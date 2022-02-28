@@ -1,0 +1,1201 @@
+DEFINT A-Z
+DECLARE SUB SAVESTATFILES ()
+DECLARE SUB GETKEY ()
+DECLARE SUB BOGUS (X%)
+DECLARE SUB NEWSCREEN ()
+DECLARE SUB TICKERUPDATE ()
+DECLARE FUNCTION EXIST% (FILENAME$)
+DECLARE SUB DRAWBOX (I)
+DECLARE SUB SHOTSTRING ()
+DECLARE FUNCTION GETDRIVE% ()
+DECLARE SUB MAMENU (BYVAL ADDRESS%, SELECTION%, START%, COUNT%, EXITCODE%, FILECOLR%, HILITECOLR%, ROWS%, COLUMNS%, SPACING%, ROW%, COLUMN%)
+
+DIM R$(14), TOA%(33), Q$(380), V%(500), V$(500), FT$(1), FR$(1), E%(13)
+DIM T(1, 34), B$(3, 5), AA$(1, 14, 1), B%(1, 14, 19), A(1, 14, 25) AS SINGLE, M9(1) AS SINGLE, L%(1, 6), W%(1, 14, 1)
+DIM PS$(4), X7(1), F7%(1, 9), CF%(1, 9), GF%(2, 9), OY%(2), OX%(2)
+DIM F1(14), S3(14), G4(14), G5(14), D8(6, 6), N0%(2, 2, 4), O0%(1), G9%(1)
+DIM D$(5), D2(1), D1(1), ZZ(2, 14), Z1(15) AS SINGLE, HT%(100), O%(100), HO$(100), H$(100)
+DIM P7(1), R3(1), T0(1), T1(1), P5(5), P4(5), Z(15) AS SINGLE, W0(1, 14), W1(1, 14), PFA%(33)
+DIM B1(1, 4), S(1, 14), V9(14), C1(1, 14), F5%(1, 4), Z2(14, 14) AS SINGLE, W2(1, 14), W3(1, 14)
+DIM RB(9), ZF(1), Z5(1), Z6(1), Y$(1), CM$(1), PO$(1), LC$(2), U5$(3)
+DIM P$(1), P7$(1), TS$(1), SC$(1), TF(1), P2(1), VG(9), VH(9)
+DIM F%(1, 9), PF%(1), TOF%(1), SC(1)
+DIM NG%(18), AP%(2), YN$(3), SX%(32, 1, 14)
+DIM SX$(32, 1), ST%(32), O$(2), X$(4), PB$(1), QQ(1, 8, 14, 14), QR(1, 7, 14)
+DIM RC$(50, 4), REC(50, 2) AS SINGLE
+
+COMMON SHARED F5%(), A() AS SINGLE, B1(), B%(), F7%(), T(), SX$(), FF$, AP%(), B$(), SX%()
+COMMON SHARED ST%(), Q$(), NG%(), YN$(), S(), AP, AD, N, ZZ()
+COMMON SHARED W0(), W1(), W%(), Y$(), X1, P$(), AA$(), Z2() AS SINGLE
+COMMON SHARED W2(), W3(), Z() AS SINGLE, Z1() AS SINGLE, V9(), R3(), TF()
+COMMON SHARED T0(), O%(), HO$(), HT%(), H$(), TG AS SINGLE, HH%
+COMMON SHARED FTF AS SINGLE, TOF%(), PF%(), TOA%(), PFA%(), JY, L%(), PO, D1()
+COMMON SHARED X7(), FR%, M9() AS SINGLE, U5, P9, GP AS SINGLE, MPG AS SINGLE, CT, X
+COMMON SHARED F%(), T, H, P2(), NB%, T1(), D$(), D2(), O$(), O0%()
+COMMON SHARED P, D, Z5(), Z6(), U6 AS SINGLE, R$(), NL%, SC(), XY%, SC, X4%
+COMMON SHARED CM%, RT%, TMT, P7$(), PS$(), OY%(), OX%(), CF%(), GF%(), TS$()
+COMMON SHARED SC$(), FT$(), FR$(), U5$(), LC$(), X$(), PO$(), CM$()
+COMMON SHARED EG%, TS%, TE, TTS%, X8, P7(), E%(), PB$(), PB%, NM%, F3, B
+COMMON SHARED A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$, U$, VG(), VH(), JJ, QQ(), QR()
+COMMON SHARED PT%, DK%, Z3$, FT%, FB%, PZ%, NT, V$(), V%(), Y2$, PB$
+COMMON SHARED HT%
+
+DATA L,1,1,1,2,2,2,H,H,3,3,3,4,4,F
+DATA 60,61,60,58,58,59,59,59,59,58,58,58,57,58,57,51,51,52,49,50,44,45,42,47,43,43,42,39,38,38,35,34,34
+DATA 9,8,8,8,8,8,8,9,8,9,8,8,7,7,06,07,07,07,08,08,08,08,08,08,08,09,09,09,09,09,09,09,08
+DATA "REG M-M     ","SAGGING M-M ","TRAPPING M-M","TIGHT M-M   ","LOOSE M-M   "
+DATA -2,-2,-3,-4,-4,-5,-5,-6,-7
+DATA -4,-5,-5,-6,-7,-8,-9,-10,-11
+DATA 0,0,-1,-2,-3,-4,-5,-5,-6
+DATA -3,-3,-4,-5,-6,-6,-7,-8,-9
+DATA -6,-7,-8,-8,-8,-9,-10,-11,-12
+
+SUB BOGUS (X)
+  IF X = 0 THEN CALL GETKEY
+END SUB
+
+SUB BOX2FILE ()
+     IF AP = 1 THEN
+        NM$ = "BOX" + MID$(STR$(AP%(0) + AP%(2)), 2, LEN(STR$(AP%(0) + AP%(2))))
+        GOTO 8951
+     END IF
+     CLS
+     INPUT "ENTER FILENAME TO SAVE GAME SUMMARY UNDER "; NM$: NM$ = NM$ + ".SPC"
+8951 OPEN P$(1) + NM$ FOR OUTPUT AS #2
+     IF N <> 2 THEN PRINT #2, "@ "; B$(N, 4): PRINT #2,
+     FOR I = 0 TO 1
+     PRINT #2, B$(I, 0); TAB(17); STR$(S(I, 1)); TAB(20); STR$(S(I, 2)); TAB(23); STR$(S(I, 3)); TAB(26); STR$(S(I, 4));
+     IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) THEN PRINT #2, TAB(29); STR$(S(I, 5));
+     IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) THEN PRINT #2, TAB(29); "- "; S(I, 0): GOTO 8963
+     IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) THEN PRINT #2, TAB(32); STR$(S(I, 6));
+     IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) THEN PRINT #2, TAB(32); "- "; S(I, 0): GOTO 8963
+     PRINT #2, TAB(35); "- "; S(I, 0)
+8963 NEXT I
+     FOR I = 0 TO 1
+     PRINT #2, : PRINT #2, B$(I, 0)
+     PRINT #2, "NAME"; TAB(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
+     FOR I1 = 0 TO 14
+     IF ZZ(I, I1) = 0 THEN 8970
+     PRINT #2, AA$(I, I1, 0); TAB(14);
+     IF ZZ(I, I1) = 0 THEN
+        PRINT #2, TAB(15); "DNP";
+        GOTO 8968
+     END IF
+     PRINT #2, USING "##"; INT(ZZ(I, I1) / 60); : PRINT #2, ":";
+     IF ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60 > 9 THEN
+        PRINT #2, USING "##"; ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60;
+     ELSE
+        PRINT #2, "0"; : PRINT #2, USING "#"; ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60;
+     END IF
+8968 PRINT #2, TAB(21); : PRINT #2, USING "##"; A(I, I1, 8);
+     PRINT #2, "-"; : PRINT #2, USING "##"; A(I, I1, 7);
+     PRINT #2, USING "  ##"; W%(I, I1, 0); : PRINT #2, "-";
+     PRINT #2, USING "##"; W%(I, I1, 1);
+     PRINT #2, USING "  ##"; A(I, I1, 10);
+     PRINT #2, "-"; : PRINT #2, USING "##"; A(I, I1, 9);
+     PRINT #2, USING "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A(I, I1, 24); A(I, I1, 11); A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0); A(I, I1, 12); A(I, I1, 14); A(I, I1, 15); A(I, I1, 13); A(I, I1, 23)
+     V9(0) = V9(0) + A(I, I1, 8)
+     V9(1) = V9(1) + A(I, I1, 7)
+     V9(2) = V9(2) + A(I, I1, 10)
+     V9(3) = V9(3) + A(I, I1, 9)
+     V9(4) = V9(4) + A(I, I1, 11)
+     V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0)
+     V9(13) = V9(13) + W%(I, I1, 0)
+     V9(14) = V9(14) + W%(I, I1, 1)
+     V9(6) = TF(I)
+     V9(7) = V9(7) + A(I, I1, 14)
+     V9(8) = V9(8) + A(I, I1, 15)
+     V9(9) = V9(9) + A(I, I1, 13)
+     V9(11) = V9(11) + A(I, I1, 24)
+     V9(12) = V9(12) + A(I, I1, 23)
+     V9(10) = V9(10) + ZZ(I, I1)
+8970 NEXT I1
+     IF V9(3) = 0 THEN V9(3) = 1
+     PRINT #2, : PRINT #2, "TOTALS"; TAB(14); INT(V9(10) / 60); TAB(21);
+     PRINT #2, USING "##"; V9(0); : PRINT #2, "-"; : PRINT #2, USING "###"; V9(1);
+     PRINT #2, TAB(28); USING "##"; V9(13); : PRINT #2, "-"; : PRINT #2, USING "##"; V9(14);
+     PRINT #2, TAB(35); USING "##"; V9(2); : PRINT #2, "-"; : PRINT #2, USING "##"; V9(3);
+     PRINT #2, TAB(42); USING "##  ## ### ##  ##  ##  ##  ##"; V9(11); V9(4); V9(5); V9(6); V9(7); V9(8); V9(9); V9(12)
+     PRINT #2, TAB(22); INT(((V9(0) / V9(1)) * 100) + .5); "%"; TAB(35); INT(((V9(2) / V9(3)) * 100) + .5); "%"
+     PRINT #2,
+     PRINT #2, "TOTAL TURNOVERS -"; T0(I)
+     PRINT #2, "TOTAL REBOUNDS  -"; R3(I)
+     FOR I2 = 0 TO 14
+     V9(I2) = 0
+     NEXT I2
+8971 IF X = 0 THEN
+       IF AP = 1 AND U5 = 2 THEN 8972
+       I$ = INKEY$: IF I$ = "" THEN 8971
+     END IF
+8972 IF X = 0 THEN CLS
+     NEXT I
+     PRINT #2, CHR$(12)
+     CLOSE 2
+     END SUB
+
+SUB BOX2PRN ()
+     IF N <> 2 THEN LPRINT "@ "; B$(N, 4): LPRINT
+     FOR I = 0 TO 1
+     LPRINT B$(I, 0); TAB(17); STR$(S(I, 1)); TAB(20); STR$(S(I, 2)); TAB(23); STR$(S(I, 3)); TAB(26); STR$(S(I, 4));
+     IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) THEN LPRINT TAB(29); STR$(S(I, 5));
+     IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) THEN LPRINT TAB(29); "- "; S(I, 0): GOTO 8913
+     IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) THEN LPRINT TAB(32); STR$(S(I, 6));
+     IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) THEN LPRINT TAB(32); "- "; S(I, 0): GOTO 8913
+     LPRINT TAB(35); "- "; S(I, 0)
+8913 NEXT I
+     CALL BOGUS(X)
+     IF X = 0 THEN CLS
+     FOR I = 0 TO 1
+     LPRINT : LPRINT B$(I, 0)
+     LPRINT "NAME"; TAB(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
+     FOR I1 = 0 TO 14
+     IF ZZ(I, I1) = 0 THEN 8920
+     LPRINT AA$(I, I1, 0); TAB(14);
+     IF ZZ(I, I1) = 0 THEN
+        LPRINT TAB(15); "DNP";
+        GOTO 8918
+     END IF
+     LPRINT USING "##"; INT(ZZ(I, I1) / 60);
+     LPRINT ":";
+     IF ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60 > 9 THEN
+        LPRINT USING "##"; ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60;
+     ELSE
+        LPRINT "0"; : LPRINT USING "#"; ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60;
+     END IF
+8918 LPRINT TAB(21);
+     LPRINT USING "##"; A(I, I1, 8);
+     LPRINT "-";
+     LPRINT USING "##"; A(I, I1, 7);
+     LPRINT USING "  ##"; W%(I, I1, 0);
+     LPRINT "-"; : LPRINT USING "##"; W%(I, I1, 1);
+     LPRINT USING "  ##"; A(I, I1, 10);
+     LPRINT "-"; : LPRINT USING "##"; A(I, I1, 9);
+     LPRINT USING "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A(I, I1, 24); A(I, I1, 11); A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0); A(I, I1, 12); A(I, I1, 14); A(I, I1, 15); A(I, I1, 13); A(I, I1, 23)
+     V9(0) = V9(0) + A(I, I1, 8)
+     V9(1) = V9(1) + A(I, I1, 7)
+     V9(2) = V9(2) + A(I, I1, 10)
+     V9(3) = V9(3) + A(I, I1, 9)
+     V9(4) = V9(4) + A(I, I1, 11)
+     V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0)
+     V9(13) = V9(13) + W%(I, I1, 0)
+     V9(14) = V9(14) + W%(I, I1, 1)
+     V9(6) = TF(I)
+     V9(7) = V9(7) + A(I, I1, 14)
+     V9(8) = V9(8) + A(I, I1, 15)
+     V9(9) = V9(9) + A(I, I1, 13)
+     V9(11) = V9(11) + A(I, I1, 24)
+     V9(12) = V9(12) + A(I, I1, 23)
+     V9(10) = V9(10) + ZZ(I, I1)
+8920 NEXT I1
+     IF V9(3) = 0 THEN V9(3) = 1
+     LPRINT
+     LPRINT "TOTALS"; TAB(14); INT(V9(10) / 60); TAB(21);
+     LPRINT USING "##"; V9(0);
+     LPRINT "-"; : LPRINT USING "###"; V9(1);
+     LPRINT TAB(28); USING "##"; V9(13);
+     LPRINT "-"; : LPRINT USING "##"; V9(14);
+     LPRINT TAB(35); USING "##"; V9(2);
+     LPRINT "-"; : LPRINT USING "##"; V9(3);
+     LPRINT TAB(42); USING "##  ## ### ##  ##  ##  ##  ##"; V9(11); V9(4); V9(5); V9(6); V9(7); V9(8); V9(9); V9(12)
+     LPRINT TAB(22); INT(((V9(0) / V9(1)) * 100) + .5); "%"; TAB(35); INT(((V9(2) / V9(3)) * 100) + .5); "%"
+     LPRINT
+     LPRINT "TOTAL TURNOVERS -"; T0(I): LPRINT "TOTAL REBOUNDS  -"; R3(I)
+     FOR I2 = 0 TO 14
+     V9(I2) = 0
+     NEXT I2
+     CALL BOGUS(X)
+     IF X = 0 THEN CLS
+     NEXT I
+     LPRINT CHR$(12)
+     END SUB
+
+SUB BOX2SPC (NM$)
+     OPEN P$(1) + NM$ FOR OUTPUT AS #2
+     IF H - 1 > E%(1) THEN PRINT #2, USING "MORE THAN ## QUARTERS"; E%(1)
+     IF S(1, 0) + S(0, 0) > E%(2) THEN PRINT #2, USING "MORE THAN ### COMBINED POINTS"; E%(2)
+     IF R3(0) + R3(1) > E%(3) THEN PRINT #2, USING "MORE THAN ### COMBINED REBOUNDS"; E%(3)
+     IF S(0, 0) > E%(4) THEN PRINT #2, B$(0, 0); : PRINT #2, USING " SCORED MORE THAN ### POINTS"; E%(4)
+     IF S(1, 0) > E%(4) THEN PRINT #2, B$(1, 0); : PRINT #2, USING " SCORED MORE THAN ### POINTS"; E%(4)
+     IF R3(0) > E%(5) THEN PRINT #2, B$(0, 0); : PRINT #2, USING " HAD MORE THAN ### REBOUNDS"; E%(5)
+     IF R3(1) > E%(5) THEN PRINT #2, B$(1, 0); : PRINT #2, USING " HAD MORE THAN ### REBOUNDS"; E%(5)
+
+    FOR I = 0 TO 1
+    FOR I1 = 0 TO 14
+    IF A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) > E%(6) THEN PRINT #2, AA$(I, I1, 0); : PRINT #2, USING " SCORED MORE THAN ### POINTS"; E%(6)
+    IF A(I, I1, 11) > E%(7) THEN PRINT #2, AA$(I, I1, 0); : PRINT #2, USING " HAD MORE THAN ### REBOUNDS"; E%(7)
+    IF A(I, I1, 14) > E%(8) THEN PRINT #2, AA$(I, I1, 0); : PRINT #2, USING " HAD MORE THAN ### ASSISTS"; E%(8)
+    IF A(I, I1, 15) > E%(9) THEN PRINT #2, AA$(I, I1, 0); : PRINT #2, USING " BLOCKED MORE THAN ### SHOTS"; E%(9)
+    IF A(I, I1, 13) > E%(10) THEN PRINT #2, AA$(I, I1, 0); : PRINT #2, USING " HAD MORE THAN ### STEALS"; E%(10)
+    IF W%(I, I1, 0) > E%(11) THEN PRINT #2, AA$(I, I1, 0); : PRINT #2, USING " MADE MORE THAN ### 3-PT FIELD GOALS"; E%(11)
+    NEXT
+    NEXT
+    PRINT #2,
+    IF N = 2 THEN PRINT #2, "NEUTRAL SITE": PRINT #2,
+    IF N <> 2 THEN PRINT #2, "@ "; B$(N, 4): PRINT #2,
+    FOR I = 0 TO 1
+    PRINT #2, B$(I, 0); TAB(17); STR$(S(I, 1)); TAB(20); STR$(S(I, 2)); TAB(23); STR$(S(I, 3)); TAB(26); STR$(S(I, 4));
+     IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) THEN PRINT #2, TAB(29); STR$(S(I, 5));
+     IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) THEN PRINT #2, TAB(29); "- "; S(I, 0): GOTO 8863
+     IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) THEN PRINT #2, TAB(32); STR$(S(I, 6));
+     IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) THEN PRINT #2, TAB(32); "- "; S(I, 0): GOTO 8863
+     PRINT #2, TAB(35); "- "; S(I, 0)
+8863 NEXT I
+     FOR I = 0 TO 1
+     PRINT #2, : PRINT #2, B$(I, 0)
+     PRINT #2, "NAME"; TAB(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
+     FOR I1 = 0 TO 14
+     IF ZZ(I, I1) = 0 THEN 8870
+     PRINT #2, AA$(I, I1, 0); TAB(14);
+     IF ZZ(I, I1) = 0 THEN
+        PRINT #2, TAB(15); "DNP";
+        GOTO 8868
+     END IF
+     PRINT #2, USING "##"; INT(ZZ(I, I1) / 60); : PRINT #2, ":";
+     IF ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60 > 9 THEN
+        PRINT #2, USING "##"; ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60;
+     ELSE
+        PRINT #2, "0"; : PRINT #2, USING "#"; ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60;
+     END IF
+8868 PRINT #2, TAB(21); : PRINT #2, USING "##"; A(I, I1, 8);
+     PRINT #2, "-"; : PRINT #2, USING "##"; A(I, I1, 7);
+     PRINT #2, USING "  ##"; W%(I, I1, 0); : PRINT #2, "-";
+     PRINT #2, USING "##"; W%(I, I1, 1);
+     PRINT #2, USING "  ##"; A(I, I1, 10);
+     PRINT #2, "-"; : PRINT #2, USING "##"; A(I, I1, 9);
+     PRINT #2, USING "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A(I, I1, 24); A(I, I1, 11); A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0); A(I, I1, 12); A(I, I1, 14); A(I, I1, 15); A(I, I1, 13); A(I, I1, 23)
+     V9(0) = V9(0) + A(I, I1, 8)
+     V9(1) = V9(1) + A(I, I1, 7)
+     V9(2) = V9(2) + A(I, I1, 10)
+     V9(3) = V9(3) + A(I, I1, 9)
+     V9(4) = V9(4) + A(I, I1, 11)
+     V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0)
+     V9(13) = V9(13) + W%(I, I1, 0)
+     V9(14) = V9(14) + W%(I, I1, 1)
+     V9(6) = TF(I)
+     V9(7) = V9(7) + A(I, I1, 14)
+     V9(8) = V9(8) + A(I, I1, 15)
+     V9(9) = V9(9) + A(I, I1, 13)
+     V9(11) = V9(11) + A(I, I1, 24)
+     V9(12) = V9(12) + A(I, I1, 23)
+     V9(10) = V9(10) + ZZ(I, I1)
+8870 NEXT I1
+     IF V9(3) = 0 THEN V9(3) = 1
+     PRINT #2, : PRINT #2, "TOTALS"; TAB(14); INT(V9(10) / 60); TAB(21);
+     PRINT #2, USING "##"; V9(0); : PRINT #2, "-"; : PRINT #2, USING "###"; V9(1);
+     PRINT #2, TAB(28); USING "##"; V9(13); : PRINT #2, "-"; : PRINT #2, USING "##"; V9(14);
+     PRINT #2, TAB(35); USING "##"; V9(2); : PRINT #2, "-"; : PRINT #2, USING "##"; V9(3);
+     PRINT #2, TAB(42); USING "##  ## ### ##  ##  ##  ##  ##"; V9(11); V9(4); V9(5); V9(6); V9(7); V9(8); V9(9); V9(12)
+     PRINT #2, TAB(22); INT(((V9(0) / V9(1)) * 100) + .5); "%"; TAB(35); INT(((V9(2) / V9(3)) * 100) + .5); "%"
+     PRINT #2,
+     PRINT #2, "TOTAL TURNOVERS -"; T0(I)
+     PRINT #2, "TOTAL REBOUNDS  -"; R3(I)
+     FOR I2 = 0 TO 14
+     V9(I2) = 0
+     NEXT I2
+8871 IF X = 0 THEN
+       IF AP = 1 AND U5 = 2 THEN 8872
+       I$ = INKEY$: IF I$ = "" THEN 8871
+     END IF
+8872 IF X = 0 THEN CLS
+     NEXT I
+     PRINT #2, CHR$(12)
+     CLOSE 2
+     END SUB
+
+SUB COMPILESTATS ()
+     CLS : J = 1
+     LOCATE 8, 8: COLOR T(1, 33), T(1, 34): PRINT " Ö"; STRING$(61, 196); "· ";
+     FOR II = 1 TO J: LOCATE 8 + II, 8: PRINT " º"; STRING$(61, 32); "º "; : NEXT
+     LOCATE 9 + J, 8: PRINT " Ó"; STRING$(61, 196); "½ ";
+     LOCATE 9, 28
+     PRINT "SAVE STATS FOR EITHER TEAM (YN)";
+     COLOR 15, 0
+     IF AP = 1 THEN 9506
+9501 I$ = INKEY$: IF I$ = "" THEN 9501
+     IF UCASE$(I$) <> "Y" THEN 9507
+     CLS : COLOR 12: PRINT TAB(30); "COMPILATION OF STATS": PRINT
+     COLOR 14: PRINT "(0) "; : COLOR 15: PRINT "BOTH TEAMS": PRINT
+     COLOR 14: PRINT "(1) "; : COLOR T(0, 33), T(0, 34): PRINT B$(0, 0); " ONLY": COLOR , 0: PRINT
+     COLOR 14: PRINT "(2) "; : COLOR T(1, 33), T(1, 34): PRINT B$(1, 0); " ONLY": COLOR , 0: PRINT
+9502 I$ = INKEY$: IF I$ = "" THEN 9502
+     X1 = VAL(I$)
+     IF X1 < 0 OR X1 > 2 THEN 9502
+9506 CALL SAVESTATFILES
+9507 END SUB
+
+SUB DISABLEPLAYERS ()
+     CLS : PRINT "DISABLE UP TO 6 PLAYERS FOR "; : COLOR T(P9, 33), T(P9, 34): PRINT B$(P9, 0); : COLOR 15, 0: PRINT " (YN)";
+     PRINT : PRINT
+     PRINT "NOTE:: THE COMPUTER WILL AUTOMATICALLY DISABLE PLAYERS BASED ON"
+     PRINT "       THE RATIO OF GAMES PLAYED FOR EACH PLAYER TO THE TOTAL"
+     PRINT "       NUMBER OF GAMES PLAYED BY THE TEAM. YOU MAY WANT TO CHECK"
+     PRINT "       TO ACTIVATE ANY COMPUTER DEACTIVATED PLAYERS"
+9202 I$ = INKEY$: IF I$ = "" THEN 9202
+     IF UCASE$(I$) <> "Y" THEN 9210
+     DX% = 0: CLS : PRINT "TEAM ROSTER FOR "; : COLOR T(P9, 33), T(P9, 34): PRINT B$(P9, 0): COLOR 15, 0
+     PRINT "# NAME            GP"
+     FOR I = 0 TO 14
+     IF I <= 9 THEN PRINT USING "#"; I;
+     IF I = 10 THEN PRINT "A";
+     IF I = 11 THEN PRINT "B";
+     IF I = 12 THEN PRINT "C";
+     IF I = 13 THEN PRINT "D";
+     IF I = 14 THEN PRINT "E";
+     IF AA$(P9, I, 0) = "XXX" THEN B%(P9, I, 18) = -1: COLOR T(P9, 33), T(P9, 34)
+     PRINT " ";
+     IF B%(P9, I, 18) <> 0 THEN COLOR T(P9, 33), T(P9, 34)
+     PRINT AA$(P9, I, 0); : COLOR 15, 0: PRINT TAB(18); B%(P9, I, 0)
+     NEXT
+9203 LOCATE 19, 1: PRINT "ENTER PLAYER # TO DISABLE/ENABLE (Z=FINISHED)"
+9205 I$ = INKEY$: IF I$ = "" THEN 9205
+     IF UCASE$(I$) = "Z" THEN 9210
+     I1 = VAL(I$)
+     IF UCASE$(I$) = "A" THEN I1 = 10
+     IF UCASE$(I$) = "B" THEN I1 = 11
+     IF UCASE$(I$) = "C" THEN I1 = 12
+     IF UCASE$(I$) = "D" THEN I1 = 13
+     IF UCASE$(I$) = "E" THEN I1 = 14
+     IF B%(P9, I1, 18) = 0 AND DX% < 6 THEN B%(P9, I1, 18) = -1: DX% = DX% + 1: LOCATE 3 + I1, 3: COLOR T(P9, 33), T(P9, 34): PRINT AA$(P9, I1, 0): COLOR 15, 0: GOTO 9203
+     IF B%(P9, I1, 18) = -1 THEN B%(P9, I1, 18) = 0: DX% = DX% - 1: LOCATE 3 + I1, 3: COLOR 15, 0: PRINT AA$(P9, I1, 0): GOTO 9203
+     GOTO 9203
+9210 END SUB
+
+SUB DRAWBOX (I)
+   JJ = 1
+   LOCATE 6, 8: COLOR T(I, 33), T(I, 34)
+   PRINT " "; CHR$(201); STRING$(61, 205); CHR$(187); " ";
+   FOR II = 1 TO JJ: LOCATE 6 + II, 8
+   PRINT " º"; STRING$(61, 32); "º "; : NEXT
+   LOCATE 7 + JJ, 8
+   PRINT " "; CHR$(200); STRING$(61, 205); CHR$(188); " "; : LOCATE 7
+END SUB
+
+SUB GETATEAM (I1, YN$)
+     OPEN P$(0) + "PROBBTMS." + YN$ FOR RANDOM AS #1 LEN = 1031
+     FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
+     FOR J = 0 TO 6
+     FIELD #1, 30 + J * 2 AS X$, 2 AS Q$(J + 2)
+     NEXT
+     FIELD #1, 44 AS X$, 2 AS Q$(9)
+     FOR J = 0 TO 34
+     FIELD #1, 46 + J * 2 AS X$, 2 AS Q$(J + 10)
+     NEXT
+     FOR J = 0 TO 14
+     FIELD #1, 116 + J * 57 AS X$, 15 AS Q$(J * 22 + 45), 2 AS Q$(J * 22 + 46)
+     FOR J1 = 0 TO 19
+     FIELD #1, 133 + J * 57 + J1 * 2 AS X$, 2 AS Q$(J * 22 + 47 + J1)
+     NEXT
+     NEXT
+     FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
+     GET #1, I1
+     B$(P9, 0) = Q$(0)
+     B$(P9, 1) = Q$(1)
+     FOR I = 0 TO 6
+     L%(P9, I) = CVI(Q$(I + 2))
+     NEXT
+     FOR I = 0 TO 34
+     T(P9, I) = CVI(Q$(I + 10))
+     NEXT
+     FOR I = 0 TO 14
+     AA$(P9, I, 0) = Q$(22 * I + 45)
+     AA$(P9, I, 1) = Q$(22 * I + 46)
+     FOR I1 = 0 TO 19
+     B%(P9, I, I1) = CVI(Q$(22 * I + 47 + I1))
+     NEXT
+     NEXT
+     B$(P9, 2) = Q$(375)
+     B$(P9, 3) = Q$(376)
+     B$(P9, 4) = Q$(377)
+     CLOSE 1
+
+     FOR I = 0 TO 14
+9004 IF RIGHT$(AA$(P9, I, 0), 1) = " " THEN AA$(P9, I, 0) = LEFT$(AA$(P9, I, 0), LEN(AA$(P9, I, 0)) - 1): GOTO 9004
+9005 IF RIGHT$(AA$(P9, I, 1), 1) = " " THEN AA$(P9, I, 1) = LEFT$(AA$(P9, I, 1), LEN(AA$(P9, I, 1)) - 1): GOTO 9005
+      NEXT
+9002 IF RIGHT$(B$(P9, 0), 1) = " " THEN B$(P9, 0) = LEFT$(B$(P9, 0), LEN(B$(P9, 0)) - 1): GOTO 9002
+9006 IF RIGHT$(B$(P9, 2), 1) = " " THEN B$(P9, 2) = LEFT$(B$(P9, 2), LEN(B$(P9, 2)) - 1): GOTO 9006
+9007 IF RIGHT$(B$(P9, 3), 1) = " " THEN B$(P9, 3) = LEFT$(B$(P9, 3), LEN(B$(P9, 3)) - 1): GOTO 9007
+9008 IF RIGHT$(B$(P9, 4), 1) = " " THEN B$(P9, 4) = LEFT$(B$(P9, 4), LEN(B$(P9, 4)) - 1): GOTO 9008
+     FOR I = 0 TO 14
+     IF B%(P9, I, 16) >= 0 OR B%(P9, I, 17) >= 0 THEN 9009
+     GP = B%(P9, I, 16) / B%(P9, I, 0)
+     MPG = B%(P9, I, 17) / B%(P9, I, 1)
+     FOR I1 = 2 TO 14
+     B%(P9, I, I1) = B%(P9, I, I1) * GP * MPG
+     B%(P9, I, 0) = B%(P9, I, 16) * -1: B%(P9, I, 1) = B%(P9, I, 17) * -1
+     NEXT I1
+9009 NEXT I
+     IF U5 = 0 OR U5 = 1 AND P9 <> CT OR AP = 1 AND U5 = 0 OR AP = 1 AND U5 = 1 AND P9 <> CT THEN 9020
+9010 CNT% = 0
+     FOR I = 0 TO 14
+     IF B%(P9, I, 18) = -1 THEN B%(P9, I, 18) = 0
+     RN = INT(RND(1) * 100) + 1
+     IF UCASE$(AA$(P9, I, 0)) = "XXX" OR (B%(P9, I, 18) = 0 AND RN > INT(B%(P9, I, 0) / L%(P9, 0) * 100 + .5)) THEN B%(P9, I, 18) = -1
+     NEXT
+     FOR I = 0 TO 14: IF B%(P9, I, 18) = 0 THEN CNT% = CNT% + 1
+     NEXT
+     IF CNT% < 10 THEN 9010
+9020 END SUB
+
+SUB GETKEY ()
+     IF AP = 1 AND U5 = 2 THEN 4091
+4092 I$ = INKEY$: IF I$ = "" THEN 4092
+4091 END SUB
+
+SUB INITIALIZE ()
+  
+  FOR I = 0 TO 14
+  READ R$(I)
+  NEXT
+  
+REM:ORIG  DATA 12,11,11,11,11,11,11,12,11,12,11,11,10,10,06,07,07,07,08,08,08,08,08,08,08,09,09,09,09,09,09,09,08
+  
+  FOR I = 0 TO 32
+  READ TOA%(I)
+  NEXT
+  FOR I = 0 TO 32
+  READ PFA%(I)
+  NEXT
+  NL% = 1
+  SC(1) = 30: SC(0) = 24
+  NB% = 5
+  OPEN "DEV.BAS" FOR INPUT AS #1
+  INPUT #1, P$(0)
+  INPUT #1, P$(1)
+  CLOSE 1
+
+   OPEN "DEFAULT" FOR INPUT AS #1
+   INPUT #1, U5
+   INPUT #1, XY%
+   INPUT #1, SC
+   INPUT #1, N
+   INPUT #1, PO
+   INPUT #1, U6
+   INPUT #1, X4%
+   INPUT #1, CM%
+   INPUT #1, NB%
+   INPUT #1, RT%
+   INPUT #1, FR%
+   INPUT #1, PB%
+   CLOSE 1
+
+   IF NOT EXIST%("TICKER") THEN TMT = 0: GOTO 2
+   OPEN "TICKER" FOR INPUT AS #2
+   FOR I = 1 TO 32
+   FOR I1 = 0 TO 1
+   FOR I2 = 1 TO 14
+   INPUT #2, SX%(I, I1, I2)
+   NEXT: NEXT: NEXT
+   FOR I = 1 TO 32
+   FOR I1 = 0 TO 1
+   INPUT #2, SX$(I, I1)
+   NEXT: NEXT
+   FOR I = 1 TO 32
+   INPUT #2, ST%(I)
+   NEXT
+   CLOSE 2
+   TMT = 1
+2  IF NOT EXIST%("GAME82") THEN 6
+  OPEN "GAME82" FOR INPUT AS #2
+  INPUT #2, FF$
+  FOR I = 0 TO 2: INPUT #2, AP%(I): NEXT
+  CLOSE 2
+
+    OPEN P$(0) + FF$ FOR RANDOM AS #1 LEN = 48
+    FOR X = 0 TO 18
+    FIELD #1, X * 2 AS X$, 2 AS Q$(X + 1), 48 - 2 - 2 * X AS X$
+    NEXT
+    FIELD #1, 38 AS X$, 2 AS Q$(22), 2 AS Q$(23), 3 AS Q$(20), 3 AS Q$(21)
+    GET #1, AP%(0) + AP%(2)
+    FOR X = 0 TO 18: NG%(X) = CVI(Q$(X + 1)): NEXT
+    FOR X = 0 TO 1: YN$(X) = Q$(20 + X): NEXT
+    VS% = CVI(Q$(22)): HS% = CVI(Q$(23))
+    CLOSE 1
+   AP = 1
+
+6  P7$(1) = "YES": P7$(0) = " NO"
+   T = 720
+   H = 1
+   T1(1) = 7: T1(0) = 7
+   PS$(0) = "G": PS$(1) = "G": PS$(2) = "F": PS$(3) = "F": PS$(4) = "C"
+   
+   
+   
+   
+   
+   
+   OY%(1) = 2: OY%(2) = -2: OX%(1) = 10: OX%(2) = -10
+   D2(0) = 1: D2(1) = 1
+   FOR I = 1 TO 5: READ D$(I): NEXT I
+   FOR I = 0 TO 1: FOR I1 = 0 TO 4: B1(I, I1) = -1: NEXT: NEXT
+   FOR I = 0 TO 1: FOR I1 = 1 TO 9: READ CF%(I, I1): NEXT: NEXT
+   FOR I = 0 TO 2: FOR I1 = 1 TO 9: READ GF%(I, I1): NEXT: NEXT
+
+   TS$(0) = "NO ": TS$(1) = "YES"
+   SC$(0) = "24 SEC SHOT CLOCK"
+   SC$(1) = "30 SEC SHOT CLOCK"
+
+   FT$(0) = "CURRENT RULES            "
+   FT$(1) = "3 TO MAKE 2 / 2 TO MAKE 1"
+
+   FR$(0) = "ONLY IN BONUS OR ACT OF SHOOTING"
+   FR$(1) = "SHOOT ON ALL FOULS              "
+
+   O$(0) = "NORMAL      "
+   O$(1) = "AGGRESSIVE  "
+   O$(2) = "SAFE        "
+
+   U5$(0) = "HUMAN OPPONENT           "
+   U5$(1) = "COMPUTER IS VISITING TEAM"
+   U5$(2) = "COMPUTER IS HOME TEAM    "
+   U5$(3) = "COMPUTER VS COMPUTER     "
+   LC$(0) = "@ TEAM 1            "
+   LC$(1) = "HOME COURT ADVANTAGE"
+   LC$(2) = "NEUTRAL SITE        "
+   X$(0) = "A ": X$(1) = "B ": X$(2) = "C ": X$(3) = "D ": X$(4) = "E "
+   
+   PO$(0) = "REGULAR SEASON"
+   PO$(1) = "PLAYOFF       "
+
+   CM$(0) = "COACH AND SELECT SHOTS           "
+   CM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
+
+   PB$(0) = "VERBOSE        "
+   PB$(1) = "HAFFNER CLASSIC"
+
+END SUB
+
+SUB NEWSCREEN ()
+     REM:*** SCREEN UPDATING ***
+     CLS
+     CALL TICKERUPDATE
+     COLOR 9, 0
+     LOCATE 3, 11: PRINT CHR$(218); STRING$(5, 196); CHR$(191)
+     LOCATE , 11: PRINT CHR$(179); : LOCATE , 17: PRINT CHR$(179)
+     LOCATE , 11: PRINT CHR$(192); STRING$(5, 196); CHR$(217)
+     LOCATE 3, 58: PRINT CHR$(218); STRING$(5, 196); CHR$(191)
+     LOCATE , 58: PRINT CHR$(179); : LOCATE , 64: PRINT CHR$(179)
+     LOCATE , 58: PRINT CHR$(192); STRING$(5, 196); CHR$(217)
+     LOCATE 2, 1: LOCATE , 9: COLOR T(0, 33), T(0, 34): PRINT B$(0, 0);
+     LOCATE 1, 37: COLOR 15, 0: PRINT USING "##"; INT(T / 60); : PRINT ":";
+     IF T - INT(T / 60) * 60 < 10 THEN
+        PRINT "0";
+        PRINT USING "#"; T - INT(T / 60) * 60;
+        GOTO 2505
+     END IF
+     PRINT USING "##"; T - INT(T / 60) * 60;
+2505 LOCATE 2, 56: COLOR T(1, 33), T(1, 34): PRINT B$(1, 0)
+     LOCATE 4, 13: COLOR 14, 0
+     PRINT USING "###"; S(0, 0);
+     LOCATE 2, 35: PRINT USING " PERIOD #"; H;
+     IF H > 4 THEN LOCATE , 35: PRINT USING "OVERTIME #"; H - 4
+     LOCATE 4, 60: COLOR 14, 0: PRINT USING "###"; S(1, 0)
+     COLOR 7: LOCATE 3, 35
+     PRINT USING "##  "; T0(0); : COLOR 12
+     PRINT "TO  "; : COLOR 7: PRINT USING "##"; T0(1)
+     LOCATE , 35: PRINT USING "##  "; R3(0);
+     COLOR 12: PRINT "RB  "; : COLOR 7: PRINT USING "##"; R3(1)
+     LOCATE , 35: PRINT USING "##  "; P2(0);
+     COLOR 12: PRINT "TF  "; : COLOR 7
+     PRINT USING "##"; P2(1);
+     IF P2(0) > NB% - 1 AND H <= 4 OR P2(0) > 2 AND H > 4 THEN LOCATE , 46: COLOR 0, 2: PRINT "BONUS"; : COLOR 7, 0
+     IF P2(1) > NB% - 1 AND H <= 4 OR P2(1) > 2 AND H > 4 THEN LOCATE , 29: COLOR 0, 2: PRINT "BONUS": COLOR 7, 0
+     LOCATE 6, 9: PRINT "TIMEOUTS:"; T1(0); : LOCATE , 56: PRINT "TIMEOUTS:"; T1(1)
+     LOCATE 8, 58
+     COLOR T(D, 33), T(D, 34): PRINT "DEF - "; D$(D2(D))
+     LOCATE , 58: COLOR T(P, 33), T(P, 34): PRINT "OFF - "; O$(O0%(P))
+     COLOR 15, 0
+     LOCATE , 41: COLOR 14: PRINT "(1) "; : COLOR 15: PRINT "SHOOT        "; : COLOR 14: PRINT "ENTER"; : COLOR 15: PRINT "-PASS"
+     LOCATE , 41: COLOR 14: PRINT "(2) "; : COLOR 15: PRINT B$(P, 0); " CALL TIMEOUT     "
+     LOCATE , 41: COLOR 14: PRINT "(3) "; : COLOR 15: PRINT "COMMIT INTL FOUL (LAST 4 MIN)"
+     LOCATE , 41: COLOR 14: PRINT "(4) "; : COLOR 15: PRINT "SHOOT A FORCED 3-POINTER"
+     LOCATE , 41: COLOR 14: PRINT "(S) "; : COLOR 15: PRINT "SCOUT REPORT ";
+     COLOR 14: PRINT "(T) "; : COLOR 15: PRINT "10 MIN TICKER"
+     LOCATE , 41: COLOR 14: PRINT "(Z) "; : COLOR 15: PRINT "LEFT TM STGY ";
+     COLOR 14: PRINT "(/) "; : COLOR 15: PRINT "RIGHT TM STGY"
+     LOCATE 7, 1
+     COLOR 9, 0: PRINT STRING$(38, 205); CHR$(203); STRING$(38, 205)
+     LOCATE 8, 1: FOR I = 1 TO 8: LOCATE , 39: PRINT CHR$(186): NEXT
+     LOCATE 17, 1: COLOR T(0, 33), T(0, 34): PRINT B$(0, 0);
+     PRINT USING " [##"; Z5(0); : PRINT "-"; : PRINT USING "##]"; Z6(0)
+     COLOR 14, 0: PRINT "# NAME         FG FT RB CX PA DF PT  F"
+     FOR I1 = 0 TO 4
+     COLOR 2: PRINT USING "# "; I1;
+     COLOR 3
+     COLOR 15: PRINT LEFT$(AA$(0, B1(0, I1), 0), 12); : LOCATE , 16
+     J = (A(0, B1(0, I1), 3)) - A(0, B1(0, I1), 7) - A(0, B1(0, I1), 11) - A(0, B1(0, I1), 12)
+     IF J <= 0 THEN J = 0
+     PRINT USING "##"; A(0, B1(0, I1), 0);
+     PRINT USING "### "; A(0, B1(0, I1), 1);
+     IF P = 0 THEN PRINT USING "##"; A(0, B1(0, I1), 21) * 2 / 10;  ELSE PRINT USING "##"; A(0, B1(0, I1), 2) * 2 / 10;
+     IF J <= 0 AND (H = 1 OR H = 2 OR H = 3 OR H = 4 AND T > 120) THEN COLOR 12
+     PRINT USING "### "; J;
+     COLOR 15
+     PRINT USING "## ##"; A(0, B1(0, I1), 4) / 10; A(0, B1(0, I1), 5) / 10;
+     PRINT USING "###  "; A(0, B1(0, I1), 8) * 2 + A(0, B1(0, I1), 10) + W%(0, B1(0, I1), 0);
+     IF A(0, B1(0, I1), 12) >= 5 THEN COLOR 12
+     PRINT USING "#"; A(0, B1(0, I1), 12)
+     COLOR 15
+     NEXT I1
+     LOCATE 17, 40: COLOR T(1, 33), T(1, 34): PRINT B$(1, 0); : PRINT USING " [##"; Z5(1); : PRINT "-"; : PRINT USING "##]"; Z6(1)
+     COLOR 14, 0: LOCATE , 40: PRINT "# NAME          FG FT RB CX PA DF PT  F"
+     FOR I1 = 0 TO 4: LOCATE , 40: COLOR 2: PRINT USING "# "; I1;
+     COLOR 15: PRINT LEFT$(AA$(1, B1(1, I1), 0), 12); : LOCATE , 56
+     J = (A(1, B1(1, I1), 3)) - A(1, B1(1, I1), 7) - A(1, B1(1, I1), 11) - A(1, B1(1, I1), 12)
+     IF J <= 0 THEN J = 0
+     PRINT USING "##"; A(1, B1(1, I1), 0);
+     PRINT USING "### "; A(1, B1(1, I1), 1);
+     IF P = 1 THEN PRINT USING "##"; A(1, B1(1, I1), 21) * 2 / 10;  ELSE PRINT USING "##"; A(1, B1(1, I1), 2) * 2 / 10;
+     IF J <= 0 AND (H = 1 OR H = 2 OR H = 3 OR H = 4 AND T > 120) THEN COLOR 12
+     PRINT USING "### "; J;
+     COLOR 15
+     PRINT USING "## ##"; A(1, B1(1, I1), 4) / 10; A(1, B1(1, I1), 5) / 10;
+     PRINT USING "###  "; A(1, B1(1, I1), 8) * 2 + A(1, B1(1, I1), 10) + W%(1, B1(1, I1), 0);
+     IF A(1, B1(1, I1), 12) >= 5 THEN COLOR 12
+     PRINT USING "#"; A(1, B1(1, I1), 12)
+     COLOR 15
+     NEXT I1
+     COLOR 9, 0: FOR I = 1 TO 9: LOCATE 14 + I, 39: PRINT CHR$(186): NEXT
+     COLOR 9, 0
+     LOCATE 16, 1: PRINT STRING$(79, 205)
+     LOCATE 16, 39: PRINT CHR$(206): COLOR 7, 0
+     END SUB
+
+SUB QUARTERTOTAL ()
+
+FOR I = 0 TO 1
+FOR I2 = 0 TO 14: V9(I2) = 0: NEXT
+     FOR I1 = 0 TO 14
+     V9(0) = V9(0) + A(I, I1, 8)
+     V9(1) = V9(1) + A(I, I1, 7)
+     V9(2) = V9(2) + A(I, I1, 10)
+     V9(3) = V9(3) + A(I, I1, 9)
+     V9(4) = V9(4) + A(I, I1, 11)
+     V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0)
+     V9(13) = V9(13) + W%(I, I1, 0)
+     V9(14) = V9(14) + W%(I, I1, 1)
+     V9(6) = TF(I)
+     V9(7) = V9(7) + A(I, I1, 14)
+     V9(8) = V9(8) + A(I, I1, 15)
+     V9(9) = V9(9) + A(I, I1, 13)
+     V9(11) = V9(11) + A(I, I1, 24)
+     V9(12) = V9(12) + A(I, I1, 23)
+     V9(10) = V9(10) + ZZ(I, I1)
+     NEXT
+
+      IF H = 1 OR H = 2 THEN
+         FOR I2 = 0 TO 14
+         QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2)
+         NEXT
+
+      FOR I1 = 0 TO 14
+      FOR I2 = 7 TO 15
+      QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6)
+      NEXT
+      QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10)
+      QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11)
+      QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12)
+      QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13)
+      QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14)
+      NEXT
+      END IF
+
+      IF H = 3 THEN
+         FOR I2 = 0 TO 14
+         QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2)
+         NEXT
+      FOR I1 = 0 TO 14
+      FOR I2 = 7 TO 15
+      QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6)
+      NEXT
+      QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10)
+      QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11)
+      QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12)
+      QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13)
+      QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14)
+      NEXT
+      END IF
+
+      IF H = 4 THEN
+         FOR I2 = 0 TO 14
+         QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2)
+         NEXT
+      FOR I1 = 0 TO 14
+      FOR I2 = 7 TO 15
+      QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6)
+      NEXT
+      QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10)
+      QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11)
+      QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12)
+      QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13)
+      QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14)
+      NEXT
+      END IF
+
+      IF H = 5 THEN
+         FOR I2 = 0 TO 14
+         QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2) - QR(I, H - 4, I2)
+         NEXT
+      FOR I1 = 0 TO 14
+      FOR I2 = 7 TO 15
+      QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6) - QQ(I, H - 4, I1, I2 - 6)
+      NEXT
+      QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10) - QQ(I, H - 4, I1, 10)
+      QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11) - QQ(I, H - 4, I1, 11)
+      QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12) - QQ(I, H - 4, I1, 12)
+      QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13) - QQ(I, H - 4, I1, 13)
+      QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14) - QQ(I, H - 4, I1, 14)
+      NEXT
+      END IF
+
+      IF H = 6 THEN
+         FOR I2 = 0 TO 14
+         QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2) - QR(I, H - 4, I2) - QR(I, H - 5, I2)
+         NEXT
+      FOR I1 = 0 TO 14
+      FOR I2 = 7 TO 15
+      QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6) - QQ(I, H - 4, I1, I2 - 6) - QQ(I, H - 5, I1, I2 - 6)
+      NEXT
+      QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10) - QQ(I, H - 4, I1, 10) - QQ(I, H - 5, I1, 10)
+      QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11) - QQ(I, H - 4, I1, 11) - QQ(I, H - 5, I1, 11)
+      QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12) - QQ(I, H - 4, I1, 12) - QQ(I, H - 5, I1, 12)
+      QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13) - QQ(I, H - 4, I1, 13) - QQ(I, H - 5, I1, 13)
+      QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14) - QQ(I, H - 4, I1, 14) - QQ(I, H - 5, I1, 14)
+      NEXT
+      END IF
+
+      IF H = 7 THEN
+         FOR I2 = 0 TO 14
+         QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2) - QR(I, H - 4, I2) - QR(I, H - 5, I2) - QR(I, H - 6, I2)
+         NEXT
+      FOR I1 = 0 TO 14
+      FOR I2 = 7 TO 15
+      QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6) - QQ(I, H - 4, I1, I2 - 6) - QQ(I, H - 5, I1, I2 - 6) - QQ(I, H - 6, I1, I2 - 6)
+      NEXT
+      QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10) - QQ(I, H - 4, I1, 10) - QQ(I, H - 5, I1, 10) - QQ(I, H - 6, I1, 10)
+      QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11) - QQ(I, H - 4, I1, 11) - QQ(I, H - 5, I1, 11) - QQ(I, H - 6, I1, 11)
+      QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12) - QQ(I, H - 4, I1, 12) - QQ(I, H - 5, I1, 12) - QQ(I, H - 6, I1, 12)
+      QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13) - QQ(I, H - 4, I1, 13) - QQ(I, H - 5, I1, 13) - QQ(I, H - 6, I1, 13)
+      QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14) - QQ(I, H - 4, I1, 14) - QQ(I, H - 5, I1, 14) - QQ(I, H - 6, I1, 14)
+      NEXT
+      END IF
+
+
+NEXT
+FOR I = 0 TO 14: V9(I) = 0: NEXT
+END SUB
+
+SUB RATINGTABLES ()
+     FOR I = 0 TO 1
+     F5%(I, 0) = 0
+     F5%(I, 1) = 0
+     F5%(I, 2) = 0
+     F5%(I, 3) = 0
+     F5%(I, 4) = 0
+     FOR I1 = 0 TO 4
+     F5%(I, 0) = F5%(I, 0) + A(I, B1(I, I1), 17)
+     F5%(I, 1) = F5%(I, 1) + B%(I, B1(I, I1), 18)
+     F5%(I, 2) = F5%(I, 2) + A(I, B1(I, I1), 25)
+     F5%(I, 3) = F5%(I, 3) + A(I, B1(I, I1), 5)
+     F5%(I, 4) = F5%(I, 4) + A(I, B1(I, I1), 4) / 10
+     NEXT I1
+     F5%(I, 4) = INT((F5%(I, 4) / (F7%(I, 6) * .9)) * 100 + .5)
+     NEXT
+END SUB
+
+SUB SAVESTATFILES ()
+     REM:SAVE STATS
+     IF NOT EXIST%("GAME82") THEN 6030
+     OPEN "GAME82" FOR INPUT AS #2
+     INPUT #2, FF$
+     FOR I = 0 TO 2: INPUT #2, AP%(I): NEXT: CLOSE 2
+     IF AP%(2) > 31 THEN 6011
+     FOR X = 0 TO 1: SX$(AP%(2) + 1, X) = B$(X, 0): NEXT
+     OPEN "TICKER" FOR OUTPUT AS #2
+     FOR I = 1 TO 32: FOR I1 = 0 TO 1: FOR I2 = 1 TO 14
+     PRINT #2, SX%(I, I1, I2): NEXT: NEXT: NEXT
+     FOR I = 1 TO 32: FOR I1 = 0 TO 1: PRINT #2, SX$(I, I1): NEXT: NEXT
+     FOR I = 1 TO 32: PRINT #2, ST%(I): NEXT
+     CLOSE 2
+6011 OPEN P$(0) + FF$ FOR RANDOM AS #1 LEN = 48
+     FOR X = 0 TO 18
+    FIELD #1, X * 2 AS X$, 2 AS Q$(X + 1), 48 - 2 - 2 * X AS X$
+    NEXT
+    FIELD #1, 38 AS X$, 2 AS Q$(22), 2 AS Q$(23), 3 AS Q$(20), 3 AS Q$(21)
+    NG%(13) = 1
+    FOR X = 0 TO 18: LSET Q$(X + 1) = MKI$(NG%(X)): NEXT
+    FOR X = 0 TO 1: LSET Q$(20 + X) = YN$(X): NEXT
+    LSET Q$(22) = MKI$(S(0, 0)): LSET Q$(23) = MKI$(S(1, 0))
+    PUT #1, AP%(0) + AP%(2)
+    CLOSE 1
+     AP%(2) = AP%(2) + 1
+     AP = 1: IF AP%(1) < AP%(0) + AP%(2) THEN KILL "GAME82": AD = 1: GOTO 6030
+     OPEN "GAME82" FOR OUTPUT AS #2
+     PRINT #2, FF$
+     FOR I = 0 TO 2: PRINT #2, AP%(I): NEXT: CLOSE 2
+6030 CLS
+     HH% = N
+     FOR PX = 0 TO 1
+     FOR J = 0 TO 14
+     A(PX, J, 16) = ZZ(PX, J)
+     A(PX, J, 17) = A(PX, J, 23)
+     A(PX, J, 18) = A(PX, J, 24)
+     NEXT
+     NEXT
+     FOR PX = 0 TO 1
+     FOR I = 0 TO 14
+     FOR J = 1 TO 12
+     A(PX, I, J) = A(PX, I, J + 6)
+     NEXT
+     W0(PX, I) = W%(PX, I, 0)
+     W1(PX, I) = W%(PX, I, 1)
+     NEXT
+     Y$(PX) = B$(PX, 0)
+     NEXT
+     Q = 0
+6115 C% = 0
+     IF AP = 1 THEN 6355
+     I$ = "Y"
+     IF X1 = 1 AND Q = 1 OR X1 = 2 AND Q = 0 THEN I$ = "N"
+     IF UCASE$(I$) = "N" THEN C% = 1: GOTO 6355
+     IF UCASE$(LEFT$(P$(1), 1)) <> "A" AND UCASE$(LEFT$(P$(1), 1)) <> "B" THEN 6355
+     CLS
+     PRINT "INSERT A FORMATTED STATS DISK FOR "; : COLOR T(Q, 33), T(Q, 34)
+     PRINT B$(Q, 0); : COLOR 15, 0: PRINT " AND HIT ANY KEY"
+6340 I$ = INKEY$: IF I$ = "" THEN 6340
+6355 IF C% = 1 THEN 6290
+     FOR XX = 4 TO 11
+     IF MID$(B$(Q, 0), XX, 1) = " " OR MID$(B$(Q, 0), XX, 1) = "." THEN MID$(B$(Q, 0), XX, 1) = "_"
+     NEXT XX
+     FOR XX = 12 TO 14
+     IF MID$(B$(Q, 0), XX, 2) = "ST" THEN MID$(B$(Q, 0), 9, 1) = "_": MID$(B$(Q, 0), 10, 2) = "ST"
+     NEXT XX
+     QQ = 8
+     FOR XX = 11 TO 4 STEP -1
+     IF MID$(B$(Q, 0), XX, 1) = "_" THEN QQ = XX - 4: GOTO 6616
+     GOTO 6620
+6616 NEXT XX
+6620 F$ = MID$(B$(Q, 0), 4, QQ)
+     R$ = F$ + "." + LEFT$(B$(Q, 0), 2)
+     IF NOT EXIST%(P$(1) + R$) THEN 6185
+     OPEN P$(1) + R$ FOR INPUT AS #2
+     INPUT #2, B$(Q, 0)
+     FOR I = 0 TO 14: INPUT #2, AA$(Q, I, 0)
+     FOR J = 0 TO 13: INPUT #2, Z2(I, J): NEXT J
+     INPUT #2, W2(Q, I): INPUT #2, W3(Q, I): NEXT I
+     FOR L = 0 TO 15: INPUT #2, Z(L): NEXT L
+     FOR L = 0 TO 15: INPUT #2, Z1(L): NEXT L
+     CLOSE #2
+6185 TG = 0
+     FOR I = 0 TO 14
+     IF A(Q, I, 2) * 2 + A(Q, I, 4) + W0(Q, I) > Z2(I, 13) THEN Z2(I, 13) = A(Q, I, 2) * 2 + A(Q, I, 4) + W0(Q, I)
+     IF A(Q, I, 10) > 0 THEN Z2(I, 0) = Z2(I, 0) + 1
+     FOR J = 1 TO 12
+     Z2(I, J) = Z2(I, J) + A(Q, I, J)
+     IF J = 5 OR J = 6 OR J = 10 OR J = 11 THEN 6215
+     Z(J) = Z(J) + A(Q, I, J): Z1(J) = Z1(J) + A(1 - Q, I, J)
+6215 NEXT J
+     Z(0) = Z(0) + A(Q, I, 10)
+     TG = TG + A(Q, I, 10)
+     NEXT I
+     FOR I = 0 TO 1: V9(I) = 0: FOR I1 = 0 TO 14: V9(I) = V9(I) + A(I, I1, 5): NEXT: NEXT
+     Z(15) = Z(15) + R3(Q) - V9(Q): Z1(15) = Z1(15) + R3(1 - Q) - V9(1 - Q)
+     Z(6) = Z(6) + TF(Q): Z1(6) = Z1(6) + TF(1 - Q)
+     Z(5) = Z(5) + R3(Q): Z1(5) = Z1(5) + R3(1 - Q): Z(11) = Z(11) + T0(Q): Z1(11) = Z1(11) + T0(1 - Q)
+     FOR J = 0 TO 14: Z(13) = Z(13) + W0(Q, J): Z(14) = Z(14) + W1(Q, J)
+     Z1(13) = Z1(13) + W0(1 - Q, J): Z1(14) = Z1(14) + W1(1 - Q, J)
+     W2(Q, J) = W2(Q, J) + W0(Q, J): W3(Q, J) = W3(Q, J) + W1(Q, J): NEXT J
+     Z(10) = Z(10) + S(Q, 0): Z1(10) = Z1(10) + S(1 - Q, 0)
+     I = Q
+     CALL DRAWBOX(I)
+     U$ = "SAVING STATS FOR " + B$(Q, 0)
+     LOCATE , (80 - LEN(U$)) / 2
+     PRINT U$
+     COLOR 15, 0
+
+     OPEN P$(1) + R$ FOR OUTPUT AS #1
+     PRINT #1, Y$(Q)
+     FOR I = 0 TO 14: PRINT #1, AA$(Q, I, 0)
+     FOR J = 0 TO 13: PRINT #1, Z2(I, J): NEXT J
+     PRINT #1, W2(Q, I): PRINT #1, W3(Q, I): NEXT I
+     FOR L = 0 TO 15: PRINT #1, Z(L): NEXT L
+     FOR L = 0 TO 15: PRINT #1, Z1(L): NEXT L
+     CLOSE #1
+
+     Y% = 0: R$ = R$ + "S"
+     IF NOT EXIST%(P$(1) + R$) THEN 6405
+     OPEN P$(1) + R$ FOR INPUT AS #1
+     INPUT #1, Y%
+     FOR I = 1 TO 100: INPUT #1, O%(I): NEXT I
+     FOR I = 1 TO 100: INPUT #1, HO$(I): NEXT I
+     FOR I = 1 TO 100: INPUT #1, HT%(I): NEXT I
+     FOR I = 1 TO 100: INPUT #1, H$(I): NEXT I
+     CLOSE #1
+6405 IF Y% < 100 THEN Y% = Y% + 1
+     IF HH% = 2 AND TG < 14500 THEN H$(Y%) = "N": GOTO 6540
+     IF HH% <> Q AND TG < 14500 THEN H$(Y%) = "V": GOTO 6540
+     IF HH% = Q AND TG < 14500 THEN H$(Y%) = "H": GOTO 6540
+     IF HH% = Q AND TG < 16000 THEN H$(Y%) = "H1": GOTO 6540
+     IF HH% = Q AND TG < 17500 THEN H$(Y%) = "H2": GOTO 6540
+     IF HH% = Q AND TG < 19000 THEN H$(Y%) = "H3": GOTO 6540
+     IF HH% = Q AND TG < 20500 THEN H$(Y%) = "H4": GOTO 6540
+     IF HH% = 2 AND TG < 16000 THEN H$(Y%) = "N1": GOTO 6540
+     IF HH% = 2 AND TG < 17500 THEN H$(Y%) = "N2": GOTO 6540
+     IF HH% = 2 AND TG < 19000 THEN H$(Y%) = "N3": GOTO 6540
+     IF HH% = 2 AND TG < 20500 THEN H$(Y%) = "N4": GOTO 6540
+     IF HH% <> Q AND TG < 16000 THEN H$(Y%) = "V1": GOTO 6540
+     IF HH% <> Q AND TG < 17500 THEN H$(Y%) = "V2": GOTO 6540
+     IF HH% <> Q AND TG < 19000 THEN H$(Y%) = "V3": GOTO 6540
+     IF HH% <> Q AND TG < 20500 THEN H$(Y%) = "V4": GOTO 6540
+6540 O%(Y%) = S(Q, 0): HO$(Y%) = B$(1 - Q, 0): HT%(Y%) = S(1 - Q, 0)
+     OPEN P$(1) + R$ FOR OUTPUT AS #1
+     PRINT #1, Y%
+     FOR I = 1 TO 100: PRINT #1, O%(I): NEXT I
+     FOR I = 1 TO 100: PRINT #1, HO$(I): NEXT I
+     FOR I = 1 TO 100: PRINT #1, HT%(I): NEXT I
+     FOR I = 1 TO 100: PRINT #1, H$(I): NEXT I
+     CLOSE #1
+     FOR I = 1 TO 100: O%(I) = 0: HT%(I) = 0: HO$(I) = "": H$(I) = "": NEXT I
+
+     FOR J = 0 TO 14
+     FOR K = 0 TO 13
+     Z2(J, K) = 0
+     NEXT K
+     NEXT J
+     FOR L = 0 TO 15
+     Z(L) = 0
+     Z1(L) = 0
+     NEXT L
+
+6290 Q = Q + 1: Z(12) = 0: IF Q < 2 THEN 6115
+     IF AP = 1 AND AD <> 1 THEN 6292
+     IF AD = 1 THEN RUN "HELLO.EXE"
+6292 END SUB
+
+SUB SCOUTREPORT ()
+     REM *** SCOUTING REPORT ***
+     JJ = 13
+     SN = 1: LOCATE 6, 8: COLOR 0, 7
+     PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
+     PRINT " º"; STRING$(61, 32); "º "; : NEXT
+     LOCATE 7 + JJ, 8
+     PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+     PRINT "SCOUTING REPORT"
+     LOCATE 8, 14: COLOR T(0, 33), T(0, 34): PRINT B$(0, 0);
+     LOCATE , 52: COLOR T(1, 33), T(1, 34): PRINT B$(1, 0)
+     COLOR 0, 7
+     LOCATE , 18: PRINT USING "###           POINTS PER GAME         ###"; (T(0, 6) * 2 + T(0, 8) + T(0, 18)) / T(0, 0); (T(1, 6) * 2 + T(1, 8) + T(1, 18)) / T(1, 0)
+     LOCATE , 18: PRINT USING " ##             FIELD GOAL %           ##"; T(0, 6) / T(0, 5) * 100 + D1(1); T(1, 6) / T(1, 5) * 100 + D1(0)
+     LOCATE , 18: PRINT USING " ##             FREE THROW %           ##"; T(0, 8) / T(0, 7) * 100; T(1, 8) / T(1, 7) * 100
+     LOCATE , 18: PRINT USING " ##          REBOUNDS PER GAME         ##"; (T(0, 9) + T(0, 10)) / T(0, 0); (T(1, 9) + T(1, 10)) / T(1, 0)
+     LOCATE , 18: PRINT USING " ##      TURNOVERS FORCED PER GAME     ##"; T(0, 29) / T(0, 0); T(1, 29) / T(1, 0)
+     LOCATE , 18: PRINT USING " ##    TURNOVERS COMMITTED PER GAME    ##"; T(0, 15) / T(0, 0); T(1, 15) / T(1, 0)
+     LOCATE , 18: PRINT USING " ##          STEALS PER GAME           ##"; T(0, 14) / T(0, 0); T(1, 14) / T(1, 0)
+     LOCATE , 18: PRINT USING " ##      PERSONAL FOULS PER GAME       ##"; T(0, 12) / T(0, 0); T(1, 12) / T(1, 0)
+     LOCATE , 18: PRINT USING " ##          ASSISTS PER GAME          ##"; T(0, 11) / T(0, 0); T(1, 11) / T(1, 0)
+     LOCATE , 18: PRINT USING " ##          BLOCKS PER GAME           ##"; T(0, 16) / T(0, 0); T(1, 16) / T(1, 0)
+     LOCATE , 18: PRINT USING " ##             3 POINT FG%            ##"; T(0, 18) / (T(0, 17) + 1) * 100 + F%(1, 4); T(1, 18) / (T(1, 17) + 1) * 100 + F%(0, 4)
+8203 I$ = INKEY$: IF I$ = "" THEN 8203
+      COLOR 7, 0
+      CALL NEWSCREEN
+      END SUB
+
+SUB SETUPRATINGS ()
+DIM X3 AS SINGLE, JX AS SINGLE
+     REM:*** SET UP TEAM RATINGS***
+     FOR I = 0 TO 1
+     YR% = VAL(LEFT$(B$(I, 0), 2))
+     FTF = 1
+     IF YR% < 74 THEN FTF = .91
+     IF YR% < 69 THEN FTF = .83
+     FOR I1 = 0 TO 14
+     B%(I, I1, 4) = B%(I, I1, 4) * FTF
+     B%(I, I1, 5) = B%(I, I1, 5) * FTF
+     NEXT I1
+     T(I, 7) = T(I, 7) * FTF
+     T(I, 8) = T(I, 8) * FTF
+     T(I, 21) = T(I, 21) * FTF
+     T(I, 22) = T(I, 22) * FTF
+     YR% = YR% - 60
+     IF YR% < 0 THEN TOF%(I) = 59: PF%(I) = 11: GOTO 9215
+     IF YR% > 32 THEN TOF%(I) = 34: PF%(I) = 8: GOTO 9215
+     TOF%(I) = TOA%(YR%)
+     PF%(I) = PFA%(YR%)
+9215 NEXT
+     IF LEFT$(B$(1, 0), 2) = LEFT$(B$(0, 0), 2) THEN 9253
+     IF AP = 1 THEN I = NG%(6): GOTO 9252
+     CLS : PRINT "THESE TWO TEAMS MAY HAVE PLAYED DURING DIFFERENT ERAS AND"
+     PRINT "PLAYED DIFFERENT STYLES OF BASKETBALL"
+     PRINT
+     PRINT "PLAY STYLE OF:"
+     PRINT
+     COLOR 14: PRINT "(0) - "; : COLOR T(0, 33), T(0, 34): PRINT B$(0, 0): COLOR , 0
+     PRINT
+     COLOR 14: PRINT "(1) - "; : COLOR T(1, 33), T(1, 34): PRINT B$(1, 0): COLOR , 0
+     PRINT
+     COLOR 14: PRINT "(2) - "; : COLOR 3: PRINT "MAKE NO ADJUSTMENT": COLOR 15, 0
+9251 I$ = INKEY$: IF I$ = "" THEN 9251
+     I = VAL(I$): IF I < 0 OR I > 2 THEN 9251
+9252 IF I = 2 THEN 9253
+     HN% = 1: HM% = I
+     JX = (T(0, 5) + T(0, 19) + T(1, 5) + T(1, 19)) * (L%(I, 1) / L%(1 - I, 1)) / ((T(1, 0) + T(0, 0)) * 2) * 2 - (L%(I, 1) + L%(I, 1)) / 2
+     JY = JX
+     GOTO 9254
+9253 REM:JX = (  T(0, 5) + T(0, 19) + T(1, 5) + T(1, 19)  ) / ( (T(1, 0) + T(0, 0) ) * 2) * 2 - (L%(0, 1) + L%(1, 1)) / 2
+     JX = (T(0, 5) + T(0, 19)) / ((T(1, 0) + T(0, 0)) * 2) + (T(1, 5) + T(1, 19)) / ((T(1, 0) + T(0, 0)) * 2)
+     JX = JX * 2 - (L%(0, 1) + L%(1, 1)) / 2
+     JY = JX
+     IF PO = 1 THEN JY = JY - 7
+9254 FOR I = 0 TO 1
+     D1(I) = INT(T(I, 20) / T(I, 19) * 100 + .5) - L%(I, 3)
+     X7(I) = 1440 - ((T(I, 5) / T(I, 0)) + (T(I, 19) / T(I, 0))) * 2
+     X7(I) = X7(I) / 25
+     F7%(I, 5) = INT(((T(I, 5) + T(I, 19)) / (T(I, 0) * 2)) + .5)
+     F7%(I, 0) = INT((((T(I, 28) / T(I, 0)) / (X7(I) * 5)) * 1000) + .5) - 41
+     F7%(I, 1) = INT(((T(I, 15) - T(I, 28)) / T(I, 0)) / (X7(I) * 5) * 1000 + .5)
+     F7%(I, 2) = INT(((T(I, 29) - T(I, 14)) / T(I, 0)) / (X7(I) * 5) * 1000 + .5) - TOF%(I): REM:-41
+     IF T(I, 31) > 0 THEN F7%(I, 4) = INT(T(I, 32) / T(I, 31) * 100 + .5) - L%(I, 5)
+     IF T(I, 31) = 0 THEN F7%(I, 4) = 0 - L%(I, 5)
+     F7%(I, 6) = INT(T(I, 6) / T(I, 0) + .5)
+     X3 = (T(I, 21) - T(I, 20) * .1) - 7.9 * T(I, 0)
+     X3 = X3 / 2
+     F7%(I, 3) = INT(X3 / (T(I, 19) + X3) * 100 + .5) - PF%(I): REM WAS -7
+     F7%(I, 7) = INT(T(I, 11) / T(I, 6) * 100 + .5)
+     NEXT
+     FOR I = 0 TO 1
+     FOR I1 = 0 TO 14
+     IF B%(I, I1, 18) <> 0 THEN 9260
+     IF B%(I, I1, 2) - B%(I, I1, 13) > 0 THEN A(I, I1, 0) = INT((B%(I, I1, 3) - B%(I, I1, 14)) / (B%(I, I1, 2) - B%(I, I1, 13)) * 100 + .5)
+     IF PO = 1 THEN A(I, I1, 0) = A(I, I1, 0) - 2
+     IF B%(I, I1, 4) > 0 THEN A(I, I1, 1) = INT(B%(I, I1, 5) / B%(I, I1, 4) * 100 + .5)
+     X3 = B%(I, I1, 7) / B%(I, I1, 1) * 48
+     X3 = X3 * 29.3 / (L%(I, 2) * .677) * ((T(I, 5) + T(I, 19)) / (T(I, 0) * 2) / L%(I, 1))
+     X3 = INT(X3 * 10 + .5)
+     A(I, I1, 2) = X3
+     X3 = B%(I, I1, 6) / B%(I, I1, 1) * 48
+     X3 = X3 * 14! / (L%(I, 2) * .323) * ((T(I, 5) + T(I, 19)) / (T(I, 0) * 2) / L%(I, 1))
+     X3 = INT(X3 * 10 + .5)
+     A(I, I1, 21) = X3
+     X3 = B%(I, I1, 8) / B%(I, I1, 1) * 48
+     A(I, I1, 25) = INT(X3 * 10 + .5)
+     X3 = X3 * 26 * T(I, 0) / T(I, 11)
+     A(I, I1, 4) = INT(X3 * 10 + .5)
+ASSIST:
+     A(I, I1, 5) = B%(I, I1, 11) / B%(I, I1, 1) * 48
+     A(I, I1, 5) = INT(A(I, I1, 5) / X7(I) * 1000 + .5)
+BLOCK:
+     A(I, I1, 6) = B%(I, I1, 12) / B%(I, I1, 1) * 48
+     A(I, I1, 6) = A(I, I1, 6) / ((T(I, 19) - T(I, 31) - T(I, 20) + T(I, 32)) / T(I, 0) / 5)
+     A(I, I1, 6) = INT(A(I, I1, 6) * .93 * 100 + .5)
+     IF FR% = 0 THEN X3 = B%(I, I1, 4) - (B%(I, I1, 3) * .1) - 1.58 * B%(I, I1, 1) / 48
+     IF FR% = 1 THEN X3 = B%(I, I1, 4) * .9 - (B%(I, I1, 3) * .1) - 1.58 * B%(I, I1, 1) / 48
+     X3 = X3 / 2
+     A(I, I1, 16) = INT(X3 / (B%(I, I1, 2) + X3) * 100 + .5)
+     IF A(I, I1, 16) < 0 THEN A(I, I1, 16) = 0
+     A(I, I1, 17) = INT(B%(I, I1, 9) / B%(I, I1, 1) * 48 * 10 + .5)
+     A(I, I1, 18) = B%(I, I1, 18)
+     IF B%(I, I1, 2) > 0 THEN A(I, I1, 19) = INT(B%(I, I1, 13) / B%(I, I1, 2) * 100 + .5)
+     IF B%(I, I1, 13) > 0 THEN A(I, I1, 20) = INT(B%(I, I1, 14) / B%(I, I1, 13) * 100 + .5)
+     X3 = INT(B%(I, I1, 2) / (B%(I, I1, 2) + B%(I, I1, 4)) * 100 + .5)
+     IF LEFT$(AA$(I, I1, 1), 1) = "F" OR LEFT$(AA$(I, I1, 1), 1) = "C" THEN 9255
+     IF X3 >= 86 THEN B%(I, I1, 16) = 1
+     IF X3 = 84 OR X3 = 85 THEN B%(I, I1, 16) = 2
+     IF X3 = 82 OR X3 = 83 THEN B%(I, I1, 16) = 3
+     IF X3 = 80 OR X3 = 81 THEN B%(I, I1, 16) = 4
+     IF X3 >= 77 AND X3 <= 79 THEN B%(I, I1, 16) = 5
+     IF X3 = 75 OR X3 = 76 THEN B%(I, I1, 16) = 6
+     IF X3 = 73 OR X3 = 74 THEN B%(I, I1, 16) = 7
+     IF X3 = 71 OR X3 = 72 THEN B%(I, I1, 16) = 8
+     IF X3 <= 70 THEN B%(I, I1, 16) = 9
+     GOTO 9260
+9255 IF X3 >= 81 THEN B%(I, I1, 16) = 1
+     IF X3 = 79 OR X3 = 80 THEN B%(I, I1, 16) = 2
+     IF X3 = 77 OR X3 = 78 THEN B%(I, I1, 16) = 3
+     IF X3 = 75 OR X3 = 76 THEN B%(I, I1, 16) = 4
+     IF X3 >= 72 AND X3 <= 74 THEN B%(I, I1, 16) = 5
+     IF X3 = 70 OR X3 = 71 THEN B%(I, I1, 16) = 6
+     IF X3 = 68 OR X3 = 69 THEN B%(I, I1, 16) = 7
+     IF X3 = 66 OR X3 = 67 THEN B%(I, I1, 16) = 8
+     IF X3 <= 65 THEN B%(I, I1, 16) = 9
+9260 NEXT I1
+     NEXT I
+     FOR I = 0 TO 1
+         M9(I) = (T(I, 5) + T(I, 19) + T(I, 9) + T(I, 10)) / (T(I, 0) * 2)
+         M9(I) = M9(I) + (T(I, 23) + T(I, 24) + T(I, 12) + T(I, 26)) / (T(I, 0) * 2)
+         M9(I) = M9(I) * 2 - (L%(I, 1) + L%(I, 2) + L%(I, 4))
+         NEXT I
+         IF HN% <> 1 THEN 9264
+         I = HM%
+         F7%(1 - I, 1) = F7%(1 - I, 1) * TOF%(I) / TOF%(1 - I)
+         M9(1 - I) = M9(1 - I) * (L%(I, 1) + L%(I, 2) + L%(I, 4)) / (L%(1 - I, 1) + L%(1 - I, 2) + L%(1 - I, 4))
+         FOR I1 = 0 TO 14
+         A(1 - I, I1, 0) = A(1 - I, I1, 0) + L%(I, 3) - L%(1 - I, 3) - L%(1 - I, 6) + L%(I, 6)
+         NEXT
+9264 S9 = INT((M9(0) + M9(1)) / 2 + .5)
+     IF PO = 1 THEN S9 = S9 - 11
+     FOR I = 0 TO 1: M9(I) = 0
+     FOR I1 = 0 TO 14
+     IF B%(I, I1, 18) <> 0 THEN 9265
+     M9(I) = M9(I) + INT((B%(I, I1, 2) + B%(I, I1, 6) + B%(I, I1, 7) + B%(I, I1, 9)) / B%(I, I1, 0) + .5)
+9265 NEXT I1
+     NEXT I
+     FOR I = 0 TO 1
+     FOR I1 = 0 TO 14
+     IF B%(I, I1, 18) <> 0 THEN 9266
+     A(I, I1, 3) = INT(((B%(I, I1, 2) + B%(I, I1, 6) + B%(I, I1, 7) + B%(I, I1, 9)) / B%(I, I1, 0)) / M9(I) * S9 + .5)
+     IF A(I, I1, 3) = 0 THEN A(I, I1, 3) = 1
+9266 NEXT I1
+     NEXT I
+9300 IF AP = 1 AND U5 >= 2 THEN 9499
+     COLOR 15, 0: CLS
+     PRINT "EDIT CONTRIBUTION PERCENTAGES OF PLAYERS FROM:"
+     PRINT
+     COLOR 14: PRINT "(0) - "; : COLOR T(0, 33), T(0, 34): PRINT B$(0, 0): COLOR , 0
+     PRINT
+     COLOR 14: PRINT "(1) - "; : COLOR T(1, 33), T(1, 34): PRINT B$(1, 0): COLOR , 0
+     PRINT
+     COLOR 14: PRINT "(2) - "; : COLOR 3: PRINT "PROCEED TO GAME": COLOR 15, 0
+     PRINT
+     PRINT "NOTE:: THE CONTRIBUTION RATING CONSISTS OF THE PLAYER'S"
+     PRINT "       FREQUENCY TO SHOOT, REBOUND, AND COMMIT FOULS."
+9301 I$ = INKEY$: IF I$ = "" THEN 9301
+     I = VAL(I$): IF I < 0 OR I > 2 THEN 9301
+     IF I = 2 THEN 9499
+     CLS
+     TX = 0: FOR I1 = 0 TO 14: TX = TX + A(I, I1, 3): NEXT
+     FOR I1 = 0 TO 14: A(I, I1, 3) = A(I, I1, 3) / TX * 100: NEXT
+9305 LOCATE 2, 1: PRINT "CONTRIBUTION RATINGS FOR "; : COLOR T(I, 33), T(I, 34): PRINT B$(I, 0): COLOR 15, 0
+     PRINT : PRINT " #  PLAYER-POS         CX"
+     TY% = 0: FOR I1 = 0 TO 14: TY% = TY% + A(I, I1, 3)
+     PRINT USING "## "; I1 + 1; : PRINT AA$(I, I1, 0); "-"; AA$(I, I1, 1); : LOCATE , 24: PRINT USING "##"; A(I, I1, 3)
+     NEXT
+     LOCATE , 23: PRINT USING "###"; TY%
+     INPUT "SELECT PLAYER TO CHANGE (0 TO CONTINUE)"; I1: I1 = I1 - 1
+     IF I1 > 14 OR I1 < 0 THEN 9310
+     LOCATE 22, 1: PRINT "ENTER NEW CX RATING FOR "; AA$(I, I1, 0); " "; : INPUT A(I, I1, 3)
+9306 LOCATE 22, 1: PRINT "                                                    ": GOTO 9305
+9310 IF TY% = 100 THEN 9320
+     LOCATE 22, 1: PRINT "TOTAL MUST ADD UP TO 100%! PRESS ANY KEY"
+9311 I$ = INKEY$: IF I$ = "" THEN 9311
+     GOTO 9306
+9320 FOR I1 = 0 TO 14: A(I, I1, 3) = A(I, I1, 3) / 100 * TX: NEXT
+     GOTO 9300
+9499 X3 = 0
+     END SUB
+
+SUB TICKERUPDATE ()
+     IF AP <> 1 OR AP%(2) > 31 THEN GOTO 2580
+     IF H = 1 AND T <= 480 AND SX%(1 + AP%(2), 0, 1) = -1 THEN SX%(1 + AP%(2), 0, 1) = S(0, 0): SX%(1 + AP%(2), 1, 1) = S(1, 0): GOTO 2580
+     IF H = 1 AND T <= 240 AND SX%(1 + AP%(2), 0, 2) = -1 THEN SX%(1 + AP%(2), 0, 2) = S(0, 0): SX%(1 + AP%(2), 1, 2) = S(1, 0): GOTO 2580
+     IF H > 1 AND SX%(1 + AP%(2), 0, 3) = -1 THEN SX%(1 + AP%(2), 0, 3) = S(0, 1): SX%(1 + AP%(2), 1, 3) = S(1, 1): GOTO 2580
+     IF H = 2 AND T <= 480 AND SX%(1 + AP%(2), 0, 4) = -1 THEN SX%(1 + AP%(2), 0, 4) = S(0, 0): SX%(1 + AP%(2), 1, 4) = S(1, 0): GOTO 2580
+     IF H = 2 AND T <= 240 AND SX%(1 + AP%(2), 0, 5) = -1 THEN SX%(1 + AP%(2), 0, 5) = S(0, 0): SX%(1 + AP%(2), 1, 5) = S(1, 0): GOTO 2580
+     IF H > 2 AND SX%(1 + AP%(2), 0, 6) = -1 THEN FOR I2 = 6 TO 8: SX%(1 + AP%(2), 0, I2) = S(0, 2) + S(0, 1): SX%(1 + AP%(2), 1, I2) = S(1, 2) + S(1, 1): NEXT: GOTO 2580
+     IF H = 3 AND T <= 480 AND SX%(1 + AP%(2), 0, 9) = -1 THEN SX%(1 + AP%(2), 0, 9) = S(0, 0): SX%(1 + AP%(2), 1, 9) = S(1, 0): GOTO 2580
+     IF H = 3 AND T <= 240 AND SX%(1 + AP%(2), 0, 10) = -1 THEN SX%(1 + AP%(2), 0, 10) = S(0, 0): SX%(1 + AP%(2), 1, 10) = S(1, 0): GOTO 2580
+     IF H > 3 AND SX%(1 + AP%(2), 0, 11) = -1 THEN SX%(1 + AP%(2), 0, 11) = S(0, 3) + S(0, 2) + S(0, 1): SX%(1 + AP%(2), 1, 11) = S(1, 3) + S(1, 2) + S(1, 1): GOTO 2580
+     IF H = 4 AND T <= 480 AND SX%(1 + AP%(2), 0, 12) = -1 THEN SX%(1 + AP%(2), 0, 12) = S(0, 0): SX%(1 + AP%(2), 1, 12) = S(1, 0): GOTO 2580
+     IF H = 4 AND T <= 240 AND SX%(1 + AP%(2), 0, 13) = -1 THEN SX%(1 + AP%(2), 0, 13) = S(0, 0): SX%(1 + AP%(2), 1, 13) = S(1, 0): GOTO 2580
+     SX%(1 + AP%(2), 0, 14) = S(0, 0): SX%(1 + AP%(2), 1, 14) = S(1, 0)
+2580 END SUB
+

@@ -1,0 +1,579 @@
+DECLARE SUB TITLE ()
+DECLARE SUB GETKEY (I$)
+DECLARE FUNCTION EXIST% (FILENAME$)
+DECLARE FUNCTION GetDrive% ()
+DECLARE FUNCTION QPRTrim$ (Work$)
+DECLARE SUB ReadFile (BYVAL Address%)
+DECLARE SUB MMenuVert (BYVAL Address%, Choice%, Start%, SCANCODE%, NormClr%, HiLite%, NumRows%, Row%, Column%)
+DECLARE SUB Box0 (ULRow%, ULCol%, LRRow%, LRCol%, Char%, Colr%)
+DECLARE SUB SortStr (BYVAL Address%, Size%, Direction%)
+DECLARE SUB MAMenu (BYVAL Address%, SELECTION%, Start%, Count%, EXITCODE%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%)
+  DIM Q$(377), T%(34), B%(14, 19), B$(14), OP%(100), OP$(100), HP%(100), HP$(100)
+  DIM VV$(500), A$(15), A(15, 14), Z(15), Z1(15), W0(15), W1(15), AA$(15, 1), PS$(15), V%(500)
+  DIM D$(1), ITEM$(4), L%(6), T$(0)
+  OPEN "DEV.BAS" FOR INPUT AS #2: FOR I = 0 TO 1: INPUT #2, D$(I): NEXT
+  CLOSE #2
+  DRIVE = GetDrive%
+10 CALL TITLE
+   ITEM$(1) = "VIEW/PRINT STATISTICAL COMPARISONS"
+   ITEM$(2) = "RETURN TO BASKETBALL PRO GAME MENU"
+     SELECTION% = 1
+     Count% = 2
+     Start% = 1
+     SCANCODE% = 2
+     FileColr% = 31
+     HiLiteColr% = 112
+     Spacing% = 1
+     Row% = 9
+     Column% = 24
+     CALL Box0(8, 23, 11, 58, 2, 31)
+     CALL ShowCursor
+     MMenuVert VARPTR(ITEM$(1)), SELECTION%, Start%, SCANCODE%, FileColr%, HiLiteColr%, Count%, Row%, Column%
+     CALL HideCursor
+     COLOR , 0
+     I1 = SELECTION%
+     IF SCANCODE% = 27 OR I1 = 2 THEN 1
+     IF I1 = 1 THEN 40
+1   IF DRIVE >= 67 THEN RUN "HELLO.EXE 4"
+    CLS : PRINT "MAKE SURE PROGRAM DISK IS IN DRIVE"
+15 I$ = INKEY$: IF I$ = "" THEN 15
+   RUN "HELLO.EXE 4"
+
+40  COLOR 15, 0: CLS
+    JJ = 7
+    LOCATE 6, 8: COLOR 15, 4
+    PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
+    PRINT " º"; STRING$(61, 32); "º "; : NEXT
+    LOCATE 7 + JJ, 8
+    PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+    LOCATE , 12: PRINT "ENTER DISK ID: ": PRINT
+    LOCATE , 12: PRINT "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+    LOCATE , 12: PRINT "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+    LOCATE , 12: PRINT "HIT <ENTER> TO USE PREVIOUS ID"
+    LOCATE 7, 27: INPUT NY$
+    IF NY$ = "" THEN GOSUB 1102: GOTO 182
+    YN$ = NY$
+    FOR I = 1 TO 200: VV$(I) = "": NEXT
+    IF UCASE$(LEFT$(D$(0), 1)) <> "A" AND UCASE$(LEFT$(D$(0), 1)) <> "B" THEN 1441
+    CLS : PRINT "MAKE SURE PROPER TEAMS DISK IS IN DRIVE "; D$(0)
+    CALL GETKEY(I$)
+1441 GOSUB 1100
+182 IF BO% = 1 THEN BO% = 0: GOTO 10
+183 LOCATE 2, 33: COLOR 15, 0: COLOR T%(33), T%(34)
+    PRINT B$(0): COLOR 15, 4
+    LOCATE , 33: PRINT "ANY CHANGE (YN)"; : I$ = INKEY$: IF I$ = "" THEN 183
+    IF UCASE$(I$) = "Y" THEN 40
+    GOTO 170
+
+1100 NTMS = 0
+     OPEN D$(0) + "PROBBTMS." + YN$ FOR RANDOM AS #1 LEN = 1031
+     Y = LOF(1)
+     FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
+     FOR I = 0 TO 6
+     FIELD #1, 30 + I * 2 AS X$, 2 AS Q$(I + 2)
+     NEXT
+     FIELD #1, 44 AS X$, 2 AS Q$(9)
+     FOR I = 0 TO 34
+     FIELD #1, 46 + I * 2 AS X$, 2 AS Q$(I + 10)
+     NEXT
+     FOR I = 0 TO 14
+     FIELD #1, 116 + I * 57 AS X$, 15 AS Q$(I * 22 + 45), 2 AS Q$(I * 22 + 46)
+     FOR I1 = 0 TO 19
+     FIELD #1, 133 + I * 57 + I1 * 2 AS X$, 2 AS Q$(I * 22 + 47 + I1)
+     NEXT
+     NEXT
+     FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
+     FOR I1 = 1 TO Y / 1031
+     GET #1, I1
+     CK% = CVI(Q$(9))
+     IF CK% <> 999 THEN 1103
+     NTMS = NTMS + 1
+     VV$(NTMS) = Q$(0): V%(NTMS) = I1
+1103 NEXT
+     CLOSE 1
+1102 SELECTION% = 1
+     Count% = NTMS
+     Start% = 1
+     FileColr% = 79
+     HiLiteColr% = 112
+     Rows% = 20
+     Columns% = 4
+     Spacing% = 6
+     Row% = 4
+     Column% = 1
+     COLOR , 4: CLS : LOCATE , 33: COLOR 14
+     PRINT "TEAM SELECTION": COLOR 15
+     LOCATE 25, 1: COLOR 14: PRINT "ESC"; : COLOR 15
+     PRINT "-SELECT NEW ID  PGDN  PGUP  "; : COLOR 14
+     PRINT "ENTER"; : COLOR 15: PRINT "-SELECTS TEAM";
+     CALL ShowCursor
+20   MAMenu VARPTR(VV$(1)), SELECTION%, Start%, Count%, EXITCODE%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%
+     CALL HideCursor
+     IF EXITCODE% = 27 THEN BO% = 1: RETURN
+     IF EXITCODE% = -71 THEN Start% = 1: EXITCODE% = 3: SELECTION% = 1: GOTO 20
+     IF EXITCODE% = -79 THEN Start% = NTMS: EXITCODE% = 3: SELECTION% = NTMS: GOTO 20
+     IF EXITCODE% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
+     IF EXITCODE% = -81 THEN Start% = Start% + 80: IF Start% > NTMS THEN Start% = NTMS
+     IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = Start%: GOTO 20
+     T1 = V%(SELECTION%)
+     OPEN D$(0) + "PROBBTMS." + YN$ FOR RANDOM AS #1 LEN = 1031
+     FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
+     FOR I = 0 TO 6
+     FIELD #1, 30 + I * 2 AS X$, 2 AS Q$(I + 2)
+     NEXT
+     FIELD #1, 44 AS X$, 2 AS Q$(9)
+     FOR I = 0 TO 34
+     FIELD #1, 46 + I * 2 AS X$, 2 AS Q$(I + 10)
+     NEXT
+     FOR I = 0 TO 14
+     FIELD #1, 116 + I * 57 AS X$, 15 AS Q$(I * 22 + 45), 2 AS Q$(I * 22 + 46)
+     FOR I1 = 0 TO 19
+     FIELD #1, 133 + I * 57 + I1 * 2 AS X$, 2 AS Q$(I * 22 + 47 + I1)
+     NEXT
+     NEXT
+     FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
+GET #1, T1
+B$(0) = Q$(0): B$(1) = Q$(1): FOR I = 0 TO 6: L%(I) = CVI(Q$(I + 2)): NEXT
+FOR I = 0 TO 34: T%(I) = CVI(Q$(I + 10)): NEXT
+FOR I = 0 TO 14
+     AA$(I, 0) = Q$(22 * I + 45)
+9004 IF RIGHT$(AA$(I, 0), 1) = " " THEN AA$(I, 0) = LEFT$(AA$(I, 0), LEN(AA$(I, 0)) - 1): GOTO 9004
+     AA$(I, 1) = Q$(22 * I + 46)
+9005 IF RIGHT$(AA$(I, 1), 1) = " " THEN AA$(I, 1) = LEFT$(AA$(I, 1), LEN(AA$(I, 1)) - 1): GOTO 9005
+     FOR I1 = 0 TO 19
+     B%(I, I1) = CVI(Q$(22 * I + 47 + I1))
+     NEXT: NEXT
+     B$(2) = Q$(375): B$(3) = Q$(376): B$(4) = Q$(377)
+     CLOSE 1
+1486 IF RIGHT$(B$(0), 1) = " " THEN B$(0) = LEFT$(B$(0), LEN(B$(0)) - 1): GOTO 1486
+1487 IF RIGHT$(B$(1), 1) = " " THEN B$(1) = LEFT$(B$(1), LEN(B$(1)) - 1): GOTO 1487
+1488 IF RIGHT$(B$(2), 1) = " " THEN B$(2) = LEFT$(B$(2), LEN(B$(2)) - 1): GOTO 1488
+1489 IF RIGHT$(B$(3), 1) = " " THEN B$(3) = LEFT$(B$(3), LEN(B$(3)) - 1): GOTO 1489
+1490 IF RIGHT$(B$(4), 1) = " " THEN B$(4) = LEFT$(B$(4), LEN(B$(4)) - 1): GOTO 1490
+   B$ = B$(0)
+     FOR XX = 4 TO 11
+     IF MID$(B$, XX, 1) = " " OR MID$(B$, XX, 1) = "." THEN MID$(B$, XX, 1) = "_"
+     NEXT XX
+     FOR XX = 12 TO 14: IF MID$(B$, XX, 2) = "ST" THEN MID$(B$, 9, 1) = "_": MID$(B$, 10, 2) = "ST"
+     NEXT XX
+     QQ = 8: FOR XX = 11 TO 4 STEP -1: IF MID$(B$, XX, 1) = "_" THEN QQ = XX - 4: GOTO 6615
+     GOTO 6620
+6615 NEXT XX
+6620 Z$ = MID$(B$, 4, QQ) + "." + LEFT$(B$, 2)
+
+    IF NOT EXIST%(D$(1) + Z$) THEN 2060
+120 OPEN D$(1) + Z$ FOR INPUT AS #1
+122 INPUT #1, B$
+123 FOR I = 0 TO 14: INPUT #1, A$(I)
+124 FOR J = 0 TO 13: INPUT #1, A(I, J): NEXT: INPUT #1, W0(I): INPUT #1, W1(I): NEXT
+125 FOR L = 0 TO 15: INPUT #1, Z(L): NEXT
+126 FOR L = 0 TO 15: INPUT #1, Z1(L): NEXT
+160 CLOSE #1
+    GOSUB 9000
+
+9100 HW = 0: HL = 0: AW = 0: AL = 0
+9103 OPEN D$(1) + Z$ + "S" FOR INPUT AS #1
+9105 INPUT #1, Y
+9110 FOR J = 1 TO 100: INPUT #1, OP%(J): NEXT
+9112 FOR J = 1 TO 100: INPUT #1, OP$(J): NEXT
+9113 FOR J = 1 TO 100: INPUT #1, HP%(J): NEXT
+9114 FOR J = 1 TO 100: INPUT #1, HP$(J): NEXT
+9120 CLOSE #1
+9130 FOR I = 1 TO Y
+9131 IF OP%(I) < HP%(I) AND LEFT$(HP$(I), 1) = "H" THEN HL = HL + 1
+9132 IF OP%(I) > HP%(I) AND LEFT$(HP$(I), 1) = "H" THEN HW = HW + 1
+9133 IF OP%(I) < HP%(I) AND LEFT$(HP$(I), 1) = "V" THEN AL = AL + 1
+9134 IF OP%(I) > HP%(I) AND LEFT$(HP$(I), 1) = "V" THEN AW = AW + 1
+9135 NEXT
+     RETURN
+
+170 COLOR 15, 0: CLS
+     JJ = 4: GOSUB 9150: COLOR 7
+     LOCATE , 30: PRINT "STATS TO "; : COLOR 15: PRINT "S"; : COLOR 7: PRINT "CREEN"
+     LOCATE , 30: PRINT "STATS TO "; : COLOR 15: PRINT "P"; : COLOR 7: PRINT "RINTER"
+8651 I$ = INKEY$: IF I$ = "" THEN 8651
+     IF I$ = CHR$(27) THEN 10
+     IF UCASE$(I$) <> "P" AND UCASE$(I$) <> "S" THEN 8651
+     COLOR 14, 0
+     IF UCASE$(I$) = "S" THEN 200
+     IF UCASE$(I$) = "P" THEN 700
+200 GOTO 2000
+201 CLS : COLOR 9: LOCATE 3, 12: PRINT "STAT COMPARISONS FOR "; : COLOR 15: PRINT B$(0)
+202 FOR I = O TO 14: COLOR 12: LOCATE I + 5, 15: PRINT USING "##"; I + 1; : PRINT ". "; : COLOR 7: PRINT A$(I): NEXT
+203 COLOR 12: LOCATE 5, 35: PRINT "16. "; : COLOR 3: PRINT "View Players In Sequence"
+204 COLOR 12: LOCATE 6, 35: PRINT "17. "; : COLOR 3: PRINT "View Another Team"
+206 COLOR 12: LOCATE 7, 35: PRINT "18. "; : COLOR 3: PRINT "Return To Main Menu"
+219 COLOR 15: LOCATE 23, 15: INPUT "ENTER # TO VIEW "; B9
+220 IF B9 < 1 OR B9 > 18 THEN GOTO 201
+221 IF B9 >= 1 AND B9 <= 15 THEN I = B9 - 1: CLS : GOSUB 5000: GOTO 300
+236 IF B9 = 16 THEN BI = 1: CLS : GOTO 260
+237 IF B9 = 17 THEN GOTO 40
+239 IF B9 = 18 THEN GOTO 1
+260 GOSUB 5000
+262 I = I + 1
+263 FOR I = 0 TO 14
+264 IF A$(I) = "XXX" OR A$(I) = "END" OR A$(I) = "" THEN 591
+300 COLOR 11: LOCATE 2, 2: PRINT T$(0)
+301 COLOR 15, 0: LOCATE 2, 14: PRINT STRING$(34, 177): COLOR 14: LOCATE 2, 14: PRINT A$(I); : PRINT " - "; : COLOR 11: PRINT PS$(I)
+302 COLOR 12: LOCATE 5, 2: PRINT "REGULAR "
+303 LOCATE 6, 2: PRINT "LEAGUE  "; : COLOR 7, 0: PRINT STRING$(2, 177)
+    LOCATE 7, 4: PRINT STRING$(8, 177)
+305 COLOR 0, 11: LOCATE 4, 14: PRINT "  G ";
+306 LOCATE , 18: PRINT " MIN ";
+307 LOCATE , 23: PRINT " FGM ";
+308 LOCATE , 28: PRINT " FGA ";
+309 LOCATE , 33: PRINT " FG-PCT ";
+310 LOCATE , 41: PRINT " FTM ";
+311 LOCATE , 46: PRINT " FTA ";
+312 LOCATE , 51: PRINT " FT-PCT ";
+313 LOCATE , 59: PRINT " O.REB ";
+314 LOCATE , 65: PRINT "  O.REB/G"
+    COLOR 12, 0: LOCATE 10, 2: PRINT "REGULAR "
+    LOCATE 11, 2: PRINT "LEAGUE  "; : COLOR 7, 0: PRINT STRING$(2, 177)
+    LOCATE 12, 4: PRINT STRING$(8, 177)
+315 COLOR 0, 11: LOCATE 9, 14: PRINT " D.REB ";
+316 LOCATE , 21: PRINT " D.REB/G ";
+317 LOCATE , 30: PRINT " ASST ";
+318 LOCATE , 36: PRINT " ASST/G ";
+319 LOCATE , 44: PRINT " FOULS ";
+    LOCATE , 51: PRINT " F/G ";
+    LOCATE , 56: PRINT " TREB ";
+    LOCATE , 62: PRINT " STL ";
+    LOCATE , 67: PRINT " STL/G"
+    COLOR 12, 0: LOCATE 15, 2: PRINT "REGULAR "
+    LOCATE 16, 2: PRINT "LEAGUE  "; : COLOR 7, 0: PRINT STRING$(2, 177)
+    LOCATE 17, 4: PRINT STRING$(8, 177)
+    COLOR 0, 11: LOCATE 14, 14: PRINT " BLK ";
+    LOCATE , 19: PRINT " BLK/G ";
+    LOCATE , 26: PRINT " 3-FGM ";
+    LOCATE , 33: PRINT " 3-FGA ";
+    LOCATE , 40: PRINT " 3-FG-PCT ";
+    LOCATE , 50: PRINT " HI-GM ";
+    LOCATE , 57: PRINT "  PTS";
+    LOCATE , 62: PRINT " PTS/G ";
+    LOCATE , 69: PRINT " MIN/G"
+321 COLOR 1, 11: LOCATE 5, 14: PRINT USING "###"; B%(I, 0);
+    LOCATE , 17: PRINT USING "#####"; B%(I, 1);
+    LOCATE , 22: PRINT USING "#####"; B%(I, 3);
+    LOCATE , 27: PRINT USING "#####"; B%(I, 2);
+    IF B%(I, 3) = 0 THEN LOCATE , 32: PRINT "    0.0"; : PRINT "%";
+    IF B%(I, 3) > 0 THEN LOCATE , 32: PRINT USING "#####.#"; (B%(I, 3) / B%(I, 2)) * 100; : PRINT "%";
+    LOCATE , 40: PRINT USING "#####"; B%(I, 5);
+    LOCATE , 45: PRINT USING "#####"; B%(I, 4);
+    IF B%(I, 5) = 0 THEN LOCATE , 50: PRINT "    0.0"; : PRINT "%";
+    IF B%(I, 5) > 0 THEN LOCATE , 50: PRINT USING "#####.#"; (B%(I, 5) / B%(I, 4)) * 100; : PRINT "%";
+    LOCATE , 58: PRINT USING "#######"; B%(I, 6);
+    IF B%(I, 0) = 0 OR B%(I, 6) = 0 THEN LOCATE , 65: PRINT "      0.0";
+    IF B%(I, 0) > 0 AND B%(I, 6) = 0 THEN LOCATE , 65: PRINT "      0.0";
+    IF B%(I, 0) > 0 AND B%(I, 6) > 0 THEN LOCATE , 65: PRINT USING "#######.#"; B%(I, 6) / B%(I, 0);
+    COLOR 7, 0: PRINT STRING$(2, 177)
+    COLOR 1, 11: LOCATE 10, 14: PRINT USING "######"; B%(I, 7);
+    IF B%(I, 0) = 0 OR B%(I, 7) = 0 THEN LOCATE , 20: PRINT "      0.0";
+    IF B%(I, 0) > 0 AND B%(I, 7) = 0 THEN LOCATE , 20: PRINT "      0.0";
+    IF B%(I, 0) > 0 AND B%(I, 7) > 0 THEN LOCATE , 20: PRINT USING "#######.#"; B%(I, 7) / B%(I, 0);
+    LOCATE , 29: PRINT USING "######"; B%(I, 8);
+    IF B%(I, 0) = 0 OR B%(I, 8) = 0 THEN LOCATE , 35: PRINT "     0.0";
+    IF B%(I, 0) > 0 AND B%(I, 8) = 0 THEN LOCATE , 35: PRINT "     0.0";
+    IF B%(I, 0) > 0 AND B%(I, 8) > 0 THEN LOCATE , 35: PRINT USING "######.#"; B%(I, 8) / B%(I, 0);
+    LOCATE , 43: PRINT USING "#######"; B%(I, 9);
+    IF B%(I, 0) = 0 OR B%(I, 9) = 0 THEN LOCATE , 50: PRINT "  0.0";
+    IF B%(I, 0) > 0 AND B%(I, 9) = 0 THEN LOCATE , 50: PRINT "  0.0";
+    IF B%(I, 0) > 0 AND B%(I, 9) > 0 THEN LOCATE , 50: PRINT USING "###.#"; B%(I, 9) / B%(I, 0);
+    LOCATE , 55: PRINT USING "######"; B%(I, 6) + B%(I, 7);
+    LOCATE , 61: PRINT USING "#####"; B%(I, 11);
+330 IF B%(I, 0) = 0 OR B%(I, 11) = 0 THEN LOCATE , 66: PRINT "    0.0";
+331 IF B%(I, 0) > 0 AND B%(I, 11) = 0 THEN LOCATE , 66: PRINT "    0.0";
+332 IF B%(I, 0) > 0 AND B%(I, 11) > 0 THEN LOCATE , 66: PRINT USING "#####.#"; B%(I, 11) / B%(I, 0);
+    COLOR 7, 0: PRINT STRING$(2, 177)
+335 COLOR 1, 11: LOCATE 15, 14: PRINT USING "####"; B%(I, 12);
+337 IF B%(I, 0) = 0 OR B%(I, 12) = 0 THEN LOCATE , 18: PRINT "    0.0";
+338 IF B%(I, 0) > 0 AND B%(I, 12) = 0 THEN LOCATE , 18: PRINT "    0.0";
+339 IF B%(I, 0) > 0 AND B%(I, 12) > 0 THEN LOCATE , 18: PRINT USING "#####.#"; B%(I, 12) / B%(I, 0);
+341 LOCATE , 25: PRINT USING "#######"; B%(I, 14);
+344 LOCATE , 32: PRINT USING "#######"; B%(I, 13);
+346 IF B%(I, 14) = 0 THEN LOCATE , 39: PRINT "      0.0"; : PRINT "%";
+347 IF B%(I, 14) > 0 THEN LOCATE , 39: PRINT USING "#######.#"; (B%(I, 14) / B%(I, 13)) * 100; : PRINT "%";
+351 LOCATE , 49: PRINT USING "#######"; B%(I, 15);
+353 LOCATE , 56: PRINT USING "######"; (B%(I, 3) * 2) + B%(I, 5) + B%(I, 14);
+357 IF (B%(I, 3) * 2) + B%(I, 5) + B%(I, 14) = 0 THEN LOCATE , 62: PRINT "   0.0";
+358 IF (B%(I, 3) * 2) + B%(I, 5) + B%(I, 14) > 0 THEN LOCATE , 62: PRINT USING "####.#"; ((B%(I, 3) * 2) + B%(I, 5) + B%(I, 14)) / B%(I, 0);
+367 IF B%(I, 1) = 0 THEN LOCATE , 68: PRINT "    0.0";
+368 IF B%(I, 1) > 0 THEN LOCATE , 68: PRINT USING "#####.#"; B%(I, 1) / B%(I, 0);
+    COLOR 7, 0: PRINT STRING$(2, 177)
+400 COLOR 14, 11: LOCATE 6, 14: PRINT USING "###"; A(I, 0);
+    IF A(I, 10) = 0 THEN LOCATE , 17: PRINT "    0";
+    IF A(I, 10) > 0 THEN LOCATE , 17: PRINT USING "#####"; (A(I, 10) + 30) / 60;
+    LOCATE , 22: PRINT USING "#####"; A(I, 2);
+    LOCATE , 27: PRINT USING "#####"; A(I, 1);
+    IF A(I, 2) = 0 THEN LOCATE , 32: PRINT "    0.0"; : PRINT "%";
+    IF A(I, 2) > 0 THEN LOCATE , 32: PRINT USING "#####.#"; (A(I, 2) / A(I, 1)) * 100; : PRINT "%";
+    LOCATE 6, 40: PRINT USING "#####"; A(I, 4);
+    LOCATE 6, 45: PRINT USING "#####"; A(I, 3);
+    IF A(I, 4) = 0 THEN LOCATE , 50: PRINT "    0.0"; : PRINT "%";
+    IF A(I, 4) > 0 THEN LOCATE , 50: PRINT USING "#####.#"; A(I, 4) / A(I, 3) * 100; : PRINT "%";
+    LOCATE , 58: PRINT USING "#######"; A(I, 12);
+    IF A(I, 0) = 0 OR A(I, 12) = 0 THEN LOCATE , 65: PRINT "      0.0";
+    IF A(I, 0) > 0 AND A(I, 12) = 0 THEN LOCATE , 65: PRINT "      0.0";
+    IF A(I, 0) > 0 AND A(I, 12) > 0 THEN LOCATE , 65: PRINT USING "#######.#"; A(I, 12) / A(I, 0);
+    COLOR 7, 0: PRINT STRING$(2, 177)
+    LOCATE , 16: PRINT STRING$(60, 177)
+    COLOR 14, 11: LOCATE 11, 14: PRINT USING "######"; A(I, 5) - A(I, 12);
+    IF A(I, 0) = 0 OR (A(I, 5) - A(I, 12)) = 0 THEN LOCATE , 20: PRINT "      0.0";
+    IF A(I, 0) > 0 AND (A(I, 5) - A(I, 12)) = 0 THEN LOCATE , 20: PRINT "      0.0";
+    IF A(I, 0) > 0 AND (A(I, 5) - A(I, 12)) > 0 THEN LOCATE , 20: PRINT USING "#######.#"; (A(I, 5) - A(I, 12)) / A(I, 0);
+    LOCATE , 29: PRINT USING "######"; A(I, 8);
+    IF A(I, 0) = 0 OR A(I, 8) = 0 THEN LOCATE , 35: PRINT "     0.0";
+    IF A(I, 0) > 0 AND A(I, 8) = 0 THEN LOCATE , 35: PRINT "     0.0";
+    IF A(I, 0) > 0 AND A(I, 8) > 0 THEN LOCATE , 35: PRINT USING "######.#"; A(I, 8) / A(I, 0);
+    LOCATE , 43: PRINT USING "#######"; A(I, 6);
+    IF A(I, 0) = 0 OR A(I, 6) = 0 THEN LOCATE , 50: PRINT "  0.0";
+    IF A(I, 0) > 0 AND A(I, 6) = 0 THEN LOCATE , 50: PRINT "  0.0";
+    IF A(I, 0) > 0 AND A(I, 6) > 0 THEN LOCATE , 50: PRINT USING "###.#"; A(I, 6) / A(I, 0);
+406 LOCATE , 55: PRINT USING "######"; A(I, 5);
+408 LOCATE , 61: PRINT USING "#####"; A(I, 7);
+410 IF A(I, 0) = 0 OR A(I, 7) = 0 THEN LOCATE , 66: PRINT "    0.0";
+411 IF A(I, 0) > 0 AND A(I, 7) = 0 THEN LOCATE , 66: PRINT "    0.0";
+412 IF A(I, 0) > 0 AND A(I, 7) > 0 THEN LOCATE , 66: PRINT USING "#####.#"; A(I, 7) / A(I, 0);
+    COLOR 7, 0: PRINT STRING$(2, 177)
+    LOCATE , 16: PRINT STRING$(59, 177)
+    COLOR 14, 11: LOCATE 16, 14: PRINT USING "####"; A(I, 9);
+417 IF A(I, 0) = 0 OR A(I, 9) = 0 THEN LOCATE , 18: PRINT "    0.0";
+418 IF A(I, 0) > 0 AND A(I, 9) = 0 THEN LOCATE , 18: PRINT "    0.0";
+419 IF A(I, 0) > 0 AND A(I, 9) > 0 THEN LOCATE , 18: PRINT USING "#####.#"; A(I, 9) / A(I, 0);
+421 LOCATE , 25: PRINT USING "#######"; W0(I);
+424 LOCATE , 32: PRINT USING "#######"; W1(I);
+426 IF W0(I) = 0 THEN LOCATE , 39: PRINT "      0.0"; : PRINT "%";
+427 IF W0(I) > 0 THEN LOCATE , 39: PRINT USING "#######.#"; W0(I) / W1(I) * 100; : PRINT "%";
+431 LOCATE , 49: PRINT USING "#######"; A(I, 13);
+433 LOCATE , 56: PRINT USING "######"; (A(I, 2) * 2) + A(I, 4) + W0(I);
+437 IF (A(I, 2) * 2) + A(I, 4) + W0(I) = 0 THEN LOCATE , 62: PRINT "   0.0";
+438 IF (A(I, 2) * 2) + A(I, 4) + W0(I) > 0 THEN LOCATE , 62: PRINT USING "####.#"; ((A(I, 2) * 2) + A(I, 4) + W0(I)) / A(I, 0);
+440 IF A(I, 10) = 0 THEN LOCATE , 68: PRINT "    0.0";
+441 IF A(I, 10) > 0 THEN LOCATE , 68: PRINT USING "#####.#"; ((A(I, 10) + 30) / 60) / A(I, 0);
+    COLOR 7, 0: PRINT STRING$(2, 177)
+    LOCATE , 16: PRINT STRING$(61, 177)
+578 COLOR 15, 0: LOCATE 22: PRINT "HIT ENTER TO CONTINUE"
+579 IF BI = 1 THEN 580 ELSE 581
+580 LOCATE 22, 23: PRINT "OR ESC TO RETURN TO MENU"
+581 I$ = INKEY$: IF I$ = "" THEN 581
+582 IF I$ = CHR$(0) THEN 591
+583 IF I$ = CHR$(27) THEN 588
+584 IF BI = 0 THEN 587
+585 IF BI = 1 THEN 591
+586 IF I < 14 THEN 591 ELSE 201
+587 CLS : GOTO 201
+588 BI = 0: GOTO 201
+590 IF BI = 1 THEN 591 ELSE 201
+591 NEXT I
+592 IF BI = 1 THEN GOTO 201
+
+1000 CLS : COLOR 15: PRINT "MAKE SURE LEAGUE UTILITIES DISK IS IN DRVE"
+1001 LOCATE 23: PRINT "HIT ANY KEY TO CONTINUE"
+1002 I$ = INKEY$: IF I$ = "" THEN 1002
+1003 RUN "LEAGUTIL.EXE"
+
+
+2060 COLOR 15, 0: CLS
+     JJ = 4: GOSUB 9150: COLOR 15
+     LOCATE , 30: PRINT "NO COMPILED STATS FOR TEAM": COLOR 7
+8652 I$ = INKEY$: IF I$ = "" THEN 8652
+2720 BO% = 1: RETURN
+2000 CLS
+2001 GOSUB 6000
+2002 LOCATE 11, 31: PRINT "                  "
+2009 COLOR 11: LOCATE 11, 33: PRINT B$(0)
+2020 COLOR 15, 12
+2021 COLOR 15, 2: LOCATE 5, 30: PRINT "      HOME    W - L ";
+     LOCATE 6, 30: PRINT "  SEASON   ";
+     LOCATE 7, 30: PRINT "  LEAGUE   ";
+     LOCATE 15, 30: PRINT "      ROAD    W - L ";
+     LOCATE 16, 30: PRINT "  SEASON   ";
+     LOCATE 17, 30: PRINT "  LEAGUE   ";
+     COLOR 15, 1: LOCATE 2, 3: PRINT "   OFFENSIVE STATS    "
+     LOCATE 3, 3: PRINT "       SEASON   LEAGUE"
+     LOCATE 4, 3: PRINT " FGM   ";
+     LOCATE 5, 3: PRINT " FGA   ";
+     LOCATE 6, 3: PRINT " FG PCT";
+     LOCATE 7, 3: PRINT " FTM   ";
+     LOCATE 8, 3: PRINT " FTA   ";
+     LOCATE 9, 3: PRINT " FT PCT";
+     LOCATE 10, 3: PRINT " O.RB  ";
+     LOCATE 11, 3: PRINT " D.RB  ";
+     LOCATE 12, 3: PRINT " T.REB ";
+     LOCATE 13, 3: PRINT " ASS'T ";
+     LOCATE 14, 3: PRINT " FLS   ";
+     LOCATE 15, 3: PRINT "  ST   ";
+     LOCATE 16, 3: PRINT "  TO   ";
+     LOCATE 17, 3: PRINT " BLK   ";
+     LOCATE 18, 3: PRINT " 3-FGM ";
+     LOCATE 19, 3: PRINT " 3-FGA ";
+     LOCATE 20, 3: PRINT " 3-PCT ";
+     COLOR 15, 12: LOCATE 2, 55: PRINT "   DEFENSIVE STATS   "
+     LOCATE 3, 55: PRINT "       SEASON  LEAGUE"
+     LOCATE 4, 55: PRINT " FGM   ";
+     LOCATE 5, 55: PRINT " FGA   ";
+     LOCATE 6, 55: PRINT " FG PCT";
+     LOCATE 7, 55: PRINT " FTM   ";
+     LOCATE 8, 55: PRINT " FTA   ";
+     LOCATE 9, 55: PRINT " FT PCT";
+     LOCATE 10, 55: PRINT " O.RB  ";
+     LOCATE 11, 55: PRINT " D.RB  ";
+     LOCATE 12, 55: PRINT " T.REB ";
+     LOCATE 13, 55: PRINT " ASS'T ";
+     LOCATE 14, 55: PRINT " FLS   ";
+     LOCATE 15, 55: PRINT "  ST   ";
+     LOCATE 16, 55: PRINT "  TO   ";
+     LOCATE 17, 55: PRINT " BLK   ";
+     LOCATE 18, 55: PRINT " 3-FGM ";
+     LOCATE 19, 55: PRINT " 3-FGA ";
+     LOCATE 20, 55: PRINT " 3-PCT ";
+     FOR I = 3 TO 21: LOCATE I, 25: COLOR 7, 0: PRINT STRING$(2, 177): NEXT
+     FOR I = 3 TO 21: LOCATE I, 76: PRINT STRING$(2, 177): NEXT
+     LOCATE 21, 5: PRINT STRING$(20, 177)
+     LOCATE 21, 57: PRINT STRING$(20, 177)
+     FOR I = 6 TO 8: LOCATE I, 50: PRINT STRING$(2, 177): NEXT
+     FOR I = 16 TO 18: LOCATE I, 50: PRINT STRING$(2, 177): NEXT
+     LOCATE 8, 32: PRINT STRING$(18, 177)
+     LOCATE 18, 32: PRINT STRING$(18, 177)
+2100 COLOR 3, 0: LOCATE 6, 41: PRINT USING "####"; T%(1);
+     LOCATE 6, 45: PRINT USING "####"; T%(2); : PRINT " ";
+     COLOR 14, 0: LOCATE 7, 41: PRINT USING "####"; HW;
+     LOCATE 7, 45: PRINT USING "####"; HL; : PRINT " ";
+     COLOR 3, 0: LOCATE 4, 10: PRINT USING "######"; T%(6);
+     LOCATE 5, 10: PRINT USING "######"; T%(5);
+2110 IF T%(6) = 0 THEN LOCATE 6, 10: PRINT "   0.0";
+2111 IF T%(6) > 0 THEN LOCATE 6, 10: PRINT "  "; : PRINT USING ".###"; (T%(6) / T%(5));
+     LOCATE 7, 10: PRINT USING "######"; T%(8);
+     LOCATE 8, 10: PRINT USING "######"; T%(7);
+2120 IF T%(7) = 0 THEN LOCATE 9, 10: PRINT "   0.0";
+2121 IF T%(7) > 0 THEN LOCATE 9, 10: PRINT "  "; : PRINT USING ".###"; (T%(8) / T%(7));
+     LOCATE 10, 10: PRINT USING "######"; T%(9);
+     LOCATE 11, 10: PRINT USING "######"; T%(10);
+     LOCATE 12, 10: PRINT USING "######"; T%(9) + T%(10);
+     LOCATE 13, 10: PRINT USING "######"; T%(11);
+     LOCATE 14, 10: PRINT USING "######"; T%(12);
+     LOCATE 15, 10: PRINT USING "######"; T%(14);
+     LOCATE 16, 10: PRINT USING "######"; T%(15);
+     LOCATE 17, 10: PRINT USING "######"; T%(16);
+     LOCATE 18, 10: PRINT USING "######"; T%(18);
+     LOCATE 19, 10: PRINT USING "######"; T%(17);
+     COLOR 3, 0: LOCATE 4, 62: PRINT USING "######"; T%(20);
+     LOCATE 5, 62: PRINT USING "######"; T%(19);
+     IF T%(19) = 0 THEN LOCATE 6, 62: PRINT "   0.0";
+     IF T%(19) > 0 THEN LOCATE 6, 62: PRINT "  "; : PRINT USING ".###"; (T%(20) / T%(19));
+     LOCATE 7, 62: PRINT USING "######"; T%(22);
+     LOCATE 8, 62: PRINT USING "######"; T%(21);
+     IF T%(21) = 0 THEN LOCATE 9, 62: PRINT "   0.0";
+     IF T%(21) > 0 THEN LOCATE 9, 62: PRINT "  "; : PRINT USING ".###"; (T%(22) / T%(21));
+     LOCATE 10, 62: PRINT USING "######"; T%(23);
+     LOCATE 11, 62: PRINT USING "######"; T%(24);
+     LOCATE 12, 62: PRINT USING "######"; T%(23) + T%(24);
+     LOCATE 13, 62: PRINT USING "######"; T%(25);
+     LOCATE 14, 62: PRINT USING "######"; T%(26);
+     LOCATE 15, 62: PRINT USING "######"; T%(28);
+     LOCATE 16, 62: PRINT USING "######"; T%(29);
+     LOCATE 17, 62: PRINT USING "######"; T%(30);
+     LOCATE 18, 62: PRINT USING "######"; T%(32);
+     LOCATE 19, 62: PRINT USING "######"; T%(31);
+     IF T%(31) = 0 THEN LOCATE 20, 62: PRINT "   0.0";
+     IF T%(31) > 0 THEN LOCATE 20, 62: PRINT "  "; : PRINT USING ".###"; (T%(32) / T%(31));
+2130 IF T%(17) = 0 THEN LOCATE 20, 10: PRINT "   0.0";
+2131 IF T%(17) > 0 THEN LOCATE 20, 10: PRINT "  "; : PRINT USING ".###"; (T%(18) / T%(17));
+2200 LOCATE 16, 41: COLOR 3, 0: PRINT USING "####"; T%(3);
+     LOCATE 16, 45: PRINT USING "####"; T%(4); : PRINT " ";
+     COLOR 14, 0: LOCATE 17, 41: PRINT USING "####"; AW;
+     LOCATE 17, 45: PRINT USING "####"; AL; : PRINT " ";
+     LOCATE 4, 16: PRINT USING "#########"; Z(2);
+     LOCATE 5, 16: PRINT USING "#########"; Z(1);
+2210 IF Z(1) = 0 THEN LOCATE 6, 16: PRINT "      0.0";
+2211 IF Z(1) > 0 THEN LOCATE 6, 16: PRINT "     "; : PRINT USING ".###"; (Z(2) / Z(1));
+     LOCATE 7, 16: PRINT USING "#########"; Z(4);
+     LOCATE 8, 16: PRINT USING "#########"; Z(3);
+2220 IF Z(3) = 0 THEN LOCATE 9, 16: PRINT "      0.0";
+2221 IF Z(3) > 0 THEN LOCATE 9, 16: PRINT "     "; : PRINT USING ".###"; (Z(4) / Z(3));
+     LOCATE 10, 16: PRINT USING "#########"; Z(12);
+     LOCATE 11, 16: PRINT USING "#########"; Z(5) - Z(12) - Z(15);
+     LOCATE 12, 16: PRINT USING "#########"; Z(5) - Z(15);
+     LOCATE 13, 16: PRINT USING "#########"; Z(8);
+     LOCATE 14, 16: PRINT USING "#########"; Z(6);
+     LOCATE 15, 16: PRINT USING "#########"; Z(7);
+     LOCATE 16, 16: PRINT USING "#########"; Z(11);
+     LOCATE 17, 16: PRINT USING "#########"; Z(9);
+     LOCATE 18, 16: PRINT USING "#########"; Z(13);
+     LOCATE 19, 16: PRINT USING "#########"; Z(14);
+     LOCATE 4, 68: PRINT USING "########"; Z1(2);
+     LOCATE 5, 68: PRINT USING "########"; Z1(1);
+     IF Z1(1) = 0 THEN LOCATE 6, 68: PRINT "     0.0";
+     IF Z1(1) > 0 THEN LOCATE 6, 68: PRINT "    "; : PRINT USING ".###"; (Z1(2) / Z1(1));
+     LOCATE 7, 68: PRINT USING "########"; Z1(4);
+     LOCATE 8, 68: PRINT USING "########"; Z1(3);
+     IF Z1(13) = 0 THEN LOCATE 9, 68: PRINT "     0.0";
+     IF Z1(13) > 0 THEN LOCATE 9, 68: PRINT "    "; : PRINT USING ".###"; (Z1(4) / Z1(3));
+     LOCATE 10, 68: PRINT USING "########"; Z1(12);
+     LOCATE 11, 68: PRINT USING "########"; Z1(5) - Z1(12) - Z1(15);
+     LOCATE 12, 68: PRINT USING "########"; Z1(5) - Z1(15);
+     LOCATE 13, 68: PRINT USING "########"; Z1(8);
+     LOCATE 14, 68: PRINT USING "########"; Z1(6);
+     LOCATE 15, 68: PRINT USING "########"; Z1(7);
+     LOCATE 16, 68: PRINT USING "########"; Z1(11);
+     LOCATE 17, 68: PRINT USING "########"; Z1(9);
+     LOCATE 18, 68: PRINT USING "########"; Z1(13);
+     LOCATE 19, 68: PRINT USING "########"; Z1(14);
+     IF Z1(13) = 0 THEN LOCATE 20, 68: PRINT "     0.0";
+     IF Z1(13) > 0 THEN LOCATE 20, 68: PRINT "    "; : PRINT USING ".###"; (Z1(13) / Z1(14));
+2230 IF Z(13) = 0 THEN LOCATE 20, 16: PRINT "      0.0";
+2231 IF Z(13) > 0 THEN LOCATE 20, 16: PRINT "     "; : PRINT USING ".###"; (Z(13) / Z(14));
+2800 LOCATE 23, 28: COLOR 15, 0: PRINT "HIT ANY KEY TO CONTINUE"
+2801 I$ = INKEY$: IF I$ = "" THEN 2801
+2900 GOTO 201
+5000 FOR dc = 1 TO 19
+5001 COLOR 15, 0: LOCATE dc
+5002 PRINT STRING$(78, 177)
+5003 NEXT
+5004 RETURN
+6000 FOR dc = 1 TO 22
+6001 COLOR 15, 0: LOCATE dc
+6002 PRINT STRING$(79, 177)
+6003 NEXT
+6004 RETURN
+9000 FOR I = 0 TO 14
+     IF AA$(I, 1) = "F" THEN PS$(I) = "FORWARD"
+     IF AA$(I, 1) = "C" THEN PS$(I) = "CENTER"
+     IF AA$(I, 1) = "G" THEN PS$(I) = "GUARD"
+     IF AA$(I, 1) = "FC" THEN PS$(I) = "FORWARD/GUARD"
+     IF AA$(I, 1) = "FG" THEN PS$(I) = "FORWARD/CENTER"
+     IF AA$(I, 1) = "GF" THEN PS$(I) = "GUARD/FORWARD"
+     IF AA$(I, 1) = "CF" THEN PS$(I) = "CENTER/FORWARD"
+     NEXT
+9015 RETURN
+
+9200 COLOR 15, 0: CLS : PRINT "MAKE SURE STATS DISK IS IN DRIVE "; D$(1)
+9202 LOCATE 23, 1: PRINT "PRESS ANY KEY TO CONTINUE"
+9205 I$ = INKEY$: IF I$ = "" THEN 9205
+9207 RETURN
+9150 LOCATE 8, 8: COLOR 14, 1
+   PRINT " "; CHR$(201); STRING$(61, 205); CHR$(187); " ";
+   FOR II = 1 TO JJ: LOCATE 8 + II, 8
+   PRINT " º"; STRING$(61, 32); "º "; : NEXT
+   LOCATE 9 + JJ, 8
+   PRINT " "; CHR$(200); STRING$(61, 205); CHR$(188); " "; : LOCATE 10
+   RETURN
+
+700
+
+SUB GETKEY (I$)
+45 I$ = INKEY$: IF I$ = "" THEN 45
+END SUB
+
+SUB TITLE ()
+   COLOR , 0: KEY OFF: CLS
+   COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 27: COLOR 12
+   PRINT "BASKETBALL: THE PRO GAME V4.0"
+   LOCATE 24, 1: PRINT TAB(80); : LOCATE , 1
+   PRINT "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994"; TAB(70); LEFT$(TIME$, 5);
+   LOCATE 3, 1: COLOR 2, 0
+   COLOR 15: PRINT "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
+             PRINT "     FOR TECHNICAL SUPPORT, CALL (615) 366-8088 OR SportGames@AOL.COM"
+   COLOR 10
+END SUB
+

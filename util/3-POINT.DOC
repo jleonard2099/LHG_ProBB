@@ -1,0 +1,12 @@
+THE FOLLOWING REPRESENT 3-POINT TENDANCIES IN THE NBA
+
+C            0.3
+POWER F      0.3
+F            1.2
+SHOOTING G   2.4
+POINT G      2.0
+             ----
+             6.2 3-PT FGA/48 MIN
+
+TO GET PLAYERS 3-PT FGA.... RATING*MINUTES PLAYED/48
+
