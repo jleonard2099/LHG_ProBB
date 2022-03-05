@@ -30,6 +30,9 @@
 *** From WWW - "BASKETBALL: THE PRO GAME V4.2"
 *** From Code - "BASKETBALL: THE PRO GAME V4.1"
 
+[ ] Re-create all library code natively in BASIC
+
+
 [ ] Attempt first compilation of each game
 	[ ] bring in files from "misc" as needed	
 	[ ] delete "misc" folder when done 
