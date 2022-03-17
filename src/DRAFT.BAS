@@ -1,455 +1,535 @@
+'$INCLUDE: 'KeyInput.BI'
+'$INCLUDE: 'QPProEqu.BI'
+DEFINT A-Z
+
 DECLARE SUB TITLE ()
-   DEFINT A-Z
-   DECLARE SUB MAMenu (BYVAL Address%, SELECTION%, Start%, Count%, EXITCODE%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%)
-   DECLARE SUB MMenuVert (BYVAL Address%, Choice%, Start%, SCANCODE%, NormClr%, HiLite%, NumRows%, Row%, Column%)
-   DECLARE FUNCTION GetDrive% ()
-   DECLARE FUNCTION EXIST% (FILENAME$)
-   DIM L%(1, 6), T%(1, 34), B%(1, 14, 19), B$(1, 14, 1), A$(1, 4), Q$(377), V$(500), V%(500)
-   DIM YR$(52), LG%(52, 5), LT%(14, 34), item$(3), D$(2), YN$(2)
-   DIM TTL(34)  AS SINGLE, Y AS LONG
-   GOSUB 8500
 
-   OPEN "DEV.BAS" FOR INPUT AS #1: INPUT #1, D$(0): CLOSE 1
+DIM L%(1, 6), T%(1, 34), B%(1, 14, 19), B$(1, 14, 1), A$(1, 4), Q$(377), V$(500), V%(500)
+DIM YR$(52), LG%(52, 5), LT%(14, 34), item$(3), D$(2), YN$(2)
+DIM TTL(34)  AS SINGLE, Y AS LONG
+	GOSUB 8500
+OPEN "DEV.BAS" FOR INPUT AS #1: INPUT #1, D$(0): CLOSE 1
+
 10 FOR I = 0 TO 1: A$(0, I) = "XXX": NEXT
-   FOR I = 0 TO 6: L%(0, I) = 0: NEXT
-   FOR I = 0 TO 34: T%(0, I) = 0: TTL(I) = 0: NEXT
-   FOR I = 0 TO 14: FOR I1 = 0 TO 34: LT%(I, I1) = 0: NEXT: NEXT
-   FOR I = 0 TO 14
-   B$(0, I, 0) = "XXX"
-   B$(0, I, 1) = "X"
-   FOR I1 = 0 TO 19
-   B%(0, I, I1) = 0
-   NEXT: NEXT
-   CALL TITLE
-   item$(1) = "DRAFT A NEW TEAM         "
-   item$(2) = "DRAFT TO AN EXISTING TEAM"
-   item$(3) = "EXIT TO MAIN MENU        "
-     SELECTION% = 1
-     Count% = 3
-     Start% = 1
-     SCANCODE% = 3
-     FileColr% = 31
-     HiLiteColr% = 112
-     Spacing% = 1
-     Row% = 8
-     Column% = 25
-     CALL box0(7, 24, 11, 50, 2, 31)
-     CALL SHOWCURSOR
-     MMenuVert VARPTR(item$(1)), SELECTION%, Start%, SCANCODE%, FileColr%, HiLiteColr%, Count%, Row%, Column%
-     CALL HIDECURSOR
-     COLOR , 0
-     IF SCANCODE% = 27 OR SELECTION% = 3 THEN 1
-     IF SELECTION% = 1 THEN DNT% = 0: GOTO 100
-     IF SELECTION% = 2 THEN DNT% = 1: GOTO 2000
+	FOR I = 0 TO 6: L%(0, I) = 0: NEXT
+	FOR I = 0 TO 34: T%(0, I) = 0: TTL(I) = 0: NEXT
+	FOR I = 0 TO 14: FOR I1 = 0 TO 34: LT%(I, I1) = 0: NEXT: NEXT
+	FOR I = 0 TO 14
+	B$(0, I, 0) = "XXX"
+	B$(0, I, 1) = "X"
+	FOR I1 = 0 TO 19
+	B%(0, I, I1) = 0
+	NEXT: NEXT
+	CALL TITLE
+	item$(1) = "DRAFT A NEW TEAM         "
+	item$(2) = "DRAFT TO AN EXISTING TEAM"
+	item$(3) = "EXIT TO MAIN MENU        "
+	SELECTION% = 1
+	Count% = 3
+	Start% = 1
+	SCANCODE% = 3
+	FileFGColr% = 15:FileBGColr% = 1
+	HiLiteFGColr% = 0:HiLiteBGColr% = 7
+	Spacing% = 1
+	Row% = 8
+	Column% = 25
 
-1   IF GetDrive% >= 67 THEN RUN "HELLO.EXE 2"
-    CLS : PRINT "MAKE SURE PROGRAM DISK IS IN DRIVE"
-15 I$ = INKEY$: IF I$ = "" THEN 15
-   RUN "HELLO.EXE 2"
+CALL box0(7, 24, 11, 50, 2, 31)
+	
+_MouseShow "DEFAULT"
+MMenuVert VARPTR(item$(1)), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+_MouseHide
+
+	COLOR , 0
+	IF SCANCODE% = 27 OR SELECTION% = 3 THEN 1
+	IF SELECTION% = 1 THEN DNT% = 0: GOTO 100
+	IF SELECTION% = 2 THEN DNT% = 1: GOTO 2000
+
+1   RUN "HELLO.EXE 2"
 
 100 CLS
-112 COLOR 14: PRINT "LEAGUE INFORMATION": COLOR 15
-    L%(0, 0) = 80
-    L%(0, 1) = LG%(YR%, 1)
-    L%(0, 2) = LG%(YR%, 2)
-    L%(0, 3) = LG%(YR%, 3)
-    L%(0, 4) = LG%(YR%, 4)
-    L%(0, 5) = LG%(YR%, 5)
-    L%(0, 6) = 0
-130 LOCATE 2: INPUT "1. DISK ID "; YN$(0): IF C1 = 1 THEN 250
-205 LOCATE 3: INPUT "2. TEAM NAME "; A$(0, 0): IF C1 = 1 THEN 250
-210 LOCATE 4: INPUT "3. TEAM NICKNAME "; A$(0, 1): IF C1 = 1 THEN 250
-240 LOCATE 5: INPUT "4. TEXT COLOR (0-15) "; T%(0, 33): IF C1 = 1 THEN 250
-245 LOCATE 6: INPUT "5. BCKGRND COLOR (0-7) "; T%(0, 34): IF C1 = 1 THEN 250
-246 LOCATE 7: INPUT "6. TEAM ABBREV (IE. BOS) "; A$(0, 2): IF C1 = 1 THEN 250
-247 LOCATE 8: INPUT "7. COACH'S NAME "; A$(0, 3): IF C1 = 1 THEN 250
-248 LOCATE 9: INPUT "8. ARENA NAME "; A$(0, 4): IF C1 = 1 THEN 250
-250 LOCATE 10: COLOR T%(0, 33), T%(0, 34): PRINT "SAMPLE TEXT": COLOR 7, 0
-255 C1 = 1: LOCATE 12: INPUT "# TO CHANGE (0 TO CONTINUE) "; B9: ON B9 GOTO 130, 205, 210, 240, 245, 246, 247, 248
-258 C1 = 0
 
-    GOTO 450
+112 COLOR 14: PRINT "LEAGUE INFORMATION": COLOR 15
+	L%(0, 0) = 80
+	L%(0, 1) = LG%(YR%, 1)
+	L%(0, 2) = LG%(YR%, 2)
+	L%(0, 3) = LG%(YR%, 3)
+	L%(0, 4) = LG%(YR%, 4)
+	L%(0, 5) = LG%(YR%, 5)
+	L%(0, 6) = 0
+
+130 LOCATE 2: INPUT "1. DISK ID "; YN$(0): IF C1 = 1 THEN 250
+
+205 LOCATE 3: INPUT "2. TEAM NAME "; A$(0, 0): IF C1 = 1 THEN 250
+
+210 LOCATE 4: INPUT "3. TEAM NICKNAME "; A$(0, 1): IF C1 = 1 THEN 250
+
+240 LOCATE 5: INPUT "4. TEXT COLOR (0-15) "; T%(0, 33): IF C1 = 1 THEN 250
+
+245 LOCATE 6: INPUT "5. BCKGRND COLOR (0-7) "; T%(0, 34): IF C1 = 1 THEN 250
+
+246 LOCATE 7: INPUT "6. TEAM ABBREV (IE. BOS) "; A$(0, 2): IF C1 = 1 THEN 250
+
+247 LOCATE 8: INPUT "7. COACH'S NAME "; A$(0, 3): IF C1 = 1 THEN 250
+
+248 LOCATE 9: INPUT "8. ARENA NAME "; A$(0, 4): IF C1 = 1 THEN 250
+
+250 LOCATE 10: COLOR T%(0, 33), T%(0, 34): PRINT "SAMPLE TEXT": COLOR 7, 0
+
+255 C1 = 1: LOCATE 12: INPUT "# TO CHANGE (0 TO CONTINUE) "; B9: ON B9 GOTO 130, 205, 210, 240, 245, 246, 247, 248
+
+258 C1 = 0
+	 GOTO 450
 
 260 CLS : COLOR 14: PRINT "TEAM OFFENSIVE INFORMATION": COLOR 15
+
 265 LOCATE 2: INPUT " 1. FGM "; T%(0, 6): IF C1 = 1 THEN 335
+
 270 LOCATE 3: INPUT " 2. FGA "; T%(0, 5): IF C1 = 1 THEN 335
+
 275 LOCATE 4: INPUT " 3. FTM "; T%(0, 8): IF C1 = 1 THEN 335
+
 280 LOCATE 5: INPUT " 4. FTA "; T%(0, 7): IF C1 = 1 THEN 335
+
 285 LOCATE 6: INPUT " 5. OFF REB "; T%(0, 9): IF C1 = 1 THEN 335
+
 290 LOCATE 7: INPUT " 6. DEF REB "; T%(0, 10): IF C1 = 1 THEN 335
+
 291 IF T%(0, 9) = 0 AND RB = 0 THEN T%(0, 9) = .32 * T%(0, 10): T%(0, 10) = T%(0, 10) - T%(0, 9): LOCATE 6: PRINT " 5. OFF REB "; T%(0, 9): LOCATE 7: PRINT " 6. DEF REB "; T%(0, 10)
+
 295 LOCATE 8: INPUT " 7. ASSISTS "; T%(0, 11): IF C1 = 1 THEN 335
+
 300 LOCATE 9: INPUT " 8. FOULS "; T%(0, 12): IF C1 = 1 THEN 335
+
 305 LOCATE 10: INPUT " 9. DISQ "; T%(0, 13): IF C1 = 1 THEN 335
+
 310 LOCATE 11: INPUT "10. STEALS "; T%(0, 14): IF C1 = 1 THEN 335
+
 315 LOCATE 12: INPUT "11. TURNOVERS "; T%(0, 15): IF C1 = 1 THEN 335
+
 320 LOCATE 13: INPUT "12. BLK SHOTS "; T%(0, 16): IF C1 = 1 THEN 335
+
 325 LOCATE 14: INPUT "13. 3-FGM "; T%(0, 18): IF C1 = 1 THEN 335
+
 330 LOCATE 15: INPUT "14. 3-FGA "; T%(0, 17): IF C1 = 1 THEN 335
+
 335 C1 = 1: LOCATE 17: INPUT "# TO CHANGE (0 TO CONTINUE) "; B9: ON B9 GOTO 265, 270, 275, 280, 285, 290, 295, 300, 305, 310, 315, 320, 325, 330
+
 336 C1 = 0
+
 340 CLS : COLOR 14: PRINT "TEAM DEFENSIVE INFORMATION": COLOR 15
+
 345 LOCATE 2: INPUT " 1. FGM "; T%(0, 20): IF C1 = 1 THEN 415
+
 350 LOCATE 3: INPUT " 2. FGA "; T%(0, 19): IF C1 = 1 THEN 415
+
 355 LOCATE 4: INPUT " 3. FTM "; T%(0, 22): IF C1 = 1 THEN 415
+
 360 LOCATE 5: INPUT " 4. FTA "; T%(0, 21): IF C1 = 1 THEN 415
+
 365 LOCATE 6: INPUT " 5. OFF REB "; T%(0, 23): IF C1 = 1 THEN 415
+
 370 LOCATE 7: INPUT " 6. DEF REB "; T%(0, 24): IF C1 = 1 THEN 415
+
 371 IF T%(0, 23) = 0 AND RB = 0 THEN T%(0, 23) = .35 * T%(0, 24): T%(0, 24) = T%(0, 24) - T%(0, 23): LOCATE 6: PRINT " 5. OFF REB "; T%(0, 23): LOCATE 7: PRINT " 6. DEF REB "; T%(0, 24)
+
 375 LOCATE 8: INPUT " 7. ASSISTS "; T%(0, 25): IF C1 = 1 THEN 415
+
 380 LOCATE 9: INPUT " 8. FOULS "; T%(0, 26): IF C1 = 1 THEN 415
+
 385 LOCATE 10: INPUT " 9. DISQ "; T%(0, 27): IF C1 = 1 THEN 415
+
 390 LOCATE 11: INPUT "10. STEALS "; T%(0, 28): IF C1 = 1 THEN 415
+
 395 LOCATE 12: INPUT "11. TURNOVERS "; T%(0, 29): IF C1 = 1 THEN 415
+
 400 LOCATE 13: INPUT "12. BLK SHOTS "; T%(0, 30): IF C1 = 1 THEN 415
+
 405 LOCATE 14: INPUT "13. 3-FGM "; T%(0, 32): IF C1 = 1 THEN 415
+
 410 LOCATE 15: INPUT "14. 3-FGA "; T%(0, 31): IF C1 = 1 THEN 415
+
 415 C1 = 1: LOCATE 17: INPUT "# TO CHANGE (0 TO CONTINUE) "; B9: ON B9 GOTO 345, 350, 355, 360, 365, 370, 375, 380, 385, 390, 395, 400, 405, 410
+
 416 C1 = 0
+
 417 IF T%(0, 28) = 0 AND ST = 0 THEN T%(0, 28) = T%(0, 5) * .1
+
 418 IF T%(0, 14) = 0 AND ST = 0 THEN T%(0, 14) = T%(0, 19) * .1
+
 419 IF T%(0, 16) = 0 AND BK = 0 THEN T%(0, 16) = T%(0, 19) * .06
+
 420 IF T%(0, 30) = 0 AND BK = 0 THEN T%(0, 30) = T%(0, 5) * .06
+
 421 IF T%(0, 29) = 0 AND T0 = 0 THEN T%(0, 29) = 18 * L%(0, 0): T%(0, 15) = T%(0, 29)
 
-
 450 COLOR 0, 0: CLS : COLOR T%(0, 33), T%(0, 34): PRINT A$(0, 0); : COLOR 14, 0: PRINT "     (DRAFTING)"
+
 451 PRINT : PRINT "PLAYERS"
+
 452 FOR I = 0 TO 14
-    COLOR 2: PRINT USING "## "; I; : COLOR 15: PRINT B$(0, I, 0); " "; B$(0, I, 1)
-    NEXT
+	COLOR 2: PRINT USING "## "; I; : COLOR 15: PRINT B$(0, I, 0); " "; B$(0, I, 1)
+	NEXT
+
 454 LOCATE 21, 1
-    COLOR 14: PRINT "(1) "; : COLOR 15: PRINT "DRAFT PLAYER"
-    COLOR 14: PRINT "(Z) "; : COLOR 15: PRINT "SAVE TEAM"
-455 I$ = INKEY$: IF I$ = "" THEN 455
+	COLOR 14: PRINT "(1) "; : COLOR 15: PRINT "DRAFT PLAYER"
+	COLOR 14: PRINT "(Z) "; : COLOR 15: PRINT "SAVE TEAM"
+455 I$ = GetKeyPress$
+
 456 IF UCASE$(I$) = "Z" THEN 1000
+
 457 IF I$ = "1" THEN 470
+
 458 GOTO 454
+
 470 LOCATE 21, 20: PRINT "SLOT # (0-14) ";
+
 471 N = 1: INPUT B
+
 472 IF B < 0 OR B > 14 THEN 470
 
 1440 COLOR 15, 0: CLS
-    JJ = 7
-    LOCATE 6, 8: COLOR 15, 4
-    PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-    PRINT " º"; STRING$(61, 32); "º "; : NEXT
-    LOCATE 7 + JJ, 8
-    PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
-    LOCATE , 12: PRINT "ENTER DISK ID: ": PRINT
-    LOCATE , 12: PRINT "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-    LOCATE , 12: PRINT "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-    LOCATE , 12: PRINT "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
-    LOCATE 7, 27: INPUT NY$
-    IF NY$ = "" THEN GOSUB 1102: GOTO 182
-    YN$(1) = NY$
-    FOR I = 1 TO 500: V$(I) = "": NEXT
-    GOSUB 1100
+	JJ = 7
+	LOCATE 6, 8: COLOR 15, 4
+	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
+	PRINT " º"; STRING$(61, 32); "º "; : NEXT
+	LOCATE 7 + JJ, 8
+	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+	LOCATE , 12: PRINT "ENTER DISK ID: ": PRINT
+	LOCATE , 12: PRINT "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+	LOCATE , 12: PRINT "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+	LOCATE , 12: PRINT "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
+	LOCATE 7, 27: INPUT NY$
+	IF NY$ = "" THEN GOSUB 1102: GOTO 182
+	YN$(1) = NY$
+	FOR I = 1 TO 500: V$(I) = "": NEXT
+	GOSUB 1100
+
 182 IF BO% = 1 THEN BO% = 0: GOTO 1440
+
 183 LOCATE 2, 33: COLOR T%(1, 33), T%(1, 34): PRINT A$(1, 0): COLOR 15, 4
-    LOCATE , 33: PRINT "ANY CHANGE (YN)"; : I$ = INKEY$: IF I$ = "" THEN 183
-    IF UCASE$(I$) = "Y" THEN 1440
+	LOCATE , 33: PRINT "ANY CHANGE (YN)";
+	I$ = GetKeyPress$
+	IF UCASE$(I$) = "Y" THEN 1440
+
 550 COLOR , 0: CLS : COLOR T%(1, 33), T%(1, 34): PRINT A$(1, 0): COLOR 14, 0
+
 551 PRINT : PRINT "PLAYERS"
+
 552 FOR I = 0 TO 14
-    COLOR 2: PRINT USING "## "; I; : COLOR 15: PRINT B$(1, I, 0); " "; B$(1, I, 1)
-    NEXT
+	COLOR 2: PRINT USING "## "; I; : COLOR 15: PRINT B$(1, I, 0); " "; B$(1, I, 1)
+	NEXT
+
 560 COLOR 14: LOCATE 21, 1: PRINT "SELECT PLAYER # TO DRAFT ";
+
 561 INPUT B1
+
 562 IF B1 < 0 OR B1 > 14 THEN 560
+
 571 FOR I = 0 TO 1: B$(0, B, I) = B$(1, B1, I): NEXT
+
 572 FOR I = 0 TO 19: B%(0, B, I) = B%(1, B1, I): NEXT
-
-    FOR I = 0 TO 34: LT%(B, I) = T%(1, I): NEXT
-    B%(0, B, 2) = B%(0, B, 2) * (LG%(YR%, 1) / L%(1, 1))
-    B%(0, B, 6) = B%(0, B, 6) * (LG%(YR%, 2) / L%(1, 2))
-    B%(0, B, 7) = B%(0, B, 7) * (LG%(YR%, 2) / L%(1, 2))
-    FG = INT(B%(1, B1, 3) / B%(1, B1, 2) * 100 + .5)
-    FG = FG * (LG%(YR%, 3) / L%(1, 3))
-    B%(0, B, 3) = FG / 100 * B%(0, B, 2)
-
-    LT%(B, 5) = (LG%(YR%, 1) / L%(1, 1)) * LT%(B, 5)
-    LT%(B, 19) = LT%(B, 19) * (LG%(YR%, 1) / L%(1, 1))
-    LT%(B, 9) = LT%(B, 9) * (LG%(YR%, 2) / L%(1, 2))
-    LT%(B, 10) = LT%(B, 10) * (LG%(YR%, 2) / L%(1, 2))
-    LT%(B, 23) = LT%(B, 23) * (LG%(YR%, 2) / L%(1, 2))
-    LT%(B, 24) = LT%(B, 24) * (LG%(YR%, 2) / L%(1, 2))
-    FG = INT(T%(1, 6) / T%(1, 5) * 100 + .5)
-    FG = FG * (LG%(YR%, 3) / L%(1, 3))
-    T%(0, 6) = FG / 100 * T%(0, 5)
-    FG = INT(T%(1, 20) / T%(1, 19) * 100 + .5)
-    FG = FG * (LG%(YR%, 3) / L%(1, 3))
-    T%(0, 20) = FG / 100 * T%(0, 19)
-
+	 FOR I = 0 TO 34: LT%(B, I) = T%(1, I): NEXT
+	B%(0, B, 2) = B%(0, B, 2) * (LG%(YR%, 1) / L%(1, 1))
+	B%(0, B, 6) = B%(0, B, 6) * (LG%(YR%, 2) / L%(1, 2))
+	B%(0, B, 7) = B%(0, B, 7) * (LG%(YR%, 2) / L%(1, 2))
+	FG = INT(B%(1, B1, 3) / B%(1, B1, 2) * 100 + .5)
+	FG = FG * (LG%(YR%, 3) / L%(1, 3))
+	B%(0, B, 3) = FG / 100 * B%(0, B, 2)
+	 LT%(B, 5) = (LG%(YR%, 1) / L%(1, 1)) * LT%(B, 5)
+	LT%(B, 19) = LT%(B, 19) * (LG%(YR%, 1) / L%(1, 1))
+	LT%(B, 9) = LT%(B, 9) * (LG%(YR%, 2) / L%(1, 2))
+	LT%(B, 10) = LT%(B, 10) * (LG%(YR%, 2) / L%(1, 2))
+	LT%(B, 23) = LT%(B, 23) * (LG%(YR%, 2) / L%(1, 2))
+	LT%(B, 24) = LT%(B, 24) * (LG%(YR%, 2) / L%(1, 2))
+	FG = INT(T%(1, 6) / T%(1, 5) * 100 + .5)
+	FG = FG * (LG%(YR%, 3) / L%(1, 3))
+	T%(0, 6) = FG / 100 * T%(0, 5)
+	FG = INT(T%(1, 20) / T%(1, 19) * 100 + .5)
+	FG = FG * (LG%(YR%, 3) / L%(1, 3))
+	T%(0, 20) = FG / 100 * T%(0, 19)
 
 574 GOTO 450
+
 1000 CLS
-     IF UCASE$(LEFT$(D$(0), 1)) <> "A" AND UCASE$(LEFT$(D$(0), 1)) <> "B" THEN 1002
-     PRINT "INSERT DISK YOU WISH TO SAVE THIS TEAM ON IN "; D$(0)
-     LOCATE 23, 1: PRINT "HIT ANY KEY TO CONTINUE"
-1001 I$ = INKEY$: IF I$ = "" THEN 1001
+
 1002 GOSUB 9800
+
 1008 GOTO 10
 
+1100 NT = 0
+OPEN D$(0) + "PROBBTMS." + YN$(1) FOR RANDOM AS #1 LEN = 1031
+	Y = LOF(1)
+	FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
+	FOR I = 0 TO 6
+	FIELD #1, 30 + I * 2 AS X$, 2 AS Q$(I + 2)
+	NEXT
+	FIELD #1, 44 AS X$, 2 AS Q$(9)
+	FOR I = 0 TO 34
+	FIELD #1, 46 + I * 2 AS X$, 2 AS Q$(I + 10)
+	NEXT
+	FOR I = 0 TO 14
+	FIELD #1, 116 + I * 57 AS X$, 15 AS Q$(I * 22 + 45), 2 AS Q$(I * 22 + 46)
+	FOR I1 = 0 TO 19
+	FIELD #1, 133 + I * 57 + I1 * 2 AS X$, 2 AS Q$(I * 22 + 47 + I1)
+	NEXT
+	NEXT
+	FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
+	FOR I1 = 1 TO Y / 1031
+	GET #1, I1
+	CK% = CVI(Q$(9))
+	IF CK% <> 999 THEN 1103
+	NT = NT + 1
+	V$(NT) = Q$(0): V%(NT) = I1
 
-1100 GOSUB 3000
-     NT = 0
-     OPEN D$(0) + "PROBBTMS." + YN$(1) FOR RANDOM AS #1 LEN = 1031
-     Y = LOF(1)
-     FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
-     FOR I = 0 TO 6
-     FIELD #1, 30 + I * 2 AS X$, 2 AS Q$(I + 2)
-     NEXT
-     FIELD #1, 44 AS X$, 2 AS Q$(9)
-     FOR I = 0 TO 34
-     FIELD #1, 46 + I * 2 AS X$, 2 AS Q$(I + 10)
-     NEXT
-     FOR I = 0 TO 14
-     FIELD #1, 116 + I * 57 AS X$, 15 AS Q$(I * 22 + 45), 2 AS Q$(I * 22 + 46)
-     FOR I1 = 0 TO 19
-     FIELD #1, 133 + I * 57 + I1 * 2 AS X$, 2 AS Q$(I * 22 + 47 + I1)
-     NEXT
-     NEXT
-     FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
-     FOR I1 = 1 TO Y / 1031
-     GET #1, I1
-     CK% = CVI(Q$(9))
-     IF CK% <> 999 THEN 1103
-     NT = NT + 1
-     V$(NT) = Q$(0): V%(NT) = I1
 1103 NEXT
-     CLOSE 1
-1102 SELECTION% = 1
-     Count% = NT
-     Start% = 1
-     FileColr% = 79
-     HiLiteColr% = 112
-     Rows% = 20
-     Columns% = 4
-     Spacing% = 6
-     Row% = 4
-     Column% = 1
-     COLOR , 4: CLS : LOCATE , 33: COLOR 14
-     PRINT "TEAM SELECTION": COLOR 15
-     LOCATE 25, 1: COLOR 14: PRINT "ESC"; : COLOR 15
-     PRINT "-SELECT NEW ID  PGDN  PGUP  "; : COLOR 14
-     PRINT "ENTER"; : COLOR 15: PRINT "-SELECTS TEAM";
-     CALL SHOWCURSOR
-120   MAMenu VARPTR(V$(1)), SELECTION%, Start%, Count%, EXITCODE%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%
-     CALL HIDECURSOR
-     IF EXITCODE% = 27 THEN BO% = 1: RETURN
-     IF EXITCODE% = -71 THEN Start% = 1: EXITCODE% = 3: SELECTION% = 1: GOTO 120
-     IF EXITCODE% = -79 THEN Start% = NT: EXITCODE% = 3: SELECTION% = NT: GOTO 120
-     IF EXITCODE% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
-     IF EXITCODE% = -81 THEN Start% = Start% + 80: IF Start% > NT THEN Start% = NT
-     IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = Start%: GOTO 120
-     D = V%(SELECTION%)
-     GOTO 9000
+CLOSE 1
 
-1200 GOSUB 3000
-     NT = 0
-     OPEN D$(0) + "PROBBTMS." + YN$(0) FOR INPUT AS #1
-     CLOSE 1
-     OPEN D$(0) + "PROBBTMS." + YN$(0) FOR RANDOM AS #1 LEN = 1031
-     Y = LOF(1)
-     FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
-     FOR I = 0 TO 6
-     FIELD #1, 30 + I * 2 AS X$, 2 AS Q$(I + 2)
-     NEXT
-     FIELD #1, 44 AS X$, 2 AS Q$(9)
-     FOR I = 0 TO 34
-     FIELD #1, 46 + I * 2 AS X$, 2 AS Q$(I + 10)
-     NEXT
-     FOR I = 0 TO 14
-     FIELD #1, 116 + I * 57 AS X$, 15 AS Q$(I * 22 + 45), 2 AS Q$(I * 22 + 46)
-     FOR I1 = 0 TO 19
-     FIELD #1, 133 + I * 57 + I1 * 2 AS X$, 2 AS Q$(I * 22 + 47 + I1)
-     NEXT
-     NEXT
-     FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
-     FOR I1 = 1 TO Y / 1031
-     GET #1, I1
-     CK% = CVI(Q$(9))
-     IF CK% <> 999 THEN 1203
-     NT = NT + 1
-     V$(NT) = Q$(0): V%(NT) = I1
+1102 SELECTION% = 1
+	Count% = NT
+	Start% = 1
+	FileFGColr% = 15:FileBGColr% = 4
+	HiLiteFGColr% = 0:HiLiteBGColr% = 7
+	Rows% = 20
+	Columns% = 4
+	Spacing% = 6
+	Row% = 4
+	Column% = 1
+	COLOR , 4: CLS : LOCATE , 33: COLOR 14
+	PRINT "TEAM SELECTION": COLOR 15
+	LOCATE 25, 1: COLOR 14: PRINT "ESC"; : COLOR 15
+	PRINT "-SELECT NEW ID  PGDN  PGUP  "; : COLOR 14
+	PRINT "ENTER"; : COLOR 15: PRINT "-SELECTS TEAM";
+	
+_MouseShow "DEFAULT"
+120   MAMenu V$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+_MouseHide
+
+	IF EXITCODE% = 27 THEN BO% = 1: RETURN
+	IF EXITCODE% = -71 THEN Start% = 1: EXITCODE% = 3: SELECTION% = 1: GOTO 120
+	IF EXITCODE% = -79 THEN Start% = NT: EXITCODE% = 3: SELECTION% = NT: GOTO 120
+	IF EXITCODE% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
+	IF EXITCODE% = -81 THEN Start% = Start% + 80: IF Start% > NT THEN Start% = NT
+	IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = Start%: GOTO 120
+	D = V%(SELECTION%)
+	GOTO 9000
+
+1200 NT = 0
+OPEN D$(0) + "PROBBTMS." + YN$(0) FOR INPUT AS #1
+CLOSE 1
+OPEN D$(0) + "PROBBTMS." + YN$(0) FOR RANDOM AS #1 LEN = 1031
+	Y = LOF(1)
+	FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
+	FOR I = 0 TO 6
+	FIELD #1, 30 + I * 2 AS X$, 2 AS Q$(I + 2)
+	NEXT
+	FIELD #1, 44 AS X$, 2 AS Q$(9)
+	FOR I = 0 TO 34
+	FIELD #1, 46 + I * 2 AS X$, 2 AS Q$(I + 10)
+	NEXT
+	FOR I = 0 TO 14
+	FIELD #1, 116 + I * 57 AS X$, 15 AS Q$(I * 22 + 45), 2 AS Q$(I * 22 + 46)
+	FOR I1 = 0 TO 19
+	FIELD #1, 133 + I * 57 + I1 * 2 AS X$, 2 AS Q$(I * 22 + 47 + I1)
+	NEXT
+	NEXT
+	FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
+	FOR I1 = 1 TO Y / 1031
+	GET #1, I1
+	CK% = CVI(Q$(9))
+	IF CK% <> 999 THEN 1203
+	NT = NT + 1
+	V$(NT) = Q$(0): V%(NT) = I1
+
 1203 NEXT
-     CLOSE 1
+CLOSE 1
 TS% = INT((NT - 1) / 80)
+
 1202 SELECTION% = 1
-     Count% = NT
-     Start% = 1
-     FileColr% = 79
-     HiLiteColr% = 112
-     Rows% = 20
-     Columns% = 4
-     Spacing% = 6
-     Row% = 4
-     Column% = 1
-     COLOR , 4: CLS : LOCATE , 33: COLOR 14
-     PRINT "TEAM SELECTION": COLOR 15
-     LOCATE 25, 1: COLOR 14: PRINT "ESC"; : COLOR 15
-     PRINT "-SELECT NEW ID  PGDN  PGUP  "; : COLOR 14
-     PRINT "ENTER"; : COLOR 15: PRINT "-SELECTS TEAM";
-     CALL SHOWCURSOR
-220   MAMenu VARPTR(V$(1)), SELECTION%, Start%, Count%, EXITCODE%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%
-     CALL HIDECURSOR
-     IF EXITCODE% = 27 THEN BO% = 1: RETURN
-     IF EXITCODE% = -71 THEN Start% = 1: EXITCODE% = 3: SELECTION% = 1: GOTO 220
-     IF EXITCODE% = -79 THEN Start% = NT: EXITCODE% = 3: SELECTION% = NT: GOTO 220
-     IF EXITCODE% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
-     IF EXITCODE% = -81 THEN Start% = Start% + 80: IF Start% > NT THEN Start% = NT
-     IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = Start%: GOTO 220
-     T = V%(SELECTION%)
-     GOTO 9100
+	Count% = NT
+	Start% = 1
+	FileFGColr% = 15:FileBGColr% = 4
+	HiLiteFGColr% = 0:HiLiteBGColr% = 7
+	Rows% = 20
+	Columns% = 4
+	Spacing% = 6
+	Row% = 4
+	Column% = 1
+	COLOR , 4: CLS : LOCATE , 33: COLOR 14
+	PRINT "TEAM SELECTION": COLOR 15
+	LOCATE 25, 1: COLOR 14: PRINT "ESC"; : COLOR 15
+	PRINT "-SELECT NEW ID  PGDN  PGUP  "; : COLOR 14
+	PRINT "ENTER"; : COLOR 15: PRINT "-SELECTS TEAM";
+	
+_MouseShow "DEFAULT"
+220   MAMenu V$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+_MouseHide
+
+	IF EXITCODE% = 27 THEN BO% = 1: RETURN
+	IF EXITCODE% = -71 THEN Start% = 1: EXITCODE% = 3: SELECTION% = 1: GOTO 220
+	IF EXITCODE% = -79 THEN Start% = NT: EXITCODE% = 3: SELECTION% = NT: GOTO 220
+	IF EXITCODE% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
+	IF EXITCODE% = -81 THEN Start% = Start% + 80: IF Start% > NT THEN Start% = NT
+	IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = Start%: GOTO 220
+	T = V%(SELECTION%)
+	GOTO 9100
 
 2000 COLOR 15, 0: CLS
-    JJ = 7
-    LOCATE 6, 8: COLOR 15, 4
-    PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-    PRINT " º"; STRING$(61, 32); "º "; : NEXT
-    LOCATE 7 + JJ, 8
-    PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
-    LOCATE , 12: PRINT "ENTER DISK ID: ": PRINT
-    LOCATE , 12: PRINT "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-    LOCATE , 12: PRINT "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-    LOCATE , 12: PRINT "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
-    LOCATE 7, 27: INPUT NY$
-    IF NY$ = "" THEN GOSUB 1102: GOTO 2001
-    YN$(0) = NY$
-    FOR I = 1 TO 500: V$(I) = "": NEXT
-    GOSUB 1200
+	JJ = 7
+	LOCATE 6, 8: COLOR 15, 4
+	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
+	PRINT " º"; STRING$(61, 32); "º "; : NEXT
+	LOCATE 7 + JJ, 8
+	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+	LOCATE , 12: PRINT "ENTER DISK ID: ": PRINT
+	LOCATE , 12: PRINT "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+	LOCATE , 12: PRINT "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+	LOCATE , 12: PRINT "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
+	LOCATE 7, 27: INPUT NY$
+	IF NY$ = "" THEN GOSUB 1102: GOTO 2001
+	YN$(0) = NY$
+	FOR I = 1 TO 500: V$(I) = "": NEXT
+	GOSUB 1200
+
 2001 IF BO% = 1 THEN BO% = 0: GOTO 2000
+
 2002 LOCATE 2, 33: COLOR T%(0, 33), T%(0, 34): PRINT A$(0, 0): COLOR 15, 4
-    LOCATE , 33: PRINT "ANY CHANGE (YN)"; : I$ = INKEY$: IF I$ = "" THEN 2002
-    IF UCASE$(I$) = "Y" THEN 2000
-    GOTO 450
+	LOCATE , 33: PRINT "ANY CHANGE (YN)"
+	I$ = GetKeyPress$
+	IF UCASE$(I$) = "Y" THEN 2000
+	GOTO 450
+4000 I$ = GetKeyPress$
 
-3000 IF UCASE$(LEFT$(D$(0), 1)) <> "A" AND UCASE$(LEFT$(D$(0), 1)) <> "B" THEN RETURN
-     CLS : PRINT "MAKE SURE TEAMS DISK IS IN DRIVE "; D$(0)
-     LOCATE 23, 1: PRINT "PRESS ANY KEY TO CONTINUE"
-3005 I$ = INKEY$: IF I$ = "" THEN 3005
-     RETURN
-
-4000 I$ = INKEY$: IF I$ = "" THEN 4000
 4001 IF UCASE$(I$) = "Y" THEN I = 1: GOTO 4005
+
 4002 IF UCASE$(I$) = "N" THEN I = 0: GOTO 4005
+
 4003 GOTO 4000
+
 4005 RETURN
 
 9000 OPEN D$(0) + "PROBBTMS." + YN$(1) FOR RANDOM AS #1 LEN = 1031
-     FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
-     FOR J% = 0 TO 6
-     FIELD #1, 30 + J% * 2 AS X$, 2 AS Q$(J% + 2)
-     NEXT
-     FIELD #1, 44 AS X$, 2 AS Q$(9)
-     FOR J% = 0 TO 34
-     FIELD #1, 46 + J% * 2 AS X$, 2 AS Q$(J% + 10)
-     NEXT
-     FOR J% = 0 TO 14
-     FIELD #1, 116 + J% * 57 AS X$, 15 AS Q$(J% * 22 + 45), 2 AS Q$(J% * 22 + 46)
-     FOR J1 = 0 TO 19
-     FIELD #1, 133 + J% * 57 + J1 * 2 AS X$, 2 AS Q$(J% * 22 + 47 + J1)
-     NEXT
-     NEXT
-     FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
-     GET #1, D
-     A$(1, 0) = Q$(0): A$(1, 1) = Q$(1)
-     FOR I = 0 TO 6: L%(1, I) = CVI(Q$(I + 2)): NEXT
+	FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
+	FOR J% = 0 TO 6
+	FIELD #1, 30 + J% * 2 AS X$, 2 AS Q$(J% + 2)
+	NEXT
+	FIELD #1, 44 AS X$, 2 AS Q$(9)
+	FOR J% = 0 TO 34
+	FIELD #1, 46 + J% * 2 AS X$, 2 AS Q$(J% + 10)
+	NEXT
+	FOR J% = 0 TO 14
+	FIELD #1, 116 + J% * 57 AS X$, 15 AS Q$(J% * 22 + 45), 2 AS Q$(J% * 22 + 46)
+	FOR J1 = 0 TO 19
+	FIELD #1, 133 + J% * 57 + J1 * 2 AS X$, 2 AS Q$(J% * 22 + 47 + J1)
+	NEXT
+	NEXT
+	FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
+	GET #1, D
+	A$(1, 0) = Q$(0): A$(1, 1) = Q$(1)
+	FOR I = 0 TO 6: L%(1, I) = CVI(Q$(I + 2)): NEXT
+
 9002 IF RIGHT$(A$(1, 0), 1) = " " THEN A$(1, 0) = LEFT$(A$(1, 0), LEN(A$(1, 0)) - 1): GOTO 9002
-     FOR I = 0 TO 34: T%(1, I) = CVI(Q$(I + 10)): NEXT
-     FOR I = 0 TO 14
-     B$(1, I, 0) = Q$(22 * I + 45)
+	FOR I = 0 TO 34: T%(1, I) = CVI(Q$(I + 10)): NEXT
+	FOR I = 0 TO 14
+	B$(1, I, 0) = Q$(22 * I + 45)
+
 9004 IF RIGHT$(B$(1, I, 0), 1) = " " THEN B$(1, I, 0) = LEFT$(B$(1, I, 0), LEN(B$(1, I, 0)) - 1): GOTO 9004
-     B$(1, I, 1) = Q$(22 * I + 46)
+	B$(1, I, 1) = Q$(22 * I + 46)
+
 9005 IF RIGHT$(B$(1, I, 1), 1) = " " THEN B$(1, I, 1) = LEFT$(B$(1, I, 1), LEN(B$(1, I, 1)) - 1): GOTO 9005
-     FOR I1 = 0 TO 19
-     B%(1, I, I1) = CVI(Q$(22 * I + 47 + I1))
-     NEXT: NEXT
-     A$(1, 2) = Q$(375): A$(1, 3) = Q$(376): A$(1, 4) = Q$(377)
-     CLOSE 1
+	FOR I1 = 0 TO 19
+	B%(1, I, I1) = CVI(Q$(22 * I + 47 + I1))
+	NEXT: NEXT
+	A$(1, 2) = Q$(375): A$(1, 3) = Q$(376): A$(1, 4) = Q$(377)
+CLOSE 1
+
 9006 IF RIGHT$(A$(1, 2), 1) = " " THEN A$(1, 2) = LEFT$(A$(1, 2), LEN(A$(1, 2)) - 1): GOTO 9006
+
 9007 IF RIGHT$(A$(1, 3), 1) = " " THEN A$(1, 3) = LEFT$(A$(1, 3), LEN(A$(1, 3)) - 1): GOTO 9007
+
 9008 IF RIGHT$(A$(1, 4), 1) = " " THEN A$(1, 4) = LEFT$(A$(1, 4), LEN(A$(1, 4)) - 1): GOTO 9008
-     RETURN
+	RETURN
+
 9100 OPEN D$(0) + "PROBBTMS." + YN$(0) FOR RANDOM AS #1 LEN = 1031
-     FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
-     FOR J% = 0 TO 6
-     FIELD #1, 30 + J% * 2 AS X$, 2 AS Q$(J% + 2)
-     NEXT
-     FIELD #1, 44 AS X$, 2 AS Q$(9)
-     FOR J% = 0 TO 34
-     FIELD #1, 46 + J% * 2 AS X$, 2 AS Q$(J% + 10)
-     NEXT
-     FOR J% = 0 TO 14
-     FIELD #1, 116 + J% * 57 AS X$, 15 AS Q$(J% * 22 + 45), 2 AS Q$(J% * 22 + 46)
-     FOR J1 = 0 TO 19
-     FIELD #1, 133 + J% * 57 + J1 * 2 AS X$, 2 AS Q$(J% * 22 + 47 + J1)
-     NEXT
-     NEXT
-     FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
-     GET #1, T
-     A$(0, 0) = Q$(0): A$(0, 1) = Q$(1)
-     FOR I = 0 TO 6: L%(0, I) = CVI(Q$(I + 2)): NEXT
+	FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
+	FOR J% = 0 TO 6
+	FIELD #1, 30 + J% * 2 AS X$, 2 AS Q$(J% + 2)
+	NEXT
+	FIELD #1, 44 AS X$, 2 AS Q$(9)
+	FOR J% = 0 TO 34
+	FIELD #1, 46 + J% * 2 AS X$, 2 AS Q$(J% + 10)
+	NEXT
+	FOR J% = 0 TO 14
+	FIELD #1, 116 + J% * 57 AS X$, 15 AS Q$(J% * 22 + 45), 2 AS Q$(J% * 22 + 46)
+	FOR J1 = 0 TO 19
+	FIELD #1, 133 + J% * 57 + J1 * 2 AS X$, 2 AS Q$(J% * 22 + 47 + J1)
+	NEXT
+	NEXT
+	FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
+	GET #1, T
+	A$(0, 0) = Q$(0): A$(0, 1) = Q$(1)
+	FOR I = 0 TO 6: L%(0, I) = CVI(Q$(I + 2)): NEXT
+
 9102 IF RIGHT$(A$(0, 0), 1) = " " THEN A$(0, 0) = LEFT$(A$(0, 0), LEN(A$(0, 0)) - 1): GOTO 9102
-     FOR I = 0 TO 34: T%(0, I) = CVI(Q$(I + 10)): NEXT
-     FOR I = 0 TO 14
-     B$(0, I, 0) = Q$(22 * I + 45)
+	FOR I = 0 TO 34: T%(0, I) = CVI(Q$(I + 10)): NEXT
+	FOR I = 0 TO 14
+	B$(0, I, 0) = Q$(22 * I + 45)
+
 9104 IF RIGHT$(B$(0, I, 0), 1) = " " THEN B$(0, I, 0) = LEFT$(B$(0, I, 0), LEN(B$(0, I, 0)) - 1): GOTO 9104
-     B$(0, I, 1) = Q$(22 * I + 46)
+	B$(0, I, 1) = Q$(22 * I + 46)
+
 9105 IF RIGHT$(B$(0, I, 1), 1) = " " THEN B$(0, I, 1) = LEFT$(B$(0, I, 1), LEN(B$(0, I, 1)) - 1): GOTO 9105
-     FOR I1 = 0 TO 19
-     B%(0, I, I1) = CVI(Q$(22 * I + 47 + I1))
-     NEXT: NEXT
-     A$(0, 2) = Q$(375): A$(0, 3) = Q$(376): A$(0, 4) = Q$(377)
-     CLOSE 1
+	FOR I1 = 0 TO 19
+	B%(0, I, I1) = CVI(Q$(22 * I + 47 + I1))
+	NEXT: NEXT
+	A$(0, 2) = Q$(375): A$(0, 3) = Q$(376): A$(0, 4) = Q$(377)
+CLOSE 1
 
 9106 IF RIGHT$(A$(0, 2), 1) = " " THEN A$(0, 2) = LEFT$(A$(0, 2), LEN(A$(0, 2)) - 1): GOTO 9106
+
 9107 IF RIGHT$(A$(0, 3), 1) = " " THEN A$(0, 3) = LEFT$(A$(0, 3), LEN(A$(0, 3)) - 1): GOTO 9107
+
 9108 IF RIGHT$(A$(0, 4), 1) = " " THEN A$(0, 4) = LEFT$(A$(0, 4), LEN(A$(0, 4)) - 1): GOTO 9108
+	 FOR I1 = 0 TO 14
+	FOR I = 0 TO 34
+	LT%(I1, I) = T%(0, I)
+	NEXT
+	NEXT
+	  RETURN
 
-    FOR I1 = 0 TO 14
-    FOR I = 0 TO 34
-    LT%(I1, I) = T%(0, I)
-    NEXT
-    NEXT
-
-     RETURN
 9800 NP = 0
-     FOR I = 0 TO 14
-     IF B$(0, I, 0) <> "XXX" THEN NP = NP + 1
-     NEXT
+	FOR I = 0 TO 14
+	IF B$(0, I, 0) <> "XXX" THEN NP = NP + 1
+	NEXT
+	  FOR I = 0 TO 14
+	IF B$(0, I, 0) = "XXX" THEN 9802
+	FOR I1 = 0 TO 32
+	TTL(I1) = TTL(I1) + LT%(I, I1)
+	NEXT I1
 
-     FOR I = 0 TO 14
-     IF B$(0, I, 0) = "XXX" THEN 9802
-     FOR I1 = 0 TO 32
-     TTL(I1) = TTL(I1) + LT%(I, I1)
-     NEXT I1
 9802 NEXT I
-
-     FOR I1 = 0 TO 32
-     TTL(I1) = TTL(I1) / NP
-     T%(0, I1) = TTL(I1)
-     NEXT
-
-     OPEN D$(0) + "PROBBTMS." + YN$(0) FOR RANDOM AS #1 LEN = 1031
-     Y = LOF(1)
-     IF DNT% = 0 THEN T = Y / 1031 + 1
-     FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
-     FOR I = 0 TO 6
-     FIELD #1, 30 + I * 2 AS X$, 2 AS Q$(I + 2)
-     NEXT
-     FIELD #1, 44 AS X$, 2 AS Q$(9)
-     FOR I = 0 TO 34
-     FIELD #1, 46 + I * 2 AS X$, 2 AS Q$(I + 10)
-     NEXT
-     FOR I = 0 TO 14
-     FIELD #1, 116 + I * 57 AS X$, 15 AS Q$(I * 22 + 45), 2 AS Q$(I * 22 + 46)
-     FOR I1 = 0 TO 19
-     FIELD #1, 133 + I * 57 + I1 * 2 AS X$, 2 AS Q$(I * 22 + 47 + I1)
-     NEXT
-     NEXT
-     FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
+	  FOR I1 = 0 TO 32
+	TTL(I1) = TTL(I1) / NP
+	T%(0, I1) = TTL(I1)
+	NEXT
+	  OPEN D$(0) + "PROBBTMS." + YN$(0) FOR RANDOM AS #1 LEN = 1031
+	Y = LOF(1)
+	IF DNT% = 0 THEN T = Y / 1031 + 1
+	FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
+	FOR I = 0 TO 6
+	FIELD #1, 30 + I * 2 AS X$, 2 AS Q$(I + 2)
+	NEXT
+	FIELD #1, 44 AS X$, 2 AS Q$(9)
+	FOR I = 0 TO 34
+	FIELD #1, 46 + I * 2 AS X$, 2 AS Q$(I + 10)
+	NEXT
+	FOR I = 0 TO 14
+	FIELD #1, 116 + I * 57 AS X$, 15 AS Q$(I * 22 + 45), 2 AS Q$(I * 22 + 46)
+	FOR I1 = 0 TO 19
+	FIELD #1, 133 + I * 57 + I1 * 2 AS X$, 2 AS Q$(I * 22 + 47 + I1)
+	NEXT
+	NEXT
+	FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
 LSET Q$(0) = A$(0, 0): LSET Q$(1) = A$(0, 1): FOR I = 0 TO 6: LSET Q$(I + 2) = MKI$(L%(0, I)): NEXT
 LSET Q$(9) = MKI$(999)
 FOR I = 0 TO 34: LSET Q$(I + 10) = MKI$(T%(0, I)): NEXT
@@ -461,6 +541,7 @@ LSET Q$(22 * I + 47 + I1) = MKI$(B%(0, I, I1))
 NEXT: NEXT
 LSET Q$(375) = A$(0, 2): LSET Q$(376) = A$(0, 3): LSET Q$(377) = A$(0, 4)
 PUT #1, T: CLOSE 1
+
 9821 RETURN
 
 DATA 1954,1955,1956,1957,1958,1959,1960,1961,1962,1963
@@ -470,13 +551,14 @@ DATA 1976,"1976 A",1977,1978,1979,1980,1981,1982,1983,1984
 DATA 1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996
 
 8500 FOR I = 1 TO 52
-     READ YR$(I)
+	READ YR$(I)
+
 8501 IF LEN(YR$(I)) <> 6 THEN YR$(I) = YR$(I) + " ": GOTO 8501
-     NEXT
+	NEXT
 FOR I = 1 TO 52: FOR I1 = 1 TO 5
 READ LG%(I, I1)
 NEXT: NEXT
-REM: FG/RB/FG%/PF/3FG%
+' FG/RB/FG%/PF/3FG%
 DATA 75,47,37,25,0
 DATA 86,52,39,25,0
 DATA 91,55,39,26,0
@@ -531,37 +613,43 @@ DATA 81,42,47,24,36
 DATA 80,41,46,23,37
 
 8000 SELECTION% = 1
-     Count% = 52
-     Start% = 1
-     FileColr% = 79
-     HiLiteColr% = 112
-     Rows% = 11
-     Columns% = 5
-     Spacing% = 10
-     Row% = 6
-     Column% = 1
-COLOR , 4: CLS : LOCATE , 16: COLOR 14: PRINT "SELECT YEAR TO NORMALIZE DRAFTED PLAYERS TO": COLOR 15
-8001 CALL SHOWCURSOR
-MAMenu VARPTR(YR$(1)), SELECTION%, Start%, Count%, EXITCODE%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%
-CALL HIDECURSOR
-     IF EXITCODE% <> 27 AND EXITCODE% <> 13 THEN 8001
-     IF EXITCODE% = 27 THEN BO% = 1: RETURN
+	Count% = 52
+	Start% = 1
+	FileFGColr% = 15:FileBGColr% = 4
+	HiLiteFGColr% = 0:HiLiteBGColr% = 7
+	Rows% = 11
+	Columns% = 5
+	Spacing% = 10
+	Row% = 6
+	Column% = 1
+	COLOR , 4: CLS : LOCATE , 16: COLOR 14: PRINT "SELECT YEAR TO NORMALIZE DRAFTED PLAYERS TO": COLOR 15
+
+8001 
+_MouseShow "DEFAULT"
+MAMenu VARPTR(YR$(1)), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+_MouseHide
+
+	IF EXITCODE% <> 27 AND EXITCODE% <> 13 THEN 8001
+	IF EXITCODE% = 27 THEN BO% = 1: RETURN
+
 184 LOCATE 3, 33: COLOR 15, 0: PRINT YR$(SELECTION%): COLOR 15, 4
-    LOCATE , 30: PRINT "ANY CHANGE (YN)"; : I$ = INKEY$: IF I$ = "" THEN 184
-    IF UCASE$(I$) = "Y" THEN 8000
-    IF UCASE$(I$) <> "N" THEN 184
-    YR% = SELECTION%
-    RETURN
+	LOCATE , 30: PRINT "ANY CHANGE (YN)"; : I$ = GetKeyPress$
+	IF UCASE$(I$) = "Y" THEN 8000
+	IF UCASE$(I$) <> "N" THEN 184
+	YR% = SELECTION%
+	RETURN
 
 SUB TITLE ()
-   COLOR , 0: KEY OFF: CLS
-   COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 27: COLOR 12
-   PRINT "BASKETBALL: THE PRO GAME V4.01"
-   LOCATE 24, 1: PRINT TAB(80); : LOCATE , 1
-   PRINT "(C) LANCE HAFFNER/SHANNON LYNN 1987-1997"; TAB(70); LEFT$(TIME$, 5);
-   LOCATE 3, 1: COLOR 2, 0
-   COLOR 15: PRINT "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
-             PRINT "     FOR TECHNICAL SUPPORT, CALL (800) 477-7032 OR SportGames@AOL.COM"
-   COLOR 10
+	COLOR , 0: KEY OFF: CLS
+	COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 27: COLOR 12
+	PRINT "BASKETBALL: THE PRO GAME V4.01"
+	LOCATE 24, 1: PRINT TAB(80); : LOCATE , 1
+	PRINT "(C) LANCE HAFFNER/SHANNON LYNN 1987-1997"; TAB(70); LEFT$(TIME$, 5);
+	LOCATE 3, 1: COLOR 2, 0
+	COLOR 15: PRINT "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
+	  PRINT "     FOR TECHNICAL SUPPORT, CALL (800) 477-7032 OR SportGames@AOL.COM"
+	COLOR 10
 END SUB
 
+'$INCLUDE: 'KeyInput.BM'
+'$INCLUDE: 'QPProEqu.BM'
