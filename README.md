@@ -1,5 +1,4 @@
-# Name
-LH Games Basketball: The Pro Game
+# LH Games Basketball: The Pro Game
 
 # Game Description
 Each player contributes as they did in real life * Stats Compiler * you determine starting lineup, substitutions, shot selection, passing, offensive and defensive styles of play and more 
