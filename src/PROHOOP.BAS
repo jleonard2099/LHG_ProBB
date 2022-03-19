@@ -1,7 +1,13 @@
+$Debug
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
-DEFINT A-Z
+_Title "Basketball: The Pro Game"
+'$EXEICON:'lhg_pbb.ico'
+'_ICON
+
+
+DefInt A-Z
 DECLARE SUB ADJFOUL ()
 DECLARE SUB BADFT ()
 DECLARE SUB BOGUS (X)
@@ -39,6261 +45,6307 @@ DECLARE SUB TICKERUPDATE ()
 DECLARE SUB UPDATESCREEN ()
 DECLARE SUB WINDEX ()
 
-DIM B1(1, 4), S(1, 14), V9(14), C1(1, 14), F5%(1, 4), Z2(14, 14) AS SINGLE, W2(1, 14), W3(1, 14)
-DIM D$(5), D2(1), D1(1), ZZ(2, 14), Z1(15) AS SINGLE, HT%(100), O%(100), HO$(100), H$(100)
-DIM F%(1, 9), PF%(1), TOF%(1), SC(1)
-DIM F1(14), S3(14), G4(14), G5(14), D8(6, 6), N0%(2, 2, 4), O0%(1), G9%(1)
-DIM NG%(18), AP%(2), YN$(3), SX%(32, 1, 14)
-DIM P$(1), P7$(1), TS$(1), SC$(1), TF(1), P2(1), VG(9), VH(9)
-DIM P7(1), R3(1), T0(1), T1(1), P5(5), P4(5), Z(15) AS SINGLE, W0(1, 14), W1(1, 14), PFA%(33)
-DIM PS$(4), X7(1), F7%(1, 9), CF%(1, 9), GF%(2, 9), OY%(2), OX%(2)
-DIM R$(14), TOA%(33), Q$(380), V%(500), V$(500), FT$(1), FR$(1), E%(13)
-DIM RB(9), ZF(1), Z5(1), Z6(1), Y$(1), CM$(1), PO$(1), LC$(2), U5$(3)
-DIM RC$(50,4),REC(50,2) AS SINGLE
-DIM SX$(32, 1), ST%(32), O$(2), X$(4), PB$(1),QQ(1,8,14,14), QR(1, 7, 14)
-DIM T(1, 34), B$(3, 5), AA$(1, 14, 1), B%(1, 14, 19), A(1, 14, 25) AS SINGLE, M9(1) AS SINGLE, L%(1, 6), W%(1, 14, 1)
+Dim B1(1, 4), S(1, 14), V9(14), C1(1, 14), F5%(1, 4), Z2(14, 14) As Single, W2(1, 14), W3(1, 14)
+Dim D$(5), D2(1), D1(1), ZZ(2, 14), Z1(15) As Single, HT%(100), O%(100), HO$(100), H$(100)
+Dim F%(1, 9), PF%(1), TOF%(1), SC(1)
+Dim F1(14), S3(14), G4(14), G5(14), D8(6, 6), N0%(2, 2, 4), O0%(1), G9%(1)
+Dim NG%(18), AP%(2), YN$(3), SX%(32, 1, 14)
+Dim P$(1), P7$(1), TS$(1), SC$(1), TF(1), P2(1), VG(9), VH(9)
+Dim P7(1), R3(1), T0(1), T1(1), P5(5), P4(5), Z(15) As Single, W0(1, 14), W1(1, 14), PFA%(33)
+Dim PS$(4), X7(1), F7%(1, 9), CF%(1, 9), GF%(2, 9), OY%(2), OX%(2)
+Dim R$(14), TOA%(33), Q$(380), V%(500), V$(500), FT$(1), FR$(1), E%(13)
+Dim RB(9), ZF(1), Z5(1), Z6(1), Y$(1), CM$(1), PO$(1), LC$(2), U5$(3)
+Dim RC$(50, 4), REC(50, 2) As Single
+Dim SX$(32, 1), ST%(32), O$(2), X$(4), PB$(1), QQ(1, 8, 14, 14), QR(1, 7, 14)
+Dim T(1, 34), B$(3, 5), AA$(1, 14, 1), B%(1, 14, 19), A(1, 14, 25) As Single, M9(1) As Single, L%(1, 6), W%(1, 14, 1)
 
-COMMON SHARED A1$,B1$,C1$,D1$,E1$,F1$,G1$,H1$,U$,VG(),VH(),JJ,QQ(),QR()
-COMMON SHARED CM%, RT%, TMT, P7$(), PS$(), OY%(), OX%(), CF%(), GF%(), TS$()
-COMMON SHARED EG%,TS%,TE,TTS%, X8,P7(),E%(),PB$(),PB%,NM%,F3,B
-COMMON SHARED F%(), T, H, P2(), NB%, T1(), D$(), D2(), O$(), O0%()
-COMMON SHARED F5%(), A() AS SINGLE, B1(), B%(), F7%(), T(), SX$(), FF$, AP%(), B$(), SX%()
-COMMON SHARED FTF AS SINGLE, TOF%(), PF%(), TOA%(), PFA%(), JY, L%(), PO, D1()
-COMMON SHARED HT%
-COMMON SHARED P, D, Z5(), Z6(), U6 AS SINGLE, R$(), NL%, SC(), XY%, SC, X4%
-COMMON SHARED PT%,DK%,Z3$,FT%,FB%,PZ%,NT,V$(),V%(),Y2$,PB$
-COMMON SHARED SC$(), FT$(), FR$(), U5$(), LC$(), X$(), PO$(), CM$()
-COMMON SHARED ST%(), Q$(), NG%(), YN$(), S(), AP, AD, N, ZZ()
-COMMON SHARED T0(), O%(), HO$(), HT%(), H$(), TG AS SINGLE, HH%
-COMMON SHARED W0(), W1(), W%(), Y$(), X1, P$(), AA$(), Z2() AS SINGLE
-COMMON SHARED W2(), W3(), Z() AS SINGLE, Z1() AS SINGLE, V9(), R3(), TF()
-COMMON SHARED X7(), FR%, M9() AS SINGLE, U5, P9, GP AS SINGLE, MPG AS SINGLE, CT, X
+Common Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$, U$, VG(), VH(), JJ, QQ(), QR()
+Common Shared CM%, RT%, TMT, P7$(), PS$(), OY%(), OX%(), CF%(), GF%(), TS$()
+Common Shared EG%, TS%, TE, TTS%, X8, P7(), E%(), PB$(), PB%, NM%, F3, B
+Common Shared F%(), T, H, P2(), NB%, T1(), D$(), D2(), O$(), O0%()
+Common Shared F5%(), A() As Single, B1(), B%(), F7%(), T(), SX$(), FF$, AP%(), B$(), SX%()
+Common Shared FTF As Single, TOF%(), PF%(), TOA%(), PFA%(), JY, L%(), PO, D1()
+Common Shared HT%
+Common Shared P, D, Z5(), Z6(), U6 As Single, R$(), NL%, SC(), XY%, SC, X4%
+Common Shared PT%, DK%, Z3$, FT%, FB%, PZ%, NT, V$(), V%(), Y2$, PB$
+Common Shared SC$(), FT$(), FR$(), U5$(), LC$(), X$(), PO$(), CM$()
+Common Shared ST%(), Q$(), NG%(), YN$(), S(), AP, AD, N, ZZ()
+Common Shared T0(), O%(), HO$(), HT%(), H$(), TG As Single, HH%
+Common Shared W0(), W1(), W%(), Y$(), X1, P$(), AA$(), Z2() As Single
+Common Shared W2(), W3(), Z() As Single, Z1() As Single, V9(), R3(), TF()
+Common Shared X7(), FR%, M9() As Single, U5, P9, GP As Single, MPG As Single, CT, X
 
-CLEAR : COLOR 7, 0: CLS
+Clear: Color 7, 0: Cls
 
-RANDOMIZE TIMER
+Randomize Timer
 
-CALL INITIALIZE
+'Call INITIALIZE
 
-IF AP = 1 THEN GOSUB 1300: GOTO 51
+For I = 0 To 14
+    Read R$(I)
+Next
 
-24 CLS : COLOR 2: PRINT TAB(29); "SELECT OPENING OPTIONS": PRINT
+'ORIG  DATA 12,11,11,11,11,11,11,12,11,12,11,11,10,10,06,07,07,07,08,08,08,08,08,08,08,09,09,09,09,09,09,09,08
 
-25 LOCATE 2, 2: COLOR 14: PRINT "(1) "; : COLOR 15: PRINT U5$(U5)
-	LOCATE 3, 2: COLOR 14: PRINT "(2) "; : COLOR 15: PRINT "VISITING TEAM: "; : COLOR T(0, 33), T(0, 34): PRINT B$(0, 0): COLOR , 0
-	LOCATE 4, 2: COLOR 14: PRINT "(3) "; : COLOR 15: PRINT "HOME TEAM: "; : COLOR T(1, 33), T(1, 34): PRINT B$(1, 0): COLOR , 0
+For I = 0 To 32
+    Read TOA%(I)
+Next
+For I = 0 To 32
+    Read PFA%(I)
+Next
 
-28 LOCATE 5, 2: COLOR 14: PRINT "(4) "; : COLOR 15: PRINT "3-POINT SHOT: "; TS$(XY%)
+NL% = 1
+SC(1) = 30: SC(0) = 24
+NB% = 5
 
-29 LOCATE 6, 2: COLOR 14: PRINT "(5) "; : COLOR 15: PRINT SC$(SC)
+Open "DEV.BAS" For Input As #1
+Input #1, P$(0)
+Input #1, P$(1)
+Close 1
 
-30 LOCATE 7, 2: COLOR 14: PRINT "(6) "; : COLOR 15: PRINT "LOCATION: "; LC$(N)
+Open "DEFAULT" For Input As #1
+Input #1, U5
+Input #1, XY%
+Input #1, SC
+Input #1, N
+Input #1, PO
+Input #1, U6
+Input #1, X4%
+Input #1, CM%
+Input #1, NB%
+Input #1, RT%
+Input #1, FR%
+Input #1, PB%
+Close 1
 
-31 LOCATE 8, 2: COLOR 14: PRINT "(7) "; : COLOR 15: PRINT USING "DISPLAY PAUSE IN SECONDS: ##.#"; U6
+If Not _FileExists("TICKER") Then TMT = 0: GoTo 2
+Open "TICKER" For Input As #2
+For I = 1 To 32
+    For I1 = 0 To 1
+        For I2 = 1 To 14
+            Input #2, SX%(I, I1, I2)
+Next: Next: Next
+For I = 1 To 32
+    For I1 = 0 To 1
+        Input #2, SX$(I, I1)
+Next: Next
+For I = 1 To 32
+    Input #2, ST%(I)
+Next
+Close 2
+TMT = 1
 
-32 LOCATE 9, 2: COLOR 14: PRINT "(8) "; : COLOR 15: PRINT "START GAME"
-	LOCATE 10, 2: COLOR 14: PRINT "(9) "; : COLOR 15: PRINT PO$(PO)
-	LOCATE 11, 2: COLOR 14: PRINT "(0) "; : COLOR 15: PRINT "SAVE SETTINGS"
-	LOCATE 12, 2: COLOR 14: PRINT "(A) "; : COLOR 15: PRINT "SHOW SHOT PERCENTAGES: "; P7$(X4%)
-	LOCATE 13, 2: COLOR 14: PRINT "(B) "; : COLOR 15: PRINT "HUMAN COACHES WILL: "; CM$(CM%); : LOCATE 1, 1
-	LOCATE 14, 2: COLOR 14: PRINT "(C) "; : COLOR 15: PRINT "BONUS AFTER FOUL # "; NB%
-	LOCATE 15, 2: COLOR 14: PRINT "(D) "; : COLOR 15: PRINT "NUMBER OF FREE THROWS "; FT$(RT%)
-	LOCATE 16, 2: COLOR 14: PRINT "(E) "; : COLOR 15: PRINT "FREE THROW RULES "; FR$(FR%)
-	LOCATE 17, 2: COLOR 14: PRINT "(F) "; : COLOR 15: PRINT "PLAY BY PLAY "; PB$(PB%)
-	LOCATE 18, 2: COLOR 14: PRINT "NOTE:: "; : COLOR 15: PRINT "BONUS WAS ON 7TH FOUL (UNTIL 72-73), 6TH FOUL (72-73 SEASON)"
-	LOCATE , 2: PRINT "       5TH FOUL (1973-74 TO PRESENT"
-	LOCATE , 2: COLOR 14: PRINT "NOTE:: "; : COLOR 15: PRINT "UP UNTIL 1972-73, WHEN A TEAM WAS IN THE BONUS, THEY HAD THE CHANCE"
-	LOCATE , 2: PRINT "       TO SHOOT 3 FT TO MAKE 2 OR 2 FT TO MAKE 1"
-	LOCATE , 2: COLOR 14: PRINT "NOTE:: "; : COLOR 15: PRINT "UP UNTIL 1972-73, ALL FOULS WERE SHOT...UNLIKE THE CURRENT RULES"
-	LOCATE , 2: COLOR 14: PRINT "NOTE:: "; : COLOR 15: PRINT "THE 3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 1979-80"
-	LOCATE , 2: COLOR 14: PRINT "NOTE:: "; : COLOR 15: PRINT "THE ABA USED A 30-SEC SHOT CLOCK THROUGH 1973-74";
+2 If Not _FileExists("GAME82") Then 6
+Open "GAME82" For Input As #2
+Input #2, FF$
+For I = 0 To 2: Input #2, AP%(I): Next
+Close 2
+Open P$(0) + FF$ For Random As #1 Len = 48
+For X = 0 To 18
+    Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
+Next
+Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+Get #1, AP%(0) + AP%(2)
+For X = 0 To 18: NG%(X) = CVI(Q$(X + 1)): Next
+For X = 0 To 1: YN$(X) = Q$(20 + X): Next
+VS% = CVI(Q$(22)): HS% = CVI(Q$(23))
+Close 1
 
-35 COLOR 7
-	I$=GetKeyPress$
-	IF I$ = CHR$(27) THEN RUN "HELLO.EXE"
-	I = VAL(I$)
-	IF UCASE$(I$) = "A" THEN I = 11
-	IF UCASE$(I$) = "B" THEN I = 12
-	IF UCASE$(I$) = "C" THEN I = 13
-	IF UCASE$(I$) = "D" THEN I = 14
-	IF UCASE$(I$) = "E" THEN I = 15
-	IF UCASE$(I$) = "F" THEN I = 16
-	IF I < 0 OR I > 16 THEN 35
-	IF I = 16 THEN PB% = 1-PB%:GOTO 25
-	IF I = 0 THEN I = 10
-	ON I GOTO 38, 40, 41, 42, 44, 46, 48, 50, 45, 43, 47, 33, 10, 11, 9
+AP = 1
 
-9 FR% = 1 - FR%: GOTO 25
+6 P7$(1) = "YES": P7$(0) = " NO"
+T = 720
+H = 1
+T1(1) = 7: T1(0) = 7
+PS$(0) = "G": PS$(1) = "G": PS$(2) = "F": PS$(3) = "F": PS$(4) = "C"
+
+OY%(1) = 2: OY%(2) = -2: OX%(1) = 10: OX%(2) = -10
+D2(0) = 1: D2(1) = 1
+
+For I = 1 To 5: Read D$(I): Next I
+
+For I = 0 To 1
+    For I1 = 0 To 4
+        B1(I, I1) = -1
+    Next I1
+Next I
+
+For I = 0 To 1
+    For I1 = 1 To 9
+        Read CF%(I, I1)
+    Next I1
+Next I
+
+For I = 0 To 2
+    For I1 = 1 To 9
+        Read GF%(I, I1)
+    Next I1
+Next I
+
+TS$(0) = "NO ":
+TS$(1) = "YES"
+SC$(0) = "24 SEC SHOT CLOCK"
+SC$(1) = "30 SEC SHOT CLOCK"
+FT$(0) = "CURRENT RULES            "
+FT$(1) = "3 TO MAKE 2 / 2 TO MAKE 1"
+FR$(0) = "ONLY IN BONUS OR ACT OF SHOOTING"
+FR$(1) = "SHOOT ON ALL FOULS              "
+O$(0) = "NORMAL      "
+O$(1) = "AGGRESSIVE  "
+O$(2) = "SAFE        "
+U5$(0) = "HUMAN OPPONENT           "
+U5$(1) = "COMPUTER IS VISITING TEAM"
+U5$(2) = "COMPUTER IS HOME TEAM    "
+U5$(3) = "COMPUTER VS COMPUTER     "
+LC$(0) = "@ TEAM 1            "
+LC$(1) = "HOME COURT ADVANTAGE"
+LC$(2) = "NEUTRAL SITE        "
+X$(0) = "A ": X$(1) = "B ": X$(2) = "C ": X$(3) = "D ": X$(4) = "E "
+PO$(0) = "REGULAR SEASON"
+PO$(1) = "PLAYOFF       "
+CM$(0) = "COACH AND SELECT SHOTS           "
+CM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
+PB$(0) = "VERBOSE        "
+PB$(1) = "HAFFNER CLASSIC"
+
+If AP = 1 Then GoSub 1300: GoTo 51
+
+24 Cls: Color 2: Print Tab(29); "SELECT OPENING OPTIONS": Print
+
+25 Locate 2, 2: Color 14: Print "(1) ";: Color 15: Print U5$(U5)
+Locate 3, 2: Color 14: Print "(2) ";: Color 15: Print "VISITING TEAM: ";: Color T(0, 33), T(0, 34): Print B$(0, 0): Color , 0
+Locate 4, 2: Color 14: Print "(3) ";: Color 15: Print "HOME TEAM: ";: Color T(1, 33), T(1, 34): Print B$(1, 0): Color , 0
+
+28 Locate 5, 2: Color 14: Print "(4) ";: Color 15: Print "3-POINT SHOT: "; TS$(XY%)
+
+29 Locate 6, 2: Color 14: Print "(5) ";: Color 15: Print SC$(SC)
+
+30 Locate 7, 2: Color 14: Print "(6) ";: Color 15: Print "LOCATION: "; LC$(N)
+
+31 Locate 8, 2: Color 14: Print "(7) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#"; U6
+
+32 Locate 9, 2: Color 14: Print "(8) ";: Color 15: Print "START GAME"
+Locate 10, 2: Color 14: Print "(9) ";: Color 15: Print PO$(PO)
+Locate 11, 2: Color 14: Print "(0) ";: Color 15: Print "SAVE SETTINGS"
+Locate 12, 2: Color 14: Print "(A) ";: Color 15: Print "SHOW SHOT PERCENTAGES: "; P7$(X4%)
+Locate 13, 2: Color 14: Print "(B) ";: Color 15: Print "HUMAN COACHES WILL: "; CM$(CM%);: Locate 1, 1
+Locate 14, 2: Color 14: Print "(C) ";: Color 15: Print "BONUS AFTER FOUL # "; NB%
+Locate 15, 2: Color 14: Print "(D) ";: Color 15: Print "NUMBER OF FREE THROWS "; FT$(RT%)
+Locate 16, 2: Color 14: Print "(E) ";: Color 15: Print "FREE THROW RULES "; FR$(FR%)
+Locate 17, 2: Color 14: Print "(F) ";: Color 15: Print "PLAY BY PLAY "; PB$(PB%)
+Locate 18, 2: Color 14: Print "NOTE:: ";: Color 15: Print "BONUS WAS ON 7TH FOUL (UNTIL 72-73), 6TH FOUL (72-73 SEASON)"
+Locate , 2: Print "       5TH FOUL (1973-74 TO PRESENT"
+Locate , 2: Color 14: Print "NOTE:: ";: Color 15: Print "UP UNTIL 1972-73, WHEN A TEAM WAS IN THE BONUS, THEY HAD THE CHANCE"
+Locate , 2: Print "       TO SHOOT 3 FT TO MAKE 2 OR 2 FT TO MAKE 1"
+Locate , 2: Color 14: Print "NOTE:: ";: Color 15: Print "UP UNTIL 1972-73, ALL FOULS WERE SHOT...UNLIKE THE CURRENT RULES"
+Locate , 2: Color 14: Print "NOTE:: ";: Color 15: Print "THE 3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 1979-80"
+Locate , 2: Color 14: Print "NOTE:: ";: Color 15: Print "THE ABA USED A 30-SEC SHOT CLOCK THROUGH 1973-74";
+
+35 Color 7
+I$ = GetKeyPress$
+If I$ = Chr$(27) Then Run "HELLO.EXE"
+I = Val(I$)
+If UCase$(I$) = "A" Then I = 11
+If UCase$(I$) = "B" Then I = 12
+If UCase$(I$) = "C" Then I = 13
+If UCase$(I$) = "D" Then I = 14
+If UCase$(I$) = "E" Then I = 15
+If UCase$(I$) = "F" Then I = 16
+If I < 0 Or I > 16 Then 35
+If I = 16 Then PB% = 1 - PB%: GoTo 25
+If I = 0 Then I = 10
+On I GOTO 38, 40, 41, 42, 44, 46, 48, 50, 45, 43, 47, 33, 10, 11, 9
+
+9 FR% = 1 - FR%: GoTo 25
 
 10 NB% = NB% + 1
-	IF NB% > 6 THEN NB% = 4
-	GOTO 25
+If NB% > 6 Then NB% = 4
+GoTo 25
 
-11 RT% = 1 - RT%: GOTO 25
+11 RT% = 1 - RT%: GoTo 25
 
-38 U5 = U5 + 1: IF U5 > 3 THEN U5 = 0
-	GOTO 25
+38 U5 = U5 + 1: If U5 > 3 Then U5 = 0
+GoTo 25
 
-40 P9 = 0: GOSUB 56: GOTO 24
+40 P9 = 0: GoSub 56: GoTo 24
 
-41 P9 = 1: GOSUB 56: GOTO 24
+41 P9 = 1: GoSub 56: GoTo 24
 
-42 XY% = XY% + 1: IF XY% > 1 THEN XY% = 0
-	GOTO 28
+42 XY% = XY% + 1: If XY% > 1 Then XY% = 0
+GoTo 28
 
-43 OPEN "DEFAULT" FOR OUTPUT AS #1
-	PRINT #1, U5: PRINT #1, XY%: PRINT #1, SC: PRINT #1, N: PRINT #1, PO: PRINT #1, U6: PRINT #1, X4%: PRINT #1, CM%
-	PRINT #1, NB%: PRINT #1, RT%: PRINT #1, FR%: PRINT #1, PB%:CLOSE 1
-	GOTO 31
+43 Open "DEFAULT" For Output As #1
+Print #1, U5: Print #1, XY%: Print #1, SC: Print #1, N: Print #1, PO: Print #1, U6: Print #1, X4%: Print #1, CM%
+Print #1, NB%: Print #1, RT%: Print #1, FR%: Print #1, PB%: Close 1
+GoTo 31
 
-44 SC = 1 - SC: GOTO 29
+44 SC = 1 - SC: GoTo 29
 
-45 PO = 1 - PO: GOTO 32
+45 PO = 1 - PO: GoTo 32
 
-46 N = N + 1: IF N > 2 THEN N = 1
-	GOTO 30
+46 N = N + 1: If N > 2 Then N = 1
+GoTo 30
 
-47 X4% = 1 - X4%: GOTO 32
+47 X4% = 1 - X4%: GoTo 32
 
-33 CM% = 1 - CM%: GOTO 32
+33 CM% = 1 - CM%: GoTo 32
 
-48 LOCATE 8, 32: INPUT U6: IF U6 < 0 THEN 48
-	GOTO 24
+48 Locate 8, 32: Input U6: If U6 < 0 Then 48
+GoTo 24
 
-50 IF B$(0, 0) = "" OR B$(1, 0) = "" THEN 24
-	CLS : COLOR 3: JJ = 6: CALL FRAMEBOX: LOCATE 10, 11
-	PRINT "IF YOU ARE USING THE 10 MINUTE TICKER OPTION FOR THIS GAME,"
-	LOCATE , 11: PRINT "ENTER STARTING TIME FOR GAME IN THIS FORMAT"
-	LOCATE , 11: PRINT "(EXAMPLES: 1:00P, 11:30A). OTHERWISE, JUST HIT ENTER": PRINT
-	LOCATE , 11: INPUT "START TIME: "; ST$
-	L = LEN(ST$)
-	IF L = 5 THEN HR = VAL(LEFT$(ST$, 1)): MIN = VAL(MID$(ST$, 3, 2))
-	IF L = 6 THEN HR = VAL(LEFT$(ST$, 2)): MIN = VAL(MID$(ST$, 4, 2))
-	T$ = RIGHT$(ST$, 1)
-	IF UCASE$(T$) = "P" AND LEFT$(ST$, 2) <> "12" THEN HR = HR + 12
-	TM = HR * 60 + MIN
-	TTS% = INT(TM / 30 - 18)
-	CALL SETUPRATINGS
+50 If B$(0, 0) = "" Or B$(1, 0) = "" Then 24
+Cls: Color 3: JJ = 6: Call FRAMEBOX: Locate 10, 11
+Print "IF YOU ARE USING THE 10 MINUTE TICKER OPTION FOR THIS GAME,"
+Locate , 11: Print "ENTER STARTING TIME FOR GAME IN THIS FORMAT"
+Locate , 11: Print "(EXAMPLES: 1:00P, 11:30A). OTHERWISE, JUST HIT ENTER": Print
+Locate , 11: Input "START TIME: "; ST$
+L = Len(ST$)
+If L = 5 Then HR = Val(Left$(ST$, 1)): MIN = Val(Mid$(ST$, 3, 2))
+If L = 6 Then HR = Val(Left$(ST$, 2)): MIN = Val(Mid$(ST$, 4, 2))
+T$ = Right$(ST$, 1)
+If UCase$(T$) = "P" And Left$(ST$, 2) <> "12" Then HR = HR + 12
+TM = HR * 60 + MIN
+TTS% = Int(TM / 30 - 18)
+Call SETUPRATINGS
 
-51 IF U5 = 1 THEN CT = 0: GOTO 55
-	IF U5 = 2 THEN U5 = 1: CT = 1: GOTO 55
-	IF U5 = 3 THEN U5 = 2
+51 If U5 = 1 Then CT = 0: GoTo 55
+If U5 = 2 Then U5 = 1: CT = 1: GoTo 55
+If U5 = 3 Then U5 = 2
 
-55 GOSUB 62
-	GOTO 900
+55 GoSub 62
+GoTo 900
 
-56 COLOR 15, 0: CLS
-	JJ = 6
-	SN = 1: LOCATE 6, 8: COLOR 15, 4
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 7 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
-	LOCATE , 12: PRINT "ENTER DISK ID: ": PRINT
-	LOCATE , 12: PRINT "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-	LOCATE , 12: PRINT "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-	LOCATE , 12: PRINT "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
-	LOCATE , 12: PRINT "HIT <ENTER> TO USE PREVIOUS ID"
-	LOCATE 7, 27: INPUT NY$
-	IF NY$ = "" THEN CALL TEAMMENU (2, YN$): GOTO 57
-	YN$ = NY$
-	FOR I = 1 TO 500: V$(I) = "": V%(I) = 1: NEXT
-	GOSUB 4100
-	CALL TEAMMENU (BO%, YN$)
+56 Color 15, 0: Cls
+JJ = 6
+SN = 1: Locate 6, 8: Color 15, 4
+Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
+Print " º"; String$(61, 32); "º ";: Next
+Locate 7 + JJ, 8
+Print " Ó"; String$(61, 196); "½ ";: Locate 7, 32
+Locate , 12: Print "ENTER DISK ID: ": Print
+Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+Locate , 12: Print "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
+Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
+Locate 7, 27: Input NY$
 
-57 IF BO% = 1 THEN BO% = 0: GOTO 56
+If NY$ = "" Then Call TEAMMENU(2, YN$): GoTo 57
 
-58 LOCATE 2, 33: COLOR T(P9, 33), T(P9, 34): PRINT B$(P9, 0): COLOR 15, 4: LOCATE , 33
-	PRINT "ANY CHANGE (YN)"; 
-	I$=GetKeyPress$
-	IF UCASE$(I$) = "Y" THEN 56
-	COLOR 15, 0
-	CALL DISABLEPLAYERS
-	RETURN
+YN$ = NY$
+For I = 1 To 500: V$(I) = "": V%(I) = 1: Next
 
-62 FOR I = 0 TO 1
-	CLS
-	IF UCASE$(LEFT$(P$(1), 1)) <> "A" AND UCASE$(LEFT$(P$(1), 1)) <> "B" THEN 64
-	COLOR 15, 0
-	PRINT "ENTER STATS DISK FOR ";
-	COLOR T(I, 33), T(I, 34)
-	PRINT B$(I, 0)
-	COLOR 15, 0
-	IF AP = 1 THEN 64
-	LOCATE 23, 1
-	PRINT "PRESS ANY KEY TO CONTINUE";
-63 I$ = GetKeyPress$
+Call TEAMMENU(BO%, YN$)
 
-64 Y$(I) = B$(I, 0)
-	Q = I
-	GOSUB 6585
-	M$ = MID$(B$(I, 0), 4, QQ)
-	R$ = M$ + "." + LEFT$(B$(I, 0), 2)
-	R$ = R$ + "S"
-	IF NOT _FILEEXISTS(P$(1) + R$) THEN 66
-OPEN P$(1) + R$ FOR INPUT AS #2
-	INPUT #2, Y%
-	FOR I1 = 1 TO 100: INPUT #2, O%(I1): NEXT
-	FOR I1 = 1 TO 100: INPUT #2, HO$(I1): NEXT
-	FOR I1 = 1 TO 100: INPUT #2, HT%(I1): NEXT
-	FOR I1 = 1 TO 100: INPUT #2, HO$(I1): NEXT
-CLOSE 2
-	FOR I1 = 1 TO Y%
-	IF O%(I1) > HT%(I1) THEN Z5(I) = Z5(I) + 1
-	IF O%(I1) < HT%(I1) THEN Z6(I) = Z6(I) + 1
-	NEXT
+57 If BO% = 1 Then BO% = 0: GoTo 56
 
-66 B$(I, 0) = Y$(I)
-	NEXT
-	RETURN
+58 Locate 2, 33: Color T(P9, 33), T(P9, 34): Print B$(P9, 0): Color 15, 4: Locate , 33
+Print "ANY CHANGE (YN)";
+I$ = GetKeyPress$
+If UCase$(I$) = "Y" Then 56
+Color 15, 0
+Call DISABLEPLAYERS
+Return
 
-70 CALL ROSTER
-	GOSUB 105
-	IF C1 = 1 THEN GOSUB 80: GOTO 73
-	FOR I = 0 TO 4
+62 For I = 0 To 1
+    Cls
+    If UCase$(Left$(P$(1), 1)) <> "A" And UCase$(Left$(P$(1), 1)) <> "B" Then 64
+    Color 15, 0
+    Print "ENTER STATS DISK FOR ";
+    Color T(I, 33), T(I, 34)
+    Print B$(I, 0)
+    Color 15, 0
+    If AP = 1 Then 64
+    Locate 23, 1
+    Print "PRESS ANY KEY TO CONTINUE";
+    63 I$ = GetKeyPress$
 
-76 LOCATE I + 20, 1
-	COLOR 2, 0: PRINT USING "# "; I; : COLOR 15: PRINT "ENTER "; PS$(I); " # ";
-72 I$ = GetKeyPress$
-	IF UCASE$(I$) = "O" OR UCASE$(I$) = "F" OR UCASE$(I$) = "P" THEN GOSUB 100: GOTO 76
-	J = VAL(I$): GOSUB 131
-	IF J < 0 OR J > 14 OR A(P9, J, 12) >= 6 OR AA$(P9, J, 0) = "XXX" OR B%(P9, J, 18) <> 0 THEN 72
-	FOR I2 = 0 TO 4: IF B1(P9, I2) = J THEN 72
-	NEXT I2
-	B1(P9, I) = J: Z = J: GOSUB 90: PRINT AA$(P9, J, 0); : LOCATE J + 3 - CV%, 3: COLOR T(P9, 33), T(P9, 34): PRINT LEFT$(AA$(P9, J, 0), 12): COLOR 15, 0
-	NEXT
+    64 Y$(I) = B$(I, 0)
+    Q = I
+    GoSub 6585
+    M$ = Mid$(B$(I, 0), 4, QQ)
+    R$ = M$ + "." + Left$(B$(I, 0), 2)
+    R$ = R$ + "S"
+    If Not _FileExists(P$(1) + R$) Then 66
+    Open P$(1) + R$ For Input As #2
+    Input #2, Y%
+    For I1 = 1 To 100: Input #2, O%(I1): Next
+    For I1 = 1 To 100: Input #2, HO$(I1): Next
+    For I1 = 1 To 100: Input #2, HT%(I1): Next
+    For I1 = 1 To 100: Input #2, HO$(I1): Next
+    Close 2
+    For I1 = 1 To Y%
+        If O%(I1) > HT%(I1) Then Z5(I) = Z5(I) + 1
+        If O%(I1) < HT%(I1) Then Z6(I) = Z6(I) + 1
+    Next
 
-73 LOCATE 25, 1: COLOR 12, 0: PRINT "# TO CHANGE (0-4) 6=NONE";
-	LOCATE 1, 1
+    66 B$(I, 0) = Y$(I)
+Next
+Return
+
+70 Call ROSTER
+GoSub 105
+If C1 = 1 Then GoSub 80: GoTo 73
+For I = 0 To 4
+
+    76 Locate I + 20, 1
+    Color 2, 0: Print Using "# "; I;: Color 15: Print "ENTER "; PS$(I); " # ";
+    72 I$ = GetKeyPress$
+    If UCase$(I$) = "O" Or UCase$(I$) = "F" Or UCase$(I$) = "P" Then GoSub 100: GoTo 76
+    J = Val(I$): GoSub 131
+    If J < 0 Or J > 14 Or A(P9, J, 12) >= 6 Or AA$(P9, J, 0) = "XXX" Or B%(P9, J, 18) <> 0 Then 72
+    For I2 = 0 To 4: If B1(P9, I2) = J Then 72
+    Next I2
+    B1(P9, I) = J: Z = J: GoSub 90: Print AA$(P9, J, 0);: Locate J + 3 - CV%, 3: Color T(P9, 33), T(P9, 34): Print Left$(AA$(P9, J, 0), 12): Color 15, 0
+Next
+
+73 Locate 25, 1: Color 12, 0: Print "# TO CHANGE (0-4) 6=NONE";
+Locate 1, 1
 74 I$ = GetKeyPress$
-	IF UCASE$(I$) = "O" OR UCASE$(I$) = "F" OR UCASE$(I$) = "P" THEN GOSUB 100: GOTO 74
-	I1 = VAL(I$): IF I1 = 6 THEN CLS : RETURN
-	IF I1 < 0 OR I1 > 4 THEN 73
-	IF X = 50 AND I1 = B AND P9 = P THEN LOCATE 20, 29: COLOR 14, 0: PRINT AA$(P9, B1(P9, I1), 0); " IS AT THE FT LINE": GOTO 73
-	LOCATE 25, 1: PRINT "                         ";
-	J = B1(P9, I1): Z = J: GOSUB 90: LOCATE J + 3 - CV%, 3: COLOR 15, 0: PRINT LEFT$(AA$(P9, J, 0), 12)
+If UCase$(I$) = "O" Or UCase$(I$) = "F" Or UCase$(I$) = "P" Then GoSub 100: GoTo 74
+I1 = Val(I$): If I1 = 6 Then Cls: Return
+If I1 < 0 Or I1 > 4 Then 73
+If X = 50 And I1 = B And P9 = P Then Locate 20, 29: Color 14, 0: Print AA$(P9, B1(P9, I1), 0); " IS AT THE FT LINE": GoTo 73
+Locate 25, 1: Print "                         ";
+J = B1(P9, I1): Z = J: GoSub 90: Locate J + 3 - CV%, 3: Color 15, 0: Print Left$(AA$(P9, J, 0), 12)
 
-77 LOCATE I1 + 20, 1: PRINT "                          ";
-	B1(P9, I1) = -1
-	LOCATE , 1: COLOR 2: PRINT USING "# "; I1; : COLOR 15: PRINT "ENTER "; PS$(I1); " # ";
+77 Locate I1 + 20, 1: Print "                          ";
+B1(P9, I1) = -1
+Locate , 1: Color 2: Print Using "# "; I1;: Color 15: Print "ENTER "; PS$(I1); " # ";
 75 I$ = GetKeyPress$
-	IF UCASE$(I$) = "O" OR UCASE$(I$) = "F" OR UCASE$(I$) = "P" THEN GOSUB 100: GOTO 77
-	J = VAL(I$): GOSUB 131
-	IF J < 0 OR J > 14 OR A(P9, J, 12) >= 6 OR B%(P9, J, 18) <> 0 OR AA$(P9, J, 0) = "XXX" THEN 75
-	FOR I2 = 0 TO 4: IF B1(P9, I2) = J THEN 75
-	NEXT I2
-	B1(P9, I1) = J: Z = J: GOSUB 90: PRINT AA$(P9, J, 0); : LOCATE J + 3 - CV%, 3: COLOR T(P9, 33), T(P9, 34): PRINT LEFT$(AA$(P9, J, 0), 12): COLOR 15, 0
-	GOTO 73
+If UCase$(I$) = "O" Or UCase$(I$) = "F" Or UCase$(I$) = "P" Then GoSub 100: GoTo 77
+J = Val(I$): GoSub 131
+If J < 0 Or J > 14 Or A(P9, J, 12) >= 6 Or B%(P9, J, 18) <> 0 Or AA$(P9, J, 0) = "XXX" Then 75
+For I2 = 0 To 4: If B1(P9, I2) = J Then 75
+Next I2
+B1(P9, I1) = J: Z = J: GoSub 90: Print AA$(P9, J, 0);: Locate J + 3 - CV%, 3: Color T(P9, 33), T(P9, 34): Print Left$(AA$(P9, J, 0), 12): Color 15, 0
+GoTo 73
 
-80 FOR M = 0 TO 4
-	LOCATE M + 20, 1
-	COLOR 2, 0: PRINT USING "# "; M; : COLOR 15, 0: PRINT "ENTER "; PS$(M); " # ";
-	Z = B1(P9, M): GOSUB 90
-	PRINT AA$(P9, Z, 0); : LOCATE Z + 3 - CV%, 3: COLOR T(P9, 33), T(P9, 34): PRINT LEFT$(AA$(P9, Z, 0), 12): COLOR 15, 0
-	NEXT
-	RETURN
+80 For M = 0 To 4
+    Locate M + 20, 1
+    Color 2, 0: Print Using "# "; M;: Color 15, 0: Print "ENTER "; PS$(M); " # ";
+    Z = B1(P9, M): GoSub 90
+    Print AA$(P9, Z, 0);: Locate Z + 3 - CV%, 3: Color T(P9, 33), T(P9, 34): Print Left$(AA$(P9, Z, 0), 12): Color 15, 0
+Next
+Return
 
-90 CV% = 0: FOR IP% = 0 TO Z: IF B%(P9, IP%, 18) <> 0 THEN CV% = CV% + 1
-	NEXT: RETURN
+90 CV% = 0: For IP% = 0 To Z: If B%(P9, IP%, 18) <> 0 Then CV% = CV% + 1
+Next: Return
 
-100 IF UCASE$(I$) = "P" THEN P7(P9) = 1 - P7(P9): GOSUB 105: RETURN
-	IF UCASE$(I$) = "F" THEN D2(P9) = D2(P9) + 1: IF D2(P9) > 5 THEN D2(P9) = 1
-	IF UCASE$(I$) = "O" THEN O0%(P9) = O0%(P9) + 1: IF O0%(P9) > 2 THEN O0%(P9) = 0
-	GOSUB 105: RETURN
+100 If UCase$(I$) = "P" Then P7(P9) = 1 - P7(P9): GoSub 105: Return
+If UCase$(I$) = "F" Then D2(P9) = D2(P9) + 1: If D2(P9) > 5 Then D2(P9) = 1
+If UCase$(I$) = "O" Then O0%(P9) = O0%(P9) + 1: If O0%(P9) > 2 Then O0%(P9) = 0
+GoSub 105: Return
 
-105 COLOR 14: LOCATE 19, 29: PRINT "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
-	LOCATE 21, 32: COLOR 15: PRINT "O"; : COLOR 3: PRINT "FFENSE STYLE-"; : COLOR 7: PRINT O$(O0%(P9))
-	LOCATE 22, 32: COLOR 3: PRINT "DE"; : COLOR 15: PRINT "F"; : COLOR 3: PRINT "ENSE STYLE-"; : COLOR 7: PRINT D$(D2(P9))
-	LOCATE 23, 32: COLOR 3: PRINT "FULL COURT "; : COLOR 15: PRINT "P"; : COLOR 3: PRINT "RESS-"; : COLOR 7: PRINT P7$(P7(P9))
-	RETURN
+105 Color 14: Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
+Locate 21, 32: Color 15: Print "O";: Color 3: Print "FFENSE STYLE-";: Color 7: Print O$(O0%(P9))
+Locate 22, 32: Color 3: Print "DE";: Color 15: Print "F";: Color 3: Print "ENSE STYLE-";: Color 7: Print D$(D2(P9))
+Locate 23, 32: Color 3: Print "FULL COURT ";: Color 15: Print "P";: Color 3: Print "RESS-";: Color 7: Print P7$(P7(P9))
+Return
 
-131 IF UCASE$(I$) = "A" THEN J = 10
-	IF UCASE$(I$) = "B" THEN J = 11
-	IF UCASE$(I$) = "C" THEN J = 12
-	IF UCASE$(I$) = "D" THEN J = 13
-	IF UCASE$(I$) = "E" THEN J = 14
-	RETURN
+131 If UCase$(I$) = "A" Then J = 10
+If UCase$(I$) = "B" Then J = 11
+If UCase$(I$) = "C" Then J = 12
+If UCase$(I$) = "D" Then J = 13
+If UCase$(I$) = "E" Then J = 14
+Return
 
-150 GOSUB 1200
-	RETURN
+150 GoSub 1200
+Return
 
-159 GOSUB 698
-	CALL NEWSCREEN
-	RETURN
+159 GoSub 698
+Call NEWSCREEN
+Return
 
 170 T = 0
-	TF(0) = TF(0) + P2(0)
-	TF(1) = TF(1) + P2(1)
-	CALL QUARTERTOTAL
-	H = H + 1
-	 GOSUB 275
-	XS = 1
-	P2(0) = 0
-	P2(1) = 0
-	X = 0
-	U$ = "END OF QUARTER!"
-	IF PB% = 0 THEN CALL DELAY
-	IF PB% = 1 AND U6 <> 0 THEN CALL WINDEX:PRINT U$:CALL MOREDELAY
-	GOSUB 178
-	IF H < 5 AND U5 <> 0 THEN GOSUB 175
-	IF H < 5 THEN GOSUB 159: B = -1: GOSUB 220: T = 720: CALL UPDATESCREEN: GOTO 250
-	GOSUB 159
-	IF H = 5 THEN U$ = "END OF REGULATION"
-	IF H = 5 AND PB% = 0 THEN CALL DELAY
-	IF H = 5 AND PB% = 1 AND U6 <> 0 THEN CALL WINDEX:PRINT U$:CALL MOREDELAY
-	IF S(0, 0) = S(1, 0) AND PB% = 0 THEN U$ = "OVERTIME !!!": CALL DELAY
-	IF S(0, 0) = S(1, 0) AND PB% = 1 THEN CALL WINDEX: PRINT "OVERTIME !!!":CALL MOREDELAY
-	IF S(0, 0) = S(1, 0) THEN 190
-	CALL GETKEY
-	GOTO 8400
+TF(0) = TF(0) + P2(0)
+TF(1) = TF(1) + P2(1)
+Call QUARTERTOTAL
+H = H + 1
+GoSub 275
+XS = 1
+P2(0) = 0
+P2(1) = 0
+X = 0
+U$ = "END OF QUARTER!"
+If PB% = 0 Then Call DELAY
+If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+GoSub 178
+If H < 5 And U5 <> 0 Then GoSub 175
+If H < 5 Then GoSub 159: B = -1: GoSub 220: T = 720: Call UPDATESCREEN: GoTo 250
+GoSub 159
+If H = 5 Then U$ = "END OF REGULATION"
+If H = 5 And PB% = 0 Then Call DELAY
+If H = 5 And PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+If S(0, 0) = S(1, 0) And PB% = 0 Then U$ = "OVERTIME !!!": Call DELAY
+If S(0, 0) = S(1, 0) And PB% = 1 Then Call WINDEX: Print "OVERTIME !!!": Call MOREDELAY
+If S(0, 0) = S(1, 0) Then 190
+I$ = GetKeyPress$
+GoTo 8400
 
-175 IF U5 = 1 THEN P9 = CT: CALL COMPUTERSUBS
-	IF U5 = 2 THEN P9 = 0: CALL COMPUTERSUBS: P9 = 1: CALL COMPUTERSUBS
-	RETURN
+175 If U5 = 1 Then P9 = CT: Call COMPUTERSUBS
+If U5 = 2 Then P9 = 0: Call COMPUTERSUBS: P9 = 1: Call COMPUTERSUBS
+Return
 
-178 IF H = 3 AND PB% = 0 THEN U$ = "HALFTIME!": CALL DELAY: GOSUB 8515
-	IF H = 3 AND PB% = 1 THEN CALL WINDEX: PRINT "HALFTIME!": GOSUB 8515
-	RETURN
+178 If H = 3 And PB% = 0 Then U$ = "HALFTIME!": Call DELAY: GoSub 8515
+If H = 3 And PB% = 1 Then Call WINDEX: Print "HALFTIME!": GoSub 8515
+Return
 
-190 T1(0) = T1(0) + 1: T1(1) = T1(1) + 1: T = 300: ZF(0) = 0: ZF(1) = 0: CALL UPDATESCREEN: B = -1: GOSUB 220: GOTO 250
+190 T1(0) = T1(0) + 1: T1(1) = T1(1) + 1: T = 300: ZF(0) = 0: ZF(1) = 0: Call UPDATESCREEN: B = -1: GoSub 220: GoTo 250
 
-210 M5 = 0: IF T <= 2 OR IN = 99 THEN M5 = 2: GOTO 214
-	IF T > 2 AND T <= 4 THEN M5 = 2
-	IF T > 4 AND T <= 16 THEN M5 = INT(RND(1) * 2) + 3
-	IF T > 16 THEN M5 = INT(RND(1) * 2) + 4: 'CHANGED AFTER DEF RB CHANGE FROM +4 TO +3
+210 M5 = 0: If T <= 2 Or IN = 99 Then M5 = 2: GoTo 214
+If T > 2 And T <= 4 Then M5 = 2
+If T > 4 And T <= 16 Then M5 = Int(Rnd(1) * 2) + 3
+If T > 16 Then M5 = Int(Rnd(1) * 2) + 4: 'CHANGED AFTER DEF RB CHANGE FROM +4 TO +3
 
-214 TE = M5: GOSUB 365: T = T - M5: IN = 0: X8 = X8 - M5
-	IF T <= .001 THEN TE = T: GOSUB 365: T = 0
-	IF X8 <= 0 THEN X8 = 0
-	CALL UPDATESCREEN
-	RETURN
+214 TE = M5: GoSub 365: T = T - M5: IN = 0: X8 = X8 - M5
+If T <= .001 Then TE = T: GoSub 365: T = 0
+If X8 <= 0 Then X8 = 0
+Call UPDATESCREEN
+Return
 
 220 NL% = 1
-	A1$ = ""
-	B1$ = ""
-	C1$ = ""
-	D1$ = ""
-	E1$ = ""
-	F1$ = ""
-	G1$ = ""
-	H1$ = ""
-	GOSUB 927
-	FO = 0
-	GOSUB 4090
-	LOCATE 10
-	IF U5 = 2 THEN S2 = 0: P9 = P: C1 = 2: GOSUB 698: CALL RATINGTABLES: RETURN
-	LOCATE 10, 1: COLOR 15, 0
-	PRINT "<ENTER>-CONTINUE"
-	PRINT "1-SUB "; B$(P, 0)
-	PRINT "2-SUB "; B$(D, 0)
+A1$ = ""
+B1$ = ""
+C1$ = ""
+D1$ = ""
+E1$ = ""
+F1$ = ""
+G1$ = ""
+H1$ = ""
+GoSub 927
+FO = 0
+GoSub 4090
+Locate 10
+If U5 = 2 Then S2 = 0: P9 = P: C1 = 2: GoSub 698: Call RATINGTABLES: Return
+Locate 10, 1: Color 15, 0
+Print "<ENTER>-CONTINUE"
+Print "1-SUB "; B$(P, 0)
+Print "2-SUB "; B$(D, 0)
 221 I$ = GetKeyPress$
-	P3 = VAL(I$)
-	IF P3 < 1 OR P3 > 2 OR U5 = 1 AND P3 = 1 AND P = CT OR U5 = 1 AND P3 = 2 AND D = CT THEN S2 = 0: P9 = P: C1 = 2: GOSUB 698: CALL RATINGTABLES: GOTO 227
-	IF P3 = 1 THEN S2 = P
-	IF P3 = 2 THEN S2 = D
-	C1 = 1: P9 = S2: GOSUB 70: GOSUB 150: P9 = P: LC% = 1: GOTO 220
+P3 = Val(I$)
+If P3 < 1 Or P3 > 2 Or U5 = 1 And P3 = 1 And P = CT Or U5 = 1 And P3 = 2 And D = CT Then S2 = 0: P9 = P: C1 = 2: GoSub 698: Call RATINGTABLES: GoTo 227
+If P3 = 1 Then S2 = P
+If P3 = 2 Then S2 = D
+C1 = 1: P9 = S2: GoSub 70: GoSub 150: P9 = P: LC% = 1: GoTo 220
 
-227 IF LC% = 1 THEN LC% = 0: GOSUB 159
-	GOSUB 4090: RETURN
+227 If LC% = 1 Then LC% = 0: GoSub 159
+GoSub 4090: Return
 
-230 REM
-	FOR P9 = 0 TO 1
-	IF U5 = 1 AND P9 = CT OR U5 = 2 THEN CALL COMPUTERSUBS: GOTO 243
-	GOSUB 70
-	GOSUB 150
+230 Rem
+For P9 = 0 To 1
+    If U5 = 1 And P9 = CT Or U5 = 2 Then Call COMPUTERSUBS: GoTo 243
+    GoSub 70
+    GoSub 150
 
-243 NEXT P9
-	CALL RATINGTABLES
-	 GOSUB 159
-	 CALL RATINGTABLES
+243 Next P9
+Call RATINGTABLES
+GoSub 159
+Call RATINGTABLES
 
-250 GOSUB 850
-	IF H < 1 AND H > 5 THEN 252
-	P = INT(RND(1) * 2): JB = P
+250 GoSub 850
+If H < 1 And H > 5 Then 252
+P = Int(Rnd(1) * 2): JB = P
 
-252 IF P = 0 THEN D = 1
-	IF P = 1 THEN D = 0
-	GOSUB 3000: GOSUB 210
-	IF T <= 0 THEN TE = T: GOSUB 365: T = 0: CALL UPDATESCREEN: GOTO 170
-	GOSUB 1033
-	IF H = 1 OR H > 4 THEN
-	  IF PB% = 0 THEN U$ = B$(JB, 0) + " GETS THE JUMP":CALL DELAY
-	  IF PB% = 1 AND U6<>0 THEN CALL WINDEX:COLOR T(JB,33),T(JB,34):PRINT B$(JB,0);:COLOR 15,0:PRINT " GETS THE JUMP":CALL MOREDELAY
-	  P9 = JB
-	  P = JB
-	  GOTO 300
-	END IF
-	IF PB% = 0 THEN U$ = B$(JB, 0) + " INBOUNDS THE BALL":CALL DELAY
-	IF PB% = 1 AND U6<>0 THEN CALL WINDEX:COLOR T(JB,33),T(JB,34):PRINT B$(JB,0);:COLOR 15,0:PRINT " INBOUNDS THE BALL":CALL MOREDELAY
-	P9 = JB
-	P = JB
-	GOTO 300
+252 If P = 0 Then D = 1
+If P = 1 Then D = 0
+GoSub 3000: GoSub 210
+If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+GoSub 1033
+If H = 1 Or H > 4 Then
+    If PB% = 0 Then U$ = B$(JB, 0) + " GETS THE JUMP": Call DELAY
+    If PB% = 1 And U6 <> 0 Then Call WINDEX: Color T(JB, 33), T(JB, 34): Print B$(JB, 0);: Color 15, 0: Print " GETS THE JUMP": Call MOREDELAY
+    P9 = JB
+    P = JB
+    GoTo 300
+End If
+If PB% = 0 Then U$ = B$(JB, 0) + " INBOUNDS THE BALL": Call DELAY
+If PB% = 1 And U6 <> 0 Then Call WINDEX: Color T(JB, 33), T(JB, 34): Print B$(JB, 0);: Color 15, 0: Print " INBOUNDS THE BALL": Call MOREDELAY
+P9 = JB
+P = JB
+GoTo 300
 
-260 GOSUB 4090
-	LOCATE 8, 1
-	IF P7(D) = 1 THEN
-	  IF PB% = 0 THEN U$ = B$(D, 0) + " IS PRESSING":CALL DELAY
-	  IF PB% = 1 AND U6<>0 THEN CALL WINDEX:COLOR T(D,33),T(D,34):PRINT B$(D,0);:COLOR 15,0:PRINT " IS PRESSING":CALL MOREDELAY
-	  P1 = 1
-	END IF
-	RETURN
+260 GoSub 4090
+Locate 8, 1
+If P7(D) = 1 Then
+    If PB% = 0 Then U$ = B$(D, 0) + " IS PRESSING": Call DELAY
+    If PB% = 1 And U6 <> 0 Then Call WINDEX: Color T(D, 33), T(D, 34): Print B$(D, 0);: Color 15, 0: Print " IS PRESSING": Call MOREDELAY
+    P1 = 1
+End If
+Return
 
 275 '*** ADJUST TIMEOUTS ***
-	IF H < 4 THEN 281
-	FOR PG = 0 TO 1
-	IF T1(PG) > 4 THEN T1(PG) = 4
-	IF H > 4 THEN T1(PG) = 3
-	NEXT
+If H < 4 Then 281
+For PG = 0 To 1
+    If T1(PG) > 4 Then T1(PG) = 4
+    If H > 4 Then T1(PG) = 3
+Next
 
-281 RETURN
+281 Return
 
-300 ST = 0: FO = 0: LS = 0: XS = 0: IF X8 > 0 AND X8 < SC(SC) THEN X8 = X8 - 5: GOTO 302
-	X8 = SC(SC): LS = 0: GOSUB 835: IF T < 6 AND LT <> 4 THEN LS = 4
+300 ST = 0: FO = 0: LS = 0: XS = 0: If X8 > 0 And X8 < SC(SC) Then X8 = X8 - 5: GoTo 302
+X8 = SC(SC): LS = 0: GoSub 835: If T < 6 And LT <> 4 Then LS = 4
 
-302 D6 = 0: PASS% = 1: A4 = 0: A6 = 0: F = 0: IF X <> 90 THEN X = 0
-	IF X <> 90 THEN X = 0
-	GOTO 400
+302 D6 = 0: PASS% = 1: A4 = 0: A6 = 0: F = 0: If X <> 90 Then X = 0
+If X <> 90 Then X = 0
+GoTo 400
 
 350 PASS% = PASS% + 1
-	P6 = 0
-	A4 = 0
-	D6 = 0
-	A6 = 1
-	F = 0
-	X = 0
-	GOTO 400
+P6 = 0
+A4 = 0
+D6 = 0
+A6 = 1
+F = 0
+X = 0
+GoTo 400
 
-359 S = INT(RND(1) * 100) + 1
-	W%(P, B1(P, B), 1) = W%(P, B1(P, B), 1) + 1
-	A(P, B1(P, B), 7) = A(P, B1(P, B), 7) + 1
-	PT% = 3
-	CALL MAKEPBP
-	CALL DELAY
-	IF S <= F3S% THEN 363
-IF PB% = 1 AND U6 <> 0 THEN
-	  CALL WINDEX
-	  PRINT "3 PT FG MISSED BY "; AA$(P, B1(P, B), 0)
-	  CALL MOREDELAY
-	END IF
-	IF PB% = 0 THEN
-	  PT% = 5
-	  CALL MAKEPBP
-	  CALL DELAY
-	END IF
-	GOSUB 1033
-	T = T - 4
-	TE = 4
-	GOSUB 365
-	IF T <= 0 THEN TE = T: GOSUB 365: T = 0: CALL UPDATESCREEN: GOTO 170
-	CALL UPDATESCREEN
-	GOTO 670
+359 S = Int(Rnd(1) * 100) + 1
+W%(P, B1(P, B), 1) = W%(P, B1(P, B), 1) + 1
+A(P, B1(P, B), 7) = A(P, B1(P, B), 7) + 1
+PT% = 3
+Call MAKEPBP
+Call DELAY
+If S <= F3S% Then 363
+If PB% = 1 And U6 <> 0 Then
+    Call WINDEX
+    Print "3 PT FG MISSED BY "; AA$(P, B1(P, B), 0)
+    Call MOREDELAY
+End If
+If PB% = 0 Then
+    PT% = 5
+    Call MAKEPBP
+    Call DELAY
+End If
+GoSub 1033
+T = T - 4
+TE = 4
+GoSub 365
+If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+Call UPDATESCREEN
+GoTo 670
 
 363 ' MADE 3-POINT FIELD GOAL
-	IF PB% = 1 AND U6<>0 THEN
-	  CALL WINDEX
-	  PRINT "3 PT FG GOOD BY "; AA$(P, B1(P, B), 0);" !!!"
-	  CALL MOREDELAY
-	END IF
-	IF PB% = 0 THEN
-	  PT% = 4
-	  CALL MAKEPBP
-	  CALL DELAY
-	END IF
-	CALL MOREDELAY
-	S(P, H) = S(P, H) + 3
-	S(P, 0) = S(P, 0) + 3
-	W%(P, B1(P, B), 0) = W%(P, B1(P, B), 0) + 1
-	A(P, B1(P, B), 8) = A(P, B1(P, B), 8) + 1
-	GOSUB 1054
-	CALL UPDATESCREEN
-	GOTO 562
+If PB% = 1 And U6 <> 0 Then
+    Call WINDEX
+    Print "3 PT FG GOOD BY "; AA$(P, B1(P, B), 0); " !!!"
+    Call MOREDELAY
+End If
+If PB% = 0 Then
+    PT% = 4
+    Call MAKEPBP
+    Call DELAY
+End If
+Call MOREDELAY
+S(P, H) = S(P, H) + 3
+S(P, 0) = S(P, 0) + 3
+W%(P, B1(P, B), 0) = W%(P, B1(P, B), 0) + 1
+A(P, B1(P, B), 8) = A(P, B1(P, B), 8) + 1
+GoSub 1054
+Call UPDATESCREEN
+GoTo 562
 
 365 '*** INCREMENT MINUTES ***
-	FOR I3 = 0 TO 1
-	FOR I4 = 0 TO 4
-	ZZ(I3, B1(I3, I4)) = ZZ(I3, B1(I3, I4)) + TE
-	NEXT: NEXT
-	RETURN
+For I3 = 0 To 1
+    For I4 = 0 To 4
+        ZZ(I3, B1(I3, I4)) = ZZ(I3, B1(I3, I4)) + TE
+Next: Next
+Return
 
-400 A4 = 0: D6 = 0: P3 = 0: B = INT(RND(1) * 5)
-	GOSUB 405
-	IF P1 = 1 THEN 428
-	R0 = INT(RND(1) * 1000) + 1
-	ON D2(D) GOTO 461, 477, 494, 461, 477: REM*** BRANCH TO AREA BASED ON DEFENSE ***
+400 A4 = 0: D6 = 0: P3 = 0: B = Int(Rnd(1) * 5)
+GoSub 405
+If P1 = 1 Then 428
+R0 = Int(Rnd(1) * 1000) + 1
+On D2(D) GOTO 461, 477, 494, 461, 477: Rem*** BRANCH TO AREA BASED ON DEFENSE ***
 
-405 R0 = INT(RND(1) * 100) + 1
-	IF U5 = 0 AND CM% = 1 OR U5 = 1 AND D = CT AND CM% = 1 OR U5 = 1 AND P = CT OR U5 = 2 THEN 1040
-	IF R0 <= 40 THEN 424
-	B = INT(RND(1) * 5)
-	GOTO 427
+405 R0 = Int(Rnd(1) * 100) + 1
+If U5 = 0 And CM% = 1 Or U5 = 1 And D = CT And CM% = 1 Or U5 = 1 And P = CT Or U5 = 2 Then 1040
+If R0 <= 40 Then 424
+B = Int(Rnd(1) * 5)
+GoTo 427
 
-424 IF U6<>0 AND PB%=0 THEN U$="PASS TO CHOICE (0-4)":CALL DELAY
-	IF U6<>0 AND PB%=1 THEN
-	  IF AP=1 AND U5=2 OR U6=0 THEN 425
-	  CALL WINDEX
-	  PRINT "PASS TO CHOICE (0-4)"
-	  CALL DELAY
-	END IF
+424 If U6 <> 0 And PB% = 0 Then U$ = "PASS TO CHOICE (0-4)": Call DELAY
+If U6 <> 0 And PB% = 1 Then
+    If AP = 1 And U5 = 2 Or U6 = 0 Then 425
+    Call WINDEX
+    Print "PASS TO CHOICE (0-4)"
+    Call DELAY
+End If
 425 I$ = GetKeyPress$
-	IF UCASE$(I$) = "T" THEN CALL TICKER: GOTO 425
-	IF UCASE$(I$) = "S" THEN CALL SCOUTREPORT: GOTO 425
-	IF UCASE$(I$) = "Q" THEN RUN "HELLO.EXE"
-	IF UCASE$(I$) = "Z" OR I$ = "/" THEN CALL CHANGESTRATEGY (I$): GOTO 425
-	B = VAL(I$): IF B < 0 OR B > 4 THEN 424
+If UCase$(I$) = "T" Then Call TICKER: GoTo 425
+If UCase$(I$) = "S" Then Call SCOUTREPORT: GoTo 425
+If UCase$(I$) = "Q" Then Run "HELLO.EXE"
+If UCase$(I$) = "Z" Or I$ = "/" Then Call CHANGESTRATEGY(I$): GoTo 425
+B = Val(I$): If B < 0 Or B > 4 Then 424
 
-427 RETURN
+427 Return
 
-428 P1 = 0: R0 = INT(RND(1) * 1000) + 1
-	IF R0 <= 3 THEN 511
-	IF R0 <= 50 THEN 512
-	IF R0 <= 50 + F7%(P, 1) + F7%(D, 2) THEN 515
-	P9 = INT(RND(1) * 5)
-	IF R0 <= 40 + F7%(P, 1) + F7%(D, 2) + A(D, B1(D, P9), 5) + F7%(P, 0) THEN 513
-	GOTO 465
-	 '***BAD SHOT ***
+428 P1 = 0: R0 = Int(Rnd(1) * 1000) + 1
+If R0 <= 3 Then 511
+If R0 <= 50 Then 512
+If R0 <= 50 + F7%(P, 1) + F7%(D, 2) Then 515
+P9 = Int(Rnd(1) * 5)
+If R0 <= 40 + F7%(P, 1) + F7%(D, 2) + A(D, B1(D, P9), 5) + F7%(P, 0) Then 513
+GoTo 465
+'***BAD SHOT ***
 
-437 A4 = 0: R0 = INT(RND(1) * 3) + 1
-	IF A(P, B1(P, B), 0) > 60 AND R0 = 1 THEN F = 24
-	IF A(P, B1(P, B), 0) > 60 AND R0 = 2 THEN F = 30
-	IF A(P, B1(P, B), 0) > 60 AND R0 = 3 THEN F = 36
-	IF A(P, B1(P, B), 0) <= 60 AND R0 = 1 THEN F = A(P, B1(P, B), 0) * .4
-	IF A(P, B1(P, B), 0) <= 60 AND R0 = 2 THEN F = A(P, B1(P, B), 0) * .5
-	IF A(P, B1(P, B), 0) <= 60 AND R0 = 3 THEN F = A(P, B1(P, B), 0) * .6
-	PZ% = 1
-	X = 0: GOTO 520
+437 A4 = 0: R0 = Int(Rnd(1) * 3) + 1
+If A(P, B1(P, B), 0) > 60 And R0 = 1 Then F = 24
+If A(P, B1(P, B), 0) > 60 And R0 = 2 Then F = 30
+If A(P, B1(P, B), 0) > 60 And R0 = 3 Then F = 36
+If A(P, B1(P, B), 0) <= 60 And R0 = 1 Then F = A(P, B1(P, B), 0) * .4
+If A(P, B1(P, B), 0) <= 60 And R0 = 2 Then F = A(P, B1(P, B), 0) * .5
+If A(P, B1(P, B), 0) <= 60 And R0 = 3 Then F = A(P, B1(P, B), 0) * .6
+PZ% = 1
+X = 0: GoTo 520
 
-445 IF H = 4 AND T <= 120 OR H > 4 THEN 446
-	IF A(P, B1(P, B), 3) - A(P, B1(P, B), 7) - A(P, B1(P, B), 11) - A(P, B1(P, B), 12) <= 0 THEN 437
+445 If H = 4 And T <= 120 Or H > 4 Then 446
+If A(P, B1(P, B), 3) - A(P, B1(P, B), 7) - A(P, B1(P, B), 11) - A(P, B1(P, B), 12) <= 0 Then 437
 
 446 '*** CHECKING 3-POINT SHOT ***
-	IF XY% = 0 THEN 448
-	F3S% = 0
-	RN = INT(RND(1) * 100) + 1
-	IF RN <= A(P, B1(P, B), 19) THEN PZ% = 4: F3S% = A(P, B1(P, B), 20) + F7%(D, 4): F3S% = F3S% + INT(RND(1) * 7) - 3: X = 0: GOTO 520
-	IF P6 = 4 AND INT(RND(1) * 100) + 1 <= 20 THEN 437
-	IF P6 = 4 THEN PZ% = 4: X = 0: F3S% = .4 * A(P, B1(P, B), 20) + F7%(D, 4): GOTO 520
-	IF H >= 4 AND T < 30 AND S(D, 0) - S(P, 0) > 3 AND A(P, B1(P, B), 19) >= 3 THEN PZ% = 4: X = 0: F3S% = A(P, B1(P, B), 20) + F7%(D, 4): GOTO 520
+If XY% = 0 Then 448
+F3S% = 0
+RN = Int(Rnd(1) * 100) + 1
+If RN <= A(P, B1(P, B), 19) Then PZ% = 4: F3S% = A(P, B1(P, B), 20) + F7%(D, 4): F3S% = F3S% + Int(Rnd(1) * 7) - 3: X = 0: GoTo 520
+If P6 = 4 And Int(Rnd(1) * 100) + 1 <= 20 Then 437
+If P6 = 4 Then PZ% = 4: X = 0: F3S% = .4 * A(P, B1(P, B), 20) + F7%(D, 4): GoTo 520
+If H >= 4 And T < 30 And S(D, 0) - S(P, 0) > 3 And A(P, B1(P, B), 19) >= 3 Then PZ% = 4: X = 0: F3S% = A(P, B1(P, B), 20) + F7%(D, 4): GoTo 520
 
 448 '*** CHECKING FOR ASSISTED SHOT ***
-	GOSUB 920: A4 = INT(RND(1) * 41)
-	R0 = INT(RND(1) * F5%(P, 4)) + 1: RN = INT(.17 * F5%(P, 4) + .5)
-	IF RN >= R0 THEN F = F + A4: PZ% = 2: X = 0: GOTO 520
-	'*** CHECK PENETRATION SHOT ***
-	RN = INT(RND(1) * 100) + 1: A4 = INT(RND(1) * 50) + 1
-	IF RN <= (B%(P, B1(P, B), 16) + OY%(O0%(P))) * 2 + 1 THEN PZ% = 3: F = F + A4: X = 0: GOTO 520
-	'*** CHECK AVERAGE SHOT ***
-	I2 = B%(P, B1(P, B), 16): RN = INT(RND(1) * 2)
-	IF LEFT$(AA$(P, B1(P, B), 1), 1) = "G" OR LEFT$(AA$(P, B1(P, B), 1), 1) = "F" THEN 453
-	IF RN = 1 THEN 452
-	PZ% = 5: F = F + CF%(RN, I2): X = 0: GOTO 520
+GoSub 920: A4 = Int(Rnd(1) * 41)
+R0 = Int(Rnd(1) * F5%(P, 4)) + 1: RN = Int(.17 * F5%(P, 4) + .5)
+If RN >= R0 Then F = F + A4: PZ% = 2: X = 0: GoTo 520
+'*** CHECK PENETRATION SHOT ***
+RN = Int(Rnd(1) * 100) + 1: A4 = Int(Rnd(1) * 50) + 1
+If RN <= (B%(P, B1(P, B), 16) + OY%(O0%(P))) * 2 + 1 Then PZ% = 3: F = F + A4: X = 0: GoTo 520
+'*** CHECK AVERAGE SHOT ***
+I2 = B%(P, B1(P, B), 16): RN = Int(Rnd(1) * 2)
+If Left$(AA$(P, B1(P, B), 1), 1) = "G" Or Left$(AA$(P, B1(P, B), 1), 1) = "F" Then 453
+If RN = 1 Then 452
+PZ% = 5: F = F + CF%(RN, I2): X = 0: GoTo 520
 
-452 PZ% = 6: F = F + CF%(RN, I2): X = 0: GOTO 520
+452 PZ% = 6: F = F + CF%(RN, I2): X = 0: GoTo 520
 
-453 RN = INT(RND(1) * 3)
-	IF RN = 1 THEN 454
-	IF RN = 2 THEN 457
-	PZ% = 5: F = F + GF%(RN, I2): X = 0: GOTO 520
+453 RN = Int(Rnd(1) * 3)
+If RN = 1 Then 454
+If RN = 2 Then 457
+PZ% = 5: F = F + GF%(RN, I2): X = 0: GoTo 520
 
-454 PZ% = 6: F = F + GF%(RN, I2): X = 0: GOTO 520
+454 PZ% = 6: F = F + GF%(RN, I2): X = 0: GoTo 520
 
-457 PZ% = 7: F = F + GF%(RN, I2): X = 0: GOTO 520
+457 PZ% = 7: F = F + GF%(RN, I2): X = 0: GoTo 520
 
 461 '*** SHOT VS REG/TIGHT M-M ***
-	IF R0 <= 2 THEN 511
-	IF R0 <= 30 THEN 512
-	IF R0 <= 30 + F7%(P, 1) + F7%(D, 2) THEN 515
-	P9 = INT(RND(1) * 5)
-	IF R0 <= 24 + F7%(P, 1) + F7%(D, 2) + A(D, B1(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) THEN 513
+If R0 <= 2 Then 511
+If R0 <= 30 Then 512
+If R0 <= 30 + F7%(P, 1) + F7%(D, 2) Then 515
+P9 = Int(Rnd(1) * 5)
+If R0 <= 24 + F7%(P, 1) + F7%(D, 2) + A(D, B1(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then 513
 
-465 R0 = INT(RND(1) * 1000) + 1
-	IF (PASS% <= 3 OR PASS% > 4) AND R0 <= 320 + ((JY - 89) * 10) THEN 445
-	IF PASS% = 4 THEN 445
-	GOTO 437
+465 R0 = Int(Rnd(1) * 1000) + 1
+If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
+If PASS% = 4 Then 445
+GoTo 437
 
 477 '*** SHOT VS LOOSE/SAG M-M ***
-	IF R0 <= 1 THEN 511
-	IF R0 <= 10 THEN 512
-	IF R0 <= 10 + F7%(P, 1) + F7%(D, 2) THEN 515
-	P9 = INT(RND(1) * 5)
-	IF R0 <= 8 + F7%(P, 1) + F7%(D, 2) + A(D, B1(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) THEN 513
-	GOTO 465
+If R0 <= 1 Then 511
+If R0 <= 10 Then 512
+If R0 <= 10 + F7%(P, 1) + F7%(D, 2) Then 515
+P9 = Int(Rnd(1) * 5)
+If R0 <= 8 + F7%(P, 1) + F7%(D, 2) + A(D, B1(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then 513
+GoTo 465
 
 494 '*** SHOT VS TRAP M-M ***
-	IF R0 <= 3 THEN 511
-	IF R0 <= 50 THEN 512
-	IF R0 <= 50 + F7%(P, 1) + F7%(D, 2) THEN 515
-	P9 = INT(RND(1) * 5)
-	IF R0 <= 40 + F7%(P, 1) + F7%(D, 2) + A(D, B1(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) THEN 513
-	GOTO 465
+If R0 <= 3 Then 511
+If R0 <= 50 Then 512
+If R0 <= 50 + F7%(P, 1) + F7%(D, 2) Then 515
+P9 = Int(Rnd(1) * 5)
+If R0 <= 40 + F7%(P, 1) + F7%(D, 2) + A(D, B1(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then 513
+GoTo 465
 
-511 X = 0: GOTO 580
+511 X = 0: GoTo 580
 
-512 GOSUB 210: GOSUB 1033: CALL UPDATESCREEN: X = 88: GOTO 565
+512 GoSub 210: GoSub 1033: Call UPDATESCREEN: X = 88: GoTo 565
 
-513 GOSUB 210
-	GOSUB 1033
-	A(P, B1(P, B), 23) = A(P, B1(P, B), 23) + 1
-	IF U6 = 0 THEN 500
-	IF PB% = 1 THEN
-	  CALL WINDEX
-	  PRINT "BALL STOLEN BY ";AA$(D, B1(D, P9), 0); "!"
-	  CALL MOREDELAY
-	  GOTO 500
-	END IF
-	RN = INT(RND(1) * 100) + 1
-	IF RN<=3 THEN U$ = AA$(D, B1(D, P9), 0) + " QUICKLY REACHES IN!":CALL DELAY
-	IF RN>3 AND RN<=6 THEN U$ = AA$(D, B1(D, P9), 0) + " SNEAKS IN FROM BEHIND!":CALL DELAY
-	IF RN>6 AND RN<=10 THEN U$ = AA$(D, B1(D, P9), 0) + " GETS A HAND ON THE BALL!":CALL DELAY
-	 RN = INT(RND(1) * 20) + 1
-	 IF RN = 1 THEN U$ = "PASS INTERCEPTED BY " + AA$(D, B1(D, P9), 0) + "!"
-	IF RN = 2 THEN U$ = "PASS IS PICKED OFF BY " + AA$(D, B1(D, P9), 0) + "!"
-	IF RN = 3 THEN U$ = "BALL IS STOLEN BY " + AA$(D, B1(D, P9), 0) + "!"
-	IF RN = 4 THEN U$ = AA$(D, B1(D, P9), 0) + " WITH THE STEAL!"
-	IF RN = 5 THEN U$ = AA$(D, B1(D, P9), 0) + " TAKES IT AWAY!"
-	IF RN = 6 THEN U$ = AA$(D, B1(D, P9), 0) + " STEALS IT!"
-	IF RN = 7 THEN U$ = AA$(D, B1(D, P9), 0) + " RIPS IT LOOSE!"
-	IF RN = 8 THEN U$ = AA$(D, B1(D, P9), 0) + " TAKES THE BALL AWAY!"
-	IF RN = 9 THEN U$ = AA$(D, B1(D, P9), 0) + " STEALS THE BALL!"
-	IF RN =10 THEN U$ = AA$(D, B1(D, P9), 0) + " PICKS IT OFF!"
-	IF RN =11 THEN U$ = AA$(D, B1(D, P9), 0) + " SWIPES THE BALL!"
-	IF RN =12 THEN U$ = AA$(D, B1(D, P9), 0) + " WITH THE STOLEN BALL!"
-	IF RN =13 THEN U$ = AA$(D, B1(D, P9), 0) + " STRIPS IT AWAY!"
-	IF RN =14 THEN U$ = AA$(D, B1(D, P9), 0) + " WITH THE STEAL!"
-	IF RN =15 THEN U$ = AA$(D, B1(D, P9), 0) + " SWIPES AND STEALS IT!"
-	IF RN =16 THEN U$ = AA$(D, B1(D, P9), 0) + " SNATCHES IT AWAY!"
-	IF RN =17 THEN U$ = AA$(D, B1(D, P9), 0) + " QUICKLY REACHES IN!"
-	IF RN =18 THEN U$ = AA$(D, B1(D, P9), 0) + " TAKES IT THE OTHER WAY!"
-	IF RN =19 THEN U$ = AA$(D, B1(D, P9), 0) + " POKES IT LOOSE!"
-	IF RN =20 THEN U$ = AA$(D, B1(D, P9), 0) + " STRIPS IT CLEAN!"
-	 CALL DELAY
+513 GoSub 210
+GoSub 1033
+A(P, B1(P, B), 23) = A(P, B1(P, B), 23) + 1
+If U6 = 0 Then 500
+If PB% = 1 Then
+    Call WINDEX
+    Print "BALL STOLEN BY "; AA$(D, B1(D, P9), 0); "!"
+    Call MOREDELAY
+    GoTo 500
+End If
+RN = Int(Rnd(1) * 100) + 1
+If RN <= 3 Then U$ = AA$(D, B1(D, P9), 0) + " QUICKLY REACHES IN!": Call DELAY
+If RN > 3 And RN <= 6 Then U$ = AA$(D, B1(D, P9), 0) + " SNEAKS IN FROM BEHIND!": Call DELAY
+If RN > 6 And RN <= 10 Then U$ = AA$(D, B1(D, P9), 0) + " GETS A HAND ON THE BALL!": Call DELAY
+RN = Int(Rnd(1) * 20) + 1
+If RN = 1 Then U$ = "PASS INTERCEPTED BY " + AA$(D, B1(D, P9), 0) + "!"
+If RN = 2 Then U$ = "PASS IS PICKED OFF BY " + AA$(D, B1(D, P9), 0) + "!"
+If RN = 3 Then U$ = "BALL IS STOLEN BY " + AA$(D, B1(D, P9), 0) + "!"
+If RN = 4 Then U$ = AA$(D, B1(D, P9), 0) + " WITH THE STEAL!"
+If RN = 5 Then U$ = AA$(D, B1(D, P9), 0) + " TAKES IT AWAY!"
+If RN = 6 Then U$ = AA$(D, B1(D, P9), 0) + " STEALS IT!"
+If RN = 7 Then U$ = AA$(D, B1(D, P9), 0) + " RIPS IT LOOSE!"
+If RN = 8 Then U$ = AA$(D, B1(D, P9), 0) + " TAKES THE BALL AWAY!"
+If RN = 9 Then U$ = AA$(D, B1(D, P9), 0) + " STEALS THE BALL!"
+If RN = 10 Then U$ = AA$(D, B1(D, P9), 0) + " PICKS IT OFF!"
+If RN = 11 Then U$ = AA$(D, B1(D, P9), 0) + " SWIPES THE BALL!"
+If RN = 12 Then U$ = AA$(D, B1(D, P9), 0) + " WITH THE STOLEN BALL!"
+If RN = 13 Then U$ = AA$(D, B1(D, P9), 0) + " STRIPS IT AWAY!"
+If RN = 14 Then U$ = AA$(D, B1(D, P9), 0) + " WITH THE STEAL!"
+If RN = 15 Then U$ = AA$(D, B1(D, P9), 0) + " SWIPES AND STEALS IT!"
+If RN = 16 Then U$ = AA$(D, B1(D, P9), 0) + " SNATCHES IT AWAY!"
+If RN = 17 Then U$ = AA$(D, B1(D, P9), 0) + " QUICKLY REACHES IN!"
+If RN = 18 Then U$ = AA$(D, B1(D, P9), 0) + " TAKES IT THE OTHER WAY!"
+If RN = 19 Then U$ = AA$(D, B1(D, P9), 0) + " POKES IT LOOSE!"
+If RN = 20 Then U$ = AA$(D, B1(D, P9), 0) + " STRIPS IT CLEAN!"
+Call DELAY
 
 500 A(D, B1(D, P9), 13) = A(D, B1(D, P9), 13) + 1
-	T0(P) = T0(P) + 1
-	CALL UPDATESCREEN
-	C1 = 2: P9 = D
-	IF T <= 0 THEN TE = T: GOSUB 365: T = 0: CALL UPDATESCREEN: GOTO 170
-	GOSUB 3000: FB% = 1: GOTO 300
+T0(P) = T0(P) + 1
+Call UPDATESCREEN
+C1 = 2: P9 = D
+If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+GoSub 3000: FB% = 1: GoTo 300
 
-515 GOSUB 210: GOSUB 1033: A(P, B1(P, B), 23) = A(P, B1(P, B), 23) + 1: T0(P) = T0(P) + 1
-	IF SV% <> 1 THEN PT% = 1: CALL MAKEPBP
-	SV% = 0
-	IF PB% = 1 AND U6 <> 0 THEN
-	  CALL WINDEX
-	  PRINT "TURNOVER BY ";:COLOR T(P,33),T(P,34):PRINT B$(P, 0):COLOR 15,0: CALL MOREDELAY
-	END IF
-	IF PB% = 0 THEN CALL DELAY
-	U$ = "BALL OUT OF BOUNDS TO " + B$(D, 0)
-	GOSUB 729
-	CALL MOREDELAY
-	CALL UPDATESCREEN
-	LOCATE 10, 1
-	IF T <= 0 THEN TE = T: GOSUB 365: T = 0: CALL UPDATESCREEN: GOTO 170
-	GOSUB 3000: GOSUB 220: GOTO 300
+515 GoSub 210: GoSub 1033: A(P, B1(P, B), 23) = A(P, B1(P, B), 23) + 1: T0(P) = T0(P) + 1
+If SV% <> 1 Then PT% = 1: Call MAKEPBP
+SV% = 0
+If PB% = 1 And U6 <> 0 Then
+    Call WINDEX
+    Print "TURNOVER BY ";: Color T(P, 33), T(P, 34): Print B$(P, 0): Color 15, 0: Call MOREDELAY
+End If
+If PB% = 0 Then Call DELAY
+U$ = "BALL OUT OF BOUNDS TO " + B$(D, 0)
+GoSub 729
+Call MOREDELAY
+Call UPDATESCREEN
+Locate 10, 1
+If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+GoSub 3000: GoSub 220: GoTo 300
 
-520 GOSUB 210
-	IF T <= 0 THEN TE = T: GOSUB 365: T = 0: CALL UPDATESCREEN: GOTO 170
-	IF PZ% = 4 AND F3S% <= 0 THEN F3S% = 3
-	IF U6 = 0 THEN 529
-	IF F > 70 AND FB% = 1 AND PASS% = 1 THEN PT% = 6: PZ% = 8: CALL MAKEPBP: CALL DELAY: GOTO 529
-	IF AA$(P, B1(P, B), 0) <> PB$ AND PB$ = "" THEN U$ = "PASS TO " + AA$(P, B1(P, B), 0): CALL DELAY
-	IF AA$(P, B1(P, B), 0) <> PB$ AND PB$ <> "" THEN PT% = 10: CALL MAKEPBP: CALL DELAY
-	IF AA$(P, B1(P, B), 0) = PB$ THEN PT% = 9: CALL MAKEPBP: CALL DELAY
-	IF X8 <= 0 THEN U$ = "SHOT CLOCK HAS EXPIRED!": SV% = 1: GOTO 515
-	IF X8 < 5 THEN U$ = "SHOT CLOCK DOWN TO" + STR$(X8): CALL DELAY
-	PB$ = AA$(P, B1(P, B), 0)
-	Z3$ = LEFT$(AA$(P, B1(P, B), 1), 1)
-	Y2$ = "HE"
-	Y3$ = AA$(D, B1(D, B), 0)
-	ON PZ% GOTO 521, 522, 523, 524, 525, 526, 527
+520 GoSub 210
+If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+If PZ% = 4 And F3S% <= 0 Then F3S% = 3
+If U6 = 0 Then 529
+If F > 70 And FB% = 1 And PASS% = 1 Then PT% = 6: PZ% = 8: Call MAKEPBP: Call DELAY: GoTo 529
+If AA$(P, B1(P, B), 0) <> PB$ And PB$ = "" Then U$ = "PASS TO " + AA$(P, B1(P, B), 0): Call DELAY
+If AA$(P, B1(P, B), 0) <> PB$ And PB$ <> "" Then PT% = 10: Call MAKEPBP: Call DELAY
+If AA$(P, B1(P, B), 0) = PB$ Then PT% = 9: Call MAKEPBP: Call DELAY
+If X8 <= 0 Then U$ = "SHOT CLOCK HAS EXPIRED!": SV% = 1: GoTo 515
+If X8 < 5 Then U$ = "SHOT CLOCK DOWN TO" + Str$(X8): Call DELAY
+PB$ = AA$(P, B1(P, B), 0)
+Z3$ = Left$(AA$(P, B1(P, B), 1), 1)
+Y2$ = "HE"
+Y3$ = AA$(D, B1(D, B), 0)
+On PZ% GOTO 521, 522, 523, 524, 525, 526, 527
 
-521 IF U6 = 0 THEN 601
-	 RN = INT(RND(1) * 12) + 1
-	IF RN = 1 THEN U$ = Y2$ + "'S HEAVILY GUARDED"
-	IF RN = 2 THEN U$ = Y2$ + "'S GUARDED"
-	IF RN = 3 THEN U$ = Y2$ + "'S GUARDED BY "+Y3$
-	IF RN = 4 THEN U$ = Y2$ + " HAS A MAN ON HIM"
-	IF RN = 5 THEN U$ = Y2$ + " HAS A DEFENDER ON HIM"
-	IF RN = 6 THEN U$ = Y2$ + "'S COVERED"
-	IF RN = 7 THEN U$ = Y2$ + " CAN'T GET AROUND THE DEFENDER"
-	IF RN = 8 THEN U$ = Y2$ + "'S PRESSURED"
-	IF RN = 9 THEN U$ = Y2$ + " HAS NOWHERE TO GO"
-	IF RN = 10 THEN U$ = Y2$ + " HAS A HAND IN HIS FACE"
-	IF RN = 11 THEN U$ = Y2$ + "'S WATCHED BY "+Y3$
-	IF RN = 12 THEN U$ = Y2$ + "'S WORKING ON "+Y3$
+521 If U6 = 0 Then 601
+RN = Int(Rnd(1) * 12) + 1
+If RN = 1 Then U$ = Y2$ + "'S HEAVILY GUARDED"
+If RN = 2 Then U$ = Y2$ + "'S GUARDED"
+If RN = 3 Then U$ = Y2$ + "'S GUARDED BY " + Y3$
+If RN = 4 Then U$ = Y2$ + " HAS A MAN ON HIM"
+If RN = 5 Then U$ = Y2$ + " HAS A DEFENDER ON HIM"
+If RN = 6 Then U$ = Y2$ + "'S COVERED"
+If RN = 7 Then U$ = Y2$ + " CAN'T GET AROUND THE DEFENDER"
+If RN = 8 Then U$ = Y2$ + "'S PRESSURED"
+If RN = 9 Then U$ = Y2$ + " HAS NOWHERE TO GO"
+If RN = 10 Then U$ = Y2$ + " HAS A HAND IN HIS FACE"
+If RN = 11 Then U$ = Y2$ + "'S WATCHED BY " + Y3$
+If RN = 12 Then U$ = Y2$ + "'S WORKING ON " + Y3$
 
-601 CALL DELAY
-	GOTO 529
+601 Call DELAY
+GoTo 529
 
-522 U$ = Y2$ + " WORKS FREE INSIDE": CALL DELAY: U$ = "HE HAS AN OPEN SHOT": CALL DELAY: GOTO 529
+522 U$ = Y2$ + " WORKS FREE INSIDE": Call DELAY: U$ = "HE HAS AN OPEN SHOT": Call DELAY: GoTo 529
 
-523 IF U6 = 0 THEN 529
-	RN = INT(RND(1) * 100) + 1
-	IF Z3$ = "C" AND RN <= 25 THEN U$ = Y2$ + " MAKES A MOVE DOWN LOW": CALL DELAY: GOTO 602
-	IF Z3$ = "C" AND RN <= 50 THEN U$ = Y2$ + " POSITIONS HIMSELF DOWN LOW": CALL DELAY: GOTO 602
-	IF Z3$ = "C" AND RN <= 75 THEN U$ = Y2$ + " POSTS UP UNDERNEATH": CALL DELAY: GOTO 602
-	IF Z3$ = "C" THEN U$ = Y2$ + " BACKS IN AGAINST " + AA$(D, B1(D, 4), 0): CALL DELAY
+523 If U6 = 0 Then 529
+RN = Int(Rnd(1) * 100) + 1
+If Z3$ = "C" And RN <= 25 Then U$ = Y2$ + " MAKES A MOVE DOWN LOW": Call DELAY: GoTo 602
+If Z3$ = "C" And RN <= 50 Then U$ = Y2$ + " POSITIONS HIMSELF DOWN LOW": Call DELAY: GoTo 602
+If Z3$ = "C" And RN <= 75 Then U$ = Y2$ + " POSTS UP UNDERNEATH": Call DELAY: GoTo 602
+If Z3$ = "C" Then U$ = Y2$ + " BACKS IN AGAINST " + AA$(D, B1(D, 4), 0): Call DELAY
 
-602 IF Z3$ = "C" THEN U$ = "HE HAS A GOOD SHOT INSIDE": CALL DELAY: GOTO 529
-	IF Z3$ = "F" AND RN <= 17 THEN U$ = Y2$ + " DRIVES THE BASELINE": CALL DELAY: GOTO 603
-	IF Z3$ = "F" AND RN <= 34 THEN U$ = Y2$ + " PENETRATES THE LANE": CALL DELAY: GOTO 603
-	IF Z3$ = "F" AND RN <= 50 THEN U$ = Y2$ + " MOVES INSIDE": CALL DELAY: GOTO 603
-	IF Z3$ = "F" AND RN <= 67 THEN U$ = Y2$ + " DRIVES THE LANE": CALL DELAY: GOTO 603
-	IF Z3$ = "F" AND RN <= 84 THEN U$ = Y2$ + " MOVES INTO THE PAINT": CALL DELAY: GOTO 603
-	IF Z3$ = "F" THEN U$ = Y2$ + " DRIVES UNDERNEATH": CALL DELAY
+602 If Z3$ = "C" Then U$ = "HE HAS A GOOD SHOT INSIDE": Call DELAY: GoTo 529
+If Z3$ = "F" And RN <= 17 Then U$ = Y2$ + " DRIVES THE BASELINE": Call DELAY: GoTo 603
+If Z3$ = "F" And RN <= 34 Then U$ = Y2$ + " PENETRATES THE LANE": Call DELAY: GoTo 603
+If Z3$ = "F" And RN <= 50 Then U$ = Y2$ + " MOVES INSIDE": Call DELAY: GoTo 603
+If Z3$ = "F" And RN <= 67 Then U$ = Y2$ + " DRIVES THE LANE": Call DELAY: GoTo 603
+If Z3$ = "F" And RN <= 84 Then U$ = Y2$ + " MOVES INTO THE PAINT": Call DELAY: GoTo 603
+If Z3$ = "F" Then U$ = Y2$ + " DRIVES UNDERNEATH": Call DELAY
 
-603 IF Z3$ = "F" THEN U$ = "HE'S GOT A GOOD SHOT UNDERNEATH": CALL DELAY: GOTO 529
-	IF Z3$ = "G" AND RN <= 25 THEN U$ = Y2$ + " DRIVES THE LANE": CALL DELAY: GOTO 604
-	IF Z3$ = "G" AND RN <= 50 THEN U$ = Y2$ + " DRIVES THROUGH THE KEY": CALL DELAY: U$ = "HE'S INTO THE LANE": CALL DELAY: GOTO 604
-	IF Z3$ = "G" AND RN <= 75 THEN U$ = Y2$ + " DRIVES TO THE BASKET": CALL DELAY: GOTO 604
-	U$ = Y2$ + " DRIVES THROUGH AN OPENING": CALL DELAY
+603 If Z3$ = "F" Then U$ = "HE'S GOT A GOOD SHOT UNDERNEATH": Call DELAY: GoTo 529
+If Z3$ = "G" And RN <= 25 Then U$ = Y2$ + " DRIVES THE LANE": Call DELAY: GoTo 604
+If Z3$ = "G" And RN <= 50 Then U$ = Y2$ + " DRIVES THROUGH THE KEY": Call DELAY: U$ = "HE'S INTO THE LANE": Call DELAY: GoTo 604
+If Z3$ = "G" And RN <= 75 Then U$ = Y2$ + " DRIVES TO THE BASKET": Call DELAY: GoTo 604
+U$ = Y2$ + " DRIVES THROUGH AN OPENING": Call DELAY
 
-604 U$ = "HE HAS A GOOD SHOT CLOSE IN": CALL DELAY
-	GOTO 529
+604 U$ = "HE HAS A GOOD SHOT CLOSE IN": Call DELAY
+GoTo 529
 
-524 U$ = "HE'S OPEN FROM 3-POINT RANGE!": CALL DELAY: GOTO 529
+524 U$ = "HE'S OPEN FROM 3-POINT RANGE!": Call DELAY: GoTo 529
 
-525 U$ = "HE'S OPEN FROM CLOSE RANGE": CALL DELAY: GOTO 529
+525 U$ = "HE'S OPEN FROM CLOSE RANGE": Call DELAY: GoTo 529
 
-526 U$ = "HE'S OPEN FROM MEDIUM RANGE": CALL DELAY: GOTO 529
+526 U$ = "HE'S OPEN FROM MEDIUM RANGE": Call DELAY: GoTo 529
 
-527 U$ = "HE'S OPEN FROM LONG RANGE": CALL DELAY: GOTO 529
+527 U$ = "HE'S OPEN FROM LONG RANGE": Call DELAY: GoTo 529
 
-529 IF F <= 0 THEN F = 1
-	IF F >= 100 THEN F = 100
-	IF U6 = 0 THEN 528
-	IF PB% = 1 THEN
-	  CALL WINDEX
-	  PRINT "PASS TO ";AA$(P, B1(P, B), 0);" OF ";
-	  COLOR T(P,33),T(P,34)
-	  PRINT B$(P, 0):COLOR 15,0
-	END IF
-	IF PB% = 1 AND PZ% <> 4 THEN LOCATE 10: PRINT "SHOT % "; INT(F + .5);
-	IF PB% = 1 AND PZ% = 4 THEN LOCATE 10: PRINT "3 PT SHOT % "; INT(F3S% + .5); : PRINT " *"; : GOTO 528
-	IF PB% = 1 AND PZ% >= 2 AND PZ% <= 8 THEN PRINT "*";
-	IF U6 = 0 OR PB% = 1 THEN 528
-	IF PZ% <> 4 THEN LOCATE 8, 41: PRINT USING "SHOT % ###   "; INT(F + .5);
-	IF PZ% = 4 THEN LOCATE 8, 41: PRINT USING "SHOT % ###"; INT(F3S% + .5); : PRINT " *"; : GOTO 528
-	IF PZ% >= 2 AND PZ% <= 8 THEN LOCATE , 52: PRINT "*";
+529 If F <= 0 Then F = 1
+If F >= 100 Then F = 100
+If U6 = 0 Then 528
+If PB% = 1 Then
+    Call WINDEX
+    Print "PASS TO "; AA$(P, B1(P, B), 0); " OF ";
+    Color T(P, 33), T(P, 34)
+    Print B$(P, 0): Color 15, 0
+End If
+If PB% = 1 And PZ% <> 4 Then Locate 10: Print "SHOT % "; Int(F + .5);
+If PB% = 1 And PZ% = 4 Then Locate 10: Print "3 PT SHOT % "; Int(F3S% + .5);: Print " *";: GoTo 528
+If PB% = 1 And PZ% >= 2 And PZ% <= 8 Then Print "*";
+If U6 = 0 Or PB% = 1 Then 528
+If PZ% <> 4 Then Locate 8, 41: Print Using "SHOT % ###   "; Int(F + .5);
+If PZ% = 4 Then Locate 8, 41: Print Using "SHOT % ###"; Int(F3S% + .5);: Print " *";: GoTo 528
+If PZ% >= 2 And PZ% <= 8 Then Locate , 52: Print "*";
 
-528 PRINT : IF PB% = 1 AND U6 <> 0 THEN CALL MOREDELAY
-	IF U5 <> 0 OR CM% = 1 THEN 949
+528 Print: If PB% = 1 And U6 <> 0 Then Call MOREDELAY
+If U5 <> 0 Or CM% = 1 Then 949
 530 I$ = GetKeyPress$
-	IF UCASE$(I$) = "T" THEN CALL TICKER: GOTO 530
-	IF UCASE$(I$) = "S" THEN CALL SCOUTREPORT: GOTO 530
-	IF UCASE$(I$) = "Q" THEN RUN "HELLO.EXE"
-	IF UCASE$(I$) = "Z" OR I$ = "/" THEN CALL CHANGESTRATEGY (I$): GOTO 530
-	P6 = VAL(I$): IF P6 < 1 OR P6 > 4 THEN P6 = 0
-	IF P6 = 4 THEN FT% = 1
+If UCase$(I$) = "T" Then Call TICKER: GoTo 530
+If UCase$(I$) = "S" Then Call SCOUTREPORT: GoTo 530
+If UCase$(I$) = "Q" Then Run "HELLO.EXE"
+If UCase$(I$) = "Z" Or I$ = "/" Then Call CHANGESTRATEGY(I$): GoTo 530
+P6 = Val(I$): If P6 < 1 Or P6 > 4 Then P6 = 0
+If P6 = 4 Then FT% = 1
 
-532 I$=GetKeyPress$
-	IF UCASE$(I$) = "T" THEN CALL TICKER
-	IF UCASE$(I$) = "Z" OR I$ = "/" THEN CALL CHANGESTRATEGY (I$)
-	IF UCASE$(I$) = "S" THEN CALL SCOUTREPORT
-	IF UCASE$(I$) = "Q" THEN RUN "HELLO.EXE"
-	IF VAL(I$) = 3 AND (U5 = 0 OR U5 = 1 AND P = CT) AND H >= 4 AND T < 240 THEN P6 = 3
-	IF VAL(I$) = 2 AND (U5 = 0 OR U5 = 1 AND D = CT) AND T1(P) > 0 THEN P6 = 2
-	P3 = P6: IF P6 = 2 AND T1(P) = 0 THEN 530
-	IF P6 = 3 AND H < 4 OR P6 = 3 AND U5 = 1 AND D = CT THEN 530
-	IF P6 = 3 AND H = 4 AND T > 240 THEN 530
-	'
-	IF (P6 = 1 OR P6 = 4) AND PZ% = 4 THEN P6 = 4
-	ON P6 + 1 GOTO 350, 537, 640, 584, 359
+532 I$ = GetKeyPress$
+If UCase$(I$) = "T" Then Call TICKER
+If UCase$(I$) = "Z" Or I$ = "/" Then Call CHANGESTRATEGY(I$)
+If UCase$(I$) = "S" Then Call SCOUTREPORT
+If UCase$(I$) = "Q" Then Run "HELLO.EXE"
+If Val(I$) = 3 And (U5 = 0 Or U5 = 1 And P = CT) And H >= 4 And T < 240 Then P6 = 3
+If Val(I$) = 2 And (U5 = 0 Or U5 = 1 And D = CT) And T1(P) > 0 Then P6 = 2
+P3 = P6: If P6 = 2 And T1(P) = 0 Then 530
+If P6 = 3 And H < 4 Or P6 = 3 And U5 = 1 And D = CT Then 530
+If P6 = 3 And H = 4 And T > 240 Then 530
+'
+If (P6 = 1 Or P6 = 4) And PZ% = 4 Then P6 = 4
+On P6 + 1 GOTO 350, 537, 640, 584, 359
 
 537 '*** SHOOT!!! ***
-	PT% = 3: CALL MAKEPBP: CALL DELAY
-	S = 0
-	R0 = INT(RND(1) * 100) + 1
-	A(P, B1(P, B), 7) = A(P, B1(P, B), 7) + 1
-	IF H > 3 AND T <= 30 AND S(D, 0) - S(P, 0) = 2 OR H > 3 AND T <= 30 AND S(D, 0) - S(P, 0) = 0 THEN 540
-	IF R0 <= A(P, B1(P, B), 16) + F7%(D, 3) THEN A(P, B1(P, B), 7) = A(P, B1(P, B), 7) - 1: GOSUB 1033: GOTO 589
+PT% = 3: Call MAKEPBP: Call DELAY
+S = 0
+R0 = Int(Rnd(1) * 100) + 1
+A(P, B1(P, B), 7) = A(P, B1(P, B), 7) + 1
+If H > 3 And T <= 30 And S(D, 0) - S(P, 0) = 2 Or H > 3 And T <= 30 And S(D, 0) - S(P, 0) = 0 Then 540
+If R0 <= A(P, B1(P, B), 16) + F7%(D, 3) Then A(P, B1(P, B), 7) = A(P, B1(P, B), 7) - 1: GoSub 1033: GoTo 589
 
-540 S = INT(RND(1) * 100) + 1: R0 = (F - 2) * .1
-	IF S <= R0 THEN GOSUB 1033: GOTO 610
-	IF S <= F - 2 THEN 553
-	R0 = INT(RND(1) * 100) + 1
-	GOTO 548
+540 S = Int(Rnd(1) * 100) + 1: R0 = (F - 2) * .1
+If S <= R0 Then GoSub 1033: GoTo 610
+If S <= F - 2 Then 553
+R0 = Int(Rnd(1) * 100) + 1
+GoTo 548
 
-545 IF PB% = 1 AND U6 <> 0 THEN
-	  CALL WINDEX
-	  PRINT "SHOT MISSED BY "; AA$(P, B1(P, B), 0)
-	  CALL MOREDELAY
-	END IF
-	IF PB% = 0 THEN PT% = 8: CALL MAKEPBP: CALL DELAY
-	GOSUB 1033
+545 If PB% = 1 And U6 <> 0 Then
+    Call WINDEX
+    Print "SHOT MISSED BY "; AA$(P, B1(P, B), 0)
+    Call MOREDELAY
+End If
+If PB% = 0 Then PT% = 8: Call MAKEPBP: Call DELAY
+GoSub 1033
 
 546 T = T - 4
-	TE = 4
-	GOSUB 365
-	IF T <= 0 THEN TE = T: GOSUB 365: T = 0: CALL UPDATESCREEN: GOTO 170
-	CALL UPDATESCREEN
-	GOTO 670
+TE = 4
+GoSub 365
+If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+Call UPDATESCREEN
+GoTo 670
 
-548 I5 = INT(RND(1) * 100) + 1
-	I3 = INT(RND(1) * 5)
-	IF I5 > A(D, B1(D, I3), 6) THEN 545
-	IF U6 = 0 THEN 554
-	IF PB% = 1 THEN
-	  CALL WINDEX
-	  PRINT "SHOT BLOCKED BY "; AA$(D, B1(D, I3), 0)
-	  CALL MOREDELAY
-	  GOTO 554
-	END IF
-	 RN = INT(RND(1) * 100) + 1
-	IF RN <= 10 THEN U$ = AA$(D, B1(D, I3), 0)+" STUFFS THE SHOT!!":GOTO 549
-	IF RN <= 15 THEN U$ = "DENIED BY "+ AA$(D, B1(D, I3), 0)+"!!":GOTO 549
-	IF RN <= 20 THEN U$ = "ERASED BY "+ AA$(D, B1(D, I3), 0)+"!!":GOTO 549
-	IF RN <= 25 THEN U$ = "EXPUNGED BY "+ AA$(D, B1(D, I3), 0)+"!!":GOTO 549
-	IF RN <= 30 THEN U$ = "REBUKED BY "+ AA$(D, B1(D, I3), 0)+"!!":GOTO 549
-	IF RN <= 35 THEN U$ = "SHOT BLOCKED CLEANLY BY "+ AA$(D, B1(D, I3), 0)+"!!":GOTO 549
-	IF RN <= 70 THEN U$ = "SHOT BLOCKED BY "+ AA$(D, B1(D, I3), 0)+"!!":GOTO 549
-	IF RN <= 90 THEN U$ = "SHOT REJECTED BY "+ AA$(D, B1(D, I3), 0)+"!!":GOTO 549
-	U$ = "SHOT SWATTED OUT BY "+ AA$(D, B1(D, I3), 0)+"!!":GOTO 549
+548 I5 = Int(Rnd(1) * 100) + 1
+I3 = Int(Rnd(1) * 5)
+If I5 > A(D, B1(D, I3), 6) Then 545
+If U6 = 0 Then 554
+If PB% = 1 Then
+    Call WINDEX
+    Print "SHOT BLOCKED BY "; AA$(D, B1(D, I3), 0)
+    Call MOREDELAY
+    GoTo 554
+End If
+RN = Int(Rnd(1) * 100) + 1
+If RN <= 10 Then U$ = AA$(D, B1(D, I3), 0) + " STUFFS THE SHOT!!": GoTo 549
+If RN <= 15 Then U$ = "DENIED BY " + AA$(D, B1(D, I3), 0) + "!!": GoTo 549
+If RN <= 20 Then U$ = "ERASED BY " + AA$(D, B1(D, I3), 0) + "!!": GoTo 549
+If RN <= 25 Then U$ = "EXPUNGED BY " + AA$(D, B1(D, I3), 0) + "!!": GoTo 549
+If RN <= 30 Then U$ = "REBUKED BY " + AA$(D, B1(D, I3), 0) + "!!": GoTo 549
+If RN <= 35 Then U$ = "SHOT BLOCKED CLEANLY BY " + AA$(D, B1(D, I3), 0) + "!!": GoTo 549
+If RN <= 70 Then U$ = "SHOT BLOCKED BY " + AA$(D, B1(D, I3), 0) + "!!": GoTo 549
+If RN <= 90 Then U$ = "SHOT REJECTED BY " + AA$(D, B1(D, I3), 0) + "!!": GoTo 549
+U$ = "SHOT SWATTED OUT BY " + AA$(D, B1(D, I3), 0) + "!!": GoTo 549
 
-549 CALL DELAY
+549 Call DELAY
 
 554 A(D, B1(D, I3), 15) = A(D, B1(D, I3), 15) + 1
-	X = 98
-	GOTO 546
+X = 98
+GoTo 546
 
-553 IF DK% = 1 AND PB% = 0 THEN PT% = 2: CALL MAKEPBP: U$ = "STUFF BY "+ AA$(P, B1(P, B), 0) + " !!!": DK% = 0: GOTO 559
-	IF DK% = 1 AND PB% = 1 THEN U$ = "STUFF BY "+ AA$(P, B1(P, B), 0) + " !!!": DK% = 0: GOTO 559
-	IF PB% = 0 AND PZ% = 8 THEN PT% = 7: CALL MAKEPBP: CALL DELAY: PZ% = 0: GOTO 560
-	U$ = "BASKET BY "
-	U$ = U$ + AA$(P, B1(P, B), 0) + " !!!"
+553 If DK% = 1 And PB% = 0 Then PT% = 2: Call MAKEPBP: U$ = "STUFF BY " + AA$(P, B1(P, B), 0) + " !!!": DK% = 0: GoTo 559
+If DK% = 1 And PB% = 1 Then U$ = "STUFF BY " + AA$(P, B1(P, B), 0) + " !!!": DK% = 0: GoTo 559
+If PB% = 0 And PZ% = 8 Then PT% = 7: Call MAKEPBP: Call DELAY: PZ% = 0: GoTo 560
+U$ = "BASKET BY "
+U$ = U$ + AA$(P, B1(P, B), 0) + " !!!"
 
-559 IF PB% = 1 AND U6 <> 0 THEN CALL WINDEX: PRINT U$: CALL MOREDELAY: GOTO 560
-	RN = INT(RND(1) * 100) + 1
-	IF RN<=50 THEN 561
-	RN = INT(RND(1)*22)+1
-	IF RN = 1 THEN U$ = "NOTHING BUT THE BOTTOM OF THE NET!"
-	IF RN = 2 THEN U$ = "COUNT IT!"
-	IF RN = 3 THEN U$ = AA$(P, B1(P, B), 0) + " TICKLES THE TWINE!"
-	IF RN = 4 THEN U$ = "NO RIM, NO BOARD, JUST CORD!"
-	IF RN = 5 THEN U$ = "GOOD!"
-	IF RN = 6 THEN U$ = "YES!"
-	IF RN = 7 THEN U$ = "COUNT IT!
-	IF RN = 8 THEN U$ = "IT'S GOOD!"
-	IF RN = 9 THEN U$ = "BINGO!"
-	IF RN = 10 THEN U$ = "IT FALLS!"
-	IF RN = 11 THEN U$ = "HE DRAINS IT!"
-	IF RN = 12 THEN U$ = "SWISH!"
-	IF RN = 13 THEN U$ = "ALL NET!"
-	IF RN = 14 THEN U$ = "IT'S THERE!"
-	IF RN = 15 THEN U$ = "HE BURIES IT!"
-	IF RN = 16 THEN U$ = "IT GOES IN!"
-	IF RN = 17 THEN U$ = "RING IT UP!"
-	IF RN = 18 THEN U$ = "IT GOES DOWN!"
-	IF RN = 19 THEN U$ = "BULLSEYE!"
-	IF RN = 20 THEN U$ = "HE SCORES!"
-	IF RN = 21 THEN U$ = "HE HAS IT!"
-	IF RN = 22 THEN U$ = "HE CONNECTS!"
+559 If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY: GoTo 560
+RN = Int(Rnd(1) * 100) + 1
+If RN <= 50 Then 561
+RN = Int(Rnd(1) * 22) + 1
+If RN = 1 Then U$ = "NOTHING BUT THE BOTTOM OF THE NET!"
+If RN = 2 Then U$ = "COUNT IT!"
+If RN = 3 Then U$ = AA$(P, B1(P, B), 0) + " TICKLES THE TWINE!"
+If RN = 4 Then U$ = "NO RIM, NO BOARD, JUST CORD!"
+If RN = 5 Then U$ = "GOOD!"
+If RN = 6 Then U$ = "YES!"
+If RN = 7 Then U$ = "COUNT IT!"
+If RN = 8 Then U$ = "IT'S GOOD!"
+If RN = 9 Then U$ = "BINGO!"
+If RN = 10 Then U$ = "IT FALLS!"
+If RN = 11 Then U$ = "HE DRAINS IT!"
+If RN = 12 Then U$ = "SWISH!"
+If RN = 13 Then U$ = "ALL NET!"
+If RN = 14 Then U$ = "IT'S THERE!"
+If RN = 15 Then U$ = "HE BURIES IT!"
+If RN = 16 Then U$ = "IT GOES IN!"
+If RN = 17 Then U$ = "RING IT UP!"
+If RN = 18 Then U$ = "IT GOES DOWN!"
+If RN = 19 Then U$ = "BULLSEYE!"
+If RN = 20 Then U$ = "HE SCORES!"
+If RN = 21 Then U$ = "HE HAS IT!"
+If RN = 22 Then U$ = "HE CONNECTS!"
 
-561 IF PB% = 0 THEN CALL DELAY
+561 If PB% = 0 Then Call DELAY
 
 560 S(P, H) = S(P, H) + 2
-	S(P, 0) = S(P, 0) + 2
-	GOSUB 1054
-	CALL UPDATESCREEN
-	A(P, B1(P, B), 8) = A(P, B1(P, B), 8) + 1
+S(P, 0) = S(P, 0) + 2
+GoSub 1054
+Call UPDATESCREEN
+A(P, B1(P, B), 8) = A(P, B1(P, B), 8) + 1
 
-562 U$ = B$(D, 0)+ " BALL AFTER SCORE"
-	IF PB% = 1 AND U6 <> 0 THEN
-	  LOCATE 9, 1
-	  COLOR T(D,33),T(D,34)
-	  PRINT B$(D, 0);:COLOR 15,0
-	  PRINT " BALL AFTER SCORE"
-	  CALL MOREDELAY
-	END IF
-	IF PB% = 0 THEN GOSUB 871: CALL DELAY
-	GOSUB 1033
-	T = T - 4
-	TE = 4
-	GOSUB 365
-	IF T <= 0 THEN TE = T: GOSUB 365: T = 0: CALL UPDATESCREEN: GOTO 170
-	CALL UPDATESCREEN: GOSUB 3000: GOSUB 810: GOSUB 260: GOTO 300
+562 U$ = B$(D, 0) + " BALL AFTER SCORE"
+If PB% = 1 And U6 <> 0 Then
+    Locate 9, 1
+    Color T(D, 33), T(D, 34)
+    Print B$(D, 0);: Color 15, 0
+    Print " BALL AFTER SCORE"
+    Call MOREDELAY
+End If
+If PB% = 0 Then GoSub 871: Call DELAY
+GoSub 1033
+T = T - 4
+TE = 4
+GoSub 365
+If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+Call UPDATESCREEN: GoSub 3000: GoSub 810: GoSub 260: GoTo 300
 
-565 GOSUB 630
+565 GoSub 630
 
-566 IF P2(D) > NB% AND H <= 4 OR P2(D) > 3 AND H > 4 THEN 570
-	IF T <= 0 THEN TE = T: GOSUB 365: T = 0: CALL UPDATESCREEN: GOTO 170
-	IF FR% = 0 THEN
-	  GOSUB 220
-	  GOSUB 4090
-	  LOCATE 8, 1
-	  U$ = B$(P, 0) + " BALL AFTER FOUL"
-	  CALL DELAY
-	  GOSUB 871
-	  GOTO 350
-	END IF
-	CALL UPDATESCREEN
-	IF U6 = 0 THEN 571
-	IF PB% = 0 THEN
-	  U$ = "1 FT: " + AA$(P, B1(P, B), 0) + STR$(A(P, B1(P, B), 1)) + " %"
-	  CALL DELAY
-	  GOTO 571
-	END IF
-	CALL WINDEX: COLOR T(P,33),T(P,34):PRINT B$(P, 0):COLOR 15,0
-	PRINT "1 FT: "; AA$(P, B1(P, B), 0); " "; A(P, B1(P, B), 1); " %"
+566 If P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then 570
+If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+If FR% = 0 Then
+    GoSub 220
+    GoSub 4090
+    Locate 8, 1
+    U$ = B$(P, 0) + " BALL AFTER FOUL"
+    Call DELAY
+    GoSub 871
+    GoTo 350
+End If
+Call UPDATESCREEN
+If U6 = 0 Then 571
+If PB% = 0 Then
+    U$ = "1 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %"
+    Call DELAY
+    GoTo 571
+End If
+Call WINDEX: Color T(P, 33), T(P, 34): Print B$(P, 0): Color 15, 0
+Print "1 FT: "; AA$(P, B1(P, B), 0); " "; A(P, B1(P, B), 1); " %"
 
 571 X = 50
-	GOSUB 220
-	X = 0
-	IF U6 = 0 THEN 572
-	IF PB% = 0 THEN
-	  U$ = "1 FT: " + AA$(P, B1(P, B), 0) + STR$(A(P, B1(P, B), 1)) + " %"
-	  CALL DELAY
-	  GOTO 572
-	END IF
-	CALL WINDEX: COLOR T(P,33),T(P,34):PRINT B$(P, 0):COLOR 15,0
-	PRINT "1 FT: "; AA$(P, B1(P, B), 0); " "; A(P, B1(P, B), 1); " %"
+GoSub 220
+X = 0
+If U6 = 0 Then 572
+If PB% = 0 Then
+    U$ = "1 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %"
+    Call DELAY
+    GoTo 572
+End If
+Call WINDEX: Color T(P, 33), T(P, 34): Print B$(P, 0): Color 15, 0
+Print "1 FT: "; AA$(P, B1(P, B), 0); " "; A(P, B1(P, B), 1); " %"
 
 572 A(P, B1(P, B), 9) = A(P, B1(P, B), 9) + 1
-	F3 = 1
-	S = INT(RND(1) * 100) + 1
-	FX% = A(P, B1(P, B), 1)
-	IF S <= FX% AND PB% = 0 THEN CALL THREEFT
-	IF S <= FX% AND PB% = 1 THEN CALL MADEFT
-	IF S > FX% AND PB% = 0 THEN CALL BADFT
-	IF S > FX% AND PB% = 1 THEN CALL MISSFT
-	LT = 0
-	IF T <= 0 THEN TE = T: GOSUB 365: T = 0: CALL UPDATESCREEN: GOTO 170
-	IF S > FX% THEN 650
-	GOSUB 3000
-	U$ = B$(P, 0) + " BALL AFTER SCORE"
-	CALL SELECTPBP
-	GOSUB 871
-	GOSUB 810
-	B = 6
-	X = 0
-	GOSUB 260
-	GOTO 300
+F3 = 1
+S = Int(Rnd(1) * 100) + 1
+FX% = A(P, B1(P, B), 1)
+If S <= FX% And PB% = 0 Then Call THREEFT
+If S <= FX% And PB% = 1 Then Call MADEFT
+If S > FX% And PB% = 0 Then Call BADFT
+If S > FX% And PB% = 1 Then Call MISSFT
+LT = 0
+If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+If S > FX% Then 650
+GoSub 3000
+U$ = B$(P, 0) + " BALL AFTER SCORE"
+Call SELECTPBP
+GoSub 871
+GoSub 810
+B = 6
+X = 0
+GoSub 260
+GoTo 300
 
-570 IF RT% = 1 AND (P2(D) > NB% AND H <= 4 OR P2(D) > 3 AND H > 4) THEN
-	  U$ = AA$(P, B1(P, B), 0) + " GETS 3 FT TO MAKE 2..."
-	ELSE
-	  U$ = AA$(P, B1(P, B), 0) + " GETS 2 FREE THROWS..."
-	END IF
-	CALL DELAY
-	GOTO 591
+570 If RT% = 1 And (P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4) Then
+    U$ = AA$(P, B1(P, B), 0) + " GETS 3 FT TO MAKE 2..."
+Else
+    U$ = AA$(P, B1(P, B), 0) + " GETS 2 FREE THROWS..."
+End If
+Call DELAY
+GoTo 591
 
-580 GOSUB 210
-	GOSUB 1033
-	GOSUB 3000
-	GOSUB 630
-	P2(D) = P2(D) - 1
-	B = W5
-	IF P2(D) > NB% AND H <= 4 OR P2(D) > 3 AND H > 4 THEN 570
-	IF T <= 0 THEN TE = T: GOSUB 365: T = 0: CALL UPDATESCREEN: GOTO 170
-	U$ = "OFFENSIVE FOUL"
-	IF PB% = 0 THEN CALL DELAY
-	IF PB% = 1 AND U6 <> 0 THEN CALL WINDEX: PRINT U$: CALL MOREDELAY
-	U$ = B$(P, 0) + " BALL AFTER FOUL"
-	GOSUB 729
-	GOSUB 871: B = 6: CALL DELAY
-	T0(D) = T0(D) + 1: CALL UPDATESCREEN: GOSUB 220: GOSUB 260: GOTO 300
+580 GoSub 210
+GoSub 1033
+GoSub 3000
+GoSub 630
+P2(D) = P2(D) - 1
+B = W5
+If P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then 570
+If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+U$ = "OFFENSIVE FOUL"
+If PB% = 0 Then Call DELAY
+If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+U$ = B$(P, 0) + " BALL AFTER FOUL"
+GoSub 729
+GoSub 871: B = 6: Call DELAY
+T0(D) = T0(D) + 1: Call UPDATESCREEN: GoSub 220: GoSub 260: GoTo 300
 
-584 IN = 99: GOSUB 210
-	IF T <= 0 THEN TE = T: GOSUB 365: T = 0: CALL UPDATESCREEN: GOTO 170
-	C1 = 2: P9 = D
-	U$ = "DESIGNATED FOULER (0-4)"
-	CALL SELECTPBP
-	IF U5 = 1 AND D = CT OR U5 = 2 THEN W5 = INT(RND(1) * 5): GOTO 588
+584 IN = 99: GoSub 210
+If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+C1 = 2: P9 = D
+U$ = "DESIGNATED FOULER (0-4)"
+Call SELECTPBP
+If U5 = 1 And D = CT Or U5 = 2 Then W5 = Int(Rnd(1) * 5): GoTo 588
 586 I$ = GetKeyPress$
-	W5 = VAL(I$): IF W5 < 0 OR W5 > 4 THEN 586
+W5 = Val(I$): If W5 < 0 Or W5 > 4 Then 586
 
-588 GOSUB 631: X8 = SC(SC): GOTO 566
+588 GoSub 631: X8 = SC(SC): GoTo 566
 
 589 T = T - 4: TE = 4
-	GOSUB 365
-	CALL UPDATESCREEN
-	GOSUB 630
-	IF U6 = 0 THEN 591
-	IF PB% = 0 AND RT% = 1 AND P2(D) > NB% AND H <= 4 OR P2(D) > 3 AND H > 4 THEN U$ = "3 TO MAKE 2 FT: " + AA$(P, B1(P, B), 0) + STR$(A(P, B1(P, B), 1)) + " %":CALL DELAY:GOTO 591
-	IF PB% = 0 THEN U$ = "2 FT: " + AA$(P, B1(P, B), 0) + STR$(A(P, B1(P, B), 1)) + " %": CALL DELAY:GOTO 591
-	IF PB% = 1 AND RT% = 1 AND P2(D) > NB% AND H <= 4 OR P2(D) > 3 AND H > 4 THEN
-	  CALL WINDEX
-	  PRINT B$(P, 0)
-	  PRINT "3 TO MAKE 2 FT: ";
-	  PRINT AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
-	  GOTO 591
-	END IF
-	IF PB% = 1 THEN CALL WINDEX: PRINT B$(P, 0):PRINT "2 FT: "; AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
+GoSub 365
+Call UPDATESCREEN
+GoSub 630
+If U6 = 0 Then 591
+If PB% = 0 And RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then U$ = "3 TO MAKE 2 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %": Call DELAY: GoTo 591
+If PB% = 0 Then U$ = "2 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %": Call DELAY: GoTo 591
+If PB% = 1 And RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then
+    Call WINDEX
+    Print B$(P, 0)
+    Print "3 TO MAKE 2 FT: ";
+    Print AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
+    GoTo 591
+End If
+If PB% = 1 Then Call WINDEX: Print B$(P, 0): Print "2 FT: "; AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
 
 591 X = 50
-	GOSUB 220
-	X = 0
-	IF U6 = 0 THEN 592
-	IF PB% = 0 AND RT% = 1 AND P2(D) > NB% AND H <= 4 OR P2(D) > 3 AND H > 4 THEN U$ = "3 TO MAKE 2 FT: " + AA$(P, B1(P, B), 0) + STR$(A(P, B1(P, B), 1)) + " %":CALL DELAY:GOTO 592
-	IF PB% = 0 THEN U$ = "2 FT: " + AA$(P, B1(P, B), 0) + STR$(A(P, B1(P, B), 1)) + " %": CALL DELAY:GOTO 592
-	IF PB% = 1 AND RT% = 1 AND P2(D) > NB% AND H <= 4 OR P2(D) > 3 AND H > 4 THEN
-	  CALL WINDEX
-	  PRINT B$(P, 0)
-	  PRINT "3 TO MAKE 2 FT: ";
-	  PRINT AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
-	  GOTO 592
-	END IF
-	IF PB% = 1 THEN CALL WINDEX: PRINT B$(P, 0):PRINT "2 FT: "; AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
+GoSub 220
+X = 0
+If U6 = 0 Then 592
+If PB% = 0 And RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then U$ = "3 TO MAKE 2 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %": Call DELAY: GoTo 592
+If PB% = 0 Then U$ = "2 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %": Call DELAY: GoTo 592
+If PB% = 1 And RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then
+    Call WINDEX
+    Print B$(P, 0)
+    Print "3 TO MAKE 2 FT: ";
+    Print AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
+    GoTo 592
+End If
+If PB% = 1 Then Call WINDEX: Print B$(P, 0): Print "2 FT: "; AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
 
-592 CALL MOREDELAY
-	NM% = 0
-	FOR F3 = 1 TO 3
-	S = INT(RND(1) * 100) + 1
-	FX% = A(P, B1(P, B), 1)
-	IF S <= FX% AND PB% = 0 THEN NM% = NM% + 1:CALL THREEFT
-	IF S <= FX% AND PB% = 1 THEN NM% = NM% + 1:CALL MADEFT
-	IF S > FX% AND PB% = 0 THEN CALL BADFT
-	IF S > FX% AND PB% = 1 THEN CALL MISSFT
-	A(P, B1(P, B), 9) = A(P, B1(P, B), 9) + 1
-	IF NM% = 2 THEN 596
-	IF F3 = 2 AND (RT% = 0 OR RT% = 1 AND (P2(D) <= NB% AND H <= 4 OR P2(D) <= 3 AND H > 4)) THEN 596
-	NEXT F3
+592 Call MOREDELAY
+NM% = 0
+For F3 = 1 To 3
+    S = Int(Rnd(1) * 100) + 1
+    FX% = A(P, B1(P, B), 1)
+    If S <= FX% And PB% = 0 Then NM% = NM% + 1: Call THREEFT
+    If S <= FX% And PB% = 1 Then NM% = NM% + 1: Call MADEFT
+    If S > FX% And PB% = 0 Then Call BADFT
+    If S > FX% And PB% = 1 Then Call MISSFT
+    A(P, B1(P, B), 9) = A(P, B1(P, B), 9) + 1
+    If NM% = 2 Then 596
+    If F3 = 2 And (RT% = 0 Or RT% = 1 And (P2(D) <= NB% And H <= 4 Or P2(D) <= 3 And H > 4)) Then 596
+Next F3
 
-596 IF T <= 0 THEN TE = T: GOSUB 365: T = 0: CALL UPDATESCREEN: GOTO 170
-	IF S > A(P, B1(P, B), 1) THEN 650
-	GOSUB 3000
-	U$ = B$(P, 0) + " BALL AFTER SCORE"
-	CALL SELECTPBP
-	GOSUB 871
-	GOSUB 810
-	B = 6
-	X = 0
-	GOSUB 260
-	GOTO 300
+596 If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+If S > A(P, B1(P, B), 1) Then 650
+GoSub 3000
+U$ = B$(P, 0) + " BALL AFTER SCORE"
+Call SELECTPBP
+GoSub 871
+GoSub 810
+B = 6
+X = 0
+GoSub 260
+GoTo 300
 
-610 T = T - 4: TE = 4: GOSUB 365: CALL UPDATESCREEN
-	IF DK% = 1 AND PB% = 0 THEN PT% = 2: CALL MAKEPBP: U$ = "STUFF BY " + AA$(P, B1(P, B), 0): CALL DELAY: DK% = 0: GOTO 617
-	IF DK% = 1 AND PB% = 1 THEN CALL WINDEX: PRINT "STUFF BY " + AA$(P, B1(P, B), 0): CALL MOREDELAY: DK% = 0: GOTO 617
-	IF PZ% = 8 AND PB% = 0 THEN PT% = 7: CALL MAKEPBP: PZ% = 0: CALL DELAY: GOTO 617
-	IF PB% = 0 THEN U$ = "BASKET GOOD BY " + AA$(P, B1(P, B), 0): CALL DELAY
-	IF PB% = 1 AND U6 <> 0 THEN CALL WINDEX: PRINT "BASKET GOOD BY " + AA$(P, B1(P, B), 0): CALL MOREDELAY
+610 T = T - 4: TE = 4: GoSub 365: Call UPDATESCREEN
+If DK% = 1 And PB% = 0 Then PT% = 2: Call MAKEPBP: U$ = "STUFF BY " + AA$(P, B1(P, B), 0): Call DELAY: DK% = 0: GoTo 617
+If DK% = 1 And PB% = 1 Then Call WINDEX: Print "STUFF BY " + AA$(P, B1(P, B), 0): Call MOREDELAY: DK% = 0: GoTo 617
+If PZ% = 8 And PB% = 0 Then PT% = 7: Call MAKEPBP: PZ% = 0: Call DELAY: GoTo 617
+If PB% = 0 Then U$ = "BASKET GOOD BY " + AA$(P, B1(P, B), 0): Call DELAY
+If PB% = 1 And U6 <> 0 Then Call WINDEX: Print "BASKET GOOD BY " + AA$(P, B1(P, B), 0): Call MOREDELAY
 
-617 U$ = "... AND HE'S FOULED !!!": GOSUB 729: F3 = 1
-	CALL MOREDELAY
-	GOSUB 1054
-	F3 = 1
-	S(P, H) = S(P, H) + 2
-	S(P, 0) = S(P, 0) + 2
-	A(P, B1(P, B), 8) = A(P, B1(P, B), 8) + 1
-	CALL UPDATESCREEN
-	GOSUB 630
-	IF U6 = 0 THEN 620
-	IF PB% = 0 AND RT% = 1 AND P2(D) > NB% AND H <= 4 OR P2(D) > 3 AND H > 4 THEN U$ = "2 TO MAKE 1 FT: " + AA$(P, B1(P, B), 0) + STR$(A(P, B1(P, B), 1)) + " %":CALL DELAY:GOTO 620
-	IF PB% = 0 THEN U$ = "1 FT: " + AA$(P, B1(P, B), 0) + STR$(A(P, B1(P, B), 1)) + " %": CALL DELAY:GOTO 620
-	IF PB% = 1 AND RT% = 1 AND P2(D) > NB% AND H <= 4 OR P2(D) > 3 AND H > 4 THEN
-	  CALL WINDEX
-	  PRINT B$(P, 0)
-	  PRINT "2 TO MAKE 1 FT: ";
-	  PRINT AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
-	  GOTO 620
-	END IF
-	IF PB% = 1 THEN CALL WINDEX: PRINT B$(P, 0):PRINT "1 FT: "; AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
+617 U$ = "... AND HE'S FOULED !!!": GoSub 729: F3 = 1
+Call MOREDELAY
+GoSub 1054
+F3 = 1
+S(P, H) = S(P, H) + 2
+S(P, 0) = S(P, 0) + 2
+A(P, B1(P, B), 8) = A(P, B1(P, B), 8) + 1
+Call UPDATESCREEN
+GoSub 630
+If U6 = 0 Then 620
+If PB% = 0 And RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then U$ = "2 TO MAKE 1 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %": Call DELAY: GoTo 620
+If PB% = 0 Then U$ = "1 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %": Call DELAY: GoTo 620
+If PB% = 1 And RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then
+    Call WINDEX
+    Print B$(P, 0)
+    Print "2 TO MAKE 1 FT: ";
+    Print AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
+    GoTo 620
+End If
+If PB% = 1 Then Call WINDEX: Print B$(P, 0): Print "1 FT: "; AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
 
-620 X = 50: GOSUB 220: X = 0
-	IF U6 = 0 THEN 621
-	IF PB% = 0 AND RT% = 1 AND P2(D) > NB% AND H <= 4 OR P2(D) > 3 AND H > 4 THEN U$ = "2 TO MAKE 1 FT: " + AA$(P, B1(P, B), 0) + STR$(A(P, B1(P, B), 1)) + " %":CALL DELAY:GOTO 621
-	IF PB% = 0 THEN U$ = "1 FT: " + AA$(P, B1(P, B), 0) + STR$(A(P, B1(P, B), 1)) + " %": CALL DELAY:GOTO 621
-	IF PB% = 1 AND RT% = 1 AND P2(D) > NB% AND H <= 4 OR P2(D) > 3 AND H > 4 THEN
-	  CALL WINDEX
-	  PRINT B$(P, 0)
-	  PRINT "2 TO MAKE 1 FT: ";
-	  PRINT AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
-	  GOTO 621
-	END IF
-	IF PB% = 1 THEN CALL WINDEX: PRINT B$(P, 0):PRINT "1 FT: "; AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
+620 X = 50: GoSub 220: X = 0
+If U6 = 0 Then 621
+If PB% = 0 And RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then U$ = "2 TO MAKE 1 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %": Call DELAY: GoTo 621
+If PB% = 0 Then U$ = "1 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %": Call DELAY: GoTo 621
+If PB% = 1 And RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then
+    Call WINDEX
+    Print B$(P, 0)
+    Print "2 TO MAKE 1 FT: ";
+    Print AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
+    GoTo 621
+End If
+If PB% = 1 Then Call WINDEX: Print B$(P, 0): Print "1 FT: "; AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
 
 621 NM% = 0
-	FOR F3 = 1 TO 2
-	S = INT(RND(1) * 100) + 1
-	FX% = A(P, B1(P, B), 1)
-	IF S <= FX% AND PB% = 0 THEN NM% = NM% + 1:CALL THREEFT
-	IF S <= FX% AND PB% = 1 THEN NM% = NM% + 1:CALL MADEFT
-	IF S > FX% AND PB% = 0 THEN CALL BADFT
-	IF S > FX% AND PB% = 1 THEN CALL MISSFT
-	 A(P, B1(P, B), 9) = A(P, B1(P, B), 9) + 1
-	IF NM% = 1 THEN 624
-	IF F3 = 1 AND (RT% = 0 OR RT% = 1 AND (P2(D) <= NB% AND H <= 4 OR P2(D) <= 3 AND H > 4)) THEN 624
-	NEXT F3
+For F3 = 1 To 2
+    S = Int(Rnd(1) * 100) + 1
+    FX% = A(P, B1(P, B), 1)
+    If S <= FX% And PB% = 0 Then NM% = NM% + 1: Call THREEFT
+    If S <= FX% And PB% = 1 Then NM% = NM% + 1: Call MADEFT
+    If S > FX% And PB% = 0 Then Call BADFT
+    If S > FX% And PB% = 1 Then Call MISSFT
+    A(P, B1(P, B), 9) = A(P, B1(P, B), 9) + 1
+    If NM% = 1 Then 624
+    If F3 = 1 And (RT% = 0 Or RT% = 1 And (P2(D) <= NB% And H <= 4 Or P2(D) <= 3 And H > 4)) Then 624
+Next F3
 
-624 IF T <= 0 THEN TE = T: GOSUB 365: T = 0: CALL UPDATESCREEN: GOTO 170
-	X = 99: IF S > FX% THEN 670
-	 GOSUB 3000
-	U$ = B$(P, 0) + " BALL AFTER SCORE"
-	CALL SELECTPBP
-	GOSUB 871
-	GOSUB 810
-	B = 6
-	X = 0
-	GOSUB 260
-	GOTO 300
+624 If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+X = 99: If S > FX% Then 670
+GoSub 3000
+U$ = B$(P, 0) + " BALL AFTER SCORE"
+Call SELECTPBP
+GoSub 871
+GoSub 810
+B = 6
+X = 0
+GoSub 260
+GoTo 300
 
-630 GOSUB 1065
+630 GoSub 1065
 
 631 A(D, B1(D, W5), 12) = A(D, B1(D, W5), 12) + 1
-	P2(D) = P2(D) + 1
-	CALL UPDATESCREEN
-	IF A(D, B1(D, W5), 3) - A(D, B1(D, W5), 7) - A(D, B1(D, W5), 11) - A(D, B1(D, W5), 12) = 0 THEN A(D, B1(D, W5), 3) = A(D, B1(D, W5), 3) + 1
-	IF A(D, B1(D, W5), 12) < 6 THEN GOSUB 638
-	IF A(D, B1(D, W5), 12) >= 6 THEN GOSUB 1000: GOSUB 635
-	RETURN
+P2(D) = P2(D) + 1
+Call UPDATESCREEN
+If A(D, B1(D, W5), 3) - A(D, B1(D, W5), 7) - A(D, B1(D, W5), 11) - A(D, B1(D, W5), 12) = 0 Then A(D, B1(D, W5), 3) = A(D, B1(D, W5), 3) + 1
+If A(D, B1(D, W5), 12) < 6 Then GoSub 638
+If A(D, B1(D, W5), 12) >= 6 Then GoSub 1000: GoSub 635
+Return
 
-635 IF PB% = 1 AND U6 <> 0 THEN CALL WINDEX: PRINT "FOUL ON "; AA$(D, B1(D, W5), 0): CALL MOREDELAY
-	IF PB% = 0 THEN U$ = "FOUL CALLED ON " + AA$(D, B1(D, W5), 0): CALL DELAY
-	U$ = "HE HAS JUST FOULED OUT !!!"
-	GOSUB 729
-	CALL MOREDELAY
-	C9 = 9
-	IF P2(D) > NB% THEN X = 50
-	P3 = 1
-	IF U5 = 0 OR U5 = 1 AND D = 1 - CT THEN P9 = D: C1 = 1: GOSUB 70: GOSUB 150: GOSUB 220: CALL NEWSCREEN
-	GOSUB 698
-	X = 0
-	RETURN
+635 If PB% = 1 And U6 <> 0 Then Call WINDEX: Print "FOUL ON "; AA$(D, B1(D, W5), 0): Call MOREDELAY
+If PB% = 0 Then U$ = "FOUL CALLED ON " + AA$(D, B1(D, W5), 0): Call DELAY
+U$ = "HE HAS JUST FOULED OUT !!!"
+GoSub 729
+Call MOREDELAY
+C9 = 9
+If P2(D) > NB% Then X = 50
+P3 = 1
+If U5 = 0 Or U5 = 1 And D = 1 - CT Then P9 = D: C1 = 1: GoSub 70: GoSub 150: GoSub 220: Call NEWSCREEN
+GoSub 698
+X = 0
+Return
 
-638 IF PB% = 1 AND U6 <> 0 THEN
-	  CALL WINDEX
-	  PRINT "FOUL ON " AA$(D, B1(D, W5), 0)
-	  CALL MOREDELAY
-	  PRINT "HE HAS "; A(D, B1(D, W5), 12)
-	  CALL MOREDELAY
-	END IF
-	IF PB% = 0 THEN U$ = "FOUL NUMBER" + STR$(A(D, B1(D, W5), 12)) + " CALLED ON " + AA$(D, B1(D, W5), 0): CALL DELAY
-	CALL MOREDELAY
-	RETURN
+638 If PB% = 1 And U6 <> 0 Then
+    Call WINDEX
+    Print "FOUL ON "; AA$(D, B1(D, W5), 0)
+    Call MOREDELAY
+    Print "HE HAS "; A(D, B1(D, W5), 12)
+    Call MOREDELAY
+End If
+If PB% = 0 Then U$ = "FOUL NUMBER" + Str$(A(D, B1(D, W5), 12)) + " CALLED ON " + AA$(D, B1(D, W5), 0): Call DELAY
+Call MOREDELAY
+Return
 
-640 IF T1(P) <= 0 THEN 648
-	T1(P) = T1(P) - 1
-	T = T + M5: TE = -M5: GOSUB 365
-	X8 = X8 + M5
-	U$ = "TIMEOUT " + B$(P, 0):
-	CALL DELAY
-	CALL MOREDELAY
-	GOSUB 220
+640 If T1(P) <= 0 Then 648
+T1(P) = T1(P) - 1
+T = T + M5: TE = -M5: GoSub 365
+X8 = X8 + M5
+U$ = "TIMEOUT " + B$(P, 0):
+Call DELAY
+Call MOREDELAY
+GoSub 220
 
-648 IF A6 = 0 THEN GOSUB 260: GOTO 300
-	GOTO 350
+648 If A6 = 0 Then GoSub 260: GoTo 300
+GoTo 350
 
-650 A6 = 1: P6 = 0: A4 = 0: D6 = 0: GOSUB 1033: S = 0
-	R0 = INT(RND(1) * 100) + 1
-	IF H > 3 AND T < 30 AND S(D, 0) - S(P, 0) = 2 AND R0 <= 12 OR H > 3 AND T < 30 AND S(D, 0) - S(P, 0) = 0 AND R0 <= 12 THEN GOSUB 790: GOTO 760
-	R0 = INT(RND(1) * 100) + 1
-	IF R0 <= 11 THEN FF% = 1: GOTO 707
-	IF R0 <= 19 THEN GOSUB 790: GOTO 760
-	GOSUB 795: GOTO 800
+650 A6 = 1: P6 = 0: A4 = 0: D6 = 0: GoSub 1033: S = 0
+R0 = Int(Rnd(1) * 100) + 1
+If H > 3 And T < 30 And S(D, 0) - S(P, 0) = 2 And R0 <= 12 Or H > 3 And T < 30 And S(D, 0) - S(P, 0) = 0 And R0 <= 12 Then GoSub 790: GoTo 760
+R0 = Int(Rnd(1) * 100) + 1
+If R0 <= 11 Then FF% = 1: GoTo 707
+If R0 <= 19 Then GoSub 790: GoTo 760
+GoSub 795: GoTo 800
 
-670 A6 = 1: P6 = 0: A4 = 0: D6 = 0: GOSUB 1033: GOTO 700
+670 A6 = 1: P6 = 0: A4 = 0: D6 = 0: GoSub 1033: GoTo 700
 
-698 IF T <= 0 THEN TE = T: GOSUB 365: T = 0: CALL UPDATESCREEN
-	RETURN
+698 If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN
+Return
 
-700 S = 0: A4 = 0: D6 = 0: R0 = INT(RND(1) * 100) + 1
-	GG = S(D, 0) - S(P, 0)
-	IF R0 <= 12 AND H > 3 AND T < 30 AND (GG = 2 OR GG = 0) THEN 700
-	IF R0 <= 1 THEN 725
-	IF R0 <= 11 THEN FF% = 1: GOTO 707
-	IF R0 <= 19 THEN 750
-	IF R0 <= 22 THEN 730
-	IF R0 <= 23 AND P6 <> 4 THEN 740
+700 S = 0: A4 = 0: D6 = 0: R0 = Int(Rnd(1) * 100) + 1
+GG = S(D, 0) - S(P, 0)
+If R0 <= 12 And H > 3 And T < 30 And (GG = 2 Or GG = 0) Then 700
+If R0 <= 1 Then 725
+If R0 <= 11 Then FF% = 1: GoTo 707
+If R0 <= 19 Then 750
+If R0 <= 22 Then 730
+If R0 <= 23 And P6 <> 4 Then 740
 
-707 GOTO 770
+707 GoTo 770
 
-710 IF U6 = 0 THEN 713
-	IF PB% = 1 THEN CALL WINDEX: PRINT AA$(D, B1(D, B), 0); " HAS THE DEF REBOUND FOR ": PRINT B$(D, 0); " AND IS FOULED !!!": CALL MOREDELAY: GOTO 713
-	U$ = AA$(D, B1(D, B), 0) + " HAS THE DEFENSIVE REBOUND": CALL DELAY
-	U$ = "HE'S FOULED !!!": CALL DELAY
-	CALL MOREDELAY
+710 If U6 = 0 Then 713
+If PB% = 1 Then Call WINDEX: Print AA$(D, B1(D, B), 0); " HAS THE DEF REBOUND FOR ": Print B$(D, 0); " AND IS FOULED !!!": Call MOREDELAY: GoTo 713
+U$ = AA$(D, B1(D, B), 0) + " HAS THE DEFENSIVE REBOUND": Call DELAY
+U$ = "HE'S FOULED !!!": Call DELAY
+Call MOREDELAY
 
-713 R3(D) = R3(D) + 1: A(D, B1(D, B), 11) = A(D, B1(D, B), 11) + 1: CALL UPDATESCREEN: GOSUB 3000: GOTO 565
+713 R3(D) = R3(D) + 1: A(D, B1(D, B), 11) = A(D, B1(D, B), 11) + 1: Call UPDATESCREEN: GoSub 3000: GoTo 565
 
 720 U$ = AA$(P, B1(P, B), 0) + " HAS THE OFFENSIVE REBOUND"
-	IF PB% = 0 THEN CALL DELAY
-	IF PB% = 1 AND U6 <> 0 THEN CALL WINDEX: PRINT U$: PRINT "FOR "; B$(P, 0): CALL MOREDELAY
-	U$ = "HE'S FOULED !!!"
-	GOSUB 729
-	CALL MOREDELAY
-	A(P, B1(P, B), 24) = A(P, B1(P, B), 24) + 1
-	A(P, B1(P, B), 11) = A(P, B1(P, B), 11) + 1
-	R3(P) = R3(P) + 1
-	CALL UPDATESCREEN
-	GOSUB 630
-	GOTO 570
+If PB% = 0 Then Call DELAY
+If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Print "FOR "; B$(P, 0): Call MOREDELAY
+U$ = "HE'S FOULED !!!"
+GoSub 729
+Call MOREDELAY
+A(P, B1(P, B), 24) = A(P, B1(P, B), 24) + 1
+A(P, B1(P, B), 11) = A(P, B1(P, B), 11) + 1
+R3(P) = R3(P) + 1
+Call UPDATESCREEN
+GoSub 630
+GoTo 570
 
-725 IF X = 98 THEN 700
-	T0(P) = T0(P) + 1
-	U$ = "OFFENSIVE GOAL TENDING"
-	IF PB% = 0 THEN CALL DELAY
-	IF PB% = 1 AND U6 <> 0 THEN CALL WINDEX: PRINT U$: CALL MOREDELAY
-	U$ = "BALL GOES TO " + B$(D, 0)
-	GOSUB 729
-	CALL MOREDELAY
-	GOSUB 3000: GOSUB 220: GOTO 300
+725 If X = 98 Then 700
+T0(P) = T0(P) + 1
+U$ = "OFFENSIVE GOAL TENDING"
+If PB% = 0 Then Call DELAY
+If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+U$ = "BALL GOES TO " + B$(D, 0)
+GoSub 729
+Call MOREDELAY
+GoSub 3000: GoSub 220: GoTo 300
 
-730 IF X = 99 THEN 700
-	GOSUB 790
-	A(P, B1(P, B), 7) = A(P, B1(P, B), 7) + 1
-	A(P, B1(P, B), 8) = A(P, B1(P, B), 8) + 1
-	A(P, B1(P, B), 11) = A(P, B1(P, B), 11) + 1
-	R3(P) = R3(P) + 1
-	S(P, H) = S(P, H) + 2
-	S(P, 0) = S(P, 0) + 2
-	CALL UPDATESCREEN
-	IF PB% = 1 AND U6 <> 0 THEN CALL WINDEX: PRINT "TIPPED IN BY "; AA$(P, B1(P, B), 0); "!!!": CALL MOREDELAY
-	IF PB% = 0 THEN U$ = AA$(P, B1(P, B), 0) + " TIPS IT IN!!!": CALL DELAY
-	CALL MOREDELAY
-	GOSUB 3000
-	U$ = B$(P, 0) + " BALL AFTER SCORE": GOSUB 871
-	GOSUB 729
-	GOSUB 810: GOSUB 260
-	GOTO 300
+730 If X = 99 Then 700
+GoSub 790
+A(P, B1(P, B), 7) = A(P, B1(P, B), 7) + 1
+A(P, B1(P, B), 8) = A(P, B1(P, B), 8) + 1
+A(P, B1(P, B), 11) = A(P, B1(P, B), 11) + 1
+R3(P) = R3(P) + 1
+S(P, H) = S(P, H) + 2
+S(P, 0) = S(P, 0) + 2
+Call UPDATESCREEN
+If PB% = 1 And U6 <> 0 Then Call WINDEX: Print "TIPPED IN BY "; AA$(P, B1(P, B), 0); "!!!": Call MOREDELAY
+If PB% = 0 Then U$ = AA$(P, B1(P, B), 0) + " TIPS IT IN!!!": Call DELAY
+Call MOREDELAY
+GoSub 3000
+U$ = B$(P, 0) + " BALL AFTER SCORE": GoSub 871
+GoSub 729
+GoSub 810: GoSub 260
+GoTo 300
 
-740 IF X = 99 THEN 700
-	U$ = "DEFENSIVE GOAL TENDING"
-	IF PB% = 0 THEN CALL DELAY
-	IF PB% = 1 AND U6 <> 0 THEN CALL WINDEX: PRINT U$: CALL MOREDELAY
-	CALL MOREDELAY:GOTO 560
+740 If X = 99 Then 700
+U$ = "DEFENSIVE GOAL TENDING"
+If PB% = 0 Then Call DELAY
+If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+Call MOREDELAY: GoTo 560
 
-750 R0 = INT(RND(1) * 100) + 1: IF R0 <= 32 THEN 752
-	R3(D) = R3(D) + 1
-	CALL UPDATESCREEN
-	U$ = "RB KNOCKED O.B. TO " + B$(D, 0)
-	IF PB% = 0 THEN CALL DELAY
-	IF PB% = 1 AND U6 <> 0 THEN CALL WINDEX: PRINT U$: CALL MOREDELAY
-	CALL MOREDELAY
-	GOSUB 220: GOSUB 3000: C1 = 2: P9 = P: GOTO 300
+750 R0 = Int(Rnd(1) * 100) + 1: If R0 <= 32 Then 752
+R3(D) = R3(D) + 1
+Call UPDATESCREEN
+U$ = "RB KNOCKED O.B. TO " + B$(D, 0)
+If PB% = 0 Then Call DELAY
+If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+Call MOREDELAY
+GoSub 220: GoSub 3000: C1 = 2: P9 = P: GoTo 300
 
 752 R3(P) = R3(P) + 1
-	CALL UPDATESCREEN
-	U$ = "RB KNOCKED O.B. TO " + B$(P, 0)
-	IF PB% = 0 THEN CALL DELAY
-	IF PB% = 1 AND U6 <> 0 THEN CALL WINDEX: PRINT U$: CALL MOREDELAY
-	CALL MOREDELAY
-	GOSUB 220: GOTO 520
+Call UPDATESCREEN
+U$ = "RB KNOCKED O.B. TO " + B$(P, 0)
+If PB% = 0 Then Call DELAY
+If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+Call MOREDELAY
+GoSub 220: GoTo 520
 
-760 IF FF% = 1 THEN FF% = 0: GOTO 720
+760 If FF% = 1 Then FF% = 0: GoTo 720
 
 761 A(P, B1(P, B), 24) = A(P, B1(P, B), 24) + 1
-	A(P, B1(P, B), 11) = A(P, B1(P, B), 11) + 1
-	R3(P) = R3(P) + 1: CALL UPDATESCREEN
-	U$ = AA$(P, B1(P, B), 0) + " HAS THE OFFENSIVE REBOUND"
-	IF PB% = 0 AND U6 <> 0 THEN CALL DELAY
-	IF PB% = 1 AND U6 <> 0 THEN CALL WINDEX: PRINT U$: PRINT "FOR " + B$(P, 0): CALL MOREDELAY
-	IF T <= 0 THEN TE = T: GOSUB 365: T = 0: CALL UPDATESCREEN: GOTO 170
-	PB$ = AA$(P, B1(P, B), 0)
-	R0 = INT(RND(1) * 10) + 1: GOSUB 920
-	IF H > 4 OR H = 4 AND T <= 120 THEN 765
-	IF A(P, B1(P, B), 3) - A(P, B1(P, B), 7) - A(P, B1(P, B), 11) - A(P, B1(P, B), 12) <= 0 THEN F = F * .6
+A(P, B1(P, B), 11) = A(P, B1(P, B), 11) + 1
+R3(P) = R3(P) + 1: Call UPDATESCREEN
+U$ = AA$(P, B1(P, B), 0) + " HAS THE OFFENSIVE REBOUND"
+If PB% = 0 And U6 <> 0 Then Call DELAY
+If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Print "FOR " + B$(P, 0): Call MOREDELAY
+If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+PB$ = AA$(P, B1(P, B), 0)
+R0 = Int(Rnd(1) * 10) + 1: GoSub 920
+If H > 4 Or H = 4 And T <= 120 Then 765
+If A(P, B1(P, B), 3) - A(P, B1(P, B), 7) - A(P, B1(P, B), 11) - A(P, B1(P, B), 12) <= 0 Then F = F * .6
 
-765 IF R0 <= 8 THEN PZ% = 9: GOTO 537
-	GOTO 520
+765 If R0 <= 8 Then PZ% = 9: GoTo 537
+GoTo 520
 
 770 RB = 0
-	FOR I = 0 TO 9: RB(I) = 0: NEXT
-	FOR I = 0 TO 4
-	IF H > 4 OR H = 4 AND T <= 120 THEN 773
-	IF A(P, B1(P, I), 3) - A(P, B1(P, I), 7) - A(P, B1(P, I), 11) - A(P, B1(P, I), 12) <= 0 THEN RB(I) = RB(I) + A(P, B1(P, I), 21) * .65: RB = RB + A(P, B1(P, I), 21) * .65: GOTO 774
+For I = 0 To 9: RB(I) = 0: Next
+For I = 0 To 4
+    If H > 4 Or H = 4 And T <= 120 Then 773
+    If A(P, B1(P, I), 3) - A(P, B1(P, I), 7) - A(P, B1(P, I), 11) - A(P, B1(P, I), 12) <= 0 Then RB(I) = RB(I) + A(P, B1(P, I), 21) * .65: RB = RB + A(P, B1(P, I), 21) * .65: GoTo 774
 
-773 RB(I) = RB(I) + A(P, B1(P, I), 21): RB = RB + A(P, B1(P, I), 21)
+    773 RB(I) = RB(I) + A(P, B1(P, I), 21): RB = RB + A(P, B1(P, I), 21)
 
-774 NEXT
-	FOR I = 0 TO 4
-	IF H > 4 OR H = 4 AND T <= 120 THEN 778
-	IF A(1 - P, B1(1 - P, I), 3) - A(1 - P, B1(1 - P, I), 7) - A(1 - P, B1(1 - P, I), 11) - A(1 - P, B1(1 - P, I), 12) <= 0 THEN RB(I + 5) = RB(I + 5) + A(1 - P, B1(1 - P, I), 2) * .5: RB = RB + A(1 - P, B1(1 - P, I), 2) * .5: GOTO 779
+774 Next
+For I = 0 To 4
+    If H > 4 Or H = 4 And T <= 120 Then 778
+    If A(1 - P, B1(1 - P, I), 3) - A(1 - P, B1(1 - P, I), 7) - A(1 - P, B1(1 - P, I), 11) - A(1 - P, B1(1 - P, I), 12) <= 0 Then RB(I + 5) = RB(I + 5) + A(1 - P, B1(1 - P, I), 2) * .5: RB = RB + A(1 - P, B1(1 - P, I), 2) * .5: GoTo 779
 
-778 RB(I + 5) = RB(I + 5) + A(1 - P, B1(1 - P, I), 2): RB = RB + A(1 - P, B1(1 - P, I), 2)
+    778 RB(I + 5) = RB(I + 5) + A(1 - P, B1(1 - P, I), 2): RB = RB + A(1 - P, B1(1 - P, I), 2)
 
-779 NEXT
-	RN = RND(1) * RB
-	FOR B = 0 TO 9
-	IF RN <= RB(B) THEN 786
-	RB(B + 1) = RB(B + 1) + RB(B)
-	NEXT
-	B = INT(RND(1) * 10)
+779 Next
+RN = Rnd(1) * RB
+For B = 0 To 9
+    If RN <= RB(B) Then 786
+    RB(B + 1) = RB(B + 1) + RB(B)
+Next
+B = Int(Rnd(1) * 10)
 
-786 IF B <= 4 THEN 761
-	B = B - 5: GOTO 800
+786 If B <= 4 Then 761
+B = B - 5: GoTo 800
 
-790 RB = 0: FOR I = 0 TO 4: RB(I) = 0
-	XZ = A(P, B1(P, I), 21)
-	IF H > 2 OR H = 2 AND T <= 120 THEN 793
-	IF A(P, B1(P, I), 3) - A(P, B1(P, I), 7) - A(P, B1(P, I), 11) - A(P, B1(P, I), 12) <= 0 THEN XZ = XZ * .5
+790 RB = 0: For I = 0 To 4: RB(I) = 0
+    XZ = A(P, B1(P, I), 21)
+    If H > 2 Or H = 2 And T <= 120 Then 793
+    If A(P, B1(P, I), 3) - A(P, B1(P, I), 7) - A(P, B1(P, I), 11) - A(P, B1(P, I), 12) <= 0 Then XZ = XZ * .5
 
-793 RB(I) = RB(I) + XZ: RB = RB + XZ
-	NEXT
-	RN = RND(1) * RB
-	FOR B = 0 TO 4
-	IF RN <= RB(B) THEN 792
-	RB(B + 1) = RB(B + 1) + RB(B)
-	NEXT
-	B = INT(RND(1) * 5)
+    793 RB(I) = RB(I) + XZ: RB = RB + XZ
+Next
+RN = Rnd(1) * RB
+For B = 0 To 4
+    If RN <= RB(B) Then 792
+    RB(B + 1) = RB(B + 1) + RB(B)
+Next
+B = Int(Rnd(1) * 5)
 
-792 RETURN
+792 Return
 
 795 RB = 0
-	FOR I = 0 TO 4
-	RB(I) = 0
-	XZ = A(1 - P, B1(1 - P, I), 2)
-	IF H > 2 OR H = 2 AND T <= 120 THEN 798
-	IF A(1 - P, B1(1 - P, I), 3) - A(1 - P, B1(1 - P, I), 7) - A(1 - P, B1(1 - P, I), 11) - A(1 - P, B1(1 - P, I), 12) <= 0 THEN XZ = XZ * .5
+For I = 0 To 4
+    RB(I) = 0
+    XZ = A(1 - P, B1(1 - P, I), 2)
+    If H > 2 Or H = 2 And T <= 120 Then 798
+    If A(1 - P, B1(1 - P, I), 3) - A(1 - P, B1(1 - P, I), 7) - A(1 - P, B1(1 - P, I), 11) - A(1 - P, B1(1 - P, I), 12) <= 0 Then XZ = XZ * .5
 
-798 RB(I) = RB(I) + XZ: RB = RB + XZ
-	NEXT
-	 RN = RND(1) * RB
-	FOR B = 0 TO 4
-	IF RN <= RB(B) THEN 804
-	RB(B + 1) = RB(B + 1) + RB(B)
-	NEXT
-	B = INT(RND(1) * 5)
+    798 RB(I) = RB(I) + XZ: RB = RB + XZ
+Next
+RN = Rnd(1) * RB
+For B = 0 To 4
+    If RN <= RB(B) Then 804
+    RB(B + 1) = RB(B + 1) + RB(B)
+Next
+B = Int(Rnd(1) * 5)
 
-804 RETURN
+804 Return
 
-800 IF FF% = 1 THEN FF% = 0: GOTO 710
-	A(D, B1(D, B), 11) = A(D, B1(D, B), 11) + 1
-	R3(D) = R3(D) + 1: CALL UPDATESCREEN
-	U$ = AA$(D, B1(D, B), 0) + " HAS THE DEFENSIVE REBOUND"
-	IF PB% = 0 AND U6 <> 0 THEN CALL DELAY
-	IF PB% = 1 AND U6 <> 0 THEN CALL WINDEX: PRINT U$: PRINT "FOR " + B$(D, 0): CALL MOREDELAY
-	PB$ = AA$(D, B1(D, B), 0)
-	C1 = 2: P9 = D: GOSUB 3000: FB% = 1: GOTO 300
+800 If FF% = 1 Then FF% = 0: GoTo 710
+A(D, B1(D, B), 11) = A(D, B1(D, B), 11) + 1
+R3(D) = R3(D) + 1: Call UPDATESCREEN
+U$ = AA$(D, B1(D, B), 0) + " HAS THE DEFENSIVE REBOUND"
+If PB% = 0 And U6 <> 0 Then Call DELAY
+If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Print "FOR " + B$(D, 0): Call MOREDELAY
+PB$ = AA$(D, B1(D, B), 0)
+C1 = 2: P9 = D: GoSub 3000: FB% = 1: GoTo 300
 
 810 NL% = 1: A1$ = "": B1$ = "": C1$ = "": D1$ = "": E1$ = "": F1$ = "": G1$ = "": H1$ = ""
-	IF U5 <> 0 THEN GOSUB 927
-	IF U5 = 2 OR U5 = 1 AND P = CT THEN S2 = 0: P9 = P: C1 = 2: GOSUB 698: RETURN
-	GOSUB 4090: LOCATE 10
-	COLOR 15, 0
-	PRINT "<ENTER>-CONTINUE"
-	PRINT "1-TIMEOUT "; B$(P, 0); "-"; T1(P)
+If U5 <> 0 Then GoSub 927
+If U5 = 2 Or U5 = 1 And P = CT Then S2 = 0: P9 = P: C1 = 2: GoSub 698: Return
+GoSub 4090: Locate 10
+Color 15, 0
+Print "<ENTER>-CONTINUE"
+Print "1-TIMEOUT "; B$(P, 0); "-"; T1(P)
 813 I$ = GetKeyPress$
-	P3 = VAL(I$): IF P3 <> 1 THEN S2 = 0: P9 = P: C1 = 2: GOSUB 698: GOTO 818
-	IF P3 = 1 AND T1(P) <= 0 OR P3 = 1 AND P = CT AND U5 = 1 THEN 813
-	IF P3 = 1 THEN T1(P) = T1(P) - 1: COLOR 15, 0: GOSUB 220
+P3 = Val(I$): If P3 <> 1 Then S2 = 0: P9 = P: C1 = 2: GoSub 698: GoTo 818
+If P3 = 1 And T1(P) <= 0 Or P3 = 1 And P = CT And U5 = 1 Then 813
+If P3 = 1 Then T1(P) = T1(P) - 1: Color 15, 0: GoSub 220
 
-818 GOSUB 4090: LOCATE 10: RETURN
+818 GoSub 4090: Locate 10: Return
 
-835 IF P = 0 THEN D = 1: RETURN
-	IF P = 1 THEN D = 0: RETURN
+835 If P = 0 Then D = 1: Return
+If P = 1 Then D = 0: Return
 
-850 IF H = 2 AND JB = 0 THEN JB = 1: RETURN
-	IF H = 2 AND JB = 1 THEN JB = 0
-	IF H = 4 AND JB = 0 THEN JB = 1: RETURN
-	IF H = 4 AND JB = 1 THEN JB = 0
-	RETURN
+850 If H = 2 And JB = 0 Then JB = 1: Return
+If H = 2 And JB = 1 Then JB = 0
+If H = 4 And JB = 0 Then JB = 1: Return
+If H = 4 And JB = 1 Then JB = 0
+Return
 
-871 LOCATE 8, 41: PRINT "            ": RETURN
+871 Locate 8, 41: Print "            ": Return
 
-900 IF AP = 1 THEN N = NG%(2)
-	X8 = SC(SC)
-	C7 = 1
-	LS = 0
-	IF T < 6 AND LT = 4 THEN LS = 4
-	GOTO 230
+900 If AP = 1 Then N = NG%(2)
+X8 = SC(SC)
+C7 = 1
+LS = 0
+If T < 6 And LT = 4 Then LS = 4
+GoTo 230
 
 920 '*** GET SHOT PCT ***
-	F = A(P, B1(P, B), 0) + D1(D)
-	IF N = P THEN F = F + 2
-	IF N <> P AND N <> 2 THEN F = F - 2
-	RETURN
+F = A(P, B1(P, B), 0) + D1(D)
+If N = P Then F = F + 2
+If N <> P And N <> 2 Then F = F - 2
+Return
 
-927 IF U5 = 2 THEN P9 = 0: GOSUB 930: P9 = 1: GOSUB 930
-	IF U5 = 1 THEN P9 = CT: GOSUB 930
-	RETURN
+927 If U5 = 2 Then P9 = 0: GoSub 930: P9 = 1: GoSub 930
+If U5 = 1 Then P9 = CT: GoSub 930
+Return
 
 930 M1 = 0: M2 = 0: M3 = 0: M4 = 0
-	IF U5 = 1 AND P9 = CT AND X = 50 OR U5 = 2 AND P9 = P AND X = 50 THEN 939
-	FOR I1 = 0 TO 14
-	M6 = A(P9, I1, 3) - A(P9, I1, 7) - A(P9, I1, 11) - A(P9, I1, 12)
-	IF H < 4 AND M6 <= 0 OR H = 4 AND T > 120 AND M6 <= 0 THEN M1 = M1 + 1
-	IF AA$(P9, I1, 0) = "XXX" OR A(P9, I1, 12) >= 6 OR B%(P9, I1, 18) <> 0 OR H = 1 AND A(P9, I1, 12) >= 2 OR H = 2 AND A(P9, I1, 12) >= 4 OR H = 3 AND A(P9, I1, 12) >= 5 OR H = 4 AND T > 300 AND A(P9, I1, 12) = 5 THEN M2 = M2 + 1
-	IF I1 > 4 THEN 937
-	M6 = A(P9, B1(P9, I1), 3) - A(P9, B1(P9, I1), 7) - A(P9, B1(P9, I1), 11) - A(P9, B1(P9, I1), 12)
-	IF M6 <= 0 AND H < 4 OR M6 <= 0 AND H = 4 AND T > 120 THEN M3 = M3 + 1
-	IF AA$(P9, B1(P9, I1), 0) = "XXX" OR A(P9, B1(P9, I1), 12) >= 6 OR B%(P9, B1(P9, I1), 18) <> 0 OR H = 1 AND A(P9, B1(P9, I1), 12) >= 2 OR H = 2 AND A(P9, B1(P9, I1), 12) >= 4 OR H = 3 AND A(P9, B1(P9, I1), 12) >= 5 OR H = 4 AND T > 300 AND A(P9 _
+If U5 = 1 And P9 = CT And X = 50 Or U5 = 2 And P9 = P And X = 50 Then 939
+For I1 = 0 To 14
+    M6 = A(P9, I1, 3) - A(P9, I1, 7) - A(P9, I1, 11) - A(P9, I1, 12)
+    If H < 4 And M6 <= 0 Or H = 4 And T > 120 And M6 <= 0 Then M1 = M1 + 1
+    If AA$(P9, I1, 0) = "XXX" Or A(P9, I1, 12) >= 6 Or B%(P9, I1, 18) <> 0 Or H = 1 And A(P9, I1, 12) >= 2 Or H = 2 And A(P9, I1, 12) >= 4 Or H = 3 And A(P9, I1, 12) >= 5 Or H = 4 And T > 300 And A(P9, I1, 12) = 5 Then M2 = M2 + 1
+    If I1 > 4 Then 937
+    M6 = A(P9, B1(P9, I1), 3) - A(P9, B1(P9, I1), 7) - A(P9, B1(P9, I1), 11) - A(P9, B1(P9, I1), 12)
+    If M6 <= 0 And H < 4 Or M6 <= 0 And H = 4 And T > 120 Then M3 = M3 + 1
+    IF AA$(P9, B1(P9, I1), 0) = "XXX" OR A(P9, B1(P9, I1), 12) >= 6 OR B%(P9, B1(P9, I1), 18) <> 0 OR H = 1 AND A(P9, B1(P9, I1), 12) >= 2 OR H = 2 AND A(P9, B1(P9, I1), 12) >= 4 OR H = 3 AND A(P9, B1(P9, I1), 12) >= 5 OR H = 4 AND T > 300 AND A(P9 _
 , B1(P9, I1), 12) = 5 THEN M4 = M4 + 1
 
-937 NEXT I1
-	IF M3 >= 1 AND 5 - M3 < 15 - M1 OR H = 4 AND T < 120 OR H > 4 OR M4 >= 1 AND M2 < 14 THEN CALL COMPUTERSUBS
+937 Next I1
+If M3 >= 1 And 5 - M3 < 15 - M1 Or H = 4 And T < 120 Or H > 4 Or M4 >= 1 And M2 < 14 Then Call COMPUTERSUBS
 
-939 IF H = 4 AND T <= 120 THEN G9%(P9) = 1
-	RETURN
+939 If H = 4 And T <= 120 Then G9%(P9) = 1
+Return
 
-949 IF H >= 4 AND T <= 240 AND S(P, 0) - S(D, 0) > 0 AND U5 = 1 AND P = CT THEN 985
-	IF U5 = 2 OR U5 = 1 AND D = CT THEN 980
+949 If H >= 4 And T <= 240 And S(P, 0) - S(D, 0) > 0 And U5 = 1 And P = CT Then 985
+If U5 = 2 Or U5 = 1 And D = CT Then 980
 
-951 IF T <= 1 OR X8 <= 6 THEN P6 = 1: GOTO 532
-	IF T <= 8 AND S(P, 0) - S(D, 0) <= -3 AND H >= 4 THEN P6 = 1: GOTO 532
-	IF T <= 20 AND S(P, 0) - S(D, 0) <= -5 AND H >= 4 THEN P6 = 1: GOTO 532
-	IF PZ% > 1 THEN P6 = 1: GOTO 532
-	P6 = 0: GOTO 532
+951 If T <= 1 Or X8 <= 6 Then P6 = 1: GoTo 532
+If T <= 8 And S(P, 0) - S(D, 0) <= -3 And H >= 4 Then P6 = 1: GoTo 532
+If T <= 20 And S(P, 0) - S(D, 0) <= -5 And H >= 4 Then P6 = 1: GoTo 532
+If PZ% > 1 Then P6 = 1: GoTo 532
+P6 = 0: GoTo 532
 
-980 IF T <= 240 AND H >= 4 AND S(P, 0) - S(D, 0) > 10 THEN 983
-	'IF T<=120 AND H>=4 AND S(P,0)-S(D,0)>4 THEN P6=3:GOTO 532
-	IF T <= 30 AND H >= 4 AND S(P, 0) - S(D, 0) > 0 THEN P6 = 3: GOTO 532
+980 If T <= 240 And H >= 4 And S(P, 0) - S(D, 0) > 10 Then 983
+'IF T<=120 AND H>=4 AND S(P,0)-S(D,0)>4 THEN P6=3:GOTO 532
+If T <= 30 And H >= 4 And S(P, 0) - S(D, 0) > 0 Then P6 = 3: GoTo 532
 
-983 IF (U5 = 1 OR U5 = 0) AND CM% <> 1 THEN 530
-	GOTO 951
+983 If (U5 = 1 Or U5 = 0) And CM% <> 1 Then 530
+GoTo 951
 
-985 U$ = STR$(A(P, B1(P, B), 1)) + " FT%  INTENTIONAL FOUL (YN)"
+985 U$ = Str$(A(P, B1(P, B), 1)) + " FT%  INTENTIONAL FOUL (YN)"
 986 I$ = GetKeyPress$
-	IF UCASE$(I$) = "Y" OR I$ = "3" THEN P6 = 3: GOTO 532
-	GOTO 951
+If UCase$(I$) = "Y" Or I$ = "3" Then P6 = 3: GoTo 532
+GoTo 951
 
 1000 M9 = 0
-	FOR I3 = 0 TO 14
-	IF I3 = B1(D, W5) OR AA$(D, I3, 1) = "XXX" OR B%(D, I3, 18) <> 0 THEN 1002
-	M9 = M9 + 1
+For I3 = 0 To 14
+    If I3 = B1(D, W5) Or AA$(D, I3, 1) = "XXX" Or B%(D, I3, 18) <> 0 Then 1002
+    M9 = M9 + 1
 
-1002 NEXT
-	FOR I3 = 0 TO 14
-	IF I3 = B1(D, W5) OR AA$(D, I3, 1) = "XXX" OR B%(D, I3, 18) <> 0 THEN 1003
-	IF A(D, I3, 0) <= A(D, B1(D, W5), 0) THEN A(D, I3, 3) = A(D, I3, 3) + INT((A(D, B1(D, W5), 3) / M9) + .5)
+1002 Next
+For I3 = 0 To 14
+    If I3 = B1(D, W5) Or AA$(D, I3, 1) = "XXX" Or B%(D, I3, 18) <> 0 Then 1003
+    If A(D, I3, 0) <= A(D, B1(D, W5), 0) Then A(D, I3, 3) = A(D, I3, 3) + Int((A(D, B1(D, W5), 3) / M9) + .5)
 
-1003 NEXT I3
-	RETURN
+1003 Next I3
+Return
 
-1033 X8 = SC(SC): LS = 4: RETURN
+1033 X8 = SC(SC): LS = 4: Return
 
 1040 CNT% = 0
 
 1041 CNT% = CNT% + 1
-	IF CNT% = 4 THEN 427
-	M9 = 0
-	B = INT(RND(1) * 5)
-	X = INT(RND(1) * 100) + 1
-	IF X <= 30 THEN 1046
-	FOR I = 0 TO 4
-	M8 = INT(B%(P, B1(P, I), 2) / B%(P, B1(P, I), 0) + .5) - A(P, B1(P, I), 7)
-	IF M8 <= 0 THEN M8 = 0
-	IF M8 <= 0 AND A(P, B1(P, I), 3) - A(P, B1(P, I), 7) - A(P, B1(P, I), 11) - A(P, B1(P, I), 12) > 0 THEN M8 = A(P, B1(P, I), 3) - A(P, B1(P, I), 7) - A(P, B1(P, I), 11) - A(P, B1(P, I), 12)
-	IF M8 >= M9 THEN B = I: M9 = M8
-	NEXT I
+If CNT% = 4 Then 427
+M9 = 0
+B = Int(Rnd(1) * 5)
+X = Int(Rnd(1) * 100) + 1
+If X <= 30 Then 1046
+For I = 0 To 4
+    M8 = Int(B%(P, B1(P, I), 2) / B%(P, B1(P, I), 0) + .5) - A(P, B1(P, I), 7)
+    If M8 <= 0 Then M8 = 0
+    If M8 <= 0 And A(P, B1(P, I), 3) - A(P, B1(P, I), 7) - A(P, B1(P, I), 11) - A(P, B1(P, I), 12) > 0 Then M8 = A(P, B1(P, I), 3) - A(P, B1(P, I), 7) - A(P, B1(P, I), 11) - A(P, B1(P, I), 12)
+    If M8 >= M9 Then B = I: M9 = M8
+Next I
 
-1046 GOTO 1041
+1046 GoTo 1041
 
 1054 'CREDIT ASSISTS
-	R0 = INT(RND(1) * 100) + 1
-	IF R0 > F7%(P, 7) THEN 1061
+R0 = Int(Rnd(1) * 100) + 1
+If R0 > F7%(P, 7) Then 1061
 
-1055 R0 = INT(RND(1) * F5%(P, 2)) + 1
-	W5 = 0
-	FOR M8 = 0 TO 4
-	W5 = W5 + A(P, B1(P, M8), 25)
-	IF R0 <= W5 THEN 1059
-	NEXT M8
-	M8 = INT(RND(1) * 5)
+1055 R0 = Int(Rnd(1) * F5%(P, 2)) + 1
+W5 = 0
+For M8 = 0 To 4
+    W5 = W5 + A(P, B1(P, M8), 25)
+    If R0 <= W5 Then 1059
+Next M8
+M8 = Int(Rnd(1) * 5)
 
-1059 W5 = M8: LOCATE 7, 25
-	IF AA$(P, B1(P, B), 0) <> AA$(P, B1(P, M8), 0) THEN
-		A(P, B1(P, M8), 14) = A(P, B1(P, M8), 14) + 1
-		GOTO 1061
-	END IF
-	GOTO 1055
+1059 W5 = M8: Locate 7, 25
+If AA$(P, B1(P, B), 0) <> AA$(P, B1(P, M8), 0) Then
+    A(P, B1(P, M8), 14) = A(P, B1(P, M8), 14) + 1
+    GoTo 1061
+End If
+GoTo 1055
 
-1061 RETURN
+1061 Return
 
-1065 W5 = 0: M9 = INT(RND(1) * F5%(D, 0)) + 1
-	FOR M8 = 0 TO 4: W5 = W5 + A(D, B1(D, M8), 17)
-	IF M9 <= W5 THEN 1069
-	NEXT M8
+1065 W5 = 0: M9 = Int(Rnd(1) * F5%(D, 0)) + 1
+For M8 = 0 To 4: W5 = W5 + A(D, B1(D, M8), 17)
+    If M9 <= W5 Then 1069
+Next M8
 
-1069 IF M8 < 0 OR M8 > 4 THEN M8 = INT(RND(1) * 5)
-	W5 = M8: RETURN
-	IF U5 = 1 AND P = CT AND H <= 3 AND T < 30 AND J < 3 THEN GOSUB 1080
-	IF U5 = 2 AND H <= 3 AND T < 30 AND J < 3 THEN GOSUB 1080
-	IF U5 = 1 AND P = CT AND H >= 4 AND T <= 120 AND J >= 3 AND J <= 9 THEN GOSUB 1080
-	IF U5 = 2 AND H >= 4 AND T <= 120 AND J >= 3 AND J <= 9 THEN GOSUB 1080
-	RETURN
+1069 If M8 < 0 Or M8 > 4 Then M8 = Int(Rnd(1) * 5)
+W5 = M8: Return
+If U5 = 1 And P = CT And H <= 3 And T < 30 And J < 3 Then GoSub 1080
+If U5 = 2 And H <= 3 And T < 30 And J < 3 Then GoSub 1080
+If U5 = 1 And P = CT And H >= 4 And T <= 120 And J >= 3 And J <= 9 Then GoSub 1080
+If U5 = 2 And H >= 4 And T <= 120 And J >= 3 And J <= 9 Then GoSub 1080
+Return
 
-1080 FOR J = 0 TO 3
-	J1 = INT(RND(1) * 5)
-	IF A(P, B1(P, J1), 20) > 0 THEN B = J1: GOTO 1084
-	NEXT J
+1080 For J = 0 To 3
+    J1 = Int(Rnd(1) * 5)
+    If A(P, B1(P, J1), 20) > 0 Then B = J1: GoTo 1084
+Next J
 
-1084 RETURN
+1084 Return
 
-1200 CLS : A = 0: S2 = 1: S3 = 1: SW = 0: FOR ZZ = 0 TO 4
-	IF A(P9, B1(P9, ZZ), 22) = 50 THEN A = A + 1: IF SW = 0 THEN PRINT : PRINT "THE FOLLOWING PLAYER(S) ARE PLAYING SAFE BUT CAN NOW PLAY NORMAL IF YOU WISH": SW = 1
-	IF A(P9, B1(P9, ZZ), 22) = 50 AND SW = 1 AND S2 < 6 THEN LOCATE S2 + 3, 1: PRINT S2; "-"; AA$(P9, B1(P9, ZZ), 0): P5(A) = S2: P4(A) = ZZ: S2 = S2 + 1: S3 = S3 + 1
-	NEXT ZZ: IF SW = 0 THEN 1214
-	A = 1: PRINT : PRINT "Z - CONTINUE"
+1200 Cls: A = 0: S2 = 1: S3 = 1: SW = 0: For ZZ = 0 To 4
+    If A(P9, B1(P9, ZZ), 22) = 50 Then A = A + 1: If SW = 0 Then Print: Print "THE FOLLOWING PLAYER(S) ARE PLAYING SAFE BUT CAN NOW PLAY NORMAL IF YOU WISH": SW = 1
+    If A(P9, B1(P9, ZZ), 22) = 50 And SW = 1 And S2 < 6 Then Locate S2 + 3, 1: Print S2; "-"; AA$(P9, B1(P9, ZZ), 0): P5(A) = S2: P4(A) = ZZ: S2 = S2 + 1: S3 = S3 + 1
+Next ZZ: If SW = 0 Then 1214
+A = 1: Print: Print "Z - CONTINUE"
 1206 I$ = GetKeyPress$
-	IF UCASE$(I$) = "Z" AND MJ = 0 THEN 1214
-	IF UCASE$(I$) = "Z" AND MJ = 25 THEN 1230
-	P6 = VAL(I$): IF P6 < 1 OR P6 > (S2 + 1) THEN 1206
-	A = P6
-	IF P6 = P5(P6) THEN
-		A(P9, B1(P9, P4(A)), 17) = A(P9, B1(P9, P4(A)), 17) * 3
-		A(P9, B1(P9, P4(A)), 22) = 0
-		LOCATE P5(A) + 3, 20
-		PRINT AA$(P9, B1(P9, P4(A)), 0); " WILL NOW PLAY NORMAL DEFENSE!"
-		CALL RATINGTABLES
-		D1(P9) = D1(P9) - 1
-		A = A + 1
-		MJ = 25
-		GOTO 1206
-	END IF
+If UCase$(I$) = "Z" And MJ = 0 Then 1214
+If UCase$(I$) = "Z" And MJ = 25 Then 1230
+P6 = Val(I$): If P6 < 1 Or P6 > (S2 + 1) Then 1206
+A = P6
+If P6 = P5(P6) Then
+    A(P9, B1(P9, P4(A)), 17) = A(P9, B1(P9, P4(A)), 17) * 3
+    A(P9, B1(P9, P4(A)), 22) = 0
+    Locate P5(A) + 3, 20
+    Print AA$(P9, B1(P9, P4(A)), 0); " WILL NOW PLAY NORMAL DEFENSE!"
+    Call RATINGTABLES
+    D1(P9) = D1(P9) - 1
+    A = A + 1
+    MJ = 25
+    GoTo 1206
+End If
 
-1214 A = 0: S2 = 1: FOR ZZ = 0 TO 4
-	IF H <= 2 AND A(P9, B1(P9, ZZ), 12) >= 3 AND A(P9, B1(P9, ZZ), 22) = 0 OR A(P9, B1(P9, ZZ), 12) = 5 AND A(P9, B1(P9, ZZ), 22) = 0 THEN
-		A = A + 1
-		IF S2 = 1 THEN
-	CLS
-	PRINT
-	PRINT "THE FOLLOWING PLAYER(S) CAN BE MADE TO PLAY SAFE IF YOU WISH"
-	PRINT
-		END IF
-	END IF
-	IF A = 0 AND ZZ > 3 THEN 1230
-	IF S2 = A AND S2 < 6 THEN PRINT S2; "- "; AA$(P9, B1(P9, ZZ), 0): P5(A) = S2: P4(A) = ZZ: S2 = S2 + 1: S3 = S3 + 1
-	NEXT ZZ
-	A = 1: PRINT : PRINT "Z - CONTINUE"
+1214 A = 0: S2 = 1: For ZZ = 0 To 4
+    If H <= 2 And A(P9, B1(P9, ZZ), 12) >= 3 And A(P9, B1(P9, ZZ), 22) = 0 Or A(P9, B1(P9, ZZ), 12) = 5 And A(P9, B1(P9, ZZ), 22) = 0 Then
+        A = A + 1
+        If S2 = 1 Then
+            Cls
+            Print
+            Print "THE FOLLOWING PLAYER(S) CAN BE MADE TO PLAY SAFE IF YOU WISH"
+            Print
+        End If
+    End If
+    If A = 0 And ZZ > 3 Then 1230
+    If S2 = A And S2 < 6 Then Print S2; "- "; AA$(P9, B1(P9, ZZ), 0): P5(A) = S2: P4(A) = ZZ: S2 = S2 + 1: S3 = S3 + 1
+Next ZZ
+A = 1: Print: Print "Z - CONTINUE"
 1220 I$ = GetKeyPress$
-	IF UCASE$(I$) = "Z" THEN 1230
-	P6 = VAL(I$): IF P6 < 1 OR P6 > (S2 + 1) THEN 1220
-	A = P6
-	IF P6 = P5(P6) THEN
-		A(P9, B1(P9, P4(A)), 17) = INT((A(P9, B1(P9, P4(A)), 17) + 1) / 3)
-		A(P9, B1(P9, P4(A)), 22) = 50
-		LOCATE P5(A) + 3, 20
-		PRINT AA$(P9, B1(P9, P4(A)), 0); " WILL NOW PLAY SAFE!"
-		CALL RATINGTABLES
-		D1(P9) = D1(P9) + 1
-		A = A + 1
-		S3 = S3 + 1
-		GOTO 1220
-	END IF
+If UCase$(I$) = "Z" Then 1230
+P6 = Val(I$): If P6 < 1 Or P6 > (S2 + 1) Then 1220
+A = P6
+If P6 = P5(P6) Then
+    A(P9, B1(P9, P4(A)), 17) = Int((A(P9, B1(P9, P4(A)), 17) + 1) / 3)
+    A(P9, B1(P9, P4(A)), 22) = 50
+    Locate P5(A) + 3, 20
+    Print AA$(P9, B1(P9, P4(A)), 0); " WILL NOW PLAY SAFE!"
+    Call RATINGTABLES
+    D1(P9) = D1(P9) + 1
+    A = A + 1
+    S3 = S3 + 1
+    GoTo 1220
+End If
 
-1230 CLS : MJ = 0
-	FO = 99: IF H = 1 AND T = 720 THEN FO = 0
-	RETURN
+1230 Cls: MJ = 0
+FO = 99: If H = 1 And T = 720 Then FO = 0
+Return
 
-1250 IF H <> 3 THEN RETURN
-	FOR I = 0 TO 1: FOR I1 = 0 TO 14
-	IF A(I, I1, 22) = 50 THEN A(I, I1, 22) = 0: A(I, I1, 17) = A(I, I1, 17) * 3: D1(I) = D1(I) - 1: MJ = 50
-	NEXT I1
-	IF MJ = 50 THEN MJ = 0: F5%(I, 0) = 0: FOR I1 = 0 TO 4: F5%(I, 0) = F5%(I, 0) + A(I, B1(I, I1), 17): NEXT I1
-	NEXT I
-	RETURN
+1250 If H <> 3 Then Return
+For I = 0 To 1: For I1 = 0 To 14
+    If A(I, I1, 22) = 50 Then A(I, I1, 22) = 0: A(I, I1, 17) = A(I, I1, 17) * 3: D1(I) = D1(I) - 1: MJ = 50
+    Next I1
+    If MJ = 50 Then MJ = 0: F5%(I, 0) = 0: For I1 = 0 To 4: F5%(I, 0) = F5%(I, 0) + A(I, B1(I, I1), 17): Next I1
+Next I
+Return
 
 1300 XY% = NG%(3)
-	U5 = NG%(8)
-	PO = NG%(5)
-	SC = NG%(7)
-	N = NG%(2)
-	U6 = NG%(4) / 10
-	CM% = NG%(9)
-	NB% = NG%(14): FR% = NG%(11): RT% = NG%(10)
-	FOR P9 = 0 TO 1
-	I1 = NG%(P9)
-	YN$ = YN$(P9)
-	CALL GETATEAM(I1, YN$)
-	NEXT P9
-	CALL SETUPRATINGS
-	RETURN
-	
+U5 = NG%(8)
+PO = NG%(5)
+SC = NG%(7)
+N = NG%(2)
+U6 = NG%(4) / 10
+CM% = NG%(9)
+NB% = NG%(14): FR% = NG%(11): RT% = NG%(10)
+For P9 = 0 To 1
+    I1 = NG%(P9)
+    YN$ = YN$(P9)
+    Call GETATEAM(I1, YN$)
+Next P9
+Call SETUPRATINGS
+Return
+    
 
-3000 PB$ = "": IF P = 1 THEN P = 0: D = 1: P9 = 0: C1 = 2: RETURN
-	IF P = 0 THEN P = 1: D = 0: P9 = 1: C1 = 2: RETURN
+3000 PB$ = "": If P = 1 Then P = 0: D = 1: P9 = 0: C1 = 2: Return
+If P = 0 Then P = 1: D = 0: P9 = 1: C1 = 2: Return
 
-4090 IF U6 = 0 THEN 4091
-	FOR I = 8 TO 15
-	LOCATE I, 1
-	PRINT "                                      "
-	NEXT I
+4090 If U6 = 0 Then 4091
+For I = 8 To 15
+    Locate I, 1
+    Print "                                      "
+Next I
 
-4091 RETURN
+4091 Return
 
-6585 FOR XX = 4 TO 11: IF MID$(B$(Q, 0), XX, 1) = " " OR MID$(B$(Q, 0), XX, 1) = "." THEN MID$(B$(Q, 0), XX, 1) = "_"
-	NEXT XX
-	FOR XX = 12 TO 14: IF MID$(B$(Q, 0), XX, 2) = "ST" THEN MID$(B$(Q, 0), 9, 1) = "_": MID$(B$(Q, 0), 10, 2) = "ST"
-	NEXT XX
-	QQ = 8: FOR XX = 11 TO 4 STEP -1: IF MID$(B$(Q, 0), XX, 1) = "_" THEN QQ = XX - 4: GOTO 6615
-	GOTO 6620
+6585 For XX = 4 To 11: If Mid$(B$(Q, 0), XX, 1) = " " Or Mid$(B$(Q, 0), XX, 1) = "." Then Mid$(B$(Q, 0), XX, 1) = "_"
+Next XX
+For XX = 12 To 14: If Mid$(B$(Q, 0), XX, 2) = "ST" Then Mid$(B$(Q, 0), 9, 1) = "_": Mid$(B$(Q, 0), 10, 2) = "ST"
+Next XX
+QQ = 8: For XX = 11 To 4 Step -1: If Mid$(B$(Q, 0), XX, 1) = "_" Then QQ = XX - 4: GoTo 6615
+    GoTo 6620
 
-6615 NEXT XX
+6615 Next XX
 
-6620 RETURN
+6620 Return
 
 8400 'CHECK SPECIAL EVENTS
-	CALL RECORDSCHECK
-	CALL EVENTS (COUNT, SPECIAL)
-	 IF SPECIAL = 1 THEN
-		NM$ = "BOX" + MID$(STR$(COUNT), 2, LEN(STR$(COUNT))) + ".SPC"
-		CALL BOX2SPC(NM$)
-	END IF
+Call RECORDSCHECK
+Call EVENTS(COUNT, SPECIAL)
+If SPECIAL = 1 Then
+    NM$ = "BOX" + Mid$(Str$(COUNT), 2, Len(Str$(COUNT))) + ".SPC"
+    Call BOX2SPC(NM$)
+End If
 
-8500 CLS
-	COLOR 14: PRINT "(0) "; : COLOR 15: PRINT "STATS TO SCREEN": PRINT
-	COLOR 14: PRINT "(1) "; : COLOR 15: PRINT "STATS TO PRINTER": PRINT
-	COLOR 14: PRINT "(2) "; : COLOR 15: PRINT "STATS TO TEXT FILE"
-	IF AP = 1 AND U5 = 2 THEN X = 2: GOTO 8680
+8500 Cls
+Color 14: Print "(0) ";: Color 15: Print "STATS TO SCREEN": Print
+Color 14: Print "(1) ";: Color 15: Print "STATS TO PRINTER": Print
+Color 14: Print "(2) ";: Color 15: Print "STATS TO TEXT FILE"
+If AP = 1 And U5 = 2 Then X = 2: GoTo 8680
 8651 I$ = GetKeyPress$
-	X = VAL(I$)
+X = Val(I$)
 
-8680 IF X = 1 THEN CALL BOX2PRN: GOTO 8532
-	IF X = 2 THEN CALL BOX2FILE: GOTO 8532
-	CLS
-	  IF N <> 2 THEN COLOR T(N, 33), T(N, 34): PRINT "@ "; B$(N, 4): PRINT : COLOR 14, 0
-	FOR I = 0 TO 1: PRINT B$(I, 0); TAB(17); STR$(S(I, 1)); TAB(20); STR$(S(I, 2)); TAB(23); STR$(S(I, 3)); TAB(26); STR$(S(I, 4));
-	IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) THEN PRINT TAB(29); STR$(S(I, 5));
-	IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) THEN PRINT TAB(29); "- "; S(I, 0): GOTO 8513
-	IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) THEN PRINT TAB(32); STR$(S(I, 6));
-	IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) THEN PRINT TAB(32); "- "; S(I, 0): GOTO 8513
-	PRINT TAB(35); "- "; S(I, 0): GOTO 8513
+8680 If X = 1 Then Call BOX2PRN: GoTo 8532
+If X = 2 Then Call BOX2FILE: GoTo 8532
+Cls
+If N <> 2 Then Color T(N, 33), T(N, 34): Print "@ "; B$(N, 4): Print: Color 14, 0
+For I = 0 To 1: Print B$(I, 0); Tab(17); Str$(S(I, 1)); Tab(20); Str$(S(I, 2)); Tab(23); Str$(S(I, 3)); Tab(26); Str$(S(I, 4));
+    If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) Then Print Tab(29); Str$(S(I, 5));
+    If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) Then Print Tab(29); "- "; S(I, 0): GoTo 8513
+    If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) Then Print Tab(32); Str$(S(I, 6));
+    If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) Then Print Tab(32); "- "; S(I, 0): GoTo 8513
+    Print Tab(35); "- "; S(I, 0): GoTo 8513
 
-8513 NEXT I
+8513 Next I
 
-8515 CALL BOGUS(X)
-	IF X = 0 THEN CLS
-	FOR I = 0 TO 1: COLOR T(I, 33), T(I, 34)
-	PRINT B$(I, 0): COLOR 14, 0
-	PRINT "NAME"; TAB(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
-	FOR I1 = 0 TO 14
-	IF ZZ(I, I1) = 0 THEN 8529
-	COLOR 15: PRINT AA$(I, I1, 0); TAB(14);
-	IF ZZ(I, I1) <> 0 THEN
-		PRINT USING "##"; INT(ZZ(I, I1) / 60);
-		PRINT ":";
-		IF ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60 > 9 THEN
-	PRINT USING "##"; ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60;
-		ELSE
-	PRINT "0";
-	PRINT USING "#"; ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60;
-		END IF
-	END IF
-	LOCATE , 21
-	PRINT USING "##"; A(I, I1, 8);
-	PRINT "-";
-	PRINT USING "##"; A(I, I1, 7);
-	PRINT USING "  ##"; W%(I, I1, 0);
-	PRINT "-";
-	PRINT USING "##"; W%(I, I1, 1);
-	PRINT USING "  ##"; A(I, I1, 10);
-	PRINT "-"; : PRINT USING "##"; A( I, I1, 9);
-	PRINT USING "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A(I, I1, 24); A(I, I1, 11); A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0); A(I, I1, 12); A(I, I1, 14); A(I, I1, 15); A(I, I1, 13); A(I, I1, 23);
-	IF ZZ(I, I1) = 0 THEN LOCATE , 15: PRINT "DNP" ELSE PRINT
-	V9(0) = V9(0) + A(I, I1, 8)
-	V9(1) = V9(1) + A(I, I1, 7)
-	V9(2) = V9(2) + A(I, I1, 10)
-	V9(3) = V9(3) + A(I, I1, 9)
-	V9(4) = V9(4) + A(I, I1, 11)
-	V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0)
-	V9(13) = V9(13) + W%(I, I1, 0)
-	V9(14) = V9(14) + W%(I, I1, 1)
-	V9(6) = TF(I): 'V9(6)+A(I,I1,12)
-	V9(7) = V9(7) + A(I, I1, 14): V9(8) = V9(8) + A(I, I1, 15): V9(9) = V9(9) + A(I, I1, 13): V9(11) = V9(11) + A(I, I1, 24): V9(12) = V9(12) + A(I, I1, 23)
-	V9(10) = V9(10) + ZZ(I, I1)
+8515 Call BOGUS(X)
+If X = 0 Then Cls
+For I = 0 To 1: Color T(I, 33), T(I, 34)
+    Print B$(I, 0): Color 14, 0
+    Print "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
+    For I1 = 0 To 14
+        If ZZ(I, I1) = 0 Then 8529
+        Color 15: Print AA$(I, I1, 0); Tab(14);
+        If ZZ(I, I1) <> 0 Then
+            Print Using "##"; Int(ZZ(I, I1) / 60);
+            Print ":";
+            If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then
+                Print Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+            Else
+                Print "0";
+                Print Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+            End If
+        End If
+        Locate , 21
+        Print Using "##"; A(I, I1, 8);
+        Print "-";
+        Print Using "##"; A(I, I1, 7);
+        Print Using "  ##"; W%(I, I1, 0);
+        Print "-";
+        Print Using "##"; W%(I, I1, 1);
+        Print Using "  ##"; A(I, I1, 10);
+        Print "-";: Print Using "##"; A(I, I1, 9);
+        Print Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A(I, I1, 24); A(I, I1, 11); A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0); A(I, I1, 12); A(I, I1, 14); A(I, I1, 15); A(I, I1, 13); A(I, I1, 23);
+        If ZZ(I, I1) = 0 Then Locate , 15: Print "DNP" Else Print
+        V9(0) = V9(0) + A(I, I1, 8)
+        V9(1) = V9(1) + A(I, I1, 7)
+        V9(2) = V9(2) + A(I, I1, 10)
+        V9(3) = V9(3) + A(I, I1, 9)
+        V9(4) = V9(4) + A(I, I1, 11)
+        V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0)
+        V9(13) = V9(13) + W%(I, I1, 0)
+        V9(14) = V9(14) + W%(I, I1, 1)
+        V9(6) = TF(I): 'V9(6)+A(I,I1,12)
+        V9(7) = V9(7) + A(I, I1, 14): V9(8) = V9(8) + A(I, I1, 15): V9(9) = V9(9) + A(I, I1, 13): V9(11) = V9(11) + A(I, I1, 24): V9(12) = V9(12) + A(I, I1, 23)
+        V9(10) = V9(10) + ZZ(I, I1)
 
-8529 NEXT I1: IF V9(3) = 0 THEN V9(3) = 1
-	PRINT : COLOR 14: PRINT "TOTALS"; : COLOR 15: PRINT TAB(14); INT(V9(10) / 60); : LOCATE , 21: PRINT USING "##"; V9(0); : PRINT "-"; : PRINT USING "###"; V9(1);
-	LOCATE , 28: PRINT USING "##"; V9(13); : PRINT "-"; : PRINT USING "##"; V9(14);
-	LOCATE , 35: PRINT USING "##"; V9(2); : PRINT "-"; : PRINT USING "##"; V9(3);
-	LOCATE , 42: PRINT USING "##  ## ### ##  ##  ##  ##  ##"; V9(11); V9(4); V9(5); V9(6); V9(7); V9(8); V9(9); V9(12)
-	PRINT TAB(22); INT(((V9(0) / V9(1)) * 100) + .5); "%"; TAB(35); INT(((V9(2) / V9(3)) * 100) + .5); "%": PRINT
-	COLOR 14: PRINT "TOTAL TURNOVERS -"; : COLOR 15: PRINT T0(I)
-	COLOR 14: PRINT "TOTAL REBOUNDS  -"; : COLOR 15: PRINT R3(I)
-	FOR I2 = 0 TO 14: V9(I2) = 0: NEXT I2
-	CALL BOGUS(X)
-	IF X = 0 THEN CLS
-	NEXT I
-	IF H >= 4 THEN EG% = 1: CALL TICKER: EG% = 0
-	IF H = 3 THEN HT% = 1: CALL TICKER: HT% = 0
-	IF H = 3 THEN GOSUB 1250: RETURN
+    8529 Next I1: If V9(3) = 0 Then V9(3) = 1
+    Print: Color 14: Print "TOTALS";: Color 15: Print Tab(14); Int(V9(10) / 60);: Locate , 21: Print Using "##"; V9(0);: Print "-";: Print Using "###"; V9(1);
+    Locate , 28: Print Using "##"; V9(13);: Print "-";: Print Using "##"; V9(14);
+    Locate , 35: Print Using "##"; V9(2);: Print "-";: Print Using "##"; V9(3);
+    Locate , 42: Print Using "##  ## ### ##  ##  ##  ##  ##"; V9(11); V9(4); V9(5); V9(6); V9(7); V9(8); V9(9); V9(12)
+    Print Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%": Print
+    Color 14: Print "TOTAL TURNOVERS -";: Color 15: Print T0(I)
+    Color 14: Print "TOTAL REBOUNDS  -";: Color 15: Print R3(I)
+    For I2 = 0 To 14: V9(I2) = 0: Next I2
+    Call BOGUS(X)
+    If X = 0 Then Cls
+Next I
+If H >= 4 Then EG% = 1: Call TICKER: EG% = 0
+If H = 3 Then HT% = 1: Call TICKER: HT% = 0
+If H = 3 Then GoSub 1250: Return
 
 8532 X = 0
-	CLS
-	J = 1
-	LOCATE 8, 8: COLOR T(1, 33), T(1, 34): PRINT " Ö"; STRING$(61, 196); "· ";
-	FOR II = 1 TO J: LOCATE 8 + II, 8: PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 9 + J, 8: PRINT " Ó"; STRING$(61, 196); "½ ";
-	LOCATE 9, 32
-	PRINT "DISPLAY STATS AGAIN (YN)";
-	COLOR 15, 0
-	IF AP = 1 AND U5 = 2 THEN 8535
+Cls
+J = 1
+Locate 8, 8: Color T(1, 33), T(1, 34): Print " Ö"; String$(61, 196); "· ";
+For II = 1 To J: Locate 8 + II, 8: Print " º"; String$(61, 32); "º ";: Next
+Locate 9 + J, 8: Print " Ó"; String$(61, 196); "½ ";
+Locate 9, 32
+Print "DISPLAY STATS AGAIN (YN)";
+Color 15, 0
+If AP = 1 And U5 = 2 Then 8535
+
 8533 I$ = GetKeyPress$
-	IF UCASE$(I$) = "Y" THEN 8500
+If UCase$(I$) = "Y" Then 8500
 
-8535 CALL COMPILESTATS
-	CLS
-	J = 1
-	LOCATE 8, 8: COLOR T(1, 33), T(1, 34): PRINT " Ö"; STRING$(61, 196); "· ";
-	FOR II = 1 TO J: LOCATE 8 + II, 8: PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 9 + J, 8: PRINT " Ó"; STRING$(61, 196); "½ ";
-	LOCATE 9, 32
-	PRINT "ANOTHER GAME (YN)";
-	COLOR 15, 0
-	IF AP = 1 THEN 8637
+8535 Call COMPILESTATS
+
+Cls
+J = 1
+Locate 8, 8: Color T(1, 33), T(1, 34): Print " Ö"; String$(61, 196); "· ";
+For II = 1 To J: Locate 8 + II, 8: Print " º"; String$(61, 32); "º ";: Next
+Locate 9 + J, 8: Print " Ó"; String$(61, 196); "½ ";
+Locate 9, 32
+Print "ANOTHER GAME (YN)";
+Color 15, 0
+If AP = 1 Then 8637
+
 8632 I$ = GetKeyPress$
-	IF UCASE$(I$) <> "Y" THEN RUN "HELLO.EXE"
-
-8637 CLS : PRINT "PLEASE WAIT ...": RUN "PROHOOP.EXE"
-
-729 IF PB% = 0 THEN CALL DELAY
-	IF PB% = 1 AND U6 <> 0 THEN PRINT U$: CALL MOREDELAY
-	RETURN
-
-DATA L,1,1,1,2,2,2,H,H,3,3,3,4,4,F
-DATA 60,61,60,58,58,59,59,59,59,58,58,58,57,58,57,51,51,52,49,50,44,45,42,47,43,43,42,39,38,38,35,34,34
-DATA 9,8,8,8,8,8,8,9,8,9,8,8,7,7,06,07,07,07,08,08,08,08,08,08,08,09,09,09,09,09,09,09,08
-DATA "REG M-M     ","SAGGING M-M ","TRAPPING M-M","TIGHT M-M   ","LOOSE M-M   "
-DATA -2,-2,-3,-4,-4,-5,-5,-6,-7
-DATA -4,-5,-5,-6,-7,-8,-9,-10,-11
-DATA 0,0,-1,-2,-3,-4,-5,-5,-6
-DATA -3,-3,-4,-5,-6,-6,-7,-8,-9
-DATA -6,-7,-8,-8,-8,-9,-10,-11,-12
-
-SUB BOGUS (X)
-IF X = 0 THEN CALL GETKEY
-END SUB
-
-SUB BOX2FILE ()
-	IF AP = 1 THEN
-		NM$ = "BOX" + MID$(STR$(AP%(0) + AP%(2)), 2, LEN(STR$(AP%(0) + AP%(2))))
-		GOTO 8951
-	END IF
-	CLS
-	INPUT "ENTER FILENAME TO SAVE GAME SUMMARY UNDER "; NM$: NM$ = NM$ + ".SPC"
-
-8951 OPEN P$(1) + NM$ FOR OUTPUT AS #2
-	IF N <> 2 THEN PRINT #2, "@ "; B$(N, 4): PRINT #2,
-	FOR I = 0 TO 1
-	PRINT #2, B$(I, 0); TAB(17); STR$(S(I, 1)); TAB(20); STR$(S(I, 2)); TAB(23); STR$(S(I, 3)); TAB(26); STR$(S(I, 4));
-	IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) THEN PRINT #2, TAB(29); STR$(S(I, 5));
-	IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) THEN PRINT #2, TAB(29); "- "; S(I, 0): GOTO 8963
-	IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) THEN PRINT #2, TAB(32); STR$(S(I, 6));
-	IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) THEN PRINT #2, TAB(32); "- "; S(I, 0): GOTO 8963
-	PRINT #2, TAB(35); "- "; S(I, 0)
-
-8963 NEXT I
-	FOR I = 0 TO 1
-	PRINT #2, : PRINT #2, B$(I, 0)
-	PRINT #2, "NAME"; TAB(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
-	FOR I1 = 0 TO 14
-	IF ZZ(I, I1) = 0 THEN 8970
-	PRINT #2, AA$(I, I1, 0); TAB(14);
-	IF ZZ(I, I1) = 0 THEN
-		PRINT #2, TAB(15); "DNP";
-		GOTO 8968
-	END IF
-	PRINT #2, USING "##"; INT(ZZ(I, I1) / 60); : PRINT #2, ":";
-	IF ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60 > 9 THEN
-		PRINT #2, USING "##"; ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60;
-	ELSE
-		PRINT #2, "0"; : PRINT #2, USING "#"; ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60;
-	END IF
-
-8968 PRINT #2, TAB(21); : PRINT #2, USING "##"; A(I, I1, 8);
-	PRINT #2, "-"; : PRINT #2, USING "##"; A(I, I1, 7);
-	PRINT #2, USING "  ##"; W%(I, I1, 0); : PRINT #2, "-";
-	PRINT #2, USING "##"; W%(I, I1, 1);
-	PRINT #2, USING "  ##"; A(I, I1, 10);
-	PRINT #2, "-"; : PRINT #2, USING "##"; A(I, I1, 9);
-	PRINT #2, USING "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A(I, I1, 24); A(I, I1, 11); A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0); A(I, I1, 12); A(I, I1, 14); A(I, I1, 15); A(I, I1, 13); A(I, I1, 23)
-	V9(0) = V9(0) + A(I, I1, 8)
-	V9(1) = V9(1) + A(I, I1, 7)
-	V9(2) = V9(2) + A(I, I1, 10)
-	V9(3) = V9(3) + A(I, I1, 9)
-	V9(4) = V9(4) + A(I, I1, 11)
-	V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0)
-	V9(13) = V9(13) + W%(I, I1, 0)
-	V9(14) = V9(14) + W%(I, I1, 1)
-	V9(6) = TF(I)
-	V9(7) = V9(7) + A(I, I1, 14)
-	V9(8) = V9(8) + A(I, I1, 15)
-	V9(9) = V9(9) + A(I, I1, 13)
-	V9(11) = V9(11) + A(I, I1, 24)
-	V9(12) = V9(12) + A(I, I1, 23)
-	V9(10) = V9(10) + ZZ(I, I1)
-
-8970 NEXT I1
-	IF V9(3) = 0 THEN V9(3) = 1
-	PRINT #2, : PRINT #2, "TOTALS"; TAB(14); INT(V9(10) / 60); TAB(21);
-	PRINT #2, USING "##"; V9(0); : PRINT #2, "-"; : PRINT #2, USING "###"; V9(1);
-	PRINT #2, TAB(28); USING "##"; V9(13); : PRINT #2, "-"; : PRINT #2, USING "##"; V9(14);
-	PRINT #2, TAB(35); USING "##"; V9(2); : PRINT #2, "-"; : PRINT #2, USING "##"; V9(3);
-	PRINT #2, TAB(42); USING "##  ## ### ##  ##  ##  ##  ##"; V9(11); V9(4); V9(5); V9(6); V9(7); V9(8); V9(9); V9(12)
-	PRINT #2, TAB(22); INT(((V9(0) / V9(1)) * 100) + .5); "%"; TAB(35); INT(((V9(2) / V9(3)) * 100) + .5); "%"
-	PRINT #2,
-	PRINT #2, "TOTAL TURNOVERS -"; T0(I)
-	PRINT #2, "TOTAL REBOUNDS  -"; R3(I)
-	FOR I2 = 0 TO 14
-	V9(I2) = 0
-	NEXT I2
-
-8971 IF X = 0 THEN
-	IF AP = 1 AND U5 = 2 THEN 
-		GOTO 8972
-		I$=GetKeyPress$
-	END IF
-
-8972 IF X = 0 THEN CLS
-	NEXT I
-
-	PRINT #2, CHR$(12)
-CLOSE 2
-	END SUB
-
-SUB BOX2PRN ()
-	IF N <> 2 THEN LPRINT "@ "; B$(N, 4): LPRINT
-	FOR I = 0 TO 1
-	LPRINT B$(I, 0); TAB(17); STR$(S(I, 1)); TAB(20); STR$(S(I, 2)); TAB(23); STR$(S(I, 3)); TAB(26); STR$(S(I, 4));
-	IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) THEN LPRINT TAB(29); STR$(S(I, 5));
-	IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) THEN LPRINT TAB(29); "- "; S(I, 0): GOTO 8913
-	IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) THEN LPRINT TAB(32); STR$(S(I, 6));
-	IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) THEN LPRINT TAB(32); "- "; S(I, 0): GOTO 8913
-	LPRINT TAB(35); "- "; S(I, 0)
-
-8913 NEXT I
-	CALL BOGUS(X)
-	IF X = 0 THEN CLS
-	FOR I = 0 TO 1
-	LPRINT : LPRINT B$(I, 0)
-	LPRINT "NAME"; TAB(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
-	FOR I1 = 0 TO 14
-	IF ZZ(I, I1) = 0 THEN 8920
-	LPRINT AA$(I, I1, 0); TAB(14);
-	IF ZZ(I, I1) = 0 THEN
-		LPRINT TAB(15); "DNP";
-		GOTO 8918
-	END IF
-	LPRINT USING "##"; INT(ZZ(I, I1) / 60);
-	LPRINT ":";
-	IF ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60 > 9 THEN
-		LPRINT USING "##"; ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60;
-	ELSE
-		LPRINT "0"; : LPRINT USING "#"; ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60;
-	END IF
-
-8918 LPRINT TAB(21);
-	LPRINT USING "##"; A(I, I1, 8);
-	LPRINT "-";
-	LPRINT USING "##"; A(I, I1, 7);
-	LPRINT USING "  ##"; W%(I, I1, 0);
-	LPRINT "-"; : LPRINT USING "##"; W%(I, I1, 1);
-	LPRINT USING "  ##"; A(I, I1, 10);
-	LPRINT "-"; : LPRINT USING "##"; A(I, I1, 9);
-	LPRINT USING "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A(I, I1, 24); A(I, I1, 11); A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0); A(I, I1, 12); A(I, I1, 14); A(I, I1, 15); A(I, I1, 13); A(I, I1, 23)
-	V9(0) = V9(0) + A(I, I1, 8)
-	V9(1) = V9(1) + A(I, I1, 7)
-	V9(2) = V9(2) + A(I, I1, 10)
-	V9(3) = V9(3) + A(I, I1, 9)
-	V9(4) = V9(4) + A(I, I1, 11)
-	V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0)
-	V9(13) = V9(13) + W%(I, I1, 0)
-	V9(14) = V9(14) + W%(I, I1, 1)
-	V9(6) = TF(I)
-	V9(7) = V9(7) + A(I, I1, 14)
-	V9(8) = V9(8) + A(I, I1, 15)
-	V9(9) = V9(9) + A(I, I1, 13)
-	V9(11) = V9(11) + A(I, I1, 24)
-	V9(12) = V9(12) + A(I, I1, 23)
-	V9(10) = V9(10) + ZZ(I, I1)
-
-8920 NEXT I1
-	IF V9(3) = 0 THEN V9(3) = 1
-	LPRINT
-	LPRINT "TOTALS"; TAB(14); INT(V9(10) / 60); TAB(21);
-	LPRINT USING "##"; V9(0);
-	LPRINT "-"; : LPRINT USING "###"; V9(1);
-	LPRINT TAB(28); USING "##"; V9(13);
-	LPRINT "-"; : LPRINT USING "##"; V9(14);
-	LPRINT TAB(35); USING "##"; V9(2);
-	LPRINT "-"; : LPRINT USING "##"; V9(3);
-	LPRINT TAB(42); USING "##  ## ### ##  ##  ##  ##  ##"; V9(11); V9(4); V9(5); V9(6); V9(7); V9(8); V9(9); V9(12)
-	LPRINT TAB(22); INT(((V9(0) / V9(1)) * 100) + .5); "%"; TAB(35); INT(((V9(2) / V9(3)) * 100) + .5); "%"
-	LPRINT
-	LPRINT "TOTAL TURNOVERS -"; T0(I): LPRINT "TOTAL REBOUNDS  -"; R3(I)
-	FOR I2 = 0 TO 14
-	V9(I2) = 0
-	NEXT I2
-	CALL BOGUS(X)
-	IF X = 0 THEN CLS
-	NEXT I
-	LPRINT CHR$(12)
-	END SUB
-
-SUB BOX2SPC (NM$)
-OPEN P$(1) + NM$ FOR OUTPUT AS #2
-	IF H - 1 > E%(1) THEN PRINT #2, USING "MORE THAN ## QUARTERS"; E%(1)
-	IF S(1, 0) + S(0, 0) > E%(2) THEN PRINT #2, USING "MORE THAN ### COMBINED POINTS"; E%(2)
-	IF R3(0) + R3(1) > E%(3) THEN PRINT #2, USING "MORE THAN ### COMBINED REBOUNDS"; E%(3)
-	IF S(0, 0) > E%(4) THEN PRINT #2, B$(0, 0); : PRINT #2, USING " SCORED MORE THAN ### POINTS"; E%(4)
-	IF S(1, 0) > E%(4) THEN PRINT #2, B$(1, 0); : PRINT #2, USING " SCORED MORE THAN ### POINTS"; E%(4)
-	IF R3(0) > E%(5) THEN PRINT #2, B$(0, 0); : PRINT #2, USING " HAD MORE THAN ### REBOUNDS"; E%(5)
-	IF R3(1) > E%(5) THEN PRINT #2, B$(1, 0); : PRINT #2, USING " HAD MORE THAN ### REBOUNDS"; E%(5)
-	 FOR I = 0 TO 1
-	FOR I1 = 0 TO 14
-	IF A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) > E%(6) THEN PRINT #2, AA$(I, I1, 0); : PRINT #2, USING " SCORED MORE THAN ### POINTS"; E%(6)
-	IF A(I, I1, 11) > E%(7) THEN PRINT #2, AA$(I, I1, 0); : PRINT #2, USING " HAD MORE THAN ### REBOUNDS"; E%(7)
-	IF A(I, I1, 14) > E%(8) THEN PRINT #2, AA$(I, I1, 0); : PRINT #2, USING " HAD MORE THAN ### ASSISTS"; E%(8)
-	IF A(I, I1, 15) > E%(9) THEN PRINT #2, AA$(I, I1, 0); : PRINT #2, USING " BLOCKED MORE THAN ### SHOTS"; E%(9)
-	IF A(I, I1, 13) > E%(10) THEN PRINT #2, AA$(I, I1, 0); : PRINT #2, USING " HAD MORE THAN ### STEALS"; E%(10)
-	IF W%(I, I1, 0) > E%(11) THEN PRINT #2, AA$(I, I1, 0); : PRINT #2, USING " MADE MORE THAN ### 3-PT FIELD GOALS"; E%(11)
-	NEXT
-	NEXT
-	PRINT #2,
-	IF N = 2 THEN PRINT #2, "NEUTRAL SITE": PRINT #2,
-	IF N <> 2 THEN PRINT #2, "@ "; B$(N, 4): PRINT #2,
-	FOR I = 0 TO 1
-	PRINT #2, B$(I, 0); TAB(17); STR$(S(I, 1)); TAB(20); STR$(S(I, 2)); TAB(23); STR$(S(I, 3)); TAB(26); STR$(S(I, 4));
-	IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) THEN PRINT #2, TAB(29); STR$(S(I, 5));
-	IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) THEN PRINT #2, TAB(29); "- "; S(I, 0): GOTO 8863
-	IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) THEN PRINT #2, TAB(32); STR$(S(I, 6));
-	IF S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) THEN PRINT #2, TAB(32); "- "; S(I, 0): GOTO 8863
-	PRINT #2, TAB(35); "- "; S(I, 0)
-
-8863 NEXT I
-	FOR I = 0 TO 1
-	PRINT #2, : PRINT #2, B$(I, 0)
-	PRINT #2, "NAME"; TAB(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
-	FOR I1 = 0 TO 14
-	IF ZZ(I, I1) = 0 THEN 8870
-	PRINT #2, AA$(I, I1, 0); TAB(14);
-	IF ZZ(I, I1) = 0 THEN
-		PRINT #2, TAB(15); "DNP";
-		GOTO 8868
-	END IF
-	PRINT #2, USING "##"; INT(ZZ(I, I1) / 60); : PRINT #2, ":";
-	IF ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60 > 9 THEN
-		PRINT #2, USING "##"; ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60;
-	ELSE
-		PRINT #2, "0"; : PRINT #2, USING "#"; ZZ(I, I1) - INT(ZZ(I, I1) / 60) * 60;
-	END IF
-
-8868 PRINT #2, TAB(21); : PRINT #2, USING "##"; A(I, I1, 8);
-	PRINT #2, "-"; : PRINT #2, USING "##"; A(I, I1, 7);
-	PRINT #2, USING "  ##"; W%(I, I1, 0); : PRINT #2, "-";
-	PRINT #2, USING "##"; W%(I, I1, 1);
-	PRINT #2, USING "  ##"; A(I, I1, 10);
-	PRINT #2, "-"; : PRINT #2, USING "##"; A(I, I1, 9);
-	PRINT #2, USING "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A(I, I1, 24); A(I, I1, 11); A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0); A(I, I1, 12); A(I, I1, 14); A(I, I1, 15); A(I, I1, 13); A(I, I1, 23)
-	V9(0) = V9(0) + A(I, I1, 8)
-	V9(1) = V9(1) + A(I, I1, 7)
-	V9(2) = V9(2) + A(I, I1, 10)
-	V9(3) = V9(3) + A(I, I1, 9)
-	V9(4) = V9(4) + A(I, I1, 11)
-	V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0)
-	V9(13) = V9(13) + W%(I, I1, 0)
-	V9(14) = V9(14) + W%(I, I1, 1)
-	V9(6) = TF(I)
-	V9(7) = V9(7) + A(I, I1, 14)
-	V9(8) = V9(8) + A(I, I1, 15)
-	V9(9) = V9(9) + A(I, I1, 13)
-	V9(11) = V9(11) + A(I, I1, 24)
-	V9(12) = V9(12) + A(I, I1, 23)
-	V9(10) = V9(10) + ZZ(I, I1)
-
-8870 NEXT I1
-	IF V9(3) = 0 THEN V9(3) = 1
-	PRINT #2, : PRINT #2, "TOTALS"; TAB(14); INT(V9(10) / 60); TAB(21);
-	PRINT #2, USING "##"; V9(0); : PRINT #2, "-"; : PRINT #2, USING "###"; V9(1);
-	PRINT #2, TAB(28); USING "##"; V9(13); : PRINT #2, "-"; : PRINT #2, USING "##"; V9(14);
-	PRINT #2, TAB(35); USING "##"; V9(2); : PRINT #2, "-"; : PRINT #2, USING "##"; V9(3);
-	PRINT #2, TAB(42); USING "##  ## ### ##  ##  ##  ##  ##"; V9(11); V9(4); V9(5); V9(6); V9(7); V9(8); V9(9); V9(12)
-	PRINT #2, TAB(22); INT(((V9(0) / V9(1)) * 100) + .5); "%"; TAB(35); INT(((V9(2) / V9(3)) * 100) + .5); "%"
-	PRINT #2,
-	PRINT #2, "TOTAL TURNOVERS -"; T0(I)
-	PRINT #2, "TOTAL REBOUNDS  -"; R3(I)
-	FOR I2 = 0 TO 14
-	V9(I2) = 0
-	NEXT I2
-
-8871 IF X = 0 THEN
-	IF AP = 1 AND U5 = 2 THEN 
-		GOTO 8872
-		I$=GetKeyPress$
-	END IF
-
-8872 IF X = 0 THEN CLS
-	NEXT I
-	PRINT #2, CHR$(12)
-CLOSE 2
-	END SUB
-
-SUB COMPILESTATS ()
-	CLS : J = 1
-	LOCATE 8, 8: COLOR T(1, 33), T(1, 34): PRINT " Ö"; STRING$(61, 196); "· ";
-	FOR II = 1 TO J: LOCATE 8 + II, 8: PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 9 + J, 8: PRINT " Ó"; STRING$(61, 196); "½ ";
-	LOCATE 9, 28
-	PRINT "SAVE STATS FOR EITHER TEAM (YN)";
-	COLOR 15, 0
-	IF AP = 1 THEN 9506
-9501 I$ = GetKeyPress$
-	IF UCASE$(I$) <> "Y" THEN 9507
-	CLS : COLOR 12: PRINT TAB(30); "COMPILATION OF STATS": PRINT
-	COLOR 14: PRINT "(0) "; : COLOR 15: PRINT "BOTH TEAMS": PRINT
-	COLOR 14: PRINT "(1) "; : COLOR T(0, 33), T(0, 34): PRINT B$(0, 0); " ONLY": COLOR , 0: PRINT
-	COLOR 14: PRINT "(2) "; : COLOR T(1, 33), T(1, 34): PRINT B$(1, 0); " ONLY": COLOR , 0: PRINT
-9502 I$ = GetKeyPress$
-	X1 = VAL(I$)
-	IF X1 < 0 OR X1 > 2 THEN 9502
-
-9506 CALL SAVESTATFILES
-
-9507 END SUB
-
-SUB DISABLEPLAYERS ()
-	CLS : PRINT "DISABLE UP TO 6 PLAYERS FOR "; : COLOR T(P9, 33), T(P9, 34): PRINT B$(P9, 0); : COLOR 15, 0: PRINT " (YN)";
-	PRINT : PRINT
-	PRINT "NOTE:: THE COMPUTER WILL AUTOMATICALLY DISABLE PLAYERS BASED ON"
-	PRINT "       THE RATIO OF GAMES PLAYED FOR EACH PLAYER TO THE TOTAL"
-	PRINT "       NUMBER OF GAMES PLAYED BY THE TEAM. YOU MAY WANT TO CHECK"
-	PRINT "       TO ACTIVATE ANY COMPUTER DEACTIVATED PLAYERS"
-9202 I$ = GetKeyPress$
-	IF UCASE$(I$) <> "Y" THEN 9210
-	DX% = 0: CLS : PRINT "TEAM ROSTER FOR "; : COLOR T(P9, 33), T(P9, 34): PRINT B$(P9, 0): COLOR 15, 0
-	PRINT "# NAME            GP"
-	FOR I = 0 TO 14
-	IF I <= 9 THEN PRINT USING "#"; I;
-	IF I = 10 THEN PRINT "A";
-	IF I = 11 THEN PRINT "B";
-	IF I = 12 THEN PRINT "C";
-	IF I = 13 THEN PRINT "D";
-	IF I = 14 THEN PRINT "E";
-	IF AA$(P9, I, 0) = "XXX" THEN B%(P9, I, 18) = -1: COLOR T(P9, 33), T(P9, 34)
-	PRINT " ";
-	IF B%(P9, I, 18) <> 0 THEN COLOR T(P9, 33), T(P9, 34)
-	PRINT AA$(P9, I, 0); : COLOR 15, 0: PRINT TAB(18); B%(P9, I, 0)
-	NEXT
-
-9203 LOCATE 19, 1: PRINT "ENTER PLAYER # TO DISABLE/ENABLE (Z=FINISHED)"
-9205 I$ = GetKeyPress$
-	IF UCASE$(I$) = "Z" THEN 9210
-	I1 = VAL(I$)
-	IF UCASE$(I$) = "A" THEN I1 = 10
-	IF UCASE$(I$) = "B" THEN I1 = 11
-	IF UCASE$(I$) = "C" THEN I1 = 12
-	IF UCASE$(I$) = "D" THEN I1 = 13
-	IF UCASE$(I$) = "E" THEN I1 = 14
-	IF B%(P9, I1, 18) = 0 AND DX% < 6 THEN B%(P9, I1, 18) = -1: DX% = DX% + 1: LOCATE 3 + I1, 3: COLOR T(P9, 33), T(P9, 34): PRINT AA$(P9, I1, 0): COLOR 15, 0: GOTO 9203
-	IF B%(P9, I1, 18) = -1 THEN B%(P9, I1, 18) = 0: DX% = DX% - 1: LOCATE 3 + I1, 3: COLOR 15, 0: PRINT AA$(P9, I1, 0): GOTO 9203
-	GOTO 9203
-
-9210 END SUB
-
-SUB DRAWBOX (I)
-	JJ = 1
-	LOCATE 6, 8: COLOR T(I, 33), T(I, 34)
-	PRINT " "; CHR$(201); STRING$(61, 205); CHR$(187); " ";
-	FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 7 + JJ, 8
-	PRINT " "; CHR$(200); STRING$(61, 205); CHR$(188); " "; : LOCATE 7
-END SUB
-
-SUB GETATEAM (I1, YN$)
-OPEN P$(0) + "PROBBTMS." + YN$ FOR RANDOM AS #1 LEN = 1031
-	FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
-	FOR J = 0 TO 6
-	FIELD #1, 30 + J * 2 AS X$, 2 AS Q$(J + 2)
-	NEXT
-	FIELD #1, 44 AS X$, 2 AS Q$(9)
-	FOR J = 0 TO 34
-	FIELD #1, 46 + J * 2 AS X$, 2 AS Q$(J + 10)
-	NEXT
-	FOR J = 0 TO 14
-	FIELD #1, 116 + J * 57 AS X$, 15 AS Q$(J * 22 + 45), 2 AS Q$(J * 22 + 46)
-	FOR J1 = 0 TO 19
-	FIELD #1, 133 + J * 57 + J1 * 2 AS X$, 2 AS Q$(J * 22 + 47 + J1)
-	NEXT
-	NEXT
-	FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
-	GET #1, I1
-	B$(P9, 0) = Q$(0)
-	B$(P9, 1) = Q$(1)
-	FOR I = 0 TO 6
-	L%(P9, I) = CVI(Q$(I + 2))
-	NEXT
-	FOR I = 0 TO 34
-	T(P9, I) = CVI(Q$(I + 10))
-	NEXT
-	FOR I = 0 TO 14
-	AA$(P9, I, 0) = Q$(22 * I + 45)
-	AA$(P9, I, 1) = Q$(22 * I + 46)
-	FOR I1 = 0 TO 19
-	B%(P9, I, I1) = CVI(Q$(22 * I + 47 + I1))
-	NEXT
-	NEXT
-	B$(P9, 2) = Q$(375)
-	B$(P9, 3) = Q$(376)
-	B$(P9, 4) = Q$(377)
-CLOSE 1
-	  FOR I = 0 TO 14
-
-9004 IF RIGHT$(AA$(P9, I, 0), 1) = " " THEN AA$(P9, I, 0) = LEFT$(AA$(P9, I, 0), LEN(AA$(P9, I, 0)) - 1): GOTO 9004
-
-9005 IF RIGHT$(AA$(P9, I, 1), 1) = " " THEN AA$(P9, I, 1) = LEFT$(AA$(P9, I, 1), LEN(AA$(P9, I, 1)) - 1): GOTO 9005
-	 NEXT
-
-9002 IF RIGHT$(B$(P9, 0), 1) = " " THEN B$(P9, 0) = LEFT$(B$(P9, 0), LEN(B$(P9, 0)) - 1): GOTO 9002
-
-9006 IF RIGHT$(B$(P9, 2), 1) = " " THEN B$(P9, 2) = LEFT$(B$(P9, 2), LEN(B$(P9, 2)) - 1): GOTO 9006
-
-9007 IF RIGHT$(B$(P9, 3), 1) = " " THEN B$(P9, 3) = LEFT$(B$(P9, 3), LEN(B$(P9, 3)) - 1): GOTO 9007
-
-9008 IF RIGHT$(B$(P9, 4), 1) = " " THEN B$(P9, 4) = LEFT$(B$(P9, 4), LEN(B$(P9, 4)) - 1): GOTO 9008
-	FOR I = 0 TO 14
-	IF B%(P9, I, 16) >= 0 OR B%(P9, I, 17) >= 0 THEN 9009
-	GP = B%(P9, I, 16) / B%(P9, I, 0)
-	MPG = B%(P9, I, 17) / B%(P9, I, 1)
-	FOR I1 = 2 TO 14
-	B%(P9, I, I1) = B%(P9, I, I1) * GP * MPG
-	B%(P9, I, 0) = B%(P9, I, 16) * -1: B%(P9, I, 1) = B%(P9, I, 17) * -1
-	NEXT I1
-
-9009 NEXT I
-	IF U5 = 0 OR U5 = 1 AND P9 <> CT OR AP = 1 AND U5 = 0 OR AP = 1 AND U5 = 1 AND P9 <> CT THEN 9020
-
-9010 CNT% = 0
-	FOR I = 0 TO 14
-	IF B%(P9, I, 18) = -1 THEN B%(P9, I, 18) = 0
-	RN = INT(RND(1) * 100) + 1
-	IF UCASE$(AA$(P9, I, 0)) = "XXX" OR (B%(P9, I, 18) = 0 AND RN > INT(B%(P9, I, 0) / L%(P9, 0) * 100 + .5)) THEN B%(P9, I, 18) = -1
-	NEXT
-	FOR I = 0 TO 14: IF B%(P9, I, 18) = 0 THEN CNT% = CNT% + 1
-	NEXT
-	IF CNT% < 10 THEN 9010
-
-9020 END SUB
-
-SUB INITIALIZE ()
-	 FOR I = 0 TO 14
-READ R$(I)
-NEXT
-	'ORIG  DATA 12,11,11,11,11,11,11,12,11,12,11,11,10,10,06,07,07,07,08,08,08,08,08,08,08,09,09,09,09,09,09,09,08
-	 FOR I = 0 TO 32
-READ TOA%(I)
-NEXT
-FOR I = 0 TO 32
-READ PFA%(I)
-NEXT
-NL% = 1
-SC(1) = 30: SC(0) = 24
-NB% = 5
-OPEN "DEV.BAS" FOR INPUT AS #1
-INPUT #1, P$(0)
-INPUT #1, P$(1)
-CLOSE 1
-OPEN "DEFAULT" FOR INPUT AS #1
-	INPUT #1, U5
-	INPUT #1, XY%
-	INPUT #1, SC
-	INPUT #1, N
-	INPUT #1, PO
-	INPUT #1, U6
-	INPUT #1, X4%
-	INPUT #1, CM%
-	INPUT #1, NB%
-	INPUT #1, RT%
-	INPUT #1, FR%
-	INPUT #1, PB%
-CLOSE 1
-	IF NOT _FILEEXISTS("TICKER") THEN TMT = 0: GOTO 2
-OPEN "TICKER" FOR INPUT AS #2
-	FOR I = 1 TO 32
-	FOR I1 = 0 TO 1
-	FOR I2 = 1 TO 14
-	INPUT #2, SX%(I, I1, I2)
-	NEXT: NEXT: NEXT
-	FOR I = 1 TO 32
-	FOR I1 = 0 TO 1
-	INPUT #2, SX$(I, I1)
-	NEXT: NEXT
-	FOR I = 1 TO 32
-	INPUT #2, ST%(I)
-	NEXT
-CLOSE 2
-	TMT = 1
-
-2  IF NOT _FILEEXISTS("GAME82") THEN 6
-OPEN "GAME82" FOR INPUT AS #2
-INPUT #2, FF$
-FOR I = 0 TO 2: INPUT #2, AP%(I): NEXT
-CLOSE 2
-	 OPEN P$(0) + FF$ FOR RANDOM AS #1 LEN = 48
-	FOR X = 0 TO 18
-	FIELD #1, X * 2 AS X$, 2 AS Q$(X + 1), 48 - 2 - 2 * X AS X$
-	NEXT
-	FIELD #1, 38 AS X$, 2 AS Q$(22), 2 AS Q$(23), 3 AS Q$(20), 3 AS Q$(21)
-	GET #1, AP%(0) + AP%(2)
-	FOR X = 0 TO 18: NG%(X) = CVI(Q$(X + 1)): NEXT
-	FOR X = 0 TO 1: YN$(X) = Q$(20 + X): NEXT
-	VS% = CVI(Q$(22)): HS% = CVI(Q$(23))
-CLOSE 1
-	AP = 1
-
-6  P7$(1) = "YES": P7$(0) = " NO"
-	T = 720
-	H = 1
-	T1(1) = 7: T1(0) = 7
-	PS$(0) = "G": PS$(1) = "G": PS$(2) = "F": PS$(3) = "F": PS$(4) = "C"
-		
-	  OY%(1) = 2: OY%(2) = -2: OX%(1) = 10: OX%(2) = -10
-	D2(0) = 1: D2(1) = 1
-	FOR I = 1 TO 5: READ D$(I): NEXT I
-	FOR I = 0 TO 1: FOR I1 = 0 TO 4: B1(I, I1) = -1: NEXT: NEXT
-	FOR I = 0 TO 1: FOR I1 = 1 TO 9: READ CF%(I, I1): NEXT: NEXT
-	FOR I = 0 TO 2: FOR I1 = 1 TO 9: READ GF%(I, I1): NEXT: NEXT
-	TS$(0) = "NO ": TS$(1) = "YES"
-	SC$(0) = "24 SEC SHOT CLOCK"
-	SC$(1) = "30 SEC SHOT CLOCK"
-	FT$(0) = "CURRENT RULES            "
-	FT$(1) = "3 TO MAKE 2 / 2 TO MAKE 1"
-	FR$(0) = "ONLY IN BONUS OR ACT OF SHOOTING"
-	FR$(1) = "SHOOT ON ALL FOULS              "
-	O$(0) = "NORMAL      "
-	O$(1) = "AGGRESSIVE  "
-	O$(2) = "SAFE        "
-	U5$(0) = "HUMAN OPPONENT           "
-	U5$(1) = "COMPUTER IS VISITING TEAM"
-	U5$(2) = "COMPUTER IS HOME TEAM    "
-	U5$(3) = "COMPUTER VS COMPUTER     "
-	LC$(0) = "@ TEAM 1            "
-	LC$(1) = "HOME COURT ADVANTAGE"
-	LC$(2) = "NEUTRAL SITE        "
-	X$(0) = "A ": X$(1) = "B ": X$(2) = "C ": X$(3) = "D ": X$(4) = "E "
-		PO$(0) = "REGULAR SEASON"
-	PO$(1) = "PLAYOFF       "
-	CM$(0) = "COACH AND SELECT SHOTS           "
-	CM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
-	PB$(0) = "VERBOSE        "
-	PB$(1) = "HAFFNER CLASSIC"
-
-END SUB
-
-SUB NEWSCREEN ()
-	'*** SCREEN UPDATING ***
-	CLS
-	CALL TICKERUPDATE
-	COLOR 9, 0
-	LOCATE 3, 11: PRINT CHR$(218); STRING$(5, 196); CHR$(191)
-	LOCATE , 11: PRINT CHR$(179); : LOCATE , 17: PRINT CHR$(179)
-	LOCATE , 11: PRINT CHR$(192); STRING$(5, 196); CHR$(217)
-	LOCATE 3, 58: PRINT CHR$(218); STRING$(5, 196); CHR$(191)
-	LOCATE , 58: PRINT CHR$(179); : LOCATE , 64: PRINT CHR$(179)
-	LOCATE , 58: PRINT CHR$(192); STRING$(5, 196); CHR$(217)
-	LOCATE 2, 1: LOCATE , 9: COLOR T(0, 33), T(0, 34): PRINT B$(0, 0);
-	LOCATE 1, 37: COLOR 15, 0: PRINT USING "##"; INT(T / 60); : PRINT ":";
-	IF T - INT(T / 60) * 60 < 10 THEN
-		PRINT "0";
-		PRINT USING "#"; T - INT(T / 60) * 60;
-		GOTO 2505
-	END IF
-	PRINT USING "##"; T - INT(T / 60) * 60;
-
-2505 LOCATE 2, 56: COLOR T(1, 33), T(1, 34): PRINT B$(1, 0)
-	LOCATE 4, 13: COLOR 14, 0
-	PRINT USING "###"; S(0, 0);
-	LOCATE 2, 35: PRINT USING " PERIOD #"; H;
-	IF H > 4 THEN LOCATE , 35: PRINT USING "OVERTIME #"; H - 4
-	LOCATE 4, 60: COLOR 14, 0: PRINT USING "###"; S(1, 0)
-	COLOR 7: LOCATE 3, 35
-	PRINT USING "##  "; T0(0); : COLOR 12
-	PRINT "TO  "; : COLOR 7: PRINT USING "##"; T0(1)
-	LOCATE , 35: PRINT USING "##  "; R3(0);
-	COLOR 12: PRINT "RB  "; : COLOR 7: PRINT USING "##"; R3(1)
-	LOCATE , 35: PRINT USING "##  "; P2(0);
-	COLOR 12: PRINT "TF  "; : COLOR 7
-	PRINT USING "##"; P2(1);
-	IF P2(0) > NB% - 1 AND H <= 4 OR P2(0) > 2 AND H > 4 THEN LOCATE , 46: COLOR 0, 2: PRINT "BONUS"; : COLOR 7, 0
-	IF P2(1) > NB% - 1 AND H <= 4 OR P2(1) > 2 AND H > 4 THEN LOCATE , 29: COLOR 0, 2: PRINT "BONUS": COLOR 7, 0
-	LOCATE 6, 9: PRINT "TIMEOUTS:"; T1(0); : LOCATE , 56: PRINT "TIMEOUTS:"; T1(1)
-	LOCATE 8, 58
-	COLOR T(D, 33), T(D, 34): PRINT "DEF - "; D$(D2(D))
-	LOCATE , 58: COLOR T(P, 33), T(P, 34): PRINT "OFF - "; O$(O0%(P))
-	COLOR 15, 0
-	LOCATE , 41: COLOR 14: PRINT "(1) "; : COLOR 15: PRINT "SHOOT        "; : COLOR 14: PRINT "ENTER"; : COLOR 15: PRINT "-PASS"
-	LOCATE , 41: COLOR 14: PRINT "(2) "; : COLOR 15: PRINT B$(P, 0); " CALL TIMEOUT     "
-	LOCATE , 41: COLOR 14: PRINT "(3) "; : COLOR 15: PRINT "COMMIT INTL FOUL (LAST 4 MIN)"
-	LOCATE , 41: COLOR 14: PRINT "(4) "; : COLOR 15: PRINT "SHOOT A FORCED 3-POINTER"
-	LOCATE , 41: COLOR 14: PRINT "(S) "; : COLOR 15: PRINT "SCOUT REPORT ";
-	COLOR 14: PRINT "(T) "; : COLOR 15: PRINT "10 MIN TICKER"
-	LOCATE , 41: COLOR 14: PRINT "(Z) "; : COLOR 15: PRINT "LEFT TM STGY ";
-	COLOR 14: PRINT "(/) "; : COLOR 15: PRINT "RIGHT TM STGY"
-	LOCATE 7, 1
-	COLOR 9, 0: PRINT STRING$(38, 205); CHR$(203); STRING$(38, 205)
-	LOCATE 8, 1: FOR I = 1 TO 8: LOCATE , 39: PRINT CHR$(186): NEXT
-	LOCATE 17, 1: COLOR T(0, 33), T(0, 34): PRINT B$(0, 0);
-	PRINT USING " [##"; Z5(0); : PRINT "-"; : PRINT USING "##]"; Z6(0)
-	COLOR 14, 0: PRINT "# NAME         FG FT RB CX PA DF PT  F"
-	FOR I1 = 0 TO 4
-	COLOR 2: PRINT USING "# "; I1;
-	COLOR 3
-	COLOR 15: PRINT LEFT$(AA$(0, B1(0, I1), 0), 12); : LOCATE , 16
-	J = (A(0, B1(0, I1), 3)) - A(0, B1(0, I1), 7) - A(0, B1(0, I1), 11) - A(0, B1(0, I1), 12)
-	IF J <= 0 THEN J = 0
-	PRINT USING "##"; A(0, B1(0, I1), 0);
-	PRINT USING "### "; A(0, B1(0, I1), 1);
-	IF P = 0 THEN PRINT USING "##"; A(0, B1(0, I1), 21) * 2 / 10;  ELSE PRINT USING "##"; A(0, B1(0, I1), 2) * 2 / 10;
-	IF J <= 0 AND (H = 1 OR H = 2 OR H = 3 OR H = 4 AND T > 120) THEN COLOR 12
-	PRINT USING "### "; J;
-	COLOR 15
-	PRINT USING "## ##"; A(0, B1(0, I1), 4) / 10; A(0, B1(0, I1), 5) / 10;
-	PRINT USING "###  "; A(0, B1(0, I1), 8) * 2 + A(0, B1(0, I1), 10) + W%(0, B1(0, I1), 0);
-	IF A(0, B1(0, I1), 12) >= 5 THEN COLOR 12
-	PRINT USING "#"; A(0, B1(0, I1), 12)
-	COLOR 15
-	NEXT I1
-	LOCATE 17, 40: COLOR T(1, 33), T(1, 34): PRINT B$(1, 0); : PRINT USING " [##"; Z5(1); : PRINT "-"; : PRINT USING "##]"; Z6(1)
-	COLOR 14, 0: LOCATE , 40: PRINT "# NAME          FG FT RB CX PA DF PT  F"
-	FOR I1 = 0 TO 4: LOCATE , 40: COLOR 2: PRINT USING "# "; I1;
-	COLOR 15: PRINT LEFT$(AA$(1, B1(1, I1), 0), 12); : LOCATE , 56
-	J = (A(1, B1(1, I1), 3)) - A(1, B1(1, I1), 7) - A(1, B1(1, I1), 11) - A(1, B1(1, I1), 12)
-	IF J <= 0 THEN J = 0
-	PRINT USING "##"; A(1, B1(1, I1), 0);
-	PRINT USING "### "; A(1, B1(1, I1), 1);
-	IF P = 1 THEN PRINT USING "##"; A(1, B1(1, I1), 21) * 2 / 10;  ELSE PRINT USING "##"; A(1, B1(1, I1), 2) * 2 / 10;
-	IF J <= 0 AND (H = 1 OR H = 2 OR H = 3 OR H = 4 AND T > 120) THEN COLOR 12
-	PRINT USING "### "; J;
-	COLOR 15
-	PRINT USING "## ##"; A(1, B1(1, I1), 4) / 10; A(1, B1(1, I1), 5) / 10;
-	PRINT USING "###  "; A(1, B1(1, I1), 8) * 2 + A(1, B1(1, I1), 10) + W%(1, B1(1, I1), 0);
-	IF A(1, B1(1, I1), 12) >= 5 THEN COLOR 12
-	PRINT USING "#"; A(1, B1(1, I1), 12)
-	COLOR 15
-	NEXT I1
-	COLOR 9, 0: FOR I = 1 TO 9: LOCATE 14 + I, 39: PRINT CHR$(186): NEXT
-	COLOR 9, 0
-	LOCATE 16, 1: PRINT STRING$(79, 205)
-	LOCATE 16, 39: PRINT CHR$(206): COLOR 7, 0
-	END SUB
-
-SUB QUARTERTOTAL ()
-
-FOR I = 0 TO 1
-FOR I2 = 0 TO 14: V9(I2) = 0: NEXT
-	FOR I1 = 0 TO 14
-	V9(0) = V9(0) + A(I, I1, 8)
-	V9(1) = V9(1) + A(I, I1, 7)
-	V9(2) = V9(2) + A(I, I1, 10)
-	V9(3) = V9(3) + A(I, I1, 9)
-	V9(4) = V9(4) + A(I, I1, 11)
-	V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0)
-	V9(13) = V9(13) + W%(I, I1, 0)
-	V9(14) = V9(14) + W%(I, I1, 1)
-	V9(6) = TF(I)
-	V9(7) = V9(7) + A(I, I1, 14)
-	V9(8) = V9(8) + A(I, I1, 15)
-	V9(9) = V9(9) + A(I, I1, 13)
-	V9(11) = V9(11) + A(I, I1, 24)
-	V9(12) = V9(12) + A(I, I1, 23)
-	V9(10) = V9(10) + ZZ(I, I1)
-	NEXT
-		IF H = 1 OR H = 2 THEN
-	FOR I2 = 0 TO 14
-	QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2)
-	NEXT
-		FOR I1 = 0 TO 14
-	 FOR I2 = 7 TO 15
-	 QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6)
-	 NEXT
-	 QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10)
-	 QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11)
-	 QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12)
-	 QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13)
-	 QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14)
-	 NEXT
-	 END IF
-		IF H = 3 THEN
-	FOR I2 = 0 TO 14
-	QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2)
-	NEXT
-	 FOR I1 = 0 TO 14
-	 FOR I2 = 7 TO 15
-	 QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6)
-	 NEXT
-	 QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10)
-	 QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11)
-	 QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12)
-	 QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13)
-	 QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14)
-	 NEXT
-	 END IF
-		IF H = 4 THEN
-	FOR I2 = 0 TO 14
-	QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2)
-	NEXT
-	 FOR I1 = 0 TO 14
-	 FOR I2 = 7 TO 15
-	 QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6)
-	 NEXT
-	 QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10)
-	 QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11)
-	 QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12)
-	 QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13)
-	 QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14)
-	 NEXT
-	 END IF
-		IF H = 5 THEN
-	FOR I2 = 0 TO 14
-	QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2) - QR(I, H - 4, I2)
-	NEXT
-	 FOR I1 = 0 TO 14
-	 FOR I2 = 7 TO 15
-	 QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6) - QQ(I, H - 4, I1, I2 - 6)
-	 NEXT
-	 QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10) - QQ(I, H - 4, I1, 10)
-	 QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11) - QQ(I, H - 4, I1, 11)
-	 QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12) - QQ(I, H - 4, I1, 12)
-	 QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13) - QQ(I, H - 4, I1, 13)
-	 QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14) - QQ(I, H - 4, I1, 14)
-	 NEXT
-	 END IF
-		IF H = 6 THEN
-	FOR I2 = 0 TO 14
-	QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2) - QR(I, H - 4, I2) - QR(I, H - 5, I2)
-	NEXT
-	 FOR I1 = 0 TO 14
-	 FOR I2 = 7 TO 15
-	 QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6) - QQ(I, H - 4, I1, I2 - 6) - QQ(I, H - 5, I1, I2 - 6)
-	 NEXT
-	 QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10) - QQ(I, H - 4, I1, 10) - QQ(I, H - 5, I1, 10)
-	 QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11) - QQ(I, H - 4, I1, 11) - QQ(I, H - 5, I1, 11)
-	 QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12) - QQ(I, H - 4, I1, 12) - QQ(I, H - 5, I1, 12)
-	 QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13) - QQ(I, H - 4, I1, 13) - QQ(I, H - 5, I1, 13)
-	 QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14) - QQ(I, H - 4, I1, 14) - QQ(I, H - 5, I1, 14)
-	 NEXT
-	 END IF
-		IF H = 7 THEN
-	FOR I2 = 0 TO 14
-	QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2) - QR(I, H - 4, I2) - QR(I, H - 5, I2) - QR(I, H - 6, I2)
-	NEXT
-	 FOR I1 = 0 TO 14
-	 FOR I2 = 7 TO 15
-	 QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6) - QQ(I, H - 4, I1, I2 - 6) - QQ(I, H - 5, I1, I2 - 6) - QQ(I, H - 6, I1, I2 - 6)
-	 NEXT
-	 QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10) - QQ(I, H - 4, I1, 10) - QQ(I, H - 5, I1, 10) - QQ(I, H - 6, I1, 10)
-	 QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11) - QQ(I, H - 4, I1, 11) - QQ(I, H - 5, I1, 11) - QQ(I, H - 6, I1, 11)
-	 QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12) - QQ(I, H - 4, I1, 12) - QQ(I, H - 5, I1, 12) - QQ(I, H - 6, I1, 12)
-	 QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13) - QQ(I, H - 4, I1, 13) - QQ(I, H - 5, I1, 13) - QQ(I, H - 6, I1, 13)
-	 QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14) - QQ(I, H - 4, I1, 14) - QQ(I, H - 5, I1, 14) - QQ(I, H - 6, I1, 14)
-	 NEXT
-	 END IF
-
-NEXT
-FOR I = 0 TO 14: V9(I) = 0: NEXT
-END SUB
-
-SUB RATINGTABLES ()
-	FOR I = 0 TO 1
-	F5%(I, 0) = 0
-	F5%(I, 1) = 0
-	F5%(I, 2) = 0
-	F5%(I, 3) = 0
-	F5%(I, 4) = 0
-	FOR I1 = 0 TO 4
-	F5%(I, 0) = F5%(I, 0) + A(I, B1(I, I1), 17)
-	F5%(I, 1) = F5%(I, 1) + B%(I, B1(I, I1), 18)
-	F5%(I, 2) = F5%(I, 2) + A(I, B1(I, I1), 25)
-	F5%(I, 3) = F5%(I, 3) + A(I, B1(I, I1), 5)
-	F5%(I, 4) = F5%(I, 4) + A(I, B1(I, I1), 4) / 10
-	NEXT I1
-	F5%(I, 4) = INT((F5%(I, 4) / (F7%(I, 6) * .9)) * 100 + .5)
-	NEXT
-END SUB
-
-SUB SAVESTATFILES ()
-	'SAVE STATS
-	IF NOT _FILEEXISTS("GAME82") THEN 6030
-OPEN "GAME82" FOR INPUT AS #2
-	INPUT #2, FF$
-	FOR I = 0 TO 2: INPUT #2, AP%(I): NEXT: CLOSE 2
-	IF AP%(2) > 31 THEN 6011
-	FOR X = 0 TO 1: SX$(AP%(2) + 1, X) = B$(X, 0): NEXT
-OPEN "TICKER" FOR OUTPUT AS #2
-	FOR I = 1 TO 32: FOR I1 = 0 TO 1: FOR I2 = 1 TO 14
-	PRINT #2, SX%(I, I1, I2): NEXT: NEXT: NEXT
-	FOR I = 1 TO 32: FOR I1 = 0 TO 1: PRINT #2, SX$(I, I1): NEXT: NEXT
-	FOR I = 1 TO 32: PRINT #2, ST%(I): NEXT
-CLOSE 2
-
-6011 OPEN P$(0) + FF$ FOR RANDOM AS #1 LEN = 48
-	FOR X = 0 TO 18
-	FIELD #1, X * 2 AS X$, 2 AS Q$(X + 1), 48 - 2 - 2 * X AS X$
-	NEXT
-	FIELD #1, 38 AS X$, 2 AS Q$(22), 2 AS Q$(23), 3 AS Q$(20), 3 AS Q$(21)
-	NG%(13) = 1
-	FOR X = 0 TO 18: LSET Q$(X + 1) = MKI$(NG%(X)): NEXT
-	FOR X = 0 TO 1: LSET Q$(20 + X) = YN$(X): NEXT
-	LSET Q$(22) = MKI$(S(0, 0)): LSET Q$(23) = MKI$(S(1, 0))
-	PUT #1, AP%(0) + AP%(2)
-CLOSE 1
-	AP%(2) = AP%(2) + 1
-	AP = 1: IF AP%(1) < AP%(0) + AP%(2) THEN KILL "GAME82": AD = 1: GOTO 6030
-OPEN "GAME82" FOR OUTPUT AS #2
-	PRINT #2, FF$
-	FOR I = 0 TO 2: PRINT #2, AP%(I): NEXT: CLOSE 2
-
-6030 CLS
-	HH% = N
-	FOR PX = 0 TO 1
-	FOR J = 0 TO 14
-	A(PX, J, 16) = ZZ(PX, J)
-	A(PX, J, 17) = A(PX, J, 23)
-	A(PX, J, 18) = A(PX, J, 24)
-	NEXT
-	NEXT
-	FOR PX = 0 TO 1
-	FOR I = 0 TO 14
-	FOR J = 1 TO 12
-	A(PX, I, J) = A(PX, I, J + 6)
-	NEXT
-	W0(PX, I) = W%(PX, I, 0)
-	W1(PX, I) = W%(PX, I, 1)
-	NEXT
-	Y$(PX) = B$(PX, 0)
-	NEXT
-	Q = 0
-
-6115 C% = 0
-	IF AP = 1 THEN 6355
-	I$ = "Y"
-	IF X1 = 1 AND Q = 1 OR X1 = 2 AND Q = 0 THEN I$ = "N"
-	IF UCASE$(I$) = "N" THEN C% = 1: GOTO 6355
-	IF UCASE$(LEFT$(P$(1), 1)) <> "A" AND UCASE$(LEFT$(P$(1), 1)) <> "B" THEN 6355
-	CLS
-
-6355 IF C% = 1 THEN 6290
-	FOR XX = 4 TO 11
-	IF MID$(B$(Q, 0), XX, 1) = " " OR MID$(B$(Q, 0), XX, 1) = "." THEN MID$(B$(Q, 0), XX, 1) = "_"
-	NEXT XX
-	FOR XX = 12 TO 14
-	IF MID$(B$(Q, 0), XX, 2) = "ST" THEN MID$(B$(Q, 0), 9, 1) = "_": MID$(B$(Q, 0), 10, 2) = "ST"
-	NEXT XX
-	QQ = 8
-	FOR XX = 11 TO 4 STEP -1
-	IF MID$(B$(Q, 0), XX, 1) = "_" THEN QQ = XX - 4: GOTO 6616
-	GOTO 6620
-
-6616 NEXT XX
-
-6620 F$ = MID$(B$(Q, 0), 4, QQ)
-	R$ = F$ + "." + LEFT$(B$(Q, 0), 2)
-	IF NOT _FILEEXISTS(P$(1) + R$) THEN 6185
-OPEN P$(1) + R$ FOR INPUT AS #2
-	INPUT #2, B$(Q, 0)
-	FOR I = 0 TO 14: INPUT #2, AA$(Q, I, 0)
-	FOR J = 0 TO 13: INPUT #2, Z2(I, J): NEXT J
-	INPUT #2, W2(Q, I): INPUT #2, W3(Q, I): NEXT I
-	FOR L = 0 TO 15: INPUT #2, Z(L): NEXT L
-	FOR L = 0 TO 15: INPUT #2, Z1(L): NEXT L
-CLOSE #2
-
-6185 TG = 0
-	FOR I = 0 TO 14
-	IF A(Q, I, 2) * 2 + A(Q, I, 4) + W0(Q, I) > Z2(I, 13) THEN Z2(I, 13) = A(Q, I, 2) * 2 + A(Q, I, 4) + W0(Q, I)
-	IF A(Q, I, 10) > 0 THEN Z2(I, 0) = Z2(I, 0) + 1
-	FOR J = 1 TO 12
-	Z2(I, J) = Z2(I, J) + A(Q, I, J)
-	IF J = 5 OR J = 6 OR J = 10 OR J = 11 THEN 6215
-	Z(J) = Z(J) + A(Q, I, J): Z1(J) = Z1(J) + A(1 - Q, I, J)
-
-6215 NEXT J
-	Z(0) = Z(0) + A(Q, I, 10)
-	TG = TG + A(Q, I, 10)
-	NEXT I
-	FOR I = 0 TO 1: V9(I) = 0: FOR I1 = 0 TO 14: V9(I) = V9(I) + A(I, I1, 5): NEXT: NEXT
-	Z(15) = Z(15) + R3(Q) - V9(Q): Z1(15) = Z1(15) + R3(1 - Q) - V9(1 - Q)
-	Z(6) = Z(6) + TF(Q): Z1(6) = Z1(6) + TF(1 - Q)
-	Z(5) = Z(5) + R3(Q): Z1(5) = Z1(5) + R3(1 - Q): Z(11) = Z(11) + T0(Q): Z1(11) = Z1(11) + T0(1 - Q)
-	FOR J = 0 TO 14: Z(13) = Z(13) + W0(Q, J): Z(14) = Z(14) + W1(Q, J)
-	Z1(13) = Z1(13) + W0(1 - Q, J): Z1(14) = Z1(14) + W1(1 - Q, J)
-	W2(Q, J) = W2(Q, J) + W0(Q, J): W3(Q, J) = W3(Q, J) + W1(Q, J): NEXT J
-	Z(10) = Z(10) + S(Q, 0): Z1(10) = Z1(10) + S(1 - Q, 0)
-	I = Q
-	CALL DRAWBOX(I)
-	U$ = "SAVING STATS FOR " + B$(Q, 0)
-	LOCATE , (80 - LEN(U$)) / 2
-	PRINT U$
-	COLOR 15, 0
-	  OPEN P$(1) + R$ FOR OUTPUT AS #1
-	PRINT #1, Y$(Q)
-	FOR I = 0 TO 14: PRINT #1, AA$(Q, I, 0)
-	FOR J = 0 TO 13: PRINT #1, Z2(I, J): NEXT J
-	PRINT #1, W2(Q, I): PRINT #1, W3(Q, I): NEXT I
-	FOR L = 0 TO 15: PRINT #1, Z(L): NEXT L
-	FOR L = 0 TO 15: PRINT #1, Z1(L): NEXT L
-CLOSE #1
-	  Y% = 0: R$ = R$ + "S"
-	IF NOT _FILEEXISTS(P$(1) + R$) THEN 6405
-OPEN P$(1) + R$ FOR INPUT AS #1
-	INPUT #1, Y%
-	FOR I = 1 TO 100: INPUT #1, O%(I): NEXT I
-	FOR I = 1 TO 100: INPUT #1, HO$(I): NEXT I
-	FOR I = 1 TO 100: INPUT #1, HT%(I): NEXT I
-	FOR I = 1 TO 100: INPUT #1, H$(I): NEXT I
-CLOSE #1
-
-6405 IF Y% < 100 THEN Y% = Y% + 1
-	IF HH% = 2 AND TG < 14500 THEN H$(Y%) = "N": GOTO 6540
-	IF HH% <> Q AND TG < 14500 THEN H$(Y%) = "V": GOTO 6540
-	IF HH% = Q AND TG < 14500 THEN H$(Y%) = "H": GOTO 6540
-	IF HH% = Q AND TG < 16000 THEN H$(Y%) = "H1": GOTO 6540
-	IF HH% = Q AND TG < 17500 THEN H$(Y%) = "H2": GOTO 6540
-	IF HH% = Q AND TG < 19000 THEN H$(Y%) = "H3": GOTO 6540
-	IF HH% = Q AND TG < 20500 THEN H$(Y%) = "H4": GOTO 6540
-	IF HH% = 2 AND TG < 16000 THEN H$(Y%) = "N1": GOTO 6540
-	IF HH% = 2 AND TG < 17500 THEN H$(Y%) = "N2": GOTO 6540
-	IF HH% = 2 AND TG < 19000 THEN H$(Y%) = "N3": GOTO 6540
-	IF HH% = 2 AND TG < 20500 THEN H$(Y%) = "N4": GOTO 6540
-	IF HH% <> Q AND TG < 16000 THEN H$(Y%) = "V1": GOTO 6540
-	IF HH% <> Q AND TG < 17500 THEN H$(Y%) = "V2": GOTO 6540
-	IF HH% <> Q AND TG < 19000 THEN H$(Y%) = "V3": GOTO 6540
-	IF HH% <> Q AND TG < 20500 THEN H$(Y%) = "V4": GOTO 6540
-
-6540 O%(Y%) = S(Q, 0): HO$(Y%) = B$(1 - Q, 0): HT%(Y%) = S(1 - Q, 0)
-OPEN P$(1) + R$ FOR OUTPUT AS #1
-	PRINT #1, Y%
-	FOR I = 1 TO 100: PRINT #1, O%(I): NEXT I
-	FOR I = 1 TO 100: PRINT #1, HO$(I): NEXT I
-	FOR I = 1 TO 100: PRINT #1, HT%(I): NEXT I
-	FOR I = 1 TO 100: PRINT #1, H$(I): NEXT I
-CLOSE #1
-	FOR I = 1 TO 100: O%(I) = 0: HT%(I) = 0: HO$(I) = "": H$(I) = "": NEXT I
-	  FOR J = 0 TO 14
-	FOR K = 0 TO 13
-	Z2(J, K) = 0
-	NEXT K
-	NEXT J
-	FOR L = 0 TO 15
-	Z(L) = 0
-	Z1(L) = 0
-	NEXT L
-
-6290 Q = Q + 1: Z(12) = 0: IF Q < 2 THEN 6115
-	IF AP = 1 AND AD <> 1 THEN 6292
-	IF AD = 1 THEN RUN "HELLO.EXE"
-
-6292 END SUB
-
-SUB SCOUTREPORT ()
-	' *** SCOUTING REPORT ***
-	JJ = 13
-	SN = 1: LOCATE 6, 8: COLOR 0, 7
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 7 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
-	PRINT "SCOUTING REPORT"
-	LOCATE 8, 14: COLOR T(0, 33), T(0, 34): PRINT B$(0, 0);
-	LOCATE , 52: COLOR T(1, 33), T(1, 34): PRINT B$(1, 0)
-	COLOR 0, 7
-	LOCATE , 18: PRINT USING "###           POINTS PER GAME         ###"; (T(0, 6) * 2 + T(0, 8) + T(0, 18)) / T(0, 0); (T(1, 6) * 2 + T(1, 8) + T(1, 18)) / T(1, 0)
-	LOCATE , 18: PRINT USING " ##             FIELD GOAL %           ##"; T(0, 6) / T(0, 5) * 100 + D1(1); T(1, 6) / T(1, 5) * 100 + D1(0)
-	LOCATE , 18: PRINT USING " ##             FREE THROW %           ##"; T(0, 8) / T(0, 7) * 100; T(1, 8) / T(1, 7) * 100
-	LOCATE , 18: PRINT USING " ##          REBOUNDS PER GAME         ##"; (T(0, 9) + T(0, 10)) / T(0, 0); (T(1, 9) + T(1, 10)) / T(1, 0)
-	LOCATE , 18: PRINT USING " ##      TURNOVERS FORCED PER GAME     ##"; T(0, 29) / T(0, 0); T(1, 29) / T(1, 0)
-	LOCATE , 18: PRINT USING " ##    TURNOVERS COMMITTED PER GAME    ##"; T(0, 15) / T(0, 0); T(1, 15) / T(1, 0)
-	LOCATE , 18: PRINT USING " ##          STEALS PER GAME           ##"; T(0, 14) / T(0, 0); T(1, 14) / T(1, 0)
-	LOCATE , 18: PRINT USING " ##      PERSONAL FOULS PER GAME       ##"; T(0, 12) / T(0, 0); T(1, 12) / T(1, 0)
-	LOCATE , 18: PRINT USING " ##          ASSISTS PER GAME          ##"; T(0, 11) / T(0, 0); T(1, 11) / T(1, 0)
-	LOCATE , 18: PRINT USING " ##          BLOCKS PER GAME           ##"; T(0, 16) / T(0, 0); T(1, 16) / T(1, 0)
-	LOCATE , 18: PRINT USING " ##             3 POINT FG%            ##"; T(0, 18) / (T(0, 17) + 1) * 100 + F%(1, 4); T(1, 18) / (T(1, 17) + 1) * 100 + F%(0, 4)
-8203 I$ = GetKeyPress$
-	 COLOR 7, 0
-	 CALL NEWSCREEN
-	 END SUB
-
-SUB SETUPRATINGS ()
-DIM X3 AS SINGLE, JX AS SINGLE
-	'*** SET UP TEAM RATINGS***
-	FOR I = 0 TO 1
-	YR% = VAL(LEFT$(B$(I, 0), 2))
-	IF YR% < 40 THEN YR% = YR% +100
-	  FTF = 1
-	IF YR% < 74 THEN FTF = .91
-	IF YR% < 69 THEN FTF = .83
-	FOR I1 = 0 TO 14
-	B%(I, I1, 4) = B%(I, I1, 4) * FTF
-	B%(I, I1, 5) = B%(I, I1, 5) * FTF
-	NEXT I1
-	T(I, 7) = T(I, 7) * FTF
-	T(I, 8) = T(I, 8) * FTF
-	T(I, 21) = T(I, 21) * FTF
-	T(I, 22) = T(I, 22) * FTF
-	YR% = YR% - 60
-	IF YR% < 0 THEN TOF%(I) = 59: PF%(I) = 11: GOTO 9215
-	IF YR% > 32 THEN TOF%(I) = 34: PF%(I) = 8: GOTO 9215
-	TOF%(I) = TOA%(YR%)
-	PF%(I) = PFA%(YR%)
-
-9215 NEXT
-	IF LEFT$(B$(1, 0), 2) = LEFT$(B$(0, 0), 2) THEN 9253
-	IF AP = 1 THEN I = NG%(6): GOTO 9252
-	CLS : PRINT "THESE TWO TEAMS MAY HAVE PLAYED DURING DIFFERENT ERAS AND"
-	PRINT "PLAYED DIFFERENT STYLES OF BASKETBALL"
-	PRINT
-	PRINT "PLAY STYLE OF:"
-	PRINT
-	COLOR 14: PRINT "(0) - "; : COLOR T(0, 33), T(0, 34): PRINT B$(0, 0): COLOR , 0
-	PRINT
-	COLOR 14: PRINT "(1) - "; : COLOR T(1, 33), T(1, 34): PRINT B$(1, 0): COLOR , 0
-	PRINT
-	COLOR 14: PRINT "(2) - "; : COLOR 3: PRINT "MAKE NO ADJUSTMENT": COLOR 15, 0
-9251 I$ = GetKeyPress$
-	I = VAL(I$): IF I < 0 OR I > 2 THEN 9251
-
-9252 IF I = 2 THEN 9253
-	HN% = 1: HM% = I
-	JX = (T(0, 5) + T(0, 19) + T(1, 5) + T(1, 19)) * (L%(I, 1) / L%(1 - I, 1)) / ((T(1, 0) + T(0, 0)) * 2) * 2 - (L%(I, 1) + L%(I, 1)) / 2
-	JY = JX
-	GOTO 9254
-
-9253 'JX = (  T(0, 5) + T(0, 19) + T(1, 5) + T(1, 19)  ) / ( (T(1, 0) + T(0, 0) ) * 2) * 2 - (L%(0, 1) + L%(1, 1)) / 2
-	JX = (T(0, 5) + T(0, 19)) / ((T(1, 0) + T(0, 0)) * 2) + (T(1, 5) + T(1, 19)) / ((T(1, 0) + T(0, 0)) * 2)
-	JX = JX * 2 - (L%(0, 1) + L%(1, 1)) / 2
-	JY = JX
-	IF PO = 1 THEN JY = JY - 7
-
-9254 FOR I = 0 TO 1
-	D1(I) = INT(T(I, 20) / T(I, 19) * 100 + .5) - L%(I, 3)
-	X7(I) = 1440 - ((T(I, 5) / T(I, 0)) + (T(I, 19) / T(I, 0))) * 2
-	X7(I) = X7(I) / 25
-	F7%(I, 5) = INT(((T(I, 5) + T(I, 19)) / (T(I, 0) * 2)) + .5)
-	F7%(I, 0) = INT((((T(I, 28) / T(I, 0)) / (X7(I) * 5)) * 1000) + .5) - 41
-	F7%(I, 1) = INT(((T(I, 15) - T(I, 28)) / T(I, 0)) / (X7(I) * 5) * 1000 + .5)
-	F7%(I, 2) = INT(((T(I, 29) - T(I, 14)) / T(I, 0)) / (X7(I) * 5) * 1000 + .5) - TOF%(I): '-41
-	IF T(I, 31) > 0 THEN F7%(I, 4) = INT(T(I, 32) / T(I, 31) * 100 + .5) - L%(I, 5)
-	IF T(I, 31) = 0 THEN F7%(I, 4) = 0 - L%(I, 5)
-	F7%(I, 6) = INT(T(I, 6) / T(I, 0) + .5)
-	X3 = (T(I, 21) - T(I, 20) * .1) - 7.9 * T(I, 0)
-	X3 = X3 / 2
-	F7%(I, 3) = INT(X3 / (T(I, 19) + X3) * 100 + .5) - PF%(I): ' WAS -7
-	F7%(I, 7) = INT(T(I, 11) / T(I, 6) * 100 + .5)
-	NEXT
-	FOR I = 0 TO 1
-	FOR I1 = 0 TO 14
-	IF B%(I, I1, 18) <> 0 THEN 9260
-	IF B%(I, I1, 2) - B%(I, I1, 13) > 0 THEN A(I, I1, 0) = INT((B%(I, I1, 3) - B%(I, I1, 14)) / (B%(I, I1, 2) - B%(I, I1, 13)) * 100 + .5)
-	IF PO = 1 THEN A(I, I1, 0) = A(I, I1, 0) - 2
-	IF B%(I, I1, 4) > 0 THEN A(I, I1, 1) = INT(B%(I, I1, 5) / B%(I, I1, 4) * 100 + .5)
-	X3 = B%(I, I1, 7) / B%(I, I1, 1) * 48
-	X3 = X3 * 29.3 / (L%(I, 2) * .677) * ((T(I, 5) + T(I, 19)) / (T(I, 0) * 2) / L%(I, 1))
-	X3 = INT(X3 * 10 + .5)
-	A(I, I1, 2) = X3
-	X3 = B%(I, I1, 6) / B%(I, I1, 1) * 48
-	X3 = X3 * 14! / (L%(I, 2) * .323) * ((T(I, 5) + T(I, 19)) / (T(I, 0) * 2) / L%(I, 1))
-	X3 = INT(X3 * 10 + .5)
-	A(I, I1, 21) = X3
-	X3 = B%(I, I1, 8) / B%(I, I1, 1) * 48
-	A(I, I1, 25) = INT(X3 * 10 + .5)
-	X3 = X3 * 26 * T(I, 0) / T(I, 11)
-	A(I, I1, 4) = INT(X3 * 10 + .5)
-ASSIST:
-	A(I, I1, 5) = B%(I, I1, 11) / B%(I, I1, 1) * 48
-	A(I, I1, 5) = INT(A(I, I1, 5) / X7(I) * 1000 + .5)
-BLOCK:
-	A(I, I1, 6) = B%(I, I1, 12) / B%(I, I1, 1) * 48
-	A(I, I1, 6) = A(I, I1, 6) / ((T(I, 19) - T(I, 31) - T(I, 20) + T(I, 32)) / T(I, 0) / 5)
-	A(I, I1, 6) = INT(A(I, I1, 6) * .93 * 100 + .5)
-	IF FR% = 0 THEN X3 = B%(I, I1, 4) - (B%(I, I1, 3) * .1) - 1.58 * B%(I, I1, 1) / 48
-	IF FR% = 1 THEN X3 = B%(I, I1, 4) * .9 - (B%(I, I1, 3) * .1) - 1.58 * B%(I, I1, 1) / 48
-	X3 = X3 / 2
-	A(I, I1, 16) = INT(X3 / (B%(I, I1, 2) + X3) * 100 + .5)
-	IF A(I, I1, 16) < 0 THEN A(I, I1, 16) = 0
-	A(I, I1, 17) = INT(B%(I, I1, 9) / B%(I, I1, 1) * 48 * 10 + .5)
-	A(I, I1, 18) = B%(I, I1, 18)
-	IF B%(I, I1, 2) > 0 THEN A(I, I1, 19) = INT(B%(I, I1, 13) / B%(I, I1, 2) * 100 + .5)
-	IF B%(I, I1, 13) > 0 THEN A(I, I1, 20) = INT(B%(I, I1, 14) / B%(I, I1, 13) * 100 + .5)
-	X3 = INT(B%(I, I1, 2) / (B%(I, I1, 2) + B%(I, I1, 4)) * 100 + .5)
-	IF LEFT$(AA$(I, I1, 1), 1) = "F" OR LEFT$(AA$(I, I1, 1), 1) = "C" THEN 9255
-	IF X3 >= 86 THEN B%(I, I1, 16) = 1
-	IF X3 = 84 OR X3 = 85 THEN B%(I, I1, 16) = 2
-	IF X3 = 82 OR X3 = 83 THEN B%(I, I1, 16) = 3
-	IF X3 = 80 OR X3 = 81 THEN B%(I, I1, 16) = 4
-	IF X3 >= 77 AND X3 <= 79 THEN B%(I, I1, 16) = 5
-	IF X3 = 75 OR X3 = 76 THEN B%(I, I1, 16) = 6
-	IF X3 = 73 OR X3 = 74 THEN B%(I, I1, 16) = 7
-	IF X3 = 71 OR X3 = 72 THEN B%(I, I1, 16) = 8
-	IF X3 <= 70 THEN B%(I, I1, 16) = 9
-	GOTO 9260
-
-9255 IF X3 >= 81 THEN B%(I, I1, 16) = 1
-	IF X3 = 79 OR X3 = 80 THEN B%(I, I1, 16) = 2
-	IF X3 = 77 OR X3 = 78 THEN B%(I, I1, 16) = 3
-	IF X3 = 75 OR X3 = 76 THEN B%(I, I1, 16) = 4
-	IF X3 >= 72 AND X3 <= 74 THEN B%(I, I1, 16) = 5
-	IF X3 = 70 OR X3 = 71 THEN B%(I, I1, 16) = 6
-	IF X3 = 68 OR X3 = 69 THEN B%(I, I1, 16) = 7
-	IF X3 = 66 OR X3 = 67 THEN B%(I, I1, 16) = 8
-	IF X3 <= 65 THEN B%(I, I1, 16) = 9
-
-9260 NEXT I1
-	NEXT I
-	FOR I = 0 TO 1
-	M9(I) = (T(I, 5) + T(I, 19) + T(I, 9) + T(I, 10)) / (T(I, 0) * 2)
-	M9(I) = M9(I) + (T(I, 23) + T(I, 24) + T(I, 12) + T(I, 26)) / (T(I, 0) * 2)
-	M9(I) = M9(I) * 2 - (L%(I, 1) + L%(I, 2) + L%(I, 4))
-	NEXT I
-	IF HN% <> 1 THEN 9264
-	I = HM%
-	F7%(1 - I, 1) = F7%(1 - I, 1) * TOF%(I) / TOF%(1 - I)
-	M9(1 - I) = M9(1 - I) * (L%(I, 1) + L%(I, 2) + L%(I, 4)) / (L%(1 - I, 1) + L%(1 - I, 2) + L%(1 - I, 4))
-	FOR I1 = 0 TO 14
-	A(1 - I, I1, 0) = A(1 - I, I1, 0) + L%(I, 3) - L%(1 - I, 3) - L%(1 - I, 6) + L%(I, 6)
-	NEXT
-
-9264 S9 = INT((M9(0) + M9(1)) / 2 + .5)
-	IF PO = 1 THEN S9 = S9 - 11
-	FOR I = 0 TO 1: M9(I) = 0
-	FOR I1 = 0 TO 14
-	IF B%(I, I1, 18) <> 0 THEN 9265
-	M9(I) = M9(I) + INT((B%(I, I1, 2) + B%(I, I1, 6) + B%(I, I1, 7) + B%(I, I1, 9)) / B%(I, I1, 0) + .5)
-
-9265 NEXT I1
-	NEXT I
-	FOR I = 0 TO 1
-	FOR I1 = 0 TO 14
-	IF B%(I, I1, 18) <> 0 THEN 9266
-	A(I, I1, 3) = INT(((B%(I, I1, 2) + B%(I, I1, 6) + B%(I, I1, 7) + B%(I, I1, 9)) / B%(I, I1, 0)) / M9(I) * S9 + .5)
-	IF A(I, I1, 3) = 0 THEN A(I, I1, 3) = 1
-
-9266 NEXT I1
-	NEXT I
-
-9300 IF AP = 1 AND U5 >= 2 THEN 9499
-	COLOR 15, 0: CLS
-	PRINT "EDIT CONTRIBUTION PERCENTAGES OF PLAYERS FROM:"
-	PRINT
-	COLOR 14: PRINT "(0) - "; : COLOR T(0, 33), T(0, 34): PRINT B$(0, 0): COLOR , 0
-	PRINT
-	COLOR 14: PRINT "(1) - "; : COLOR T(1, 33), T(1, 34): PRINT B$(1, 0): COLOR , 0
-	PRINT
-	COLOR 14: PRINT "(2) - "; : COLOR 3: PRINT "PROCEED TO GAME": COLOR 15, 0
-	PRINT
-	PRINT "NOTE:: THE CONTRIBUTION RATING CONSISTS OF THE PLAYER'S"
-	PRINT "       FREQUENCY TO SHOOT, REBOUND, AND COMMIT FOULS."
-9301 I$ = GetKeyPress$
-	I = VAL(I$): IF I < 0 OR I > 2 THEN 9301
-	IF I = 2 THEN 9499
-	CLS
-	TX = 0: FOR I1 = 0 TO 14: TX = TX + A(I, I1, 3): NEXT
-	FOR I1 = 0 TO 14: A(I, I1, 3) = A(I, I1, 3) / TX * 100: NEXT
-
-9305 LOCATE 2, 1: PRINT "CONTRIBUTION RATINGS FOR "; : COLOR T(I, 33), T(I, 34): PRINT B$(I, 0): COLOR 15, 0
-	PRINT : PRINT " #  PLAYER-POS         CX"
-	TY% = 0: FOR I1 = 0 TO 14: TY% = TY% + A(I, I1, 3)
-	PRINT USING "## "; I1 + 1; : PRINT AA$(I, I1, 0); "-"; AA$(I, I1, 1); : LOCATE , 24: PRINT USING "##"; A(I, I1, 3)
-	NEXT
-	LOCATE , 23: PRINT USING "###"; TY%
-	INPUT "SELECT PLAYER TO CHANGE (0 TO CONTINUE)"; I1: I1 = I1 - 1
-	IF I1 > 14 OR I1 < 0 THEN 9310
-	LOCATE 22, 1: PRINT "ENTER NEW CX RATING FOR "; AA$(I, I1, 0); " "; : INPUT A(I, I1, 3)
-
-9306 LOCATE 22, 1: PRINT "                                                    ": GOTO 9305
-
-9310 IF TY% = 100 THEN 9320
-	LOCATE 22, 1: PRINT "TOTAL MUST ADD UP TO 100%! PRESS ANY KEY"
-9311 I$ = GetKeyPress$
-	GOTO 9306
-
-9320 FOR I1 = 0 TO 14: A(I, I1, 3) = A(I, I1, 3) / 100 * TX: NEXT
-	GOTO 9300
-
-9499 X3 = 0
-	END SUB
-
-SUB TICKERUPDATE ()
-	IF AP <> 1 OR AP%(2) > 31 THEN GOTO 2580
-	IF H = 1 AND T <= 480 AND SX%(1 + AP%(2), 0, 1) = -1 THEN SX%(1 + AP%(2), 0, 1) = S(0, 0): SX%(1 + AP%(2), 1, 1) = S(1, 0): GOTO 2580
-	IF H = 1 AND T <= 240 AND SX%(1 + AP%(2), 0, 2) = -1 THEN SX%(1 + AP%(2), 0, 2) = S(0, 0): SX%(1 + AP%(2), 1, 2) = S(1, 0): GOTO 2580
-	IF H > 1 AND SX%(1 + AP%(2), 0, 3) = -1 THEN SX%(1 + AP%(2), 0, 3) = S(0, 1): SX%(1 + AP%(2), 1, 3) = S(1, 1): GOTO 2580
-	IF H = 2 AND T <= 480 AND SX%(1 + AP%(2), 0, 4) = -1 THEN SX%(1 + AP%(2), 0, 4) = S(0, 0): SX%(1 + AP%(2), 1, 4) = S(1, 0): GOTO 2580
-	IF H = 2 AND T <= 240 AND SX%(1 + AP%(2), 0, 5) = -1 THEN SX%(1 + AP%(2), 0, 5) = S(0, 0): SX%(1 + AP%(2), 1, 5) = S(1, 0): GOTO 2580
-	IF H > 2 AND SX%(1 + AP%(2), 0, 6) = -1 THEN FOR I2 = 6 TO 8: SX%(1 + AP%(2), 0, I2) = S(0, 2) + S(0, 1): SX%(1 + AP%(2), 1, I2) = S(1, 2) + S(1, 1): NEXT: GOTO 2580
-	IF H = 3 AND T <= 480 AND SX%(1 + AP%(2), 0, 9) = -1 THEN SX%(1 + AP%(2), 0, 9) = S(0, 0): SX%(1 + AP%(2), 1, 9) = S(1, 0): GOTO 2580
-	IF H = 3 AND T <= 240 AND SX%(1 + AP%(2), 0, 10) = -1 THEN SX%(1 + AP%(2), 0, 10) = S(0, 0): SX%(1 + AP%(2), 1, 10) = S(1, 0): GOTO 2580
-	IF H > 3 AND SX%(1 + AP%(2), 0, 11) = -1 THEN SX%(1 + AP%(2), 0, 11) = S(0, 3) + S(0, 2) + S(0, 1): SX%(1 + AP%(2), 1, 11) = S(1, 3) + S(1, 2) + S(1, 1): GOTO 2580
-	IF H = 4 AND T <= 480 AND SX%(1 + AP%(2), 0, 12) = -1 THEN SX%(1 + AP%(2), 0, 12) = S(0, 0): SX%(1 + AP%(2), 1, 12) = S(1, 0): GOTO 2580
-	IF H = 4 AND T <= 240 AND SX%(1 + AP%(2), 0, 13) = -1 THEN SX%(1 + AP%(2), 0, 13) = S(0, 0): SX%(1 + AP%(2), 1, 13) = S(1, 0): GOTO 2580
-	SX%(1 + AP%(2), 0, 14) = S(0, 0): SX%(1 + AP%(2), 1, 14) = S(1, 0)
-
-2580 END SUB
-
-
-SUB ADJFOUL ()
-FOR I = 0 TO 14
-	IF A(P9, I, 12) >= 6 THEN A(P9, I, 12) = 5: GOTO 8789
-NEXT
-
-8789 END SUB
-
-
-SUB BADFT ()
-	IF F3 = 1 THEN U$ = "FIRST FREE THROW IS MISSED"
-	IF F3 = 2 THEN U$ = "SECOND FREE THROW IS MISSED"
-	IF F3 = 3 THEN U$ = "THIRD FREE THROW IS MISSED"
-	CALL DELAY
-END SUB
-
-
-SUB CHANGESTRATEGY (I$)
-	IF UCASE$(I$) = "Z" AND U5 = 1 AND CT = 0 OR U5 = 2 THEN 8155
-	IF I$ = "/" AND U5 = 1 AND CT = 1 OR U5 = 2 THEN 8155
-	TS% = 1
-	IF UCASE$(I$) = "Z" THEN TS% = 0
-
-8101 JJ = 8: CALL FRAMEBOX: PRINT B$(TS%, 0); " SELECT STRATEGY:"
-
-8102 LOCATE 12, 14
-	LOCATE , 14: PRINT "0 - RETURN TO GAME"
-	LOCATE , 14: PRINT "1 - SELECT OFFENSIVE STYLE OF PLAY"
-	LOCATE , 14: PRINT "2 - SELECT DEFENSIVE STYLE OF PLAY"
-	LOCATE , 14: PRINT "3 - FULL COURT PRESS "; P7$(P7(TS%))
-8103 I$ = GetKeyPress$
-	I1 = VAL(I$): IF I1 < 0 OR I1 > 3 THEN 8103
-	IF I1 = 0 THEN 8155
-	IF I1 = 1 THEN GOSUB 8170: GOTO 8101
-	IF I1 = 2 THEN GOSUB 8160: GOTO 8101
-	P7(TS%) = 1 - P7(TS%): GOTO 8102
-
-8155 COLOR 7, 0: CALL NEWSCREEN
-	GOTO 8166
-
-8160 'DEFENSE
-	JJ = 10: CALL FRAMEBOX: PRINT B$(TS%, 0); " SELECT DEFENSE:"
-	LOCATE 12, 14
-	LOCATE , 14: PRINT "1 - REGULAR MAN-TO-MAN"
-	LOCATE , 14: PRINT "2 - SAGGING MAN-TO-MAN"
-	LOCATE , 14: PRINT "3 - TRAPPING MAN-TO-MAN"
-	LOCATE , 14: PRINT "4 - TIGHT MAN-TO-MAN"
-	LOCATE , 14: PRINT "5 - LOOSE MAN-TO-MAN"
-8161 I$ = GetKeyPress$
-	I1 = VAL(I$): IF I1 < 1 OR I1 > 5 THEN 8161
-	D2(TS%) = I1
-	RETURN
-
-8170 'DEFENSE
-	JJ = 8: CALL FRAMEBOX: PRINT B$(TS%, 0); " SELECT OFFENSE:"
-	LOCATE 12, 14
-	LOCATE , 14: PRINT "0 - NORMAL"
-	LOCATE , 14: PRINT "1 - AGGRESSIVE"
-	LOCATE , 14: PRINT "2 - SAFE"
-8171 I$ = GetKeyPress$
-	I1 = VAL(I$): IF I1 < 0 OR I1 > 2 THEN 8171
-	O0%(TS%) = I1
-	RETURN
-
-8166 END SUB
-
-SUB COMPUTERCOACH ()
-	IF P9 = 0 THEN I6 = 1
-	IF P9 = 1 THEN I6 = 0
-	IF S(P9, 0) - S(I6, 0) < 0 THEN I5 = S(I6, 0) - S(P9, 0): GOTO 8867
-	R0 = INT(RND(1) * 100) + 1: P7(P9) = 0
-	IF H <= 4 AND R0 >= 41 THEN D2(P9) = 1
-	IF H <= 4 AND R0 > 20 AND R0 <= 40 THEN D2(P9) = 4
-	IF H <= 4 AND R0 <= 20 THEN D2(P9) = 2
-	IF H = 3 AND R0 >= 50 THEN D2(P9) = 1
-	IF H = 3 AND R0 > 25 AND R0 < 50 THEN D2(P9) = 4
-	IF H = 3 AND R0 <= 25 THEN D2(P9) = 2
-	IF H = 4 AND R0 >= 70 THEN D2(P9) = 1
-	IF H = 4 AND R0 >= 35 AND R0 < 70 THEN D2(P9) = 2
-	IF H = 4 AND R0 < 35 THEN D2(P9) = 4
-	IF H > 4 AND R0 >= 50 THEN D2(P9) = 1
-	IF H > 4 AND R0 >= 25 AND R0 < 50 THEN D2(P9) = 2
-	IF H > 4 AND R0 < 25 THEN D2(P9) = 4
-
-8866 GOTO 8880
-
-8867 IF H <= 2 THEN D2(P9) = 1: P7(P9) = 0
-	IF H = 3 AND I5 > 20 THEN D2(P9) = 1: P7(P9) = 0
-	IF H = 3 AND I5 >= 10 AND I5 < 20 THEN D2(P9) = 1: P7(P9) = 1
-	IF H = 3 AND I5 < 10 THEN D2(P9) = 1: P7(P9) = 0
-	IF H = 4 AND T >= 120 AND I5 > 20 THEN D2(P9) = 1: P7(P9) = 0
-	IF H = 4 AND T >= 120 AND I5 > 10 AND I5 < 20 THEN D2(P9) = 3: P7(P9) = 1
-	IF H = 4 AND T >= 120 AND I5 <= 10 THEN D2(P9) = 1: P7(P9) = 1
-	IF H = 4 AND T < 120 AND I5 > 10 THEN D2(P9) = 1: P7(P9) = 0
-	IF H = 4 AND T < 120 AND I5 <= 10 AND I5 > 4 THEN D2(P9) = 3: P7(P9) = 1
-	IF H = 4 AND T < 120 AND I5 <= 4 THEN D2(P9) = 1: P7(P9) = 1
-	IF H > 4 THEN D2(P9) = 1: P7(P9) = 1
-	GOTO 8866
-
-8880 O0%(P9) = 0: IF H < 3 THEN O0%(P9) = 0
-	IF H >= 3 AND S(P9, 0) - S(I6, 0) < 0 AND INT(RND(1) * 2) = 1 THEN O0%(P9) = 1
-	IF H >= 3 AND S(P9, 0) - S(I6, 0) >= 0 AND INT(RND(1) * 2) = 1 THEN O0%(P9) = 2
-	END SUB
-
-SUB COMPUTERSUBS ()
-	FOR I2 = 0 TO 4
-	B1(P9, I2) = -1
-	NEXT
-	FOR I2 = 0 TO 1
-	P$ = "G"
-
-8781 FOR I1 = 14 TO 0 STEP -1: M6 = 0: M7 = 0
-	IF LEFT$(AA$(P9, I1, 1), 1) <> P$ AND RIGHT$(AA$(P9, I1, 1), 1) <> P$ THEN 8782
-	IF AA$(P9, I1, 0) = "XXX" OR A(P9, I1, 12) >= 6 OR B%(P9, I1, 18) <> 0 OR H = 1 AND A(P9, I1, 12) >= 2 + FS% OR H = 2 AND A(P9, I1, 12) >= 4 + FS% OR H = 3 AND A(P9, I1, 12) >= 5 OR H = 4 AND T > 300 AND A(P9, I1, 12) = 5 THEN 8782
-	M6 = A(P9, I1, 3) - A(P9, I1, 7) - A(P9, I1, 11) - A(P9, I1, 12)
-	IF B1(P9, I2) > -1 THEN M7 = A(P9, B1(P9, I2), 3) - A(P9, B1(P9, I2), 7) - A(P9, B1(P9, I2), 11) - A(P9, B1(P9, I2), 12)
-	IF H = 4 AND T < 120 OR H > 4 THEN M6 = A(P9, I1, 3)
-	IF (H = 4 AND T < 120 OR H > 4) AND B1(P9, I2) > -1 THEN M7 = A(P9, B1(P9, I2), 3)
-	IF I2 = 1 AND B1(P9, 0) = I1 THEN 8782
-	IF B1(P9, I2) = -1 OR M6 >= M7 THEN B1(P9, I2) = I1
-
-8782 NEXT I1
-	IF B1(P9, I2) = -1 AND FS% <> 1 AND P$ = "G" THEN P$ = "F": GOTO 8781
-	IF B1(P9, I2) = -1 AND FS% <> 1 AND P$ = "F" THEN P$ = "C": GOTO 8781
-	IF B1(P9, I2) = -1 AND FS% <> 1 THEN FS% = 1: P$ = "G": GOTO 8781
-	FS% = 0
-	NEXT I2
-	FOR I2 = 2 TO 3
-	P$ = "F"
-
-8783 FOR I1 = 14 TO 0 STEP -1: M6 = 0: M7 = 0
-	IF LEFT$(AA$(P9, I1, 1), 1) <> P$ AND RIGHT$(AA$(P9, I1, 1), 1) <> P$ THEN 8784
-	IF AA$(P9, I1, 0) = "XXX" OR A(P9, I1, 12) >= 6 OR B%(P9, I1, 18) <> 0 OR H = 1 AND A(P9, I1, 12) >= 2 + FS% OR H = 2 AND A(P9, I1, 12) >= 4 + FS% OR H = 3 AND A(P9, I1, 12) >= 5 OR H = 4 AND T > 300 AND A(P9, I1, 12) = 5 THEN 8784
-	M6 = A(P9, I1, 3) - A(P9, I1, 7) - A(P9, I1, 11) - A(P9, I1, 12)
-	IF B1(P9, I2) > -1 THEN M7 = A(P9, B1(P9, I2), 3) - A(P9, B1(P9, I2), 7) - A(P9, B1(P9, I2), 11) - A(P9, B1(P9, I2), 12)
-	IF H = 4 AND T < 120 OR H > 4 THEN M6 = A(P9, I1, 3)
-	IF (H = 4 AND T < 120 OR H > 4) AND B1(P9, I2) > -1 THEN M7 = A(P9, B1(P9, I2), 3)
-	IF I2 = 2 AND (B1(P9, 0) = I1 OR B1(P9, 1) = I1) THEN 8784
-	IF I2 = 3 AND (B1(P9, 0) = I1 OR B1(P9, 1) = I1 OR B1(P9, 2) = I1) THEN 8784
-	IF B1(P9, I2) = -1 OR M6 >= M7 THEN B1(P9, I2) = I1
-
-8784 NEXT I1
-	IF B1(P9, I2) = -1 AND FS% <> 1 AND P$ = "F" THEN P$ = "C": GOTO 8783
-	IF B1(P9, I2) = -1 AND FS% <> 1 AND P$ = "C" THEN P$ = "G": GOTO 8783
-	IF B1(P9, I2) = -1 AND FS% <> 1 THEN FS% = 1: P$ = "F": GOTO 8783
-	FS% = 0
-	NEXT I2
-	P$ = "C"
-
-8785 FOR I1 = 14 TO 0 STEP -1: M6 = 0: M7 = 0
-	IF LEFT$(AA$(P9, I1, 1), 1) <> P$ AND RIGHT$(AA$(P9, I1, 1), 1) <> P$ THEN 8786
-	IF AA$(P9, I1, 0) = "XXX" OR A(P9, I1, 12) >= 6 OR B%(P9, I1, 18) <> 0 OR H = 1 AND A(P9, I1, 12) >= 2 + FS% OR H = 2 AND A(P9, I1, 12) >= 4 + FS% OR H = 3 AND A(P9, I1, 12) >= 5 OR H = 4 AND T > 300 AND A(P9, I1, 12) = 5 THEN 8786
-	M6 = A(P9, I1, 3) - A(P9, I1, 7) - A(P9, I1, 11) - A(P9, I1, 12)
-	IF B1(P9, 4) > -1 THEN M7 = A(P9, B1(P9, 4), 3) - A(P9, B1(P9, 4), 7) - A(P9, B1(P9, 4), 11) - A(P9, B1(P9, 4), 12)
-	IF H = 4 AND T < 120 OR H > 4 THEN M6 = A(P9, I1, 3)
-	IF (H = 4 AND T < 120 OR H > 4) AND B1(P9, I2) > -1 THEN M7 = A(P9, B1(P9, I2), 3)
-	IF B1(P9, 0) = I1 OR B1(P9, 1) = I1 OR B1(P9, 2) = I1 OR B1(P9, 3) = I1 THEN 8786
-	IF B1(P9, 4) = -1 OR M6 >= M7 THEN B1(P9, 4) = I1
-
-8786 NEXT I1
-	IF B1(P9, I2) = -1 AND FS% <> 1 AND P$ = "C" THEN P$ = "F": GOTO 8785
-	IF B1(P9, I2) = -1 AND FS% <> 1 AND P$ = "F" THEN P$ = "G": GOTO 8785
-	IF B1(P9, I2) = -1 AND FS% <> 1 THEN FS% = 1: P$ = "F": GOTO 8785
-	FS% = 0
-	FOR I2 = 0 TO 4
-	IF B1(P9, I2) = -1 THEN GOSUB 8790: GOTO 8787
-	NEXT
-
-8787 CALL COMPUTERCOACH
-	GOTO 8788
-
-8790 I = 15
-	FOR I2 = 0 TO 4
-
-8795 I = I - 1
-	IF I < 0 THEN CALL ADJFOUL: GOTO 8790
-	IF B%(P9, I, 18) <> 0 OR AA$(P9, I, 0) = "XXX" OR A(P9, I, 12) >= 6 THEN 8795
-	B1(P9, I2) = I
-	NEXT I2
-	RETURN
-
-8788 END SUB
-
-SUB DELAY ()
-	IF U6 = 0 OR PB% = 1 THEN 2246
-
-2249 IF LEN(U$) < 38 THEN U$ = U$ + " ": GOTO 2249
-	U$ = LEFT$(U$, 38)
-	LOCATE 8, 1
-	IF NL% = 1 THEN A1$ = U$: VG(1) = T(P, 33): VH(1) = T(P, 34)
-	IF NL% = 2 THEN B1$ = U$: VG(2) = T(P, 33): VH(2) = T(P, 34)
-	IF NL% = 3 THEN C1$ = U$: VG(3) = T(P, 33): VH(3) = T(P, 34)
-	IF NL% = 4 THEN D1$ = U$: VG(4) = T(P, 33): VH(4) = T(P, 34)
-	IF NL% = 5 THEN E1$ = U$: VG(5) = T(P, 33): VH(5) = T(P, 34)
-	IF NL% = 6 THEN F1$ = U$: VG(6) = T(P, 33): VH(6) = T(P, 34)
-	IF NL% = 7 THEN G1$ = U$: VG(7) = T(P, 33): VH(7) = T(P, 34)
-	IF NL% = 8 THEN H1$ = U$: VG(8) = T(P, 33): VH(8) = T(P, 34)
-	IF NL% > 8 THEN
-		A1$ = B1$
-		B1$ = C1$
-		C1$ = D1$
-		D1$ = E1$
-		E1$ = F1$
-		F1$ = G1$
-		G1$ = H1$
-		H1$ = U$
-		FOR I = 1 TO 7
-		VG(I) = VG(I + 1)
-		VH(I) = VH(I + 1)
-		NEXT
-		VG(8) = T(P, 33)
-		VH(8) = T(P, 34)
-	END IF
-	NL% = NL% + 1
-	COLOR VG(1), VH(1): PRINT A1$
-	COLOR VG(2), VH(2): PRINT B1$
-	COLOR VG(3), VH(3): PRINT C1$
-	COLOR VG(4), VH(4): PRINT D1$
-	COLOR VG(5), VH(5): PRINT E1$
-	COLOR VG(6), VH(6): PRINT F1$
-	COLOR VG(7), VH(7): PRINT G1$
-	COLOR VG(8), VH(8): PRINT H1$
-	COLOR 15, 0
-	U! = TIMER: WHILE TIMER < U! + U6: WEND
-
-2246 END SUB
-
-SUB EVENTS (COUNT, SPECIAL)
-IF NOT _FILEEXISTS("EVENTS.BOX") THEN 8450
-OPEN "EVENTS.BOX" FOR INPUT AS #1
-	FOR X = 1 TO 13
-	INPUT #1, E%(X)
-	NEXT
-CLOSE 1
-	IF H - 1 > E%(1) THEN GOSUB 7100: GOTO 8450
-	IF S(1, 0) + S(0, 0) > E%(2) THEN GOSUB 7100: GOTO 8450
-	IF R3(0) + R3(1) > E%(3) THEN GOSUB 7100: GOTO 8450
-	IF S(1, 0) > E%(4) OR S(0, 0) > E%(4) THEN GOSUB 7100: GOTO 8450
-	IF R3(1) > E%(5) OR R3(0) > E%(5) THEN GOSUB 7100: GOTO 8450
-	 FOR I = 0 TO 1
-	FOR I1 = 0 TO 14
-	IF A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) > E%(6) THEN GOSUB 7100: GOTO 8450
-	IF A(I, I1, 11) > E%(7) THEN GOSUB 7100: GOTO 8450
-	IF A(I, I1, 14) > E%(8) THEN GOSUB 7100: GOTO 8450
-	IF A(I, I1, 15) > E%(9) THEN GOSUB 7100: GOTO 8450
-	IF A(I, I1, 13) > E%(10) THEN GOSUB 7100: GOTO 8450
-	IF W%(I, I1, 0) > E%(11) THEN GOSUB 7100: GOTO 8450
-	NEXT
-	NEXT
-	GOTO 8450
-
-7100 SPEC$ = P$(1) + "*.SPC"
-	COUNT = FCOUNT%(SPEC$)
-	COUNT = COUNT + 1
-	SPECIAL = 1
-	RETURN
-
-8450 END SUB
-
-SUB FRAMEBOX ()
-	SN = 1: LOCATE 8, 8: COLOR T(TS%, 33), T(TS%, 34)
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 8 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 9 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 10, 15
-	END SUB
-
-SUB MADEFT ()
-	A(P, B1(P, B), 10) = A(P, B1(P, B), 10) + 1
-	IF U6 <> 0 THEN
-		LOCATE F3 + 9, 1
-		CALL MOREDELAY
-		PRINT F3; " GOOD"
-	END IF
-	S(P, H) = S(P, H) + 1
-	S(P, 0) = S(P, 0) + 1
-	CALL UPDATESCREEN
-	CALL MOREDELAY
-END SUB
-
-SUB MAKEPBP ()
-	'PLAY BY PLAY
-	IF U6 = 0 THEN GOTO 1495
-	RN = INT(RND(1) * 100) + 1
-	ON PT% GOTO 1410, 1420, 1430, 1440, 1445, 1450, 1460, 1470, 1480, 1490
-	U$ = AA$(P, B1(P, B), 0)
-
-1410 'TURNOVER
-	U$ = AA$(P, B1(P, B), 0)
-	RN = INT(RND(1) * 14) + 1
-	IF RN = 1 THEN U$ = U$ + " TURNS THE BALL OVER"
-	IF RN = 2 THEN U$ = U$ + " THROWS IT AWAY"
-	IF RN = 3 THEN U$ = U$ + " IS WHISTLED FOR TRAVELING"
-	IF RN = 4 THEN U$ = U$ + " TURNS IT OVER"
-	IF RN = 5 THEN U$ = U$ + " LOSES CONTROL OF THE BALL"
-	IF RN = 6 THEN U$ = U$ + " LOSES IT OUT OF BOUNDS"
-	IF RN = 7 THEN U$ = U$ + " LOSES THE HANDLE"
-	IF RN = 8 THEN U$ = U$ + " LOSES IT"
-	IF RN = 9 THEN U$ = U$ + " IS CALLED FOR STEPS"
-	IF RN =10 THEN U$ = U$ + " TRAVELS"
-	IF RN =11 THEN U$ = U$ + " WALKS WITH IT"
-	IF RN =12 THEN U$ = U$ + " LETS IT GET AWAY"
-	IF RN =13 THEN U$ = U$ + " DOUBLE DRIBBLES"
-	IF RN =14 THEN U$ = U$ + " LOSES CONTROL"
-	GOTO 1495
-
-1420 'DUNK
-	RN = INT(RND(1) * 39) + 1
-	IF RN = 1 THEN U$ = "DIPSY-DOO DUNK-A-ROO!!!"
-	IF RN = 2 THEN U$ = AA$(P, B1(P, B), 0) + " MAKES IT HAMMER TIME!!!"
-	IF RN = 3 THEN U$ = AA$(P, B1(P, B), 0) + " SLAMS IT IN!!!"
-	IF RN = 4 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
-	IF RN = 5 THEN U$ = AA$(P, B1(P, B), 0) + " SLAMS IT HOME!!!"
-	IF RN = 6 THEN U$ = AA$(P, B1(P, B), 0) + " JAMS IT HOME!!!"
-	IF RN = 7 THEN U$ = AA$(P, B1(P, B), 0) + " THROWS IT DOWN!!!"
-	IF RN = 8 THEN U$ = AA$(P, B1(P, B), 0) + " THUNDERSLAM!!!"
-	IF RN = 9 THEN U$ = "RIM ROCKING JAM!!!"
-	IF RN =10 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE MONSTER SLAM!!"
-	IF RN =11 THEN U$ = AA$(P, B1(P, B), 0) + "POWER SLAMS IT!!!"
-	IF RN =12 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE 2-HANDED STUFF!!!"
-	IF RN =13 THEN U$ = AA$(P, B1(P, B), 0) + " BACKWARDS JAM!!!"
-	IF RN =14 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE 1-HANDED SLAM!!!"
-	IF RN =15 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE REVERSE SLAM!!!"
-	IF RN =16 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE REVERSE JAM!!!"
-	IF RN =17 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE WINDMILL JAM!!!"
-	IF RN =18 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE WINDMILL SLAM!!!"
-	IF RN =19 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE TOMAHAWK SLAM!!!"
-	IF RN =20 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE 360 SLAM!!!"
-	IF RN =21 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE SPINNING SLAM!!!"
-	IF RN =22 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE LEFT HANDED DUNK!!!"
-	IF RN =23 THEN U$ = "DOUBLE CLUTCH JAM!!!"
-	IF RN =24 THEN U$ = AA$(P, B1(P, B), 0) + " GETS THE FLUSH!!!"
-	IF RN =25 THEN U$ = AA$(P, B1(P, B), 0) + " PUNCHES IT HOME!!!"
-	IF RN =26 THEN U$ = AA$(P, B1(P, B), 0) + "...DOUBLE PUMP SLAM!!!"
-	IF RN =27 THEN U$ = AA$(P, B1(P, B), 0) + "...IN YOUR FACE SLAM!!!"
-	IF RN =28 THEN U$ = AA$(p, B1(p, B), 0) + " IS UP": CALL DELAY: U$ = "HE SPINS": CALL DELAY: U$ = "BEHIND THE BACK SLAM!!!"
-	IF RN =29 THEN U$ = "HE SLAMS IT HOME!!"
-	IF RN =30 THEN U$ = "HE LAYS IT UP AND IN!!"
-	IF RN =31 THEN U$ = "HE BANGS IT IN!!"
-	IF RN =32 THEN U$ = "HE RAMS IT IN!!"
-	IF RN =33 THEN U$ = "HE SLAMS IT IN!!!"
-	IF RN =34 THEN U$ = "DIPSY-DOO DUNK-A-ROO!!!"
-	IF RN =35 THEN U$ = "HE MAKES IT HAMMER TIME!!!"
-	IF RN =36 THEN U$ = AA$(p, B1(p, B), 0) + " WITH THE 2-HANDED SLAM!!!"
-	IF RN =37 THEN U$ = AA$(p, B1(p, B), 0) + " IS UP": CALL DELAY: U$ = "HE SPINS": CALL DELAY: U$ = "BEHIND THE BACK SLAM!!!"
-	IF RN =38 THEN U$ = "HE JAMS IT HOME!!!"
-	IF RN = 39 THEN U$ = "HE HAMMERS IT HOME!"
-	GOTO 1495
-
-1425 IF INT(RND(1) * 100) + 1 <= 15 THEN DK% = 1
-	RETURN
-
-1426 IF INT(RND(1) * 100) + 1 <= 7 THEN DK% = 1
-	RETURN
-
-1427 IF INT(RND(1) * 100) + 1 <= 2 THEN DK% = 1
-	RETURN
-
-1428 IF (B = 0 OR B = 1) AND INT(RND(1) * 100) + 1 <= 1 THEN DK% = 1
-	IF (B = 2 OR B = 3) AND INT(RND(1) * 100) + 1 <= 5 THEN DK% = 1
-	IF B = 4 AND INT(RND(1) * 100) + 1 <= 7 THEN DK% = 1
-	RETURN
-
-1430 'SHOOTS...PZ%567 SML
-	U$ = AA$(P, B1(P, B), 0)
-	ON PZ% GOTO 1431, 1432, 1433, 1434, 1435, 1436, 1436, 1438, 1439
-
-1431 'BAD
-	  IF RN <= 40 THEN U$ = U$ + " TAKES A TOUGH SHOT": GOTO 1495
-	IF RN <= 45 THEN U$ = U$ + " SHOOTS OFF BALANCE": GOTO 1495
-	IF RN <= 50 THEN U$ = U$ + " FORCES ONE UP": GOTO 1495
-	IF RN <= 60 THEN U$ = U$ + " SHOOTS UNDER PRESSURE": GOTO 1495
-	IF RN <= 65 THEN U$ = U$ + " WITH A BAD SHOT": GOTO 1495
-	IF RN <= 70 THEN U$ = U$ + " SHOOTS IN HEAVY TRAFFIC": GOTO 1495
-	IF RN <= 75 THEN U$ = U$ + " THROWS UP A PRAYER": GOTO 1495
-	IF RN <= 80 THEN U$ = U$ + " TAKES A BAD SHOT": GOTO 1495
-	IF RN <= 85 THEN U$ = U$ + " FORCES THE INSIDE SHOT": GOTO 1495
-	U$ = U$ + " TURNS AND SHOOTS": GOTO 1495
-
-1432 'INSIDE W/ASSIST
-	IF RN <= 10 THEN U$ = "HE CUTS TO THE BASKET": CALL DELAY: U$ = "TAKES IT UP": GOSUB 1428: GOTO 1495
-	IF RN <= 20 THEN U$ = "HE TAKES IT TO THE HOLE": GOSUB 1428: GOTO 1495
-	IF RN <= 30 THEN U$ = "HE TAKES IT TO THE HOOP": GOSUB 1428: GOTO 1495
-	IF RN <= 40 THEN U$ = "HE LEANS IN AND SHOOTS": GOTO 1495
-	IF RN <= 50 THEN U$ = "HE PUTS IT UP": GOTO 1495
-	IF RN <= 60 THEN U$ = "HE TAKES IT TO THE BOARD": GOSUB 1428: GOTO 1495
-	IF RN <= 70 THEN U$ = "HE PUTS IT OFF THE GLASS": GOTO 1495
-	IF RN <= 80 AND B = 4 THEN U$ = "HE SHOOTS THE HOOK": GOTO 1495
-	IF RN <= 80 AND B <> 4 THEN U$ = "HE GOES IN FOR THE LAYUP": GOTO 1495
-	IF RN <= 90 THEN U$ = "HE TAKES IT UP STRONG": GOSUB 1428: GOTO 1495
-	IF RN <= 95 THEN U$ = "HE POWERS IT UP": GOSUB 1428: GOTO 1495
-	U$ = "HE LAYS IT UP": GOTO 1495
-
-1433 'PENETRATE
-	IF Z3$ = "C" AND RN <= 15 THEN U$ = "HE PUTS IT OFF THE GLASS": GOTO 1495
-	IF Z3$ = "C" AND RN <= 25 THEN U$ = "HE PIVOTS TO THE BASKET": GOTO 1495
-	IF Z3$ = "C" AND RN <= 40 THEN U$ = "HE POWERS IT UP": GOTO 1495
-	IF Z3$ = "C" AND RN <= 58 THEN U$ = "HE TAKES IT TO THE HOOP": GOSUB 1425: GOTO 1495
-	IF Z3$ = "C" AND RN <= 70 THEN U$ = "HE TAKES THE SHOT": GOTO 1495
-	IF Z3$ = "C" AND RN <= 72 THEN U$ = "HE CURLS OFF A PICK IN THE PAINT": CALL DELAY: U$ = "TAKES IT UP":GOSUB 1425:GOTO 1495
-	IF Z3$ = "C" AND RN <= 74 THEN U$ = "HE MAKES A NICE SPIN MOVE": CALL DELAY: U$ = "AND SOARS TO THE HOOP":GOSUB 1425:GOTO 1495
-	IF Z3$ = "C" THEN U$ = "HE TAKES IT UP STRONG": GOSUB 1425: GOTO 1495
-	IF Z3$ = "F" AND RN <= 16 THEN U$ = "HE TAKES IT UP": GOSUB 1426: GOTO 1495
-	IF Z3$ = "F" AND RN <= 32 THEN U$ = "HE SPINS FREE": CALL DELAY: U$ = "SHOOTS": GOSUB 1426: GOTO 1495
-	IF Z3$ = "F" AND RN <= 48 THEN U$ = "HE GETS LOOSE IN THE PAINT": CALL DELAY: U$ = "TAKES IT UP": GOSUB 1426: GOTO 1495
-	IF Z3$ = "F" AND RN <= 64 THEN U$ = "HE PUTS IT UP": GOTO 1495
-	IF Z3$ = "F" AND RN <= 67 THEN U$ = "HE CURLS OFF A PICK IN THE PAINT": CALL DELAY: U$ = "TAKES IT UP":GOSUB 1426:GOTO 1495
-	IF Z3$ = "F" AND RN <= 69 THEN U$ = "HE MAKES A NICE SPIN MOVE": CALL DELAY: U$ = "AND SOARS TO THE HOOP":GOSUB 1426:GOTO 1495
-	IF Z3$ = "F" AND RN <= 71 THEN U$ = "HE DRIVES THE BASELINE":CALL DELAY:U$="SPINS RIGHT AND GOES UP": GOSUB 1426:GOTO 1495
-	IF Z3$ = "F" AND RN = 72 THEN U$ = "HE SLICES IN THE HOLE":CALL DELAY:U$="UNDERHAND SCOOP SHOT": GOTO 1495
-	IF Z3$ = "F" AND RN = 73 THEN U$ = "STRONG CUT ALONG THE BASELINE":CALL DELAY:U$="DOUBLE PUMP REVERSE LAYUP": GOTO 1495
-	IF Z3$ = "F" AND RN = 74 THEN U$ = "HE PENETRATES":CALL DELAY:U$="GORGEOUS FINGER ROLL!": GOTO 1495
-	IF Z3$ = "F" AND RN > 80 THEN U$ = "HE SHOOTS": GOTO 1495
-	IF Z3$ = "F" THEN U$ = "HE TAKES THE SHOT": GOTO 1495
-	IF RN <= 25 THEN U$ = "HE SPINS FREE": CALL DELAY: U$ = "SHOOTS": GOTO 1495
-	IF RN <= 50 THEN U$ = "HE TAKES IT UP UNDER THE BASKET": GOSUB 1427: GOTO 1495
-	IF RN <= 52 THEN U$ = "HE MAKES A NICE SPIN MOVE": CALL DELAY: U$ = "AND SOARS TO THE HOOP":GOSUB 1427:GOTO 1495
-	IF RN <= 54 THEN U$ = "HE BLOWS PAST TWO DEFENDERS": GOTO 1495
-	IF RN <= 56 THEN U$ = "HE DRIVES THE BASELINE":CALL DELAY:U$="SPINS RIGHT AND GOES UP": GOSUB 1427:GOTO 1495
-	IF RN = 57 THEN U$ = "HE SLICES IN THE HOLE":CALL DELAY:U$="UNDERHAND SCOOP SHOT": GOTO 1495
-	IF RN = 58 THEN U$ = "STRONG CUT ALONG THE BASELINE":CALL DELAY:U$="DOUBLE PUMP REVERSE LAYUP": GOTO 1495
-	IF RN = 59 THEN U$ = "HE PENETRATES":CALL DELAY:U$="GORGEOUS FINGER ROLL!": GOTO 1495
-	IF RN <= 75 THEN U$ = "HE TAKES THE JUMPER": GOTO 1495
-	IF RN <= 90 THEN U$ = "HE STOPS": CALL DELAY: U$ = "SHOOTS": GOTO 1495
-	IF RN <= 91 THEN U$ = "HE LOOKS TO PASS": CALL DELAY: U$ = "NO ONE IS OPEN": CALL DELAY: U$ = "HE PUTS IT UP": GOTO 1495
-	U$ = "HE TAKES THE SHOT": GOTO 1495
-
-1434 'THREE!
-	IF FT% = 1 AND RN <= 50 THEN U$ = U$ + " THROWS UP A PRAYER"
-	IF FT% = 1 AND RN > 50 THEN U$ = U$ + " LAUNCHES A THREE"
-	IF FT% = 1 THEN FT% = 0: GOTO 1495
-	IF RN <= 10 THEN U$ = U$ + " TRIES FOR THREE!"
-	IF RN > 10 AND RN <= 20 THEN U$ = U$ + " SHOOTS FROM 3-POINT RANGE!"
-	IF RN > 20 AND RN <= 30 THEN U$ = U$ + " HOISTS A THREE!"
-	IF RN > 30 AND RN <= 40 THEN U$ = U$ + " BOMBS A THREE FROM THE CORNER!"
-	IF RN > 40 AND RN <= 50 THEN U$ = U$ + " FIRES FROM THE 3-POINT LINE!"
-	IF RN > 50 AND RN <= 60 THEN U$ = U$ + " SHOOTS FOR THREE!"
-	IF RN > 60 AND RN <= 70 THEN U$ = U$ + " SHOOTS THE 3-POINTER!"
-	IF RN > 70 AND RN <= 80 THEN U$ = U$ + " FOR 3...!"
-	IF RN > 80 AND RN <= 90 THEN U$ = U$ + " PUTS UP THE TREY!"
-	IF RN > 90 THEN U$ = U$ + " TAKES THE 3-POINTER!"
-	GOTO 1495
-
-1435 'SHORT JUMP
-	RN  = INT(RND(1)*59) + 1
-	IF RN = 1 THEN U$ = U$ + " WITH A TWISTING JUMPER"
-	IF RN = 2 THEN U$ = U$ + " SHOOTS THE J"
-	IF RN = 3 AND B = 4 THEN U$ = U$ + " RELEASES THE HOOK"
-	IF RN = 3 AND B <> 4 THEN U$ = U$ + " TAKES THE SHOT"
-	IF RN = 4 THEN U$ = U$ + " WITH A SHORT JUMPER"
-	IF RN = 5 THEN U$ = U$ + " WITH THE 10 FOOTER"
-	IF RN = 6 AND B<>4 THEN U$ = U$ + " WITH THE RUNNER"
-	IF RN = 6 AND B=4 THEN U$ = U$ + " WITH THE RUNNING HOOK"
-	IF RN = 7 AND B=4 THEN U$ = U$ + " WITH A SWEEPING HOOK"
-	IF RN = 7 AND B<>4 THEN U$ = U$ + " WORKS FREE AND SHOOTS"
-	IF RN = 8 AND B<>4 THEN U$ = U$ + " TAKES THE SHOT"
-	IF RN = 8 AND B=4 THEN U$ = U$ + " WITH A BABY HOOK SHOT"
-	IF RN = 9 THEN U$ = U$ + " LEANS IN AND SHOOTS"
-	IF RN = 10 THEN U$ = U$ + " SHOOTS"
-	IF RN = 11 THEN U$ = U$ + " SHOOTS FALLING AWAY"
-	IF RN = 12 THEN U$ = U$ + " LEANS IN FOR THE SHOT"
-	IF RN = 13 THEN U$ = U$ + " TAKES THE LEFT HANDER"
-	IF RN = 14 THEN U$ = U$ + " HARD TO THE HOLE..."
-	IF RN = 15 THEN U$ = U$ + " FLIPS IT UP"
-	IF RN = 16 THEN U$ = U$ + " FORCES THE INSIDE SHOT"
-	IF RN = 17 THEN U$ = U$ + " CUTS TO THE BASKET"
-	IF RN = 18 THEN U$ = U$ + " TAKES IT IN THE PAINT"
-	IF RN = 19 THEN U$ = U$ + " FLOATS IT OVER HIS MAN"
-	IF RN = 20 THEN U$ = U$ + " TAKES HIS MAN INSIDE"
-	IF RN = 21 THEN U$ = U$ + " WHEELS IN THE LANE"
-	IF RN = 22 THEN U$ = U$ + " CUTS INSIDE FOR THE SHOT"
-	IF RN = 23 THEN U$ = U$ + " PENETRATES AND SHOOTS"
-	IF RN = 24 THEN U$ = U$ + " SLICES INSIDE"
-	IF RN = 25 THEN U$ = U$ + " LOOKS FOR TWO"
-	IF RN = 26 THEN U$ = U$ + " DRIVES INTO THE PAINT"
-	IF RN = 27 THEN U$ = U$ + " HAS THE BASELINE JUMPER"
-	IF RN = 28 THEN U$ = U$ + " GLIDES TO THE HOLE"
-	IF RN = 29 THEN U$ = U$ + " GETS INSIDE FOR THE SHOT"
-	IF RN = 30 THEN U$ = U$ + " SPINS TOWARD THE HOOP"
-	IF RN = 31 THEN U$ = U$ + " FROM SHORT RANGE"
-	IF RN = 32 THEN U$ = U$ + " GOES BASELINE"
-	IF RN = 33 THEN U$ = U$ + " PENETRATES AND SHOOTS"
-	IF RN = 34 THEN U$ = U$ + " FROM 8 FEET"
-	IF RN = 35 THEN U$ = U$ + " FROM 6 FEET"
-	IF RN = 36 THEN U$ = U$ + " FROM 5 FEET"
-	IF RN = 37 THEN U$ = U$ + " DRIVES TO THE HOLE"
-	IF RN = 38 THEN U$ = U$ + " GLIDES TO THE HOLE"
-	IF RN = 39 THEN U$ = U$ + " GETS INSIDE FOR THE SHOT"
-	IF RN = 40 THEN U$ = U$ + " GOES TO THE HOLE"
-	IF RN = 41 THEN U$ = U$ + " CUTS INSIDE"
-	IF RN = 42 THEN U$ = U$ + " SPINS INSIDE"
-	IF RN = 43 THEN U$ = U$ + " BREAKS INSIDE"
-	IF RN = 44 THEN U$ = U$ + " SNEAKS INSIDE"
-	IF RN = 45 THEN U$ = U$ + " SCOOTS INSIDE"
-	IF RN = 46 THEN U$ = U$ + " WORKS IT INSIDE"
-	IF RN = 47 THEN U$ = U$ + " KNIFES INSIDE"
-	IF RN = 48 THEN U$ = U$ + " SCISSORS THROUGH"
-	IF RN = 49 THEN U$ = U$ + " BANGS INSIDE"
-	IF RN = 50 THEN U$ = U$ + " SLICES INSIDE"
-	IF RN = 51 THEN U$ = U$ + " PUMPS AND SHOOTS"
-	IF RN = 52 THEN U$ = U$ + " DOUBLE PUMPS AND SHOOTS"
-	IF RN = 53 THEN U$ = U$ + "...ONE HANDED FADE AWAY"
-	IF RN = 54 THEN U$ = U$ + "...LEFT HANDED FADE AWAY"
-	IF RN = 55 THEN U$ = U$ + "...HIGH ARCHING SHOT"
-	IF RN = 56 THEN U$ = U$ + " WITH A RUNNING LEFT HANDER"
-	IF RN = 57 THEN U$ = U$ + " WITH A RUNNING SCOOP SHOT"
-	IF RN = 58 THEN U$ = U$ + " WITH THE SCOOP SHOT"
-	IF RN = 59 THEN U$ = U$ + " WITH THE FINGER ROLL"
-	  GOTO 1495
-
-1436 RN = INT(RND(1) * 59) + 1
-	IF RN = 1 THEN U$ = U$ + " POPS FROM OUTSIDE"
-	IF RN = 2 THEN U$ = U$ + " DECIDES TO SHOOT IT"
-	IF RN = 3 THEN U$ = U$ + " FIRES THE FADE-AWAY"
-	IF RN = 4 THEN U$ = U$ + " LETS IT FLY"
-	IF RN = 5 THEN U$ = U$ + " LAUNCHES ONE"
-	IF RN = 6 THEN U$ = U$ + " WITH THE OUTSIDE SHOT"
-	IF RN = 7 THEN U$ = U$ + " OUT OF THE CORNER"
-	IF RN = 8 THEN U$ = U$ + " PUTS IT UP FROM 18"
-	IF RN = 9 THEN U$ = U$ + " SPOTS UP OUTSIDE"
-	IF RN = 10 THEN U$ = U$ + " RELEASES THE JUMPER"
-	IF RN = 11 THEN U$ = U$ + " FROM THE TOP OF THE KEY"
-	IF RN = 12 THEN U$ = U$ + " FIRES FROM THE LEFT WING"
-	IF RN = 13 THEN U$ = U$ + " TRIES THE 12 FOOTER"
-	IF RN = 14 THEN U$ = U$ + " PULLS UP AND POPS"
-	IF RN = 15 THEN U$ = U$ + " FIRES FROM 15"
-	IF RN = 16 THEN U$ = U$ + " FROM THE PERIMETER"
-	IF RN = 17 THEN U$ = U$ + " TURNS AND SHOOTS"
-	IF RN = 18 THEN U$ = U$ + " SHOOTS OFF THE SCREEN"
-	IF RN = 19 THEN U$ = U$ + " FAKES AND SHOOTS"
-	IF RN = 20 THEN U$ = U$ + " FIRES AWAY"
-	IF RN = 21 THEN U$ = U$ + " POPS FROM THE BASELINE"
-	IF RN = 22 THEN U$ = U$ + " DRIVES THE LANE"
-	IF RN = 23 THEN U$ = U$ + " TAKES THE SHOT"
-	IF RN = 24 THEN U$ = U$ + " WORKS FREE AND FIRES"
-	IF RN = 25 THEN U$ = U$ + " SHOOTS OVER HIS MAN"
-	IF RN = 26 THEN U$ = U$ + " SHOOTS FALLING AWAY"
-	IF RN = 27 THEN U$ = U$ + " FAKES AND SHOOTS"
-	IF RN = 28 THEN U$ = U$ + " FIRES AWAY"
-	IF RN = 29 THEN U$ = U$ + " POPS FROM THE BASELINE"
-	IF RN = 30 THEN U$ = U$ + " DRIVES THE LANE"
-	IF RN = 31 THEN U$ = U$ + " TAKES THE SHOT"
-	IF RN = 32 THEN U$ = U$ + " WORKS FREE AND FIRES"
-	IF RN = 33 THEN U$ = U$ + " SHOOTS FROM 15"
-	IF RN = 34 THEN U$ = U$ + " SHOOTS"
-	IF RN = 35 THEN U$ = U$ + " TAKES THE JUMPER"
-	IF RN = 36 THEN U$ = U$ + " FROM THE RIGHT CORNER"
-	IF RN = 37 THEN U$ = U$ + " FROM THE LEFT CORNER"
-	IF RN = 38 THEN U$ = U$ + " FROM THE KEY"
-	IF RN = 39 THEN U$ = U$ + " FIRES FROM OUTSIDE"
-	IF RN = 40 THEN U$ = U$ + " PUTS IT UP FROM 16"
-	IF RN = 41 THEN U$ = U$ + " FROM THE PERIMETER"
-	IF RN = 42 THEN U$ = U$ + " FAKES AND SHOOTS"
-	IF RN = 43 THEN U$ = U$ + " FROM AROUND 16 FEET"
-	IF RN = 44 THEN U$ = U$ + " PUTS IT UP"
-	IF RN = 45 THEN U$ = U$ + " WITH A RUNNING ONE-HANDER"
-	IF RN = 46 THEN U$ = U$ + " PULLS UP"
-	IF RN = 47 THEN U$ = U$ + " KISSES THE GLASS"
-	IF RN = 48 THEN U$ = U$ + " SPINS AND SHOOTS"
-	IF RN = 49 THEN U$ = U$ + " PUTS IT UP FROM 16"
-	IF RN = 50 THEN U$ = U$ + " WITH A LONG JUMPER"
-	IF RN = 51 THEN U$ = U$ + " PUMPS AND SHOOTS"
-	IF RN = 52 THEN U$ = U$ + " DOUBLE PUMPS AND SHOOTS"
-	IF RN = 53 THEN U$ = U$ + "...ONE HANDED FADE AWAY"
-	IF RN = 54 THEN U$ = U$ + "...LEFT HANDED FADE AWAY"
-	IF RN = 55 THEN U$ = U$ + "...HIGH ARCHING SHOT"
-	IF RN = 56 THEN U$ = U$ + " WITH A RUNNING LEFT HANDER"
-	IF RN = 57 THEN U$ = U$ + " WITH A RUNNING SCOOP SHOT"
-	IF RN = 58 THEN U$ = U$ + " WITH THE SCOOP SHOT"
-	IF RN = 59 THEN U$ = U$ + " WITH THE FINGER ROLL"
-	GOTO 1495
-
-1438 IF RN <= 20 THEN U$ = "HE SAILS TO THE HOOP": GOTO 1495
-	IF RN <= 23 THEN U$ = "HE TAKES IT TO THE BUCKET":GOTO 1495
-	IF RN <= 26 THEN U$ = "HE TAKES IT TO THE HOLE":GOTO 1495
-	IF RN <= 29 THEN U$ = "HE SLASHES TO THE HOLE":GOTO 1495
-	IF RN <= 32 THEN U$ = "HE SLASHES TO THE BUCKET":GOTO 1495
-	IF RN <= 35 THEN U$ = "HE SOARS TO THE BUCKET":GOTO 1495
-	IF RN <= 38 THEN U$ = "HE SOARS TO THE HOLE":GOTO 1495
-	IF RN <= 40 THEN U$ = "HE GLIDES TO THE HOLE": GOTO 1495
-	IF RN <= 60 THEN U$ = "HE GOES IN STRONG": GOTO 1495
-	IF RN <= 80 THEN U$ = "HE TAKES IT IN": GOTO 1495
-	IF RN <= 90 THEN U$ = "HE TAKES A DEFENDER WITH HIM": GOTO 1495
-	U$ = "HE GOES UP WITH IT": GOTO 1495
-
-1439 'BACK AFTER REB
-	U$ = "HE "
-	RN = INT(RND(1) *11 )  +1
-	IF RN = 1 THEN U$ = U$ + "TAKES IT BACK UP"
-	IF RN = 2 THEN U$ = U$ + "GOES BACK UP WITH IT"
-	IF RN = 3 THEN U$ = U$ + "POWERS HIS WAY UP WITH IT"
-	IF RN = 4 THEN U$ = U$ + "GOES STRONG TO THE BASKET"
-	IF RN = 5 THEN U$ = U$ + "MUSCLES IT UP"
-	IF RN = 6 THEN U$ = U$ + "SHOOTS"
-	IF RN = 7 THEN U$ = U$ + "TAKES IT TO THE GOAL"
-	IF RN = 8 THEN U$ = U$ + "PUTS IT UP AGAIN"
-	IF RN = 9 THEN U$ = U$ + "SHOOTS IT AGAIN"
-	IF RN =10 THEN U$ = U$ + "CLAWS HIS WAY UP"
-	IF RN =11 THEN U$ = U$ + "SHOOTS IN TRAFFIC"
-	  IF B = 2 OR B = 3 AND INT(RND(1) * 100) + 1 <= 7 THEN DK% = 1
-	IF B = 4 AND INT(RND(1) * 100) + 1 <= 15 THEN DK% = 1
-	GOTO 1495
-
-1440 'THREE GOOD
-	U$ = "HE "
-	IF RN <= 10 THEN U$ = U$ + "FILLS UP THE BASKET!!!": GOTO 1495
-	IF RN <= 20 THEN U$ = U$ + "HITS THE TREY!!!": GOTO 1495
-	IF RN <= 30 THEN U$ = "IT'S GOOOODD!!": GOTO 1495
-	IF RN <= 40 THEN U$ = U$ + "GETS IT!!!": GOTO 1495
-	IF RN <= 50 THEN U$ = "COUNT IT!!": GOTO 1495
-	IF RN <= 60 THEN U$ = U$ + "RINGS IT UP!!!": GOTO 1495
-	IF RN <= 80 THEN U$ = U$ + "DRAINS IT!!!": GOTO 1495
-	IF RN <= 90 THEN U$ = "HE BURIES IT!!!": GOTO 1495
-	U$ = "IT'S ALL NET!!!"
-	GOTO 1495
-
-1445 'THREE BAD
-	U$ = "HE "
-	IF RN <= 20 THEN U$ = U$ + "GETS NONE": GOTO 1495
-	IF RN <= 25 THEN U$ = "IT NEVER HAD A CHANCE": GOTO 1495
-	IF RN <= 35 THEN U$ = "AIRRRR BALLLL!!": GOTO 1495
-	IF RN <= 40 THEN U$ = U$ + "MISFIRES": GOTO 1495
-	IF RN <= 60 THEN U$ = "IT'S OFF THE RIM...NO GOOD!": GOTO 1495
-	IF RN <= 80 THEN U$ = "IT'S SHORT": GOTO 1495
-	U$ = U$ + "MISSES": GOTO 1495
-
-1450 'FAST BREAK
-	U$ = AA$(P, B1(P, B), 0)
-	RN = INT(RND(1)* 38) + 1
-	IF RN = 1 THEN U$ = U$ + " HAS IT ON THE FAST BREAK!"
-	IF RN = 2 THEN U$ = U$ + " IS IN TRANSITION!"
-	IF RN = 3 THEN U$ = U$ + " STARTS THE BREAK!"
-	IF RN = 4 THEN U$ = U$ + " IS DOWN COURT IN A HURRY!"
-	IF RN = 5 THEN U$ = U$ + " IS ON THE RUN!"
-	IF RN = 6 THEN U$ = U$ + " GOES COAST TO COAST!"
-	IF RN = 7 THEN U$ = U$ + " ON THE BREAK!"
-	IF RN = 8 THEN U$ = U$ + " ON THE RUN!"
-	IF RN = 9 THEN U$ = U$ + " ON THE FAST BREAK!"
-	IF RN =10 THEN U$ = U$ + " HAS THE FAST BREAK!"
-	IF RN =11 THEN U$ = U$ + " BREAKS INTO THE FORECOURT!"
-	IF RN =12 THEN U$ = U$ + " FLIES UPCOURT!"
-	IF RN =13 THEN U$ = U$ + " STARTS THE FASTBREAK!"
-	IF RN =14 THEN U$ = U$ + " ON THE MOVE!"
-	IF RN =15 THEN U$ = U$ + " IN TRANSITION!"
-	IF RN =16 THEN U$ = U$ + " DOWN COURT IN A HURRY!"
-	IF RN =17 THEN U$ = U$ + " CHARGES ACROSS THE LINE!"
-	IF RN =18 THEN U$ = U$ + " BREAKS QUICKLY!"
-	IF RN =19 THEN U$ = U$ + " BREAKS DOWN COURT!"
-	IF RN =20 THEN U$ = U$ + " STARTS THE RUNNING GAME!"
-	IF RN =21 THEN U$ = U$ + " FLIES DOWN THE FLOOR!"
-	IF RN =22 THEN U$ = U$ + " GOES RIGHT TO WORK!"
-	IF RN =23 THEN U$ = U$ + " BACK THE OTHER WAY!"
-	IF RN =24 THEN U$ = U$ + " QUICKLY UP THE FLOOR!"
-	IF RN =25 THEN U$ = U$ + " PUSHES IT UP COURT!"
-	IF RN =26 THEN U$ = U$ + " WASTES NO TIME!"
-	IF RN =27 THEN U$ = U$ + " UPS THE TEMPO!"
-	IF RN =28 THEN U$ = U$ + " HUSTLES DOWN COURT!"
-	IF RN =29 THEN U$ = U$ + " RUSHES UP THE FLOOR!"
-	IF RN =30 THEN U$ = U$ + " ON THE MOVE!"
-	IF RN =31 THEN U$ = U$ + " STREAKS UP THE COURT!"
-	IF RN =32 THEN U$ = U$ + " FLIES DOWN THE COURT!"
-	IF RN =33 THEN U$ = U$ + " JETS DOWN COURT!"
-	IF RN =34 THEN U$ = U$ + " QUICKLY GETS IT UP COURT!"
-	IF RN =35 THEN U$ = U$ + " TAKES IT COAST TO COAST!"
-	IF RN =36 THEN U$ = U$ + " IS RUNNING AND GUNNING!"
-	IF RN =37 THEN U$ = U$ + " FLIES OVER THE TIME LINE!"
-	IF RN =38 THEN U$ = U$ + " RUSHES IT UP THE FLOOR!"
-	GOTO 1495
-
-1460 'FAST BREAK SCORE
-	FB% = 0
-	RN = INT(RND(1) * 39) + 1
-	IF RN = 1 THEN U$ = "DIPSY-DOO DUNK-A-ROO!!!"
-	IF RN = 2 THEN U$ = AA$(P, B1(P, B), 0) + " MAKES IT HAMMER TIME!!!"
-	IF RN = 3 THEN U$ = AA$(P, B1(P, B), 0) + " SLAMS IT IN!!!"
-	IF RN = 4 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
-	IF RN = 5 THEN U$ = AA$(P, B1(P, B), 0) + " SLAMS IT HOME!!!"
-	IF RN = 6 THEN U$ = AA$(P, B1(P, B), 0) + " JAMS IT HOME!!!"
-	IF RN = 7 THEN U$ = AA$(P, B1(P, B), 0) + " THROWS IT DOWN!!!"
-	IF RN = 8 THEN U$ = AA$(P, B1(P, B), 0) + " THUNDERSLAM!!!"
-	IF RN = 9 THEN U$ = "RIM ROCKING JAM!!!"
-	IF RN =10 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE MONSTER SLAM!!"
-	IF RN =11 THEN U$ = AA$(P, B1(P, B), 0) + "POWER SLAMS IT!!!"
-	IF RN =12 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE 2-HANDED STUFF!!!"
-	IF RN =13 THEN U$ = AA$(P, B1(P, B), 0) + " BACKWARDS JAM!!!"
-	IF RN =14 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE 1-HANDED SLAM!!!"
-	IF RN =15 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE REVERSE SLAM!!!"
-	IF RN =16 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE REVERSE JAM!!!"
-	IF RN =17 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE WINDMILL JAM!!!"
-	IF RN =18 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE WINDMILL SLAM!!!"
-	IF RN =19 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE TOMAHAWK SLAM!!!"
-	IF RN =20 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE 360 SLAM!!!"
-	IF RN =21 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE SPINNING SLAM!!!"
-	IF RN =22 THEN U$ = AA$(P, B1(P, B), 0) + " WITH THE LEFT HANDED DUNK!!!"
-	IF RN =23 THEN U$ = "DOUBLE CLUTCH JAM!!!"
-	IF RN =24 THEN U$ = AA$(P, B1(P, B), 0) + " GETS THE FLUSH!!!"
-	IF RN =25 THEN U$ = AA$(P, B1(P, B), 0) + " PUNCHES IT HOME!!!"
-	IF RN =26 THEN U$ = AA$(P, B1(P, B), 0) + "...DOUBLE PUMP SLAM!!!"
-	IF RN =27 THEN U$ = AA$(P, B1(P, B), 0) + "...IN YOUR FACE SLAM!!!"
-	IF RN =28 THEN U$ = AA$(p, B1(p, B), 0) + " IS UP": CALL DELAY: U$ = "HE SPINS": CALL DELAY: U$ = "BEHIND THE BACK SLAM!!!"
-	IF RN =29 THEN U$ = "HE SLAMS IT HOME!!"
-	IF RN =30 THEN U$ = "HE LAYS IT UP AND IN!!"
-	IF RN =31 THEN U$ = "HE BANGS IT IN!!"
-	IF RN =32 THEN U$ = "HE RAMS IT IN!!"
-	IF RN =33 THEN U$ = "HE SLAMS IT IN!!!"
-	IF RN =34 THEN U$ = "DIPSY-DOO DUNK-A-ROO!!!"
-	IF RN =35 THEN U$ = "HE MAKES IT HAMMER TIME!!!"
-	IF RN =36 THEN U$ = AA$(p, B1(p, B), 0) + " WITH THE 2-HANDED SLAM!!!"
-	IF RN =37 THEN U$ = AA$(p, B1(p, B), 0) + " IS UP": CALL DELAY: U$ = "HE SPINS": CALL DELAY: U$ = "BEHIND THE BACK SLAM!!!"
-	IF RN =38 THEN U$ = "HE JAMS IT HOME!!!"
-	IF RN = 39 THEN U$ = "HE HAMMERS IT HOME!"
-	GOTO 1495
-
-1470 'MISS
-	IF PZ% = 8 THEN PZ% = 0: FB% = 0: GOTO 1475
-	RN = INT(RND(1) * 50) + 1
-	IF RN = 1 THEN U$ = "IT RATTLES IN AND OUT...NO GOOD"
-	IF RN = 2 THEN U$ = "OFF THE IRON"
-	IF RN = 3 THEN U$ = "IT SPINS IN AND OUT"
-	IF RN = 4 THEN U$ = "IT'S OFF THE GLASS"
-	IF RN = 5 THEN U$ = "IT'S NO GOOD"
-	IF RN = 6 THEN U$ = "IT'S OFF THE MARK"
-	IF RN = 7 THEN U$ = "IT'S A BRICK"
-	IF RN = 8 THEN U$ = "OFF THE RIM"
-	IF RN = 9 THEN U$ = "NOT EVEN CLOSE!"
-	IF RN =10 THEN U$ = "NO GOOD"
-	IF RN =11 THEN U$ = "HE MISSES"
-	IF RN =12 THEN U$ = "DOESN'T GET THE ROLL"
-	IF RN =13 THEN U$ = "OFF THE GLASS"
-	IF RN =14 THEN U$ = "FALLS SHORT"
-	IF RN =15 THEN U$ = "NO GOOD"
-	IF RN =16 THEN U$ = "NO"
-	IF RN =17 THEN U$ = "HE MISSES"
-	IF RN =18 THEN U$ = "IN AND OUT"
-	IF RN =19 THEN U$ = "OFF THE RIM"
-	IF RN =20 THEN U$ = "OFF THE IRON"
-	IF RN =21 THEN U$ = "IT'S NOT THERE"
-	IF RN =22 THEN U$ = "OFF TARGET"
-	IF RN =23 THEN U$ = "IT RATTLES OUT"
-	IF RN =24 THEN U$ = "IT DOESN'T FALL"
-	IF RN =25 THEN U$ = "IT BOUNCES OFF"
-	IF RN =26 THEN U$ = "IT ROLLS OFF"
-	IF RN =27 THEN U$ = "SHORT"
-	IF RN =28 THEN U$ = "IT DOESN'T GO DOWN"
-	IF RN =29 THEN U$ = "IT'S NO GOOD"
-	IF RN =30 THEN U$ = "NO GOOD"
-	IF RN =31 THEN U$ = "HE MISSES"
-	IF RN =32 THEN U$ = "IT'S A BRICK"
-	IF RN =33 THEN U$ = "HE FAILS TO CONNECT"
-	IF RN =34 THEN U$ = "OFF THE SIDE OF THE RIM"
-	IF RN =35 THEN U$ = "IT COMES UP SHORT"
-	IF RN =36 THEN U$ = "IT ROLLS OUT"
-	IF RN =37 THEN U$ = "AROUND AND OUT"
-	IF RN =38 THEN U$ = "OFF THE BACK OF THE IRON"
-	IF RN =39 THEN U$ = "ON THE FRONT RIM...ROLLS OFF"
-	IF RN =40 THEN U$ = "IN THE AIR...NO GOOD"
-	IF RN =41 THEN U$ = "TOO SHORT"
-	IF RN =42 THEN U$ = "NO GOOD"
-	IF RN =43 THEN U$ = "IT COMES UP SHORT"
-	IF RN =44 THEN U$ = "IT ROLLS OUT"
-	IF RN =45 THEN U$ = "IN AND OUT"
-	IF RN =46 THEN U$ = "OFF THE FRONT OF THE IRON"
-	IF RN =47 THEN U$ = "ON THE RIM...ROLLS OFF"
-	IF RN =48 THEN U$ = "OFF THE FRONT OF THE RIM"
-	IF RN =49 THEN U$ = "TOO SHORT"
-	IF RN =50 THEN U$ = "TOO STRONG"
-	  GOTO 1495
-
-1475 U$ = "HE "
-	IF RN <= 20 THEN U$ = U$ + "MISSES THE EASY BASKET!": GOTO 1495
-	IF RN <= 40 THEN U$ = U$ + "JAMS IT TOO HARD!!": GOTO 1495
-	IF RN <= 60 THEN U$ = U$ + "SLAMS IT OFF THE IRON...NO GOOD!": GOTO 1495
-	IF RN <= 80 THEN U$ = U$ + "CAN'T GET IT DOWN!": GOTO 1495
-	U$ = U$ + "BLOWS THE EASY BASKET!!": GOTO 1495
-
-1480 'NOPASS
-	U$ = AA$(P, B1(P, B), 0) + " "
-	RN = INT(RND(1)* 56) + 1
-	  IF RN = 1 THEN U$ = U$ + "LOOKS INSIDE"
-	IF RN = 2 THEN U$ = U$ + "TRIES TO WORK FREE"
-	IF RN = 3 THEN U$ = U$ + "SETS UP THE PLAY"
-	IF RN = 4 THEN U$ = U$ + "LOOKS FOR AN OPENING"
-	IF RN = 5 THEN U$ = U$ + "DRIBBLES AROUND HIS MAN"
-	IF RN = 6 THEN U$ = U$ + "SIGNALS THE PLAY"
-	IF RN = 7 THEN U$ = U$ + "IS IN CONTROL"
-	IF RN = 8 THEN U$ = U$ + "IS IN POSSESSION"
-	IF RN = 9 THEN U$ = U$ + "TRIES TO GET OPEN"
-	IF RN = 10 THEN U$ = U$ + "YO-YO'S OUT TOP"
-	IF RN = 11 THEN U$ = U$ + "GOES TO WORK
-	IF RN = 12 THEN U$ = U$ + "WORKS OFF THE PICK"
-	IF RN = 13 THEN U$ = U$ + "ON THE DRIBBLE"
-	IF RN = 14 THEN U$ = U$ + "CUTS TO THE LEFT"
-	IF RN = 15 THEN U$ = U$ + "CUTS TO THE RIGHT"
-	IF RN = 16 THEN U$ = U$ + "WHEELS AND DEALS"
-	IF RN = 17 THEN U$ = U$ + "SETS UP ON TOP"
-	IF RN = 18 THEN U$ = U$ + "SLIDES RIGHT"
-	IF RN = 19 THEN U$ = U$ + "SLIDES LEFT"
-	IF RN = 20 THEN U$ = U$ + "GOES TO WORK"
-	IF RN = 21 THEN U$ = U$ + "MOVES IT LEFT-SIDE"
-	IF RN = 22 THEN U$ = U$ + "MOVES IT RIGHT-SIDE"
-	IF RN = 23 THEN U$ = U$ + "REVERSES THE DRIBBLE"
-	IF RN = 24 THEN U$ = U$ + "TRIES TO GET OPEN"
-	IF RN = 25 THEN U$ = U$ + "DRIBBLES TO THE MIDDLE"
-	IF RN = 26 THEN U$ = U$ + "FAKES THE PASS"
-	IF RN = 27 THEN U$ = U$ + "SETS UP ON TOP"
-	IF RN = 28 THEN U$ = U$ + "SLIDES RIGHT"
-	IF RN = 29 THEN U$ = U$ + "SLIDES LEFT"
-	IF RN = 30 THEN U$ = U$ + "DRIBBLES IT BEHIND THE BACK"
-	IF RN = 31 THEN U$ = U$ + "FAKES LEFT...GOES RIGHT"
-	IF RN = 32 THEN U$ = U$ + "FAKES RIGHT...GOES LEFT"
-	IF RN = 33 THEN U$ = U$ + "SPINS HARD TO THE LEFT"
-	IF RN = 34 THEN U$ = U$ + "SPINS HARD TO THE RIGHT"
-	IF RN = 35 THEN U$ = U$ + "LEANS LEFT...GOES RIGHT"
-	IF RN = 36 THEN U$ = U$ + "LEANS RIGHT...GOES LEFT"
-	IF RN = 37 THEN U$ = U$ + "LEANS LEFT...CUTS RIGHT"
-	IF RN = 38 THEN U$ = U$ + "LEANS RIGHT...CUTS LEFT"
-	IF RN = 39 THEN U$ = U$ + "DOUBLE REVERSES HIS DRIBBLE"
-	IF RN = 40 THEN U$ = U$ + "BACKS IN"
-	IF RN = 41 THEN U$ = U$ + "LEANS FORWARD"
-	IF RN = 42 THEN U$ = U$ + "CROSSES OVER...SPINS"
-	IF RN = 43 THEN U$ = U$ + "CUTS LEFT"
-	IF RN = 44 THEN U$ = U$ + "CUTS RIGHT"
-	IF RN = 45 THEN U$ = U$ + "WITH THE HESITATION DRIBBLE":CALL DELAY:U$="HE SPINS LEFT"
-	IF RN = 46 THEN U$ = U$ + "WITH THE HESITATION DRIBBLE":CALL DELAY:U$="HE SPINS RIGHT"
-	IF RN = 47 THEN U$ = U$ + "WITH THE HESITATION DRIBBLE":CALL DELAY:U$="HE CUTS LEFT"
-	IF RN = 48 THEN U$ = U$ + "WITH THE HESITATION DRIBBLE":CALL DELAY:U$="HE CUTS RIGHT"
-	IF RN = 49 THEN U$ = U$ + "STUTTER STEPS":CALL DELAY:U$="HE MOVES LEFT"
-	IF RN = 50 THEN U$ = U$ + "MAINTAINS HIS DRIBBLE"
-	IF RN = 51 THEN U$ = U$ + "FAKE SPINS LEFT...GOES RIGHT"
-	IF RN = 52 THEN U$ = U$ + "FAKE SPINS RIGHT...GOES LEFT"
-	IF RN = 53 THEN U$ = U$ + "PALMS THE BALL":CALL DELAY:U$="HE TAKES IT AND SPINS"
-	IF RN = 54 THEN U$ = U$ + "SHAKES AND BAKES"
-	IF RN = 55 THEN U$ = U$ + "DRIBBLES WITH THE LEFT HAND"
-	IF RN = 56 THEN U$ = U$ + "DRIBBLES WITH THE RIGHT HAND"
-	GOTO 1495
-
-1490 'PASS PB$=PREV HANDLER
-	V$ = AA$(P, B1(P, B), 0)
-	RN = INT(RND(1)*60) + 1
-	IF RN = 1 THEN U$ = PB$ + " TO " + V$
-	IF RN = 2 THEN U$ = PB$ + " KICKS IT OUT": CALL DELAY: U$ = V$ + " TAKES THE PASS"
-	IF RN = 3 THEN U$ = PB$ + " FEEDS " + V$
-	IF RN = 4 THEN U$ = PB$ + " PASSES TO " + V$
-	IF RN = 4 THEN U$ = PB$ + " DISHES TO " + V$
-	IF RN = 5 THEN U$ = PB$ + " GIVES IT TO " + V$
-	IF RN = 6 THEN U$ = PB$ + " WITH A NICE GIVE TO " + V$
-	IF RN = 7 THEN U$ = PB$ + " LOOKS": CALL DELAY: U$ = "HE GETS IT TO " + V$
-	IF RN = 8 THEN U$ = PB$ + " SENDS IT TO " + V$
-	IF RN = 9 THEN U$ = PB$ + " TO " + V$
-	IF RN =10 THEN U$ = PB$ + " GETS IT TO " + V$
-	IF RN =11 THEN U$ = PB$ + " OVER TO " + V$
-	IF RN =12 THEN U$ = PB$ + " ZIPS IT TO "+ V$
-	IF RN =13 THEN U$ = PB$ + " FINDS " + V$
-	IF RN =14 THEN U$ = PB$ + " LOOKS FOR " + V$
-	IF RN =14 THEN U$ = PB$ + " THROWS IT TO " + V$
-	IF RN =15 THEN U$ = PB$ + " GOES TO " + V$
-	IF RN =16 THEN U$ = PB$ + " SETS UP " + V$
-	IF RN =17 THEN U$ = PB$ + " OUT TO " + V$
-	IF RN =18 THEN U$ = PB$ + " FLIPS IT TO " + V$
-	IF RN = 19 THEN U$ = "BOUNCE PASS TO " + V$
-	IF RN =20 THEN U$ = PB$ + " LEAVES IT FOR " + V$
-	IF RN = 21 THEN U$ = PB$ + " LOOPS IT TO " + V$
-	IF RN =22 THEN U$ = PB$ + " SHOVELS IT OVER TO " + V$
-	IF RN = 23 THEN U$ = PB$ + " GIVES IT BACK TO " + V$
-	IF RN =24 THEN U$ = PB$ + " FEEDS IT TO " + V$
-	IF RN = 25 THEN U$ = PB$ + " GIVES IT OFF TO " + V$
-	IF RN =26 THEN U$ = "PASSES TO " + V$
-	IF RN = 27 THEN U$ = "DISHES TO " + V$
-	IF RN =28 THEN U$ = "GIVES TO " + V$
-	IF RN = 29 THEN U$ = "OVER TO " + V$
-	IF RN =30 THEN U$ = "SENDS IT BACK TO " + V$
-	IF RN=31 THEN U$="NO-LOOK PASS TO "+V$
-	IF RN=32 THEN U$="NO-LOOK BOUNCE PASS TO " + V$
-	IF RN=33 THEN U$="BEHIND THE BACK TO " + V$
-	IF RN=34 THEN U$=PB$+" SWINGS IT TO "+V$
-	IF RN=35 THEN U$=PB$+" FIRES A PASS TO " + V$
-	IF RN=36 THEN U$=PB$+" SNAPS A PASS TO " + V$
-	IF RN=37 THEN U$=PB$+" SWINGS A PASS TO "+V$
-	IF RN=38 THEN U$="TWO-HANDED PASS TO " + V$
-	IF RN=39 THEN U$="WRAP AROUND PASS TO " + V$
-	IF RN=40 THEN U$="OVER THE SHOULDER PASS TO "+V$
-	IF RN=41 THEN U$="BACKHAND PASS TO " + V$
-	IF RN=42 THEN U$="BACKHAND DISH TO " + V$
-	IF RN=43 THEN U$="PASS CONNECTED TO "+V$
-	IF RN=44 THEN U$=PB$+" WIRES IT TO "+V$
-	IF RN=45 THEN U$=PB$+" WIRES A PASS TO " + V$
-	IF RN=46 THEN U$=PB$+" SNAPS A PASS TO " + V$
-	IF RN=47 THEN U$=PB$+" FAKES..PASSES TO "+V$
-	IF RN=48 THEN U$=PB$+" SHUFFLES IT TO " + V$
-	IF RN=49 THEN U$=PB$+" SLINGS IT TO " + V$
-	IF RN=50 THEN U$=PB$+" FLIPS IT TO "+V$
-	IF RN=51 THEN U$=PB$+" WHIPS IT OVER TO " + V$
-	IF RN=52 THEN U$=PB$+" SLINGS A BOUNCE PASS TO " + V$
-	IF RN=53 THEN U$=PB$+" SHOVELS IT TO "+V$
-	IF RN=54 THEN U$=PB$+" PUMP FAKES A SHOT":CALL DELAY:U$="HE SWINGS IT TO "+V$
-	IF RN=55 THEN U$=PB$+" PUMP FAKES A SHOT":CALL DELAY:U$="HE BOUNCES IT TO " + V$
-	IF RN=56 THEN U$=PB$+" WITH A FOOT FAKE":CALL DELAY:U$="HE SPINS AND DUMPS IT TO " + V$
-	IF RN=57 THEN U$=PB$+" CUTS ACROSS THE LANE":CALL DELAY:U$="HE DISHES INSIDE TO "+V$
-	IF RN=58 THEN U$=PB$+" DRIVES THE BASELINE":CALL DELAY:U$="DISHES UNDERNEATH TO " + V$
-	IF RN=59 THEN U$=PB$+" FAKES RIGHT...CUTS LEFT":CALL DELAY:U$="SHUFFLES IT TO " + V$
-	IF RN=60 THEN U$=PB$+" HEAD FAKES":CALL DELAY:U$="HE PUSHES IT TO "+V$
-
-1495 END SUB
-
-SUB MISSFT ()
-	IF U6 = 0 THEN 3699
-	CALL MOREDELAY
-	LOCATE F3 + 9, 1
-	PRINT F3; " MISSED"
-	CALL MOREDELAY
-
-3699 REM
-END SUB
-
-SUB MOREDELAY ()
-IF U6 <> 0 THEN
-	U! = TIMER
-	WHILE TIMER < U! + U6
-	WEND
-END IF
-END SUB
-
-SUB ROSTER ()
-	CLS
-	COLOR T(P9, 33), T(P9, 34)
-	PRINT B$(P9, 0);
-	COLOR 15, 0
-	PRINT " TEAM ROSTER   COACH: ";B$(P9, 3);"     ";
-	PRINT "  RECORD: ";:PRINT USING "##";T(P9, 1)+T(P9,3);:PRINT "-";:PRINT USING "##";T(P9, 2)+T(P9,4)
-	COLOR 14: PRINT "# NAME         PS GP MG FG 3FG %3A FT  ORB  DRB  A  S  B CX CN PT F  FC  PPG"
-	LOCATE 3, 1
-	FOR R1 = 0 TO 14
-	IF B%(P9, R1, 18) <> 0 OR AA$(P9, R1, 0) = "XXX" THEN 71
-	COLOR 2
-	IF R1 <= 9 THEN PRINT USING "# "; R1;
-	IF R1 > 9 THEN PRINT X$(R1 - 10);
-	COLOR 15
-	PRINT LEFT$(AA$(P9, R1, 0), 12); : LOCATE , 16
-	IF LEN(AA$(P9, R1, 1)) = 1 THEN PRINT AA$(P9, R1, 1);
-	IF LEN(AA$(P9, R1, 1)) > 1 THEN PRINT LEFT$(AA$(P9, R1, 1), 1); RIGHT$(AA$(P9, R1, 1), 1);
-	L = 0: LOCATE , 19: L = A(P9, R1, 7) + A(P9, R1, 11) + A(P9, R1, 12)
-	PRINT USING "## ##"; B%(P9, R1, 0); B%(P9, R1, 1) / B%(P9, R1, 0);
-	PRINT USING "### ### ## ### ##.# ##.# ## ## ##"; A(P9, R1, 0); A(P9, R1, 20); A(P9, R1, 19); A(P9, R1, 1); A(P9, R1, 21) / 10; A(P9, R1, 2) / 10; A(P9, R1, 4) / 10; A(P9, R1, 5); A(P9, R1, 6);
-	PRINT USING "### "; A(P9, R1, 3) - L;
-	J = (A(P9, R1, 3)) - A(P9, R1, 7) - A(P9, R1, 11) - A(P9, R1, 12)
-	IF H <= 3 AND J / A(P9, R1, 3) < .25 THEN LOCATE , 61: PRINT " T";
-	IF J / A(P9, R1, 3) < .5 AND H <= 2 THEN LOCATE , 61: PRINT " T";
-	IF H = 4 AND T > 200 AND J / A(P9, R1, 3) <= T / 2880 THEN LOCATE , 61: PRINT " T";
-	IF A(P9, R1, 3) - A(P9, R1, 7) - A(P9, R1, 11) - A(P9, R1, 12) <= 0 THEN LOCATE , 61: PRINT "EX";
-	IF H > 4 OR H = 4 AND T <= 120 AND T <> 0 THEN LOCATE , 61: PRINT "  ";
-	LOCATE , 63: PRINT USING "### # ### ##.#"; A(P9, R1, 8) * 2 + A(P9, R1, 10) + W%(P9, R1, 0); A(P9, R1, 12); A(P9, R1, 17); (B%(P9, R1, 3)*2+B%(P9, R1, 5)+B%(P9, R1, 14))/B%(P9, R1, 0)
-
-71 NEXT R1
-	LOCATE 18, 1: COLOR 9, 0: PRINT STRING$(27, 205); CHR$(203); STRING$(51, 205)
-	FOR R1 = 1 TO 7: LOCATE R1 + 18, 28: PRINT CHR$(186); : NEXT
-	LOCATE 19, 1: COLOR 14, 0: PRINT "STARTING LINEUP"
-
-END SUB
-
-SUB SELECTPBP ()
-	IF PB% = 0 THEN CALL DELAY
-	IF PB% = 1 AND U6 <> 0 THEN CALL WINDEX: PRINT U$: CALL MOREDELAY
-	CALL MOREDELAY
-END SUB
-
-SUB TEAMMENU (BO%, YN$)
-DIM Y2 AS LONG
-	IF BO% = 2 THEN BO% = 0: GOTO 1102
-	NT = 0
-OPEN P$(0) + "PROBBTMS." + YN$ FOR RANDOM AS #1 LEN = 1031
-	Y2 = LOF(1)
-	FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
-	FIELD #1, 44 AS X$, 2 AS Q$(9)
-	FOR I1 = 1 TO Y2 / 1031
-	GET #1, I1
-	CK% = CVI(Q$(9))
-	IF CK% <> 999 THEN 1103
-	NT = NT + 1
-	V$(NT) = Q$(0): V%(NT) = I1
-
-1103 NEXT
-CLOSE 1
-
-1102 SELECTION% = 1
-	COUNT% = NT
-	START% = 1
-	FileFGColr% = 15:FileBGColr% = 4
-	HiLiteFGColr% = 0:HiLiteBGColr% = 7
-	ROWS% = 20
-	COLUMNS% = 4
-	SPACING% = 6
-	ROW% = 4
-	COLUMN% = 1
-	COLOR , 4: CLS : LOCATE , 33: COLOR 14
-	PRINT "TEAM SELECTION": COLOR 15
-	LOCATE 25, 1: COLOR 14: PRINT "ESC"; : COLOR 15
-	PRINT "-SELECT NEW ID  PGDN  PGUP  "; : COLOR 14
-	PRINT "ENTER"; : COLOR 15: PRINT "-SELECTS TEAM";
-	
-_MouseShow "DEFAULT"
-20   MAMENU VARPTR(V$(1)), SELECTION%, START%, COUNT%, EXITCODE%, FILECOLR%, HILITECOLR%, ROWS%, COLUMNS%, SPACING%, ROW%, COLUMN%
-_MouseHide
-
-	IF EXITCODE% = 27 THEN BO% = 1: GOTO 25
-	IF EXITCODE% = -71 THEN START% = 1: EXITCODE% = 3: SELECTION% = 1: GOTO 20
-	IF EXITCODE% = -79 THEN START% = NT: EXITCODE% = 3: SELECTION% = NT: GOTO 20
-	IF EXITCODE% = -73 THEN START% = START% - 80: IF START% < 1 THEN START% = 1
-	IF EXITCODE% = -81 THEN START% = START% + 80: IF START% > NT THEN START% = NT
-	IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = START%: GOTO 20
-	I1 = V%(SELECTION%)
-	CALL GETATEAM(I1, YN$)
-
-25   END SUB
-
-SUB THREEFT ()
-	A(P, B1(P, B), 10) = A(P, B1(P, B), 10) + 1
-	RN = INT(RND(1) * 100) + 1
-	IF F3 = 1 AND RN <= 50 THEN U$ = "FREE THROW IS GOOD"
-	IF F3 = 1 AND RN > 50 THEN U$ = "FREE THROW IS GOOD"
-	RN = INT(RND(1) * 100) + 1
-	IF F3 = 2 AND RN <= 50 THEN U$ = "SECOND FREE THROW IS GOOD"
-	IF F3 = 2 AND RN > 50 THEN U$ = "HE HITS THE SECOND ONE"
-	RN = INT(RND(1) * 100) + 1
-	IF F3 = 3 AND RN <= 50 THEN U$ = "THIRD FREE THROW IS GOOD"
-	IF F3 = 3 AND RN > 50 THEN U$ = "HE HITS THE LAST ONE"
-	CALL DELAY
-	S(P, H) = S(P, H) + 1
-	S(P, 0) = S(P, 0) + 1
-	CALL UPDATESCREEN
-END SUB
-
-SUB TICKER ()
-	'*** TICKER ***
-	IF AP = 1 AND U5 = 2 THEN 2884
-	COLOR 14, 0: CLS
-	RN = INT(RND(1) * 100) + 1
-	IF RN <= 50 AND HT% = 1 AND G9 = 0 THEN LOCATE , 23: PRINT "PRUDENTIAL AT THE HALF SCOREBOARD": GOTO 2851
-	IF RN > 50 AND HT% = 1 AND G9 = 0 THEN LOCATE , 28: PRINT "RED MAN HALFTIME REPORT": GOTO 2851
-	IF HT% = 1 AND RN <= 50 THEN LOCATE , 29: PRINT "TOYOTA HALFTIME REPORT": GOTO 2851
-	IF HT% = 1 AND RN > 50 THEN LOCATE , 29: PRINT "HONDA HALFTIME REPORT": GOTO 2851
-	IF EG% = 1 AND G9 = 0 THEN LOCATE , 27: PRINT "CHEVROLET FINAL SCOREBOARD": GOTO 2851
-	IF EG% = 1 AND RN <= 33 THEN LOCATE , 27: PRINT "USA TODAY FINAL SCOREBOARD": GOTO 2851
-	IF EG% = 1 AND RN > 33 AND RN <= 67 THEN LOCATE , 24: PRINT "FEDERAL EXPRESS FINAL SCOREBOARD": GOTO 2851
-	IF EG% = 1 AND RN > 67 THEN LOCATE , 23: PRINT "ESPN SPORTSCENTER FINAL SCOREBOARD": GOTO 2851
-	IF HT% = 0 THEN LOCATE , 30: PRINT "LANCE HAFFNER GAMES SCOREBOARD": GOTO 2851
-
-2851  COLOR 15: IF TMT = 0 THEN LOCATE 10, 28: PRINT "NO OTHER GAMES SCHEDULED": GOTO 2883
-	IF H = 1 AND T < 720 AND T >= 480 THEN TE = 1
-	IF H = 1 AND T < 480 AND T >= 240 THEN TE = 2
-	IF H = 1 AND T < 240 THEN TE = 3
-	IF H = 2 AND T < 720 AND T >= 480 THEN TE = 4
-	IF H = 2 AND T < 480 AND T >= 240 THEN TE = 5
-	IF H = 2 AND T < 240 THEN TE = 6
-	IF H = 3 AND T < 720 AND T >= 480 THEN TE = 9
-	IF H = 3 AND T < 480 AND T >= 240 THEN TE = 10
-	IF H = 3 AND T < 240 THEN TE = 11
-	IF H = 4 AND T < 720 AND T >= 480 THEN TE = 12
-	IF H = 4 AND T < 480 AND T >= 240 THEN TE = 13
-	IF H = 4 AND T < 240 THEN TE = 14
-	IF H = 5 AND T < 720 AND T >= 480 THEN TE = 15
-	IF H = 5 AND T < 480 AND T >= 240 THEN TE = 16
-	IF H = 5 AND T < 240 THEN TE = 17
-	IF HT% = 1 THEN TE = 8
-	  IF LEFT$(SX$(1, 0), 3) = "XXX" THEN 2852
-	LOCATE 2, 1: X = 1: GOSUB 2885
-	PRINT LEFT$(SX$(1, 0), 13);
-	LOCATE , 15: PRINT USING "### "; SX%(1, 0, TS%); : PRINT R$(TS%)
-	PRINT LEFT$(SX$(1, 1), 13);
-	LOCATE , 15: PRINT USING "### #"; SX%(1, 1, TS%)
-
-2852  IF LEFT$(SX$(2, 0), 3) = "XXX" THEN 2853
-	LOCATE 5, 1: X = 2: GOSUB 2885: PRINT LEFT$(SX$(2, 0), 13); : LOCATE , 15: PRINT USING "### "; SX%(2, 0, TS%); : PRINT R$(TS%)
-	PRINT LEFT$(SX$(2, 1), 13); : LOCATE , 15: PRINT USING "### #"; SX%(2, 1, TS%)
-
-2853 IF LEFT$(SX$(3, 0), 3) = "XXX" THEN 2854
-	LOCATE 8, 1: X = 3: GOSUB 2885: PRINT LEFT$(SX$(3, 0), 13); : LOCATE , 15: PRINT USING "### "; SX%(3, 0, TS%); : PRINT R$(TS%)
-	PRINT LEFT$(SX$(3, 1), 13); : LOCATE , 15: PRINT USING "### #"; SX%(3, 1, TS%)
-
-2854  IF LEFT$(SX$(4, 0), 3) = "XXX" THEN 2855
-	LOCATE 11, 1: X = 4: GOSUB 2885: PRINT LEFT$(SX$(4, 0), 13); : LOCATE , 15: PRINT USING "### "; SX%(4, 0, TS%); : PRINT R$(TS%)
-	PRINT LEFT$(SX$(4, 1), 13); : LOCATE , 15: PRINT USING "### #"; SX%(4, 1, TS%)
-
-2855  IF LEFT$(SX$(5, 0), 3) = "XXX" THEN 2856
-	LOCATE 14, 1: X = 5: GOSUB 2885: PRINT LEFT$(SX$(5, 0), 13); : LOCATE , 15: PRINT USING "### "; SX%(5, 0, TS%); : PRINT R$(TS%)
-	PRINT LEFT$(SX$(5, 1), 13); : LOCATE , 15: PRINT USING "### #"; SX%(5, 1, TS%)
-
-2856  IF LEFT$(SX$(6, 0), 3) = "XXX" THEN 2857
-	LOCATE 17, 1: X = 6: GOSUB 2885: PRINT LEFT$(SX$(6, 0), 13); : LOCATE , 15: PRINT USING "### "; SX%(6, 0, TS%); : PRINT R$(TS%)
-	PRINT LEFT$(SX$(6, 1), 13); : LOCATE , 15: PRINT USING "### #"; SX%(6, 1, TS%)
-
-2857  IF LEFT$(SX$(7, 0), 3) = "XXX" THEN 2858
-	LOCATE 20, 1: X = 7: GOSUB 2885: PRINT LEFT$(SX$(7, 0), 13); : LOCATE , 15: PRINT USING "### "; SX%(7, 0, TS%); : PRINT R$(TS%)
-	PRINT LEFT$(SX$(7, 1), 13); : LOCATE , 15: PRINT USING "### #"; SX%(7, 1, TS%)
-
-2858  IF LEFT$(SX$(8, 0), 3) = "XXX" THEN 2859
-	LOCATE 23, 1: X = 8: GOSUB 2885: PRINT LEFT$(SX$(8, 0), 13); : LOCATE , 15: PRINT USING "### "; SX%(8, 0, TS%); : PRINT R$(TS%)
-	PRINT LEFT$(SX$(8, 1), 13); : LOCATE , 15: PRINT USING "### #"; SX%(8, 1, TS%);
-
-2859  IF LEFT$(SX$(9, 0), 3) = "XXX" THEN 2860
-	LOCATE 2, 21: X = 9: GOSUB 2885: PRINT LEFT$(SX$(9, 0), 13); : LOCATE , 35: PRINT USING "### "; SX%(9, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 21: PRINT LEFT$(SX$(9, 1), 13); : LOCATE , 35: PRINT USING "### #"; SX%(9, 1, TS%)
-
-2860  IF LEFT$(SX$(10, 0), 3) = "XXX" THEN 2861
-	LOCATE 5, 21: X = 10: GOSUB 2885: PRINT LEFT$(SX$(10, 0), 13); : LOCATE , 35: PRINT USING "### "; SX%(10, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 21: PRINT LEFT$(SX$(10, 1), 13); : LOCATE , 35: PRINT USING "### #"; SX%(10, 1, TS%)
-
-2861  IF LEFT$(SX$(11, 0), 3) = "XXX" THEN 2862
-	LOCATE 8, 21: X = 11: GOSUB 2885: PRINT LEFT$(SX$(11, 0), 13); : LOCATE , 35: PRINT USING "### "; SX%(11, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 21: PRINT LEFT$(SX$(11, 1), 13); : LOCATE , 35: PRINT USING "### #"; SX%(11, 1, TS%)
-
-2862  IF LEFT$(SX$(12, 0), 3) = "XXX" THEN 2863
-	LOCATE 11, 21: X = 12: GOSUB 2885: PRINT LEFT$(SX$(12, 0), 13); : LOCATE , 35: PRINT USING "### "; SX%(12, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 21: PRINT LEFT$(SX$(12, 1), 13); : LOCATE , 35: PRINT USING "### #"; SX%(12, 1, TS%)
-
-2863  IF LEFT$(SX$(13, 0), 3) = "XXX" THEN 2864
-	LOCATE 14, 21: X = 13: GOSUB 2885: PRINT LEFT$(SX$(13, 0), 13); : LOCATE , 35: PRINT USING "### "; SX%(13, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 21: PRINT LEFT$(SX$(13, 1), 13); : LOCATE , 35: PRINT USING "### #"; SX%(13, 1, TS%)
-
-2864  IF LEFT$(SX$(14, 0), 3) = "XXX" THEN 2865
-	LOCATE 17, 21: X = 14: GOSUB 2885: PRINT LEFT$(SX$(14, 0), 13); : LOCATE , 35: PRINT USING "### "; SX%(14, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 21: PRINT LEFT$(SX$(14, 1), 13); : LOCATE , 35: PRINT USING "### #"; SX%(14, 1, TS%)
-
-2865  IF LEFT$(SX$(15, 0), 3) = "XXX" THEN 2866
-	LOCATE 20, 21: X = 15: GOSUB 2885: PRINT LEFT$(SX$(15, 0), 13); : LOCATE , 35: PRINT USING "### "; SX%(15, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 21: PRINT LEFT$(SX$(15, 1), 13); : LOCATE , 35: PRINT USING "### #"; SX%(15, 1, TS%)
-
-2866  IF LEFT$(SX$(16, 0), 3) = "XXX" THEN 2867
-	LOCATE 23, 21: X = 16: GOSUB 2885: PRINT LEFT$(SX$(16, 0), 13); : LOCATE , 35: PRINT USING "### "; SX%(16, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 21: PRINT LEFT$(SX$(16, 1), 13); : LOCATE , 35: PRINT USING "### #"; SX%(16, 1, TS%);
-
-2867  IF LEFT$(SX$(17, 0), 3) = "XXX" THEN 2868
-	LOCATE 2, 41: X = 17: GOSUB 2885: PRINT LEFT$(SX$(17, 0), 13); : LOCATE , 55: PRINT USING "### "; SX%(17, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 41: PRINT LEFT$(SX$(17, 1), 13); : LOCATE , 55: PRINT USING "### #"; SX%(17, 1, TS%)
-
-2868  IF LEFT$(SX$(18, 0), 3) = "XXX" THEN 2869
-	LOCATE 5, 41: X = 18: GOSUB 2885: PRINT LEFT$(SX$(18, 0), 13); : LOCATE , 55: PRINT USING "### "; SX%(18, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 41: PRINT LEFT$(SX$(18, 1), 13); : LOCATE , 55: PRINT USING "### #"; SX%(18, 1, TS%)
-
-2869  IF LEFT$(SX$(19, 0), 3) = "XXX" THEN 2870
-	LOCATE 8, 41: X = 19: GOSUB 2885: PRINT LEFT$(SX$(19, 0), 13); : LOCATE , 55: PRINT USING "### "; SX%(19, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 41: PRINT LEFT$(SX$(19, 1), 13); : LOCATE , 55: PRINT USING "### #"; SX%(19, 1, TS%)
-
-2870 IF LEFT$(SX$(20, 0), 3) = "XXX" THEN 2871
-	LOCATE 11, 41: X = 20: GOSUB 2885: PRINT LEFT$(SX$(20, 0), 13); : LOCATE , 55: PRINT USING "### "; SX%(20, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 41: PRINT LEFT$(SX$(20, 1), 13); : LOCATE , 55: PRINT USING "### #"; SX%(20, 1, TS%)
-
-2871 IF LEFT$(SX$(21, 0), 3) = "XXX" THEN 2872
-	LOCATE 14, 41: X = 21: GOSUB 2885: PRINT LEFT$(SX$(21, 0), 13); : LOCATE , 55: PRINT USING "### "; SX%(21, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 41: PRINT LEFT$(SX$(21, 1), 13); : LOCATE , 55: PRINT USING "### #"; SX%(21, 1, TS%)
-
-2872 IF LEFT$(SX$(22, 0), 3) = "XXX" THEN 2873
-	LOCATE 17, 41: X = 22: GOSUB 2885: PRINT LEFT$(SX$(22, 0), 13); : LOCATE , 55: PRINT USING "### "; SX%(22, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 41: PRINT LEFT$(SX$(22, 1), 13); : LOCATE , 55: PRINT USING "### #"; SX%(22, 1, TS%)
-
-2873 IF LEFT$(SX$(23, 0), 3) = "XXX" THEN 2874
-	LOCATE 20, 41: X = 23: GOSUB 2885: PRINT LEFT$(SX$(23, 0), 13); : LOCATE , 55: PRINT USING "### "; SX%(23, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 41: PRINT LEFT$(SX$(23, 1), 13); : LOCATE , 55: PRINT USING "### #"; SX%(23, 1, TS%)
-
-2874 IF LEFT$(SX$(24, 0), 3) = "XXX" THEN 2875
-	LOCATE 23, 41: X = 24: GOSUB 2885: PRINT LEFT$(SX$(24, 0), 13); : LOCATE , 55: PRINT USING "### "; SX%(24, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 41: PRINT LEFT$(SX$(24, 1), 13); : LOCATE , 55: PRINT USING "### #"; SX%(24, 1, TS%);
-
-2875 IF LEFT$(SX$(25, 0), 3) = "XXX" THEN 2876
-	LOCATE 2, 61: X = 25: GOSUB 2885: PRINT LEFT$(SX$(25, 0), 13); : LOCATE , 75: PRINT USING "### "; SX%(25, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 61: PRINT LEFT$(SX$(25, 1), 13); : LOCATE , 75: PRINT USING "### #"; SX%(25, 1, TS%)
-
-2876 IF LEFT$(SX$(26, 0), 3) = "XXX" THEN 2877
-	LOCATE 5, 61: X = 26: GOSUB 2885: PRINT LEFT$(SX$(26, 0), 13); : LOCATE , 75: PRINT USING "### "; SX%(26, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 61: PRINT LEFT$(SX$(26, 1), 13); : LOCATE , 75: PRINT USING "### #"; SX%(26, 1, TS%)
-
-2877 IF LEFT$(SX$(27, 0), 3) = "XXX" THEN 2878
-	LOCATE 8, 61: X = 27: GOSUB 2885: PRINT LEFT$(SX$(27, 0), 13); : LOCATE , 75: PRINT USING "### "; SX%(27, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 61: PRINT LEFT$(SX$(27, 1), 13); : LOCATE , 75: PRINT USING "### #"; SX%(27, 1, TS%)
-
-2878 IF LEFT$(SX$(28, 0), 3) = "XXX" THEN 2879
-	LOCATE 11, 61: X = 28: GOSUB 2885: PRINT LEFT$(SX$(28, 0), 13); : LOCATE , 75: PRINT USING "### "; SX%(28, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 61: PRINT LEFT$(SX$(28, 1), 13); : LOCATE , 75: PRINT USING "### #"; SX%(28, 1, TS%)
-
-2879 IF LEFT$(SX$(29, 0), 3) = "XXX" THEN 2880
-	LOCATE 14, 61: X = 29: GOSUB 2885: PRINT LEFT$(SX$(29, 0), 13); : LOCATE , 75: PRINT USING "### "; SX%(29, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 61: PRINT LEFT$(SX$(29, 1), 13); : LOCATE , 75: PRINT USING "### #"; SX%(29, 1, TS%)
-
-2880 IF LEFT$(SX$(30, 0), 3) = "XXX" THEN 2881
-	LOCATE 17, 61: X = 30: GOSUB 2885: PRINT LEFT$(SX$(30, 0), 13); : LOCATE , 75: PRINT USING "### "; SX%(30, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 61: PRINT LEFT$(SX$(30, 1), 13); : LOCATE , 75: PRINT USING "### #"; SX%(30, 1, TS%)
-
-2881 IF LEFT$(SX$(31, 0), 3) = "XXX" THEN 2882
-	LOCATE 20, 61: X = 31: GOSUB 2885: PRINT LEFT$(SX$(31, 0), 13); : LOCATE , 75: PRINT USING "### "; SX%(31, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 61: PRINT LEFT$(SX$(31, 1), 13); : LOCATE , 75: PRINT USING "### #"; SX%(31, 1, TS%)
-
-2882 IF LEFT$(SX$(32, 0), 3) = "XXX" THEN 2883
-	LOCATE 23, 61: X = 32: GOSUB 2885: PRINT LEFT$(SX$(32, 0), 13); : LOCATE , 75: PRINT USING "### "; SX%(32, 0, TS%); : PRINT R$(TS%)
-	LOCATE , 61: PRINT LEFT$(SX$(32, 1), 13); : LOCATE , 75: PRINT USING "### #"; SX%(32, 1, TS%);
-2883 I$ = GetKeyPress$
-	CALL NEWSCREEN
-	GOTO 2884
-
-2885 TS% = TE + (TTS% - ST%(X)) * 3
-	IF TS% < 0 THEN TS% = 0
-	IF TS% > 14 THEN TS% = 14
-	IF EG% = 1 THEN TS% = 14
-	RETURN
-
-2884 END SUB
-
-SUB UPDATESCREEN ()
-	'M A I N   S C R E E N
-	CALL TICKERUPDATE
-	LOCATE 1, 37: COLOR 15, 0: PRINT USING "##"; INT(T / 60); : PRINT ":";
-	IF T - INT(T / 60) * 60 < 10 THEN PRINT "0"; : PRINT USING "#"; T - INT(T / 60) * 60; : GOTO 2171
-	PRINT USING "##"; T - INT(T / 60) * 60;
-
-2171 LOCATE 4, 13: COLOR 14, 0: PRINT USING "###"; S(0, 0);
-	LOCATE 2, 35: PRINT USING " PERIOD #"; H;
-	IF H > 4 THEN LOCATE , 35: PRINT USING "OVERTIME #"; H - 4
-	LOCATE 4, 60: COLOR 14, 0: PRINT USING "###"; S(1, 0)
-	COLOR 7: LOCATE 3, 35: PRINT USING "##  "; T0(0); : COLOR 12: PRINT "TO  "; : COLOR 7: PRINT USING "##"; T0(1)
-	LOCATE , 35: PRINT USING "##  "; R3(0); : COLOR 12: PRINT "RB  "; : COLOR 7: PRINT USING "##"; R3(1)
-	LOCATE , 35: PRINT USING "##  "; P2(0); : COLOR 12: PRINT "TF  "; : COLOR 7: PRINT USING "##"; P2(1);
-	IF P2(0) > NB% - 1 AND H <= 4 OR P2(0) > 2 AND H > 4 THEN LOCATE , 46: COLOR 0, 2: PRINT "BONUS"; : COLOR 7, 0
-	IF P2(1) > NB% - 1 AND H <= 4 OR P2(1) > 2 AND H > 4 THEN LOCATE , 29: COLOR 0, 2: PRINT "BONUS": COLOR 7, 0
-	LOCATE 6, 9: PRINT "TIMEOUTS:"; T1(0); : LOCATE , 56: PRINT "TIMEOUTS:"; T1(1)
-	LOCATE 6, 37: COLOR 15, 0: PRINT USING " :##"; X8
-	IF T < 25 AND X8 >= T OR H > 4 AND T = 300 THEN LOCATE 6, 37: PRINT " :  "
-	IF U6 = 0 THEN 2250
-	LOCATE 8, 58
-	COLOR T(D, 33), T(D, 34): PRINT "DEF - "; D$(D2(D))
-	LOCATE , 58: COLOR T(P, 33), T(P, 34): PRINT "OFF - "; O$(O0%(P))
-	COLOR 15, 0
-	LOCATE , 41: COLOR 14: PRINT "(1) "; : COLOR 15: PRINT "SHOOT        "; : COLOR 14: PRINT "ENTER"; : COLOR 15: PRINT "-PASS"
-	LOCATE , 41: COLOR 14: PRINT "(2) "; : COLOR 15: PRINT B$(P, 0); " CALL TIMEOUT     "
-	LOCATE , 41: COLOR 14: PRINT "(3) "; : COLOR 15: PRINT "COMMIT INTL FOUL (LAST 4 MIN)"
-	LOCATE , 41: COLOR 14: PRINT "(4) "; : COLOR 15: PRINT "SHOOT A FORCED 3-POINTER"
-	LOCATE , 41: COLOR 14: PRINT "(S) "; : COLOR 15: PRINT "SCOUT REPORT "; : COLOR 14: PRINT "(T) "; : COLOR 15: PRINT "10 MIN TICKER"
-	LOCATE , 41: COLOR 14: PRINT "(Z) "; : COLOR 15: PRINT "LEFT TM STGY "; : COLOR 14: PRINT "(/) "; : COLOR 15: PRINT "RIGHT TM STGY"
-	COLOR 15, 0
-	LOCATE 19, 1
-	FOR I1 = 0 TO 4
-	COLOR 2, 0
-	PRINT USING "# "; I1;
-	COLOR 15
-	PRINT LEFT$(AA$(0, B1(0, I1), 0), 12); TAB(16);
-	J = (A(0, B1(0, I1), 3)) - A(0, B1(0, I1), 7) - A(0, B1(0, I1), 11) - A(0, B1(0, I1), 12)
-	IF J <= 0 THEN J = 0
-	IF A(0, B1(0, I1), 1) >= 100 THEN A(0, B1(0, I1), 1) = 99
-	PRINT USING "## ## "; A(0, B1(0, I1), 0); A(0, B1(0, I1), 1);
-	IF P = 0 THEN
-		PRINT USING "##"; A(0, B1(0, I1), 21) * 2 / 10;
-	ELSE
-		PRINT USING "##"; A(0, B1(0, I1), 2) * 2 / 10;
-	END IF
-	IF J <= 0 AND (H = 1 OR H = 2 OR H = 3 OR H = 4 AND T > 120) THEN COLOR 12
-	PRINT USING "### "; J;
-	COLOR 15
-	PRINT USING "## ##"; A(0, B1(0, I1), 4) / 10; A(0, B1(0, I1), 5) / 10;
-	PRINT USING "###  "; A(0, B1(0, I1), 8) * 2 + A(0, B1(0, I1), 10) + W%(0, B1(0, I1), 0);
-	IF A(0, B1(0, I1), 12) >= 5 THEN COLOR 12
-	PRINT USING "#"; A(0, B1(0, I1), 12)
-	COLOR 15
-	NEXT I1
-	LOCATE 19, 40
-	FOR I1 = 0 TO 4
-	LOCATE , 40
-	COLOR 2, 0
-	PRINT USING "# "; I1;
-	COLOR 15: PRINT LEFT$(AA$(1, B1(1, I1), 0), 12); TAB(56);
-	J = (A(1, B1(1, I1), 3)) - A(1, B1(1, I1), 7) - A(1, B1(1, I1), 11) - A(1, B1(1, I1), 12)
-	IF J <= 0 THEN J = 0
-	IF A(1, B1(1, I1), 1) >= 100 THEN A(1, B1(1, I1), 1) = 99
-	PRINT USING "## ## "; A(1, B1(1, I1), 0); A(1, B1(1, I1), 1);
-	IF P = 1 THEN PRINT USING "##"; A(1, B1(1, I1), 21) * 2 / 10;  ELSE PRINT USING "##"; A(1, B1(1, I1), 2) * 2 / 10;
-	IF J <= 0 AND (H = 1 OR H = 2 OR H = 3 OR H = 4 AND T > 120) THEN COLOR 12
-	PRINT USING "### "; J;
-	COLOR 15
-	PRINT USING "## ##"; A(1, B1(1, I1), 4) / 10; A(1, B1(1, I1), 5) / 10;
-	PRINT USING "###  "; A(1, B1(1, I1), 8) * 2 + A(1, B1(1, I1), 10) + W%(1, B1(1, I1), 0);
-	IF A(1, B1(1, I1), 12) >= 5 THEN COLOR 12
-	PRINT USING "#"; A(1, B1(1, I1), 12)
-	COLOR 15
-	NEXT I1
-
-2250 END SUB
-
-
-SUB WINDEX ()
-	  IF U6 = 0 THEN 4094
-	  FOR I = 8 TO 15
-	  LOCATE I, 1
-	  PRINT "                                      "
-	  NEXT I
-	  LOCATE 8, 1
-
-4094 REM
-END SUB
-
-
-SUB RECORDSCHECK ()
-DIM RC$(50, 4), REC(50, 2) AS SINGLE, TRC$(125, 3), TREC(125, 2) AS SINGLE
-DIM V8(1, 14)
-DIM SITE$(1)
-	SITE$(0) = "AT": SITE$(1) = "VS."
-	IF NOT _FILEEXISTS(P$(1) + "RECORDS.GAM") THEN
-	 TREC(2, 0) = 999
-	 TREC(4, 0) = 999
-	 TREC(7, 0) = 999
-	 TREC(9, 0) = 999
-	 TREC(11, 0) = 999
-	 TREC(13, 0) = 999
-	 TREC(15, 0) = 999
-	 TREC(17, 0) = 999
-	 TREC(19, 0) = 999
-	 TREC(21, 0) = 999
-	 TREC(23, 0) = 999
-	 TREC(25, 0) = 999
-	 TREC(27, 0) = 999
-	 TREC(29, 0) = 999
-	 TREC(31, 0) = 999
-	 TREC(33, 0) = 999
-	 TREC(35, 0) = 999
-	 TREC(37, 0) = 999
-	 TREC(43, 0) = 999
-	 TREC(45, 0) = 999
-	 TREC(61, 0) = 999
-	 TREC(63, 0) = 999
-	 TREC(65, 0) = 999
-	 TREC(67, 0) = 999
-	 TREC(73, 0) = 999
-	 TREC(75, 0) = 999
-	 TREC(81, 0) = 999
-	 TREC(83, 0) = 999
-	 TREC(87, 0) = 999
-	 TREC(89, 0) = 999
-	 TREC(92, 0) = 999
-	 TREC(94, 0) = 999
-	 TREC(97, 0) = 999
-	 TREC(99, 0) = 999
-	 TREC(105, 0) = 999
-	 TREC(107, 0) = 999
-	 TREC(113, 0) = 999
-	 TREC(115, 0) = 999
-	 TREC(120, 0) = 999
-	 TREC(123, 0) = 999
-	 TREC(125, 0) = 999
-	 GOTO 505
-	END IF
-OPEN P$(1) + "RECORDS.GAM" FOR INPUT AS #1
-	FOR I = 0 TO 48
-	FOR I1 = 0 TO 2
-	INPUT #1, REC(I, I1)
-	NEXT
-	FOR I1 = 0 TO 4
-	INPUT #1, RC$(I, I1)
-	NEXT
-	NEXT
-FOR I = 0 TO 125
-FOR I1 = 0 TO 2
-INPUT #1, TREC(I, I1)
-NEXT
-FOR I1 = 0 TO 3
-INPUT #1, TRC$(I, I1)
-NEXT
-NEXT
-CLOSE 1
-
-505 'CHECK THE INDIVIDUAL RECORDS
-	 FOR I = 0 TO 1
-	FOR I1 = 0 TO 14
-
-' SCORING RECORDS FOR POINTS IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
-	IF A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) > REC(0, 0) THEN
-	  REC(0, 0) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) ' POINTS
-	  REC(0, 1) = 1                                             ' TIMES DONE
-	  REC(0, 2) = 0                                             ' GAME
-	  RC$(0, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(0, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(0, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(0, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(0, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 1, I1, 13) + QQ(I, 2, I1, 13) > REC(1, 0) THEN
-	  REC(1, 0) = QQ(I, 1, I1, 13) + QQ(I, 2, I1, 13) ' POINTS
-	  REC(1, 1) = 1                                             ' TIMES DONE
-	  REC(1, 2) = 1                                             ' HALF
-	  RC$(1, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(1, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(1, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(1, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(1, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 3, I1, 13) + QQ(I, 4, I1, 13) > REC(1, 0) THEN
-	  REC(1, 0) = QQ(I, 3, I1, 13) + QQ(I, 4, I1, 13) ' POINTS
-	  REC(1, 1) = 1                                             ' TIMES DONE
-	  REC(1, 2) = 2                                             ' HALF
-	  RC$(1, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(1, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(1, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(1, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(1, 4) = DATE$                                         ' DATE
-	END IF
-	 FOR I2 = 1 TO 4
-	  IF QQ(I, I2, I1, 13) > REC(2, 0) THEN
-	  REC(2, 0) = QQ(I, I2, I1, 13)  ' POINTS
-	  REC(2, 1) = 1                                             ' TIMES DONE
-	  REC(2, 2) = I2                                             ' QTR
-	  RC$(2, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(2, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(2, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(2, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(2, 4) = DATE$                                         ' DATE
-	END IF
-	NEXT I2
-	 FOR I2 = 5 TO 8
-	IF QQ(I, I2, I1, 13) > REC(3, 0) THEN
-	  REC(3, 0) = QQ(I, I2, I1, 13)  ' POINTS
-	  REC(3, 1) = 1                                             ' TIMES DONE
-	  REC(3, 2) = I2                                             ' QTR
-	  RC$(3, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(3, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(3, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(3, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(3, 4) = DATE$                                         ' DATE
-	END IF
-	NEXT I2
-
-' FIELD GOAL PERCENTAGE RECORDS FOR HIGH %, MOST W/NO MISSES, MOST W/NONE MADE
-	IF A(I, I1, 8) < 15 THEN 900
-	IF A(I, I1, 8) / A(I, I1, 7) > REC(4, 0) THEN
-	  REC(4, 0) = A(I, I1, 8) / A(I, I1, 7)                     ' PCTG
-	  REC(4, 1) = A(I, I1, 8)                                   ' FGM
-	  REC(4, 2) = A(I, I1, 7)                                   ' FGA
-	  RC$(4, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(4, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(4, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(4, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(4, 4) = DATE$                                         ' DATE
-	END IF
-
-900
-	IF A(I, I1, 8) = A(I, I1, 7) AND A(I, I1, 7) > REC(5, 0) THEN
-	  REC(5, 0) = A(I, I1, 7)                                   ' MOST FGM
-	  RC$(5, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(5, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(5, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(5, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(5, 4) = DATE$                                         ' DATE
-	END IF
-	IF A(I, I1, 8) = 0 AND A(I, I1, 7) > REC(6, 0) THEN
-	  REC(6, 0) = A(I, I1, 7)                                   ' 0 FGM /FGA
-	  RC$(6, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(6, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(6, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(6, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(6, 4) = DATE$                                         ' DATE
-	END IF
-
-' FIELD GOALS MADE IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
-	IF A(I, I1, 8) > REC(7, 0) THEN
-	  REC(7, 0) = A(I, I1, 8)                                   ' FGM
-	  REC(7, 1) = 1                                             ' TIMES DONE
-	  REC(7, 2) = 0                                             ' GAME
-	  RC$(7, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(7, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(7, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(7, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(7, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 1, I1, 2) + QQ(I, 2, I1, 2) > REC(8, 0) THEN
-	  REC(8, 0) = QQ(I, 1, I1, 2) + QQ(I, 2, I1, 2)             ' FGM
-	  REC(8, 1) = 1                                             ' TIMES DONE
-	  REC(8, 2) = 1                                             ' HALF
-	  RC$(8, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(8, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(8, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(8, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(8, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 3, I1, 2) + QQ(I, 4, I1, 2) > REC(8, 0) THEN
-	  REC(8, 0) = QQ(I, 3, I1, 2) + QQ(I, 4, I1, 2)              ' FGM
-	  REC(8, 1) = 1                                             ' TIMES DONE
-	  REC(8, 2) = 2                                             ' HALF
-	  RC$(8, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(8, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(8, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(8, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(8, 4) = DATE$                                         ' DATE
-	END IF
-	 FOR I2 = 1 TO 4
-	  IF QQ(I, I2, I1, 2) > REC(9, 0) THEN
-	  REC(9, 0) = QQ(I, I2, I1, 2)                              ' FGM
-	  REC(9, 1) = 1                                             ' TIMES DONE
-	  REC(9, 2) = I2                                             ' QTR
-	  RC$(9, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(9, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(9, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(9, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(9, 4) = DATE$                                         ' DATE
-	END IF
-	NEXT I2
-	 FOR I2 = 5 TO 8
-	IF QQ(I, I2, I1, 2) > REC(10, 0) THEN
-	  REC(10, 0) = QQ(I, I2, I1, 2)                              ' FGM
-	  REC(10, 1) = 1                                             ' TIMES DONE
-	  REC(10, 2) = I2                                             ' QTR
-	  RC$(10, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(10, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(10, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(10, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(10, 4) = DATE$                                         ' DATE
-	END IF
-	NEXT I2
-
-' FIELD GOAL ATTEMPTS MADE IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
-	IF A(I, I1, 7) > REC(11, 0) THEN
-	  REC(11, 0) = A(I, I1, 7)                                   ' FGA
-	  REC(11, 1) = 1                                             ' TIMES DONE
-	  REC(11, 2) = 0                                             ' GAME
-	  RC$(11, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(11, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(11, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(11, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(11, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 1, I1, 1) + QQ(I, 2, I1, 1) > REC(12, 0) THEN
-	  REC(12, 0) = QQ(I, 1, I1, 1) + QQ(I, 2, I1, 1)             ' FGA
-	  REC(12, 1) = 1                                             ' TIMES DONE
-	  REC(12, 2) = 1                                             ' HALF
-	  RC$(12, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(12, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(12, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(12, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(12, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 3, I1, 1) + QQ(I, 4, I1, 1) > REC(12, 0) THEN
-	  REC(12, 0) = QQ(I, 3, I1, 1) + QQ(I, 4, I1, 1)              ' FGA
-	  REC(12, 1) = 1                                             ' TIMES DONE
-	  REC(12, 2) = 2                                             ' HALF
-	  RC$(12, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(12, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(12, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(12, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(12, 4) = DATE$                                         ' DATE
-	END IF
-	 FOR I2 = 1 TO 4
-	  IF QQ(I, I2, I1, 1) > REC(13, 0) THEN
-	  REC(13, 0) = QQ(I, I2, I1, 1)                              ' FGA
-	  REC(13, 1) = 1                                             ' TIMES DONE
-	  REC(13, 2) = I2                                             ' QTR
-	  RC$(13, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(13, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(13, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(13, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(13, 4) = DATE$                                         ' DATE
-	END IF
-	NEXT I2
-	 FOR I2 = 5 TO 8
-	IF QQ(I, I2, I1, 1) > REC(14, 0) THEN
-	  REC(14, 0) = QQ(I, I2, I1, 1)                              ' FGA
-	  REC(14, 1) = 1                                             ' TIMES DONE
-	  REC(14, 2) = I2                                             ' QTR
-	  RC$(14, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(14, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(14, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(14, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(14, 4) = DATE$                                         ' DATE
-	END IF
-	NEXT I2
-
-' THREE-POINT FIELD GOALS MOST MADE NO MISSES, MOST ATT NONE MADE
-	IF W%(I, I1, 0) = W%(I, I1, 1) AND W%(I, I1, 0) > REC(15, 0) THEN
-	  REC(15, 0) = W%(I, I1, 0)                                  ' MOST 3-FGM
-	  RC$(15, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(15, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(15, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(15, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(15, 4) = DATE$                                         ' DATE
-	END IF
-	IF W%(I, I1, 0) = 0 AND W%(I, I1, 1) > REC(16, 0) THEN
-	  REC(16, 0) = W%(I, I1, 1)                                   ' 0 3FGM /3FGA
-	  RC$(16, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(16, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(16, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(16, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(16, 4) = DATE$                                         ' DATE
-	END IF
-
-' 3-FIELD GOALS MADE IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
-	IF W%(I, I1, 0) > REC(17, 0) THEN
-	  REC(17, 0) = W%(I, I1, 0)                                   ' 3FGM
-	  REC(17, 1) = 1                                             ' TIMES DONE
-	  REC(17, 2) = 0                                             ' GAME
-	  RC$(17, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(17, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(17, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(17, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(17, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 1, I1, 10) + QQ(I, 2, I1, 10) > REC(18, 0) THEN
-	  REC(18, 0) = QQ(I, 1, I1, 10) + QQ(I, 2, I1, 10)             ' 3FGM
-	  REC(18, 1) = 1                                             ' TIMES DONE
-	  REC(18, 2) = 1                                             ' HALF
-	  RC$(18, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(18, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(18, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(18, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(18, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) > REC(18, 0) THEN
-	  REC(18, 0) = QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10)              ' 3FGM
-	  REC(18, 1) = 1                                             ' TIMES DONE
-	  REC(18, 2) = 2                                             ' HALF
-	  RC$(18, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(18, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(18, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(18, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(18, 4) = DATE$                                         ' DATE
-	END IF
-	 FOR I2 = 1 TO 4
-	  IF QQ(I, I2, I1, 10) > REC(19, 0) THEN
-	  REC(19, 0) = QQ(I, I2, I1, 10)                              ' 3FGM
-	  REC(19, 1) = 1                                             ' TIMES DONE
-	  REC(19, 2) = I2                                             ' QTR
-	  RC$(19, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(19, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(19, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(19, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(19, 4) = DATE$                                         ' DATE
-	END IF
-	NEXT I2
-	 FOR I2 = 5 TO 8
-	IF QQ(I, I2, I1, 10) > REC(20, 0) THEN
-	  REC(20, 0) = QQ(I, I2, I1, 10)                              ' 3FGM
-	  REC(20, 1) = 1                                             ' TIMES DONE
-	  REC(20, 2) = I2                                             ' QTR
-	  RC$(20, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(20, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(20, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(20, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(20, 4) = DATE$                                         ' DATE
-	END IF
-	NEXT I2
-
-' 3-FIELD GOALS ATT IN A GAME, HALF
-	IF W%(I, I1, 1) > REC(21, 0) THEN
-	  REC(21, 0) = W%(I, I1, 1)                                   ' 3FGA
-	  REC(21, 1) = 1                                             ' TIMES DONE
-	  REC(21, 2) = 0                                             ' GAME
-	  RC$(21, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(21, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(21, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(21, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(21, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 1, I1, 11) + QQ(I, 2, I1, 11) > REC(22, 0) THEN
-	  REC(22, 0) = QQ(I, 1, I1, 11) + QQ(I, 2, I1, 11)             ' 3FGA
-	  REC(22, 1) = 1                                             ' TIMES DONE
-	  REC(22, 2) = 1                                             ' HALF
-	  RC$(22, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(22, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(22, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(22, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(22, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 3, I1, 11) + QQ(I, 4, I1, 11) > REC(22, 0) THEN
-	  REC(22, 0) = QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10)              ' 3FGA
-	  REC(22, 1) = 1                                             ' TIMES DONE
-	  REC(22, 2) = 2                                             ' HALF
-	  RC$(22, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(22, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(22, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(22, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(22, 4) = DATE$                                         ' DATE
-	END IF
-' FREE THROWS -  MOST MADE NO MISSES, MOST ATT NONE MADE
-	IF A(I, I1, 9) = A(I, I1, 10) AND A(I, I1, 10) > REC(23, 0) THEN
-	  REC(23, 0) = A(I, I1, 10)                                  ' MOST FTM
-	  RC$(23, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(23, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(23, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(23, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(23, 4) = DATE$                                         ' DATE
-	END IF
-	IF A(I, I1, 10) = 0 AND A(I, I1, 9) > REC(24, 0) THEN
-	  REC(24, 0) = A(I, I1, 9)                                   ' 0 FTM /FTA
-	  RC$(24, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(24, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(24, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(24, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(24, 4) = DATE$                                         ' DATE
-	END IF
-
-' MADE FREE THROWS IN A GAME, HALF, QUARTER
-	IF A(I, I1, 10) > REC(25, 0) THEN
-	  REC(25, 0) = A(I, I1, 10)  ' FTM
-	  REC(25, 1) = 1                                             ' TIMES DONE
-	  REC(25, 2) = 0                                             ' GAME
-	  RC$(25, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(25, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(25, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(25, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(25, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 1, I1, 4) + QQ(I, 2, I1, 4) > REC(26, 0) THEN
-	  REC(26, 0) = QQ(I, 1, I1, 4) + QQ(I, 2, I1, 4) ' FTM
-	  REC(26, 1) = 1                                             ' TIMES DONE
-	  REC(26, 2) = 1                                             ' HALF
-	  RC$(26, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(26, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(26, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(26, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(26, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 3, I1, 4) + QQ(I, 4, I1, 4) > REC(26, 0) THEN
-	  REC(26, 0) = QQ(I, 3, I1, 4) + QQ(I, 4, I1, 4) ' FTM
-	  REC(26, 1) = 1                                             ' TIMES DONE
-	  REC(26, 2) = 2                                             ' HALF
-	  RC$(26, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(26, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(26, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(26, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(26, 4) = DATE$                                         ' DATE
-	END IF
-	 FOR I2 = 1 TO 4
-	  IF QQ(I, I2, I1, 4) > REC(27, 0) THEN
-	  REC(27, 0) = QQ(I, I2, I1, 4)  ' FTM
-	  REC(27, 1) = 1                                             ' TIMES DONE
-	  REC(27, 2) = I2                                             ' QTR
-	  RC$(27, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(27, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(27, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(27, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(27, 4) = DATE$                                         ' DATE
-	END IF
-	NEXT I2
-' FREE THROWS ATTEMPTS IN A GAME, HALF, QUARTER
-	IF A(I, I1, 9) > REC(28, 0) THEN
-	  REC(28, 0) = A(I, I1, 9)  ' FTA
-	  REC(28, 1) = 1                                             ' TIMES DONE
-	  REC(28, 2) = 0                                             ' GAME
-	  RC$(28, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(28, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(28, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(28, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(28, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 1, I1, 3) + QQ(I, 2, I1, 3) > REC(29, 0) THEN
-	  REC(29, 0) = QQ(I, 1, I1, 3) + QQ(I, 2, I1, 3) ' FTA
-	  REC(29, 1) = 1                                             ' TIMES DONE
-	  REC(29, 2) = 1                                             ' HALF
-	  RC$(29, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(29, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(29, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(29, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(29, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 3, I1, 3) + QQ(I, 4, I1, 3) > REC(29, 0) THEN
-	  REC(29, 0) = QQ(I, 3, I1, 3) + QQ(I, 4, I1, 3) ' FTM
-	  REC(29, 1) = 1                                             ' TIMES DONE
-	  REC(29, 2) = 2                                             ' HALF
-	  RC$(29, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(29, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(29, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(29, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(29, 4) = DATE$                                         ' DATE
-	END IF
-	 FOR I2 = 1 TO 4
-	  IF QQ(I, I2, I1, 3) > REC(30, 0) THEN
-	  REC(30, 0) = QQ(I, I2, I1, 3)  ' FTM
-	  REC(30, 1) = 1                                             ' TIMES DONE
-	  REC(30, 2) = I2                                             ' QTR
-	  RC$(30, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(30, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(30, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(30, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(30, 4) = DATE$                                         ' DATE
-	END IF
-	NEXT I2
-
-' TOTAL REBOUNDS IN A GAME, HALF, QUARTER
-	IF A(I, I1, 11) > REC(31, 0) THEN
-	  REC(31, 0) = A(I, I1, 11)  ' FTA
-	  REC(31, 1) = 1                                             ' TIMES DONE
-	  REC(31, 2) = 0                                             ' GAME
-	  RC$(31, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(31, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(31, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(31, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(31, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) > REC(32, 0) THEN
-	  REC(32, 0) = QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) ' RB
-	  REC(32, 1) = 1                                             ' TIMES DONE
-	  REC(32, 2) = 1                                             ' HALF
-	  RC$(32, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(32, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(32, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(32, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(32, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) > REC(32, 0) THEN
-	  REC(32, 0) = QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) ' RB
-	  REC(32, 1) = 1                                             ' TIMES DONE
-	  REC(32, 2) = 2                                             ' HALF
-	  RC$(32, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(32, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(32, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(32, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(32, 4) = DATE$                                         ' DATE
-	END IF
-	 FOR I2 = 1 TO 4
-	  IF QQ(I, I2, I1, 5) > REC(33, 0) THEN
-	  REC(33, 0) = QQ(I, I2, I1, 5)  ' RB
-	  REC(33, 1) = 1                                             ' TIMES DONE
-	  REC(33, 2) = I2                                             ' QTR
-	  RC$(33, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(33, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(33, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(33, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(33, 4) = DATE$                                         ' DATE
-	END IF
-	NEXT I2
-
-' TOTAL OFFENSIVE REBOUNDS IN A GAME, HALF, QUARTER
-	IF A(I, I1, 24) > REC(34, 0) THEN
-	  REC(34, 0) = A(I, I1, 24)  ' FTA
-	  REC(34, 1) = 1                                             ' TIMES DONE
-	  REC(34, 2) = 0                                             ' GAME
-	  RC$(34, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(34, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(34, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(34, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(34, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12) > REC(35, 0) THEN
-	  REC(35, 0) = QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12) ' RB
-	  REC(35, 1) = 1                                             ' TIMES DONE
-	  REC(35, 2) = 1                                             ' HALF
-	  RC$(35, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(35, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(35, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(35, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(35, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12) > REC(35, 0) THEN
-	  REC(35, 0) = QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12) ' RB
-	  REC(35, 1) = 1                                             ' TIMES DONE
-	  REC(35, 2) = 2                                             ' HALF
-	  RC$(35, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(35, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(35, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(35, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(35, 4) = DATE$                                         ' DATE
-	END IF
-	 FOR I2 = 1 TO 4
-	  IF QQ(I, I2, I1, 12) > REC(36, 0) THEN
-	  REC(36, 0) = QQ(I, I2, I1, 12)  ' RB
-	  REC(36, 1) = 1                                             ' TIMES DONE
-	  REC(36, 2) = I2                                             ' QTR
-	  RC$(36, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(36, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(36, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(36, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(36, 4) = DATE$                                         ' DATE
-	END IF
-	NEXT I2
-
-' TOTAL DEFENSIVE REBOUNDS IN A GAME, HALF, QUARTER
-	IF A(I, I1, 11) - A(I, I1, 24) > REC(37, 0) THEN
-	  REC(37, 0) = A(I, I1, 11) - A(I, I1, 24)  ' FTA
-	  REC(37, 1) = 1                                             ' TIMES DONE
-	  REC(37, 2) = 0                                             ' GAME
-	  RC$(37, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(37, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(37, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(37, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(37, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) - (QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12)) > REC(38, 0) THEN
-	  REC(38, 0) = QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) - (QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12)) ' RB
-	  REC(38, 1) = 1                                             ' TIMES DONE
-	  REC(38, 2) = 1                                             ' HALF
-	  RC$(38, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(38, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(38, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(38, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(38, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) - (QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12)) > REC(38, 0) THEN
-	  REC(38, 0) = QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) - (QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12)) ' RB
-	  REC(38, 1) = 1                                             ' TIMES DONE
-	  REC(38, 2) = 2                                             ' HALF
-	  RC$(38, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(38, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(38, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(38, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(38, 4) = DATE$                                         ' DATE
-	END IF
-	 FOR I2 = 1 TO 4
-	  IF QQ(I, I2, I1, 5) - QQ(I, I2, I1, 12) > REC(39, 0) THEN
-	  REC(39, 0) = QQ(I, I2, I1, 5) - QQ(I, I2, I1, 12)  ' RB
-	  REC(39, 1) = 1                                             ' TIMES DONE
-	  REC(39, 2) = I2                                             ' QTR
-	  RC$(39, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(39, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(39, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(39, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(39, 4) = DATE$                                         ' DATE
-	END IF
-	NEXT I2
-
-' ASSISTS IN A GAME, HALF, QUARTER
-	IF A(I, I1, 14) > REC(40, 0) THEN
-	  REC(40, 0) = A(I, I1, 14)  ' FTA
-	  REC(40, 1) = 1                                             ' TIMES DONE
-	  REC(40, 2) = 0                                             ' GAME
-	  RC$(40, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(40, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(40, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(40, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(40, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 1, I1, 8) + QQ(I, 2, I1, 8) > REC(41, 0) THEN
-	  REC(41, 0) = QQ(I, 1, I1, 8) + QQ(I, 2, I1, 8) ' FTA
-	  REC(41, 1) = 1                                             ' TIMES DONE
-	  REC(41, 2) = 1                                             ' HALF
-	  RC$(41, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(41, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(41, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(41, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(41, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 3, I1, 8) + QQ(I, 4, I1, 8) > REC(41, 0) THEN
-	  REC(41, 0) = QQ(I, 3, I1, 8) + QQ(I, 4, I1, 8) ' FTM
-	  REC(41, 1) = 1                                             ' TIMES DONE
-	  REC(41, 2) = 2                                             ' HALF
-	  RC$(41, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(41, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(41, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(41, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(41, 4) = DATE$                                         ' DATE
-	END IF
-	 FOR I2 = 1 TO 4
-	  IF QQ(I, I2, I1, 8) > REC(42, 0) THEN
-	  REC(42, 0) = QQ(I, I2, I1, 8)  ' FTM
-	  REC(42, 1) = 1                                             ' TIMES DONE
-	  REC(42, 2) = I2                                             ' QTR
-	  RC$(42, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(42, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(42, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(42, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(42, 4) = DATE$                                         ' DATE
-	END IF
-	NEXT I2
-
-' STEALS IN A GAME, HALF, QUARTER
-	IF A(I, I1, 13) > REC(43, 0) THEN
-	  REC(43, 0) = A(I, I1, 13)  ' FTA
-	  REC(43, 1) = 1                                             ' TIMES DONE
-	  REC(43, 2) = 0                                             ' GAME
-	  RC$(43, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(43, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(43, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(43, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(43, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 1, I1, 7) + QQ(I, 2, I1, 7) > REC(44, 0) THEN
-	  REC(44, 0) = QQ(I, 1, I1, 7) + QQ(I, 2, I1, 7) ' FTA
-	  REC(44, 1) = 1                                             ' TIMES DONE
-	  REC(44, 2) = 1                                             ' HALF
-	  RC$(44, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(44, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(44, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(44, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(44, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 3, I1, 7) + QQ(I, 4, I1, 7) > REC(44, 0) THEN
-	  REC(44, 0) = QQ(I, 3, I1, 7) + QQ(I, 4, I1, 7) ' FTM
-	  REC(44, 1) = 1                                             ' TIMES DONE
-	  REC(44, 2) = 2                                             ' HALF
-	  RC$(44, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(44, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(44, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(44, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(44, 4) = DATE$                                         ' DATE
-	END IF
-	 FOR I2 = 1 TO 4
-	  IF QQ(I, I2, I1, 7) > REC(45, 0) THEN
-	  REC(45, 0) = QQ(I, I2, I1, 7)  ' FTM
-	  REC(45, 1) = 1                                             ' TIMES DONE
-	  REC(45, 2) = I2                                             ' QTR
-	  RC$(45, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(45, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(45, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(45, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(45, 4) = DATE$                                         ' DATE
-	END IF
-	NEXT I2
-
-' BLOCKS IN A GAME, HALF, QUARTER
-	IF A(I, I1, 15) > REC(46, 0) THEN
-	  REC(46, 0) = A(I, I1, 15)  ' FTA
-	  REC(46, 1) = 1                                             ' TIMES DONE
-	  REC(46, 2) = 0                                             ' GAME
-	  RC$(46, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(46, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(46, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(46, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(46, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 1, I1, 9) + QQ(I, 2, I1, 9) > REC(47, 0) THEN
-	  REC(47, 0) = QQ(I, 1, I1, 9) + QQ(I, 2, I1, 9) ' FTA
-	  REC(47, 1) = 1                                             ' TIMES DONE
-	  REC(47, 2) = 1                                             ' HALF
-	  RC$(47, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(47, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(47, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(47, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(47, 4) = DATE$                                         ' DATE
-	END IF
-	IF QQ(I, 3, I1, 9) + QQ(I, 4, I1, 9) > REC(47, 0) THEN
-	  REC(47, 0) = QQ(I, 3, I1, 9) + QQ(I, 4, I1, 9) ' FTM
-	  REC(47, 1) = 1                                             ' TIMES DONE
-	  REC(47, 2) = 2                                             ' HALF
-	  RC$(47, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(47, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(47, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(47, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(47, 4) = DATE$                                         ' DATE
-	END IF
-	 FOR I2 = 1 TO 4
-	  IF QQ(I, I2, I1, 9) > REC(48, 0) THEN
-	  REC(48, 0) = QQ(I, I2, I1, 9)  ' FTM
-	  REC(48, 1) = 1                                             ' TIMES DONE
-	  REC(48, 2) = I2                                             ' QTR
-	  RC$(48, 0) = AA$(I, I1, 0)                                 ' NAME
-	  RC$(48, 1) = B$(I, 0)                                      ' TEAM
-	  RC$(48, 2) = SITE$(I)                                      ' AT/VS
-	  RC$(48, 3) = B$(1 - I, 0)                                  ' OPPONENT
-	  RC$(48, 4) = DATE$                                         ' DATE
-	END IF
-	NEXT I2
-	 NEXT
-	NEXT
-
-' MOST OVERTIME PERIODS
-IF H - 5 > TREC(0, 0) THEN
-	TREC(0, 0) = H - 5
-	TREC(0, 1) = S(0, 0)
-	TREC(0, 2) = S(1, 0)
-	TRC$(0, 0) = B$(0, 0)
-	TRC$(0, 1) = B$(1, 0)
-	TRC$(0, 2) = DATE$
-END IF
-
-FOR I = 0 TO 1
-
-IF S(I, 0) > TREC(1, 0) THEN
-	TREC(1, 0) = S(I, 0)
-	TREC(1, 1) = 1
-	TREC(1, 2) = 0
-	TRC$(1, 0) = B$(I, 0)
-	TRC$(1, 1) = SITE$(I)
-	TRC$(1, 2) = B$(1 - I, 0)
-	TRC$(1, 3) = DATE$
-END IF
-
-IF S(I, 0) < TREC(2, 0) THEN
-	TREC(2, 0) = S(I, 0)
-	TREC(2, 1) = 1
-	TREC(2, 2) = 0
-	TRC$(2, 0) = B$(I, 0)
-	TRC$(2, 1) = SITE$(I)
-	TRC$(2, 2) = B$(1 - I, 0)
-	TRC$(2, 3) = DATE$
-END IF
-
-IF S(I, 0) + S(1 - I, 0) > TREC(3, 0) THEN
-	TREC(3, 0) = S(I, 0) + S(1 - I, 0)
-	TREC(3, 1) = S(I, 0)
-	TREC(3, 2) = S(1 - I, 0)
-	TRC$(3, 0) = B$(I, 0)
-	TRC$(3, 1) = SITE$(I)
-	TRC$(3, 2) = B$(1 - I, 0)
-	TRC$(3, 3) = DATE$
-END IF
-
-IF S(I, 0) + S(1 - I, 0) < TREC(4, 0) THEN
-	TREC(4, 0) = S(I, 0) + S(1 - I, 0)
-	TREC(4, 1) = S(I, 0)
-	TREC(4, 2) = S(1 - I, 0)
-	TRC$(4, 0) = B$(I, 0)
-	TRC$(4, 1) = SITE$(I)
-	TRC$(4, 2) = B$(1 - I, 0)
-	TRC$(4, 3) = DATE$
-END IF
-
-IF S(I, 1) + S(I, 2) > TREC(6, 0) THEN
-	TREC(6, 0) = S(I, 1) + S(I, 2)
-	TREC(6, 1) = 1
-	TREC(6, 2) = 0
-	TRC$(6, 0) = B$(I, 0)
-	TRC$(6, 1) = SITE$(I)
-	TRC$(6, 2) = B$(1 - I, 0)
-	TRC$(6, 3) = DATE$
-END IF
-
-IF S(I, 1) + S(I, 2) < TREC(7, 0) THEN
-	TREC(7, 0) = S(I, 1) + S(I, 2)
-	TREC(7, 1) = 1
-	TREC(7, 2) = 0
-	TRC$(7, 0) = B$(I, 0)
-	TRC$(7, 1) = SITE$(I)
-	TRC$(7, 2) = B$(1 - I, 0)
-	TRC$(7, 3) = DATE$
-END IF
-
-IF S(I, 1) + S(I, 2) + S(1 - I, 1) + S(1 - I, 2) > TREC(8, 0) THEN
-	TREC(8, 0) = S(I, 1) + S(1 - I, 1) + S(I, 2) + S(1 - I, 2)
-	TREC(8, 1) = S(I, 1) + S(I, 2)
-	TREC(8, 2) = S(1 - I, 1) + S(1 - I, 2)
-	TRC$(8, 0) = B$(I, 0)
-	TRC$(8, 1) = SITE$(I)
-	TRC$(8, 2) = B$(1 - I, 0)
-	TRC$(8, 3) = DATE$
-END IF
-
-IF S(I, 1) + S(I, 2) + S(1 - I, 1) + S(1 - I, 2) < TREC(9, 0) THEN
-	TREC(9, 0) = S(I, 1) + S(1 - I, 1) + S(I, 2) + S(1 - I, 2)
-	TREC(9, 1) = S(I, 1) + S(I, 2)
-	TREC(9, 2) = S(1 - I, 1) + S(1 - I, 2)
-	TRC$(9, 0) = B$(I, 0)
-	TRC$(9, 1) = SITE$(I)
-	TRC$(9, 2) = B$(1 - I, 0)
-	TRC$(9, 3) = DATE$
-END IF
-
-IF S(I, 3) + S(I, 4) > TREC(10, 0) THEN
-	TREC(10, 0) = S(I, 3) + S(I, 4)
-	TREC(10, 1) = 1
-	TREC(10, 2) = 0
-	TRC$(10, 0) = B$(I, 0)
-	TRC$(10, 1) = SITE$(I)
-	TRC$(10, 2) = B$(1 - I, 0)
-	TRC$(10, 3) = DATE$
-END IF
-
-IF S(I, 3) + S(I, 4) < TREC(11, 0) THEN
-	TREC(11, 0) = S(I, 3) + S(I, 4)
-	TREC(11, 1) = 1
-	TREC(11, 2) = 0
-	TRC$(11, 0) = B$(I, 0)
-	TRC$(11, 1) = SITE$(I)
-	TRC$(11, 2) = B$(1 - I, 0)
-	TRC$(11, 3) = DATE$
-END IF
-
-IF S(I, 3) + S(I, 4) + S(1 - I, 3) + S(1 - I, 4) > TREC(12, 0) THEN
-	TREC(12, 0) = S(I, 3) + S(1 - I, 3) + S(I, 4) + S(1 - I, 4)
-	TREC(12, 1) = S(I, 3) + S(I, 4)
-	TREC(12, 2) = S(1 - I, 3) + S(1 - I, 4)
-	TRC$(12, 0) = B$(I, 0)
-	TRC$(12, 1) = SITE$(I)
-	TRC$(12, 2) = B$(1 - I, 0)
-	TRC$(12, 3) = DATE$
-END IF
-
-IF S(I, 3) + S(I, 4) + S(1 - I, 3) + S(1 - I, 4) < TREC(13, 0) THEN
-	TREC(13, 0) = S(I, 3) + S(1 - I, 3) + S(I, 4) + S(1 - I, 4)
-	TREC(13, 1) = S(I, 3) + S(I, 4)
-	TREC(13, 2) = S(1 - I, 3) + S(1 - I, 4)
-	TRC$(13, 0) = B$(I, 0)
-	TRC$(13, 1) = SITE$(I)
-	TRC$(13, 2) = B$(1 - I, 0)
-	TRC$(13, 3) = DATE$
-END IF
-
-IF S(I, 1) > TREC(14, 0) THEN
-	TREC(14, 0) = S(I, 1)
-	TREC(14, 1) = 1
-	TREC(14, 2) = 0
-	TRC$(14, 0) = B$(I, 0)
-	TRC$(14, 1) = SITE$(I)
-	TRC$(14, 2) = B$(1 - I, 0)
-	TRC$(14, 3) = DATE$
-END IF
-
-IF S(I, 1) < TREC(15, 0) THEN
-	TREC(15, 0) = S(I, 1)
-	TREC(15, 1) = 1
-	TREC(15, 2) = 0
-	TRC$(15, 0) = B$(I, 0)
-	TRC$(15, 1) = SITE$(I)
-	TRC$(15, 2) = B$(1 - I, 0)
-	TRC$(15, 3) = DATE$
-END IF
-
-IF S(I, 1) + S(1 - I, 1) > TREC(16, 0) THEN
-	TREC(16, 0) = S(I, 1) + S(1 - I, 1)
-	TREC(16, 1) = S(I, 1)
-	TREC(16, 2) = S(1 - I, 1)
-	TRC$(16, 0) = B$(I, 0)
-	TRC$(16, 1) = SITE$(I)
-	TRC$(16, 2) = B$(1 - I, 0)
-	TRC$(16, 3) = DATE$
-END IF
-
-IF S(I, 1) + S(1 - I, 1) < TREC(17, 0) THEN
-	TREC(17, 0) = S(I, 1) + S(1 - I, 1)
-	TREC(17, 1) = S(I, 1)
-	TREC(17, 2) = S(1 - I, 1)
-	TRC$(17, 0) = B$(I, 0)
-	TRC$(17, 1) = SITE$(I)
-	TRC$(17, 2) = B$(1 - I, 0)
-	TRC$(17, 3) = DATE$
-END IF
-
-IF S(I, 2) > TREC(18, 0) THEN
-	TREC(18, 0) = S(I, 2)
-	TREC(18, 1) = 1
-	TREC(18, 2) = 0
-	TRC$(18, 0) = B$(I, 0)
-	TRC$(18, 1) = SITE$(I)
-	TRC$(18, 2) = B$(1 - I, 0)
-	TRC$(18, 3) = DATE$
-END IF
-
-IF S(I, 2) < TREC(19, 0) THEN
-	TREC(19, 0) = S(I, 2)
-	TREC(19, 1) = 1
-	TREC(19, 2) = 0
-	TRC$(19, 0) = B$(I, 0)
-	TRC$(19, 1) = SITE$(I)
-	TRC$(19, 2) = B$(1 - I, 0)
-	TRC$(19, 3) = DATE$
-END IF
-
-IF S(I, 2) + S(1 - I, 2) > TREC(20, 0) THEN
-	TREC(20, 0) = S(I, 2) + S(1 - I, 2)
-	TREC(20, 1) = S(I, 2)
-	TREC(20, 2) = S(1 - I, 2)
-	TRC$(20, 0) = B$(I, 0)
-	TRC$(20, 1) = SITE$(I)
-	TRC$(20, 2) = B$(1 - I, 0)
-	TRC$(20, 3) = DATE$
-END IF
-
-IF S(I, 2) + S(1 - I, 2) < TREC(21, 0) THEN
-	TREC(21, 0) = S(I, 2) + S(1 - I, 2)
-	TREC(21, 1) = S(I, 2)
-	TREC(21, 2) = S(1 - I, 2)
-	TRC$(21, 0) = B$(I, 0)
-	TRC$(21, 1) = SITE$(I)
-	TRC$(21, 2) = B$(1 - I, 0)
-	TRC$(21, 3) = DATE$
-END IF
-
-IF S(I, 3) > TREC(22, 0) THEN
-	TREC(22, 0) = S(I, 3)
-	TREC(22, 1) = 1
-	TREC(22, 2) = 0
-	TRC$(22, 0) = B$(I, 0)
-	TRC$(22, 1) = SITE$(I)
-	TRC$(22, 2) = B$(1 - I, 0)
-	TRC$(22, 3) = DATE$
-END IF
-
-IF S(I, 3) < TREC(23, 0) THEN
-	TREC(23, 0) = S(I, 3)
-	TREC(23, 1) = 1
-	TREC(23, 2) = 0
-	TRC$(23, 0) = B$(I, 0)
-	TRC$(23, 1) = SITE$(I)
-	TRC$(23, 2) = B$(1 - I, 0)
-	TRC$(23, 3) = DATE$
-END IF
-
-IF S(I, 3) + S(1 - I, 3) > TREC(24, 0) THEN
-	TREC(24, 0) = S(I, 3) + S(1 - I, 3)
-	TREC(24, 1) = S(I, 3)
-	TREC(24, 2) = S(1 - I, 3)
-	TRC$(24, 0) = B$(I, 0)
-	TRC$(24, 1) = SITE$(I)
-	TRC$(24, 2) = B$(1 - I, 0)
-	TRC$(24, 3) = DATE$
-END IF
-
-IF S(I, 3) + S(1 - I, 3) < TREC(25, 0) THEN
-	TREC(25, 0) = S(I, 3) + S(1 - I, 3)
-	TREC(25, 1) = S(I, 3)
-	TREC(25, 2) = S(1 - I, 3)
-	TRC$(25, 0) = B$(I, 0)
-	TRC$(25, 1) = SITE$(I)
-	TRC$(25, 2) = B$(1 - I, 0)
-	TRC$(25, 3) = DATE$
-END IF
-
-IF S(I, 4) > TREC(26, 0) THEN
-	TREC(26, 0) = S(I, 4)
-	TREC(26, 1) = 1
-	TREC(26, 2) = 0
-	TRC$(26, 0) = B$(I, 0)
-	TRC$(26, 1) = SITE$(I)
-	TRC$(26, 2) = B$(1 - I, 0)
-	TRC$(26, 3) = DATE$
-END IF
-
-IF S(I, 4) < TREC(27, 0) THEN
-	TREC(27, 0) = S(I, 4)
-	TREC(27, 1) = 1
-	TREC(27, 2) = 0
-	TRC$(27, 0) = B$(I, 0)
-	TRC$(27, 1) = SITE$(I)
-	TRC$(27, 2) = B$(1 - I, 0)
-	TRC$(27, 3) = DATE$
-END IF
-
-IF S(I, 4) + S(1 - I, 4) > TREC(28, 0) THEN
-	TREC(28, 0) = S(I, 4) + S(1 - I, 4)
-	TREC(28, 1) = S(I, 4)
-	TREC(28, 2) = S(1 - I, 4)
-	TRC$(28, 0) = B$(I, 0)
-	TRC$(28, 1) = SITE$(I)
-	TRC$(28, 2) = B$(1 - I, 0)
-	TRC$(28, 3) = DATE$
-END IF
-
-IF S(I, 4) + S(1 - I, 4) < TREC(29, 0) THEN
-	TREC(29, 0) = S(I, 4) + S(1 - I, 4)
-	TREC(29, 1) = S(I, 4)
-	TREC(29, 2) = S(1 - I, 4)
-	TRC$(29, 0) = B$(I, 0)
-	TRC$(29, 1) = SITE$(I)
-	TRC$(29, 2) = B$(1 - I, 0)
-	TRC$(29, 3) = DATE$
-END IF
-
-' TEAM FIELD GOAL PERCENTAGES
-FOR I1 = 0 TO 14: V8(I, I1) = 0: V8(1 - I, I1) = 0: NEXT
-	FOR I2 = 0 TO 1
-	FOR I1 = 0 TO 14
-	V8(I2, 0) = V8(I2, 0) + A(I2, I1, 8)
-	V8(I2, 1) = V8(I2, 1) + A(I2, I1, 7)
-	V8(I2, 2) = V8(I2, 2) + A(I2, I1, 10)
-	V8(I2, 3) = V8(I2, 3) + A(I2, I1, 9)
-	V8(I2, 4) = V8(I2, 4) + A(I2, I1, 11)
-	V8(I2, 5) = V8(I2, 5) + (A(I2, I1, 8) * 2) + A(I2, I1, 10) + W%(I2, I1, 0)
-	V8(I2, 13) = V8(I2, 13) + W%(I2, I1, 0)
-	V8(I2, 14) = V8(I2, 14) + W%(I2, I1, 1)
-	V8(I2, 6) = TF(I2)
-	V8(I2, 7) = V8(I2, 7) + A(I2, I1, 14)
-	V8(I2, 8) = V8(I2, 8) + A(I2, I1, 15)
-	V8(I2, 9) = V8(I2, 9) + A(I2, I1, 13)
-	V8(I2, 11) = V8(I2, 11) + A(I2, I1, 24)
-	V8(I2, 12) = V8(I2, 12) + A(I2, I1, 23)
-	V8(I2, 10) = V8(I2, 10) + ZZ(I2, I1)
-	NEXT
-	NEXT
-
-IF V8(I, 0) / V8(I, 1) > TREC(30, 0) THEN
-	TREC(30, 0) = V8(I, 0) / V8(I, 1)
-	TREC(30, 1) = V8(I, 0)
-	TREC(30, 2) = V8(I, 1)
-	TRC$(30, 0) = B$(I, 0)
-	TRC$(30, 1) = SITE$(I)
-	TRC$(30, 2) = B$(1 - I, 0)
-	TRC$(30, 3) = DATE$
-END IF
-
-IF V8(I, 0) / V8(I, 1) < TREC(31, 0) THEN
-	TREC(31, 0) = V8(I, 0) / V8(I, 1)
-	TREC(31, 1) = V8(I, 0)
-	TREC(31, 2) = V8(I, 1)
-	TRC$(31, 0) = B$(I, 0)
-	TRC$(31, 1) = SITE$(I)
-	TRC$(31, 2) = B$(1 - I, 0)
-	TRC$(31, 3) = DATE$
-END IF
-
-IF (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1)) > TREC(32, 0) THEN
-	TREC(32, 0) = (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1))
-	TREC(32, 1) = V8(I, 0) / V8(I, 1)
-	TREC(32, 2) = V8(1 - I, 0) / V8(1 - I, 1)
-	TRC$(32, 0) = B$(I, 0)
-	TRC$(32, 1) = SITE$(I)
-	TRC$(32, 2) = B$(1 - I, 0)
-	TRC$(32, 3) = DATE$
-END IF
-
-IF (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1)) < TREC(33, 0) THEN
-	TREC(33, 0) = (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1))
-	TREC(33, 1) = V8(I, 0) / V8(I, 1)
-	TREC(33, 2) = V8(1 - I, 0) / V8(1 - I, 1)
-	TRC$(33, 0) = B$(I, 0)
-	TRC$(33, 1) = SITE$(I)
-	TRC$(33, 2) = B$(1 - I, 0)
-	TRC$(33, 3) = DATE$
-END IF
-
-' TEAM FIELD GOALS MADE
-IF V8(I, 0) > TREC(34, 0) THEN
-	TREC(34, 0) = V8(I, 0)
-	TREC(34, 1) = 0
-	TREC(34, 2) = 0
-	TRC$(34, 0) = B$(I, 0)
-	TRC$(34, 1) = SITE$(I)
-	TRC$(34, 2) = B$(1 - I, 0)
-	TRC$(34, 3) = DATE$
-END IF
-
-IF V8(I, 0) < TREC(35, 0) THEN
-	TREC(35, 0) = V8(I, 0)
-	TREC(35, 1) = 0
-	TREC(35, 2) = 0
-	TRC$(35, 0) = B$(I, 0)
-	TRC$(35, 1) = SITE$(I)
-	TRC$(35, 2) = B$(1 - I, 0)
-	TRC$(35, 3) = DATE$
-END IF
-
-IF V8(I, 0) + V8(1 - I, 0) > TREC(36, 0) THEN
-	TREC(36, 0) = V8(I, 0) + V8(1 - I, 0)
-	TREC(36, 1) = V8(I, 0)
-	TREC(36, 2) = V8(1 - I, 0)
-	TRC$(36, 0) = B$(I, 0)
-	TRC$(36, 1) = SITE$(I)
-	TRC$(36, 2) = B$(1 - I, 0)
-	TRC$(36, 3) = DATE$
-END IF
-
-IF V8(I, 0) + V8(1 - I, 0) < TREC(37, 0) THEN
-	TREC(37, 0) = V8(I, 0) + V8(1 - I, 0)
-	TREC(37, 1) = V8(I, 0)
-	TREC(37, 2) = V8(1 - I, 0)
-	TRC$(37, 0) = B$(I, 0)
-	TRC$(37, 1) = SITE$(I)
-	TRC$(37, 2) = B$(1 - I, 0)
-	TRC$(37, 3) = DATE$
-END IF
-
-IF QR(I, 1, 0) + QR(I, 2, 0) > TREC(38, 0) THEN
-	TREC(38, 0) = QR(I, 1, 0) + QR(I, 2, 0)
-	TREC(38, 1) = 1
-	TREC(38, 2) = 0
-	TRC$(38, 0) = B$(I, 0)
-	TRC$(38, 1) = SITE$(I)
-	TRC$(38, 2) = B$(1 - I, 0)
-	TRC$(38, 3) = DATE$
-END IF
-
-IF QR(I, 3, 0) + QR(I, 4, 0) > TREC(38, 0) THEN
-	TREC(38, 0) = QR(I, 3, 0) + QR(I, 4, 0)
-	TREC(38, 1) = 2
-	TREC(38, 2) = 0
-	TRC$(38, 0) = B$(I, 0)
-	TRC$(38, 1) = SITE$(I)
-	TRC$(38, 2) = B$(1 - I, 0)
-	TRC$(38, 3) = DATE$
-END IF
-
-IF QR(I, 1, 0) + QR(I, 2, 0) + QR(1 - I, 1, 0) + QR(1 - I, 2, 0) > TREC(39, 0) THEN
-	TREC(39, 0) = QR(I, 1, 0) + QR(I, 2, 0) + QR(1 - I, 1, 0) + QR(1 - I, 2, 0)
-	TREC(39, 1) = 1
-	TREC(39, 2) = 0
-	TRC$(39, 0) = B$(I, 0)
-	TRC$(39, 1) = SITE$(I)
-	TRC$(39, 2) = B$(1 - I, 0)
-	TRC$(39, 3) = DATE$
-END IF
-
-IF QR(I, 3, 0) + QR(I, 4, 0) + QR(1 - I, 3, 0) + QR(1 - I, 4, 0) > TREC(39, 0) THEN
-	TREC(39, 0) = QR(I, 3, 0) + QR(I, 4, 0) + QR(1 - I, 3, 0) + QR(1 - I, 4, 0)
-	TREC(39, 1) = 2
-	TREC(39, 2) = 0
-	TRC$(39, 0) = B$(I, 0)
-	TRC$(39, 1) = SITE$(I)
-	TRC$(39, 2) = B$(1 - I, 0)
-	TRC$(39, 3) = DATE$
-END IF
-
-FOR I2 = 1 TO 4
-IF QR(I, I2, 0) > TREC(40, 0) THEN
-	TREC(40, 0) = QR(I, I2, 0)
-	TREC(40, 1) = I2
-	TREC(40, 2) = 0
-	TRC$(40, 0) = B$(I, 0)
-	TRC$(40, 1) = SITE$(I)
-	TRC$(40, 2) = B$(1 - I, 0)
-	TRC$(40, 3) = DATE$
-END IF
-
-IF QR(I, I2, 0) + QR(1 - I, I2, 0) > TREC(41, 0) THEN
-	TREC(41, 0) = QR(I, I2, 0) + QR(1 - I, I2, 0)
-	TREC(41, 1) = I2
-	TREC(41, 2) = QR(I, I2, 0)
-	TRC$(41, 0) = B$(I, 0)
-	TRC$(41, 1) = SITE$(I)
-	TRC$(41, 2) = B$(1 - I, 0)
-	TRC$(41, 3) = DATE$
-END IF
-NEXT
-
-'TEAM FIELD GOAL ATTEMPTS
-IF V8(I, 1) > TREC(42, 0) THEN
-	TREC(42, 0) = V8(I, 1)
-	TREC(42, 1) = 0
-	TREC(42, 2) = 0
-	TRC$(42, 0) = B$(I, 0)
-	TRC$(42, 1) = SITE$(I)
-	TRC$(42, 2) = B$(1 - I, 0)
-	TRC$(42, 3) = DATE$
-END IF
-
-IF V8(I, 1) < TREC(43, 0) THEN
-	TREC(43, 0) = V8(I, 1)
-	TREC(43, 1) = 0
-	TREC(43, 2) = 0
-	TRC$(43, 0) = B$(I, 0)
-	TRC$(43, 1) = SITE$(I)
-	TRC$(43, 2) = B$(1 - I, 0)
-	TRC$(43, 3) = DATE$
-END IF
-
-IF V8(I, 1) + V8(1 - I, 1) > TREC(44, 0) THEN
-	TREC(44, 0) = V8(I, 1) + V8(1 - I, 1)
-	TREC(44, 1) = V8(I, 1)
-	TREC(44, 2) = V8(1 - I, 1)
-	TRC$(44, 0) = B$(I, 0)
-	TRC$(44, 1) = SITE$(I)
-	TRC$(44, 2) = B$(1 - I, 0)
-	TRC$(44, 3) = DATE$
-END IF
-
-IF V8(I, 1) + V8(1 - I, 1) < TREC(45, 0) THEN
-	TREC(45, 0) = V8(I, 1) + V8(1 - I, 1)
-	TREC(45, 1) = V8(I, 1)
-	TREC(45, 2) = V8(1 - I, 1)
-	TRC$(45, 0) = B$(I, 0)
-	TRC$(45, 1) = SITE$(I)
-	TRC$(45, 2) = B$(1 - I, 0)
-	TRC$(45, 3) = DATE$
-END IF
-
-IF QR(I, 1, 1) + QR(I, 2, 1) > TREC(46, 0) THEN
-	TREC(46, 0) = QR(I, 1, 1) + QR(I, 2, 1)
-	TREC(46, 1) = 1
-	TREC(46, 2) = 0
-	TRC$(46, 0) = B$(I, 0)
-	TRC$(46, 1) = SITE$(I)
-	TRC$(46, 2) = B$(1 - I, 0)
-	TRC$(46, 3) = DATE$
-END IF
-
-IF QR(I, 3, 1) + QR(I, 4, 1) > TREC(46, 0) THEN
-	TREC(46, 0) = QR(I, 3, 1) + QR(I, 4, 1)
-	TREC(46, 1) = 2
-	TREC(46, 2) = 0
-	TRC$(46, 0) = B$(I, 0)
-	TRC$(46, 1) = SITE$(I)
-	TRC$(46, 2) = B$(1 - I, 0)
-	TRC$(46, 3) = DATE$
-END IF
-
-IF QR(I, 1, 1) + QR(I, 2, 1) + QR(1 - I, 1, 1) + QR(1 - I, 2, 1) > TREC(47, 0) THEN
-	TREC(47, 0) = QR(I, 1, 1) + QR(I, 2, 1) + QR(1 - I, 1, 1) + QR(1 - I, 2, 1)
-	TREC(47, 1) = 1
-	TREC(47, 2) = QR(I, 1, 1) + QR(I, 2, 1)
-	TRC$(47, 0) = B$(I, 0)
-	TRC$(47, 1) = SITE$(I)
-	TRC$(47, 2) = B$(1 - I, 0)
-	TRC$(47, 3) = DATE$
-END IF
-
-IF QR(I, 3, 1) + QR(I, 4, 1) + QR(1 - I, 3, 1) + QR(1 - I, 4, 1) > TREC(47, 0) THEN
-	TREC(47, 0) = QR(I, 3, 1) + QR(I, 4, 1) + QR(1 - I, 3, 1) + QR(1 - I, 4, 1)
-	TREC(47, 1) = 1
-	TREC(47, 2) = QR(I, 3, 1) + QR(I, 4, 1)
-	TRC$(47, 0) = B$(I, 0)
-	TRC$(47, 1) = SITE$(I)
-	TRC$(47, 2) = B$(1 - I, 0)
-	TRC$(47, 3) = DATE$
-END IF
-
-FOR I2 = 1 TO 4
-IF QR(I, I2, 1) > TREC(48, 0) THEN
-	TREC(48, 0) = QR(I, I2, 1)
-	TREC(48, 1) = I2
-	TREC(48, 2) = 0
-	TRC$(48, 0) = B$(I, 0)
-	TRC$(48, 1) = SITE$(I)
-	TRC$(48, 2) = B$(1 - I, 0)
-	TRC$(48, 3) = DATE$
-END IF
-
-IF QR(I, I2, 1) + QR(1 - I, I2, 1) > TREC(49, 0) THEN
-	TREC(49, 0) = QR(I, I2, 1) + QR(1 - I, I2, 1)
-	TREC(49, 1) = I2
-	TREC(49, 2) = QR(I, I2, 1)
-	TRC$(49, 0) = B$(I, 0)
-	TRC$(49, 1) = SITE$(I)
-	TRC$(49, 2) = B$(1 - I, 0)
-	TRC$(49, 3) = DATE$
-END IF
-NEXT
-
-'TEAM FIELD GOAL ATTEMPTS
-IF V8(I, 13) = V8(I, 14) AND V8(I, 14) > TREC(50, 0) THEN
-	TREC(50, 0) = V8(I, 13)
-	TREC(50, 1) = 0
-	TREC(50, 2) = 0
-	TRC$(50, 0) = B$(I, 0)
-	TRC$(50, 1) = SITE$(I)
-	TRC$(50, 2) = B$(1 - I, 0)
-	TRC$(50, 3) = DATE$
-END IF
-
-'TEAM FIELD GOAL ATTEMPTS MOST MADE
-IF V8(I, 13) = V8(I, 14) AND V8(1 - I, 13) = V8(1 - I, 14) AND V8(I, 14) + V8(1 - I, 14) > TREC(51, 0) THEN
-	TREC(51, 0) = V8(I, 13)
-	TREC(51, 1) = V8(1 - I, 13)
-	TREC(51, 2) = 0
-	TRC$(51, 0) = B$(I, 0)
-	TRC$(51, 1) = SITE$(I)
-	TRC$(51, 2) = B$(1 - I, 0)
-	TRC$(51, 3) = DATE$
-END IF
-
-'TEAM FIELD GOAL ATTEMPTS NONE MADE
-IF V8(I, 13) = 0 AND V8(I, 14) > TREC(52, 0) THEN
-	TREC(52, 0) = V8(I, 14)
-	TREC(52, 1) = 0
-	TREC(52, 2) = 0
-	TRC$(52, 0) = B$(I, 0)
-	TRC$(52, 1) = SITE$(I)
-	TRC$(52, 2) = B$(1 - I, 0)
-	TRC$(52, 3) = DATE$
-END IF
-
-'TEAM FIELD GOAL ATTEMPTS NONE MADE
-IF V8(I, 13) > TREC(53, 0) THEN
-	TREC(53, 0) = V8(I, 13)
-	TREC(53, 1) = 0
-	TREC(53, 2) = 0
-	TRC$(53, 0) = B$(I, 0)
-	TRC$(53, 1) = SITE$(I)
-	TRC$(53, 2) = B$(1 - I, 0)
-	TRC$(53, 3) = DATE$
-END IF
-
-'TEAM FIELD GOAL ATTEMPTS NONE MADE
-IF V8(I, 13) + V8(1 - I, 13) > TREC(54, 0) THEN
-	TREC(54, 0) = V8(I, 13) + V8(1 - I, 13)
-	TREC(54, 1) = V8(I, 13)
-	TREC(54, 2) = V8(1 - I, 13)
-	TRC$(54, 0) = B$(I, 0)
-	TRC$(54, 1) = SITE$(I)
-	TRC$(54, 2) = B$(1 - I, 0)
-	TRC$(54, 3) = DATE$
-END IF
-
-IF QR(I, 1, 13) + QR(I, 2, 13) > TREC(55, 0) THEN
-	TREC(55, 0) = QR(I, 1, 13) + QR(I, 2, 13)
-	TREC(55, 1) = 1
-	TREC(55, 2) = 0
-	TRC$(55, 0) = B$(I, 0)
-	TRC$(55, 1) = SITE$(I)
-	TRC$(55, 2) = B$(1 - I, 0)
-	TRC$(55, 3) = DATE$
-END IF
-
-IF QR(I, 3, 13) + QR(I, 4, 13) > TREC(55, 0) THEN
-	TREC(55, 0) = QR(I, 3, 13) + QR(I, 4, 13)
-	TREC(55, 1) = 2
-	TREC(55, 2) = 0
-	TRC$(55, 0) = B$(I, 0)
-	TRC$(55, 1) = SITE$(I)
-	TRC$(55, 2) = B$(1 - I, 0)
-	TRC$(55, 3) = DATE$
-END IF
-
-FOR I2 = 1 TO 4
-IF QR(I, I2, 13) > TREC(56, 0) THEN
-	TREC(56, 0) = QR(I, I2, 13)
-	TREC(56, 1) = I2
-	TREC(56, 2) = 0
-	TRC$(56, 0) = B$(I, 0)
-	TRC$(56, 1) = SITE$(I)
-	TRC$(56, 2) = B$(1 - I, 0)
-	TRC$(56, 3) = DATE$
-END IF
-NEXT
-'TEAM FIELD GOAL ATTEMPTS NONE MADE
-IF V8(I, 14) > TREC(57, 0) THEN
-	TREC(57, 0) = V8(I, 14)
-	TREC(57, 1) = 0
-	TREC(57, 2) = 0
-	TRC$(57, 0) = B$(I, 0)
-	TRC$(57, 1) = SITE$(I)
-	TRC$(57, 2) = B$(1 - I, 0)
-	TRC$(57, 3) = DATE$
-END IF
-
-'TEAM FIELD GOAL ATTEMPTS NONE MADE
-IF V8(I, 14) + V8(1 - I, 14) > TREC(58, 0) THEN
-	TREC(58, 0) = V8(I, 14) + V8(1 - I, 14)
-	TREC(58, 1) = V8(I, 14)
-	TREC(58, 2) = V8(1 - I, 14)
-	TRC$(58, 0) = B$(I, 0)
-	TRC$(58, 1) = SITE$(I)
-	TRC$(58, 2) = B$(1 - I, 0)
-	TRC$(58, 3) = DATE$
-END IF
-
-IF QR(I, 1, 14) + QR(I, 2, 14) > TREC(59, 0) THEN
-	TREC(59, 0) = QR(I, 1, 14) + QR(I, 2, 14)
-	TREC(59, 1) = 1
-	TREC(59, 2) = 0
-	TRC$(59, 0) = B$(I, 0)
-	TRC$(59, 1) = SITE$(I)
-	TRC$(59, 2) = B$(1 - I, 0)
-	TRC$(59, 3) = DATE$
-END IF
-
-IF QR(I, 3, 14) + QR(I, 4, 14) > TREC(59, 0) THEN
-	TREC(59, 0) = QR(I, 3, 14) + QR(I, 4, 14)
-	TREC(59, 1) = 2
-	TREC(59, 2) = 0
-	TRC$(59, 0) = B$(I, 0)
-	TRC$(59, 1) = SITE$(I)
-	TRC$(59, 2) = B$(1 - I, 0)
-	TRC$(59, 3) = DATE$
-END IF
-
-' FREE THROW ATTEMPTS NO MISS
-IF V8(I, 2) = V8(I, 3) AND V8(I, 2) > TREC(60, 0) THEN
-	TREC(60, 0) = V8(I, 2)
-	TREC(60, 1) = 0
-	TREC(60, 2) = 0
-	TRC$(60, 0) = B$(I, 0)
-	TRC$(60, 1) = SITE$(I)
-	TRC$(60, 2) = B$(1 - I, 0)
-	TRC$(60, 3) = DATE$
-END IF
-
-' FREE THROW ATTEMPTS LOW %
-IF V8(I, 2) / V8(I, 3) < TREC(61, 0) THEN
-	TREC(61, 0) = V8(I, 2) / V8(I, 3)
-	TREC(61, 1) = V8(I, 2)
-	TREC(61, 2) = V8(I, 3)
-	TRC$(61, 0) = B$(I, 0)
-	TRC$(61, 1) = SITE$(I)
-	TRC$(61, 2) = B$(1 - I, 0)
-	TRC$(61, 3) = DATE$
-END IF
-
-' FREE THROW ATTEMPTS COMBINED HIGH %
-IF (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3)) > TREC(62, 0) THEN
-	TREC(62, 0) = (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3))
-	TREC(62, 1) = V8(I, 2) / V8(I, 3)
-	TREC(62, 2) = V8(1 - I, 2) / V8(1 - I, 3)
-	TRC$(62, 0) = B$(I, 0)
-	TRC$(62, 1) = SITE$(I)
-	TRC$(62, 2) = B$(1 - I, 0)
-	TRC$(62, 3) = DATE$
-END IF
-
-' FREE THROW ATTEMPTS COMBINED LOW %
-IF (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3)) < TREC(63, 0) THEN
-	TREC(63, 0) = (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3))
-	TREC(63, 1) = V8(I, 2) / V8(I, 3)
-	TREC(63, 2) = V8(1 - I, 2) / V8(1 - I, 3)
-	TRC$(63, 0) = B$(I, 0)
-	TRC$(63, 1) = SITE$(I)
-	TRC$(63, 2) = B$(1 - I, 0)
-	TRC$(63, 3) = DATE$
-END IF
-
-' TEAM FREE THROWS MADE
-IF V8(I, 2) > TREC(64, 0) THEN
-	TREC(64, 0) = V8(I, 2)
-	TREC(64, 1) = 0
-	TREC(64, 2) = 0
-	TRC$(64, 0) = B$(I, 0)
-	TRC$(64, 1) = SITE$(I)
-	TRC$(64, 2) = B$(1 - I, 0)
-	TRC$(64, 3) = DATE$
-END IF
-
-IF V8(I, 2) < TREC(65, 0) THEN
-	TREC(65, 0) = V8(I, 2)
-	TREC(65, 1) = 0
-	TREC(65, 2) = 0
-	TRC$(65, 0) = B$(I, 0)
-	TRC$(65, 1) = SITE$(I)
-	TRC$(65, 2) = B$(1 - I, 0)
-	TRC$(65, 3) = DATE$
-END IF
-
-IF V8(I, 2) + V8(1 - I, 2) > TREC(66, 0) THEN
-	TREC(66, 0) = V8(I, 2) + V8(1 - I, 2)
-	TREC(66, 1) = V8(I, 2)
-	TREC(66, 2) = V8(1 - I, 2)
-	TRC$(66, 0) = B$(I, 0)
-	TRC$(66, 1) = SITE$(I)
-	TRC$(66, 2) = B$(1 - I, 0)
-	TRC$(66, 3) = DATE$
-END IF
-
-IF V8(I, 2) + V8(1 - I, 2) < TREC(67, 0) THEN
-	TREC(67, 0) = V8(I, 2) + V8(1 - I, 2)
-	TREC(67, 1) = V8(I, 2)
-	TREC(67, 2) = V8(1 - I, 2)
-	TRC$(67, 0) = B$(I, 0)
-	TRC$(67, 1) = SITE$(I)
-	TRC$(67, 2) = B$(1 - I, 0)
-	TRC$(67, 3) = DATE$
-END IF
-
-IF QR(I, 1, 2) + QR(I, 2, 2) > TREC(68, 0) THEN
-	TREC(68, 0) = QR(I, 1, 2) + QR(I, 2, 2)
-	TREC(68, 1) = 1
-	TREC(68, 2) = 0
-	TRC$(68, 0) = B$(I, 0)
-	TRC$(68, 1) = SITE$(I)
-	TRC$(68, 2) = B$(1 - I, 0)
-	TRC$(68, 3) = DATE$
-END IF
-
-IF QR(I, 3, 2) + QR(I, 4, 2) > TREC(68, 0) THEN
-	TREC(68, 0) = QR(I, 3, 2) + QR(I, 4, 2)
-	TREC(68, 1) = 2
-	TREC(68, 2) = 0
-	TRC$(68, 0) = B$(I, 0)
-	TRC$(68, 1) = SITE$(I)
-	TRC$(68, 2) = B$(1 - I, 0)
-	TRC$(68, 3) = DATE$
-END IF
-
-FOR I2 = 1 TO 4
-IF QR(I, I2, 2) > TREC(70, 0) THEN
-	TREC(70, 0) = QR(I, I2, 2)
-	TREC(70, 1) = I2
-	TREC(70, 2) = 0
-	TRC$(70, 0) = B$(I, 0)
-	TRC$(70, 1) = SITE$(I)
-	TRC$(70, 2) = B$(1 - I, 0)
-	TRC$(70, 3) = DATE$
-END IF
-
-NEXT
-
-' TEAM FREE THROWS ATTEMPTED
-IF V8(I, 3) > TREC(72, 0) THEN
-	TREC(72, 0) = V8(I, 3)
-	TREC(72, 1) = 0
-	TREC(72, 2) = 0
-	TRC$(72, 0) = B$(I, 0)
-	TRC$(72, 1) = SITE$(I)
-	TRC$(72, 2) = B$(1 - I, 0)
-	TRC$(72, 3) = DATE$
-END IF
-
-IF V8(I, 3) < TREC(73, 0) THEN
-	TREC(73, 0) = V8(I, 3)
-	TREC(73, 1) = 0
-	TREC(73, 2) = 0
-	TRC$(73, 0) = B$(I, 0)
-	TRC$(73, 1) = SITE$(I)
-	TRC$(73, 2) = B$(1 - I, 0)
-	TRC$(73, 3) = DATE$
-END IF
-
-IF V8(I, 3) + V8(1 - I, 3) > TREC(74, 0) THEN
-	TREC(74, 0) = V8(I, 3) + V8(1 - I, 3)
-	TREC(74, 1) = V8(I, 3)
-	TREC(74, 2) = V8(1 - I, 3)
-	TRC$(74, 0) = B$(I, 0)
-	TRC$(74, 1) = SITE$(I)
-	TRC$(74, 2) = B$(1 - I, 0)
-	TRC$(74, 3) = DATE$
-END IF
-
-IF V8(I, 3) + V8(1 - I, 3) < TREC(75, 0) THEN
-	TREC(75, 0) = V8(I, 3) + V8(1 - I, 3)
-	TREC(75, 1) = V8(I, 3)
-	TREC(75, 2) = V8(1 - I, 3)
-	TRC$(75, 0) = B$(I, 0)
-	TRC$(75, 1) = SITE$(I)
-	TRC$(75, 2) = B$(1 - I, 0)
-	TRC$(75, 3) = DATE$
-END IF
-
-IF QR(I, 1, 3) + QR(I, 2, 3) > TREC(76, 0) THEN
-	TREC(76, 0) = QR(I, 1, 3) + QR(I, 2, 3)
-	TREC(76, 1) = 1
-	TREC(76, 2) = 0
-	TRC$(76, 0) = B$(I, 0)
-	TRC$(76, 1) = SITE$(I)
-	TRC$(76, 2) = B$(1 - I, 0)
-	TRC$(76, 3) = DATE$
-END IF
-
-IF QR(I, 3, 3) + QR(I, 4, 3) > TREC(76, 0) THEN
-	TREC(76, 0) = QR(I, 3, 3) + QR(I, 4, 3)
-	TREC(76, 1) = 2
-	TREC(76, 2) = 0
-	TRC$(76, 0) = B$(I, 0)
-	TRC$(76, 1) = SITE$(I)
-	TRC$(76, 2) = B$(1 - I, 0)
-	TRC$(76, 3) = DATE$
-END IF
-
-IF QR(I, 1, 3) + QR(I, 2, 3) + QR(1 - I, 1, 3) + QR(1 - I, 2, 3) > TREC(77, 0) THEN
-	TREC(77, 0) = QR(I, 1, 3) + QR(I, 2, 3) + QR(1 - I, 1, 3) + QR(1 - I, 2, 3)
-	TREC(77, 1) = 1
-	TREC(77, 2) = QR(I, 1, 3) + QR(I, 2, 3)
-	TRC$(77, 0) = B$(I, 0)
-	TRC$(77, 1) = SITE$(I)
-	TRC$(77, 2) = B$(1 - I, 0)
-	TRC$(77, 3) = DATE$
-END IF
-
-IF QR(I, 3, 3) + QR(I, 4, 3) + QR(1 - I, 3, 3) + QR(1 - I, 4, 3) > TREC(77, 0) THEN
-	TREC(77, 0) = QR(I, 3, 3) + QR(I, 4, 3) + QR(1 - I, 3, 3) + QR(1 - I, 4, 3)
-	TREC(77, 1) = 2
-	TREC(77, 2) = QR(I, 3, 3) + QR(I, 4, 3)
-	TRC$(77, 0) = B$(I, 0)
-	TRC$(77, 1) = SITE$(I)
-	TRC$(77, 2) = B$(1 - I, 0)
-	TRC$(77, 3) = DATE$
-END IF
-
-FOR I2 = 1 TO 4
-IF QR(I, I2, 3) > TREC(78, 0) THEN
-	TREC(78, 0) = QR(I, I2, 3)
-	TREC(78, 1) = I2
-	TREC(78, 2) = 0
-	TRC$(78, 0) = B$(I, 0)
-	TRC$(78, 1) = SITE$(I)
-	TRC$(78, 2) = B$(1 - I, 0)
-	TRC$(78, 3) = DATE$
-END IF
-
-IF QR(I, I2, 3) + QR(1 - I, I2, 3) > TREC(79, 0) THEN
-	TREC(79, 0) = QR(I, I2, 3) + QR(1 - I, I2, 3)
-	TREC(79, 1) = I2
-	TREC(79, 2) = QR(I, I2, 3)
-	TRC$(79, 0) = B$(I, 0)
-	TRC$(79, 1) = SITE$(I)
-	TRC$(79, 2) = B$(1 - I, 0)
-	TRC$(79, 3) = DATE$
-END IF
-NEXT
-
-IF R3(I) > TREC(80, 0) THEN
-	TREC(80, 0) = R3(I)
-	TREC(80, 1) = 0
-	TREC(80, 2) = 0
-	TRC$(80, 0) = B$(I, 0)
-	TRC$(80, 1) = SITE$(I)
-	TRC$(80, 2) = B$(1 - I, 0)
-	TRC$(80, 3) = DATE$
-END IF
-
-IF R3(I) < TREC(81, 0) THEN
-	TREC(81, 0) = R3(I)
-	TREC(81, 1) = 0
-	TREC(81, 2) = 0
-	TRC$(81, 0) = B$(I, 0)
-	TRC$(81, 1) = SITE$(I)
-	TRC$(81, 2) = B$(1 - I, 0)
-	TRC$(81, 3) = DATE$
-END IF
-
-IF R3(I) + R3(1 - I) > TREC(82, 0) THEN
-	TREC(82, 0) = R3(I) + R3(1 - I)
-	TREC(82, 1) = R3(I)
-	TREC(82, 2) = R3(1 - I)
-	TRC$(82, 0) = B$(I, 0)
-	TRC$(82, 1) = SITE$(I)
-	TRC$(82, 2) = B$(1 - I, 0)
-	TRC$(82, 3) = DATE$
-END IF
-
-IF R3(I) + R3(1 - I) < TREC(83, 0) THEN
-	TREC(83, 0) = R3(I) + R3(1 - I)
-	TREC(83, 1) = R3(I)
-	TREC(83, 2) = R3(1 - I)
-	TRC$(83, 0) = B$(I, 0)
-	TRC$(83, 1) = SITE$(I)
-	TRC$(83, 2) = B$(1 - I, 0)
-	TRC$(83, 3) = DATE$
-END IF
-
-IF QR(I, 1, 4) + QR(I, 2, 4) > TREC(84, 0) THEN
-	TREC(84, 0) = QR(I, 1, 4) + QR(I, 2, 4)
-	TREC(84, 1) = 1
-	TREC(84, 2) = QR(I, 1, 4) + QR(I, 2, 4)
-	TRC$(84, 0) = B$(I, 0)
-	TRC$(84, 1) = SITE$(I)
-	TRC$(84, 2) = B$(1 - I, 0)
-	TRC$(84, 3) = DATE$
-END IF
-
-IF QR(I, 3, 4) + QR(I, 4, 4) > TREC(84, 0) THEN
-	TREC(84, 0) = QR(I, 3, 4) + QR(I, 4, 4)
-	TREC(84, 1) = 2
-	TREC(84, 2) = QR(I, 3, 4) + QR(I, 4, 4)
-	TRC$(84, 0) = B$(I, 0)
-	TRC$(84, 1) = SITE$(I)
-	TRC$(84, 2) = B$(1 - I, 0)
-	TRC$(84, 3) = DATE$
-END IF
-
-FOR I2 = 1 TO 4
-IF QR(I, I2, 4) > TREC(85, 0) THEN
-	TREC(85, 0) = QR(I, I2, 4)
-	TREC(85, 1) = I2
-	TREC(85, 2) = 0
-	TRC$(85, 0) = B$(I, 0)
-	TRC$(85, 1) = SITE$(I)
-	TRC$(85, 2) = B$(1 - I, 0)
-	TRC$(85, 3) = DATE$
-END IF
-NEXT
-
-IF V8(I, 11) > TREC(86, 0) THEN
-	TREC(86, 0) = V8(I, 11)
-	TREC(86, 1) = 0
-	TREC(86, 2) = 0
-	TRC$(86, 0) = B$(I, 0)
-	TRC$(86, 1) = SITE$(I)
-	TRC$(86, 2) = B$(1 - I, 0)
-	TRC$(86, 3) = DATE$
-END IF
-
-IF V8(I, 11) + V8(1 - I, 11) > TREC(88, 0) THEN
-	TREC(88, 0) = V8(I, 11) + V8(1 - I, 11)
-	TREC(88, 1) = V8(I, 11)
-	TREC(88, 2) = V8(1 - I, 11)
-	TRC$(88, 0) = B$(I, 0)
-	TRC$(88, 1) = SITE$(I)
-	TRC$(88, 2) = B$(1 - I, 0)
-	TRC$(88, 3) = DATE$
-END IF
-
-IF V8(I, 11) + V8(1 - I, 11) < TREC(89, 0) THEN
-	TREC(89, 0) = V8(I, 11) + V8(1 - I, 11)
-	TREC(89, 1) = V8(I, 11)
-	TREC(89, 2) = V8(1 - I, 11)
-	TRC$(89, 0) = B$(I, 0)
-	TRC$(89, 1) = SITE$(I)
-	TRC$(89, 2) = B$(1 - I, 0)
-	TRC$(89, 3) = DATE$
-END IF
-
-IF QR(I, 1, 11) + QR(I, 2, 11) > TREC(90, 0) THEN
-	TREC(90, 0) = QR(I, 1, 11) + QR(I, 2, 11)
-	TREC(90, 1) = 1
-	TREC(90, 2) = QR(I, 1, 11) + QR(I, 2, 11)
-	TRC$(90, 0) = B$(I, 0)
-	TRC$(90, 1) = SITE$(I)
-	TRC$(90, 2) = B$(1 - I, 0)
-	TRC$(90, 3) = DATE$
-END IF
-
-IF QR(I, 3, 11) + QR(I, 4, 11) > TREC(90, 0) THEN
-	TREC(90, 0) = QR(I, 3, 11) + QR(I, 4, 11)
-	TREC(90, 1) = 2
-	TREC(90, 2) = QR(I, 3, 11) + QR(I, 4, 11)
-	TRC$(90, 0) = B$(I, 0)
-	TRC$(90, 1) = SITE$(I)
-	TRC$(90, 2) = B$(1 - I, 0)
-	TRC$(90, 3) = DATE$
-END IF
-
-' ASSISTS
-IF V8(I, 7) > TREC(96, 0) THEN
-	TREC(96, 0) = V8(I, 7)
-	TREC(96, 1) = 0
-	TREC(96, 2) = 0
-	TRC$(96, 0) = B$(I, 0)
-	TRC$(96, 1) = SITE$(I)
-	TRC$(96, 2) = B$(1 - I, 0)
-	TRC$(96, 3) = DATE$
-END IF
-
-IF V8(I, 7) < TREC(97, 0) THEN
-	TREC(97, 0) = V8(I, 7)
-	TREC(97, 1) = 0
-	TREC(97, 2) = 0
-	TRC$(97, 0) = B$(I, 0)
-	TRC$(97, 1) = SITE$(I)
-	TRC$(97, 2) = B$(1 - I, 0)
-	TRC$(97, 3) = DATE$
-END IF
-
-IF V8(I, 7) + V8(1 - I, 7) > TREC(98, 0) THEN
-	TREC(98, 0) = V8(I, 7) + V8(1 - I, 7)
-	TREC(98, 1) = V8(I, 7)
-	TREC(98, 2) = V8(1 - I, 7)
-	TRC$(98, 0) = B$(I, 0)
-	TRC$(98, 1) = SITE$(I)
-	TRC$(98, 2) = B$(1 - I, 0)
-	TRC$(98, 3) = DATE$
-END IF
-
-IF V8(I, 7) + V8(1 - I, 7) < TREC(99, 0) THEN
-	TREC(99, 0) = V8(I, 7) + V8(1 - I, 7)
-	TREC(99, 1) = V8(I, 7)
-	TREC(99, 2) = V8(1 - I, 7)
-	TRC$(99, 0) = B$(I, 0)
-	TRC$(99, 1) = SITE$(I)
-	TRC$(99, 2) = B$(1 - I, 0)
-	TRC$(99, 3) = DATE$
-END IF
-
-IF QR(I, 1, 7) + QR(I, 2, 7) > TREC(100, 0) THEN
-	TREC(100, 0) = QR(I, 1, 7) + QR(I, 2, 7)
-	TREC(100, 1) = 1
-	TREC(100, 2) = 0
-	TRC$(100, 0) = B$(I, 0)
-	TRC$(100, 1) = SITE$(I)
-	TRC$(100, 2) = B$(1 - I, 0)
-	TRC$(100, 3) = DATE$
-END IF
-
-IF QR(I, 3, 7) + QR(I, 4, 7) > TREC(100, 0) THEN
-	TREC(100, 0) = QR(I, 3, 7) + QR(I, 4, 7)
-	TREC(100, 1) = 2
-	TREC(100, 2) = 0
-	TRC$(100, 0) = B$(I, 0)
-	TRC$(100, 1) = SITE$(I)
-	TRC$(100, 2) = B$(1 - I, 0)
-	TRC$(100, 3) = DATE$
-END IF
-
-FOR I2 = 1 TO 4
-IF QR(I, I2, 7) > TREC(102, 0) THEN
-	TREC(102, 0) = QR(I, I2, 7)
-	TREC(102, 1) = I2
-	TREC(102, 2) = 0
-	TRC$(102, 0) = B$(I, 0)
-	TRC$(102, 1) = SITE$(I)
-	TRC$(102, 2) = B$(1 - I, 0)
-	TRC$(102, 3) = DATE$
-END IF
-NEXT
-
-' FOULS
-IF V8(I, 6) > TREC(104, 0) THEN
-	TREC(104, 0) = V8(I, 6)
-	TREC(104, 1) = 0
-	TREC(104, 2) = 0
-	TRC$(104, 0) = B$(I, 0)
-	TRC$(104, 1) = SITE$(I)
-	TRC$(104, 2) = B$(1 - I, 0)
-	TRC$(104, 3) = DATE$
-	END IF
-
-IF V8(I, 6) < TREC(105, 0) THEN
-	TREC(105, 0) = V8(I, 6)
-	TREC(105, 1) = 0
-	TREC(105, 2) = 0
-	TRC$(105, 0) = B$(I, 0)
-	TRC$(105, 1) = SITE$(I)
-	TRC$(105, 2) = B$(1 - I, 0)
-	TRC$(105, 3) = DATE$
-	END IF
-
-IF V8(I, 6) + V8(1 - I, 6) > TREC(106, 0) THEN
-	TREC(106, 0) = V8(I, 6) + V8(1 - I, 6)
-	TREC(106, 1) = V8(I, 6)
-	TREC(106, 2) = V8(1 - I, 6)
-	TRC$(106, 0) = B$(I, 0)
-	TRC$(106, 1) = SITE$(I)
-	TRC$(106, 2) = B$(1 - I, 0)
-	TRC$(106, 3) = DATE$
-	END IF
-
-IF V8(I, 6) + V8(1 - I, 6) < TREC(107, 0) THEN
-	TREC(107, 0) = V8(I, 6) + V8(1 - I, 6)
-	TREC(107, 1) = V8(I, 6)
-	TREC(107, 2) = V8(1 - I, 6)
-	TRC$(107, 0) = B$(I, 0)
-	TRC$(107, 1) = SITE$(I)
-	TRC$(107, 2) = B$(1 - I, 0)
-	TRC$(107, 3) = DATE$
-	END IF
-
-IF QR(I, 1, 6) + QR(I, 2, 6) > TREC(108, 0) THEN
-	TREC(108, 0) = QR(I, 1, 6) + QR(I, 2, 6)
-	TREC(108, 1) = 1
-	TREC(108, 2) = 0
-	TRC$(108, 0) = B$(I, 0)
-	TRC$(108, 1) = SITE$(I)
-	TRC$(108, 2) = B$(1 - I, 0)
-	TRC$(108, 3) = DATE$
-	END IF
-
-IF QR(I, 3, 6) + QR(I, 4, 6) > TREC(108, 0) THEN
-	TREC(108, 0) = QR(I, 3, 6) + QR(I, 4, 6)
-	TREC(108, 1) = 2
-	TREC(108, 2) = 0
-	TRC$(108, 0) = B$(I, 0)
-	TRC$(108, 1) = SITE$(I)
-	TRC$(108, 2) = B$(1 - I, 0)
-	TRC$(108, 3) = DATE$
-	END IF
-
-IF QR(I, 1, 6) + QR(I, 2, 6) + QR(1 - I, 1, 6) + QR(1 - I, 2, 6) > TREC(109, 0) THEN
-	TREC(109, 0) = QR(I, 1, 6) + QR(I, 2, 6) + QR(1 - I, 1, 6) + QR(1 - I, 2, 6)
-	TREC(109, 1) = 1
-	TREC(109, 2) = QR(I, 1, 6) + QR(I, 2, 6)
-	TRC$(109, 0) = B$(I, 0)
-	TRC$(109, 1) = SITE$(I)
-	TRC$(109, 2) = B$(1 - I, 0)
-	TRC$(109, 3) = DATE$
-	END IF
-
-IF QR(I, 3, 6) + QR(I, 4, 6) + QR(1 - I, 3, 6) + QR(1 - I, 4, 6) > TREC(109, 0) THEN
-	TREC(109, 0) = QR(I, 3, 6) + QR(I, 4, 6) + QR(1 - I, 3, 6) + QR(1 - I, 4, 6)
-	TREC(109, 1) = 2
-	TREC(109, 2) = QR(I, 3, 6) + QR(I, 4, 6)
-	TRC$(109, 0) = B$(I, 0)
-	TRC$(109, 1) = SITE$(I)
-	TRC$(109, 2) = B$(1 - I, 0)
-	TRC$(109, 3) = DATE$
-	END IF
-
-FOR I2 = 1 TO 4
-IF QR(I, I2, 6) > TREC(110, 0) THEN
-	TREC(110, 0) = QR(I, I2, 6)
-	TREC(110, 1) = I2
-	TREC(110, 2) = 0
-	TRC$(110, 0) = B$(I, 0)
-	TRC$(110, 1) = SITE$(I)
-	TRC$(110, 2) = B$(1 - I, 0)
-	TRC$(110, 3) = DATE$
-	END IF
-
-IF QR(I, I2, 6) + QR(1 - I, I2, 6) > TREC(111, 0) THEN
-	TREC(111, 0) = QR(I, I2, 6) + QR(1 - I, I2, 6)
-	TREC(111, 1) = I2
-	TREC(111, 2) = QR(I, I2, 6)
-	TRC$(111, 0) = B$(I, 0)
-	TRC$(111, 1) = SITE$(I)
-	TRC$(111, 2) = B$(1 - I, 0)
-	TRC$(111, 3) = DATE$
-	END IF
-NEXT
-
-' STEALS
-IF V8(I, 9) > TREC(112, 0) THEN
-	TREC(112, 0) = V8(I, 9)
-	TREC(112, 1) = 0
-	TREC(112, 2) = 0
-	TRC$(112, 0) = B$(I, 0)
-	TRC$(112, 1) = SITE$(I)
-	TRC$(112, 2) = B$(1 - I, 0)
-	TRC$(112, 3) = DATE$
-	END IF
-
-IF V8(I, 9) + V8(1 - I, 9) > TREC(114, 0) THEN
-	TREC(114, 0) = V8(I, 9) + V8(1 - I, 9)
-	TREC(114, 1) = V8(I, 9)
-	TREC(114, 2) = V8(1 - I, 9)
-	TRC$(114, 0) = B$(I, 0)
-	TRC$(114, 1) = SITE$(I)
-	TRC$(114, 2) = B$(1 - I, 0)
-	TRC$(114, 3) = DATE$
-	END IF
-
-IF QR(I, 1, 9) + QR(I, 2, 9) > TREC(116, 0) THEN
-	TREC(116, 0) = QR(I, 1, 9) + QR(I, 2, 9)
-	TREC(116, 1) = 1
-	TREC(116, 2) = 0
-	TRC$(116, 0) = B$(I, 0)
-	TRC$(116, 1) = SITE$(I)
-	TRC$(116, 2) = B$(1 - I, 0)
-	TRC$(116, 3) = DATE$
-	END IF
-
-IF QR(I, 3, 9) + QR(I, 4, 9) > TREC(116, 0) THEN
-	TREC(116, 0) = QR(I, 3, 9) + QR(I, 4, 9)
-	TREC(116, 1) = 2
-	TREC(116, 2) = 0
-	TRC$(116, 0) = B$(I, 0)
-	TRC$(116, 1) = SITE$(I)
-	TRC$(116, 2) = B$(1 - I, 0)
-	TRC$(116, 3) = DATE$
-	END IF
-
-FOR I2 = 1 TO 4
-IF QR(I, I2, 9) > TREC(117, 0) THEN
-	TREC(117, 0) = QR(I, I2, 9)
-	TREC(117, 1) = I2
-	TREC(117, 2) = 0
-	TRC$(117, 0) = B$(I, 0)
-	TRC$(117, 1) = SITE$(I)
-	TRC$(117, 2) = B$(1 - I, 0)
-	TRC$(117, 3) = DATE$
-	END IF
-NEXT
-
-' BLOCKS
-IF V8(I, 8) > TREC(118, 0) THEN
-	TREC(118, 0) = V8(I, 8)
-	TREC(118, 1) = 0
-	TREC(118, 2) = 0
-	TRC$(118, 0) = B$(I, 0)
-	TRC$(118, 1) = SITE$(I)
-	TRC$(118, 2) = B$(1 - I, 0)
-	TRC$(118, 3) = DATE$
-	END IF
-
-IF V8(I, 8) + V8(1 - I, 8) > TREC(119, 0) THEN
-	TREC(119, 0) = V8(I, 8) + V8(1 - I, 8)
-	TREC(119, 1) = V8(I, 8)
-	TREC(119, 2) = V8(1 - I, 8)
-	TRC$(119, 0) = B$(I, 0)
-	TRC$(119, 1) = SITE$(I)
-	TRC$(119, 2) = B$(1 - I, 0)
-	TRC$(119, 3) = DATE$
-	END IF
-
-' TURNOVERS
-IF V8(I, 12) > TREC(122, 0) THEN
-	TREC(122, 0) = V8(I, 12)
-	TREC(122, 1) = 0
-	TREC(122, 2) = 0
-	TRC$(122, 0) = B$(I, 0)
-	TRC$(122, 1) = SITE$(I)
-	TRC$(122, 2) = B$(1 - I, 0)
-	TRC$(122, 3) = DATE$
-	END IF
-
-IF V8(I, 12) < TREC(123, 0) THEN
-	TREC(123, 0) = V8(I, 12)
-	TREC(123, 1) = 0
-	TREC(123, 2) = 0
-	TRC$(123, 0) = B$(I, 0)
-	TRC$(123, 1) = SITE$(I)
-	TRC$(123, 2) = B$(1 - I, 0)
-	TRC$(123, 3) = DATE$
-	END IF
-	IF V8(I, 12) + V8(1 - I, 12) > TREC(124, 0) THEN
-	TREC(124, 0) = V8(I, 12) + V8(1 - I, 12)
-	TREC(124, 1) = V8(I, 12)
-	TREC(124, 2) = V8(1 - I, 12)
-	TRC$(124, 0) = B$(I, 0)
-	TRC$(124, 1) = SITE$(I)
-	TRC$(124, 2) = B$(1 - I, 0)
-	TRC$(124, 3) = DATE$
-	END IF
-
-IF V8(I, 12) + V8(1 - I, 12) < TREC(125, 0) THEN
-	TREC(125, 0) = V8(I, 12) + V8(1 - I, 12)
-	TREC(125, 1) = V8(I, 12)
-	TREC(125, 2) = V8(1 - I, 12)
-	TRC$(125, 0) = B$(I, 0)
-	TRC$(125, 1) = SITE$(I)
-	TRC$(125, 2) = B$(1 - I, 0)
-	TRC$(125, 3) = DATE$
-	END IF
-
-NEXT
-
-OPEN P$(1) + "RECORDS.GAM" FOR OUTPUT AS #1
-	FOR I = 0 TO 48
-	FOR I1 = 0 TO 2
-	WRITE #1, REC(I, I1)
-	NEXT
-	FOR I1 = 0 TO 4
-	WRITE #1, RC$(I, I1)
-	NEXT
-	NEXT
-	FOR I = 0 TO 125
-	FOR I1 = 0 TO 2
-	WRITE #1, TREC(I, I1)
-	NEXT
-	FOR I1 = 0 TO 3
-	WRITE #1, TRC$(I, I1)
-	NEXT
-	NEXT
-CLOSE 1
-
-END SUB
+If UCase$(I$) <> "Y" Then Run "HELLO.EXE"
+
+8637 Cls: Print "PLEASE WAIT ...": Run "PROHOOP.EXE"
+
+729 If PB% = 0 Then Call DELAY
+If PB% = 1 And U6 <> 0 Then Print U$: Call MOREDELAY
+Return
+
+Data L,1,1,1,2,2,2,H,H,3,3,3,4,4,F
+Data 60,61,60,58,58,59,59,59,59,58,58,58,57,58,57,51,51,52,49,50,44,45,42,47,43,43,42,39,38,38,35,34,34
+Data 9,8,8,8,8,8,8,9,8,9,8,8,7,7,06,07,07,07,08,08,08,08,08,08,08,09,09,09,09,09,09,09,08
+Data "REG M-M     ","SAGGING M-M ","TRAPPING M-M","TIGHT M-M   ","LOOSE M-M   "
+Data -2,-2,-3,-4,-4,-5,-5,-6,-7
+Data -4,-5,-5,-6,-7,-8,-9,-10,-11
+Data 0,0,-1,-2,-3,-4,-5,-5,-6
+Data -3,-3,-4,-5,-6,-6,-7,-8,-9
+Data -6,-7,-8,-8,-8,-9,-10,-11,-12
+
+
+Sub BOGUS (X)
+    If X = 0 Then I$ = GetKeyPress$
+End Sub
+
+
+Sub BOX2FILE ()
+    If AP = 1 Then
+        NM$ = "BOX" + Mid$(Str$(AP%(0) + AP%(2)), 2, Len(Str$(AP%(0) + AP%(2))))
+        GoTo 8951
+    End If
+
+    Cls
+    Input "ENTER FILENAME TO SAVE GAME SUMMARY UNDER "; NM$: NM$ = NM$ + ".SPC"
+
+    8951 Open P$(1) + NM$ For Output As #2
+    If N <> 2 Then Print #2, "@ "; B$(N, 4): Print #2,
+
+    For I = 0 To 1
+        Print #2, B$(I, 0); Tab(17); Str$(S(I, 1)); Tab(20); Str$(S(I, 2)); Tab(23); Str$(S(I, 3)); Tab(26); Str$(S(I, 4));
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) Then Print #2, Tab(29); Str$(S(I, 5));
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) Then Print #2, Tab(29); "- "; S(I, 0): _Continue
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) Then Print #2, Tab(32); Str$(S(I, 6));
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) Then Print #2, Tab(32); "- "; S(I, 0): _Continue
+        Print #2, Tab(35); "- "; S(I, 0)
+
+    Next I
+
+    For I0 = 0 To 1
+        Print #2,: Print #2, B$(I, 0)
+        Print #2, "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
+        For I1 = 0 To 14
+            If ZZ(I, I1) = 0 Then _Continue
+            Print #2, AA$(I, I1, 0); Tab(14);
+            If ZZ(I, I1) = 0 Then
+                Print #2, Tab(15); "DNP";
+                GoTo 8968
+            End If
+            Print #2, Using "##"; Int(ZZ(I, I1) / 60);: Print #2, ":";
+            If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then
+                Print #2, Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+            Else
+                Print #2, "0";: Print #2, Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+            End If
+
+            8968 Print #2, Tab(21);: Print #2, Using "##"; A(I, I1, 8);
+            Print #2, "-";: Print #2, Using "##"; A(I, I1, 7);
+            Print #2, Using "  ##"; W%(I, I1, 0);: Print #2, "-";
+            Print #2, Using "##"; W%(I, I1, 1);
+            Print #2, Using "  ##"; A(I, I1, 10);
+            Print #2, "-";: Print #2, Using "##"; A(I, I1, 9);
+            Print #2, Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A(I, I1, 24); A(I, I1, 11); A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0); A(I, I1, 12); A(I, I1, 14); A(I, I1, 15); A(I, I1, 13); A(I, I1, 23)
+            V9(0) = V9(0) + A(I, I1, 8)
+            V9(1) = V9(1) + A(I, I1, 7)
+            V9(2) = V9(2) + A(I, I1, 10)
+            V9(3) = V9(3) + A(I, I1, 9)
+            V9(4) = V9(4) + A(I, I1, 11)
+            V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0)
+            V9(13) = V9(13) + W%(I, I1, 0)
+            V9(14) = V9(14) + W%(I, I1, 1)
+            V9(6) = TF(I)
+            V9(7) = V9(7) + A(I, I1, 14)
+            V9(8) = V9(8) + A(I, I1, 15)
+            V9(9) = V9(9) + A(I, I1, 13)
+            V9(11) = V9(11) + A(I, I1, 24)
+            V9(12) = V9(12) + A(I, I1, 23)
+            V9(10) = V9(10) + ZZ(I, I1)
+
+        Next I1
+
+        If V9(3) = 0 Then V9(3) = 1
+        Print #2,: Print #2, "TOTALS"; Tab(14); Int(V9(10) / 60); Tab(21);
+        Print #2, Using "##"; V9(0);: Print #2, "-";: Print #2, Using "###"; V9(1);
+        Print #2, Tab(28); Using "##"; V9(13);: Print #2, "-";: Print #2, Using "##"; V9(14);
+        Print #2, Tab(35); Using "##"; V9(2);: Print #2, "-";: Print #2, Using "##"; V9(3);
+        Print #2, Tab(42); Using "##  ## ### ##  ##  ##  ##  ##"; V9(11); V9(4); V9(5); V9(6); V9(7); V9(8); V9(9); V9(12)
+        Print #2, Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%"
+        Print #2,
+        Print #2, "TOTAL TURNOVERS -"; T0(I)
+        Print #2, "TOTAL REBOUNDS  -"; R3(I)
+
+        For I2 = 0 To 14
+            V9(I2) = 0
+        Next I2
+
+        If X = 0 Then
+            If AP = 1 And U5 = 2 Then
+                If X = 0 Then Cls
+                I$ = GetKeyPress$
+            End If
+
+            If X = 0 Then Cls
+        End If
+    Next I0
+
+    Print #2, Chr$(12)
+    Close 2
+End Sub
+
+
+Sub BOX2PRN ()
+    If N <> 2 Then LPrint "@ "; B$(N, 4): LPrint
+    For I = 0 To 1
+        LPrint B$(I, 0); Tab(17); Str$(S(I, 1)); Tab(20); Str$(S(I, 2)); Tab(23); Str$(S(I, 3)); Tab(26); Str$(S(I, 4));
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) Then LPrint Tab(29); Str$(S(I, 5));
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) Then LPrint Tab(29); "- "; S(I, 0): GoTo 8913
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) Then LPrint Tab(32); Str$(S(I, 6));
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) Then LPrint Tab(32); "- "; S(I, 0): GoTo 8913
+        LPrint Tab(35); "- "; S(I, 0)
+
+    8913 Next I
+    Call BOGUS(X)
+    If X = 0 Then Cls
+    For I = 0 To 1
+        LPrint: LPrint B$(I, 0)
+        LPrint "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
+        For I1 = 0 To 14
+            If ZZ(I, I1) = 0 Then 8920
+            LPrint AA$(I, I1, 0); Tab(14);
+            If ZZ(I, I1) = 0 Then
+                LPrint Tab(15); "DNP";
+                GoTo 8918
+            End If
+            LPrint Using "##"; Int(ZZ(I, I1) / 60);
+            LPrint ":";
+            If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then
+                LPrint Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+            Else
+                LPrint "0";: LPrint Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+            End If
+
+            8918 LPrint Tab(21);
+            LPrint Using "##"; A(I, I1, 8);
+            LPrint "-";
+            LPrint Using "##"; A(I, I1, 7);
+            LPrint Using "  ##"; W%(I, I1, 0);
+            LPrint "-";: LPrint Using "##"; W%(I, I1, 1);
+            LPrint Using "  ##"; A(I, I1, 10);
+            LPrint "-";: LPrint Using "##"; A(I, I1, 9);
+            LPrint Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A(I, I1, 24); A(I, I1, 11); A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0); A(I, I1, 12); A(I, I1, 14); A(I, I1, 15); A(I, I1, 13); A(I, I1, 23)
+            V9(0) = V9(0) + A(I, I1, 8)
+            V9(1) = V9(1) + A(I, I1, 7)
+            V9(2) = V9(2) + A(I, I1, 10)
+            V9(3) = V9(3) + A(I, I1, 9)
+            V9(4) = V9(4) + A(I, I1, 11)
+            V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0)
+            V9(13) = V9(13) + W%(I, I1, 0)
+            V9(14) = V9(14) + W%(I, I1, 1)
+            V9(6) = TF(I)
+            V9(7) = V9(7) + A(I, I1, 14)
+            V9(8) = V9(8) + A(I, I1, 15)
+            V9(9) = V9(9) + A(I, I1, 13)
+            V9(11) = V9(11) + A(I, I1, 24)
+            V9(12) = V9(12) + A(I, I1, 23)
+            V9(10) = V9(10) + ZZ(I, I1)
+
+        8920 Next I1
+        If V9(3) = 0 Then V9(3) = 1
+        LPrint
+        LPrint "TOTALS"; Tab(14); Int(V9(10) / 60); Tab(21);
+        LPrint Using "##"; V9(0);
+        LPrint "-";: LPrint Using "###"; V9(1);
+        LPrint Tab(28); Using "##"; V9(13);
+        LPrint "-";: LPrint Using "##"; V9(14);
+        LPrint Tab(35); Using "##"; V9(2);
+        LPrint "-";: LPrint Using "##"; V9(3);
+        LPrint Tab(42); Using "##  ## ### ##  ##  ##  ##  ##"; V9(11); V9(4); V9(5); V9(6); V9(7); V9(8); V9(9); V9(12)
+        LPrint Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%"
+        LPrint
+        LPrint "TOTAL TURNOVERS -"; T0(I): LPrint "TOTAL REBOUNDS  -"; R3(I)
+        For I2 = 0 To 14
+            V9(I2) = 0
+        Next I2
+        Call BOGUS(X)
+        If X = 0 Then Cls
+    Next I
+    LPrint Chr$(12)
+End Sub
+
+Sub BOX2SPC (NM$)
+    Open P$(1) + NM$ For Output As #2
+    If H - 1 > E%(1) Then Print #2, Using "MORE THAN ## QUARTERS"; E%(1)
+    If S(1, 0) + S(0, 0) > E%(2) Then Print #2, Using "MORE THAN ### COMBINED POINTS"; E%(2)
+    If R3(0) + R3(1) > E%(3) Then Print #2, Using "MORE THAN ### COMBINED REBOUNDS"; E%(3)
+    If S(0, 0) > E%(4) Then Print #2, B$(0, 0);: Print #2, Using " SCORED MORE THAN ### POINTS"; E%(4)
+    If S(1, 0) > E%(4) Then Print #2, B$(1, 0);: Print #2, Using " SCORED MORE THAN ### POINTS"; E%(4)
+    If R3(0) > E%(5) Then Print #2, B$(0, 0);: Print #2, Using " HAD MORE THAN ### REBOUNDS"; E%(5)
+    If R3(1) > E%(5) Then Print #2, B$(1, 0);: Print #2, Using " HAD MORE THAN ### REBOUNDS"; E%(5)
+    For I = 0 To 1
+        For I1 = 0 To 14
+            If A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) > E%(6) Then Print #2, AA$(I, I1, 0);: Print #2, Using " SCORED MORE THAN ### POINTS"; E%(6)
+            If A(I, I1, 11) > E%(7) Then Print #2, AA$(I, I1, 0);: Print #2, Using " HAD MORE THAN ### REBOUNDS"; E%(7)
+            If A(I, I1, 14) > E%(8) Then Print #2, AA$(I, I1, 0);: Print #2, Using " HAD MORE THAN ### ASSISTS"; E%(8)
+            If A(I, I1, 15) > E%(9) Then Print #2, AA$(I, I1, 0);: Print #2, Using " BLOCKED MORE THAN ### SHOTS"; E%(9)
+            If A(I, I1, 13) > E%(10) Then Print #2, AA$(I, I1, 0);: Print #2, Using " HAD MORE THAN ### STEALS"; E%(10)
+            If W%(I, I1, 0) > E%(11) Then Print #2, AA$(I, I1, 0);: Print #2, Using " MADE MORE THAN ### 3-PT FIELD GOALS"; E%(11)
+        Next
+    Next
+    Print #2,
+    If N = 2 Then Print #2, "NEUTRAL SITE": Print #2,
+    If N <> 2 Then Print #2, "@ "; B$(N, 4): Print #2,
+    For I = 0 To 1
+        Print #2, B$(I, 0); Tab(17); Str$(S(I, 1)); Tab(20); Str$(S(I, 2)); Tab(23); Str$(S(I, 3)); Tab(26); Str$(S(I, 4));
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) Then Print #2, Tab(29); Str$(S(I, 5));
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) Then Print #2, Tab(29); "- "; S(I, 0): GoTo 8863
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) Then Print #2, Tab(32); Str$(S(I, 6));
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) Then Print #2, Tab(32); "- "; S(I, 0): GoTo 8863
+        Print #2, Tab(35); "- "; S(I, 0)
+
+    8863 Next I
+    For I = 0 To 1
+        Print #2,: Print #2, B$(I, 0)
+        Print #2, "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
+        For I1 = 0 To 14
+            If ZZ(I, I1) = 0 Then 8870
+            Print #2, AA$(I, I1, 0); Tab(14);
+            If ZZ(I, I1) = 0 Then
+                Print #2, Tab(15); "DNP";
+                GoTo 8868
+            End If
+            Print #2, Using "##"; Int(ZZ(I, I1) / 60);: Print #2, ":";
+            If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then
+                Print #2, Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+            Else
+                Print #2, "0";: Print #2, Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+            End If
+
+            8868 Print #2, Tab(21);: Print #2, Using "##"; A(I, I1, 8);
+            Print #2, "-";: Print #2, Using "##"; A(I, I1, 7);
+            Print #2, Using "  ##"; W%(I, I1, 0);: Print #2, "-";
+            Print #2, Using "##"; W%(I, I1, 1);
+            Print #2, Using "  ##"; A(I, I1, 10);
+            Print #2, "-";: Print #2, Using "##"; A(I, I1, 9);
+            Print #2, Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A(I, I1, 24); A(I, I1, 11); A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0); A(I, I1, 12); A(I, I1, 14); A(I, I1, 15); A(I, I1, 13); A(I, I1, 23)
+            V9(0) = V9(0) + A(I, I1, 8)
+            V9(1) = V9(1) + A(I, I1, 7)
+            V9(2) = V9(2) + A(I, I1, 10)
+            V9(3) = V9(3) + A(I, I1, 9)
+            V9(4) = V9(4) + A(I, I1, 11)
+            V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0)
+            V9(13) = V9(13) + W%(I, I1, 0)
+            V9(14) = V9(14) + W%(I, I1, 1)
+            V9(6) = TF(I)
+            V9(7) = V9(7) + A(I, I1, 14)
+            V9(8) = V9(8) + A(I, I1, 15)
+            V9(9) = V9(9) + A(I, I1, 13)
+            V9(11) = V9(11) + A(I, I1, 24)
+            V9(12) = V9(12) + A(I, I1, 23)
+            V9(10) = V9(10) + ZZ(I, I1)
+
+        8870 Next I1
+        If V9(3) = 0 Then V9(3) = 1
+        Print #2,: Print #2, "TOTALS"; Tab(14); Int(V9(10) / 60); Tab(21);
+        Print #2, Using "##"; V9(0);: Print #2, "-";: Print #2, Using "###"; V9(1);
+        Print #2, Tab(28); Using "##"; V9(13);: Print #2, "-";: Print #2, Using "##"; V9(14);
+        Print #2, Tab(35); Using "##"; V9(2);: Print #2, "-";: Print #2, Using "##"; V9(3);
+        Print #2, Tab(42); Using "##  ## ### ##  ##  ##  ##  ##"; V9(11); V9(4); V9(5); V9(6); V9(7); V9(8); V9(9); V9(12)
+        Print #2, Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%"
+        Print #2,
+        Print #2, "TOTAL TURNOVERS -"; T0(I)
+        Print #2, "TOTAL REBOUNDS  -"; R3(I)
+        For I2 = 0 To 14
+            V9(I2) = 0
+        Next I2
+
+        8871 If X = 0 Then
+            If AP = 1 And U5 = 2 Then
+                GoTo 8872
+                I$ = GetKeyPress$
+            End If
+
+            8872 If X = 0 Then Cls
+        End If
+    Next I
+    Print #2, Chr$(12)
+    Close 2
+End Sub
+
+
+Sub COMPILESTATS ()
+    Cls: J = 1
+    Locate 8, 8: Color T(1, 33), T(1, 34): Print " Ö"; String$(61, 196); "· ";
+    For II = 1 To J: Locate 8 + II, 8: Print " º"; String$(61, 32); "º ";: Next
+    Locate 9 + J, 8: Print " Ó"; String$(61, 196); "½ ";
+    Locate 9, 28
+    Print "SAVE STATS FOR EITHER TEAM (YN)";
+    Color 15, 0
+    If AP = 1 Then 9506
+    9501 I$ = GetKeyPress$
+    If UCase$(I$) <> "Y" Then 9507
+    Cls: Color 12: Print Tab(30); "COMPILATION OF STATS": Print
+    Color 14: Print "(0) ";: Color 15: Print "BOTH TEAMS": Print
+    Color 14: Print "(1) ";: Color T(0, 33), T(0, 34): Print B$(0, 0); " ONLY": Color , 0: Print
+    Color 14: Print "(2) ";: Color T(1, 33), T(1, 34): Print B$(1, 0); " ONLY": Color , 0: Print
+    9502 I$ = GetKeyPress$
+    X1 = Val(I$)
+    If X1 < 0 Or X1 > 2 Then 9502
+
+    9506 Call SAVESTATFILES
+
+9507 End Sub
+
+Sub DISABLEPLAYERS ()
+    Cls: Print "DISABLE UP TO 6 PLAYERS FOR ";: Color T(P9, 33), T(P9, 34): Print B$(P9, 0);: Color 15, 0: Print " (YN)";
+    Print: Print
+    Print "NOTE:: THE COMPUTER WILL AUTOMATICALLY DISABLE PLAYERS BASED ON"
+    Print "       THE RATIO OF GAMES PLAYED FOR EACH PLAYER TO THE TOTAL"
+    Print "       NUMBER OF GAMES PLAYED BY THE TEAM. YOU MAY WANT TO CHECK"
+    Print "       TO ACTIVATE ANY COMPUTER DEACTIVATED PLAYERS"
+    9202 I$ = GetKeyPress$
+    If UCase$(I$) <> "Y" Then 9210
+    DX% = 0: Cls: Print "TEAM ROSTER FOR ";: Color T(P9, 33), T(P9, 34): Print B$(P9, 0): Color 15, 0
+    Print "# NAME            GP"
+    For I = 0 To 14
+        If I <= 9 Then Print Using "#"; I;
+        If I = 10 Then Print "A";
+        If I = 11 Then Print "B";
+        If I = 12 Then Print "C";
+        If I = 13 Then Print "D";
+        If I = 14 Then Print "E";
+        If AA$(P9, I, 0) = "XXX" Then B%(P9, I, 18) = -1: Color T(P9, 33), T(P9, 34)
+        Print " ";
+        If B%(P9, I, 18) <> 0 Then Color T(P9, 33), T(P9, 34)
+        Print AA$(P9, I, 0);: Color 15, 0: Print Tab(18); B%(P9, I, 0)
+    Next
+
+    9203 Locate 19, 1: Print "ENTER PLAYER # TO DISABLE/ENABLE (Z=FINISHED)"
+    9205 I$ = GetKeyPress$
+    If UCase$(I$) = "Z" Then 9210
+    I1 = Val(I$)
+    If UCase$(I$) = "A" Then I1 = 10
+    If UCase$(I$) = "B" Then I1 = 11
+    If UCase$(I$) = "C" Then I1 = 12
+    If UCase$(I$) = "D" Then I1 = 13
+    If UCase$(I$) = "E" Then I1 = 14
+    If B%(P9, I1, 18) = 0 And DX% < 6 Then B%(P9, I1, 18) = -1: DX% = DX% + 1: Locate 3 + I1, 3: Color T(P9, 33), T(P9, 34): Print AA$(P9, I1, 0): Color 15, 0: GoTo 9203
+    If B%(P9, I1, 18) = -1 Then B%(P9, I1, 18) = 0: DX% = DX% - 1: Locate 3 + I1, 3: Color 15, 0: Print AA$(P9, I1, 0): GoTo 9203
+    GoTo 9203
+
+9210 End Sub
+
+Sub DRAWBOX (I)
+    JJ = 1
+    Locate 6, 8: Color T(I, 33), T(I, 34)
+    Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
+    For II = 1 To JJ: Locate 6 + II, 8
+    Print " º"; String$(61, 32); "º ";: Next
+    Locate 7 + JJ, 8
+    Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7
+End Sub
+
+Sub GETATEAM (I1, YN$)
+    Open P$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+    Field #1, 15 As Q$(0), 15 As Q$(1)
+    For J = 0 To 6
+        Field #1, 30 + J * 2 As X$, 2 As Q$(J + 2)
+    Next
+    Field #1, 44 As X$, 2 As Q$(9)
+    For J = 0 To 34
+        Field #1, 46 + J * 2 As X$, 2 As Q$(J + 10)
+    Next
+    For J = 0 To 14
+        Field #1, 116 + J * 57 As X$, 15 As Q$(J * 22 + 45), 2 As Q$(J * 22 + 46)
+        For J1 = 0 To 19
+            Field #1, 133 + J * 57 + J1 * 2 As X$, 2 As Q$(J * 22 + 47 + J1)
+        Next
+    Next
+    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+    Get #1, I1
+    B$(P9, 0) = Q$(0)
+    B$(P9, 1) = Q$(1)
+    For I = 0 To 6
+        L%(P9, I) = CVI(Q$(I + 2))
+    Next
+    For I = 0 To 34
+        T(P9, I) = CVI(Q$(I + 10))
+    Next
+    For I = 0 To 14
+        AA$(P9, I, 0) = Q$(22 * I + 45)
+        AA$(P9, I, 1) = Q$(22 * I + 46)
+        For I1 = 0 To 19
+            B%(P9, I, I1) = CVI(Q$(22 * I + 47 + I1))
+        Next
+    Next
+    B$(P9, 2) = Q$(375)
+    B$(P9, 3) = Q$(376)
+    B$(P9, 4) = Q$(377)
+    Close 1
+    For I = 0 To 14
+
+        9004 If Right$(AA$(P9, I, 0), 1) = " " Then AA$(P9, I, 0) = Left$(AA$(P9, I, 0), Len(AA$(P9, I, 0)) - 1): GoTo 9004
+
+        9005 If Right$(AA$(P9, I, 1), 1) = " " Then AA$(P9, I, 1) = Left$(AA$(P9, I, 1), Len(AA$(P9, I, 1)) - 1): GoTo 9005
+    Next
+
+    9002 If Right$(B$(P9, 0), 1) = " " Then B$(P9, 0) = Left$(B$(P9, 0), Len(B$(P9, 0)) - 1): GoTo 9002
+
+    9006 If Right$(B$(P9, 2), 1) = " " Then B$(P9, 2) = Left$(B$(P9, 2), Len(B$(P9, 2)) - 1): GoTo 9006
+
+    9007 If Right$(B$(P9, 3), 1) = " " Then B$(P9, 3) = Left$(B$(P9, 3), Len(B$(P9, 3)) - 1): GoTo 9007
+
+    9008 If Right$(B$(P9, 4), 1) = " " Then B$(P9, 4) = Left$(B$(P9, 4), Len(B$(P9, 4)) - 1): GoTo 9008
+    For I = 0 To 14
+        If B%(P9, I, 16) >= 0 Or B%(P9, I, 17) >= 0 Then 9009
+        GP = B%(P9, I, 16) / B%(P9, I, 0)
+        MPG = B%(P9, I, 17) / B%(P9, I, 1)
+        For I1 = 2 To 14
+            B%(P9, I, I1) = B%(P9, I, I1) * GP * MPG
+            B%(P9, I, 0) = B%(P9, I, 16) * -1: B%(P9, I, 1) = B%(P9, I, 17) * -1
+        Next I1
+
+    9009 Next I
+    If U5 = 0 Or U5 = 1 And P9 <> CT Or AP = 1 And U5 = 0 Or AP = 1 And U5 = 1 And P9 <> CT Then 9020
+
+    9010 CNT% = 0
+    For I = 0 To 14
+        If B%(P9, I, 18) = -1 Then B%(P9, I, 18) = 0
+        RN = Int(Rnd(1) * 100) + 1
+        If UCase$(AA$(P9, I, 0)) = "XXX" Or (B%(P9, I, 18) = 0 And RN > Int(B%(P9, I, 0) / L%(P9, 0) * 100 + .5)) Then B%(P9, I, 18) = -1
+    Next
+    For I = 0 To 14: If B%(P9, I, 18) = 0 Then CNT% = CNT% + 1
+    Next
+    If CNT% < 10 Then 9010
+
+9020 End Sub
+
+
+Sub INITIALIZE ()
+
+End Sub
+
+
+Sub NEWSCREEN ()
+    '*** SCREEN UPDATING ***
+    Cls
+    Call TICKERUPDATE
+    Color 9, 0
+    Locate 3, 11: Print Chr$(218); String$(5, 196); Chr$(191)
+    Locate , 11: Print Chr$(179);: Locate , 17: Print Chr$(179)
+    Locate , 11: Print Chr$(192); String$(5, 196); Chr$(217)
+    Locate 3, 58: Print Chr$(218); String$(5, 196); Chr$(191)
+    Locate , 58: Print Chr$(179);: Locate , 64: Print Chr$(179)
+    Locate , 58: Print Chr$(192); String$(5, 196); Chr$(217)
+    Locate 2, 1: Locate , 9: Color T(0, 33), T(0, 34): Print B$(0, 0);
+    Locate 1, 37: Color 15, 0: Print Using "##"; Int(T / 60);: Print ":";
+    If T - Int(T / 60) * 60 < 10 Then
+        Print "0";
+        Print Using "#"; T - Int(T / 60) * 60;
+        GoTo 2505
+    End If
+    Print Using "##"; T - Int(T / 60) * 60;
+
+    2505 Locate 2, 56: Color T(1, 33), T(1, 34): Print B$(1, 0)
+    Locate 4, 13: Color 14, 0
+    Print Using "###"; S(0, 0);
+    Locate 2, 35: Print Using " PERIOD #"; H;
+    If H > 4 Then Locate , 35: Print Using "OVERTIME #"; H - 4
+    Locate 4, 60: Color 14, 0: Print Using "###"; S(1, 0)
+    Color 7: Locate 3, 35
+    Print Using "##  "; T0(0);: Color 12
+    Print "TO  ";: Color 7: Print Using "##"; T0(1)
+    Locate , 35: Print Using "##  "; R3(0);
+    Color 12: Print "RB  ";: Color 7: Print Using "##"; R3(1)
+    Locate , 35: Print Using "##  "; P2(0);
+    Color 12: Print "TF  ";: Color 7
+    Print Using "##"; P2(1);
+    If P2(0) > NB% - 1 And H <= 4 Or P2(0) > 2 And H > 4 Then Locate , 46: Color 0, 2: Print "BONUS";: Color 7, 0
+    If P2(1) > NB% - 1 And H <= 4 Or P2(1) > 2 And H > 4 Then Locate , 29: Color 0, 2: Print "BONUS": Color 7, 0
+    Locate 6, 9: Print "TIMEOUTS:"; T1(0);: Locate , 56: Print "TIMEOUTS:"; T1(1)
+    Locate 8, 58
+    Color T(D, 33), T(D, 34): Print "DEF - "; D$(D2(D))
+    Locate , 58: Color T(P, 33), T(P, 34): Print "OFF - "; O$(O0%(P))
+    Color 15, 0
+    Locate , 41: Color 14: Print "(1) ";: Color 15: Print "SHOOT        ";: Color 14: Print "ENTER";: Color 15: Print "-PASS"
+    Locate , 41: Color 14: Print "(2) ";: Color 15: Print B$(P, 0); " CALL TIMEOUT     "
+    Locate , 41: Color 14: Print "(3) ";: Color 15: Print "COMMIT INTL FOUL (LAST 4 MIN)"
+    Locate , 41: Color 14: Print "(4) ";: Color 15: Print "SHOOT A FORCED 3-POINTER"
+    Locate , 41: Color 14: Print "(S) ";: Color 15: Print "SCOUT REPORT ";
+    Color 14: Print "(T) ";: Color 15: Print "10 MIN TICKER"
+    Locate , 41: Color 14: Print "(Z) ";: Color 15: Print "LEFT TM STGY ";
+    Color 14: Print "(/) ";: Color 15: Print "RIGHT TM STGY"
+    Locate 7, 1
+    Color 9, 0: Print String$(38, 205); Chr$(203); String$(38, 205)
+    Locate 8, 1: For I = 1 To 8: Locate , 39: Print Chr$(186): Next
+    Locate 17, 1: Color T(0, 33), T(0, 34): Print B$(0, 0);
+    Print Using " [##"; Z5(0);: Print "-";: Print Using "##]"; Z6(0)
+    Color 14, 0: Print "# NAME         FG FT RB CX PA DF PT  F"
+    For I1 = 0 To 4
+        Color 2: Print Using "# "; I1;
+        Color 3
+        Color 15: Print Left$(AA$(0, B1(0, I1), 0), 12);: Locate , 16
+        J = (A(0, B1(0, I1), 3)) - A(0, B1(0, I1), 7) - A(0, B1(0, I1), 11) - A(0, B1(0, I1), 12)
+        If J <= 0 Then J = 0
+        Print Using "##"; A(0, B1(0, I1), 0);
+        Print Using "### "; A(0, B1(0, I1), 1);
+        If P = 0 Then Print Using "##"; A(0, B1(0, I1), 21) * 2 / 10; Else Print Using "##"; A(0, B1(0, I1), 2) * 2 / 10;
+        If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And T > 120) Then Color 12
+        Print Using "### "; J;
+        Color 15
+        Print Using "## ##"; A(0, B1(0, I1), 4) / 10; A(0, B1(0, I1), 5) / 10;
+        Print Using "###  "; A(0, B1(0, I1), 8) * 2 + A(0, B1(0, I1), 10) + W%(0, B1(0, I1), 0);
+        If A(0, B1(0, I1), 12) >= 5 Then Color 12
+        Print Using "#"; A(0, B1(0, I1), 12)
+        Color 15
+    Next I1
+    Locate 17, 40: Color T(1, 33), T(1, 34): Print B$(1, 0);: Print Using " [##"; Z5(1);: Print "-";: Print Using "##]"; Z6(1)
+    Color 14, 0: Locate , 40: Print "# NAME          FG FT RB CX PA DF PT  F"
+    For I1 = 0 To 4: Locate , 40: Color 2: Print Using "# "; I1;
+        Color 15: Print Left$(AA$(1, B1(1, I1), 0), 12);: Locate , 56
+        J = (A(1, B1(1, I1), 3)) - A(1, B1(1, I1), 7) - A(1, B1(1, I1), 11) - A(1, B1(1, I1), 12)
+        If J <= 0 Then J = 0
+        Print Using "##"; A(1, B1(1, I1), 0);
+        Print Using "### "; A(1, B1(1, I1), 1);
+        If P = 1 Then Print Using "##"; A(1, B1(1, I1), 21) * 2 / 10; Else Print Using "##"; A(1, B1(1, I1), 2) * 2 / 10;
+        If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And T > 120) Then Color 12
+        Print Using "### "; J;
+        Color 15
+        Print Using "## ##"; A(1, B1(1, I1), 4) / 10; A(1, B1(1, I1), 5) / 10;
+        Print Using "###  "; A(1, B1(1, I1), 8) * 2 + A(1, B1(1, I1), 10) + W%(1, B1(1, I1), 0);
+        If A(1, B1(1, I1), 12) >= 5 Then Color 12
+        Print Using "#"; A(1, B1(1, I1), 12)
+        Color 15
+    Next I1
+    Color 9, 0: For I = 1 To 9: Locate 14 + I, 39: Print Chr$(186): Next
+    Color 9, 0
+    Locate 16, 1: Print String$(79, 205)
+    Locate 16, 39: Print Chr$(206): Color 7, 0
+End Sub
+
+Sub QUARTERTOTAL ()
+
+    For I = 0 To 1
+        For I2 = 0 To 14: V9(I2) = 0: Next
+        For I1 = 0 To 14
+            V9(0) = V9(0) + A(I, I1, 8)
+            V9(1) = V9(1) + A(I, I1, 7)
+            V9(2) = V9(2) + A(I, I1, 10)
+            V9(3) = V9(3) + A(I, I1, 9)
+            V9(4) = V9(4) + A(I, I1, 11)
+            V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0)
+            V9(13) = V9(13) + W%(I, I1, 0)
+            V9(14) = V9(14) + W%(I, I1, 1)
+            V9(6) = TF(I)
+            V9(7) = V9(7) + A(I, I1, 14)
+            V9(8) = V9(8) + A(I, I1, 15)
+            V9(9) = V9(9) + A(I, I1, 13)
+            V9(11) = V9(11) + A(I, I1, 24)
+            V9(12) = V9(12) + A(I, I1, 23)
+            V9(10) = V9(10) + ZZ(I, I1)
+        Next
+        If H = 1 Or H = 2 Then
+            For I2 = 0 To 14
+                QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2)
+            Next
+            For I1 = 0 To 14
+                For I2 = 7 To 15
+                    QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6)
+                Next
+                QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10)
+                QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11)
+                QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12)
+                QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13)
+                QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14)
+            Next
+        End If
+        If H = 3 Then
+            For I2 = 0 To 14
+                QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2)
+            Next
+            For I1 = 0 To 14
+                For I2 = 7 To 15
+                    QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6)
+                Next
+                QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10)
+                QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11)
+                QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12)
+                QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13)
+                QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14)
+            Next
+        End If
+        If H = 4 Then
+            For I2 = 0 To 14
+                QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2)
+            Next
+            For I1 = 0 To 14
+                For I2 = 7 To 15
+                    QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6)
+                Next
+                QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10)
+                QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11)
+                QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12)
+                QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13)
+                QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14)
+            Next
+        End If
+        If H = 5 Then
+            For I2 = 0 To 14
+                QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2) - QR(I, H - 4, I2)
+            Next
+            For I1 = 0 To 14
+                For I2 = 7 To 15
+                    QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6) - QQ(I, H - 4, I1, I2 - 6)
+                Next
+                QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10) - QQ(I, H - 4, I1, 10)
+                QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11) - QQ(I, H - 4, I1, 11)
+                QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12) - QQ(I, H - 4, I1, 12)
+                QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13) - QQ(I, H - 4, I1, 13)
+                QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14) - QQ(I, H - 4, I1, 14)
+            Next
+        End If
+        If H = 6 Then
+            For I2 = 0 To 14
+                QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2) - QR(I, H - 4, I2) - QR(I, H - 5, I2)
+            Next
+            For I1 = 0 To 14
+                For I2 = 7 To 15
+                    QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6) - QQ(I, H - 4, I1, I2 - 6) - QQ(I, H - 5, I1, I2 - 6)
+                Next
+                QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10) - QQ(I, H - 4, I1, 10) - QQ(I, H - 5, I1, 10)
+                QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11) - QQ(I, H - 4, I1, 11) - QQ(I, H - 5, I1, 11)
+                QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12) - QQ(I, H - 4, I1, 12) - QQ(I, H - 5, I1, 12)
+                QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13) - QQ(I, H - 4, I1, 13) - QQ(I, H - 5, I1, 13)
+                QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14) - QQ(I, H - 4, I1, 14) - QQ(I, H - 5, I1, 14)
+            Next
+        End If
+        If H = 7 Then
+            For I2 = 0 To 14
+                QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2) - QR(I, H - 4, I2) - QR(I, H - 5, I2) - QR(I, H - 6, I2)
+            Next
+            For I1 = 0 To 14
+                For I2 = 7 To 15
+                    QQ(I, H, I1, I2 - 6) = A(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6) - QQ(I, H - 4, I1, I2 - 6) - QQ(I, H - 5, I1, I2 - 6) - QQ(I, H - 6, I1, I2 - 6)
+                Next
+                QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10) - QQ(I, H - 4, I1, 10) - QQ(I, H - 5, I1, 10) - QQ(I, H - 6, I1, 10)
+                QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11) - QQ(I, H - 4, I1, 11) - QQ(I, H - 5, I1, 11) - QQ(I, H - 6, I1, 11)
+                QQ(I, H, I1, 12) = A(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12) - QQ(I, H - 4, I1, 12) - QQ(I, H - 5, I1, 12) - QQ(I, H - 6, I1, 12)
+                QQ(I, H, I1, 13) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13) - QQ(I, H - 4, I1, 13) - QQ(I, H - 5, I1, 13) - QQ(I, H - 6, I1, 13)
+                QQ(I, H, I1, 14) = A(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14) - QQ(I, H - 4, I1, 14) - QQ(I, H - 5, I1, 14) - QQ(I, H - 6, I1, 14)
+            Next
+        End If
+
+    Next
+    For I = 0 To 14: V9(I) = 0: Next
+End Sub
+
+Sub RATINGTABLES ()
+    For I = 0 To 1
+        F5%(I, 0) = 0
+        F5%(I, 1) = 0
+        F5%(I, 2) = 0
+        F5%(I, 3) = 0
+        F5%(I, 4) = 0
+        For I1 = 0 To 4
+            F5%(I, 0) = F5%(I, 0) + A(I, B1(I, I1), 17)
+            F5%(I, 1) = F5%(I, 1) + B%(I, B1(I, I1), 18)
+            F5%(I, 2) = F5%(I, 2) + A(I, B1(I, I1), 25)
+            F5%(I, 3) = F5%(I, 3) + A(I, B1(I, I1), 5)
+            F5%(I, 4) = F5%(I, 4) + A(I, B1(I, I1), 4) / 10
+        Next I1
+        F5%(I, 4) = Int((F5%(I, 4) / (F7%(I, 6) * .9)) * 100 + .5)
+    Next
+End Sub
+
+Sub SAVESTATFILES ()
+    'SAVE STATS
+    If Not _FileExists("GAME82") Then 6030
+    Open "GAME82" For Input As #2
+    Input #2, FF$
+    For I = 0 To 2: Input #2, AP%(I): Next: Close 2
+    If AP%(2) > 31 Then 6011
+    For X = 0 To 1: SX$(AP%(2) + 1, X) = B$(X, 0): Next
+    Open "TICKER" For Output As #2
+    For I = 1 To 32: For I1 = 0 To 1: For I2 = 1 To 14
+    Print #2, SX%(I, I1, I2): Next: Next: Next
+    For I = 1 To 32: For I1 = 0 To 1: Print #2, SX$(I, I1): Next: Next
+    For I = 1 To 32: Print #2, ST%(I): Next
+    Close 2
+
+    6011 Open P$(0) + FF$ For Random As #1 Len = 48
+    For X = 0 To 18
+        Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
+    Next
+    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+    NG%(13) = 1
+    For X = 0 To 18: LSet Q$(X + 1) = MKI$(NG%(X)): Next
+    For X = 0 To 1: LSet Q$(20 + X) = YN$(X): Next
+    LSet Q$(22) = MKI$(S(0, 0)): LSet Q$(23) = MKI$(S(1, 0))
+    Put #1, AP%(0) + AP%(2)
+    Close 1
+    AP%(2) = AP%(2) + 1
+    AP = 1: If AP%(1) < AP%(0) + AP%(2) Then Kill "GAME82": AD = 1: GoTo 6030
+    Open "GAME82" For Output As #2
+    Print #2, FF$
+    For I = 0 To 2: Print #2, AP%(I): Next: Close 2
+
+    6030 Cls
+    HH% = N
+    For PX = 0 To 1
+        For J = 0 To 14
+            A(PX, J, 16) = ZZ(PX, J)
+            A(PX, J, 17) = A(PX, J, 23)
+            A(PX, J, 18) = A(PX, J, 24)
+        Next
+    Next
+    For PX = 0 To 1
+        For I = 0 To 14
+            For J = 1 To 12
+                A(PX, I, J) = A(PX, I, J + 6)
+            Next
+            W0(PX, I) = W%(PX, I, 0)
+            W1(PX, I) = W%(PX, I, 1)
+        Next
+        Y$(PX) = B$(PX, 0)
+    Next
+    Q = 0
+
+    6115 C% = 0
+    If AP = 1 Then 6355
+    I$ = "Y"
+    If X1 = 1 And Q = 1 Or X1 = 2 And Q = 0 Then I$ = "N"
+    If UCase$(I$) = "N" Then C% = 1: GoTo 6355
+    If UCase$(Left$(P$(1), 1)) <> "A" And UCase$(Left$(P$(1), 1)) <> "B" Then 6355
+    Cls
+
+    6355 If C% = 1 Then 6290
+    For XX = 4 To 11
+        If Mid$(B$(Q, 0), XX, 1) = " " Or Mid$(B$(Q, 0), XX, 1) = "." Then Mid$(B$(Q, 0), XX, 1) = "_"
+    Next XX
+    For XX = 12 To 14
+        If Mid$(B$(Q, 0), XX, 2) = "ST" Then Mid$(B$(Q, 0), 9, 1) = "_": Mid$(B$(Q, 0), 10, 2) = "ST"
+    Next XX
+    QQ = 8
+    For XX = 11 To 4 Step -1
+        If Mid$(B$(Q, 0), XX, 1) = "_" Then QQ = XX - 4: GoTo 6616
+        GoTo 6620
+
+    6616 Next XX
+
+    6620 F$ = Mid$(B$(Q, 0), 4, QQ)
+    R$ = F$ + "." + Left$(B$(Q, 0), 2)
+    If Not _FileExists(P$(1) + R$) Then 6185
+    Open P$(1) + R$ For Input As #2
+    Input #2, B$(Q, 0)
+    For I = 0 To 14: Input #2, AA$(Q, I, 0)
+        For J = 0 To 13: Input #2, Z2(I, J): Next J
+    Input #2, W2(Q, I): Input #2, W3(Q, I): Next I
+    For L = 0 To 15: Input #2, Z(L): Next L
+    For L = 0 To 15: Input #2, Z1(L): Next L
+    Close #2
+
+    6185 TG = 0
+    For I = 0 To 14
+        If A(Q, I, 2) * 2 + A(Q, I, 4) + W0(Q, I) > Z2(I, 13) Then Z2(I, 13) = A(Q, I, 2) * 2 + A(Q, I, 4) + W0(Q, I)
+        If A(Q, I, 10) > 0 Then Z2(I, 0) = Z2(I, 0) + 1
+        For J = 1 To 12
+            Z2(I, J) = Z2(I, J) + A(Q, I, J)
+            If J = 5 Or J = 6 Or J = 10 Or J = 11 Then 6215
+            Z(J) = Z(J) + A(Q, I, J): Z1(J) = Z1(J) + A(1 - Q, I, J)
+
+        6215 Next J
+        Z(0) = Z(0) + A(Q, I, 10)
+        TG = TG + A(Q, I, 10)
+    Next I
+    For I = 0 To 1: V9(I) = 0: For I1 = 0 To 14: V9(I) = V9(I) + A(I, I1, 5): Next: Next
+    Z(15) = Z(15) + R3(Q) - V9(Q): Z1(15) = Z1(15) + R3(1 - Q) - V9(1 - Q)
+    Z(6) = Z(6) + TF(Q): Z1(6) = Z1(6) + TF(1 - Q)
+    Z(5) = Z(5) + R3(Q): Z1(5) = Z1(5) + R3(1 - Q): Z(11) = Z(11) + T0(Q): Z1(11) = Z1(11) + T0(1 - Q)
+    For J = 0 To 14: Z(13) = Z(13) + W0(Q, J): Z(14) = Z(14) + W1(Q, J)
+        Z1(13) = Z1(13) + W0(1 - Q, J): Z1(14) = Z1(14) + W1(1 - Q, J)
+    W2(Q, J) = W2(Q, J) + W0(Q, J): W3(Q, J) = W3(Q, J) + W1(Q, J): Next J
+    Z(10) = Z(10) + S(Q, 0): Z1(10) = Z1(10) + S(1 - Q, 0)
+    I = Q
+    Call DRAWBOX(I)
+    U$ = "SAVING STATS FOR " + B$(Q, 0)
+    Locate , (80 - Len(U$)) / 2
+    Print U$
+    Color 15, 0
+    Open P$(1) + R$ For Output As #1
+    Print #1, Y$(Q)
+    For I = 0 To 14: Print #1, AA$(Q, I, 0)
+        For J = 0 To 13: Print #1, Z2(I, J): Next J
+    Print #1, W2(Q, I): Print #1, W3(Q, I): Next I
+    For L = 0 To 15: Print #1, Z(L): Next L
+    For L = 0 To 15: Print #1, Z1(L): Next L
+    Close #1
+    Y% = 0: R$ = R$ + "S"
+    If Not _FileExists(P$(1) + R$) Then 6405
+    Open P$(1) + R$ For Input As #1
+    Input #1, Y%
+    For I = 1 To 100: Input #1, O%(I): Next I
+    For I = 1 To 100: Input #1, HO$(I): Next I
+    For I = 1 To 100: Input #1, HT%(I): Next I
+    For I = 1 To 100: Input #1, H$(I): Next I
+    Close #1
+
+    6405 If Y% < 100 Then Y% = Y% + 1
+    If HH% = 2 And TG < 14500 Then H$(Y%) = "N": GoTo 6540
+    If HH% <> Q And TG < 14500 Then H$(Y%) = "V": GoTo 6540
+    If HH% = Q And TG < 14500 Then H$(Y%) = "H": GoTo 6540
+    If HH% = Q And TG < 16000 Then H$(Y%) = "H1": GoTo 6540
+    If HH% = Q And TG < 17500 Then H$(Y%) = "H2": GoTo 6540
+    If HH% = Q And TG < 19000 Then H$(Y%) = "H3": GoTo 6540
+    If HH% = Q And TG < 20500 Then H$(Y%) = "H4": GoTo 6540
+    If HH% = 2 And TG < 16000 Then H$(Y%) = "N1": GoTo 6540
+    If HH% = 2 And TG < 17500 Then H$(Y%) = "N2": GoTo 6540
+    If HH% = 2 And TG < 19000 Then H$(Y%) = "N3": GoTo 6540
+    If HH% = 2 And TG < 20500 Then H$(Y%) = "N4": GoTo 6540
+    If HH% <> Q And TG < 16000 Then H$(Y%) = "V1": GoTo 6540
+    If HH% <> Q And TG < 17500 Then H$(Y%) = "V2": GoTo 6540
+    If HH% <> Q And TG < 19000 Then H$(Y%) = "V3": GoTo 6540
+    If HH% <> Q And TG < 20500 Then H$(Y%) = "V4": GoTo 6540
+
+    6540 O%(Y%) = S(Q, 0): HO$(Y%) = B$(1 - Q, 0): HT%(Y%) = S(1 - Q, 0)
+    Open P$(1) + R$ For Output As #1
+    Print #1, Y%
+    For I = 1 To 100: Print #1, O%(I): Next I
+    For I = 1 To 100: Print #1, HO$(I): Next I
+    For I = 1 To 100: Print #1, HT%(I): Next I
+    For I = 1 To 100: Print #1, H$(I): Next I
+    Close #1
+    For I = 1 To 100: O%(I) = 0: HT%(I) = 0: HO$(I) = "": H$(I) = "": Next I
+    For J = 0 To 14
+        For K = 0 To 13
+            Z2(J, K) = 0
+        Next K
+    Next J
+    For L = 0 To 15
+        Z(L) = 0
+        Z1(L) = 0
+    Next L
+
+    6290 Q = Q + 1: Z(12) = 0: If Q < 2 Then 6115
+    If AP = 1 And AD <> 1 Then 6292
+    If AD = 1 Then Run "HELLO.EXE"
+
+6292 End Sub
+
+Sub SCOUTREPORT ()
+    ' *** SCOUTING REPORT ***
+    JJ = 13
+    SN = 1: Locate 6, 8: Color 0, 7
+    Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
+    Print " º"; String$(61, 32); "º ";: Next
+    Locate 7 + JJ, 8
+    Print " Ó"; String$(61, 196); "½ ";: Locate 7, 32
+    Print "SCOUTING REPORT"
+    Locate 8, 14: Color T(0, 33), T(0, 34): Print B$(0, 0);
+    Locate , 52: Color T(1, 33), T(1, 34): Print B$(1, 0)
+    Color 0, 7
+    Locate , 18: Print Using "###           POINTS PER GAME         ###"; (T(0, 6) * 2 + T(0, 8) + T(0, 18)) / T(0, 0); (T(1, 6) * 2 + T(1, 8) + T(1, 18)) / T(1, 0)
+    Locate , 18: Print Using " ##             FIELD GOAL %           ##"; T(0, 6) / T(0, 5) * 100 + D1(1); T(1, 6) / T(1, 5) * 100 + D1(0)
+    Locate , 18: Print Using " ##             FREE THROW %           ##"; T(0, 8) / T(0, 7) * 100; T(1, 8) / T(1, 7) * 100
+    Locate , 18: Print Using " ##          REBOUNDS PER GAME         ##"; (T(0, 9) + T(0, 10)) / T(0, 0); (T(1, 9) + T(1, 10)) / T(1, 0)
+    Locate , 18: Print Using " ##      TURNOVERS FORCED PER GAME     ##"; T(0, 29) / T(0, 0); T(1, 29) / T(1, 0)
+    Locate , 18: Print Using " ##    TURNOVERS COMMITTED PER GAME    ##"; T(0, 15) / T(0, 0); T(1, 15) / T(1, 0)
+    Locate , 18: Print Using " ##          STEALS PER GAME           ##"; T(0, 14) / T(0, 0); T(1, 14) / T(1, 0)
+    Locate , 18: Print Using " ##      PERSONAL FOULS PER GAME       ##"; T(0, 12) / T(0, 0); T(1, 12) / T(1, 0)
+    Locate , 18: Print Using " ##          ASSISTS PER GAME          ##"; T(0, 11) / T(0, 0); T(1, 11) / T(1, 0)
+    Locate , 18: Print Using " ##          BLOCKS PER GAME           ##"; T(0, 16) / T(0, 0); T(1, 16) / T(1, 0)
+    Locate , 18: Print Using " ##             3 POINT FG%            ##"; T(0, 18) / (T(0, 17) + 1) * 100 + F%(1, 4); T(1, 18) / (T(1, 17) + 1) * 100 + F%(0, 4)
+    8203 I$ = GetKeyPress$
+    Color 7, 0
+    Call NEWSCREEN
+End Sub
+
+Sub SETUPRATINGS ()
+    Dim X3 As Single, JX As Single
+    '*** SET UP TEAM RATINGS***
+    For I = 0 To 1
+        YR% = Val(Left$(B$(I, 0), 2))
+        If YR% < 40 Then YR% = YR% + 100
+        FTF = 1
+        If YR% < 74 Then FTF = .91
+        If YR% < 69 Then FTF = .83
+        For I1 = 0 To 14
+            B%(I, I1, 4) = B%(I, I1, 4) * FTF
+            B%(I, I1, 5) = B%(I, I1, 5) * FTF
+        Next I1
+        T(I, 7) = T(I, 7) * FTF
+        T(I, 8) = T(I, 8) * FTF
+        T(I, 21) = T(I, 21) * FTF
+        T(I, 22) = T(I, 22) * FTF
+        YR% = YR% - 60
+        If YR% < 0 Then TOF%(I) = 59: PF%(I) = 11: GoTo 9215
+        If YR% > 32 Then TOF%(I) = 34: PF%(I) = 8: GoTo 9215
+        TOF%(I) = TOA%(YR%)
+        PF%(I) = PFA%(YR%)
+
+    9215 Next
+    If Left$(B$(1, 0), 2) = Left$(B$(0, 0), 2) Then 9253
+    If AP = 1 Then I = NG%(6): GoTo 9252
+    Cls: Print "THESE TWO TEAMS MAY HAVE PLAYED DURING DIFFERENT ERAS AND"
+    Print "PLAYED DIFFERENT STYLES OF BASKETBALL"
+    Print
+    Print "PLAY STYLE OF:"
+    Print
+    Color 14: Print "(0) - ";: Color T(0, 33), T(0, 34): Print B$(0, 0): Color , 0
+    Print
+    Color 14: Print "(1) - ";: Color T(1, 33), T(1, 34): Print B$(1, 0): Color , 0
+    Print
+    Color 14: Print "(2) - ";: Color 3: Print "MAKE NO ADJUSTMENT": Color 15, 0
+    9251 I$ = GetKeyPress$
+    I = Val(I$): If I < 0 Or I > 2 Then 9251
+
+    9252 If I = 2 Then 9253
+    HN% = 1: HM% = I
+    JX = (T(0, 5) + T(0, 19) + T(1, 5) + T(1, 19)) * (L%(I, 1) / L%(1 - I, 1)) / ((T(1, 0) + T(0, 0)) * 2) * 2 - (L%(I, 1) + L%(I, 1)) / 2
+    JY = JX
+    GoTo 9254
+
+    9253 'JX = (  T(0, 5) + T(0, 19) + T(1, 5) + T(1, 19)  ) / ( (T(1, 0) + T(0, 0) ) * 2) * 2 - (L%(0, 1) + L%(1, 1)) / 2
+    JX = (T(0, 5) + T(0, 19)) / ((T(1, 0) + T(0, 0)) * 2) + (T(1, 5) + T(1, 19)) / ((T(1, 0) + T(0, 0)) * 2)
+    JX = JX * 2 - (L%(0, 1) + L%(1, 1)) / 2
+    JY = JX
+    If PO = 1 Then JY = JY - 7
+
+    9254 For I = 0 To 1
+        D1(I) = Int(T(I, 20) / T(I, 19) * 100 + .5) - L%(I, 3)
+        X7(I) = 1440 - ((T(I, 5) / T(I, 0)) + (T(I, 19) / T(I, 0))) * 2
+        X7(I) = X7(I) / 25
+        F7%(I, 5) = Int(((T(I, 5) + T(I, 19)) / (T(I, 0) * 2)) + .5)
+        F7%(I, 0) = Int((((T(I, 28) / T(I, 0)) / (X7(I) * 5)) * 1000) + .5) - 41
+        F7%(I, 1) = Int(((T(I, 15) - T(I, 28)) / T(I, 0)) / (X7(I) * 5) * 1000 + .5)
+        F7%(I, 2) = Int(((T(I, 29) - T(I, 14)) / T(I, 0)) / (X7(I) * 5) * 1000 + .5) - TOF%(I): '-41
+        If T(I, 31) > 0 Then F7%(I, 4) = Int(T(I, 32) / T(I, 31) * 100 + .5) - L%(I, 5)
+        If T(I, 31) = 0 Then F7%(I, 4) = 0 - L%(I, 5)
+        F7%(I, 6) = Int(T(I, 6) / T(I, 0) + .5)
+        X3 = (T(I, 21) - T(I, 20) * .1) - 7.9 * T(I, 0)
+        X3 = X3 / 2
+        F7%(I, 3) = Int(X3 / (T(I, 19) + X3) * 100 + .5) - PF%(I): ' WAS -7
+        F7%(I, 7) = Int(T(I, 11) / T(I, 6) * 100 + .5)
+    Next
+    For I = 0 To 1
+        For I1 = 0 To 14
+            If B%(I, I1, 18) <> 0 Then 9260
+            If B%(I, I1, 2) - B%(I, I1, 13) > 0 Then A(I, I1, 0) = Int((B%(I, I1, 3) - B%(I, I1, 14)) / (B%(I, I1, 2) - B%(I, I1, 13)) * 100 + .5)
+            If PO = 1 Then A(I, I1, 0) = A(I, I1, 0) - 2
+            If B%(I, I1, 4) > 0 Then A(I, I1, 1) = Int(B%(I, I1, 5) / B%(I, I1, 4) * 100 + .5)
+            X3 = B%(I, I1, 7) / B%(I, I1, 1) * 48
+            X3 = X3 * 29.3 / (L%(I, 2) * .677) * ((T(I, 5) + T(I, 19)) / (T(I, 0) * 2) / L%(I, 1))
+            X3 = Int(X3 * 10 + .5)
+            A(I, I1, 2) = X3
+            X3 = B%(I, I1, 6) / B%(I, I1, 1) * 48
+            X3 = X3 * 14! / (L%(I, 2) * .323) * ((T(I, 5) + T(I, 19)) / (T(I, 0) * 2) / L%(I, 1))
+            X3 = Int(X3 * 10 + .5)
+            A(I, I1, 21) = X3
+            X3 = B%(I, I1, 8) / B%(I, I1, 1) * 48
+            A(I, I1, 25) = Int(X3 * 10 + .5)
+            X3 = X3 * 26 * T(I, 0) / T(I, 11)
+            A(I, I1, 4) = Int(X3 * 10 + .5)
+            ASSIST:
+            A(I, I1, 5) = B%(I, I1, 11) / B%(I, I1, 1) * 48
+            A(I, I1, 5) = Int(A(I, I1, 5) / X7(I) * 1000 + .5)
+            BLOCK:
+            A(I, I1, 6) = B%(I, I1, 12) / B%(I, I1, 1) * 48
+            A(I, I1, 6) = A(I, I1, 6) / ((T(I, 19) - T(I, 31) - T(I, 20) + T(I, 32)) / T(I, 0) / 5)
+            A(I, I1, 6) = Int(A(I, I1, 6) * .93 * 100 + .5)
+            If FR% = 0 Then X3 = B%(I, I1, 4) - (B%(I, I1, 3) * .1) - 1.58 * B%(I, I1, 1) / 48
+            If FR% = 1 Then X3 = B%(I, I1, 4) * .9 - (B%(I, I1, 3) * .1) - 1.58 * B%(I, I1, 1) / 48
+            X3 = X3 / 2
+            A(I, I1, 16) = Int(X3 / (B%(I, I1, 2) + X3) * 100 + .5)
+            If A(I, I1, 16) < 0 Then A(I, I1, 16) = 0
+            A(I, I1, 17) = Int(B%(I, I1, 9) / B%(I, I1, 1) * 48 * 10 + .5)
+            A(I, I1, 18) = B%(I, I1, 18)
+            If B%(I, I1, 2) > 0 Then A(I, I1, 19) = Int(B%(I, I1, 13) / B%(I, I1, 2) * 100 + .5)
+            If B%(I, I1, 13) > 0 Then A(I, I1, 20) = Int(B%(I, I1, 14) / B%(I, I1, 13) * 100 + .5)
+            X3 = Int(B%(I, I1, 2) / (B%(I, I1, 2) + B%(I, I1, 4)) * 100 + .5)
+            If Left$(AA$(I, I1, 1), 1) = "F" Or Left$(AA$(I, I1, 1), 1) = "C" Then 9255
+            If X3 >= 86 Then B%(I, I1, 16) = 1
+            If X3 = 84 Or X3 = 85 Then B%(I, I1, 16) = 2
+            If X3 = 82 Or X3 = 83 Then B%(I, I1, 16) = 3
+            If X3 = 80 Or X3 = 81 Then B%(I, I1, 16) = 4
+            If X3 >= 77 And X3 <= 79 Then B%(I, I1, 16) = 5
+            If X3 = 75 Or X3 = 76 Then B%(I, I1, 16) = 6
+            If X3 = 73 Or X3 = 74 Then B%(I, I1, 16) = 7
+            If X3 = 71 Or X3 = 72 Then B%(I, I1, 16) = 8
+            If X3 <= 70 Then B%(I, I1, 16) = 9
+            GoTo 9260
+
+            9255 If X3 >= 81 Then B%(I, I1, 16) = 1
+            If X3 = 79 Or X3 = 80 Then B%(I, I1, 16) = 2
+            If X3 = 77 Or X3 = 78 Then B%(I, I1, 16) = 3
+            If X3 = 75 Or X3 = 76 Then B%(I, I1, 16) = 4
+            If X3 >= 72 And X3 <= 74 Then B%(I, I1, 16) = 5
+            If X3 = 70 Or X3 = 71 Then B%(I, I1, 16) = 6
+            If X3 = 68 Or X3 = 69 Then B%(I, I1, 16) = 7
+            If X3 = 66 Or X3 = 67 Then B%(I, I1, 16) = 8
+            If X3 <= 65 Then B%(I, I1, 16) = 9
+
+        9260 Next I1
+    Next I
+    For I = 0 To 1
+        M9(I) = (T(I, 5) + T(I, 19) + T(I, 9) + T(I, 10)) / (T(I, 0) * 2)
+        M9(I) = M9(I) + (T(I, 23) + T(I, 24) + T(I, 12) + T(I, 26)) / (T(I, 0) * 2)
+        M9(I) = M9(I) * 2 - (L%(I, 1) + L%(I, 2) + L%(I, 4))
+    Next I
+    If HN% <> 1 Then 9264
+    I = HM%
+    F7%(1 - I, 1) = F7%(1 - I, 1) * TOF%(I) / TOF%(1 - I)
+    M9(1 - I) = M9(1 - I) * (L%(I, 1) + L%(I, 2) + L%(I, 4)) / (L%(1 - I, 1) + L%(1 - I, 2) + L%(1 - I, 4))
+    For I1 = 0 To 14
+        A(1 - I, I1, 0) = A(1 - I, I1, 0) + L%(I, 3) - L%(1 - I, 3) - L%(1 - I, 6) + L%(I, 6)
+    Next
+
+    9264 S9 = Int((M9(0) + M9(1)) / 2 + .5)
+    If PO = 1 Then S9 = S9 - 11
+    For I = 0 To 1: M9(I) = 0
+        For I1 = 0 To 14
+            If B%(I, I1, 18) <> 0 Then 9265
+            M9(I) = M9(I) + Int((B%(I, I1, 2) + B%(I, I1, 6) + B%(I, I1, 7) + B%(I, I1, 9)) / B%(I, I1, 0) + .5)
+
+        9265 Next I1
+    Next I
+    For I = 0 To 1
+        For I1 = 0 To 14
+            If B%(I, I1, 18) <> 0 Then 9266
+            A(I, I1, 3) = Int(((B%(I, I1, 2) + B%(I, I1, 6) + B%(I, I1, 7) + B%(I, I1, 9)) / B%(I, I1, 0)) / M9(I) * S9 + .5)
+            If A(I, I1, 3) = 0 Then A(I, I1, 3) = 1
+
+        9266 Next I1
+    Next I
+
+    9300 If AP = 1 And U5 >= 2 Then 9499
+    Color 15, 0: Cls
+    Print "EDIT CONTRIBUTION PERCENTAGES OF PLAYERS FROM:"
+    Print
+    Color 14: Print "(0) - ";: Color T(0, 33), T(0, 34): Print B$(0, 0): Color , 0
+    Print
+    Color 14: Print "(1) - ";: Color T(1, 33), T(1, 34): Print B$(1, 0): Color , 0
+    Print
+    Color 14: Print "(2) - ";: Color 3: Print "PROCEED TO GAME": Color 15, 0
+    Print
+    Print "NOTE:: THE CONTRIBUTION RATING CONSISTS OF THE PLAYER'S"
+    Print "       FREQUENCY TO SHOOT, REBOUND, AND COMMIT FOULS."
+    9301 I$ = GetKeyPress$
+    I = Val(I$): If I < 0 Or I > 2 Then 9301
+    If I = 2 Then 9499
+    Cls
+    TX = 0: For I1 = 0 To 14: TX = TX + A(I, I1, 3): Next
+    For I1 = 0 To 14: A(I, I1, 3) = A(I, I1, 3) / TX * 100: Next
+
+    9305 Locate 2, 1: Print "CONTRIBUTION RATINGS FOR ";: Color T(I, 33), T(I, 34): Print B$(I, 0): Color 15, 0
+    Print: Print " #  PLAYER-POS         CX"
+    TY% = 0: For I1 = 0 To 14: TY% = TY% + A(I, I1, 3)
+        Print Using "## "; I1 + 1;: Print AA$(I, I1, 0); "-"; AA$(I, I1, 1);: Locate , 24: Print Using "##"; A(I, I1, 3)
+    Next
+    Locate , 23: Print Using "###"; TY%
+    Input "SELECT PLAYER TO CHANGE (0 TO CONTINUE)"; I1: I1 = I1 - 1
+    If I1 > 14 Or I1 < 0 Then 9310
+    Locate 22, 1: Print "ENTER NEW CX RATING FOR "; AA$(I, I1, 0); " ";: Input A(I, I1, 3)
+
+    9306 Locate 22, 1: Print "                                                    ": GoTo 9305
+
+    9310 If TY% = 100 Then 9320
+    Locate 22, 1: Print "TOTAL MUST ADD UP TO 100%! PRESS ANY KEY"
+    9311 I$ = GetKeyPress$
+    GoTo 9306
+
+    9320 For I1 = 0 To 14: A(I, I1, 3) = A(I, I1, 3) / 100 * TX: Next
+    GoTo 9300
+
+    9499 X3 = 0
+End Sub
+
+Sub TICKERUPDATE ()
+    If AP <> 1 Or AP%(2) > 31 Then GoTo 2580
+    If H = 1 And T <= 480 And SX%(1 + AP%(2), 0, 1) = -1 Then SX%(1 + AP%(2), 0, 1) = S(0, 0): SX%(1 + AP%(2), 1, 1) = S(1, 0): GoTo 2580
+    If H = 1 And T <= 240 And SX%(1 + AP%(2), 0, 2) = -1 Then SX%(1 + AP%(2), 0, 2) = S(0, 0): SX%(1 + AP%(2), 1, 2) = S(1, 0): GoTo 2580
+    If H > 1 And SX%(1 + AP%(2), 0, 3) = -1 Then SX%(1 + AP%(2), 0, 3) = S(0, 1): SX%(1 + AP%(2), 1, 3) = S(1, 1): GoTo 2580
+    If H = 2 And T <= 480 And SX%(1 + AP%(2), 0, 4) = -1 Then SX%(1 + AP%(2), 0, 4) = S(0, 0): SX%(1 + AP%(2), 1, 4) = S(1, 0): GoTo 2580
+    If H = 2 And T <= 240 And SX%(1 + AP%(2), 0, 5) = -1 Then SX%(1 + AP%(2), 0, 5) = S(0, 0): SX%(1 + AP%(2), 1, 5) = S(1, 0): GoTo 2580
+    If H > 2 And SX%(1 + AP%(2), 0, 6) = -1 Then For I2 = 6 To 8: SX%(1 + AP%(2), 0, I2) = S(0, 2) + S(0, 1): SX%(1 + AP%(2), 1, I2) = S(1, 2) + S(1, 1): Next: GoTo 2580
+    If H = 3 And T <= 480 And SX%(1 + AP%(2), 0, 9) = -1 Then SX%(1 + AP%(2), 0, 9) = S(0, 0): SX%(1 + AP%(2), 1, 9) = S(1, 0): GoTo 2580
+    If H = 3 And T <= 240 And SX%(1 + AP%(2), 0, 10) = -1 Then SX%(1 + AP%(2), 0, 10) = S(0, 0): SX%(1 + AP%(2), 1, 10) = S(1, 0): GoTo 2580
+    If H > 3 And SX%(1 + AP%(2), 0, 11) = -1 Then SX%(1 + AP%(2), 0, 11) = S(0, 3) + S(0, 2) + S(0, 1): SX%(1 + AP%(2), 1, 11) = S(1, 3) + S(1, 2) + S(1, 1): GoTo 2580
+    If H = 4 And T <= 480 And SX%(1 + AP%(2), 0, 12) = -1 Then SX%(1 + AP%(2), 0, 12) = S(0, 0): SX%(1 + AP%(2), 1, 12) = S(1, 0): GoTo 2580
+    If H = 4 And T <= 240 And SX%(1 + AP%(2), 0, 13) = -1 Then SX%(1 + AP%(2), 0, 13) = S(0, 0): SX%(1 + AP%(2), 1, 13) = S(1, 0): GoTo 2580
+    SX%(1 + AP%(2), 0, 14) = S(0, 0): SX%(1 + AP%(2), 1, 14) = S(1, 0)
+
+2580 End Sub
+
+
+Sub ADJFOUL ()
+    For I = 0 To 14
+        If A(P9, I, 12) >= 6 Then A(P9, I, 12) = 5: GoTo 8789
+    Next
+
+8789 End Sub
+
+
+Sub BADFT ()
+    If F3 = 1 Then U$ = "FIRST FREE THROW IS MISSED"
+    If F3 = 2 Then U$ = "SECOND FREE THROW IS MISSED"
+    If F3 = 3 Then U$ = "THIRD FREE THROW IS MISSED"
+    Call DELAY
+End Sub
+
+
+Sub CHANGESTRATEGY (I$)
+    If UCase$(I$) = "Z" And U5 = 1 And CT = 0 Or U5 = 2 Then 8155
+    If I$ = "/" And U5 = 1 And CT = 1 Or U5 = 2 Then 8155
+    TS% = 1
+    If UCase$(I$) = "Z" Then TS% = 0
+
+    8101 JJ = 8: Call FRAMEBOX: Print B$(TS%, 0); " SELECT STRATEGY:"
+
+    8102 Locate 12, 14
+    Locate , 14: Print "0 - RETURN TO GAME"
+    Locate , 14: Print "1 - SELECT OFFENSIVE STYLE OF PLAY"
+    Locate , 14: Print "2 - SELECT DEFENSIVE STYLE OF PLAY"
+    Locate , 14: Print "3 - FULL COURT PRESS "; P7$(P7(TS%))
+    8103 I$ = GetKeyPress$
+    I1 = Val(I$): If I1 < 0 Or I1 > 3 Then 8103
+    If I1 = 0 Then 8155
+    If I1 = 1 Then GoSub 8170: GoTo 8101
+    If I1 = 2 Then GoSub 8160: GoTo 8101
+    P7(TS%) = 1 - P7(TS%): GoTo 8102
+
+    8155 Color 7, 0: Call NEWSCREEN
+    GoTo 8166
+
+    8160 'DEFENSE
+    JJ = 10: Call FRAMEBOX: Print B$(TS%, 0); " SELECT DEFENSE:"
+    Locate 12, 14
+    Locate , 14: Print "1 - REGULAR MAN-TO-MAN"
+    Locate , 14: Print "2 - SAGGING MAN-TO-MAN"
+    Locate , 14: Print "3 - TRAPPING MAN-TO-MAN"
+    Locate , 14: Print "4 - TIGHT MAN-TO-MAN"
+    Locate , 14: Print "5 - LOOSE MAN-TO-MAN"
+    8161 I$ = GetKeyPress$
+    I1 = Val(I$): If I1 < 1 Or I1 > 5 Then 8161
+    D2(TS%) = I1
+    Return
+
+    8170 'DEFENSE
+    JJ = 8: Call FRAMEBOX: Print B$(TS%, 0); " SELECT OFFENSE:"
+    Locate 12, 14
+    Locate , 14: Print "0 - NORMAL"
+    Locate , 14: Print "1 - AGGRESSIVE"
+    Locate , 14: Print "2 - SAFE"
+    8171 I$ = GetKeyPress$
+    I1 = Val(I$): If I1 < 0 Or I1 > 2 Then 8171
+    O0%(TS%) = I1
+    Return
+
+8166 End Sub
+
+Sub COMPUTERCOACH ()
+    If P9 = 0 Then I6 = 1
+    If P9 = 1 Then I6 = 0
+    If S(P9, 0) - S(I6, 0) < 0 Then I5 = S(I6, 0) - S(P9, 0): GoTo 8867
+    R0 = Int(Rnd(1) * 100) + 1: P7(P9) = 0
+    If H <= 4 And R0 >= 41 Then D2(P9) = 1
+    If H <= 4 And R0 > 20 And R0 <= 40 Then D2(P9) = 4
+    If H <= 4 And R0 <= 20 Then D2(P9) = 2
+    If H = 3 And R0 >= 50 Then D2(P9) = 1
+    If H = 3 And R0 > 25 And R0 < 50 Then D2(P9) = 4
+    If H = 3 And R0 <= 25 Then D2(P9) = 2
+    If H = 4 And R0 >= 70 Then D2(P9) = 1
+    If H = 4 And R0 >= 35 And R0 < 70 Then D2(P9) = 2
+    If H = 4 And R0 < 35 Then D2(P9) = 4
+    If H > 4 And R0 >= 50 Then D2(P9) = 1
+    If H > 4 And R0 >= 25 And R0 < 50 Then D2(P9) = 2
+    If H > 4 And R0 < 25 Then D2(P9) = 4
+
+    8866 GoTo 8880
+
+    8867 If H <= 2 Then D2(P9) = 1: P7(P9) = 0
+    If H = 3 And I5 > 20 Then D2(P9) = 1: P7(P9) = 0
+    If H = 3 And I5 >= 10 And I5 < 20 Then D2(P9) = 1: P7(P9) = 1
+    If H = 3 And I5 < 10 Then D2(P9) = 1: P7(P9) = 0
+    If H = 4 And T >= 120 And I5 > 20 Then D2(P9) = 1: P7(P9) = 0
+    If H = 4 And T >= 120 And I5 > 10 And I5 < 20 Then D2(P9) = 3: P7(P9) = 1
+    If H = 4 And T >= 120 And I5 <= 10 Then D2(P9) = 1: P7(P9) = 1
+    If H = 4 And T < 120 And I5 > 10 Then D2(P9) = 1: P7(P9) = 0
+    If H = 4 And T < 120 And I5 <= 10 And I5 > 4 Then D2(P9) = 3: P7(P9) = 1
+    If H = 4 And T < 120 And I5 <= 4 Then D2(P9) = 1: P7(P9) = 1
+    If H > 4 Then D2(P9) = 1: P7(P9) = 1
+    GoTo 8866
+
+    8880 O0%(P9) = 0: If H < 3 Then O0%(P9) = 0
+    If H >= 3 And S(P9, 0) - S(I6, 0) < 0 And Int(Rnd(1) * 2) = 1 Then O0%(P9) = 1
+    If H >= 3 And S(P9, 0) - S(I6, 0) >= 0 And Int(Rnd(1) * 2) = 1 Then O0%(P9) = 2
+End Sub
+
+Sub COMPUTERSUBS ()
+    For I2 = 0 To 4
+        B1(P9, I2) = -1
+    Next
+    For I2 = 0 To 1
+        P$ = "G"
+
+        8781 For I1 = 14 To 0 Step -1: M6 = 0: M7 = 0
+            If Left$(AA$(P9, I1, 1), 1) <> P$ And Right$(AA$(P9, I1, 1), 1) <> P$ Then 8782
+            If AA$(P9, I1, 0) = "XXX" Or A(P9, I1, 12) >= 6 Or B%(P9, I1, 18) <> 0 Or H = 1 And A(P9, I1, 12) >= 2 + FS% Or H = 2 And A(P9, I1, 12) >= 4 + FS% Or H = 3 And A(P9, I1, 12) >= 5 Or H = 4 And T > 300 And A(P9, I1, 12) = 5 Then 8782
+            M6 = A(P9, I1, 3) - A(P9, I1, 7) - A(P9, I1, 11) - A(P9, I1, 12)
+            If B1(P9, I2) > -1 Then M7 = A(P9, B1(P9, I2), 3) - A(P9, B1(P9, I2), 7) - A(P9, B1(P9, I2), 11) - A(P9, B1(P9, I2), 12)
+            If H = 4 And T < 120 Or H > 4 Then M6 = A(P9, I1, 3)
+            If (H = 4 And T < 120 Or H > 4) And B1(P9, I2) > -1 Then M7 = A(P9, B1(P9, I2), 3)
+            If I2 = 1 And B1(P9, 0) = I1 Then 8782
+            If B1(P9, I2) = -1 Or M6 >= M7 Then B1(P9, I2) = I1
+
+        8782 Next I1
+        If B1(P9, I2) = -1 And FS% <> 1 And P$ = "G" Then P$ = "F": GoTo 8781
+        If B1(P9, I2) = -1 And FS% <> 1 And P$ = "F" Then P$ = "C": GoTo 8781
+        If B1(P9, I2) = -1 And FS% <> 1 Then FS% = 1: P$ = "G": GoTo 8781
+        FS% = 0
+    Next I2
+    For I2 = 2 To 3
+        P$ = "F"
+
+        8783 For I1 = 14 To 0 Step -1: M6 = 0: M7 = 0
+            If Left$(AA$(P9, I1, 1), 1) <> P$ And Right$(AA$(P9, I1, 1), 1) <> P$ Then 8784
+            If AA$(P9, I1, 0) = "XXX" Or A(P9, I1, 12) >= 6 Or B%(P9, I1, 18) <> 0 Or H = 1 And A(P9, I1, 12) >= 2 + FS% Or H = 2 And A(P9, I1, 12) >= 4 + FS% Or H = 3 And A(P9, I1, 12) >= 5 Or H = 4 And T > 300 And A(P9, I1, 12) = 5 Then 8784
+            M6 = A(P9, I1, 3) - A(P9, I1, 7) - A(P9, I1, 11) - A(P9, I1, 12)
+            If B1(P9, I2) > -1 Then M7 = A(P9, B1(P9, I2), 3) - A(P9, B1(P9, I2), 7) - A(P9, B1(P9, I2), 11) - A(P9, B1(P9, I2), 12)
+            If H = 4 And T < 120 Or H > 4 Then M6 = A(P9, I1, 3)
+            If (H = 4 And T < 120 Or H > 4) And B1(P9, I2) > -1 Then M7 = A(P9, B1(P9, I2), 3)
+            If I2 = 2 And (B1(P9, 0) = I1 Or B1(P9, 1) = I1) Then 8784
+            If I2 = 3 And (B1(P9, 0) = I1 Or B1(P9, 1) = I1 Or B1(P9, 2) = I1) Then 8784
+            If B1(P9, I2) = -1 Or M6 >= M7 Then B1(P9, I2) = I1
+
+        8784 Next I1
+        If B1(P9, I2) = -1 And FS% <> 1 And P$ = "F" Then P$ = "C": GoTo 8783
+        If B1(P9, I2) = -1 And FS% <> 1 And P$ = "C" Then P$ = "G": GoTo 8783
+        If B1(P9, I2) = -1 And FS% <> 1 Then FS% = 1: P$ = "F": GoTo 8783
+        FS% = 0
+    Next I2
+    P$ = "C"
+
+    8785 For I1 = 14 To 0 Step -1: M6 = 0: M7 = 0
+        If Left$(AA$(P9, I1, 1), 1) <> P$ And Right$(AA$(P9, I1, 1), 1) <> P$ Then 8786
+        If AA$(P9, I1, 0) = "XXX" Or A(P9, I1, 12) >= 6 Or B%(P9, I1, 18) <> 0 Or H = 1 And A(P9, I1, 12) >= 2 + FS% Or H = 2 And A(P9, I1, 12) >= 4 + FS% Or H = 3 And A(P9, I1, 12) >= 5 Or H = 4 And T > 300 And A(P9, I1, 12) = 5 Then 8786
+        M6 = A(P9, I1, 3) - A(P9, I1, 7) - A(P9, I1, 11) - A(P9, I1, 12)
+        If B1(P9, 4) > -1 Then M7 = A(P9, B1(P9, 4), 3) - A(P9, B1(P9, 4), 7) - A(P9, B1(P9, 4), 11) - A(P9, B1(P9, 4), 12)
+        If H = 4 And T < 120 Or H > 4 Then M6 = A(P9, I1, 3)
+        If (H = 4 And T < 120 Or H > 4) And B1(P9, I2) > -1 Then M7 = A(P9, B1(P9, I2), 3)
+        If B1(P9, 0) = I1 Or B1(P9, 1) = I1 Or B1(P9, 2) = I1 Or B1(P9, 3) = I1 Then 8786
+        If B1(P9, 4) = -1 Or M6 >= M7 Then B1(P9, 4) = I1
+
+    8786 Next I1
+    If B1(P9, I2) = -1 And FS% <> 1 And P$ = "C" Then P$ = "F": GoTo 8785
+    If B1(P9, I2) = -1 And FS% <> 1 And P$ = "F" Then P$ = "G": GoTo 8785
+    If B1(P9, I2) = -1 And FS% <> 1 Then FS% = 1: P$ = "F": GoTo 8785
+    FS% = 0
+    For I2 = 0 To 4
+        If B1(P9, I2) = -1 Then GoSub 8790: GoTo 8787
+    Next
+
+    8787 Call COMPUTERCOACH
+    GoTo 8788
+
+    8790 I = 15
+    For I2 = 0 To 4
+
+        8795 I = I - 1
+        If I < 0 Then Call ADJFOUL: GoTo 8790
+        If B%(P9, I, 18) <> 0 Or AA$(P9, I, 0) = "XXX" Or A(P9, I, 12) >= 6 Then 8795
+        B1(P9, I2) = I
+    Next I2
+    Return
+
+8788 End Sub
+
+Sub DELAY ()
+    If U6 = 0 Or PB% = 1 Then 2246
+
+    2249 If Len(U$) < 38 Then U$ = U$ + " ": GoTo 2249
+    U$ = Left$(U$, 38)
+    Locate 8, 1
+    If NL% = 1 Then A1$ = U$: VG(1) = T(P, 33): VH(1) = T(P, 34)
+    If NL% = 2 Then B1$ = U$: VG(2) = T(P, 33): VH(2) = T(P, 34)
+    If NL% = 3 Then C1$ = U$: VG(3) = T(P, 33): VH(3) = T(P, 34)
+    If NL% = 4 Then D1$ = U$: VG(4) = T(P, 33): VH(4) = T(P, 34)
+    If NL% = 5 Then E1$ = U$: VG(5) = T(P, 33): VH(5) = T(P, 34)
+    If NL% = 6 Then F1$ = U$: VG(6) = T(P, 33): VH(6) = T(P, 34)
+    If NL% = 7 Then G1$ = U$: VG(7) = T(P, 33): VH(7) = T(P, 34)
+    If NL% = 8 Then H1$ = U$: VG(8) = T(P, 33): VH(8) = T(P, 34)
+    If NL% > 8 Then
+        A1$ = B1$
+        B1$ = C1$
+        C1$ = D1$
+        D1$ = E1$
+        E1$ = F1$
+        F1$ = G1$
+        G1$ = H1$
+        H1$ = U$
+        For I = 1 To 7
+            VG(I) = VG(I + 1)
+            VH(I) = VH(I + 1)
+        Next
+        VG(8) = T(P, 33)
+        VH(8) = T(P, 34)
+    End If
+    NL% = NL% + 1
+    Color VG(1), VH(1): Print A1$
+    Color VG(2), VH(2): Print B1$
+    Color VG(3), VH(3): Print C1$
+    Color VG(4), VH(4): Print D1$
+    Color VG(5), VH(5): Print E1$
+    Color VG(6), VH(6): Print F1$
+    Color VG(7), VH(7): Print G1$
+    Color VG(8), VH(8): Print H1$
+    Color 15, 0
+    U! = Timer: While Timer < U! + U6: Wend
+
+2246 End Sub
+
+Sub EVENTS (COUNT, SPECIAL)
+    If Not _FileExists("EVENTS.BOX") Then 8450
+    Open "EVENTS.BOX" For Input As #1
+    For X = 1 To 13
+        Input #1, E%(X)
+    Next
+    Close 1
+    If H - 1 > E%(1) Then GoSub 7100: GoTo 8450
+    If S(1, 0) + S(0, 0) > E%(2) Then GoSub 7100: GoTo 8450
+    If R3(0) + R3(1) > E%(3) Then GoSub 7100: GoTo 8450
+    If S(1, 0) > E%(4) Or S(0, 0) > E%(4) Then GoSub 7100: GoTo 8450
+    If R3(1) > E%(5) Or R3(0) > E%(5) Then GoSub 7100: GoTo 8450
+    For I = 0 To 1
+        For I1 = 0 To 14
+            If A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) > E%(6) Then GoSub 7100: GoTo 8450
+            If A(I, I1, 11) > E%(7) Then GoSub 7100: GoTo 8450
+            If A(I, I1, 14) > E%(8) Then GoSub 7100: GoTo 8450
+            If A(I, I1, 15) > E%(9) Then GoSub 7100: GoTo 8450
+            If A(I, I1, 13) > E%(10) Then GoSub 7100: GoTo 8450
+            If W%(I, I1, 0) > E%(11) Then GoSub 7100: GoTo 8450
+        Next
+    Next
+    GoTo 8450
+
+    7100 SPEC$ = P$(1) + "*.SPC"
+    COUNT = FCount%(SPEC$)
+    COUNT = COUNT + 1
+    SPECIAL = 1
+    Return
+
+8450 End Sub
+
+Sub FRAMEBOX ()
+    SN = 1: Locate 8, 8: Color T(TS%, 33), T(TS%, 34)
+    Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 8 + II, 8
+    Print " º"; String$(61, 32); "º ";: Next
+    Locate 9 + JJ, 8
+    Print " Ó"; String$(61, 196); "½ ";: Locate 10, 15
+End Sub
+
+Sub MADEFT ()
+    A(P, B1(P, B), 10) = A(P, B1(P, B), 10) + 1
+    If U6 <> 0 Then
+        Locate F3 + 9, 1
+        Call MOREDELAY
+        Print F3; " GOOD"
+    End If
+    S(P, H) = S(P, H) + 1
+    S(P, 0) = S(P, 0) + 1
+    Call UPDATESCREEN
+    Call MOREDELAY
+End Sub
+
+Sub MAKEPBP ()
+    'PLAY BY PLAY
+    If U6 = 0 Then GoTo 1495
+    RN = Int(Rnd(1) * 100) + 1
+    On PT% GOTO 1410, 1420, 1430, 1440, 1445, 1450, 1460, 1470, 1480, 1490
+    U$ = AA$(P, B1(P, B), 0)
+
+    1410 'TURNOVER
+    U$ = AA$(P, B1(P, B), 0)
+    RN = Int(Rnd(1) * 14) + 1
+    If RN = 1 Then U$ = U$ + " TURNS THE BALL OVER"
+    If RN = 2 Then U$ = U$ + " THROWS IT AWAY"
+    If RN = 3 Then U$ = U$ + " IS WHISTLED FOR TRAVELING"
+    If RN = 4 Then U$ = U$ + " TURNS IT OVER"
+    If RN = 5 Then U$ = U$ + " LOSES CONTROL OF THE BALL"
+    If RN = 6 Then U$ = U$ + " LOSES IT OUT OF BOUNDS"
+    If RN = 7 Then U$ = U$ + " LOSES THE HANDLE"
+    If RN = 8 Then U$ = U$ + " LOSES IT"
+    If RN = 9 Then U$ = U$ + " IS CALLED FOR STEPS"
+    If RN = 10 Then U$ = U$ + " TRAVELS"
+    If RN = 11 Then U$ = U$ + " WALKS WITH IT"
+    If RN = 12 Then U$ = U$ + " LETS IT GET AWAY"
+    If RN = 13 Then U$ = U$ + " DOUBLE DRIBBLES"
+    If RN = 14 Then U$ = U$ + " LOSES CONTROL"
+    GoTo 1495
+
+    1420 'DUNK
+    RN = Int(Rnd(1) * 39) + 1
+    If RN = 1 Then U$ = "DIPSY-DOO DUNK-A-ROO!!!"
+    If RN = 2 Then U$ = AA$(P, B1(P, B), 0) + " MAKES IT HAMMER TIME!!!"
+    If RN = 3 Then U$ = AA$(P, B1(P, B), 0) + " SLAMS IT IN!!!"
+    If RN = 4 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
+    If RN = 5 Then U$ = AA$(P, B1(P, B), 0) + " SLAMS IT HOME!!!"
+    If RN = 6 Then U$ = AA$(P, B1(P, B), 0) + " JAMS IT HOME!!!"
+    If RN = 7 Then U$ = AA$(P, B1(P, B), 0) + " THROWS IT DOWN!!!"
+    If RN = 8 Then U$ = AA$(P, B1(P, B), 0) + " THUNDERSLAM!!!"
+    If RN = 9 Then U$ = "RIM ROCKING JAM!!!"
+    If RN = 10 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE MONSTER SLAM!!"
+    If RN = 11 Then U$ = AA$(P, B1(P, B), 0) + "POWER SLAMS IT!!!"
+    If RN = 12 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE 2-HANDED STUFF!!!"
+    If RN = 13 Then U$ = AA$(P, B1(P, B), 0) + " BACKWARDS JAM!!!"
+    If RN = 14 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE 1-HANDED SLAM!!!"
+    If RN = 15 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE REVERSE SLAM!!!"
+    If RN = 16 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE REVERSE JAM!!!"
+    If RN = 17 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE WINDMILL JAM!!!"
+    If RN = 18 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE WINDMILL SLAM!!!"
+    If RN = 19 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE TOMAHAWK SLAM!!!"
+    If RN = 20 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE 360 SLAM!!!"
+    If RN = 21 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE SPINNING SLAM!!!"
+    If RN = 22 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE LEFT HANDED DUNK!!!"
+    If RN = 23 Then U$ = "DOUBLE CLUTCH JAM!!!"
+    If RN = 24 Then U$ = AA$(P, B1(P, B), 0) + " GETS THE FLUSH!!!"
+    If RN = 25 Then U$ = AA$(P, B1(P, B), 0) + " PUNCHES IT HOME!!!"
+    If RN = 26 Then U$ = AA$(P, B1(P, B), 0) + "...DOUBLE PUMP SLAM!!!"
+    If RN = 27 Then U$ = AA$(P, B1(P, B), 0) + "...IN YOUR FACE SLAM!!!"
+    If RN = 28 Then U$ = AA$(P, B1(P, B), 0) + " IS UP": Call DELAY: U$ = "HE SPINS": Call DELAY: U$ = "BEHIND THE BACK SLAM!!!"
+    If RN = 29 Then U$ = "HE SLAMS IT HOME!!"
+    If RN = 30 Then U$ = "HE LAYS IT UP AND IN!!"
+    If RN = 31 Then U$ = "HE BANGS IT IN!!"
+    If RN = 32 Then U$ = "HE RAMS IT IN!!"
+    If RN = 33 Then U$ = "HE SLAMS IT IN!!!"
+    If RN = 34 Then U$ = "DIPSY-DOO DUNK-A-ROO!!!"
+    If RN = 35 Then U$ = "HE MAKES IT HAMMER TIME!!!"
+    If RN = 36 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
+    If RN = 37 Then U$ = AA$(P, B1(P, B), 0) + " IS UP": Call DELAY: U$ = "HE SPINS": Call DELAY: U$ = "BEHIND THE BACK SLAM!!!"
+    If RN = 38 Then U$ = "HE JAMS IT HOME!!!"
+    If RN = 39 Then U$ = "HE HAMMERS IT HOME!"
+    GoTo 1495
+
+    1425 If Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
+    Return
+
+    1426 If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+    Return
+
+    1427 If Int(Rnd(1) * 100) + 1 <= 2 Then DK% = 1
+    Return
+
+    1428 If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
+    If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
+    If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+    Return
+
+    1430 'SHOOTS...PZ%567 SML
+    U$ = AA$(P, B1(P, B), 0)
+    On PZ% GOTO 1431, 1432, 1433, 1434, 1435, 1436, 1436, 1438, 1439
+
+    1431 'BAD
+    If RN <= 40 Then U$ = U$ + " TAKES A TOUGH SHOT": GoTo 1495
+    If RN <= 45 Then U$ = U$ + " SHOOTS OFF BALANCE": GoTo 1495
+    If RN <= 50 Then U$ = U$ + " FORCES ONE UP": GoTo 1495
+    If RN <= 60 Then U$ = U$ + " SHOOTS UNDER PRESSURE": GoTo 1495
+    If RN <= 65 Then U$ = U$ + " WITH A BAD SHOT": GoTo 1495
+    If RN <= 70 Then U$ = U$ + " SHOOTS IN HEAVY TRAFFIC": GoTo 1495
+    If RN <= 75 Then U$ = U$ + " THROWS UP A PRAYER": GoTo 1495
+    If RN <= 80 Then U$ = U$ + " TAKES A BAD SHOT": GoTo 1495
+    If RN <= 85 Then U$ = U$ + " FORCES THE INSIDE SHOT": GoTo 1495
+    U$ = U$ + " TURNS AND SHOOTS": GoTo 1495
+
+    1432 'INSIDE W/ASSIST
+    If RN <= 10 Then U$ = "HE CUTS TO THE BASKET": Call DELAY: U$ = "TAKES IT UP": GoSub 1428: GoTo 1495
+    If RN <= 20 Then U$ = "HE TAKES IT TO THE HOLE": GoSub 1428: GoTo 1495
+    If RN <= 30 Then U$ = "HE TAKES IT TO THE HOOP": GoSub 1428: GoTo 1495
+    If RN <= 40 Then U$ = "HE LEANS IN AND SHOOTS": GoTo 1495
+    If RN <= 50 Then U$ = "HE PUTS IT UP": GoTo 1495
+    If RN <= 60 Then U$ = "HE TAKES IT TO THE BOARD": GoSub 1428: GoTo 1495
+    If RN <= 70 Then U$ = "HE PUTS IT OFF THE GLASS": GoTo 1495
+    If RN <= 80 And B = 4 Then U$ = "HE SHOOTS THE HOOK": GoTo 1495
+    If RN <= 80 And B <> 4 Then U$ = "HE GOES IN FOR THE LAYUP": GoTo 1495
+    If RN <= 90 Then U$ = "HE TAKES IT UP STRONG": GoSub 1428: GoTo 1495
+    If RN <= 95 Then U$ = "HE POWERS IT UP": GoSub 1428: GoTo 1495
+    U$ = "HE LAYS IT UP": GoTo 1495
+
+    1433 'PENETRATE
+    If Z3$ = "C" And RN <= 15 Then U$ = "HE PUTS IT OFF THE GLASS": GoTo 1495
+    If Z3$ = "C" And RN <= 25 Then U$ = "HE PIVOTS TO THE BASKET": GoTo 1495
+    If Z3$ = "C" And RN <= 40 Then U$ = "HE POWERS IT UP": GoTo 1495
+    If Z3$ = "C" And RN <= 58 Then U$ = "HE TAKES IT TO THE HOOP": GoSub 1425: GoTo 1495
+    If Z3$ = "C" And RN <= 70 Then U$ = "HE TAKES THE SHOT": GoTo 1495
+    If Z3$ = "C" And RN <= 72 Then U$ = "HE CURLS OFF A PICK IN THE PAINT": Call DELAY: U$ = "TAKES IT UP": GoSub 1425: GoTo 1495
+    If Z3$ = "C" And RN <= 74 Then U$ = "HE MAKES A NICE SPIN MOVE": Call DELAY: U$ = "AND SOARS TO THE HOOP": GoSub 1425: GoTo 1495
+    If Z3$ = "C" Then U$ = "HE TAKES IT UP STRONG": GoSub 1425: GoTo 1495
+    If Z3$ = "F" And RN <= 16 Then U$ = "HE TAKES IT UP": GoSub 1426: GoTo 1495
+    If Z3$ = "F" And RN <= 32 Then U$ = "HE SPINS FREE": Call DELAY: U$ = "SHOOTS": GoSub 1426: GoTo 1495
+    If Z3$ = "F" And RN <= 48 Then U$ = "HE GETS LOOSE IN THE PAINT": Call DELAY: U$ = "TAKES IT UP": GoSub 1426: GoTo 1495
+    If Z3$ = "F" And RN <= 64 Then U$ = "HE PUTS IT UP": GoTo 1495
+    If Z3$ = "F" And RN <= 67 Then U$ = "HE CURLS OFF A PICK IN THE PAINT": Call DELAY: U$ = "TAKES IT UP": GoSub 1426: GoTo 1495
+    If Z3$ = "F" And RN <= 69 Then U$ = "HE MAKES A NICE SPIN MOVE": Call DELAY: U$ = "AND SOARS TO THE HOOP": GoSub 1426: GoTo 1495
+    If Z3$ = "F" And RN <= 71 Then U$ = "HE DRIVES THE BASELINE": Call DELAY: U$ = "SPINS RIGHT AND GOES UP": GoSub 1426: GoTo 1495
+    If Z3$ = "F" And RN = 72 Then U$ = "HE SLICES IN THE HOLE": Call DELAY: U$ = "UNDERHAND SCOOP SHOT": GoTo 1495
+    If Z3$ = "F" And RN = 73 Then U$ = "STRONG CUT ALONG THE BASELINE": Call DELAY: U$ = "DOUBLE PUMP REVERSE LAYUP": GoTo 1495
+    If Z3$ = "F" And RN = 74 Then U$ = "HE PENETRATES": Call DELAY: U$ = "GORGEOUS FINGER ROLL!": GoTo 1495
+    If Z3$ = "F" And RN > 80 Then U$ = "HE SHOOTS": GoTo 1495
+    If Z3$ = "F" Then U$ = "HE TAKES THE SHOT": GoTo 1495
+    If RN <= 25 Then U$ = "HE SPINS FREE": Call DELAY: U$ = "SHOOTS": GoTo 1495
+    If RN <= 50 Then U$ = "HE TAKES IT UP UNDER THE BASKET": GoSub 1427: GoTo 1495
+    If RN <= 52 Then U$ = "HE MAKES A NICE SPIN MOVE": Call DELAY: U$ = "AND SOARS TO THE HOOP": GoSub 1427: GoTo 1495
+    If RN <= 54 Then U$ = "HE BLOWS PAST TWO DEFENDERS": GoTo 1495
+    If RN <= 56 Then U$ = "HE DRIVES THE BASELINE": Call DELAY: U$ = "SPINS RIGHT AND GOES UP": GoSub 1427: GoTo 1495
+    If RN = 57 Then U$ = "HE SLICES IN THE HOLE": Call DELAY: U$ = "UNDERHAND SCOOP SHOT": GoTo 1495
+    If RN = 58 Then U$ = "STRONG CUT ALONG THE BASELINE": Call DELAY: U$ = "DOUBLE PUMP REVERSE LAYUP": GoTo 1495
+    If RN = 59 Then U$ = "HE PENETRATES": Call DELAY: U$ = "GORGEOUS FINGER ROLL!": GoTo 1495
+    If RN <= 75 Then U$ = "HE TAKES THE JUMPER": GoTo 1495
+    If RN <= 90 Then U$ = "HE STOPS": Call DELAY: U$ = "SHOOTS": GoTo 1495
+    If RN <= 91 Then U$ = "HE LOOKS TO PASS": Call DELAY: U$ = "NO ONE IS OPEN": Call DELAY: U$ = "HE PUTS IT UP": GoTo 1495
+    U$ = "HE TAKES THE SHOT": GoTo 1495
+
+    1434 'THREE!
+    If FT% = 1 And RN <= 50 Then U$ = U$ + " THROWS UP A PRAYER"
+    If FT% = 1 And RN > 50 Then U$ = U$ + " LAUNCHES A THREE"
+    If FT% = 1 Then FT% = 0: GoTo 1495
+    If RN <= 10 Then U$ = U$ + " TRIES FOR THREE!"
+    If RN > 10 And RN <= 20 Then U$ = U$ + " SHOOTS FROM 3-POINT RANGE!"
+    If RN > 20 And RN <= 30 Then U$ = U$ + " HOISTS A THREE!"
+    If RN > 30 And RN <= 40 Then U$ = U$ + " BOMBS A THREE FROM THE CORNER!"
+    If RN > 40 And RN <= 50 Then U$ = U$ + " FIRES FROM THE 3-POINT LINE!"
+    If RN > 50 And RN <= 60 Then U$ = U$ + " SHOOTS FOR THREE!"
+    If RN > 60 And RN <= 70 Then U$ = U$ + " SHOOTS THE 3-POINTER!"
+    If RN > 70 And RN <= 80 Then U$ = U$ + " FOR 3...!"
+    If RN > 80 And RN <= 90 Then U$ = U$ + " PUTS UP THE TREY!"
+    If RN > 90 Then U$ = U$ + " TAKES THE 3-POINTER!"
+    GoTo 1495
+
+    1435 'SHORT JUMP
+    RN = Int(Rnd(1) * 59) + 1
+    If RN = 1 Then U$ = U$ + " WITH A TWISTING JUMPER"
+    If RN = 2 Then U$ = U$ + " SHOOTS THE J"
+    If RN = 3 And B = 4 Then U$ = U$ + " RELEASES THE HOOK"
+    If RN = 3 And B <> 4 Then U$ = U$ + " TAKES THE SHOT"
+    If RN = 4 Then U$ = U$ + " WITH A SHORT JUMPER"
+    If RN = 5 Then U$ = U$ + " WITH THE 10 FOOTER"
+    If RN = 6 And B <> 4 Then U$ = U$ + " WITH THE RUNNER"
+    If RN = 6 And B = 4 Then U$ = U$ + " WITH THE RUNNING HOOK"
+    If RN = 7 And B = 4 Then U$ = U$ + " WITH A SWEEPING HOOK"
+    If RN = 7 And B <> 4 Then U$ = U$ + " WORKS FREE AND SHOOTS"
+    If RN = 8 And B <> 4 Then U$ = U$ + " TAKES THE SHOT"
+    If RN = 8 And B = 4 Then U$ = U$ + " WITH A BABY HOOK SHOT"
+    If RN = 9 Then U$ = U$ + " LEANS IN AND SHOOTS"
+    If RN = 10 Then U$ = U$ + " SHOOTS"
+    If RN = 11 Then U$ = U$ + " SHOOTS FALLING AWAY"
+    If RN = 12 Then U$ = U$ + " LEANS IN FOR THE SHOT"
+    If RN = 13 Then U$ = U$ + " TAKES THE LEFT HANDER"
+    If RN = 14 Then U$ = U$ + " HARD TO THE HOLE..."
+    If RN = 15 Then U$ = U$ + " FLIPS IT UP"
+    If RN = 16 Then U$ = U$ + " FORCES THE INSIDE SHOT"
+    If RN = 17 Then U$ = U$ + " CUTS TO THE BASKET"
+    If RN = 18 Then U$ = U$ + " TAKES IT IN THE PAINT"
+    If RN = 19 Then U$ = U$ + " FLOATS IT OVER HIS MAN"
+    If RN = 20 Then U$ = U$ + " TAKES HIS MAN INSIDE"
+    If RN = 21 Then U$ = U$ + " WHEELS IN THE LANE"
+    If RN = 22 Then U$ = U$ + " CUTS INSIDE FOR THE SHOT"
+    If RN = 23 Then U$ = U$ + " PENETRATES AND SHOOTS"
+    If RN = 24 Then U$ = U$ + " SLICES INSIDE"
+    If RN = 25 Then U$ = U$ + " LOOKS FOR TWO"
+    If RN = 26 Then U$ = U$ + " DRIVES INTO THE PAINT"
+    If RN = 27 Then U$ = U$ + " HAS THE BASELINE JUMPER"
+    If RN = 28 Then U$ = U$ + " GLIDES TO THE HOLE"
+    If RN = 29 Then U$ = U$ + " GETS INSIDE FOR THE SHOT"
+    If RN = 30 Then U$ = U$ + " SPINS TOWARD THE HOOP"
+    If RN = 31 Then U$ = U$ + " FROM SHORT RANGE"
+    If RN = 32 Then U$ = U$ + " GOES BASELINE"
+    If RN = 33 Then U$ = U$ + " PENETRATES AND SHOOTS"
+    If RN = 34 Then U$ = U$ + " FROM 8 FEET"
+    If RN = 35 Then U$ = U$ + " FROM 6 FEET"
+    If RN = 36 Then U$ = U$ + " FROM 5 FEET"
+    If RN = 37 Then U$ = U$ + " DRIVES TO THE HOLE"
+    If RN = 38 Then U$ = U$ + " GLIDES TO THE HOLE"
+    If RN = 39 Then U$ = U$ + " GETS INSIDE FOR THE SHOT"
+    If RN = 40 Then U$ = U$ + " GOES TO THE HOLE"
+    If RN = 41 Then U$ = U$ + " CUTS INSIDE"
+    If RN = 42 Then U$ = U$ + " SPINS INSIDE"
+    If RN = 43 Then U$ = U$ + " BREAKS INSIDE"
+    If RN = 44 Then U$ = U$ + " SNEAKS INSIDE"
+    If RN = 45 Then U$ = U$ + " SCOOTS INSIDE"
+    If RN = 46 Then U$ = U$ + " WORKS IT INSIDE"
+    If RN = 47 Then U$ = U$ + " KNIFES INSIDE"
+    If RN = 48 Then U$ = U$ + " SCISSORS THROUGH"
+    If RN = 49 Then U$ = U$ + " BANGS INSIDE"
+    If RN = 50 Then U$ = U$ + " SLICES INSIDE"
+    If RN = 51 Then U$ = U$ + " PUMPS AND SHOOTS"
+    If RN = 52 Then U$ = U$ + " DOUBLE PUMPS AND SHOOTS"
+    If RN = 53 Then U$ = U$ + "...ONE HANDED FADE AWAY"
+    If RN = 54 Then U$ = U$ + "...LEFT HANDED FADE AWAY"
+    If RN = 55 Then U$ = U$ + "...HIGH ARCHING SHOT"
+    If RN = 56 Then U$ = U$ + " WITH A RUNNING LEFT HANDER"
+    If RN = 57 Then U$ = U$ + " WITH A RUNNING SCOOP SHOT"
+    If RN = 58 Then U$ = U$ + " WITH THE SCOOP SHOT"
+    If RN = 59 Then U$ = U$ + " WITH THE FINGER ROLL"
+    GoTo 1495
+
+    1436 RN = Int(Rnd(1) * 59) + 1
+    If RN = 1 Then U$ = U$ + " POPS FROM OUTSIDE"
+    If RN = 2 Then U$ = U$ + " DECIDES TO SHOOT IT"
+    If RN = 3 Then U$ = U$ + " FIRES THE FADE-AWAY"
+    If RN = 4 Then U$ = U$ + " LETS IT FLY"
+    If RN = 5 Then U$ = U$ + " LAUNCHES ONE"
+    If RN = 6 Then U$ = U$ + " WITH THE OUTSIDE SHOT"
+    If RN = 7 Then U$ = U$ + " OUT OF THE CORNER"
+    If RN = 8 Then U$ = U$ + " PUTS IT UP FROM 18"
+    If RN = 9 Then U$ = U$ + " SPOTS UP OUTSIDE"
+    If RN = 10 Then U$ = U$ + " RELEASES THE JUMPER"
+    If RN = 11 Then U$ = U$ + " FROM THE TOP OF THE KEY"
+    If RN = 12 Then U$ = U$ + " FIRES FROM THE LEFT WING"
+    If RN = 13 Then U$ = U$ + " TRIES THE 12 FOOTER"
+    If RN = 14 Then U$ = U$ + " PULLS UP AND POPS"
+    If RN = 15 Then U$ = U$ + " FIRES FROM 15"
+    If RN = 16 Then U$ = U$ + " FROM THE PERIMETER"
+    If RN = 17 Then U$ = U$ + " TURNS AND SHOOTS"
+    If RN = 18 Then U$ = U$ + " SHOOTS OFF THE SCREEN"
+    If RN = 19 Then U$ = U$ + " FAKES AND SHOOTS"
+    If RN = 20 Then U$ = U$ + " FIRES AWAY"
+    If RN = 21 Then U$ = U$ + " POPS FROM THE BASELINE"
+    If RN = 22 Then U$ = U$ + " DRIVES THE LANE"
+    If RN = 23 Then U$ = U$ + " TAKES THE SHOT"
+    If RN = 24 Then U$ = U$ + " WORKS FREE AND FIRES"
+    If RN = 25 Then U$ = U$ + " SHOOTS OVER HIS MAN"
+    If RN = 26 Then U$ = U$ + " SHOOTS FALLING AWAY"
+    If RN = 27 Then U$ = U$ + " FAKES AND SHOOTS"
+    If RN = 28 Then U$ = U$ + " FIRES AWAY"
+    If RN = 29 Then U$ = U$ + " POPS FROM THE BASELINE"
+    If RN = 30 Then U$ = U$ + " DRIVES THE LANE"
+    If RN = 31 Then U$ = U$ + " TAKES THE SHOT"
+    If RN = 32 Then U$ = U$ + " WORKS FREE AND FIRES"
+    If RN = 33 Then U$ = U$ + " SHOOTS FROM 15"
+    If RN = 34 Then U$ = U$ + " SHOOTS"
+    If RN = 35 Then U$ = U$ + " TAKES THE JUMPER"
+    If RN = 36 Then U$ = U$ + " FROM THE RIGHT CORNER"
+    If RN = 37 Then U$ = U$ + " FROM THE LEFT CORNER"
+    If RN = 38 Then U$ = U$ + " FROM THE KEY"
+    If RN = 39 Then U$ = U$ + " FIRES FROM OUTSIDE"
+    If RN = 40 Then U$ = U$ + " PUTS IT UP FROM 16"
+    If RN = 41 Then U$ = U$ + " FROM THE PERIMETER"
+    If RN = 42 Then U$ = U$ + " FAKES AND SHOOTS"
+    If RN = 43 Then U$ = U$ + " FROM AROUND 16 FEET"
+    If RN = 44 Then U$ = U$ + " PUTS IT UP"
+    If RN = 45 Then U$ = U$ + " WITH A RUNNING ONE-HANDER"
+    If RN = 46 Then U$ = U$ + " PULLS UP"
+    If RN = 47 Then U$ = U$ + " KISSES THE GLASS"
+    If RN = 48 Then U$ = U$ + " SPINS AND SHOOTS"
+    If RN = 49 Then U$ = U$ + " PUTS IT UP FROM 16"
+    If RN = 50 Then U$ = U$ + " WITH A LONG JUMPER"
+    If RN = 51 Then U$ = U$ + " PUMPS AND SHOOTS"
+    If RN = 52 Then U$ = U$ + " DOUBLE PUMPS AND SHOOTS"
+    If RN = 53 Then U$ = U$ + "...ONE HANDED FADE AWAY"
+    If RN = 54 Then U$ = U$ + "...LEFT HANDED FADE AWAY"
+    If RN = 55 Then U$ = U$ + "...HIGH ARCHING SHOT"
+    If RN = 56 Then U$ = U$ + " WITH A RUNNING LEFT HANDER"
+    If RN = 57 Then U$ = U$ + " WITH A RUNNING SCOOP SHOT"
+    If RN = 58 Then U$ = U$ + " WITH THE SCOOP SHOT"
+    If RN = 59 Then U$ = U$ + " WITH THE FINGER ROLL"
+    GoTo 1495
+
+    1438 If RN <= 20 Then U$ = "HE SAILS TO THE HOOP": GoTo 1495
+    If RN <= 23 Then U$ = "HE TAKES IT TO THE BUCKET": GoTo 1495
+    If RN <= 26 Then U$ = "HE TAKES IT TO THE HOLE": GoTo 1495
+    If RN <= 29 Then U$ = "HE SLASHES TO THE HOLE": GoTo 1495
+    If RN <= 32 Then U$ = "HE SLASHES TO THE BUCKET": GoTo 1495
+    If RN <= 35 Then U$ = "HE SOARS TO THE BUCKET": GoTo 1495
+    If RN <= 38 Then U$ = "HE SOARS TO THE HOLE": GoTo 1495
+    If RN <= 40 Then U$ = "HE GLIDES TO THE HOLE": GoTo 1495
+    If RN <= 60 Then U$ = "HE GOES IN STRONG": GoTo 1495
+    If RN <= 80 Then U$ = "HE TAKES IT IN": GoTo 1495
+    If RN <= 90 Then U$ = "HE TAKES A DEFENDER WITH HIM": GoTo 1495
+    U$ = "HE GOES UP WITH IT": GoTo 1495
+
+    1439 'BACK AFTER REB
+    U$ = "HE "
+    RN = Int(Rnd(1) * 11) + 1
+    If RN = 1 Then U$ = U$ + "TAKES IT BACK UP"
+    If RN = 2 Then U$ = U$ + "GOES BACK UP WITH IT"
+    If RN = 3 Then U$ = U$ + "POWERS HIS WAY UP WITH IT"
+    If RN = 4 Then U$ = U$ + "GOES STRONG TO THE BASKET"
+    If RN = 5 Then U$ = U$ + "MUSCLES IT UP"
+    If RN = 6 Then U$ = U$ + "SHOOTS"
+    If RN = 7 Then U$ = U$ + "TAKES IT TO THE GOAL"
+    If RN = 8 Then U$ = U$ + "PUTS IT UP AGAIN"
+    If RN = 9 Then U$ = U$ + "SHOOTS IT AGAIN"
+    If RN = 10 Then U$ = U$ + "CLAWS HIS WAY UP"
+    If RN = 11 Then U$ = U$ + "SHOOTS IN TRAFFIC"
+    If B = 2 Or B = 3 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+    If B = 4 And Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
+    GoTo 1495
+
+    1440 'THREE GOOD
+    U$ = "HE "
+    If RN <= 10 Then U$ = U$ + "FILLS UP THE BASKET!!!": GoTo 1495
+    If RN <= 20 Then U$ = U$ + "HITS THE TREY!!!": GoTo 1495
+    If RN <= 30 Then U$ = "IT'S GOOOODD!!": GoTo 1495
+    If RN <= 40 Then U$ = U$ + "GETS IT!!!": GoTo 1495
+    If RN <= 50 Then U$ = "COUNT IT!!": GoTo 1495
+    If RN <= 60 Then U$ = U$ + "RINGS IT UP!!!": GoTo 1495
+    If RN <= 80 Then U$ = U$ + "DRAINS IT!!!": GoTo 1495
+    If RN <= 90 Then U$ = "HE BURIES IT!!!": GoTo 1495
+    U$ = "IT'S ALL NET!!!"
+    GoTo 1495
+
+    1445 'THREE BAD
+    U$ = "HE "
+    If RN <= 20 Then U$ = U$ + "GETS NONE": GoTo 1495
+    If RN <= 25 Then U$ = "IT NEVER HAD A CHANCE": GoTo 1495
+    If RN <= 35 Then U$ = "AIRRRR BALLLL!!": GoTo 1495
+    If RN <= 40 Then U$ = U$ + "MISFIRES": GoTo 1495
+    If RN <= 60 Then U$ = "IT'S OFF THE RIM...NO GOOD!": GoTo 1495
+    If RN <= 80 Then U$ = "IT'S SHORT": GoTo 1495
+    U$ = U$ + "MISSES": GoTo 1495
+
+    1450 'FAST BREAK
+    U$ = AA$(P, B1(P, B), 0)
+    RN = Int(Rnd(1) * 38) + 1
+    If RN = 1 Then U$ = U$ + " HAS IT ON THE FAST BREAK!"
+    If RN = 2 Then U$ = U$ + " IS IN TRANSITION!"
+    If RN = 3 Then U$ = U$ + " STARTS THE BREAK!"
+    If RN = 4 Then U$ = U$ + " IS DOWN COURT IN A HURRY!"
+    If RN = 5 Then U$ = U$ + " IS ON THE RUN!"
+    If RN = 6 Then U$ = U$ + " GOES COAST TO COAST!"
+    If RN = 7 Then U$ = U$ + " ON THE BREAK!"
+    If RN = 8 Then U$ = U$ + " ON THE RUN!"
+    If RN = 9 Then U$ = U$ + " ON THE FAST BREAK!"
+    If RN = 10 Then U$ = U$ + " HAS THE FAST BREAK!"
+    If RN = 11 Then U$ = U$ + " BREAKS INTO THE FORECOURT!"
+    If RN = 12 Then U$ = U$ + " FLIES UPCOURT!"
+    If RN = 13 Then U$ = U$ + " STARTS THE FASTBREAK!"
+    If RN = 14 Then U$ = U$ + " ON THE MOVE!"
+    If RN = 15 Then U$ = U$ + " IN TRANSITION!"
+    If RN = 16 Then U$ = U$ + " DOWN COURT IN A HURRY!"
+    If RN = 17 Then U$ = U$ + " CHARGES ACROSS THE LINE!"
+    If RN = 18 Then U$ = U$ + " BREAKS QUICKLY!"
+    If RN = 19 Then U$ = U$ + " BREAKS DOWN COURT!"
+    If RN = 20 Then U$ = U$ + " STARTS THE RUNNING GAME!"
+    If RN = 21 Then U$ = U$ + " FLIES DOWN THE FLOOR!"
+    If RN = 22 Then U$ = U$ + " GOES RIGHT TO WORK!"
+    If RN = 23 Then U$ = U$ + " BACK THE OTHER WAY!"
+    If RN = 24 Then U$ = U$ + " QUICKLY UP THE FLOOR!"
+    If RN = 25 Then U$ = U$ + " PUSHES IT UP COURT!"
+    If RN = 26 Then U$ = U$ + " WASTES NO TIME!"
+    If RN = 27 Then U$ = U$ + " UPS THE TEMPO!"
+    If RN = 28 Then U$ = U$ + " HUSTLES DOWN COURT!"
+    If RN = 29 Then U$ = U$ + " RUSHES UP THE FLOOR!"
+    If RN = 30 Then U$ = U$ + " ON THE MOVE!"
+    If RN = 31 Then U$ = U$ + " STREAKS UP THE COURT!"
+    If RN = 32 Then U$ = U$ + " FLIES DOWN THE COURT!"
+    If RN = 33 Then U$ = U$ + " JETS DOWN COURT!"
+    If RN = 34 Then U$ = U$ + " QUICKLY GETS IT UP COURT!"
+    If RN = 35 Then U$ = U$ + " TAKES IT COAST TO COAST!"
+    If RN = 36 Then U$ = U$ + " IS RUNNING AND GUNNING!"
+    If RN = 37 Then U$ = U$ + " FLIES OVER THE TIME LINE!"
+    If RN = 38 Then U$ = U$ + " RUSHES IT UP THE FLOOR!"
+    GoTo 1495
+
+    1460 'FAST BREAK SCORE
+    FB% = 0
+    RN = Int(Rnd(1) * 39) + 1
+    If RN = 1 Then U$ = "DIPSY-DOO DUNK-A-ROO!!!"
+    If RN = 2 Then U$ = AA$(P, B1(P, B), 0) + " MAKES IT HAMMER TIME!!!"
+    If RN = 3 Then U$ = AA$(P, B1(P, B), 0) + " SLAMS IT IN!!!"
+    If RN = 4 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
+    If RN = 5 Then U$ = AA$(P, B1(P, B), 0) + " SLAMS IT HOME!!!"
+    If RN = 6 Then U$ = AA$(P, B1(P, B), 0) + " JAMS IT HOME!!!"
+    If RN = 7 Then U$ = AA$(P, B1(P, B), 0) + " THROWS IT DOWN!!!"
+    If RN = 8 Then U$ = AA$(P, B1(P, B), 0) + " THUNDERSLAM!!!"
+    If RN = 9 Then U$ = "RIM ROCKING JAM!!!"
+    If RN = 10 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE MONSTER SLAM!!"
+    If RN = 11 Then U$ = AA$(P, B1(P, B), 0) + "POWER SLAMS IT!!!"
+    If RN = 12 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE 2-HANDED STUFF!!!"
+    If RN = 13 Then U$ = AA$(P, B1(P, B), 0) + " BACKWARDS JAM!!!"
+    If RN = 14 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE 1-HANDED SLAM!!!"
+    If RN = 15 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE REVERSE SLAM!!!"
+    If RN = 16 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE REVERSE JAM!!!"
+    If RN = 17 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE WINDMILL JAM!!!"
+    If RN = 18 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE WINDMILL SLAM!!!"
+    If RN = 19 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE TOMAHAWK SLAM!!!"
+    If RN = 20 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE 360 SLAM!!!"
+    If RN = 21 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE SPINNING SLAM!!!"
+    If RN = 22 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE LEFT HANDED DUNK!!!"
+    If RN = 23 Then U$ = "DOUBLE CLUTCH JAM!!!"
+    If RN = 24 Then U$ = AA$(P, B1(P, B), 0) + " GETS THE FLUSH!!!"
+    If RN = 25 Then U$ = AA$(P, B1(P, B), 0) + " PUNCHES IT HOME!!!"
+    If RN = 26 Then U$ = AA$(P, B1(P, B), 0) + "...DOUBLE PUMP SLAM!!!"
+    If RN = 27 Then U$ = AA$(P, B1(P, B), 0) + "...IN YOUR FACE SLAM!!!"
+    If RN = 28 Then U$ = AA$(P, B1(P, B), 0) + " IS UP": Call DELAY: U$ = "HE SPINS": Call DELAY: U$ = "BEHIND THE BACK SLAM!!!"
+    If RN = 29 Then U$ = "HE SLAMS IT HOME!!"
+    If RN = 30 Then U$ = "HE LAYS IT UP AND IN!!"
+    If RN = 31 Then U$ = "HE BANGS IT IN!!"
+    If RN = 32 Then U$ = "HE RAMS IT IN!!"
+    If RN = 33 Then U$ = "HE SLAMS IT IN!!!"
+    If RN = 34 Then U$ = "DIPSY-DOO DUNK-A-ROO!!!"
+    If RN = 35 Then U$ = "HE MAKES IT HAMMER TIME!!!"
+    If RN = 36 Then U$ = AA$(P, B1(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
+    If RN = 37 Then U$ = AA$(P, B1(P, B), 0) + " IS UP": Call DELAY: U$ = "HE SPINS": Call DELAY: U$ = "BEHIND THE BACK SLAM!!!"
+    If RN = 38 Then U$ = "HE JAMS IT HOME!!!"
+    If RN = 39 Then U$ = "HE HAMMERS IT HOME!"
+    GoTo 1495
+
+    1470 'MISS
+    If PZ% = 8 Then PZ% = 0: FB% = 0: GoTo 1475
+    RN = Int(Rnd(1) * 50) + 1
+    If RN = 1 Then U$ = "IT RATTLES IN AND OUT...NO GOOD"
+    If RN = 2 Then U$ = "OFF THE IRON"
+    If RN = 3 Then U$ = "IT SPINS IN AND OUT"
+    If RN = 4 Then U$ = "IT'S OFF THE GLASS"
+    If RN = 5 Then U$ = "IT'S NO GOOD"
+    If RN = 6 Then U$ = "IT'S OFF THE MARK"
+    If RN = 7 Then U$ = "IT'S A BRICK"
+    If RN = 8 Then U$ = "OFF THE RIM"
+    If RN = 9 Then U$ = "NOT EVEN CLOSE!"
+    If RN = 10 Then U$ = "NO GOOD"
+    If RN = 11 Then U$ = "HE MISSES"
+    If RN = 12 Then U$ = "DOESN'T GET THE ROLL"
+    If RN = 13 Then U$ = "OFF THE GLASS"
+    If RN = 14 Then U$ = "FALLS SHORT"
+    If RN = 15 Then U$ = "NO GOOD"
+    If RN = 16 Then U$ = "NO"
+    If RN = 17 Then U$ = "HE MISSES"
+    If RN = 18 Then U$ = "IN AND OUT"
+    If RN = 19 Then U$ = "OFF THE RIM"
+    If RN = 20 Then U$ = "OFF THE IRON"
+    If RN = 21 Then U$ = "IT'S NOT THERE"
+    If RN = 22 Then U$ = "OFF TARGET"
+    If RN = 23 Then U$ = "IT RATTLES OUT"
+    If RN = 24 Then U$ = "IT DOESN'T FALL"
+    If RN = 25 Then U$ = "IT BOUNCES OFF"
+    If RN = 26 Then U$ = "IT ROLLS OFF"
+    If RN = 27 Then U$ = "SHORT"
+    If RN = 28 Then U$ = "IT DOESN'T GO DOWN"
+    If RN = 29 Then U$ = "IT'S NO GOOD"
+    If RN = 30 Then U$ = "NO GOOD"
+    If RN = 31 Then U$ = "HE MISSES"
+    If RN = 32 Then U$ = "IT'S A BRICK"
+    If RN = 33 Then U$ = "HE FAILS TO CONNECT"
+    If RN = 34 Then U$ = "OFF THE SIDE OF THE RIM"
+    If RN = 35 Then U$ = "IT COMES UP SHORT"
+    If RN = 36 Then U$ = "IT ROLLS OUT"
+    If RN = 37 Then U$ = "AROUND AND OUT"
+    If RN = 38 Then U$ = "OFF THE BACK OF THE IRON"
+    If RN = 39 Then U$ = "ON THE FRONT RIM...ROLLS OFF"
+    If RN = 40 Then U$ = "IN THE AIR...NO GOOD"
+    If RN = 41 Then U$ = "TOO SHORT"
+    If RN = 42 Then U$ = "NO GOOD"
+    If RN = 43 Then U$ = "IT COMES UP SHORT"
+    If RN = 44 Then U$ = "IT ROLLS OUT"
+    If RN = 45 Then U$ = "IN AND OUT"
+    If RN = 46 Then U$ = "OFF THE FRONT OF THE IRON"
+    If RN = 47 Then U$ = "ON THE RIM...ROLLS OFF"
+    If RN = 48 Then U$ = "OFF THE FRONT OF THE RIM"
+    If RN = 49 Then U$ = "TOO SHORT"
+    If RN = 50 Then U$ = "TOO STRONG"
+    GoTo 1495
+
+    1475 U$ = "HE "
+    If RN <= 20 Then U$ = U$ + "MISSES THE EASY BASKET!": GoTo 1495
+    If RN <= 40 Then U$ = U$ + "JAMS IT TOO HARD!!": GoTo 1495
+    If RN <= 60 Then U$ = U$ + "SLAMS IT OFF THE IRON...NO GOOD!": GoTo 1495
+    If RN <= 80 Then U$ = U$ + "CAN'T GET IT DOWN!": GoTo 1495
+    U$ = U$ + "BLOWS THE EASY BASKET!!": GoTo 1495
+
+    1480 'NOPASS
+    U$ = AA$(P, B1(P, B), 0) + " "
+    RN = Int(Rnd(1) * 56) + 1
+    If RN = 1 Then U$ = U$ + "LOOKS INSIDE"
+    If RN = 2 Then U$ = U$ + "TRIES TO WORK FREE"
+    If RN = 3 Then U$ = U$ + "SETS UP THE PLAY"
+    If RN = 4 Then U$ = U$ + "LOOKS FOR AN OPENING"
+    If RN = 5 Then U$ = U$ + "DRIBBLES AROUND HIS MAN"
+    If RN = 6 Then U$ = U$ + "SIGNALS THE PLAY"
+    If RN = 7 Then U$ = U$ + "IS IN CONTROL"
+    If RN = 8 Then U$ = U$ + "IS IN POSSESSION"
+    If RN = 9 Then U$ = U$ + "TRIES TO GET OPEN"
+    If RN = 10 Then U$ = U$ + "YO-YO'S OUT TOP"
+    If RN = 11 Then U$ = U$ + "GOES TO WORK"
+    If RN = 12 Then U$ = U$ + "WORKS OFF THE PICK"
+    If RN = 13 Then U$ = U$ + "ON THE DRIBBLE"
+    If RN = 14 Then U$ = U$ + "CUTS TO THE LEFT"
+    If RN = 15 Then U$ = U$ + "CUTS TO THE RIGHT"
+    If RN = 16 Then U$ = U$ + "WHEELS AND DEALS"
+    If RN = 17 Then U$ = U$ + "SETS UP ON TOP"
+    If RN = 18 Then U$ = U$ + "SLIDES RIGHT"
+    If RN = 19 Then U$ = U$ + "SLIDES LEFT"
+    If RN = 20 Then U$ = U$ + "GOES TO WORK"
+    If RN = 21 Then U$ = U$ + "MOVES IT LEFT-SIDE"
+    If RN = 22 Then U$ = U$ + "MOVES IT RIGHT-SIDE"
+    If RN = 23 Then U$ = U$ + "REVERSES THE DRIBBLE"
+    If RN = 24 Then U$ = U$ + "TRIES TO GET OPEN"
+    If RN = 25 Then U$ = U$ + "DRIBBLES TO THE MIDDLE"
+    If RN = 26 Then U$ = U$ + "FAKES THE PASS"
+    If RN = 27 Then U$ = U$ + "SETS UP ON TOP"
+    If RN = 28 Then U$ = U$ + "SLIDES RIGHT"
+    If RN = 29 Then U$ = U$ + "SLIDES LEFT"
+    If RN = 30 Then U$ = U$ + "DRIBBLES IT BEHIND THE BACK"
+    If RN = 31 Then U$ = U$ + "FAKES LEFT...GOES RIGHT"
+    If RN = 32 Then U$ = U$ + "FAKES RIGHT...GOES LEFT"
+    If RN = 33 Then U$ = U$ + "SPINS HARD TO THE LEFT"
+    If RN = 34 Then U$ = U$ + "SPINS HARD TO THE RIGHT"
+    If RN = 35 Then U$ = U$ + "LEANS LEFT...GOES RIGHT"
+    If RN = 36 Then U$ = U$ + "LEANS RIGHT...GOES LEFT"
+    If RN = 37 Then U$ = U$ + "LEANS LEFT...CUTS RIGHT"
+    If RN = 38 Then U$ = U$ + "LEANS RIGHT...CUTS LEFT"
+    If RN = 39 Then U$ = U$ + "DOUBLE REVERSES HIS DRIBBLE"
+    If RN = 40 Then U$ = U$ + "BACKS IN"
+    If RN = 41 Then U$ = U$ + "LEANS FORWARD"
+    If RN = 42 Then U$ = U$ + "CROSSES OVER...SPINS"
+    If RN = 43 Then U$ = U$ + "CUTS LEFT"
+    If RN = 44 Then U$ = U$ + "CUTS RIGHT"
+    If RN = 45 Then U$ = U$ + "WITH THE HESITATION DRIBBLE": Call DELAY: U$ = "HE SPINS LEFT"
+    If RN = 46 Then U$ = U$ + "WITH THE HESITATION DRIBBLE": Call DELAY: U$ = "HE SPINS RIGHT"
+    If RN = 47 Then U$ = U$ + "WITH THE HESITATION DRIBBLE": Call DELAY: U$ = "HE CUTS LEFT"
+    If RN = 48 Then U$ = U$ + "WITH THE HESITATION DRIBBLE": Call DELAY: U$ = "HE CUTS RIGHT"
+    If RN = 49 Then U$ = U$ + "STUTTER STEPS": Call DELAY: U$ = "HE MOVES LEFT"
+    If RN = 50 Then U$ = U$ + "MAINTAINS HIS DRIBBLE"
+    If RN = 51 Then U$ = U$ + "FAKE SPINS LEFT...GOES RIGHT"
+    If RN = 52 Then U$ = U$ + "FAKE SPINS RIGHT...GOES LEFT"
+    If RN = 53 Then U$ = U$ + "PALMS THE BALL": Call DELAY: U$ = "HE TAKES IT AND SPINS"
+    If RN = 54 Then U$ = U$ + "SHAKES AND BAKES"
+    If RN = 55 Then U$ = U$ + "DRIBBLES WITH THE LEFT HAND"
+    If RN = 56 Then U$ = U$ + "DRIBBLES WITH THE RIGHT HAND"
+    GoTo 1495
+
+    1490 'PASS PB$=PREV HANDLER
+    V$ = AA$(P, B1(P, B), 0)
+    RN = Int(Rnd(1) * 60) + 1
+    If RN = 1 Then U$ = PB$ + " TO " + V$
+    If RN = 2 Then U$ = PB$ + " KICKS IT OUT": Call DELAY: U$ = V$ + " TAKES THE PASS"
+    If RN = 3 Then U$ = PB$ + " FEEDS " + V$
+    If RN = 4 Then U$ = PB$ + " PASSES TO " + V$
+    If RN = 4 Then U$ = PB$ + " DISHES TO " + V$
+    If RN = 5 Then U$ = PB$ + " GIVES IT TO " + V$
+    If RN = 6 Then U$ = PB$ + " WITH A NICE GIVE TO " + V$
+    If RN = 7 Then U$ = PB$ + " LOOKS": Call DELAY: U$ = "HE GETS IT TO " + V$
+    If RN = 8 Then U$ = PB$ + " SENDS IT TO " + V$
+    If RN = 9 Then U$ = PB$ + " TO " + V$
+    If RN = 10 Then U$ = PB$ + " GETS IT TO " + V$
+    If RN = 11 Then U$ = PB$ + " OVER TO " + V$
+    If RN = 12 Then U$ = PB$ + " ZIPS IT TO " + V$
+    If RN = 13 Then U$ = PB$ + " FINDS " + V$
+    If RN = 14 Then U$ = PB$ + " LOOKS FOR " + V$
+    If RN = 14 Then U$ = PB$ + " THROWS IT TO " + V$
+    If RN = 15 Then U$ = PB$ + " GOES TO " + V$
+    If RN = 16 Then U$ = PB$ + " SETS UP " + V$
+    If RN = 17 Then U$ = PB$ + " OUT TO " + V$
+    If RN = 18 Then U$ = PB$ + " FLIPS IT TO " + V$
+    If RN = 19 Then U$ = "BOUNCE PASS TO " + V$
+    If RN = 20 Then U$ = PB$ + " LEAVES IT FOR " + V$
+    If RN = 21 Then U$ = PB$ + " LOOPS IT TO " + V$
+    If RN = 22 Then U$ = PB$ + " SHOVELS IT OVER TO " + V$
+    If RN = 23 Then U$ = PB$ + " GIVES IT BACK TO " + V$
+    If RN = 24 Then U$ = PB$ + " FEEDS IT TO " + V$
+    If RN = 25 Then U$ = PB$ + " GIVES IT OFF TO " + V$
+    If RN = 26 Then U$ = "PASSES TO " + V$
+    If RN = 27 Then U$ = "DISHES TO " + V$
+    If RN = 28 Then U$ = "GIVES TO " + V$
+    If RN = 29 Then U$ = "OVER TO " + V$
+    If RN = 30 Then U$ = "SENDS IT BACK TO " + V$
+    If RN = 31 Then U$ = "NO-LOOK PASS TO " + V$
+    If RN = 32 Then U$ = "NO-LOOK BOUNCE PASS TO " + V$
+    If RN = 33 Then U$ = "BEHIND THE BACK TO " + V$
+    If RN = 34 Then U$ = PB$ + " SWINGS IT TO " + V$
+    If RN = 35 Then U$ = PB$ + " FIRES A PASS TO " + V$
+    If RN = 36 Then U$ = PB$ + " SNAPS A PASS TO " + V$
+    If RN = 37 Then U$ = PB$ + " SWINGS A PASS TO " + V$
+    If RN = 38 Then U$ = "TWO-HANDED PASS TO " + V$
+    If RN = 39 Then U$ = "WRAP AROUND PASS TO " + V$
+    If RN = 40 Then U$ = "OVER THE SHOULDER PASS TO " + V$
+    If RN = 41 Then U$ = "BACKHAND PASS TO " + V$
+    If RN = 42 Then U$ = "BACKHAND DISH TO " + V$
+    If RN = 43 Then U$ = "PASS CONNECTED TO " + V$
+    If RN = 44 Then U$ = PB$ + " WIRES IT TO " + V$
+    If RN = 45 Then U$ = PB$ + " WIRES A PASS TO " + V$
+    If RN = 46 Then U$ = PB$ + " SNAPS A PASS TO " + V$
+    If RN = 47 Then U$ = PB$ + " FAKES..PASSES TO " + V$
+    If RN = 48 Then U$ = PB$ + " SHUFFLES IT TO " + V$
+    If RN = 49 Then U$ = PB$ + " SLINGS IT TO " + V$
+    If RN = 50 Then U$ = PB$ + " FLIPS IT TO " + V$
+    If RN = 51 Then U$ = PB$ + " WHIPS IT OVER TO " + V$
+    If RN = 52 Then U$ = PB$ + " SLINGS A BOUNCE PASS TO " + V$
+    If RN = 53 Then U$ = PB$ + " SHOVELS IT TO " + V$
+    If RN = 54 Then U$ = PB$ + " PUMP FAKES A SHOT": Call DELAY: U$ = "HE SWINGS IT TO " + V$
+    If RN = 55 Then U$ = PB$ + " PUMP FAKES A SHOT": Call DELAY: U$ = "HE BOUNCES IT TO " + V$
+    If RN = 56 Then U$ = PB$ + " WITH A FOOT FAKE": Call DELAY: U$ = "HE SPINS AND DUMPS IT TO " + V$
+    If RN = 57 Then U$ = PB$ + " CUTS ACROSS THE LANE": Call DELAY: U$ = "HE DISHES INSIDE TO " + V$
+    If RN = 58 Then U$ = PB$ + " DRIVES THE BASELINE": Call DELAY: U$ = "DISHES UNDERNEATH TO " + V$
+    If RN = 59 Then U$ = PB$ + " FAKES RIGHT...CUTS LEFT": Call DELAY: U$ = "SHUFFLES IT TO " + V$
+    If RN = 60 Then U$ = PB$ + " HEAD FAKES": Call DELAY: U$ = "HE PUSHES IT TO " + V$
+
+1495 End Sub
+
+Sub MISSFT ()
+    If U6 = 0 Then 3699
+    Call MOREDELAY
+    Locate F3 + 9, 1
+    Print F3; " MISSED"
+    Call MOREDELAY
+
+    3699 Rem
+End Sub
+
+Sub MOREDELAY ()
+    If U6 <> 0 Then
+        U! = Timer
+        While Timer < U! + U6
+        Wend
+    End If
+End Sub
+
+Sub ROSTER ()
+    Cls
+    Color T(P9, 33), T(P9, 34)
+    Print B$(P9, 0);
+    Color 15, 0
+    Print " TEAM ROSTER   COACH: "; B$(P9, 3); "     ";
+    Print "  RECORD: ";: Print Using "##"; T(P9, 1) + T(P9, 3);: Print "-";: Print Using "##"; T(P9, 2) + T(P9, 4)
+    Color 14: Print "# NAME         PS GP MG FG 3FG %3A FT  ORB  DRB  A  S  B CX CN PT F  FC  PPG"
+    Locate 3, 1
+    For R1 = 0 To 14
+        If B%(P9, R1, 18) <> 0 Or AA$(P9, R1, 0) = "XXX" Then 71
+        Color 2
+        If R1 <= 9 Then Print Using "# "; R1;
+        If R1 > 9 Then Print X$(R1 - 10);
+        Color 15
+        Print Left$(AA$(P9, R1, 0), 12);: Locate , 16
+        If Len(AA$(P9, R1, 1)) = 1 Then Print AA$(P9, R1, 1);
+        If Len(AA$(P9, R1, 1)) > 1 Then Print Left$(AA$(P9, R1, 1), 1); Right$(AA$(P9, R1, 1), 1);
+        L = 0: Locate , 19: L = A(P9, R1, 7) + A(P9, R1, 11) + A(P9, R1, 12)
+        Print Using "## ##"; B%(P9, R1, 0); B%(P9, R1, 1) / B%(P9, R1, 0);
+        Print Using "### ### ## ### ##.# ##.# ## ## ##"; A(P9, R1, 0); A(P9, R1, 20); A(P9, R1, 19); A(P9, R1, 1); A(P9, R1, 21) / 10; A(P9, R1, 2) / 10; A(P9, R1, 4) / 10; A(P9, R1, 5); A(P9, R1, 6);
+        Print Using "### "; A(P9, R1, 3) - L;
+        J = (A(P9, R1, 3)) - A(P9, R1, 7) - A(P9, R1, 11) - A(P9, R1, 12)
+        If H <= 3 And J / A(P9, R1, 3) < .25 Then Locate , 61: Print " T";
+        If J / A(P9, R1, 3) < .5 And H <= 2 Then Locate , 61: Print " T";
+        If H = 4 And T > 200 And J / A(P9, R1, 3) <= T / 2880 Then Locate , 61: Print " T";
+        If A(P9, R1, 3) - A(P9, R1, 7) - A(P9, R1, 11) - A(P9, R1, 12) <= 0 Then Locate , 61: Print "EX";
+        If H > 4 Or H = 4 And T <= 120 And T <> 0 Then Locate , 61: Print "  ";
+        Locate , 63: Print Using "### # ### ##.#"; A(P9, R1, 8) * 2 + A(P9, R1, 10) + W%(P9, R1, 0); A(P9, R1, 12); A(P9, R1, 17); (B%(P9, R1, 3) * 2 + B%(P9, R1, 5) + B%(P9, R1, 14)) / B%(P9, R1, 0)
+
+    71 Next R1
+    Locate 18, 1: Color 9, 0: Print String$(27, 205); Chr$(203); String$(51, 205)
+    For R1 = 1 To 7: Locate R1 + 18, 28: Print Chr$(186);: Next
+    Locate 19, 1: Color 14, 0: Print "STARTING LINEUP"
+
+End Sub
+
+Sub SELECTPBP ()
+    If PB% = 0 Then Call DELAY
+    If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+    Call MOREDELAY
+End Sub
+
+Sub TEAMMENU (BO%, YN$)
+    Dim Y2 As Long
+    If BO% = 2 Then BO% = 0: GoTo 1102
+    NT = 0
+    Open P$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+    Y2 = LOF(1)
+
+    Field #1, 15 As Q$(0), 15 As Q$(1)
+    Field #1, 44 As X$, 2 As Q$(9)
+
+    For I1 = 1 To Y2 / 1031
+        Get #1, I1
+        CK% = CVI(Q$(9))
+        If CK% <> 999 Then 1103
+        NT = NT + 1
+        V$(NT) = Q$(0): V%(NT) = I1
+
+    1103 Next
+    Close 1
+
+    1102 SELECTION% = 1
+    COUNT% = NT
+    START% = 1
+    FileFGColr% = 15: FileBGColr% = 4
+    HiLiteFGColr% = 0: HiLiteBGColr% = 7
+    ROWS% = 20
+    COLUMNS% = 4
+    SPACING% = 6
+    ROW% = 4
+    COLUMN% = 1
+    Color , 4: Cls: Locate , 33: Color 14
+    Print "TEAM SELECTION": Color 15
+    Locate 25, 1: Color 14: Print "ESC";: Color 15
+    Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
+    Print "ENTER";: Color 15: Print "-SELECTS TEAM";
+
+    _MouseShow "DEFAULT"
+    20 MAMenu V$(), SELECTION%, START%, COUNT%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, ROWS%, COLUMNS%, SPACING%, ROW%, COLUMN%
+    _MouseHide
+
+    If EXITCODE% = 27 Then BO% = 1: GoTo 25
+    If EXITCODE% = -71 Then START% = 1: EXITCODE% = 3: SELECTION% = 1: GoTo 20
+    If EXITCODE% = -79 Then START% = NT: EXITCODE% = 3: SELECTION% = NT: GoTo 20
+    If EXITCODE% = -73 Then START% = START% - 80: If START% < 1 Then START% = 1
+    If EXITCODE% = -81 Then START% = START% + 80: If START% > NT Then START% = NT
+    If EXITCODE% = -81 Or EXITCODE% = -73 Then EXITCODE% = 3: SELECTION% = START%: GoTo 20
+    I1 = V%(SELECTION%)
+    Call GETATEAM(I1, YN$)
+
+25 End Sub
+
+Sub THREEFT ()
+    A(P, B1(P, B), 10) = A(P, B1(P, B), 10) + 1
+    RN = Int(Rnd(1) * 100) + 1
+    If F3 = 1 And RN <= 50 Then U$ = "FREE THROW IS GOOD"
+    If F3 = 1 And RN > 50 Then U$ = "FREE THROW IS GOOD"
+    RN = Int(Rnd(1) * 100) + 1
+    If F3 = 2 And RN <= 50 Then U$ = "SECOND FREE THROW IS GOOD"
+    If F3 = 2 And RN > 50 Then U$ = "HE HITS THE SECOND ONE"
+    RN = Int(Rnd(1) * 100) + 1
+    If F3 = 3 And RN <= 50 Then U$ = "THIRD FREE THROW IS GOOD"
+    If F3 = 3 And RN > 50 Then U$ = "HE HITS THE LAST ONE"
+    Call DELAY
+    S(P, H) = S(P, H) + 1
+    S(P, 0) = S(P, 0) + 1
+    Call UPDATESCREEN
+End Sub
+
+Sub TICKER ()
+    '*** TICKER ***
+    If AP = 1 And U5 = 2 Then 2884
+    Color 14, 0: Cls
+    RN = Int(Rnd(1) * 100) + 1
+    If RN <= 50 And HT% = 1 And G9 = 0 Then Locate , 23: Print "PRUDENTIAL AT THE HALF SCOREBOARD": GoTo 2851
+    If RN > 50 And HT% = 1 And G9 = 0 Then Locate , 28: Print "RED MAN HALFTIME REPORT": GoTo 2851
+    If HT% = 1 And RN <= 50 Then Locate , 29: Print "TOYOTA HALFTIME REPORT": GoTo 2851
+    If HT% = 1 And RN > 50 Then Locate , 29: Print "HONDA HALFTIME REPORT": GoTo 2851
+    If EG% = 1 And G9 = 0 Then Locate , 27: Print "CHEVROLET FINAL SCOREBOARD": GoTo 2851
+    If EG% = 1 And RN <= 33 Then Locate , 27: Print "USA TODAY FINAL SCOREBOARD": GoTo 2851
+    If EG% = 1 And RN > 33 And RN <= 67 Then Locate , 24: Print "FEDERAL EXPRESS FINAL SCOREBOARD": GoTo 2851
+    If EG% = 1 And RN > 67 Then Locate , 23: Print "ESPN SPORTSCENTER FINAL SCOREBOARD": GoTo 2851
+    If HT% = 0 Then Locate , 30: Print "LANCE HAFFNER GAMES SCOREBOARD": GoTo 2851
+
+    2851 Color 15: If TMT = 0 Then Locate 10, 28: Print "NO OTHER GAMES SCHEDULED": GoTo 2883
+    If H = 1 And T < 720 And T >= 480 Then TE = 1
+    If H = 1 And T < 480 And T >= 240 Then TE = 2
+    If H = 1 And T < 240 Then TE = 3
+    If H = 2 And T < 720 And T >= 480 Then TE = 4
+    If H = 2 And T < 480 And T >= 240 Then TE = 5
+    If H = 2 And T < 240 Then TE = 6
+    If H = 3 And T < 720 And T >= 480 Then TE = 9
+    If H = 3 And T < 480 And T >= 240 Then TE = 10
+    If H = 3 And T < 240 Then TE = 11
+    If H = 4 And T < 720 And T >= 480 Then TE = 12
+    If H = 4 And T < 480 And T >= 240 Then TE = 13
+    If H = 4 And T < 240 Then TE = 14
+    If H = 5 And T < 720 And T >= 480 Then TE = 15
+    If H = 5 And T < 480 And T >= 240 Then TE = 16
+    If H = 5 And T < 240 Then TE = 17
+    If HT% = 1 Then TE = 8
+    If Left$(SX$(1, 0), 3) = "XXX" Then 2852
+    Locate 2, 1: X = 1: GoSub 2885
+    Print Left$(SX$(1, 0), 13);
+    Locate , 15: Print Using "### "; SX%(1, 0, TS%);: Print R$(TS%)
+    Print Left$(SX$(1, 1), 13);
+    Locate , 15: Print Using "### #"; SX%(1, 1, TS%)
+
+    2852 If Left$(SX$(2, 0), 3) = "XXX" Then 2853
+    Locate 5, 1: X = 2: GoSub 2885: Print Left$(SX$(2, 0), 13);: Locate , 15: Print Using "### "; SX%(2, 0, TS%);: Print R$(TS%)
+    Print Left$(SX$(2, 1), 13);: Locate , 15: Print Using "### #"; SX%(2, 1, TS%)
+
+    2853 If Left$(SX$(3, 0), 3) = "XXX" Then 2854
+    Locate 8, 1: X = 3: GoSub 2885: Print Left$(SX$(3, 0), 13);: Locate , 15: Print Using "### "; SX%(3, 0, TS%);: Print R$(TS%)
+    Print Left$(SX$(3, 1), 13);: Locate , 15: Print Using "### #"; SX%(3, 1, TS%)
+
+    2854 If Left$(SX$(4, 0), 3) = "XXX" Then 2855
+    Locate 11, 1: X = 4: GoSub 2885: Print Left$(SX$(4, 0), 13);: Locate , 15: Print Using "### "; SX%(4, 0, TS%);: Print R$(TS%)
+    Print Left$(SX$(4, 1), 13);: Locate , 15: Print Using "### #"; SX%(4, 1, TS%)
+
+    2855 If Left$(SX$(5, 0), 3) = "XXX" Then 2856
+    Locate 14, 1: X = 5: GoSub 2885: Print Left$(SX$(5, 0), 13);: Locate , 15: Print Using "### "; SX%(5, 0, TS%);: Print R$(TS%)
+    Print Left$(SX$(5, 1), 13);: Locate , 15: Print Using "### #"; SX%(5, 1, TS%)
+
+    2856 If Left$(SX$(6, 0), 3) = "XXX" Then 2857
+    Locate 17, 1: X = 6: GoSub 2885: Print Left$(SX$(6, 0), 13);: Locate , 15: Print Using "### "; SX%(6, 0, TS%);: Print R$(TS%)
+    Print Left$(SX$(6, 1), 13);: Locate , 15: Print Using "### #"; SX%(6, 1, TS%)
+
+    2857 If Left$(SX$(7, 0), 3) = "XXX" Then 2858
+    Locate 20, 1: X = 7: GoSub 2885: Print Left$(SX$(7, 0), 13);: Locate , 15: Print Using "### "; SX%(7, 0, TS%);: Print R$(TS%)
+    Print Left$(SX$(7, 1), 13);: Locate , 15: Print Using "### #"; SX%(7, 1, TS%)
+
+    2858 If Left$(SX$(8, 0), 3) = "XXX" Then 2859
+    Locate 23, 1: X = 8: GoSub 2885: Print Left$(SX$(8, 0), 13);: Locate , 15: Print Using "### "; SX%(8, 0, TS%);: Print R$(TS%)
+    Print Left$(SX$(8, 1), 13);: Locate , 15: Print Using "### #"; SX%(8, 1, TS%);
+
+    2859 If Left$(SX$(9, 0), 3) = "XXX" Then 2860
+    Locate 2, 21: X = 9: GoSub 2885: Print Left$(SX$(9, 0), 13);: Locate , 35: Print Using "### "; SX%(9, 0, TS%);: Print R$(TS%)
+    Locate , 21: Print Left$(SX$(9, 1), 13);: Locate , 35: Print Using "### #"; SX%(9, 1, TS%)
+
+    2860 If Left$(SX$(10, 0), 3) = "XXX" Then 2861
+    Locate 5, 21: X = 10: GoSub 2885: Print Left$(SX$(10, 0), 13);: Locate , 35: Print Using "### "; SX%(10, 0, TS%);: Print R$(TS%)
+    Locate , 21: Print Left$(SX$(10, 1), 13);: Locate , 35: Print Using "### #"; SX%(10, 1, TS%)
+
+    2861 If Left$(SX$(11, 0), 3) = "XXX" Then 2862
+    Locate 8, 21: X = 11: GoSub 2885: Print Left$(SX$(11, 0), 13);: Locate , 35: Print Using "### "; SX%(11, 0, TS%);: Print R$(TS%)
+    Locate , 21: Print Left$(SX$(11, 1), 13);: Locate , 35: Print Using "### #"; SX%(11, 1, TS%)
+
+    2862 If Left$(SX$(12, 0), 3) = "XXX" Then 2863
+    Locate 11, 21: X = 12: GoSub 2885: Print Left$(SX$(12, 0), 13);: Locate , 35: Print Using "### "; SX%(12, 0, TS%);: Print R$(TS%)
+    Locate , 21: Print Left$(SX$(12, 1), 13);: Locate , 35: Print Using "### #"; SX%(12, 1, TS%)
+
+    2863 If Left$(SX$(13, 0), 3) = "XXX" Then 2864
+    Locate 14, 21: X = 13: GoSub 2885: Print Left$(SX$(13, 0), 13);: Locate , 35: Print Using "### "; SX%(13, 0, TS%);: Print R$(TS%)
+    Locate , 21: Print Left$(SX$(13, 1), 13);: Locate , 35: Print Using "### #"; SX%(13, 1, TS%)
+
+    2864 If Left$(SX$(14, 0), 3) = "XXX" Then 2865
+    Locate 17, 21: X = 14: GoSub 2885: Print Left$(SX$(14, 0), 13);: Locate , 35: Print Using "### "; SX%(14, 0, TS%);: Print R$(TS%)
+    Locate , 21: Print Left$(SX$(14, 1), 13);: Locate , 35: Print Using "### #"; SX%(14, 1, TS%)
+
+    2865 If Left$(SX$(15, 0), 3) = "XXX" Then 2866
+    Locate 20, 21: X = 15: GoSub 2885: Print Left$(SX$(15, 0), 13);: Locate , 35: Print Using "### "; SX%(15, 0, TS%);: Print R$(TS%)
+    Locate , 21: Print Left$(SX$(15, 1), 13);: Locate , 35: Print Using "### #"; SX%(15, 1, TS%)
+
+    2866 If Left$(SX$(16, 0), 3) = "XXX" Then 2867
+    Locate 23, 21: X = 16: GoSub 2885: Print Left$(SX$(16, 0), 13);: Locate , 35: Print Using "### "; SX%(16, 0, TS%);: Print R$(TS%)
+    Locate , 21: Print Left$(SX$(16, 1), 13);: Locate , 35: Print Using "### #"; SX%(16, 1, TS%);
+
+    2867 If Left$(SX$(17, 0), 3) = "XXX" Then 2868
+    Locate 2, 41: X = 17: GoSub 2885: Print Left$(SX$(17, 0), 13);: Locate , 55: Print Using "### "; SX%(17, 0, TS%);: Print R$(TS%)
+    Locate , 41: Print Left$(SX$(17, 1), 13);: Locate , 55: Print Using "### #"; SX%(17, 1, TS%)
+
+    2868 If Left$(SX$(18, 0), 3) = "XXX" Then 2869
+    Locate 5, 41: X = 18: GoSub 2885: Print Left$(SX$(18, 0), 13);: Locate , 55: Print Using "### "; SX%(18, 0, TS%);: Print R$(TS%)
+    Locate , 41: Print Left$(SX$(18, 1), 13);: Locate , 55: Print Using "### #"; SX%(18, 1, TS%)
+
+    2869 If Left$(SX$(19, 0), 3) = "XXX" Then 2870
+    Locate 8, 41: X = 19: GoSub 2885: Print Left$(SX$(19, 0), 13);: Locate , 55: Print Using "### "; SX%(19, 0, TS%);: Print R$(TS%)
+    Locate , 41: Print Left$(SX$(19, 1), 13);: Locate , 55: Print Using "### #"; SX%(19, 1, TS%)
+
+    2870 If Left$(SX$(20, 0), 3) = "XXX" Then 2871
+    Locate 11, 41: X = 20: GoSub 2885: Print Left$(SX$(20, 0), 13);: Locate , 55: Print Using "### "; SX%(20, 0, TS%);: Print R$(TS%)
+    Locate , 41: Print Left$(SX$(20, 1), 13);: Locate , 55: Print Using "### #"; SX%(20, 1, TS%)
+
+    2871 If Left$(SX$(21, 0), 3) = "XXX" Then 2872
+    Locate 14, 41: X = 21: GoSub 2885: Print Left$(SX$(21, 0), 13);: Locate , 55: Print Using "### "; SX%(21, 0, TS%);: Print R$(TS%)
+    Locate , 41: Print Left$(SX$(21, 1), 13);: Locate , 55: Print Using "### #"; SX%(21, 1, TS%)
+
+    2872 If Left$(SX$(22, 0), 3) = "XXX" Then 2873
+    Locate 17, 41: X = 22: GoSub 2885: Print Left$(SX$(22, 0), 13);: Locate , 55: Print Using "### "; SX%(22, 0, TS%);: Print R$(TS%)
+    Locate , 41: Print Left$(SX$(22, 1), 13);: Locate , 55: Print Using "### #"; SX%(22, 1, TS%)
+
+    2873 If Left$(SX$(23, 0), 3) = "XXX" Then 2874
+    Locate 20, 41: X = 23: GoSub 2885: Print Left$(SX$(23, 0), 13);: Locate , 55: Print Using "### "; SX%(23, 0, TS%);: Print R$(TS%)
+    Locate , 41: Print Left$(SX$(23, 1), 13);: Locate , 55: Print Using "### #"; SX%(23, 1, TS%)
+
+    2874 If Left$(SX$(24, 0), 3) = "XXX" Then 2875
+    Locate 23, 41: X = 24: GoSub 2885: Print Left$(SX$(24, 0), 13);: Locate , 55: Print Using "### "; SX%(24, 0, TS%);: Print R$(TS%)
+    Locate , 41: Print Left$(SX$(24, 1), 13);: Locate , 55: Print Using "### #"; SX%(24, 1, TS%);
+
+    2875 If Left$(SX$(25, 0), 3) = "XXX" Then 2876
+    Locate 2, 61: X = 25: GoSub 2885: Print Left$(SX$(25, 0), 13);: Locate , 75: Print Using "### "; SX%(25, 0, TS%);: Print R$(TS%)
+    Locate , 61: Print Left$(SX$(25, 1), 13);: Locate , 75: Print Using "### #"; SX%(25, 1, TS%)
+
+    2876 If Left$(SX$(26, 0), 3) = "XXX" Then 2877
+    Locate 5, 61: X = 26: GoSub 2885: Print Left$(SX$(26, 0), 13);: Locate , 75: Print Using "### "; SX%(26, 0, TS%);: Print R$(TS%)
+    Locate , 61: Print Left$(SX$(26, 1), 13);: Locate , 75: Print Using "### #"; SX%(26, 1, TS%)
+
+    2877 If Left$(SX$(27, 0), 3) = "XXX" Then 2878
+    Locate 8, 61: X = 27: GoSub 2885: Print Left$(SX$(27, 0), 13);: Locate , 75: Print Using "### "; SX%(27, 0, TS%);: Print R$(TS%)
+    Locate , 61: Print Left$(SX$(27, 1), 13);: Locate , 75: Print Using "### #"; SX%(27, 1, TS%)
+
+    2878 If Left$(SX$(28, 0), 3) = "XXX" Then 2879
+    Locate 11, 61: X = 28: GoSub 2885: Print Left$(SX$(28, 0), 13);: Locate , 75: Print Using "### "; SX%(28, 0, TS%);: Print R$(TS%)
+    Locate , 61: Print Left$(SX$(28, 1), 13);: Locate , 75: Print Using "### #"; SX%(28, 1, TS%)
+
+    2879 If Left$(SX$(29, 0), 3) = "XXX" Then 2880
+    Locate 14, 61: X = 29: GoSub 2885: Print Left$(SX$(29, 0), 13);: Locate , 75: Print Using "### "; SX%(29, 0, TS%);: Print R$(TS%)
+    Locate , 61: Print Left$(SX$(29, 1), 13);: Locate , 75: Print Using "### #"; SX%(29, 1, TS%)
+
+    2880 If Left$(SX$(30, 0), 3) = "XXX" Then 2881
+    Locate 17, 61: X = 30: GoSub 2885: Print Left$(SX$(30, 0), 13);: Locate , 75: Print Using "### "; SX%(30, 0, TS%);: Print R$(TS%)
+    Locate , 61: Print Left$(SX$(30, 1), 13);: Locate , 75: Print Using "### #"; SX%(30, 1, TS%)
+
+    2881 If Left$(SX$(31, 0), 3) = "XXX" Then 2882
+    Locate 20, 61: X = 31: GoSub 2885: Print Left$(SX$(31, 0), 13);: Locate , 75: Print Using "### "; SX%(31, 0, TS%);: Print R$(TS%)
+    Locate , 61: Print Left$(SX$(31, 1), 13);: Locate , 75: Print Using "### #"; SX%(31, 1, TS%)
+
+    2882 If Left$(SX$(32, 0), 3) = "XXX" Then 2883
+    Locate 23, 61: X = 32: GoSub 2885: Print Left$(SX$(32, 0), 13);: Locate , 75: Print Using "### "; SX%(32, 0, TS%);: Print R$(TS%)
+    Locate , 61: Print Left$(SX$(32, 1), 13);: Locate , 75: Print Using "### #"; SX%(32, 1, TS%);
+    2883 I$ = GetKeyPress$
+    Call NEWSCREEN
+    GoTo 2884
+
+    2885 TS% = TE + (TTS% - ST%(X)) * 3
+    If TS% < 0 Then TS% = 0
+    If TS% > 14 Then TS% = 14
+    If EG% = 1 Then TS% = 14
+    Return
+
+2884 End Sub
+
+Sub UPDATESCREEN ()
+    'M A I N   S C R E E N
+    Call TICKERUPDATE
+    Locate 1, 37: Color 15, 0: Print Using "##"; Int(T / 60);: Print ":";
+    If T - Int(T / 60) * 60 < 10 Then Print "0";: Print Using "#"; T - Int(T / 60) * 60;: GoTo 2171
+    Print Using "##"; T - Int(T / 60) * 60;
+
+    2171 Locate 4, 13: Color 14, 0: Print Using "###"; S(0, 0);
+    Locate 2, 35: Print Using " PERIOD #"; H;
+    If H > 4 Then Locate , 35: Print Using "OVERTIME #"; H - 4
+    Locate 4, 60: Color 14, 0: Print Using "###"; S(1, 0)
+    Color 7: Locate 3, 35: Print Using "##  "; T0(0);: Color 12: Print "TO  ";: Color 7: Print Using "##"; T0(1)
+    Locate , 35: Print Using "##  "; R3(0);: Color 12: Print "RB  ";: Color 7: Print Using "##"; R3(1)
+    Locate , 35: Print Using "##  "; P2(0);: Color 12: Print "TF  ";: Color 7: Print Using "##"; P2(1);
+    If P2(0) > NB% - 1 And H <= 4 Or P2(0) > 2 And H > 4 Then Locate , 46: Color 0, 2: Print "BONUS";: Color 7, 0
+    If P2(1) > NB% - 1 And H <= 4 Or P2(1) > 2 And H > 4 Then Locate , 29: Color 0, 2: Print "BONUS": Color 7, 0
+    Locate 6, 9: Print "TIMEOUTS:"; T1(0);: Locate , 56: Print "TIMEOUTS:"; T1(1)
+    Locate 6, 37: Color 15, 0: Print Using " :##"; X8
+    If T < 25 And X8 >= T Or H > 4 And T = 300 Then Locate 6, 37: Print " :  "
+    If U6 = 0 Then 2250
+    Locate 8, 58
+    Color T(D, 33), T(D, 34): Print "DEF - "; D$(D2(D))
+    Locate , 58: Color T(P, 33), T(P, 34): Print "OFF - "; O$(O0%(P))
+    Color 15, 0
+    Locate , 41: Color 14: Print "(1) ";: Color 15: Print "SHOOT        ";: Color 14: Print "ENTER";: Color 15: Print "-PASS"
+    Locate , 41: Color 14: Print "(2) ";: Color 15: Print B$(P, 0); " CALL TIMEOUT     "
+    Locate , 41: Color 14: Print "(3) ";: Color 15: Print "COMMIT INTL FOUL (LAST 4 MIN)"
+    Locate , 41: Color 14: Print "(4) ";: Color 15: Print "SHOOT A FORCED 3-POINTER"
+    Locate , 41: Color 14: Print "(S) ";: Color 15: Print "SCOUT REPORT ";: Color 14: Print "(T) ";: Color 15: Print "10 MIN TICKER"
+    Locate , 41: Color 14: Print "(Z) ";: Color 15: Print "LEFT TM STGY ";: Color 14: Print "(/) ";: Color 15: Print "RIGHT TM STGY"
+    Color 15, 0
+    Locate 19, 1
+    For I1 = 0 To 4
+        Color 2, 0
+        Print Using "# "; I1;
+        Color 15
+        Print Left$(AA$(0, B1(0, I1), 0), 12); Tab(16);
+        J = (A(0, B1(0, I1), 3)) - A(0, B1(0, I1), 7) - A(0, B1(0, I1), 11) - A(0, B1(0, I1), 12)
+        If J <= 0 Then J = 0
+        If A(0, B1(0, I1), 1) >= 100 Then A(0, B1(0, I1), 1) = 99
+        Print Using "## ## "; A(0, B1(0, I1), 0); A(0, B1(0, I1), 1);
+        If P = 0 Then
+            Print Using "##"; A(0, B1(0, I1), 21) * 2 / 10;
+        Else
+            Print Using "##"; A(0, B1(0, I1), 2) * 2 / 10;
+        End If
+        If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And T > 120) Then Color 12
+        Print Using "### "; J;
+        Color 15
+        Print Using "## ##"; A(0, B1(0, I1), 4) / 10; A(0, B1(0, I1), 5) / 10;
+        Print Using "###  "; A(0, B1(0, I1), 8) * 2 + A(0, B1(0, I1), 10) + W%(0, B1(0, I1), 0);
+        If A(0, B1(0, I1), 12) >= 5 Then Color 12
+        Print Using "#"; A(0, B1(0, I1), 12)
+        Color 15
+    Next I1
+    Locate 19, 40
+    For I1 = 0 To 4
+        Locate , 40
+        Color 2, 0
+        Print Using "# "; I1;
+        Color 15: Print Left$(AA$(1, B1(1, I1), 0), 12); Tab(56);
+        J = (A(1, B1(1, I1), 3)) - A(1, B1(1, I1), 7) - A(1, B1(1, I1), 11) - A(1, B1(1, I1), 12)
+        If J <= 0 Then J = 0
+        If A(1, B1(1, I1), 1) >= 100 Then A(1, B1(1, I1), 1) = 99
+        Print Using "## ## "; A(1, B1(1, I1), 0); A(1, B1(1, I1), 1);
+        If P = 1 Then Print Using "##"; A(1, B1(1, I1), 21) * 2 / 10; Else Print Using "##"; A(1, B1(1, I1), 2) * 2 / 10;
+        If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And T > 120) Then Color 12
+        Print Using "### "; J;
+        Color 15
+        Print Using "## ##"; A(1, B1(1, I1), 4) / 10; A(1, B1(1, I1), 5) / 10;
+        Print Using "###  "; A(1, B1(1, I1), 8) * 2 + A(1, B1(1, I1), 10) + W%(1, B1(1, I1), 0);
+        If A(1, B1(1, I1), 12) >= 5 Then Color 12
+        Print Using "#"; A(1, B1(1, I1), 12)
+        Color 15
+    Next I1
+
+2250 End Sub
+
+
+Sub WINDEX ()
+    If U6 = 0 Then 4094
+    For I = 8 To 15
+        Locate I, 1
+        Print "                                      "
+    Next I
+    Locate 8, 1
+
+    4094 Rem
+End Sub
+
+
+Sub RECORDSCHECK ()
+    Dim RC$(50, 4), REC(50, 2) As Single, TRC$(125, 3), TREC(125, 2) As Single
+    Dim V8(1, 14)
+    Dim SITE$(1)
+    SITE$(0) = "AT": SITE$(1) = "VS."
+    If Not _FileExists(P$(1) + "RECORDS.GAM") Then
+        TREC(2, 0) = 999
+        TREC(4, 0) = 999
+        TREC(7, 0) = 999
+        TREC(9, 0) = 999
+        TREC(11, 0) = 999
+        TREC(13, 0) = 999
+        TREC(15, 0) = 999
+        TREC(17, 0) = 999
+        TREC(19, 0) = 999
+        TREC(21, 0) = 999
+        TREC(23, 0) = 999
+        TREC(25, 0) = 999
+        TREC(27, 0) = 999
+        TREC(29, 0) = 999
+        TREC(31, 0) = 999
+        TREC(33, 0) = 999
+        TREC(35, 0) = 999
+        TREC(37, 0) = 999
+        TREC(43, 0) = 999
+        TREC(45, 0) = 999
+        TREC(61, 0) = 999
+        TREC(63, 0) = 999
+        TREC(65, 0) = 999
+        TREC(67, 0) = 999
+        TREC(73, 0) = 999
+        TREC(75, 0) = 999
+        TREC(81, 0) = 999
+        TREC(83, 0) = 999
+        TREC(87, 0) = 999
+        TREC(89, 0) = 999
+        TREC(92, 0) = 999
+        TREC(94, 0) = 999
+        TREC(97, 0) = 999
+        TREC(99, 0) = 999
+        TREC(105, 0) = 999
+        TREC(107, 0) = 999
+        TREC(113, 0) = 999
+        TREC(115, 0) = 999
+        TREC(120, 0) = 999
+        TREC(123, 0) = 999
+        TREC(125, 0) = 999
+        GoTo 505
+    End If
+    Open P$(1) + "RECORDS.GAM" For Input As #1
+    For I = 0 To 48
+        For I1 = 0 To 2
+            Input #1, REC(I, I1)
+        Next
+        For I1 = 0 To 4
+            Input #1, RC$(I, I1)
+        Next
+    Next
+    For I = 0 To 125
+        For I1 = 0 To 2
+            Input #1, TREC(I, I1)
+        Next
+        For I1 = 0 To 3
+            Input #1, TRC$(I, I1)
+        Next
+    Next
+    Close 1
+
+    505 'CHECK THE INDIVIDUAL RECORDS
+    For I = 0 To 1
+        For I1 = 0 To 14
+
+            ' SCORING RECORDS FOR POINTS IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
+            If A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) > REC(0, 0) Then
+                REC(0, 0) = A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) ' POINTS
+                REC(0, 1) = 1 ' TIMES DONE
+                REC(0, 2) = 0 ' GAME
+                RC$(0, 0) = AA$(I, I1, 0) ' NAME
+                RC$(0, 1) = B$(I, 0) ' TEAM
+                RC$(0, 2) = SITE$(I) ' AT/VS
+                RC$(0, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(0, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 1, I1, 13) + QQ(I, 2, I1, 13) > REC(1, 0) Then
+                REC(1, 0) = QQ(I, 1, I1, 13) + QQ(I, 2, I1, 13) ' POINTS
+                REC(1, 1) = 1 ' TIMES DONE
+                REC(1, 2) = 1 ' HALF
+                RC$(1, 0) = AA$(I, I1, 0) ' NAME
+                RC$(1, 1) = B$(I, 0) ' TEAM
+                RC$(1, 2) = SITE$(I) ' AT/VS
+                RC$(1, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(1, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 3, I1, 13) + QQ(I, 4, I1, 13) > REC(1, 0) Then
+                REC(1, 0) = QQ(I, 3, I1, 13) + QQ(I, 4, I1, 13) ' POINTS
+                REC(1, 1) = 1 ' TIMES DONE
+                REC(1, 2) = 2 ' HALF
+                RC$(1, 0) = AA$(I, I1, 0) ' NAME
+                RC$(1, 1) = B$(I, 0) ' TEAM
+                RC$(1, 2) = SITE$(I) ' AT/VS
+                RC$(1, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(1, 4) = Date$ ' DATE
+            End If
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 13) > REC(2, 0) Then
+                    REC(2, 0) = QQ(I, I2, I1, 13) ' POINTS
+                    REC(2, 1) = 1 ' TIMES DONE
+                    REC(2, 2) = I2 ' QTR
+                    RC$(2, 0) = AA$(I, I1, 0) ' NAME
+                    RC$(2, 1) = B$(I, 0) ' TEAM
+                    RC$(2, 2) = SITE$(I) ' AT/VS
+                    RC$(2, 3) = B$(1 - I, 0) ' OPPONENT
+                    RC$(2, 4) = Date$ ' DATE
+                End If
+            Next I2
+            For I2 = 5 To 8
+                If QQ(I, I2, I1, 13) > REC(3, 0) Then
+                    REC(3, 0) = QQ(I, I2, I1, 13) ' POINTS
+                    REC(3, 1) = 1 ' TIMES DONE
+                    REC(3, 2) = I2 ' QTR
+                    RC$(3, 0) = AA$(I, I1, 0) ' NAME
+                    RC$(3, 1) = B$(I, 0) ' TEAM
+                    RC$(3, 2) = SITE$(I) ' AT/VS
+                    RC$(3, 3) = B$(1 - I, 0) ' OPPONENT
+                    RC$(3, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' FIELD GOAL PERCENTAGE RECORDS FOR HIGH %, MOST W/NO MISSES, MOST W/NONE MADE
+            If A(I, I1, 8) < 15 Then 900
+            If A(I, I1, 8) / A(I, I1, 7) > REC(4, 0) Then
+                REC(4, 0) = A(I, I1, 8) / A(I, I1, 7) ' PCTG
+                REC(4, 1) = A(I, I1, 8) ' FGM
+                REC(4, 2) = A(I, I1, 7) ' FGA
+                RC$(4, 0) = AA$(I, I1, 0) ' NAME
+                RC$(4, 1) = B$(I, 0) ' TEAM
+                RC$(4, 2) = SITE$(I) ' AT/VS
+                RC$(4, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(4, 4) = Date$ ' DATE
+            End If
+
+            900
+            If A(I, I1, 8) = A(I, I1, 7) And A(I, I1, 7) > REC(5, 0) Then
+                REC(5, 0) = A(I, I1, 7) ' MOST FGM
+                RC$(5, 0) = AA$(I, I1, 0) ' NAME
+                RC$(5, 1) = B$(I, 0) ' TEAM
+                RC$(5, 2) = SITE$(I) ' AT/VS
+                RC$(5, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(5, 4) = Date$ ' DATE
+            End If
+            If A(I, I1, 8) = 0 And A(I, I1, 7) > REC(6, 0) Then
+                REC(6, 0) = A(I, I1, 7) ' 0 FGM /FGA
+                RC$(6, 0) = AA$(I, I1, 0) ' NAME
+                RC$(6, 1) = B$(I, 0) ' TEAM
+                RC$(6, 2) = SITE$(I) ' AT/VS
+                RC$(6, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(6, 4) = Date$ ' DATE
+            End If
+
+            ' FIELD GOALS MADE IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
+            If A(I, I1, 8) > REC(7, 0) Then
+                REC(7, 0) = A(I, I1, 8) ' FGM
+                REC(7, 1) = 1 ' TIMES DONE
+                REC(7, 2) = 0 ' GAME
+                RC$(7, 0) = AA$(I, I1, 0) ' NAME
+                RC$(7, 1) = B$(I, 0) ' TEAM
+                RC$(7, 2) = SITE$(I) ' AT/VS
+                RC$(7, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(7, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 1, I1, 2) + QQ(I, 2, I1, 2) > REC(8, 0) Then
+                REC(8, 0) = QQ(I, 1, I1, 2) + QQ(I, 2, I1, 2) ' FGM
+                REC(8, 1) = 1 ' TIMES DONE
+                REC(8, 2) = 1 ' HALF
+                RC$(8, 0) = AA$(I, I1, 0) ' NAME
+                RC$(8, 1) = B$(I, 0) ' TEAM
+                RC$(8, 2) = SITE$(I) ' AT/VS
+                RC$(8, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(8, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 3, I1, 2) + QQ(I, 4, I1, 2) > REC(8, 0) Then
+                REC(8, 0) = QQ(I, 3, I1, 2) + QQ(I, 4, I1, 2) ' FGM
+                REC(8, 1) = 1 ' TIMES DONE
+                REC(8, 2) = 2 ' HALF
+                RC$(8, 0) = AA$(I, I1, 0) ' NAME
+                RC$(8, 1) = B$(I, 0) ' TEAM
+                RC$(8, 2) = SITE$(I) ' AT/VS
+                RC$(8, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(8, 4) = Date$ ' DATE
+            End If
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 2) > REC(9, 0) Then
+                    REC(9, 0) = QQ(I, I2, I1, 2) ' FGM
+                    REC(9, 1) = 1 ' TIMES DONE
+                    REC(9, 2) = I2 ' QTR
+                    RC$(9, 0) = AA$(I, I1, 0) ' NAME
+                    RC$(9, 1) = B$(I, 0) ' TEAM
+                    RC$(9, 2) = SITE$(I) ' AT/VS
+                    RC$(9, 3) = B$(1 - I, 0) ' OPPONENT
+                    RC$(9, 4) = Date$ ' DATE
+                End If
+            Next I2
+            For I2 = 5 To 8
+                If QQ(I, I2, I1, 2) > REC(10, 0) Then
+                    REC(10, 0) = QQ(I, I2, I1, 2) ' FGM
+                    REC(10, 1) = 1 ' TIMES DONE
+                    REC(10, 2) = I2 ' QTR
+                    RC$(10, 0) = AA$(I, I1, 0) ' NAME
+                    RC$(10, 1) = B$(I, 0) ' TEAM
+                    RC$(10, 2) = SITE$(I) ' AT/VS
+                    RC$(10, 3) = B$(1 - I, 0) ' OPPONENT
+                    RC$(10, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' FIELD GOAL ATTEMPTS MADE IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
+            If A(I, I1, 7) > REC(11, 0) Then
+                REC(11, 0) = A(I, I1, 7) ' FGA
+                REC(11, 1) = 1 ' TIMES DONE
+                REC(11, 2) = 0 ' GAME
+                RC$(11, 0) = AA$(I, I1, 0) ' NAME
+                RC$(11, 1) = B$(I, 0) ' TEAM
+                RC$(11, 2) = SITE$(I) ' AT/VS
+                RC$(11, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(11, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 1, I1, 1) + QQ(I, 2, I1, 1) > REC(12, 0) Then
+                REC(12, 0) = QQ(I, 1, I1, 1) + QQ(I, 2, I1, 1) ' FGA
+                REC(12, 1) = 1 ' TIMES DONE
+                REC(12, 2) = 1 ' HALF
+                RC$(12, 0) = AA$(I, I1, 0) ' NAME
+                RC$(12, 1) = B$(I, 0) ' TEAM
+                RC$(12, 2) = SITE$(I) ' AT/VS
+                RC$(12, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(12, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 3, I1, 1) + QQ(I, 4, I1, 1) > REC(12, 0) Then
+                REC(12, 0) = QQ(I, 3, I1, 1) + QQ(I, 4, I1, 1) ' FGA
+                REC(12, 1) = 1 ' TIMES DONE
+                REC(12, 2) = 2 ' HALF
+                RC$(12, 0) = AA$(I, I1, 0) ' NAME
+                RC$(12, 1) = B$(I, 0) ' TEAM
+                RC$(12, 2) = SITE$(I) ' AT/VS
+                RC$(12, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(12, 4) = Date$ ' DATE
+            End If
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 1) > REC(13, 0) Then
+                    REC(13, 0) = QQ(I, I2, I1, 1) ' FGA
+                    REC(13, 1) = 1 ' TIMES DONE
+                    REC(13, 2) = I2 ' QTR
+                    RC$(13, 0) = AA$(I, I1, 0) ' NAME
+                    RC$(13, 1) = B$(I, 0) ' TEAM
+                    RC$(13, 2) = SITE$(I) ' AT/VS
+                    RC$(13, 3) = B$(1 - I, 0) ' OPPONENT
+                    RC$(13, 4) = Date$ ' DATE
+                End If
+            Next I2
+            For I2 = 5 To 8
+                If QQ(I, I2, I1, 1) > REC(14, 0) Then
+                    REC(14, 0) = QQ(I, I2, I1, 1) ' FGA
+                    REC(14, 1) = 1 ' TIMES DONE
+                    REC(14, 2) = I2 ' QTR
+                    RC$(14, 0) = AA$(I, I1, 0) ' NAME
+                    RC$(14, 1) = B$(I, 0) ' TEAM
+                    RC$(14, 2) = SITE$(I) ' AT/VS
+                    RC$(14, 3) = B$(1 - I, 0) ' OPPONENT
+                    RC$(14, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' THREE-POINT FIELD GOALS MOST MADE NO MISSES, MOST ATT NONE MADE
+            If W%(I, I1, 0) = W%(I, I1, 1) And W%(I, I1, 0) > REC(15, 0) Then
+                REC(15, 0) = W%(I, I1, 0) ' MOST 3-FGM
+                RC$(15, 0) = AA$(I, I1, 0) ' NAME
+                RC$(15, 1) = B$(I, 0) ' TEAM
+                RC$(15, 2) = SITE$(I) ' AT/VS
+                RC$(15, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(15, 4) = Date$ ' DATE
+            End If
+            If W%(I, I1, 0) = 0 And W%(I, I1, 1) > REC(16, 0) Then
+                REC(16, 0) = W%(I, I1, 1) ' 0 3FGM /3FGA
+                RC$(16, 0) = AA$(I, I1, 0) ' NAME
+                RC$(16, 1) = B$(I, 0) ' TEAM
+                RC$(16, 2) = SITE$(I) ' AT/VS
+                RC$(16, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(16, 4) = Date$ ' DATE
+            End If
+
+            ' 3-FIELD GOALS MADE IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
+            If W%(I, I1, 0) > REC(17, 0) Then
+                REC(17, 0) = W%(I, I1, 0) ' 3FGM
+                REC(17, 1) = 1 ' TIMES DONE
+                REC(17, 2) = 0 ' GAME
+                RC$(17, 0) = AA$(I, I1, 0) ' NAME
+                RC$(17, 1) = B$(I, 0) ' TEAM
+                RC$(17, 2) = SITE$(I) ' AT/VS
+                RC$(17, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(17, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 1, I1, 10) + QQ(I, 2, I1, 10) > REC(18, 0) Then
+                REC(18, 0) = QQ(I, 1, I1, 10) + QQ(I, 2, I1, 10) ' 3FGM
+                REC(18, 1) = 1 ' TIMES DONE
+                REC(18, 2) = 1 ' HALF
+                RC$(18, 0) = AA$(I, I1, 0) ' NAME
+                RC$(18, 1) = B$(I, 0) ' TEAM
+                RC$(18, 2) = SITE$(I) ' AT/VS
+                RC$(18, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(18, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) > REC(18, 0) Then
+                REC(18, 0) = QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) ' 3FGM
+                REC(18, 1) = 1 ' TIMES DONE
+                REC(18, 2) = 2 ' HALF
+                RC$(18, 0) = AA$(I, I1, 0) ' NAME
+                RC$(18, 1) = B$(I, 0) ' TEAM
+                RC$(18, 2) = SITE$(I) ' AT/VS
+                RC$(18, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(18, 4) = Date$ ' DATE
+            End If
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 10) > REC(19, 0) Then
+                    REC(19, 0) = QQ(I, I2, I1, 10) ' 3FGM
+                    REC(19, 1) = 1 ' TIMES DONE
+                    REC(19, 2) = I2 ' QTR
+                    RC$(19, 0) = AA$(I, I1, 0) ' NAME
+                    RC$(19, 1) = B$(I, 0) ' TEAM
+                    RC$(19, 2) = SITE$(I) ' AT/VS
+                    RC$(19, 3) = B$(1 - I, 0) ' OPPONENT
+                    RC$(19, 4) = Date$ ' DATE
+                End If
+            Next I2
+            For I2 = 5 To 8
+                If QQ(I, I2, I1, 10) > REC(20, 0) Then
+                    REC(20, 0) = QQ(I, I2, I1, 10) ' 3FGM
+                    REC(20, 1) = 1 ' TIMES DONE
+                    REC(20, 2) = I2 ' QTR
+                    RC$(20, 0) = AA$(I, I1, 0) ' NAME
+                    RC$(20, 1) = B$(I, 0) ' TEAM
+                    RC$(20, 2) = SITE$(I) ' AT/VS
+                    RC$(20, 3) = B$(1 - I, 0) ' OPPONENT
+                    RC$(20, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' 3-FIELD GOALS ATT IN A GAME, HALF
+            If W%(I, I1, 1) > REC(21, 0) Then
+                REC(21, 0) = W%(I, I1, 1) ' 3FGA
+                REC(21, 1) = 1 ' TIMES DONE
+                REC(21, 2) = 0 ' GAME
+                RC$(21, 0) = AA$(I, I1, 0) ' NAME
+                RC$(21, 1) = B$(I, 0) ' TEAM
+                RC$(21, 2) = SITE$(I) ' AT/VS
+                RC$(21, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(21, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 1, I1, 11) + QQ(I, 2, I1, 11) > REC(22, 0) Then
+                REC(22, 0) = QQ(I, 1, I1, 11) + QQ(I, 2, I1, 11) ' 3FGA
+                REC(22, 1) = 1 ' TIMES DONE
+                REC(22, 2) = 1 ' HALF
+                RC$(22, 0) = AA$(I, I1, 0) ' NAME
+                RC$(22, 1) = B$(I, 0) ' TEAM
+                RC$(22, 2) = SITE$(I) ' AT/VS
+                RC$(22, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(22, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 3, I1, 11) + QQ(I, 4, I1, 11) > REC(22, 0) Then
+                REC(22, 0) = QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) ' 3FGA
+                REC(22, 1) = 1 ' TIMES DONE
+                REC(22, 2) = 2 ' HALF
+                RC$(22, 0) = AA$(I, I1, 0) ' NAME
+                RC$(22, 1) = B$(I, 0) ' TEAM
+                RC$(22, 2) = SITE$(I) ' AT/VS
+                RC$(22, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(22, 4) = Date$ ' DATE
+            End If
+            ' FREE THROWS -  MOST MADE NO MISSES, MOST ATT NONE MADE
+            If A(I, I1, 9) = A(I, I1, 10) And A(I, I1, 10) > REC(23, 0) Then
+                REC(23, 0) = A(I, I1, 10) ' MOST FTM
+                RC$(23, 0) = AA$(I, I1, 0) ' NAME
+                RC$(23, 1) = B$(I, 0) ' TEAM
+                RC$(23, 2) = SITE$(I) ' AT/VS
+                RC$(23, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(23, 4) = Date$ ' DATE
+            End If
+            If A(I, I1, 10) = 0 And A(I, I1, 9) > REC(24, 0) Then
+                REC(24, 0) = A(I, I1, 9) ' 0 FTM /FTA
+                RC$(24, 0) = AA$(I, I1, 0) ' NAME
+                RC$(24, 1) = B$(I, 0) ' TEAM
+                RC$(24, 2) = SITE$(I) ' AT/VS
+                RC$(24, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(24, 4) = Date$ ' DATE
+            End If
+
+            ' MADE FREE THROWS IN A GAME, HALF, QUARTER
+            If A(I, I1, 10) > REC(25, 0) Then
+                REC(25, 0) = A(I, I1, 10) ' FTM
+                REC(25, 1) = 1 ' TIMES DONE
+                REC(25, 2) = 0 ' GAME
+                RC$(25, 0) = AA$(I, I1, 0) ' NAME
+                RC$(25, 1) = B$(I, 0) ' TEAM
+                RC$(25, 2) = SITE$(I) ' AT/VS
+                RC$(25, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(25, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 1, I1, 4) + QQ(I, 2, I1, 4) > REC(26, 0) Then
+                REC(26, 0) = QQ(I, 1, I1, 4) + QQ(I, 2, I1, 4) ' FTM
+                REC(26, 1) = 1 ' TIMES DONE
+                REC(26, 2) = 1 ' HALF
+                RC$(26, 0) = AA$(I, I1, 0) ' NAME
+                RC$(26, 1) = B$(I, 0) ' TEAM
+                RC$(26, 2) = SITE$(I) ' AT/VS
+                RC$(26, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(26, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 3, I1, 4) + QQ(I, 4, I1, 4) > REC(26, 0) Then
+                REC(26, 0) = QQ(I, 3, I1, 4) + QQ(I, 4, I1, 4) ' FTM
+                REC(26, 1) = 1 ' TIMES DONE
+                REC(26, 2) = 2 ' HALF
+                RC$(26, 0) = AA$(I, I1, 0) ' NAME
+                RC$(26, 1) = B$(I, 0) ' TEAM
+                RC$(26, 2) = SITE$(I) ' AT/VS
+                RC$(26, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(26, 4) = Date$ ' DATE
+            End If
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 4) > REC(27, 0) Then
+                    REC(27, 0) = QQ(I, I2, I1, 4) ' FTM
+                    REC(27, 1) = 1 ' TIMES DONE
+                    REC(27, 2) = I2 ' QTR
+                    RC$(27, 0) = AA$(I, I1, 0) ' NAME
+                    RC$(27, 1) = B$(I, 0) ' TEAM
+                    RC$(27, 2) = SITE$(I) ' AT/VS
+                    RC$(27, 3) = B$(1 - I, 0) ' OPPONENT
+                    RC$(27, 4) = Date$ ' DATE
+                End If
+            Next I2
+            ' FREE THROWS ATTEMPTS IN A GAME, HALF, QUARTER
+            If A(I, I1, 9) > REC(28, 0) Then
+                REC(28, 0) = A(I, I1, 9) ' FTA
+                REC(28, 1) = 1 ' TIMES DONE
+                REC(28, 2) = 0 ' GAME
+                RC$(28, 0) = AA$(I, I1, 0) ' NAME
+                RC$(28, 1) = B$(I, 0) ' TEAM
+                RC$(28, 2) = SITE$(I) ' AT/VS
+                RC$(28, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(28, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 1, I1, 3) + QQ(I, 2, I1, 3) > REC(29, 0) Then
+                REC(29, 0) = QQ(I, 1, I1, 3) + QQ(I, 2, I1, 3) ' FTA
+                REC(29, 1) = 1 ' TIMES DONE
+                REC(29, 2) = 1 ' HALF
+                RC$(29, 0) = AA$(I, I1, 0) ' NAME
+                RC$(29, 1) = B$(I, 0) ' TEAM
+                RC$(29, 2) = SITE$(I) ' AT/VS
+                RC$(29, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(29, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 3, I1, 3) + QQ(I, 4, I1, 3) > REC(29, 0) Then
+                REC(29, 0) = QQ(I, 3, I1, 3) + QQ(I, 4, I1, 3) ' FTM
+                REC(29, 1) = 1 ' TIMES DONE
+                REC(29, 2) = 2 ' HALF
+                RC$(29, 0) = AA$(I, I1, 0) ' NAME
+                RC$(29, 1) = B$(I, 0) ' TEAM
+                RC$(29, 2) = SITE$(I) ' AT/VS
+                RC$(29, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(29, 4) = Date$ ' DATE
+            End If
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 3) > REC(30, 0) Then
+                    REC(30, 0) = QQ(I, I2, I1, 3) ' FTM
+                    REC(30, 1) = 1 ' TIMES DONE
+                    REC(30, 2) = I2 ' QTR
+                    RC$(30, 0) = AA$(I, I1, 0) ' NAME
+                    RC$(30, 1) = B$(I, 0) ' TEAM
+                    RC$(30, 2) = SITE$(I) ' AT/VS
+                    RC$(30, 3) = B$(1 - I, 0) ' OPPONENT
+                    RC$(30, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' TOTAL REBOUNDS IN A GAME, HALF, QUARTER
+            If A(I, I1, 11) > REC(31, 0) Then
+                REC(31, 0) = A(I, I1, 11) ' FTA
+                REC(31, 1) = 1 ' TIMES DONE
+                REC(31, 2) = 0 ' GAME
+                RC$(31, 0) = AA$(I, I1, 0) ' NAME
+                RC$(31, 1) = B$(I, 0) ' TEAM
+                RC$(31, 2) = SITE$(I) ' AT/VS
+                RC$(31, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(31, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) > REC(32, 0) Then
+                REC(32, 0) = QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) ' RB
+                REC(32, 1) = 1 ' TIMES DONE
+                REC(32, 2) = 1 ' HALF
+                RC$(32, 0) = AA$(I, I1, 0) ' NAME
+                RC$(32, 1) = B$(I, 0) ' TEAM
+                RC$(32, 2) = SITE$(I) ' AT/VS
+                RC$(32, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(32, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) > REC(32, 0) Then
+                REC(32, 0) = QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) ' RB
+                REC(32, 1) = 1 ' TIMES DONE
+                REC(32, 2) = 2 ' HALF
+                RC$(32, 0) = AA$(I, I1, 0) ' NAME
+                RC$(32, 1) = B$(I, 0) ' TEAM
+                RC$(32, 2) = SITE$(I) ' AT/VS
+                RC$(32, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(32, 4) = Date$ ' DATE
+            End If
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 5) > REC(33, 0) Then
+                    REC(33, 0) = QQ(I, I2, I1, 5) ' RB
+                    REC(33, 1) = 1 ' TIMES DONE
+                    REC(33, 2) = I2 ' QTR
+                    RC$(33, 0) = AA$(I, I1, 0) ' NAME
+                    RC$(33, 1) = B$(I, 0) ' TEAM
+                    RC$(33, 2) = SITE$(I) ' AT/VS
+                    RC$(33, 3) = B$(1 - I, 0) ' OPPONENT
+                    RC$(33, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' TOTAL OFFENSIVE REBOUNDS IN A GAME, HALF, QUARTER
+            If A(I, I1, 24) > REC(34, 0) Then
+                REC(34, 0) = A(I, I1, 24) ' FTA
+                REC(34, 1) = 1 ' TIMES DONE
+                REC(34, 2) = 0 ' GAME
+                RC$(34, 0) = AA$(I, I1, 0) ' NAME
+                RC$(34, 1) = B$(I, 0) ' TEAM
+                RC$(34, 2) = SITE$(I) ' AT/VS
+                RC$(34, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(34, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12) > REC(35, 0) Then
+                REC(35, 0) = QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12) ' RB
+                REC(35, 1) = 1 ' TIMES DONE
+                REC(35, 2) = 1 ' HALF
+                RC$(35, 0) = AA$(I, I1, 0) ' NAME
+                RC$(35, 1) = B$(I, 0) ' TEAM
+                RC$(35, 2) = SITE$(I) ' AT/VS
+                RC$(35, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(35, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12) > REC(35, 0) Then
+                REC(35, 0) = QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12) ' RB
+                REC(35, 1) = 1 ' TIMES DONE
+                REC(35, 2) = 2 ' HALF
+                RC$(35, 0) = AA$(I, I1, 0) ' NAME
+                RC$(35, 1) = B$(I, 0) ' TEAM
+                RC$(35, 2) = SITE$(I) ' AT/VS
+                RC$(35, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(35, 4) = Date$ ' DATE
+            End If
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 12) > REC(36, 0) Then
+                    REC(36, 0) = QQ(I, I2, I1, 12) ' RB
+                    REC(36, 1) = 1 ' TIMES DONE
+                    REC(36, 2) = I2 ' QTR
+                    RC$(36, 0) = AA$(I, I1, 0) ' NAME
+                    RC$(36, 1) = B$(I, 0) ' TEAM
+                    RC$(36, 2) = SITE$(I) ' AT/VS
+                    RC$(36, 3) = B$(1 - I, 0) ' OPPONENT
+                    RC$(36, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' TOTAL DEFENSIVE REBOUNDS IN A GAME, HALF, QUARTER
+            If A(I, I1, 11) - A(I, I1, 24) > REC(37, 0) Then
+                REC(37, 0) = A(I, I1, 11) - A(I, I1, 24) ' FTA
+                REC(37, 1) = 1 ' TIMES DONE
+                REC(37, 2) = 0 ' GAME
+                RC$(37, 0) = AA$(I, I1, 0) ' NAME
+                RC$(37, 1) = B$(I, 0) ' TEAM
+                RC$(37, 2) = SITE$(I) ' AT/VS
+                RC$(37, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(37, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) - (QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12)) > REC(38, 0) Then
+                REC(38, 0) = QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) - (QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12)) ' RB
+                REC(38, 1) = 1 ' TIMES DONE
+                REC(38, 2) = 1 ' HALF
+                RC$(38, 0) = AA$(I, I1, 0) ' NAME
+                RC$(38, 1) = B$(I, 0) ' TEAM
+                RC$(38, 2) = SITE$(I) ' AT/VS
+                RC$(38, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(38, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) - (QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12)) > REC(38, 0) Then
+                REC(38, 0) = QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) - (QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12)) ' RB
+                REC(38, 1) = 1 ' TIMES DONE
+                REC(38, 2) = 2 ' HALF
+                RC$(38, 0) = AA$(I, I1, 0) ' NAME
+                RC$(38, 1) = B$(I, 0) ' TEAM
+                RC$(38, 2) = SITE$(I) ' AT/VS
+                RC$(38, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(38, 4) = Date$ ' DATE
+            End If
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 5) - QQ(I, I2, I1, 12) > REC(39, 0) Then
+                    REC(39, 0) = QQ(I, I2, I1, 5) - QQ(I, I2, I1, 12) ' RB
+                    REC(39, 1) = 1 ' TIMES DONE
+                    REC(39, 2) = I2 ' QTR
+                    RC$(39, 0) = AA$(I, I1, 0) ' NAME
+                    RC$(39, 1) = B$(I, 0) ' TEAM
+                    RC$(39, 2) = SITE$(I) ' AT/VS
+                    RC$(39, 3) = B$(1 - I, 0) ' OPPONENT
+                    RC$(39, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' ASSISTS IN A GAME, HALF, QUARTER
+            If A(I, I1, 14) > REC(40, 0) Then
+                REC(40, 0) = A(I, I1, 14) ' FTA
+                REC(40, 1) = 1 ' TIMES DONE
+                REC(40, 2) = 0 ' GAME
+                RC$(40, 0) = AA$(I, I1, 0) ' NAME
+                RC$(40, 1) = B$(I, 0) ' TEAM
+                RC$(40, 2) = SITE$(I) ' AT/VS
+                RC$(40, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(40, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 1, I1, 8) + QQ(I, 2, I1, 8) > REC(41, 0) Then
+                REC(41, 0) = QQ(I, 1, I1, 8) + QQ(I, 2, I1, 8) ' FTA
+                REC(41, 1) = 1 ' TIMES DONE
+                REC(41, 2) = 1 ' HALF
+                RC$(41, 0) = AA$(I, I1, 0) ' NAME
+                RC$(41, 1) = B$(I, 0) ' TEAM
+                RC$(41, 2) = SITE$(I) ' AT/VS
+                RC$(41, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(41, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 3, I1, 8) + QQ(I, 4, I1, 8) > REC(41, 0) Then
+                REC(41, 0) = QQ(I, 3, I1, 8) + QQ(I, 4, I1, 8) ' FTM
+                REC(41, 1) = 1 ' TIMES DONE
+                REC(41, 2) = 2 ' HALF
+                RC$(41, 0) = AA$(I, I1, 0) ' NAME
+                RC$(41, 1) = B$(I, 0) ' TEAM
+                RC$(41, 2) = SITE$(I) ' AT/VS
+                RC$(41, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(41, 4) = Date$ ' DATE
+            End If
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 8) > REC(42, 0) Then
+                    REC(42, 0) = QQ(I, I2, I1, 8) ' FTM
+                    REC(42, 1) = 1 ' TIMES DONE
+                    REC(42, 2) = I2 ' QTR
+                    RC$(42, 0) = AA$(I, I1, 0) ' NAME
+                    RC$(42, 1) = B$(I, 0) ' TEAM
+                    RC$(42, 2) = SITE$(I) ' AT/VS
+                    RC$(42, 3) = B$(1 - I, 0) ' OPPONENT
+                    RC$(42, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' STEALS IN A GAME, HALF, QUARTER
+            If A(I, I1, 13) > REC(43, 0) Then
+                REC(43, 0) = A(I, I1, 13) ' FTA
+                REC(43, 1) = 1 ' TIMES DONE
+                REC(43, 2) = 0 ' GAME
+                RC$(43, 0) = AA$(I, I1, 0) ' NAME
+                RC$(43, 1) = B$(I, 0) ' TEAM
+                RC$(43, 2) = SITE$(I) ' AT/VS
+                RC$(43, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(43, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 1, I1, 7) + QQ(I, 2, I1, 7) > REC(44, 0) Then
+                REC(44, 0) = QQ(I, 1, I1, 7) + QQ(I, 2, I1, 7) ' FTA
+                REC(44, 1) = 1 ' TIMES DONE
+                REC(44, 2) = 1 ' HALF
+                RC$(44, 0) = AA$(I, I1, 0) ' NAME
+                RC$(44, 1) = B$(I, 0) ' TEAM
+                RC$(44, 2) = SITE$(I) ' AT/VS
+                RC$(44, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(44, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 3, I1, 7) + QQ(I, 4, I1, 7) > REC(44, 0) Then
+                REC(44, 0) = QQ(I, 3, I1, 7) + QQ(I, 4, I1, 7) ' FTM
+                REC(44, 1) = 1 ' TIMES DONE
+                REC(44, 2) = 2 ' HALF
+                RC$(44, 0) = AA$(I, I1, 0) ' NAME
+                RC$(44, 1) = B$(I, 0) ' TEAM
+                RC$(44, 2) = SITE$(I) ' AT/VS
+                RC$(44, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(44, 4) = Date$ ' DATE
+            End If
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 7) > REC(45, 0) Then
+                    REC(45, 0) = QQ(I, I2, I1, 7) ' FTM
+                    REC(45, 1) = 1 ' TIMES DONE
+                    REC(45, 2) = I2 ' QTR
+                    RC$(45, 0) = AA$(I, I1, 0) ' NAME
+                    RC$(45, 1) = B$(I, 0) ' TEAM
+                    RC$(45, 2) = SITE$(I) ' AT/VS
+                    RC$(45, 3) = B$(1 - I, 0) ' OPPONENT
+                    RC$(45, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' BLOCKS IN A GAME, HALF, QUARTER
+            If A(I, I1, 15) > REC(46, 0) Then
+                REC(46, 0) = A(I, I1, 15) ' FTA
+                REC(46, 1) = 1 ' TIMES DONE
+                REC(46, 2) = 0 ' GAME
+                RC$(46, 0) = AA$(I, I1, 0) ' NAME
+                RC$(46, 1) = B$(I, 0) ' TEAM
+                RC$(46, 2) = SITE$(I) ' AT/VS
+                RC$(46, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(46, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 1, I1, 9) + QQ(I, 2, I1, 9) > REC(47, 0) Then
+                REC(47, 0) = QQ(I, 1, I1, 9) + QQ(I, 2, I1, 9) ' FTA
+                REC(47, 1) = 1 ' TIMES DONE
+                REC(47, 2) = 1 ' HALF
+                RC$(47, 0) = AA$(I, I1, 0) ' NAME
+                RC$(47, 1) = B$(I, 0) ' TEAM
+                RC$(47, 2) = SITE$(I) ' AT/VS
+                RC$(47, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(47, 4) = Date$ ' DATE
+            End If
+            If QQ(I, 3, I1, 9) + QQ(I, 4, I1, 9) > REC(47, 0) Then
+                REC(47, 0) = QQ(I, 3, I1, 9) + QQ(I, 4, I1, 9) ' FTM
+                REC(47, 1) = 1 ' TIMES DONE
+                REC(47, 2) = 2 ' HALF
+                RC$(47, 0) = AA$(I, I1, 0) ' NAME
+                RC$(47, 1) = B$(I, 0) ' TEAM
+                RC$(47, 2) = SITE$(I) ' AT/VS
+                RC$(47, 3) = B$(1 - I, 0) ' OPPONENT
+                RC$(47, 4) = Date$ ' DATE
+            End If
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 9) > REC(48, 0) Then
+                    REC(48, 0) = QQ(I, I2, I1, 9) ' FTM
+                    REC(48, 1) = 1 ' TIMES DONE
+                    REC(48, 2) = I2 ' QTR
+                    RC$(48, 0) = AA$(I, I1, 0) ' NAME
+                    RC$(48, 1) = B$(I, 0) ' TEAM
+                    RC$(48, 2) = SITE$(I) ' AT/VS
+                    RC$(48, 3) = B$(1 - I, 0) ' OPPONENT
+                    RC$(48, 4) = Date$ ' DATE
+                End If
+            Next I2
+        Next
+    Next
+
+    ' MOST OVERTIME PERIODS
+    If H - 5 > TREC(0, 0) Then
+        TREC(0, 0) = H - 5
+        TREC(0, 1) = S(0, 0)
+        TREC(0, 2) = S(1, 0)
+        TRC$(0, 0) = B$(0, 0)
+        TRC$(0, 1) = B$(1, 0)
+        TRC$(0, 2) = Date$
+    End If
+
+    For I = 0 To 1
+
+        If S(I, 0) > TREC(1, 0) Then
+            TREC(1, 0) = S(I, 0)
+            TREC(1, 1) = 1
+            TREC(1, 2) = 0
+            TRC$(1, 0) = B$(I, 0)
+            TRC$(1, 1) = SITE$(I)
+            TRC$(1, 2) = B$(1 - I, 0)
+            TRC$(1, 3) = Date$
+        End If
+
+        If S(I, 0) < TREC(2, 0) Then
+            TREC(2, 0) = S(I, 0)
+            TREC(2, 1) = 1
+            TREC(2, 2) = 0
+            TRC$(2, 0) = B$(I, 0)
+            TRC$(2, 1) = SITE$(I)
+            TRC$(2, 2) = B$(1 - I, 0)
+            TRC$(2, 3) = Date$
+        End If
+
+        If S(I, 0) + S(1 - I, 0) > TREC(3, 0) Then
+            TREC(3, 0) = S(I, 0) + S(1 - I, 0)
+            TREC(3, 1) = S(I, 0)
+            TREC(3, 2) = S(1 - I, 0)
+            TRC$(3, 0) = B$(I, 0)
+            TRC$(3, 1) = SITE$(I)
+            TRC$(3, 2) = B$(1 - I, 0)
+            TRC$(3, 3) = Date$
+        End If
+
+        If S(I, 0) + S(1 - I, 0) < TREC(4, 0) Then
+            TREC(4, 0) = S(I, 0) + S(1 - I, 0)
+            TREC(4, 1) = S(I, 0)
+            TREC(4, 2) = S(1 - I, 0)
+            TRC$(4, 0) = B$(I, 0)
+            TRC$(4, 1) = SITE$(I)
+            TRC$(4, 2) = B$(1 - I, 0)
+            TRC$(4, 3) = Date$
+        End If
+
+        If S(I, 1) + S(I, 2) > TREC(6, 0) Then
+            TREC(6, 0) = S(I, 1) + S(I, 2)
+            TREC(6, 1) = 1
+            TREC(6, 2) = 0
+            TRC$(6, 0) = B$(I, 0)
+            TRC$(6, 1) = SITE$(I)
+            TRC$(6, 2) = B$(1 - I, 0)
+            TRC$(6, 3) = Date$
+        End If
+
+        If S(I, 1) + S(I, 2) < TREC(7, 0) Then
+            TREC(7, 0) = S(I, 1) + S(I, 2)
+            TREC(7, 1) = 1
+            TREC(7, 2) = 0
+            TRC$(7, 0) = B$(I, 0)
+            TRC$(7, 1) = SITE$(I)
+            TRC$(7, 2) = B$(1 - I, 0)
+            TRC$(7, 3) = Date$
+        End If
+
+        If S(I, 1) + S(I, 2) + S(1 - I, 1) + S(1 - I, 2) > TREC(8, 0) Then
+            TREC(8, 0) = S(I, 1) + S(1 - I, 1) + S(I, 2) + S(1 - I, 2)
+            TREC(8, 1) = S(I, 1) + S(I, 2)
+            TREC(8, 2) = S(1 - I, 1) + S(1 - I, 2)
+            TRC$(8, 0) = B$(I, 0)
+            TRC$(8, 1) = SITE$(I)
+            TRC$(8, 2) = B$(1 - I, 0)
+            TRC$(8, 3) = Date$
+        End If
+
+        If S(I, 1) + S(I, 2) + S(1 - I, 1) + S(1 - I, 2) < TREC(9, 0) Then
+            TREC(9, 0) = S(I, 1) + S(1 - I, 1) + S(I, 2) + S(1 - I, 2)
+            TREC(9, 1) = S(I, 1) + S(I, 2)
+            TREC(9, 2) = S(1 - I, 1) + S(1 - I, 2)
+            TRC$(9, 0) = B$(I, 0)
+            TRC$(9, 1) = SITE$(I)
+            TRC$(9, 2) = B$(1 - I, 0)
+            TRC$(9, 3) = Date$
+        End If
+
+        If S(I, 3) + S(I, 4) > TREC(10, 0) Then
+            TREC(10, 0) = S(I, 3) + S(I, 4)
+            TREC(10, 1) = 1
+            TREC(10, 2) = 0
+            TRC$(10, 0) = B$(I, 0)
+            TRC$(10, 1) = SITE$(I)
+            TRC$(10, 2) = B$(1 - I, 0)
+            TRC$(10, 3) = Date$
+        End If
+
+        If S(I, 3) + S(I, 4) < TREC(11, 0) Then
+            TREC(11, 0) = S(I, 3) + S(I, 4)
+            TREC(11, 1) = 1
+            TREC(11, 2) = 0
+            TRC$(11, 0) = B$(I, 0)
+            TRC$(11, 1) = SITE$(I)
+            TRC$(11, 2) = B$(1 - I, 0)
+            TRC$(11, 3) = Date$
+        End If
+
+        If S(I, 3) + S(I, 4) + S(1 - I, 3) + S(1 - I, 4) > TREC(12, 0) Then
+            TREC(12, 0) = S(I, 3) + S(1 - I, 3) + S(I, 4) + S(1 - I, 4)
+            TREC(12, 1) = S(I, 3) + S(I, 4)
+            TREC(12, 2) = S(1 - I, 3) + S(1 - I, 4)
+            TRC$(12, 0) = B$(I, 0)
+            TRC$(12, 1) = SITE$(I)
+            TRC$(12, 2) = B$(1 - I, 0)
+            TRC$(12, 3) = Date$
+        End If
+
+        If S(I, 3) + S(I, 4) + S(1 - I, 3) + S(1 - I, 4) < TREC(13, 0) Then
+            TREC(13, 0) = S(I, 3) + S(1 - I, 3) + S(I, 4) + S(1 - I, 4)
+            TREC(13, 1) = S(I, 3) + S(I, 4)
+            TREC(13, 2) = S(1 - I, 3) + S(1 - I, 4)
+            TRC$(13, 0) = B$(I, 0)
+            TRC$(13, 1) = SITE$(I)
+            TRC$(13, 2) = B$(1 - I, 0)
+            TRC$(13, 3) = Date$
+        End If
+
+        If S(I, 1) > TREC(14, 0) Then
+            TREC(14, 0) = S(I, 1)
+            TREC(14, 1) = 1
+            TREC(14, 2) = 0
+            TRC$(14, 0) = B$(I, 0)
+            TRC$(14, 1) = SITE$(I)
+            TRC$(14, 2) = B$(1 - I, 0)
+            TRC$(14, 3) = Date$
+        End If
+
+        If S(I, 1) < TREC(15, 0) Then
+            TREC(15, 0) = S(I, 1)
+            TREC(15, 1) = 1
+            TREC(15, 2) = 0
+            TRC$(15, 0) = B$(I, 0)
+            TRC$(15, 1) = SITE$(I)
+            TRC$(15, 2) = B$(1 - I, 0)
+            TRC$(15, 3) = Date$
+        End If
+
+        If S(I, 1) + S(1 - I, 1) > TREC(16, 0) Then
+            TREC(16, 0) = S(I, 1) + S(1 - I, 1)
+            TREC(16, 1) = S(I, 1)
+            TREC(16, 2) = S(1 - I, 1)
+            TRC$(16, 0) = B$(I, 0)
+            TRC$(16, 1) = SITE$(I)
+            TRC$(16, 2) = B$(1 - I, 0)
+            TRC$(16, 3) = Date$
+        End If
+
+        If S(I, 1) + S(1 - I, 1) < TREC(17, 0) Then
+            TREC(17, 0) = S(I, 1) + S(1 - I, 1)
+            TREC(17, 1) = S(I, 1)
+            TREC(17, 2) = S(1 - I, 1)
+            TRC$(17, 0) = B$(I, 0)
+            TRC$(17, 1) = SITE$(I)
+            TRC$(17, 2) = B$(1 - I, 0)
+            TRC$(17, 3) = Date$
+        End If
+
+        If S(I, 2) > TREC(18, 0) Then
+            TREC(18, 0) = S(I, 2)
+            TREC(18, 1) = 1
+            TREC(18, 2) = 0
+            TRC$(18, 0) = B$(I, 0)
+            TRC$(18, 1) = SITE$(I)
+            TRC$(18, 2) = B$(1 - I, 0)
+            TRC$(18, 3) = Date$
+        End If
+
+        If S(I, 2) < TREC(19, 0) Then
+            TREC(19, 0) = S(I, 2)
+            TREC(19, 1) = 1
+            TREC(19, 2) = 0
+            TRC$(19, 0) = B$(I, 0)
+            TRC$(19, 1) = SITE$(I)
+            TRC$(19, 2) = B$(1 - I, 0)
+            TRC$(19, 3) = Date$
+        End If
+
+        If S(I, 2) + S(1 - I, 2) > TREC(20, 0) Then
+            TREC(20, 0) = S(I, 2) + S(1 - I, 2)
+            TREC(20, 1) = S(I, 2)
+            TREC(20, 2) = S(1 - I, 2)
+            TRC$(20, 0) = B$(I, 0)
+            TRC$(20, 1) = SITE$(I)
+            TRC$(20, 2) = B$(1 - I, 0)
+            TRC$(20, 3) = Date$
+        End If
+
+        If S(I, 2) + S(1 - I, 2) < TREC(21, 0) Then
+            TREC(21, 0) = S(I, 2) + S(1 - I, 2)
+            TREC(21, 1) = S(I, 2)
+            TREC(21, 2) = S(1 - I, 2)
+            TRC$(21, 0) = B$(I, 0)
+            TRC$(21, 1) = SITE$(I)
+            TRC$(21, 2) = B$(1 - I, 0)
+            TRC$(21, 3) = Date$
+        End If
+
+        If S(I, 3) > TREC(22, 0) Then
+            TREC(22, 0) = S(I, 3)
+            TREC(22, 1) = 1
+            TREC(22, 2) = 0
+            TRC$(22, 0) = B$(I, 0)
+            TRC$(22, 1) = SITE$(I)
+            TRC$(22, 2) = B$(1 - I, 0)
+            TRC$(22, 3) = Date$
+        End If
+
+        If S(I, 3) < TREC(23, 0) Then
+            TREC(23, 0) = S(I, 3)
+            TREC(23, 1) = 1
+            TREC(23, 2) = 0
+            TRC$(23, 0) = B$(I, 0)
+            TRC$(23, 1) = SITE$(I)
+            TRC$(23, 2) = B$(1 - I, 0)
+            TRC$(23, 3) = Date$
+        End If
+
+        If S(I, 3) + S(1 - I, 3) > TREC(24, 0) Then
+            TREC(24, 0) = S(I, 3) + S(1 - I, 3)
+            TREC(24, 1) = S(I, 3)
+            TREC(24, 2) = S(1 - I, 3)
+            TRC$(24, 0) = B$(I, 0)
+            TRC$(24, 1) = SITE$(I)
+            TRC$(24, 2) = B$(1 - I, 0)
+            TRC$(24, 3) = Date$
+        End If
+
+        If S(I, 3) + S(1 - I, 3) < TREC(25, 0) Then
+            TREC(25, 0) = S(I, 3) + S(1 - I, 3)
+            TREC(25, 1) = S(I, 3)
+            TREC(25, 2) = S(1 - I, 3)
+            TRC$(25, 0) = B$(I, 0)
+            TRC$(25, 1) = SITE$(I)
+            TRC$(25, 2) = B$(1 - I, 0)
+            TRC$(25, 3) = Date$
+        End If
+
+        If S(I, 4) > TREC(26, 0) Then
+            TREC(26, 0) = S(I, 4)
+            TREC(26, 1) = 1
+            TREC(26, 2) = 0
+            TRC$(26, 0) = B$(I, 0)
+            TRC$(26, 1) = SITE$(I)
+            TRC$(26, 2) = B$(1 - I, 0)
+            TRC$(26, 3) = Date$
+        End If
+
+        If S(I, 4) < TREC(27, 0) Then
+            TREC(27, 0) = S(I, 4)
+            TREC(27, 1) = 1
+            TREC(27, 2) = 0
+            TRC$(27, 0) = B$(I, 0)
+            TRC$(27, 1) = SITE$(I)
+            TRC$(27, 2) = B$(1 - I, 0)
+            TRC$(27, 3) = Date$
+        End If
+
+        If S(I, 4) + S(1 - I, 4) > TREC(28, 0) Then
+            TREC(28, 0) = S(I, 4) + S(1 - I, 4)
+            TREC(28, 1) = S(I, 4)
+            TREC(28, 2) = S(1 - I, 4)
+            TRC$(28, 0) = B$(I, 0)
+            TRC$(28, 1) = SITE$(I)
+            TRC$(28, 2) = B$(1 - I, 0)
+            TRC$(28, 3) = Date$
+        End If
+
+        If S(I, 4) + S(1 - I, 4) < TREC(29, 0) Then
+            TREC(29, 0) = S(I, 4) + S(1 - I, 4)
+            TREC(29, 1) = S(I, 4)
+            TREC(29, 2) = S(1 - I, 4)
+            TRC$(29, 0) = B$(I, 0)
+            TRC$(29, 1) = SITE$(I)
+            TRC$(29, 2) = B$(1 - I, 0)
+            TRC$(29, 3) = Date$
+        End If
+
+        ' TEAM FIELD GOAL PERCENTAGES
+        For I1 = 0 To 14: V8(I, I1) = 0: V8(1 - I, I1) = 0: Next
+        For I2 = 0 To 1
+            For I1 = 0 To 14
+                V8(I2, 0) = V8(I2, 0) + A(I2, I1, 8)
+                V8(I2, 1) = V8(I2, 1) + A(I2, I1, 7)
+                V8(I2, 2) = V8(I2, 2) + A(I2, I1, 10)
+                V8(I2, 3) = V8(I2, 3) + A(I2, I1, 9)
+                V8(I2, 4) = V8(I2, 4) + A(I2, I1, 11)
+                V8(I2, 5) = V8(I2, 5) + (A(I2, I1, 8) * 2) + A(I2, I1, 10) + W%(I2, I1, 0)
+                V8(I2, 13) = V8(I2, 13) + W%(I2, I1, 0)
+                V8(I2, 14) = V8(I2, 14) + W%(I2, I1, 1)
+                V8(I2, 6) = TF(I2)
+                V8(I2, 7) = V8(I2, 7) + A(I2, I1, 14)
+                V8(I2, 8) = V8(I2, 8) + A(I2, I1, 15)
+                V8(I2, 9) = V8(I2, 9) + A(I2, I1, 13)
+                V8(I2, 11) = V8(I2, 11) + A(I2, I1, 24)
+                V8(I2, 12) = V8(I2, 12) + A(I2, I1, 23)
+                V8(I2, 10) = V8(I2, 10) + ZZ(I2, I1)
+            Next
+        Next
+
+        If V8(I, 0) / V8(I, 1) > TREC(30, 0) Then
+            TREC(30, 0) = V8(I, 0) / V8(I, 1)
+            TREC(30, 1) = V8(I, 0)
+            TREC(30, 2) = V8(I, 1)
+            TRC$(30, 0) = B$(I, 0)
+            TRC$(30, 1) = SITE$(I)
+            TRC$(30, 2) = B$(1 - I, 0)
+            TRC$(30, 3) = Date$
+        End If
+
+        If V8(I, 0) / V8(I, 1) < TREC(31, 0) Then
+            TREC(31, 0) = V8(I, 0) / V8(I, 1)
+            TREC(31, 1) = V8(I, 0)
+            TREC(31, 2) = V8(I, 1)
+            TRC$(31, 0) = B$(I, 0)
+            TRC$(31, 1) = SITE$(I)
+            TRC$(31, 2) = B$(1 - I, 0)
+            TRC$(31, 3) = Date$
+        End If
+
+        If (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1)) > TREC(32, 0) Then
+            TREC(32, 0) = (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1))
+            TREC(32, 1) = V8(I, 0) / V8(I, 1)
+            TREC(32, 2) = V8(1 - I, 0) / V8(1 - I, 1)
+            TRC$(32, 0) = B$(I, 0)
+            TRC$(32, 1) = SITE$(I)
+            TRC$(32, 2) = B$(1 - I, 0)
+            TRC$(32, 3) = Date$
+        End If
+
+        If (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1)) < TREC(33, 0) Then
+            TREC(33, 0) = (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1))
+            TREC(33, 1) = V8(I, 0) / V8(I, 1)
+            TREC(33, 2) = V8(1 - I, 0) / V8(1 - I, 1)
+            TRC$(33, 0) = B$(I, 0)
+            TRC$(33, 1) = SITE$(I)
+            TRC$(33, 2) = B$(1 - I, 0)
+            TRC$(33, 3) = Date$
+        End If
+
+        ' TEAM FIELD GOALS MADE
+        If V8(I, 0) > TREC(34, 0) Then
+            TREC(34, 0) = V8(I, 0)
+            TREC(34, 1) = 0
+            TREC(34, 2) = 0
+            TRC$(34, 0) = B$(I, 0)
+            TRC$(34, 1) = SITE$(I)
+            TRC$(34, 2) = B$(1 - I, 0)
+            TRC$(34, 3) = Date$
+        End If
+
+        If V8(I, 0) < TREC(35, 0) Then
+            TREC(35, 0) = V8(I, 0)
+            TREC(35, 1) = 0
+            TREC(35, 2) = 0
+            TRC$(35, 0) = B$(I, 0)
+            TRC$(35, 1) = SITE$(I)
+            TRC$(35, 2) = B$(1 - I, 0)
+            TRC$(35, 3) = Date$
+        End If
+
+        If V8(I, 0) + V8(1 - I, 0) > TREC(36, 0) Then
+            TREC(36, 0) = V8(I, 0) + V8(1 - I, 0)
+            TREC(36, 1) = V8(I, 0)
+            TREC(36, 2) = V8(1 - I, 0)
+            TRC$(36, 0) = B$(I, 0)
+            TRC$(36, 1) = SITE$(I)
+            TRC$(36, 2) = B$(1 - I, 0)
+            TRC$(36, 3) = Date$
+        End If
+
+        If V8(I, 0) + V8(1 - I, 0) < TREC(37, 0) Then
+            TREC(37, 0) = V8(I, 0) + V8(1 - I, 0)
+            TREC(37, 1) = V8(I, 0)
+            TREC(37, 2) = V8(1 - I, 0)
+            TRC$(37, 0) = B$(I, 0)
+            TRC$(37, 1) = SITE$(I)
+            TRC$(37, 2) = B$(1 - I, 0)
+            TRC$(37, 3) = Date$
+        End If
+
+        If QR(I, 1, 0) + QR(I, 2, 0) > TREC(38, 0) Then
+            TREC(38, 0) = QR(I, 1, 0) + QR(I, 2, 0)
+            TREC(38, 1) = 1
+            TREC(38, 2) = 0
+            TRC$(38, 0) = B$(I, 0)
+            TRC$(38, 1) = SITE$(I)
+            TRC$(38, 2) = B$(1 - I, 0)
+            TRC$(38, 3) = Date$
+        End If
+
+        If QR(I, 3, 0) + QR(I, 4, 0) > TREC(38, 0) Then
+            TREC(38, 0) = QR(I, 3, 0) + QR(I, 4, 0)
+            TREC(38, 1) = 2
+            TREC(38, 2) = 0
+            TRC$(38, 0) = B$(I, 0)
+            TRC$(38, 1) = SITE$(I)
+            TRC$(38, 2) = B$(1 - I, 0)
+            TRC$(38, 3) = Date$
+        End If
+
+        If QR(I, 1, 0) + QR(I, 2, 0) + QR(1 - I, 1, 0) + QR(1 - I, 2, 0) > TREC(39, 0) Then
+            TREC(39, 0) = QR(I, 1, 0) + QR(I, 2, 0) + QR(1 - I, 1, 0) + QR(1 - I, 2, 0)
+            TREC(39, 1) = 1
+            TREC(39, 2) = 0
+            TRC$(39, 0) = B$(I, 0)
+            TRC$(39, 1) = SITE$(I)
+            TRC$(39, 2) = B$(1 - I, 0)
+            TRC$(39, 3) = Date$
+        End If
+
+        If QR(I, 3, 0) + QR(I, 4, 0) + QR(1 - I, 3, 0) + QR(1 - I, 4, 0) > TREC(39, 0) Then
+            TREC(39, 0) = QR(I, 3, 0) + QR(I, 4, 0) + QR(1 - I, 3, 0) + QR(1 - I, 4, 0)
+            TREC(39, 1) = 2
+            TREC(39, 2) = 0
+            TRC$(39, 0) = B$(I, 0)
+            TRC$(39, 1) = SITE$(I)
+            TRC$(39, 2) = B$(1 - I, 0)
+            TRC$(39, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 0) > TREC(40, 0) Then
+                TREC(40, 0) = QR(I, I2, 0)
+                TREC(40, 1) = I2
+                TREC(40, 2) = 0
+                TRC$(40, 0) = B$(I, 0)
+                TRC$(40, 1) = SITE$(I)
+                TRC$(40, 2) = B$(1 - I, 0)
+                TRC$(40, 3) = Date$
+            End If
+
+            If QR(I, I2, 0) + QR(1 - I, I2, 0) > TREC(41, 0) Then
+                TREC(41, 0) = QR(I, I2, 0) + QR(1 - I, I2, 0)
+                TREC(41, 1) = I2
+                TREC(41, 2) = QR(I, I2, 0)
+                TRC$(41, 0) = B$(I, 0)
+                TRC$(41, 1) = SITE$(I)
+                TRC$(41, 2) = B$(1 - I, 0)
+                TRC$(41, 3) = Date$
+            End If
+        Next
+
+        'TEAM FIELD GOAL ATTEMPTS
+        If V8(I, 1) > TREC(42, 0) Then
+            TREC(42, 0) = V8(I, 1)
+            TREC(42, 1) = 0
+            TREC(42, 2) = 0
+            TRC$(42, 0) = B$(I, 0)
+            TRC$(42, 1) = SITE$(I)
+            TRC$(42, 2) = B$(1 - I, 0)
+            TRC$(42, 3) = Date$
+        End If
+
+        If V8(I, 1) < TREC(43, 0) Then
+            TREC(43, 0) = V8(I, 1)
+            TREC(43, 1) = 0
+            TREC(43, 2) = 0
+            TRC$(43, 0) = B$(I, 0)
+            TRC$(43, 1) = SITE$(I)
+            TRC$(43, 2) = B$(1 - I, 0)
+            TRC$(43, 3) = Date$
+        End If
+
+        If V8(I, 1) + V8(1 - I, 1) > TREC(44, 0) Then
+            TREC(44, 0) = V8(I, 1) + V8(1 - I, 1)
+            TREC(44, 1) = V8(I, 1)
+            TREC(44, 2) = V8(1 - I, 1)
+            TRC$(44, 0) = B$(I, 0)
+            TRC$(44, 1) = SITE$(I)
+            TRC$(44, 2) = B$(1 - I, 0)
+            TRC$(44, 3) = Date$
+        End If
+
+        If V8(I, 1) + V8(1 - I, 1) < TREC(45, 0) Then
+            TREC(45, 0) = V8(I, 1) + V8(1 - I, 1)
+            TREC(45, 1) = V8(I, 1)
+            TREC(45, 2) = V8(1 - I, 1)
+            TRC$(45, 0) = B$(I, 0)
+            TRC$(45, 1) = SITE$(I)
+            TRC$(45, 2) = B$(1 - I, 0)
+            TRC$(45, 3) = Date$
+        End If
+
+        If QR(I, 1, 1) + QR(I, 2, 1) > TREC(46, 0) Then
+            TREC(46, 0) = QR(I, 1, 1) + QR(I, 2, 1)
+            TREC(46, 1) = 1
+            TREC(46, 2) = 0
+            TRC$(46, 0) = B$(I, 0)
+            TRC$(46, 1) = SITE$(I)
+            TRC$(46, 2) = B$(1 - I, 0)
+            TRC$(46, 3) = Date$
+        End If
+
+        If QR(I, 3, 1) + QR(I, 4, 1) > TREC(46, 0) Then
+            TREC(46, 0) = QR(I, 3, 1) + QR(I, 4, 1)
+            TREC(46, 1) = 2
+            TREC(46, 2) = 0
+            TRC$(46, 0) = B$(I, 0)
+            TRC$(46, 1) = SITE$(I)
+            TRC$(46, 2) = B$(1 - I, 0)
+            TRC$(46, 3) = Date$
+        End If
+
+        If QR(I, 1, 1) + QR(I, 2, 1) + QR(1 - I, 1, 1) + QR(1 - I, 2, 1) > TREC(47, 0) Then
+            TREC(47, 0) = QR(I, 1, 1) + QR(I, 2, 1) + QR(1 - I, 1, 1) + QR(1 - I, 2, 1)
+            TREC(47, 1) = 1
+            TREC(47, 2) = QR(I, 1, 1) + QR(I, 2, 1)
+            TRC$(47, 0) = B$(I, 0)
+            TRC$(47, 1) = SITE$(I)
+            TRC$(47, 2) = B$(1 - I, 0)
+            TRC$(47, 3) = Date$
+        End If
+
+        If QR(I, 3, 1) + QR(I, 4, 1) + QR(1 - I, 3, 1) + QR(1 - I, 4, 1) > TREC(47, 0) Then
+            TREC(47, 0) = QR(I, 3, 1) + QR(I, 4, 1) + QR(1 - I, 3, 1) + QR(1 - I, 4, 1)
+            TREC(47, 1) = 1
+            TREC(47, 2) = QR(I, 3, 1) + QR(I, 4, 1)
+            TRC$(47, 0) = B$(I, 0)
+            TRC$(47, 1) = SITE$(I)
+            TRC$(47, 2) = B$(1 - I, 0)
+            TRC$(47, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 1) > TREC(48, 0) Then
+                TREC(48, 0) = QR(I, I2, 1)
+                TREC(48, 1) = I2
+                TREC(48, 2) = 0
+                TRC$(48, 0) = B$(I, 0)
+                TRC$(48, 1) = SITE$(I)
+                TRC$(48, 2) = B$(1 - I, 0)
+                TRC$(48, 3) = Date$
+            End If
+
+            If QR(I, I2, 1) + QR(1 - I, I2, 1) > TREC(49, 0) Then
+                TREC(49, 0) = QR(I, I2, 1) + QR(1 - I, I2, 1)
+                TREC(49, 1) = I2
+                TREC(49, 2) = QR(I, I2, 1)
+                TRC$(49, 0) = B$(I, 0)
+                TRC$(49, 1) = SITE$(I)
+                TRC$(49, 2) = B$(1 - I, 0)
+                TRC$(49, 3) = Date$
+            End If
+        Next
+
+        'TEAM FIELD GOAL ATTEMPTS
+        If V8(I, 13) = V8(I, 14) And V8(I, 14) > TREC(50, 0) Then
+            TREC(50, 0) = V8(I, 13)
+            TREC(50, 1) = 0
+            TREC(50, 2) = 0
+            TRC$(50, 0) = B$(I, 0)
+            TRC$(50, 1) = SITE$(I)
+            TRC$(50, 2) = B$(1 - I, 0)
+            TRC$(50, 3) = Date$
+        End If
+
+        'TEAM FIELD GOAL ATTEMPTS MOST MADE
+        If V8(I, 13) = V8(I, 14) And V8(1 - I, 13) = V8(1 - I, 14) And V8(I, 14) + V8(1 - I, 14) > TREC(51, 0) Then
+            TREC(51, 0) = V8(I, 13)
+            TREC(51, 1) = V8(1 - I, 13)
+            TREC(51, 2) = 0
+            TRC$(51, 0) = B$(I, 0)
+            TRC$(51, 1) = SITE$(I)
+            TRC$(51, 2) = B$(1 - I, 0)
+            TRC$(51, 3) = Date$
+        End If
+
+        'TEAM FIELD GOAL ATTEMPTS NONE MADE
+        If V8(I, 13) = 0 And V8(I, 14) > TREC(52, 0) Then
+            TREC(52, 0) = V8(I, 14)
+            TREC(52, 1) = 0
+            TREC(52, 2) = 0
+            TRC$(52, 0) = B$(I, 0)
+            TRC$(52, 1) = SITE$(I)
+            TRC$(52, 2) = B$(1 - I, 0)
+            TRC$(52, 3) = Date$
+        End If
+
+        'TEAM FIELD GOAL ATTEMPTS NONE MADE
+        If V8(I, 13) > TREC(53, 0) Then
+            TREC(53, 0) = V8(I, 13)
+            TREC(53, 1) = 0
+            TREC(53, 2) = 0
+            TRC$(53, 0) = B$(I, 0)
+            TRC$(53, 1) = SITE$(I)
+            TRC$(53, 2) = B$(1 - I, 0)
+            TRC$(53, 3) = Date$
+        End If
+
+        'TEAM FIELD GOAL ATTEMPTS NONE MADE
+        If V8(I, 13) + V8(1 - I, 13) > TREC(54, 0) Then
+            TREC(54, 0) = V8(I, 13) + V8(1 - I, 13)
+            TREC(54, 1) = V8(I, 13)
+            TREC(54, 2) = V8(1 - I, 13)
+            TRC$(54, 0) = B$(I, 0)
+            TRC$(54, 1) = SITE$(I)
+            TRC$(54, 2) = B$(1 - I, 0)
+            TRC$(54, 3) = Date$
+        End If
+
+        If QR(I, 1, 13) + QR(I, 2, 13) > TREC(55, 0) Then
+            TREC(55, 0) = QR(I, 1, 13) + QR(I, 2, 13)
+            TREC(55, 1) = 1
+            TREC(55, 2) = 0
+            TRC$(55, 0) = B$(I, 0)
+            TRC$(55, 1) = SITE$(I)
+            TRC$(55, 2) = B$(1 - I, 0)
+            TRC$(55, 3) = Date$
+        End If
+
+        If QR(I, 3, 13) + QR(I, 4, 13) > TREC(55, 0) Then
+            TREC(55, 0) = QR(I, 3, 13) + QR(I, 4, 13)
+            TREC(55, 1) = 2
+            TREC(55, 2) = 0
+            TRC$(55, 0) = B$(I, 0)
+            TRC$(55, 1) = SITE$(I)
+            TRC$(55, 2) = B$(1 - I, 0)
+            TRC$(55, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 13) > TREC(56, 0) Then
+                TREC(56, 0) = QR(I, I2, 13)
+                TREC(56, 1) = I2
+                TREC(56, 2) = 0
+                TRC$(56, 0) = B$(I, 0)
+                TRC$(56, 1) = SITE$(I)
+                TRC$(56, 2) = B$(1 - I, 0)
+                TRC$(56, 3) = Date$
+            End If
+        Next
+        'TEAM FIELD GOAL ATTEMPTS NONE MADE
+        If V8(I, 14) > TREC(57, 0) Then
+            TREC(57, 0) = V8(I, 14)
+            TREC(57, 1) = 0
+            TREC(57, 2) = 0
+            TRC$(57, 0) = B$(I, 0)
+            TRC$(57, 1) = SITE$(I)
+            TRC$(57, 2) = B$(1 - I, 0)
+            TRC$(57, 3) = Date$
+        End If
+
+        'TEAM FIELD GOAL ATTEMPTS NONE MADE
+        If V8(I, 14) + V8(1 - I, 14) > TREC(58, 0) Then
+            TREC(58, 0) = V8(I, 14) + V8(1 - I, 14)
+            TREC(58, 1) = V8(I, 14)
+            TREC(58, 2) = V8(1 - I, 14)
+            TRC$(58, 0) = B$(I, 0)
+            TRC$(58, 1) = SITE$(I)
+            TRC$(58, 2) = B$(1 - I, 0)
+            TRC$(58, 3) = Date$
+        End If
+
+        If QR(I, 1, 14) + QR(I, 2, 14) > TREC(59, 0) Then
+            TREC(59, 0) = QR(I, 1, 14) + QR(I, 2, 14)
+            TREC(59, 1) = 1
+            TREC(59, 2) = 0
+            TRC$(59, 0) = B$(I, 0)
+            TRC$(59, 1) = SITE$(I)
+            TRC$(59, 2) = B$(1 - I, 0)
+            TRC$(59, 3) = Date$
+        End If
+
+        If QR(I, 3, 14) + QR(I, 4, 14) > TREC(59, 0) Then
+            TREC(59, 0) = QR(I, 3, 14) + QR(I, 4, 14)
+            TREC(59, 1) = 2
+            TREC(59, 2) = 0
+            TRC$(59, 0) = B$(I, 0)
+            TRC$(59, 1) = SITE$(I)
+            TRC$(59, 2) = B$(1 - I, 0)
+            TRC$(59, 3) = Date$
+        End If
+
+        ' FREE THROW ATTEMPTS NO MISS
+        If V8(I, 2) = V8(I, 3) And V8(I, 2) > TREC(60, 0) Then
+            TREC(60, 0) = V8(I, 2)
+            TREC(60, 1) = 0
+            TREC(60, 2) = 0
+            TRC$(60, 0) = B$(I, 0)
+            TRC$(60, 1) = SITE$(I)
+            TRC$(60, 2) = B$(1 - I, 0)
+            TRC$(60, 3) = Date$
+        End If
+
+        ' FREE THROW ATTEMPTS LOW %
+        If V8(I, 2) / V8(I, 3) < TREC(61, 0) Then
+            TREC(61, 0) = V8(I, 2) / V8(I, 3)
+            TREC(61, 1) = V8(I, 2)
+            TREC(61, 2) = V8(I, 3)
+            TRC$(61, 0) = B$(I, 0)
+            TRC$(61, 1) = SITE$(I)
+            TRC$(61, 2) = B$(1 - I, 0)
+            TRC$(61, 3) = Date$
+        End If
+
+        ' FREE THROW ATTEMPTS COMBINED HIGH %
+        If (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3)) > TREC(62, 0) Then
+            TREC(62, 0) = (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3))
+            TREC(62, 1) = V8(I, 2) / V8(I, 3)
+            TREC(62, 2) = V8(1 - I, 2) / V8(1 - I, 3)
+            TRC$(62, 0) = B$(I, 0)
+            TRC$(62, 1) = SITE$(I)
+            TRC$(62, 2) = B$(1 - I, 0)
+            TRC$(62, 3) = Date$
+        End If
+
+        ' FREE THROW ATTEMPTS COMBINED LOW %
+        If (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3)) < TREC(63, 0) Then
+            TREC(63, 0) = (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3))
+            TREC(63, 1) = V8(I, 2) / V8(I, 3)
+            TREC(63, 2) = V8(1 - I, 2) / V8(1 - I, 3)
+            TRC$(63, 0) = B$(I, 0)
+            TRC$(63, 1) = SITE$(I)
+            TRC$(63, 2) = B$(1 - I, 0)
+            TRC$(63, 3) = Date$
+        End If
+
+        ' TEAM FREE THROWS MADE
+        If V8(I, 2) > TREC(64, 0) Then
+            TREC(64, 0) = V8(I, 2)
+            TREC(64, 1) = 0
+            TREC(64, 2) = 0
+            TRC$(64, 0) = B$(I, 0)
+            TRC$(64, 1) = SITE$(I)
+            TRC$(64, 2) = B$(1 - I, 0)
+            TRC$(64, 3) = Date$
+        End If
+
+        If V8(I, 2) < TREC(65, 0) Then
+            TREC(65, 0) = V8(I, 2)
+            TREC(65, 1) = 0
+            TREC(65, 2) = 0
+            TRC$(65, 0) = B$(I, 0)
+            TRC$(65, 1) = SITE$(I)
+            TRC$(65, 2) = B$(1 - I, 0)
+            TRC$(65, 3) = Date$
+        End If
+
+        If V8(I, 2) + V8(1 - I, 2) > TREC(66, 0) Then
+            TREC(66, 0) = V8(I, 2) + V8(1 - I, 2)
+            TREC(66, 1) = V8(I, 2)
+            TREC(66, 2) = V8(1 - I, 2)
+            TRC$(66, 0) = B$(I, 0)
+            TRC$(66, 1) = SITE$(I)
+            TRC$(66, 2) = B$(1 - I, 0)
+            TRC$(66, 3) = Date$
+        End If
+
+        If V8(I, 2) + V8(1 - I, 2) < TREC(67, 0) Then
+            TREC(67, 0) = V8(I, 2) + V8(1 - I, 2)
+            TREC(67, 1) = V8(I, 2)
+            TREC(67, 2) = V8(1 - I, 2)
+            TRC$(67, 0) = B$(I, 0)
+            TRC$(67, 1) = SITE$(I)
+            TRC$(67, 2) = B$(1 - I, 0)
+            TRC$(67, 3) = Date$
+        End If
+
+        If QR(I, 1, 2) + QR(I, 2, 2) > TREC(68, 0) Then
+            TREC(68, 0) = QR(I, 1, 2) + QR(I, 2, 2)
+            TREC(68, 1) = 1
+            TREC(68, 2) = 0
+            TRC$(68, 0) = B$(I, 0)
+            TRC$(68, 1) = SITE$(I)
+            TRC$(68, 2) = B$(1 - I, 0)
+            TRC$(68, 3) = Date$
+        End If
+
+        If QR(I, 3, 2) + QR(I, 4, 2) > TREC(68, 0) Then
+            TREC(68, 0) = QR(I, 3, 2) + QR(I, 4, 2)
+            TREC(68, 1) = 2
+            TREC(68, 2) = 0
+            TRC$(68, 0) = B$(I, 0)
+            TRC$(68, 1) = SITE$(I)
+            TRC$(68, 2) = B$(1 - I, 0)
+            TRC$(68, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 2) > TREC(70, 0) Then
+                TREC(70, 0) = QR(I, I2, 2)
+                TREC(70, 1) = I2
+                TREC(70, 2) = 0
+                TRC$(70, 0) = B$(I, 0)
+                TRC$(70, 1) = SITE$(I)
+                TRC$(70, 2) = B$(1 - I, 0)
+                TRC$(70, 3) = Date$
+            End If
+
+        Next
+
+        ' TEAM FREE THROWS ATTEMPTED
+        If V8(I, 3) > TREC(72, 0) Then
+            TREC(72, 0) = V8(I, 3)
+            TREC(72, 1) = 0
+            TREC(72, 2) = 0
+            TRC$(72, 0) = B$(I, 0)
+            TRC$(72, 1) = SITE$(I)
+            TRC$(72, 2) = B$(1 - I, 0)
+            TRC$(72, 3) = Date$
+        End If
+
+        If V8(I, 3) < TREC(73, 0) Then
+            TREC(73, 0) = V8(I, 3)
+            TREC(73, 1) = 0
+            TREC(73, 2) = 0
+            TRC$(73, 0) = B$(I, 0)
+            TRC$(73, 1) = SITE$(I)
+            TRC$(73, 2) = B$(1 - I, 0)
+            TRC$(73, 3) = Date$
+        End If
+
+        If V8(I, 3) + V8(1 - I, 3) > TREC(74, 0) Then
+            TREC(74, 0) = V8(I, 3) + V8(1 - I, 3)
+            TREC(74, 1) = V8(I, 3)
+            TREC(74, 2) = V8(1 - I, 3)
+            TRC$(74, 0) = B$(I, 0)
+            TRC$(74, 1) = SITE$(I)
+            TRC$(74, 2) = B$(1 - I, 0)
+            TRC$(74, 3) = Date$
+        End If
+
+        If V8(I, 3) + V8(1 - I, 3) < TREC(75, 0) Then
+            TREC(75, 0) = V8(I, 3) + V8(1 - I, 3)
+            TREC(75, 1) = V8(I, 3)
+            TREC(75, 2) = V8(1 - I, 3)
+            TRC$(75, 0) = B$(I, 0)
+            TRC$(75, 1) = SITE$(I)
+            TRC$(75, 2) = B$(1 - I, 0)
+            TRC$(75, 3) = Date$
+        End If
+
+        If QR(I, 1, 3) + QR(I, 2, 3) > TREC(76, 0) Then
+            TREC(76, 0) = QR(I, 1, 3) + QR(I, 2, 3)
+            TREC(76, 1) = 1
+            TREC(76, 2) = 0
+            TRC$(76, 0) = B$(I, 0)
+            TRC$(76, 1) = SITE$(I)
+            TRC$(76, 2) = B$(1 - I, 0)
+            TRC$(76, 3) = Date$
+        End If
+
+        If QR(I, 3, 3) + QR(I, 4, 3) > TREC(76, 0) Then
+            TREC(76, 0) = QR(I, 3, 3) + QR(I, 4, 3)
+            TREC(76, 1) = 2
+            TREC(76, 2) = 0
+            TRC$(76, 0) = B$(I, 0)
+            TRC$(76, 1) = SITE$(I)
+            TRC$(76, 2) = B$(1 - I, 0)
+            TRC$(76, 3) = Date$
+        End If
+
+        If QR(I, 1, 3) + QR(I, 2, 3) + QR(1 - I, 1, 3) + QR(1 - I, 2, 3) > TREC(77, 0) Then
+            TREC(77, 0) = QR(I, 1, 3) + QR(I, 2, 3) + QR(1 - I, 1, 3) + QR(1 - I, 2, 3)
+            TREC(77, 1) = 1
+            TREC(77, 2) = QR(I, 1, 3) + QR(I, 2, 3)
+            TRC$(77, 0) = B$(I, 0)
+            TRC$(77, 1) = SITE$(I)
+            TRC$(77, 2) = B$(1 - I, 0)
+            TRC$(77, 3) = Date$
+        End If
+
+        If QR(I, 3, 3) + QR(I, 4, 3) + QR(1 - I, 3, 3) + QR(1 - I, 4, 3) > TREC(77, 0) Then
+            TREC(77, 0) = QR(I, 3, 3) + QR(I, 4, 3) + QR(1 - I, 3, 3) + QR(1 - I, 4, 3)
+            TREC(77, 1) = 2
+            TREC(77, 2) = QR(I, 3, 3) + QR(I, 4, 3)
+            TRC$(77, 0) = B$(I, 0)
+            TRC$(77, 1) = SITE$(I)
+            TRC$(77, 2) = B$(1 - I, 0)
+            TRC$(77, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 3) > TREC(78, 0) Then
+                TREC(78, 0) = QR(I, I2, 3)
+                TREC(78, 1) = I2
+                TREC(78, 2) = 0
+                TRC$(78, 0) = B$(I, 0)
+                TRC$(78, 1) = SITE$(I)
+                TRC$(78, 2) = B$(1 - I, 0)
+                TRC$(78, 3) = Date$
+            End If
+
+            If QR(I, I2, 3) + QR(1 - I, I2, 3) > TREC(79, 0) Then
+                TREC(79, 0) = QR(I, I2, 3) + QR(1 - I, I2, 3)
+                TREC(79, 1) = I2
+                TREC(79, 2) = QR(I, I2, 3)
+                TRC$(79, 0) = B$(I, 0)
+                TRC$(79, 1) = SITE$(I)
+                TRC$(79, 2) = B$(1 - I, 0)
+                TRC$(79, 3) = Date$
+            End If
+        Next
+
+        If R3(I) > TREC(80, 0) Then
+            TREC(80, 0) = R3(I)
+            TREC(80, 1) = 0
+            TREC(80, 2) = 0
+            TRC$(80, 0) = B$(I, 0)
+            TRC$(80, 1) = SITE$(I)
+            TRC$(80, 2) = B$(1 - I, 0)
+            TRC$(80, 3) = Date$
+        End If
+
+        If R3(I) < TREC(81, 0) Then
+            TREC(81, 0) = R3(I)
+            TREC(81, 1) = 0
+            TREC(81, 2) = 0
+            TRC$(81, 0) = B$(I, 0)
+            TRC$(81, 1) = SITE$(I)
+            TRC$(81, 2) = B$(1 - I, 0)
+            TRC$(81, 3) = Date$
+        End If
+
+        If R3(I) + R3(1 - I) > TREC(82, 0) Then
+            TREC(82, 0) = R3(I) + R3(1 - I)
+            TREC(82, 1) = R3(I)
+            TREC(82, 2) = R3(1 - I)
+            TRC$(82, 0) = B$(I, 0)
+            TRC$(82, 1) = SITE$(I)
+            TRC$(82, 2) = B$(1 - I, 0)
+            TRC$(82, 3) = Date$
+        End If
+
+        If R3(I) + R3(1 - I) < TREC(83, 0) Then
+            TREC(83, 0) = R3(I) + R3(1 - I)
+            TREC(83, 1) = R3(I)
+            TREC(83, 2) = R3(1 - I)
+            TRC$(83, 0) = B$(I, 0)
+            TRC$(83, 1) = SITE$(I)
+            TRC$(83, 2) = B$(1 - I, 0)
+            TRC$(83, 3) = Date$
+        End If
+
+        If QR(I, 1, 4) + QR(I, 2, 4) > TREC(84, 0) Then
+            TREC(84, 0) = QR(I, 1, 4) + QR(I, 2, 4)
+            TREC(84, 1) = 1
+            TREC(84, 2) = QR(I, 1, 4) + QR(I, 2, 4)
+            TRC$(84, 0) = B$(I, 0)
+            TRC$(84, 1) = SITE$(I)
+            TRC$(84, 2) = B$(1 - I, 0)
+            TRC$(84, 3) = Date$
+        End If
+
+        If QR(I, 3, 4) + QR(I, 4, 4) > TREC(84, 0) Then
+            TREC(84, 0) = QR(I, 3, 4) + QR(I, 4, 4)
+            TREC(84, 1) = 2
+            TREC(84, 2) = QR(I, 3, 4) + QR(I, 4, 4)
+            TRC$(84, 0) = B$(I, 0)
+            TRC$(84, 1) = SITE$(I)
+            TRC$(84, 2) = B$(1 - I, 0)
+            TRC$(84, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 4) > TREC(85, 0) Then
+                TREC(85, 0) = QR(I, I2, 4)
+                TREC(85, 1) = I2
+                TREC(85, 2) = 0
+                TRC$(85, 0) = B$(I, 0)
+                TRC$(85, 1) = SITE$(I)
+                TRC$(85, 2) = B$(1 - I, 0)
+                TRC$(85, 3) = Date$
+            End If
+        Next
+
+        If V8(I, 11) > TREC(86, 0) Then
+            TREC(86, 0) = V8(I, 11)
+            TREC(86, 1) = 0
+            TREC(86, 2) = 0
+            TRC$(86, 0) = B$(I, 0)
+            TRC$(86, 1) = SITE$(I)
+            TRC$(86, 2) = B$(1 - I, 0)
+            TRC$(86, 3) = Date$
+        End If
+
+        If V8(I, 11) + V8(1 - I, 11) > TREC(88, 0) Then
+            TREC(88, 0) = V8(I, 11) + V8(1 - I, 11)
+            TREC(88, 1) = V8(I, 11)
+            TREC(88, 2) = V8(1 - I, 11)
+            TRC$(88, 0) = B$(I, 0)
+            TRC$(88, 1) = SITE$(I)
+            TRC$(88, 2) = B$(1 - I, 0)
+            TRC$(88, 3) = Date$
+        End If
+
+        If V8(I, 11) + V8(1 - I, 11) < TREC(89, 0) Then
+            TREC(89, 0) = V8(I, 11) + V8(1 - I, 11)
+            TREC(89, 1) = V8(I, 11)
+            TREC(89, 2) = V8(1 - I, 11)
+            TRC$(89, 0) = B$(I, 0)
+            TRC$(89, 1) = SITE$(I)
+            TRC$(89, 2) = B$(1 - I, 0)
+            TRC$(89, 3) = Date$
+        End If
+
+        If QR(I, 1, 11) + QR(I, 2, 11) > TREC(90, 0) Then
+            TREC(90, 0) = QR(I, 1, 11) + QR(I, 2, 11)
+            TREC(90, 1) = 1
+            TREC(90, 2) = QR(I, 1, 11) + QR(I, 2, 11)
+            TRC$(90, 0) = B$(I, 0)
+            TRC$(90, 1) = SITE$(I)
+            TRC$(90, 2) = B$(1 - I, 0)
+            TRC$(90, 3) = Date$
+        End If
+
+        If QR(I, 3, 11) + QR(I, 4, 11) > TREC(90, 0) Then
+            TREC(90, 0) = QR(I, 3, 11) + QR(I, 4, 11)
+            TREC(90, 1) = 2
+            TREC(90, 2) = QR(I, 3, 11) + QR(I, 4, 11)
+            TRC$(90, 0) = B$(I, 0)
+            TRC$(90, 1) = SITE$(I)
+            TRC$(90, 2) = B$(1 - I, 0)
+            TRC$(90, 3) = Date$
+        End If
+
+        ' ASSISTS
+        If V8(I, 7) > TREC(96, 0) Then
+            TREC(96, 0) = V8(I, 7)
+            TREC(96, 1) = 0
+            TREC(96, 2) = 0
+            TRC$(96, 0) = B$(I, 0)
+            TRC$(96, 1) = SITE$(I)
+            TRC$(96, 2) = B$(1 - I, 0)
+            TRC$(96, 3) = Date$
+        End If
+
+        If V8(I, 7) < TREC(97, 0) Then
+            TREC(97, 0) = V8(I, 7)
+            TREC(97, 1) = 0
+            TREC(97, 2) = 0
+            TRC$(97, 0) = B$(I, 0)
+            TRC$(97, 1) = SITE$(I)
+            TRC$(97, 2) = B$(1 - I, 0)
+            TRC$(97, 3) = Date$
+        End If
+
+        If V8(I, 7) + V8(1 - I, 7) > TREC(98, 0) Then
+            TREC(98, 0) = V8(I, 7) + V8(1 - I, 7)
+            TREC(98, 1) = V8(I, 7)
+            TREC(98, 2) = V8(1 - I, 7)
+            TRC$(98, 0) = B$(I, 0)
+            TRC$(98, 1) = SITE$(I)
+            TRC$(98, 2) = B$(1 - I, 0)
+            TRC$(98, 3) = Date$
+        End If
+
+        If V8(I, 7) + V8(1 - I, 7) < TREC(99, 0) Then
+            TREC(99, 0) = V8(I, 7) + V8(1 - I, 7)
+            TREC(99, 1) = V8(I, 7)
+            TREC(99, 2) = V8(1 - I, 7)
+            TRC$(99, 0) = B$(I, 0)
+            TRC$(99, 1) = SITE$(I)
+            TRC$(99, 2) = B$(1 - I, 0)
+            TRC$(99, 3) = Date$
+        End If
+
+        If QR(I, 1, 7) + QR(I, 2, 7) > TREC(100, 0) Then
+            TREC(100, 0) = QR(I, 1, 7) + QR(I, 2, 7)
+            TREC(100, 1) = 1
+            TREC(100, 2) = 0
+            TRC$(100, 0) = B$(I, 0)
+            TRC$(100, 1) = SITE$(I)
+            TRC$(100, 2) = B$(1 - I, 0)
+            TRC$(100, 3) = Date$
+        End If
+
+        If QR(I, 3, 7) + QR(I, 4, 7) > TREC(100, 0) Then
+            TREC(100, 0) = QR(I, 3, 7) + QR(I, 4, 7)
+            TREC(100, 1) = 2
+            TREC(100, 2) = 0
+            TRC$(100, 0) = B$(I, 0)
+            TRC$(100, 1) = SITE$(I)
+            TRC$(100, 2) = B$(1 - I, 0)
+            TRC$(100, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 7) > TREC(102, 0) Then
+                TREC(102, 0) = QR(I, I2, 7)
+                TREC(102, 1) = I2
+                TREC(102, 2) = 0
+                TRC$(102, 0) = B$(I, 0)
+                TRC$(102, 1) = SITE$(I)
+                TRC$(102, 2) = B$(1 - I, 0)
+                TRC$(102, 3) = Date$
+            End If
+        Next
+
+        ' FOULS
+        If V8(I, 6) > TREC(104, 0) Then
+            TREC(104, 0) = V8(I, 6)
+            TREC(104, 1) = 0
+            TREC(104, 2) = 0
+            TRC$(104, 0) = B$(I, 0)
+            TRC$(104, 1) = SITE$(I)
+            TRC$(104, 2) = B$(1 - I, 0)
+            TRC$(104, 3) = Date$
+        End If
+
+        If V8(I, 6) < TREC(105, 0) Then
+            TREC(105, 0) = V8(I, 6)
+            TREC(105, 1) = 0
+            TREC(105, 2) = 0
+            TRC$(105, 0) = B$(I, 0)
+            TRC$(105, 1) = SITE$(I)
+            TRC$(105, 2) = B$(1 - I, 0)
+            TRC$(105, 3) = Date$
+        End If
+
+        If V8(I, 6) + V8(1 - I, 6) > TREC(106, 0) Then
+            TREC(106, 0) = V8(I, 6) + V8(1 - I, 6)
+            TREC(106, 1) = V8(I, 6)
+            TREC(106, 2) = V8(1 - I, 6)
+            TRC$(106, 0) = B$(I, 0)
+            TRC$(106, 1) = SITE$(I)
+            TRC$(106, 2) = B$(1 - I, 0)
+            TRC$(106, 3) = Date$
+        End If
+
+        If V8(I, 6) + V8(1 - I, 6) < TREC(107, 0) Then
+            TREC(107, 0) = V8(I, 6) + V8(1 - I, 6)
+            TREC(107, 1) = V8(I, 6)
+            TREC(107, 2) = V8(1 - I, 6)
+            TRC$(107, 0) = B$(I, 0)
+            TRC$(107, 1) = SITE$(I)
+            TRC$(107, 2) = B$(1 - I, 0)
+            TRC$(107, 3) = Date$
+        End If
+
+        If QR(I, 1, 6) + QR(I, 2, 6) > TREC(108, 0) Then
+            TREC(108, 0) = QR(I, 1, 6) + QR(I, 2, 6)
+            TREC(108, 1) = 1
+            TREC(108, 2) = 0
+            TRC$(108, 0) = B$(I, 0)
+            TRC$(108, 1) = SITE$(I)
+            TRC$(108, 2) = B$(1 - I, 0)
+            TRC$(108, 3) = Date$
+        End If
+
+        If QR(I, 3, 6) + QR(I, 4, 6) > TREC(108, 0) Then
+            TREC(108, 0) = QR(I, 3, 6) + QR(I, 4, 6)
+            TREC(108, 1) = 2
+            TREC(108, 2) = 0
+            TRC$(108, 0) = B$(I, 0)
+            TRC$(108, 1) = SITE$(I)
+            TRC$(108, 2) = B$(1 - I, 0)
+            TRC$(108, 3) = Date$
+        End If
+
+        If QR(I, 1, 6) + QR(I, 2, 6) + QR(1 - I, 1, 6) + QR(1 - I, 2, 6) > TREC(109, 0) Then
+            TREC(109, 0) = QR(I, 1, 6) + QR(I, 2, 6) + QR(1 - I, 1, 6) + QR(1 - I, 2, 6)
+            TREC(109, 1) = 1
+            TREC(109, 2) = QR(I, 1, 6) + QR(I, 2, 6)
+            TRC$(109, 0) = B$(I, 0)
+            TRC$(109, 1) = SITE$(I)
+            TRC$(109, 2) = B$(1 - I, 0)
+            TRC$(109, 3) = Date$
+        End If
+
+        If QR(I, 3, 6) + QR(I, 4, 6) + QR(1 - I, 3, 6) + QR(1 - I, 4, 6) > TREC(109, 0) Then
+            TREC(109, 0) = QR(I, 3, 6) + QR(I, 4, 6) + QR(1 - I, 3, 6) + QR(1 - I, 4, 6)
+            TREC(109, 1) = 2
+            TREC(109, 2) = QR(I, 3, 6) + QR(I, 4, 6)
+            TRC$(109, 0) = B$(I, 0)
+            TRC$(109, 1) = SITE$(I)
+            TRC$(109, 2) = B$(1 - I, 0)
+            TRC$(109, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 6) > TREC(110, 0) Then
+                TREC(110, 0) = QR(I, I2, 6)
+                TREC(110, 1) = I2
+                TREC(110, 2) = 0
+                TRC$(110, 0) = B$(I, 0)
+                TRC$(110, 1) = SITE$(I)
+                TRC$(110, 2) = B$(1 - I, 0)
+                TRC$(110, 3) = Date$
+            End If
+
+            If QR(I, I2, 6) + QR(1 - I, I2, 6) > TREC(111, 0) Then
+                TREC(111, 0) = QR(I, I2, 6) + QR(1 - I, I2, 6)
+                TREC(111, 1) = I2
+                TREC(111, 2) = QR(I, I2, 6)
+                TRC$(111, 0) = B$(I, 0)
+                TRC$(111, 1) = SITE$(I)
+                TRC$(111, 2) = B$(1 - I, 0)
+                TRC$(111, 3) = Date$
+            End If
+        Next
+
+        ' STEALS
+        If V8(I, 9) > TREC(112, 0) Then
+            TREC(112, 0) = V8(I, 9)
+            TREC(112, 1) = 0
+            TREC(112, 2) = 0
+            TRC$(112, 0) = B$(I, 0)
+            TRC$(112, 1) = SITE$(I)
+            TRC$(112, 2) = B$(1 - I, 0)
+            TRC$(112, 3) = Date$
+        End If
+
+        If V8(I, 9) + V8(1 - I, 9) > TREC(114, 0) Then
+            TREC(114, 0) = V8(I, 9) + V8(1 - I, 9)
+            TREC(114, 1) = V8(I, 9)
+            TREC(114, 2) = V8(1 - I, 9)
+            TRC$(114, 0) = B$(I, 0)
+            TRC$(114, 1) = SITE$(I)
+            TRC$(114, 2) = B$(1 - I, 0)
+            TRC$(114, 3) = Date$
+        End If
+
+        If QR(I, 1, 9) + QR(I, 2, 9) > TREC(116, 0) Then
+            TREC(116, 0) = QR(I, 1, 9) + QR(I, 2, 9)
+            TREC(116, 1) = 1
+            TREC(116, 2) = 0
+            TRC$(116, 0) = B$(I, 0)
+            TRC$(116, 1) = SITE$(I)
+            TRC$(116, 2) = B$(1 - I, 0)
+            TRC$(116, 3) = Date$
+        End If
+
+        If QR(I, 3, 9) + QR(I, 4, 9) > TREC(116, 0) Then
+            TREC(116, 0) = QR(I, 3, 9) + QR(I, 4, 9)
+            TREC(116, 1) = 2
+            TREC(116, 2) = 0
+            TRC$(116, 0) = B$(I, 0)
+            TRC$(116, 1) = SITE$(I)
+            TRC$(116, 2) = B$(1 - I, 0)
+            TRC$(116, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 9) > TREC(117, 0) Then
+                TREC(117, 0) = QR(I, I2, 9)
+                TREC(117, 1) = I2
+                TREC(117, 2) = 0
+                TRC$(117, 0) = B$(I, 0)
+                TRC$(117, 1) = SITE$(I)
+                TRC$(117, 2) = B$(1 - I, 0)
+                TRC$(117, 3) = Date$
+            End If
+        Next
+
+        ' BLOCKS
+        If V8(I, 8) > TREC(118, 0) Then
+            TREC(118, 0) = V8(I, 8)
+            TREC(118, 1) = 0
+            TREC(118, 2) = 0
+            TRC$(118, 0) = B$(I, 0)
+            TRC$(118, 1) = SITE$(I)
+            TRC$(118, 2) = B$(1 - I, 0)
+            TRC$(118, 3) = Date$
+        End If
+
+        If V8(I, 8) + V8(1 - I, 8) > TREC(119, 0) Then
+            TREC(119, 0) = V8(I, 8) + V8(1 - I, 8)
+            TREC(119, 1) = V8(I, 8)
+            TREC(119, 2) = V8(1 - I, 8)
+            TRC$(119, 0) = B$(I, 0)
+            TRC$(119, 1) = SITE$(I)
+            TRC$(119, 2) = B$(1 - I, 0)
+            TRC$(119, 3) = Date$
+        End If
+
+        ' TURNOVERS
+        If V8(I, 12) > TREC(122, 0) Then
+            TREC(122, 0) = V8(I, 12)
+            TREC(122, 1) = 0
+            TREC(122, 2) = 0
+            TRC$(122, 0) = B$(I, 0)
+            TRC$(122, 1) = SITE$(I)
+            TRC$(122, 2) = B$(1 - I, 0)
+            TRC$(122, 3) = Date$
+        End If
+
+        If V8(I, 12) < TREC(123, 0) Then
+            TREC(123, 0) = V8(I, 12)
+            TREC(123, 1) = 0
+            TREC(123, 2) = 0
+            TRC$(123, 0) = B$(I, 0)
+            TRC$(123, 1) = SITE$(I)
+            TRC$(123, 2) = B$(1 - I, 0)
+            TRC$(123, 3) = Date$
+        End If
+        If V8(I, 12) + V8(1 - I, 12) > TREC(124, 0) Then
+            TREC(124, 0) = V8(I, 12) + V8(1 - I, 12)
+            TREC(124, 1) = V8(I, 12)
+            TREC(124, 2) = V8(1 - I, 12)
+            TRC$(124, 0) = B$(I, 0)
+            TRC$(124, 1) = SITE$(I)
+            TRC$(124, 2) = B$(1 - I, 0)
+            TRC$(124, 3) = Date$
+        End If
+
+        If V8(I, 12) + V8(1 - I, 12) < TREC(125, 0) Then
+            TREC(125, 0) = V8(I, 12) + V8(1 - I, 12)
+            TREC(125, 1) = V8(I, 12)
+            TREC(125, 2) = V8(1 - I, 12)
+            TRC$(125, 0) = B$(I, 0)
+            TRC$(125, 1) = SITE$(I)
+            TRC$(125, 2) = B$(1 - I, 0)
+            TRC$(125, 3) = Date$
+        End If
+
+    Next
+
+    Open P$(1) + "RECORDS.GAM" For Output As #1
+    For I = 0 To 48
+        For I1 = 0 To 2
+            Write #1, REC(I, I1)
+        Next
+        For I1 = 0 To 4
+            Write #1, RC$(I, I1)
+        Next
+    Next
+    For I = 0 To 125
+        For I1 = 0 To 2
+            Write #1, TREC(I, I1)
+        Next
+        For I1 = 0 To 3
+            Write #1, TRC$(I, I1)
+        Next
+    Next
+    Close 1
+
+End Sub
 
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'
