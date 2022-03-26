@@ -4,7 +4,7 @@
 
 DEFINT A-Z
 DECLARE SUB TITLE ()
-DECLARE FUNCTION FnExt$ (X$, Length)
+DECLARE FUNCTION PadRight$ (X$, Length)
 
 DIM Z1$(40), Z2$(40), Z1%(40), D$(1), T%(34), T1$(1)
 DIM Q$(500), VV$(200), V%(200), item$(4)
@@ -42,7 +42,7 @@ CLOSE 2
 CALL box0(7, 24, 11, 57, 2, 31)
 	
 _MouseShow "DEFAULT"
-MMenuVert VARPTR(item$(1)), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 	COLOR , 0
@@ -73,13 +73,13 @@ _MouseHide
 25  CLS
 	COLOR 15, 1
 	LOCATE 5, 1: QPrint "Name for Division 1 ", 30, -1
-	LOCATE , 21: QPrint FnExt$(D1$, 10), FG, BG, -1
+	LOCATE , 21: QPrint PadRight$(D1$, 10), FG, BG, -1
 	LOCATE 7, 1: QPrint "Name for Division 2 ", 30, -1
-	LOCATE , 21: QPrint FnExt$(D2$, 10), FG, BG, -1
+	LOCATE , 21: QPrint PadRight$(D2$, 10), FG, BG, -1
 	LOCATE 9, 1: QPrint "Name for Division 3 ", 30, -1
-	LOCATE , 21: QPrint FnExt$(D3$, 10), FG, BG, -1
+	LOCATE , 21: QPrint PadRight$(D3$, 10), FG, BG, -1
 	LOCATE 11, 1: QPrint "Name for Division 4 ", 30, -1
-	LOCATE , 21: QPrint FnExt$(D4$, 10), FG, BG, -1
+	LOCATE , 21: QPrint PadRight$(D4$, 10), FG, BG, -1
 
 GetDiv1:
 	LOCATE 5, 21                         'location of beginning of field
@@ -112,9 +112,9 @@ Done:
 	LOCATE 23, 1
 	PRINT "Is this okay? (Yes/No) ";
 	X$ = ""
-	CALL YesNoB(X$, XCode, Colr)
+	CALL YesNoB(X$, XCode, FG, BG)
 	LOCATE , 1
-	ClearEOL 30
+	ClearEOL 14, 1
 	IF XCode = 1 GOTO GetDiv4
 	IF X$ = "N" GOTO GetDiv1
 	IF X$ <> "Y" GOTO Done               'insist on either Y or N or up-arrow
@@ -246,7 +246,7 @@ CLOSE 1
 	PRINT "ENTER"; : COLOR 15: PRINT "-SELECTS TEAM";
 	
 _MouseShow "DEFAULT"
-20   MAMenu VARPTR(VV$(1)), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+20   MAMenu VV$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 	IF ExitCode% = 27 THEN BO% = 1: RETURN
@@ -367,15 +367,15 @@ CLOSE 2
 	GOTO 25
 
 4500 LOCATE 10, 8
-	CALL CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Cnf)
+	CALL CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
 	I$ = GetKeyPress$
-	CALL CSMsgBox("", 0, Cnf)
+	CALL CSMsgBox("", 0, Pass)
 	GOTO 50
 
 
-FUNCTION FnExt$ (X$, Length) 
+FUNCTION PadRight$ (X$, Length) 
 'Essentially this pads space to the right of the string
-	X$ = X$ + SPACE$(Length - LEN(X$))  'for display only
+	PadRight$ = X$ + SPACE$(Length - LEN(X$))  'for display only
 END FUNCTION
 
 

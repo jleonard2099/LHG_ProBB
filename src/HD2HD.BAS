@@ -30,7 +30,7 @@ CLOSE #2
 CALL box0(7, 24, 10, 48, 2, 31)
 	
 _MouseShow "DEFAULT"
-MMenuVert VARPTR(item$(1)), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 	COLOR , 0
@@ -539,7 +539,7 @@ CLOSE 1
 	PRINT "ENTER"; : COLOR 15: PRINT "-SELECTS TEAM";
 	
 _MouseShow "DEFAULT"
-20   MAMenu VARPTR(VV$(1)), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+20   MAMenu VV$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 	IF ExitCode% = 27 THEN BO% = 1: RETURN
@@ -641,7 +641,7 @@ LOCATE , 33: PRINT "ANY CHANGE (YN)";
 3912 I$ = GetKeyPress$
 	IF UCASE$(I$) = "Y" THEN 1445
 
-3913 F$ = QPRTRIM$(F$)
+3913 F$ = RTrim$(F$)
 	F$ = LEFT$(F$, LEN(F$) - 4)
 	RETURN
 

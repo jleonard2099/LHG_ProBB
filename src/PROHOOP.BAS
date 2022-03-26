@@ -66,7 +66,7 @@ Common Shared F%(), T, H, P2(), NB%, T1(), D$(), D2(), O$(), O0%()
 Common Shared F5%(), A() As Single, B1(), B%(), F7%(), T(), SX$(), FF$, AP%(), B$(), SX%()
 Common Shared FTF As Single, TOF%(), PF%(), TOA%(), PFA%(), JY, L%(), PO, D1()
 Common Shared HT%
-Common Shared P, D, Z5(), Z6(), U6 As Single, R$(), NL%, SC(), XY%, SC, X4%
+Common Shared P, D, Z5(), Z6(), displayPause As Single, R$(), NL%, SC(), XY%, SC, X4%
 Common Shared PT%, DK%, Z3$, FT%, FB%, PZ%, NT, V$(), V%(), Y2$, PB$
 Common Shared SC$(), FT$(), FR$(), U5$(), LC$(), X$(), PO$(), CM$()
 Common Shared ST%(), Q$(), NG%(), YN$(), S(), AP, AD, N, ZZ()
@@ -109,7 +109,7 @@ Input #1, XY%
 Input #1, SC
 Input #1, N
 Input #1, PO
-Input #1, U6
+Input #1, displayPause
 Input #1, X4%
 Input #1, CM%
 Input #1, NB%
@@ -222,7 +222,7 @@ Locate 4, 2: Color 14: Print "(3) ";: Color 15: Print "HOME TEAM: ";: Color T(1,
 
 30 Locate 7, 2: Color 14: Print "(6) ";: Color 15: Print "LOCATION: "; LC$(N)
 
-31 Locate 8, 2: Color 14: Print "(7) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#"; U6
+31 Locate 8, 2: Color 14: Print "(7) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#"; displayPause
 
 32 Locate 9, 2: Color 14: Print "(8) ";: Color 15: Print "START GAME"
 Locate 10, 2: Color 14: Print "(9) ";: Color 15: Print PO$(PO)
@@ -275,7 +275,7 @@ GoTo 25
 GoTo 28
 
 43 Open "DEFAULT" For Output As #1
-Print #1, U5: Print #1, XY%: Print #1, SC: Print #1, N: Print #1, PO: Print #1, U6: Print #1, X4%: Print #1, CM%
+Print #1, U5: Print #1, XY%: Print #1, SC: Print #1, N: Print #1, PO: Print #1, displayPause: Print #1, X4%: Print #1, CM%
 Print #1, NB%: Print #1, RT%: Print #1, FR%: Print #1, PB%: Close 1
 GoTo 31
 
@@ -290,7 +290,7 @@ GoTo 30
 
 33 CM% = 1 - CM%: GoTo 32
 
-48 Locate 8, 32: Input U6: If U6 < 0 Then 48
+48 Locate 8, 32: Input displayPause: If displayPause < 0 Then 48
 GoTo 24
 
 50 If B$(0, 0) = "" Or B$(1, 0) = "" Then 24
@@ -317,11 +317,26 @@ GoTo 900
 
 56 Color 15, 0: Cls
 JJ = 6
-SN = 1: Locate 6, 8: Color 15, 4
-Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
-Print " º"; String$(61, 32); "º ";: Next
+SN = 1
+Locate 6, 8
+Color 15, 4
+
+'Print box top
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+'Print box sides
+JJ = 9
+For II = 1 To JJ
+    Locate 6 + II, 8
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
 Locate 7 + JJ, 8
-Print " Ó"; String$(61, 196); "½ ";: Locate 7, 32
+
+'Print box bottom
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+Locate 7, 32
+
 Locate , 12: Print "ENTER DISK ID: ": Print
 Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
 Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -348,17 +363,6 @@ Return
 
 62 For I = 0 To 1
     Cls
-    If UCase$(Left$(P$(1), 1)) <> "A" And UCase$(Left$(P$(1), 1)) <> "B" Then 64
-    Color 15, 0
-    Print "ENTER STATS DISK FOR ";
-    Color T(I, 33), T(I, 34)
-    Print B$(I, 0)
-    Color 15, 0
-    If AP = 1 Then 64
-    Locate 23, 1
-    Print "PRESS ANY KEY TO CONTINUE";
-    63 I$ = GetKeyPress$
-
     64 Y$(I) = B$(I, 0)
     Q = I
     GoSub 6585
@@ -468,14 +472,14 @@ P2(1) = 0
 X = 0
 U$ = "END OF QUARTER!"
 If PB% = 0 Then Call DELAY
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
 GoSub 178
 If H < 5 And U5 <> 0 Then GoSub 175
 If H < 5 Then GoSub 159: B = -1: GoSub 220: T = 720: Call UPDATESCREEN: GoTo 250
 GoSub 159
 If H = 5 Then U$ = "END OF REGULATION"
 If H = 5 And PB% = 0 Then Call DELAY
-If H = 5 And PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+If H = 5 And PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
 If S(0, 0) = S(1, 0) And PB% = 0 Then U$ = "OVERTIME !!!": Call DELAY
 If S(0, 0) = S(1, 0) And PB% = 1 Then Call WINDEX: Print "OVERTIME !!!": Call MOREDELAY
 If S(0, 0) = S(1, 0) Then 190
@@ -553,13 +557,13 @@ If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
 GoSub 1033
 If H = 1 Or H > 4 Then
     If PB% = 0 Then U$ = B$(JB, 0) + " GETS THE JUMP": Call DELAY
-    If PB% = 1 And U6 <> 0 Then Call WINDEX: Color T(JB, 33), T(JB, 34): Print B$(JB, 0);: Color 15, 0: Print " GETS THE JUMP": Call MOREDELAY
+    If PB% = 1 And displayPause <> 0 Then Call WINDEX: Color T(JB, 33), T(JB, 34): Print B$(JB, 0);: Color 15, 0: Print " GETS THE JUMP": Call MOREDELAY
     P9 = JB
     P = JB
     GoTo 300
 End If
 If PB% = 0 Then U$ = B$(JB, 0) + " INBOUNDS THE BALL": Call DELAY
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Color T(JB, 33), T(JB, 34): Print B$(JB, 0);: Color 15, 0: Print " INBOUNDS THE BALL": Call MOREDELAY
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Color T(JB, 33), T(JB, 34): Print B$(JB, 0);: Color 15, 0: Print " INBOUNDS THE BALL": Call MOREDELAY
 P9 = JB
 P = JB
 GoTo 300
@@ -568,7 +572,7 @@ GoTo 300
 Locate 8, 1
 If P7(D) = 1 Then
     If PB% = 0 Then U$ = B$(D, 0) + " IS PRESSING": Call DELAY
-    If PB% = 1 And U6 <> 0 Then Call WINDEX: Color T(D, 33), T(D, 34): Print B$(D, 0);: Color 15, 0: Print " IS PRESSING": Call MOREDELAY
+    If PB% = 1 And displayPause <> 0 Then Call WINDEX: Color T(D, 33), T(D, 34): Print B$(D, 0);: Color 15, 0: Print " IS PRESSING": Call MOREDELAY
     P1 = 1
 End If
 Return
@@ -605,7 +609,7 @@ PT% = 3
 Call MAKEPBP
 Call DELAY
 If S <= F3S% Then 363
-If PB% = 1 And U6 <> 0 Then
+If PB% = 1 And displayPause <> 0 Then
     Call WINDEX
     Print "3 PT FG MISSED BY "; AA$(P, B1(P, B), 0)
     Call MOREDELAY
@@ -624,7 +628,7 @@ Call UPDATESCREEN
 GoTo 670
 
 363 ' MADE 3-POINT FIELD GOAL
-If PB% = 1 And U6 <> 0 Then
+If PB% = 1 And displayPause <> 0 Then
     Call WINDEX
     Print "3 PT FG GOOD BY "; AA$(P, B1(P, B), 0); " !!!"
     Call MOREDELAY
@@ -662,9 +666,9 @@ If R0 <= 40 Then 424
 B = Int(Rnd(1) * 5)
 GoTo 427
 
-424 If U6 <> 0 And PB% = 0 Then U$ = "PASS TO CHOICE (0-4)": Call DELAY
-If U6 <> 0 And PB% = 1 Then
-    If AP = 1 And U5 = 2 Or U6 = 0 Then 425
+424 If displayPause <> 0 And PB% = 0 Then U$ = "PASS TO CHOICE (0-4)": Call DELAY
+If displayPause <> 0 And PB% = 1 Then
+    If AP = 1 And U5 = 2 Or displayPause = 0 Then 425
     Call WINDEX
     Print "PASS TO CHOICE (0-4)"
     Call DELAY
@@ -768,7 +772,7 @@ GoTo 465
 513 GoSub 210
 GoSub 1033
 A(P, B1(P, B), 23) = A(P, B1(P, B), 23) + 1
-If U6 = 0 Then 500
+If displayPause = 0 Then 500
 If PB% = 1 Then
     Call WINDEX
     Print "BALL STOLEN BY "; AA$(D, B1(D, P9), 0); "!"
@@ -812,7 +816,7 @@ GoSub 3000: FB% = 1: GoTo 300
 515 GoSub 210: GoSub 1033: A(P, B1(P, B), 23) = A(P, B1(P, B), 23) + 1: T0(P) = T0(P) + 1
 If SV% <> 1 Then PT% = 1: Call MAKEPBP
 SV% = 0
-If PB% = 1 And U6 <> 0 Then
+If PB% = 1 And displayPause <> 0 Then
     Call WINDEX
     Print "TURNOVER BY ";: Color T(P, 33), T(P, 34): Print B$(P, 0): Color 15, 0: Call MOREDELAY
 End If
@@ -828,7 +832,7 @@ GoSub 3000: GoSub 220: GoTo 300
 520 GoSub 210
 If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
 If PZ% = 4 And F3S% <= 0 Then F3S% = 3
-If U6 = 0 Then 529
+If displayPause = 0 Then 529
 If F > 70 And FB% = 1 And PASS% = 1 Then PT% = 6: PZ% = 8: Call MAKEPBP: Call DELAY: GoTo 529
 If AA$(P, B1(P, B), 0) <> PB$ And PB$ = "" Then U$ = "PASS TO " + AA$(P, B1(P, B), 0): Call DELAY
 If AA$(P, B1(P, B), 0) <> PB$ And PB$ <> "" Then PT% = 10: Call MAKEPBP: Call DELAY
@@ -841,7 +845,7 @@ Y2$ = "HE"
 Y3$ = AA$(D, B1(D, B), 0)
 On PZ% GOTO 521, 522, 523, 524, 525, 526, 527
 
-521 If U6 = 0 Then 601
+521 If displayPause = 0 Then 601
 RN = Int(Rnd(1) * 12) + 1
 If RN = 1 Then U$ = Y2$ + "'S HEAVILY GUARDED"
 If RN = 2 Then U$ = Y2$ + "'S GUARDED"
@@ -861,7 +865,7 @@ GoTo 529
 
 522 U$ = Y2$ + " WORKS FREE INSIDE": Call DELAY: U$ = "HE HAS AN OPEN SHOT": Call DELAY: GoTo 529
 
-523 If U6 = 0 Then 529
+523 If displayPause = 0 Then 529
 RN = Int(Rnd(1) * 100) + 1
 If Z3$ = "C" And RN <= 25 Then U$ = Y2$ + " MAKES A MOVE DOWN LOW": Call DELAY: GoTo 602
 If Z3$ = "C" And RN <= 50 Then U$ = Y2$ + " POSITIONS HIMSELF DOWN LOW": Call DELAY: GoTo 602
@@ -895,7 +899,7 @@ GoTo 529
 
 529 If F <= 0 Then F = 1
 If F >= 100 Then F = 100
-If U6 = 0 Then 528
+If displayPause = 0 Then 528
 If PB% = 1 Then
     Call WINDEX
     Print "PASS TO "; AA$(P, B1(P, B), 0); " OF ";
@@ -905,12 +909,12 @@ End If
 If PB% = 1 And PZ% <> 4 Then Locate 10: Print "SHOT % "; Int(F + .5);
 If PB% = 1 And PZ% = 4 Then Locate 10: Print "3 PT SHOT % "; Int(F3S% + .5);: Print " *";: GoTo 528
 If PB% = 1 And PZ% >= 2 And PZ% <= 8 Then Print "*";
-If U6 = 0 Or PB% = 1 Then 528
+If displayPause = 0 Or PB% = 1 Then 528
 If PZ% <> 4 Then Locate 8, 41: Print Using "SHOT % ###   "; Int(F + .5);
 If PZ% = 4 Then Locate 8, 41: Print Using "SHOT % ###"; Int(F3S% + .5);: Print " *";: GoTo 528
 If PZ% >= 2 And PZ% <= 8 Then Locate , 52: Print "*";
 
-528 Print: If PB% = 1 And U6 <> 0 Then Call MOREDELAY
+528 Print: If PB% = 1 And displayPause <> 0 Then Call MOREDELAY
 If U5 <> 0 Or CM% = 1 Then 949
 530 I$ = GetKeyPress$
 If UCase$(I$) = "T" Then Call TICKER: GoTo 530
@@ -948,7 +952,7 @@ If S <= F - 2 Then 553
 R0 = Int(Rnd(1) * 100) + 1
 GoTo 548
 
-545 If PB% = 1 And U6 <> 0 Then
+545 If PB% = 1 And displayPause <> 0 Then
     Call WINDEX
     Print "SHOT MISSED BY "; AA$(P, B1(P, B), 0)
     Call MOREDELAY
@@ -966,7 +970,7 @@ GoTo 670
 548 I5 = Int(Rnd(1) * 100) + 1
 I3 = Int(Rnd(1) * 5)
 If I5 > A(D, B1(D, I3), 6) Then 545
-If U6 = 0 Then 554
+If displayPause = 0 Then 554
 If PB% = 1 Then
     Call WINDEX
     Print "SHOT BLOCKED BY "; AA$(D, B1(D, I3), 0)
@@ -996,7 +1000,7 @@ If PB% = 0 And PZ% = 8 Then PT% = 7: Call MAKEPBP: Call DELAY: PZ% = 0: GoTo 560
 U$ = "BASKET BY "
 U$ = U$ + AA$(P, B1(P, B), 0) + " !!!"
 
-559 If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY: GoTo 560
+559 If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Call MOREDELAY: GoTo 560
 RN = Int(Rnd(1) * 100) + 1
 If RN <= 50 Then 561
 RN = Int(Rnd(1) * 22) + 1
@@ -1032,7 +1036,7 @@ Call UPDATESCREEN
 A(P, B1(P, B), 8) = A(P, B1(P, B), 8) + 1
 
 562 U$ = B$(D, 0) + " BALL AFTER SCORE"
-If PB% = 1 And U6 <> 0 Then
+If PB% = 1 And displayPause <> 0 Then
     Locate 9, 1
     Color T(D, 33), T(D, 34)
     Print B$(D, 0);: Color 15, 0
@@ -1061,7 +1065,7 @@ If FR% = 0 Then
     GoTo 350
 End If
 Call UPDATESCREEN
-If U6 = 0 Then 571
+If displayPause = 0 Then 571
 If PB% = 0 Then
     U$ = "1 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %"
     Call DELAY
@@ -1073,7 +1077,7 @@ Print "1 FT: "; AA$(P, B1(P, B), 0); " "; A(P, B1(P, B), 1); " %"
 571 X = 50
 GoSub 220
 X = 0
-If U6 = 0 Then 572
+If displayPause = 0 Then 572
 If PB% = 0 Then
     U$ = "1 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %"
     Call DELAY
@@ -1121,7 +1125,7 @@ If P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then 570
 If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
 U$ = "OFFENSIVE FOUL"
 If PB% = 0 Then Call DELAY
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
 U$ = B$(P, 0) + " BALL AFTER FOUL"
 GoSub 729
 GoSub 871: B = 6: Call DELAY
@@ -1142,7 +1146,7 @@ W5 = Val(I$): If W5 < 0 Or W5 > 4 Then 586
 GoSub 365
 Call UPDATESCREEN
 GoSub 630
-If U6 = 0 Then 591
+If displayPause = 0 Then 591
 If PB% = 0 And RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then U$ = "3 TO MAKE 2 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %": Call DELAY: GoTo 591
 If PB% = 0 Then U$ = "2 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %": Call DELAY: GoTo 591
 If PB% = 1 And RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then
@@ -1157,7 +1161,7 @@ If PB% = 1 Then Call WINDEX: Print B$(P, 0): Print "2 FT: "; AA$(P, B1(P, B), 0)
 591 X = 50
 GoSub 220
 X = 0
-If U6 = 0 Then 592
+If displayPause = 0 Then 592
 If PB% = 0 And RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then U$ = "3 TO MAKE 2 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %": Call DELAY: GoTo 592
 If PB% = 0 Then U$ = "2 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %": Call DELAY: GoTo 592
 If PB% = 1 And RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then
@@ -1200,7 +1204,7 @@ If DK% = 1 And PB% = 0 Then PT% = 2: Call MAKEPBP: U$ = "STUFF BY " + AA$(P, B1(
 If DK% = 1 And PB% = 1 Then Call WINDEX: Print "STUFF BY " + AA$(P, B1(P, B), 0): Call MOREDELAY: DK% = 0: GoTo 617
 If PZ% = 8 And PB% = 0 Then PT% = 7: Call MAKEPBP: PZ% = 0: Call DELAY: GoTo 617
 If PB% = 0 Then U$ = "BASKET GOOD BY " + AA$(P, B1(P, B), 0): Call DELAY
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print "BASKET GOOD BY " + AA$(P, B1(P, B), 0): Call MOREDELAY
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print "BASKET GOOD BY " + AA$(P, B1(P, B), 0): Call MOREDELAY
 
 617 U$ = "... AND HE'S FOULED !!!": GoSub 729: F3 = 1
 Call MOREDELAY
@@ -1211,7 +1215,7 @@ S(P, 0) = S(P, 0) + 2
 A(P, B1(P, B), 8) = A(P, B1(P, B), 8) + 1
 Call UPDATESCREEN
 GoSub 630
-If U6 = 0 Then 620
+If displayPause = 0 Then 620
 If PB% = 0 And RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then U$ = "2 TO MAKE 1 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %": Call DELAY: GoTo 620
 If PB% = 0 Then U$ = "1 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %": Call DELAY: GoTo 620
 If PB% = 1 And RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then
@@ -1224,7 +1228,7 @@ End If
 If PB% = 1 Then Call WINDEX: Print B$(P, 0): Print "1 FT: "; AA$(P, B1(P, B), 0); "   "; A(P, B1(P, B), 1); " %"
 
 620 X = 50: GoSub 220: X = 0
-If U6 = 0 Then 621
+If displayPause = 0 Then 621
 If PB% = 0 And RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then U$ = "2 TO MAKE 1 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %": Call DELAY: GoTo 621
 If PB% = 0 Then U$ = "1 FT: " + AA$(P, B1(P, B), 0) + Str$(A(P, B1(P, B), 1)) + " %": Call DELAY: GoTo 621
 If PB% = 1 And RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then
@@ -1271,7 +1275,7 @@ If A(D, B1(D, W5), 12) < 6 Then GoSub 638
 If A(D, B1(D, W5), 12) >= 6 Then GoSub 1000: GoSub 635
 Return
 
-635 If PB% = 1 And U6 <> 0 Then Call WINDEX: Print "FOUL ON "; AA$(D, B1(D, W5), 0): Call MOREDELAY
+635 If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print "FOUL ON "; AA$(D, B1(D, W5), 0): Call MOREDELAY
 If PB% = 0 Then U$ = "FOUL CALLED ON " + AA$(D, B1(D, W5), 0): Call DELAY
 U$ = "HE HAS JUST FOULED OUT !!!"
 GoSub 729
@@ -1284,7 +1288,7 @@ GoSub 698
 X = 0
 Return
 
-638 If PB% = 1 And U6 <> 0 Then
+638 If PB% = 1 And displayPause <> 0 Then
     Call WINDEX
     Print "FOUL ON "; AA$(D, B1(D, W5), 0)
     Call MOREDELAY
@@ -1331,7 +1335,7 @@ If R0 <= 23 And P6 <> 4 Then 740
 
 707 GoTo 770
 
-710 If U6 = 0 Then 713
+710 If displayPause = 0 Then 713
 If PB% = 1 Then Call WINDEX: Print AA$(D, B1(D, B), 0); " HAS THE DEF REBOUND FOR ": Print B$(D, 0); " AND IS FOULED !!!": Call MOREDELAY: GoTo 713
 U$ = AA$(D, B1(D, B), 0) + " HAS THE DEFENSIVE REBOUND": Call DELAY
 U$ = "HE'S FOULED !!!": Call DELAY
@@ -1341,7 +1345,7 @@ Call MOREDELAY
 
 720 U$ = AA$(P, B1(P, B), 0) + " HAS THE OFFENSIVE REBOUND"
 If PB% = 0 Then Call DELAY
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Print "FOR "; B$(P, 0): Call MOREDELAY
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Print "FOR "; B$(P, 0): Call MOREDELAY
 U$ = "HE'S FOULED !!!"
 GoSub 729
 Call MOREDELAY
@@ -1356,7 +1360,7 @@ GoTo 570
 T0(P) = T0(P) + 1
 U$ = "OFFENSIVE GOAL TENDING"
 If PB% = 0 Then Call DELAY
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
 U$ = "BALL GOES TO " + B$(D, 0)
 GoSub 729
 Call MOREDELAY
@@ -1371,7 +1375,7 @@ R3(P) = R3(P) + 1
 S(P, H) = S(P, H) + 2
 S(P, 0) = S(P, 0) + 2
 Call UPDATESCREEN
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print "TIPPED IN BY "; AA$(P, B1(P, B), 0); "!!!": Call MOREDELAY
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print "TIPPED IN BY "; AA$(P, B1(P, B), 0); "!!!": Call MOREDELAY
 If PB% = 0 Then U$ = AA$(P, B1(P, B), 0) + " TIPS IT IN!!!": Call DELAY
 Call MOREDELAY
 GoSub 3000
@@ -1383,7 +1387,7 @@ GoTo 300
 740 If X = 99 Then 700
 U$ = "DEFENSIVE GOAL TENDING"
 If PB% = 0 Then Call DELAY
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
 Call MOREDELAY: GoTo 560
 
 750 R0 = Int(Rnd(1) * 100) + 1: If R0 <= 32 Then 752
@@ -1391,7 +1395,7 @@ R3(D) = R3(D) + 1
 Call UPDATESCREEN
 U$ = "RB KNOCKED O.B. TO " + B$(D, 0)
 If PB% = 0 Then Call DELAY
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
 Call MOREDELAY
 GoSub 220: GoSub 3000: C1 = 2: P9 = P: GoTo 300
 
@@ -1399,7 +1403,7 @@ GoSub 220: GoSub 3000: C1 = 2: P9 = P: GoTo 300
 Call UPDATESCREEN
 U$ = "RB KNOCKED O.B. TO " + B$(P, 0)
 If PB% = 0 Then Call DELAY
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
 Call MOREDELAY
 GoSub 220: GoTo 520
 
@@ -1409,8 +1413,8 @@ GoSub 220: GoTo 520
 A(P, B1(P, B), 11) = A(P, B1(P, B), 11) + 1
 R3(P) = R3(P) + 1: Call UPDATESCREEN
 U$ = AA$(P, B1(P, B), 0) + " HAS THE OFFENSIVE REBOUND"
-If PB% = 0 And U6 <> 0 Then Call DELAY
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Print "FOR " + B$(P, 0): Call MOREDELAY
+If PB% = 0 And displayPause <> 0 Then Call DELAY
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Print "FOR " + B$(P, 0): Call MOREDELAY
 If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
 PB$ = AA$(P, B1(P, B), 0)
 R0 = Int(Rnd(1) * 10) + 1: GoSub 920
@@ -1484,8 +1488,8 @@ B = Int(Rnd(1) * 5)
 A(D, B1(D, B), 11) = A(D, B1(D, B), 11) + 1
 R3(D) = R3(D) + 1: Call UPDATESCREEN
 U$ = AA$(D, B1(D, B), 0) + " HAS THE DEFENSIVE REBOUND"
-If PB% = 0 And U6 <> 0 Then Call DELAY
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Print "FOR " + B$(D, 0): Call MOREDELAY
+If PB% = 0 And displayPause <> 0 Then Call DELAY
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Print "FOR " + B$(D, 0): Call MOREDELAY
 PB$ = AA$(D, B1(D, B), 0)
 C1 = 2: P9 = D: GoSub 3000: FB% = 1: GoTo 300
 
@@ -1712,7 +1716,7 @@ U5 = NG%(8)
 PO = NG%(5)
 SC = NG%(7)
 N = NG%(2)
-U6 = NG%(4) / 10
+displayPause = NG%(4) / 10
 CM% = NG%(9)
 NB% = NG%(14): FR% = NG%(11): RT% = NG%(10)
 For P9 = 0 To 1
@@ -1727,7 +1731,7 @@ Return
 3000 PB$ = "": If P = 1 Then P = 0: D = 1: P9 = 0: C1 = 2: Return
 If P = 0 Then P = 1: D = 0: P9 = 1: C1 = 2: Return
 
-4090 If U6 = 0 Then 4091
+4090 If displayPause = 0 Then 4091
 For I = 8 To 15
     Locate I, 1
     Print "                                      "
@@ -1835,9 +1839,22 @@ If H = 3 Then GoSub 1250: Return
 8532 X = 0
 Cls
 J = 1
-Locate 8, 8: Color T(1, 33), T(1, 34): Print " Ö"; String$(61, 196); "· ";
-For II = 1 To J: Locate 8 + II, 8: Print " º"; String$(61, 32); "º ";: Next
-Locate 9 + J, 8: Print " Ó"; String$(61, 196); "½ ";
+Locate 8, 8
+Color T(1, 33), T(1, 34)
+
+'Print box top
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+'Print box sides
+For II = 1 To JJ
+    Locate 8 + II, 8
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
+
+'Print box bottom
+Locate 9 + JJ, 8
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
 Locate 9, 32
 Print "DISPLAY STATS AGAIN (YN)";
 Color 15, 0
@@ -1850,9 +1867,22 @@ If UCase$(I$) = "Y" Then 8500
 
 Cls
 J = 1
-Locate 8, 8: Color T(1, 33), T(1, 34): Print " Ö"; String$(61, 196); "· ";
-For II = 1 To J: Locate 8 + II, 8: Print " º"; String$(61, 32); "º ";: Next
-Locate 9 + J, 8: Print " Ó"; String$(61, 196); "½ ";
+Locate 8, 8
+Color T(1, 33), T(1, 34)
+
+'Print box top
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+'Print box sides
+For II = 1 To JJ
+    Locate 8 + II, 8
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
+
+'Print box bottom
+Locate 9 + JJ, 8
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
 Locate 9, 32
 Print "ANOTHER GAME (YN)";
 Color 15, 0
@@ -1864,7 +1894,7 @@ If UCase$(I$) <> "Y" Then Run "HELLO.EXE"
 8637 Cls: Print "PLEASE WAIT ...": Run "PROHOOP.EXE"
 
 729 If PB% = 0 Then Call DELAY
-If PB% = 1 And U6 <> 0 Then Print U$: Call MOREDELAY
+If PB% = 1 And displayPause <> 0 Then Print U$: Call MOREDELAY
 Return
 
 Data L,1,1,1,2,2,2,H,H,3,3,3,4,4,F
@@ -2158,9 +2188,22 @@ End Sub
 
 Sub COMPILESTATS ()
     Cls: J = 1
-    Locate 8, 8: Color T(1, 33), T(1, 34): Print " Ö"; String$(61, 196); "· ";
-    For II = 1 To J: Locate 8 + II, 8: Print " º"; String$(61, 32); "º ";: Next
-    Locate 9 + J, 8: Print " Ó"; String$(61, 196); "½ ";
+    Locate 8, 8
+    Color T(1, 33), T(1, 34)
+
+    'Print box top
+    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+    'Print box sides
+    For II = 1 To JJ
+        Locate 8 + II, 8
+        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Next
+
+    'Print box bottom
+    Locate 9 + JJ, 8
+    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
     Locate 9, 28
     Print "SAVE STATS FOR EITHER TEAM (YN)";
     Color 15, 0
@@ -2218,14 +2261,16 @@ Sub DISABLEPLAYERS ()
 
 9210 End Sub
 
+
 Sub DRAWBOX (I)
     JJ = 1
     Locate 6, 8: Color T(I, 33), T(I, 34)
     Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
     For II = 1 To JJ: Locate 6 + II, 8
-    Print " º"; String$(61, 32); "º ";: Next
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
     Locate 7 + JJ, 8
     Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7
+
 End Sub
 
 Sub GETATEAM (I1, YN$)
@@ -2717,11 +2762,24 @@ Sub SAVESTATFILES ()
 Sub SCOUTREPORT ()
     ' *** SCOUTING REPORT ***
     JJ = 13
-    SN = 1: Locate 6, 8: Color 0, 7
-    Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
-    Print " º"; String$(61, 32); "º ";: Next
+    SN = 1
+    Locate 6, 8
+    Color 0, 7
+
+    ' Top of box
+    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+    ' Sides of box
+    For II = 1 To JJ: Locate 6 + II, 8
+        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Next
+
+    ' Bottom of box
     Locate 7 + JJ, 8
-    Print " Ó"; String$(61, 196); "½ ";: Locate 7, 32
+    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+    Locate 7, 32
+
     Print "SCOUTING REPORT"
     Locate 8, 14: Color T(0, 33), T(0, 34): Print B$(0, 0);
     Locate , 52: Color T(1, 33), T(1, 34): Print B$(1, 0)
@@ -3142,48 +3200,57 @@ Sub COMPUTERSUBS ()
 8788 End Sub
 
 Sub DELAY ()
-    If U6 = 0 Or PB% = 1 Then 2246
 
-    2249 If Len(U$) < 38 Then U$ = U$ + " ": GoTo 2249
-    U$ = Left$(U$, 38)
-    Locate 8, 1
-    If NL% = 1 Then A1$ = U$: VG(1) = T(P, 33): VH(1) = T(P, 34)
-    If NL% = 2 Then B1$ = U$: VG(2) = T(P, 33): VH(2) = T(P, 34)
-    If NL% = 3 Then C1$ = U$: VG(3) = T(P, 33): VH(3) = T(P, 34)
-    If NL% = 4 Then D1$ = U$: VG(4) = T(P, 33): VH(4) = T(P, 34)
-    If NL% = 5 Then E1$ = U$: VG(5) = T(P, 33): VH(5) = T(P, 34)
-    If NL% = 6 Then F1$ = U$: VG(6) = T(P, 33): VH(6) = T(P, 34)
-    If NL% = 7 Then G1$ = U$: VG(7) = T(P, 33): VH(7) = T(P, 34)
-    If NL% = 8 Then H1$ = U$: VG(8) = T(P, 33): VH(8) = T(P, 34)
-    If NL% > 8 Then
-        A1$ = B1$
-        B1$ = C1$
-        C1$ = D1$
-        D1$ = E1$
-        E1$ = F1$
-        F1$ = G1$
-        G1$ = H1$
-        H1$ = U$
-        For I = 1 To 7
-            VG(I) = VG(I + 1)
-            VH(I) = VH(I + 1)
-        Next
-        VG(8) = T(P, 33)
-        VH(8) = T(P, 34)
-    End If
-    NL% = NL% + 1
-    Color VG(1), VH(1): Print A1$
-    Color VG(2), VH(2): Print B1$
-    Color VG(3), VH(3): Print C1$
-    Color VG(4), VH(4): Print D1$
-    Color VG(5), VH(5): Print E1$
-    Color VG(6), VH(6): Print F1$
-    Color VG(7), VH(7): Print G1$
-    Color VG(8), VH(8): Print H1$
-    Color 15, 0
-    U! = Timer: While Timer < U! + U6: Wend
+'Original code that was modified:
+'    If displayPause = 0 Or PB% = 1 Then 
+    If displayPause > 0 Or PB% = 0 Then 
+	
+		'-- Shouldn't we PadRight instead to 38 length
+		2249 If Len(U$) < 38 Then U$ = U$ + " ": GoTo 2249
+		U$ = Left$(U$, 38)
+	
+		Locate 8, 1
 
-2246 End Sub
+		If NL% = 1 Then A1$ = U$: VG(1) = T(P, 33): VH(1) = T(P, 34)
+		If NL% = 2 Then B1$ = U$: VG(2) = T(P, 33): VH(2) = T(P, 34)
+		If NL% = 3 Then C1$ = U$: VG(3) = T(P, 33): VH(3) = T(P, 34)
+		If NL% = 4 Then D1$ = U$: VG(4) = T(P, 33): VH(4) = T(P, 34)
+		If NL% = 5 Then E1$ = U$: VG(5) = T(P, 33): VH(5) = T(P, 34)
+		If NL% = 6 Then F1$ = U$: VG(6) = T(P, 33): VH(6) = T(P, 34)
+		If NL% = 7 Then G1$ = U$: VG(7) = T(P, 33): VH(7) = T(P, 34)
+		If NL% = 8 Then H1$ = U$: VG(8) = T(P, 33): VH(8) = T(P, 34)
+		If NL% > 8 Then
+			A1$ = B1$
+			B1$ = C1$
+			C1$ = D1$
+			D1$ = E1$
+			E1$ = F1$
+			F1$ = G1$
+			G1$ = H1$
+			H1$ = U$
+			For I = 1 To 7
+				VG(I) = VG(I + 1)
+				VH(I) = VH(I + 1)
+			Next
+			VG(8) = T(P, 33)
+			VH(8) = T(P, 34)
+		End If
+		
+		NL% = NL% + 1
+		
+		Color VG(1), VH(1): Print A1$
+		Color VG(2), VH(2): Print B1$
+		Color VG(3), VH(3): Print C1$
+		Color VG(4), VH(4): Print D1$
+		Color VG(5), VH(5): Print E1$
+		Color VG(6), VH(6): Print F1$
+		Color VG(7), VH(7): Print G1$
+		Color VG(8), VH(8): Print H1$
+		Color 15, 0
+		
+		_Delay displayPause
+	End If
+End Sub
 
 Sub EVENTS (COUNT, SPECIAL)
     If Not _FileExists("EVENTS.BOX") Then 8450
@@ -3218,16 +3285,28 @@ Sub EVENTS (COUNT, SPECIAL)
 8450 End Sub
 
 Sub FRAMEBOX ()
-    SN = 1: Locate 8, 8: Color T(TS%, 33), T(TS%, 34)
-    Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 8 + II, 8
-    Print " º"; String$(61, 32); "º ";: Next
+    SN = 1
+    Locate 8, 8
+    Color T(TS%, 33), T(TS%, 34)
+
+    'Print box top
+    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+    'Print box sides
+    For II = 1 To JJ
+        Locate 8 + II, 8
+        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Next
+
+    'Print box bottom
     Locate 9 + JJ, 8
-    Print " Ó"; String$(61, 196); "½ ";: Locate 10, 15
+    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
 End Sub
 
 Sub MADEFT ()
     A(P, B1(P, B), 10) = A(P, B1(P, B), 10) + 1
-    If U6 <> 0 Then
+    If displayPause <> 0 Then
         Locate F3 + 9, 1
         Call MOREDELAY
         Print F3; " GOOD"
@@ -3240,7 +3319,7 @@ End Sub
 
 Sub MAKEPBP ()
     'PLAY BY PLAY
-    If U6 = 0 Then GoTo 1495
+    If displayPause = 0 Then GoTo 1495
     RN = Int(Rnd(1) * 100) + 1
     On PT% GOTO 1410, 1420, 1430, 1440, 1445, 1450, 1460, 1470, 1480, 1490
     U$ = AA$(P, B1(P, B), 0)
@@ -3863,7 +3942,7 @@ Sub MAKEPBP ()
 1495 End Sub
 
 Sub MISSFT ()
-    If U6 = 0 Then 3699
+    If displayPause = 0 Then 3699
     Call MOREDELAY
     Locate F3 + 9, 1
     Print F3; " MISSED"
@@ -3873,10 +3952,8 @@ Sub MISSFT ()
 End Sub
 
 Sub MOREDELAY ()
-    If U6 <> 0 Then
-        U! = Timer
-        While Timer < U! + U6
-        Wend
+    If displayPause <> 0 Then
+        _Delay displayPause
     End If
 End Sub
 
@@ -3919,7 +3996,7 @@ End Sub
 
 Sub SELECTPBP ()
     If PB% = 0 Then Call DELAY
-    If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+    If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
     Call MOREDELAY
 End Sub
 
@@ -4184,7 +4261,7 @@ Sub UPDATESCREEN ()
     Locate 6, 9: Print "TIMEOUTS:"; T1(0);: Locate , 56: Print "TIMEOUTS:"; T1(1)
     Locate 6, 37: Color 15, 0: Print Using " :##"; X8
     If T < 25 And X8 >= T Or H > 4 And T = 300 Then Locate 6, 37: Print " :  "
-    If U6 = 0 Then 2250
+    If displayPause = 0 Then 2250
     Locate 8, 58
     Color T(D, 33), T(D, 34): Print "DEF - "; D$(D2(D))
     Locate , 58: Color T(P, 33), T(P, 34): Print "OFF - "; O$(O0%(P))
@@ -4245,7 +4322,7 @@ Sub UPDATESCREEN ()
 
 
 Sub WINDEX ()
-    If U6 = 0 Then 4094
+    If displayPause = 0 Then 4094
     For I = 8 To 15
         Locate I, 1
         Print "                                      "

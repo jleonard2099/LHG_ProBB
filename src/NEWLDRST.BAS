@@ -26,7 +26,7 @@ OPEN "DEV.BAS" FOR INPUT AS #2: FOR I = 0 TO 1: INPUT #2, D$(I): NEXT: CLOSE 2
 CALL box0(7, 24, 10, 55, 2, 31)
 	
 _MouseShow "DEFAULT"
-MMenuVert VARPTR(item$(1)), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 	COLOR , 0
@@ -333,7 +333,7 @@ LOCATE , 33: PRINT "ANY CHANGE (YN)";
 3912 I$ = GetKeyPress$
 	IF UCASE$(I$) = "Y" THEN 1445
 
-3913 F$ = QPRTRIM$(F$)
+3913 F$ = RTrim$(F$)
 	F$ = LEFT$(F$, LEN(F$) - 4)
 	LG$ = F$
 	RETURN
