@@ -1,237 +1,242 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
-10 DIM T$(4), B%(15, 19), B$(15, 1), T%(35), L%(6), Q$(377), v$(500), v%(500)
-DIM P$(3), D$(1), ITEM$(5)
+_Title "Basketball: The Pro Game - Adjust Game Time"
+''$ExeIcon:'./lhg_bbpro.ico'
+'_Icon
+_AllowFullScreen
+
+10 Dim T$(4), B%(15, 19), B$(15, 1), T%(35), L%(6), Q$(377), v$(500), v%(500)
+Dim P$(3), D$(1), menuItems$(5)
 
 20 P$(0) = "G": P$(1) = "F": P$(2) = "C"
 
-50 OPEN "DEV.BAS" FOR INPUT AS #1
-	INPUT #1, D$(0): CLOSE #1
+50 Open "DEV.BAS" For Input As #1
+Input #1, D$(0): Close #1
 
-60 COLOR 1, 0: CLS : COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 22: COLOR 14
-	PRINT "BASKETBALL:THE PRO GAME ADJUST PLAYING TIME"
-	LOCATE 24, 1: PRINT TAB(80); : LOCATE , 1
-	PRINT "(C) LANCE HAFFNER/SHANNON LYNN 1991"; TAB(70); LEFT$(TIME$, 5);
-	LOCATE 4, 1: COLOR 1, 0
-	item$(1) = "ADJUST GAMES AND MINUTES PER GAME "
-	item$(2) = "EXIT TO MAIN MENU                 "
-	  SELECTION% = 1
-	Count% = 2
-	Start% = 1
-	SCANCODE% = 2
-	FileFGColr% = 15:FileBGColr% = 1
-	HiLiteFGColr% = 0:HiLiteBGColr% = 7
-	Spacing% = 1
-	Row% = 8
-	Column% = 25
+60 Color 1, 0: Cls: Color , 1: Locate 1, 1: Print Tab(80);: Locate , 22: Color 14
+Print "BASKETBALL:THE PRO GAME ADJUST PLAYING TIME"
+Locate 24, 1: Print Tab(80);: Locate , 1
+Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+Locate 4, 1: Color 1, 0
+menuItems$(1) = "ADJUST GAMES AND MINUTES PER GAME "
+menuItems$(2) = "EXIT TO MAIN MENU                 "
+SELECTION% = 1
+Count% = 2
+Start% = 1
+SCANCODE% = 2
+FileFGColr% = 15: FileBGColr% = 1
+HiLiteFGColr% = 0: HiLiteBGColr% = 7
+Spacing% = 1
+Row% = 8
+Column% = 25
 
-CALL box0(7, 24, 10, 59, 2, 31)
-	
+Call box0(7, 24, 10, 59, 2, 31)
+    
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
-	COLOR , 0
-	I = SELECTION%
-	IF SCANCODE% = 27 THEN I = 2
-	IF I = 1 THEN 181
-	
-5    RUN "HELLO.EXE"
+Color , 0
+I = SELECTION%
+If SCANCODE% = 27 Then I = 2
+If I = 1 Then 181
+    
+5 Run "HELLO.EXE"
 
-100 COLOR , 0: CLS : COLOR T%(33), T%(34): PRINT T$(0): COLOR 15, 0
-	PRINT "   PLAYERS                 ACTUAL           ADJUSTED"
-	PRINT "                          GP   MPG          GP    MPG"
-	GP = 0: MIN = 0
-	FOR I = 0 TO 14
-	IF B%(I, 16) >= 0 OR B%(I, 17) >= 0 THEN B%(I, 16) = B%(I, 0) * -1: B%(I, 17) = B%(I, 1) * -1
-	GP = GP + B%(I, 0)
-	MIN = MIN + B%(I, 17) * -1
-	IF LEFT$(B$(I, 0), 3) = "XXX" THEN 105
-	PRINT USING "## "; I; : PRINT B$(I, 0); " "; B$(I, 1); TAB(27);
-	PRINT USING "##   ##.#         ##   ##.#"; B%(I, 0); B%(I, 1) / B%(I, 0); B%(I, 16) * -1; B%(I, 17) / B%(I, 16)
+100 Color , 0: Cls: Color T%(33), T%(34): Print T$(0): Color 15, 0
+Print "   PLAYERS                 ACTUAL           ADJUSTED"
+Print "                          GP   MPG          GP    MPG"
+GP = 0: MIN = 0
+For I = 0 To 14
+    If B%(I, 16) >= 0 Or B%(I, 17) >= 0 Then B%(I, 16) = B%(I, 0) * -1: B%(I, 17) = B%(I, 1) * -1
+    GP = GP + B%(I, 0)
+    MIN = MIN + B%(I, 17) * -1
+    If Left$(B$(I, 0), 3) = "XXX" Then 105
+    Print Using "## "; I;: Print B$(I, 0); " "; B$(I, 1); Tab(27);
+    Print Using "##   ##.#         ##   ##.#"; B%(I, 0); B%(I, 1) / B%(I, 0); B%(I, 16) * -1; B%(I, 17) / B%(I, 16)
 
-105 NEXT
-	PRINT "15 END AND SAVE CHANGES"
-	PRINT
-	PRINT "TEAM MIN/G SHOULD BE APPROXIMATELY 240, OVERTIME WILL INCREASE THIS FIGURE"
-	PRINT USING "TEAM MIN/G = ###.#"; MIN / T%(0)
+105 Next
+Print "15 END AND SAVE CHANGES"
+Print
+Print "TEAM MIN/G SHOULD BE APPROXIMATELY 240, OVERTIME WILL INCREASE THIS FIGURE"
+Print Using "TEAM MIN/G = ###.#"; MIN / T%(0)
 
-560 LOCATE 23, 1
+560 Locate 23, 1
 
-561 INPUT "ENTER SELECTION "; B1
+561 Input "ENTER SELECTION "; B1
 
-562 IF B1 < 0 OR B1 > 15 THEN 560
-	IF B1 = 15 THEN 1380
-	GOSUB 2800
-	PRINT B$(B1, 0); " "; : INPUT "GAMES PLAYED "; GP
-	GOSUB 2800
-	PRINT B$(B1, 0); " "; : INPUT "MINUTES PER GAME "; MPG
-	B%(B1, 16) = GP * -1
-	B%(B1, 17) = MPG * GP * -1
-	GOTO 100
+562 If B1 < 0 Or B1 > 15 Then 560
+If B1 = 15 Then 1380
+GoSub 2800
+Print B$(B1, 0); " ";: Input "GAMES PLAYED "; GP
+GoSub 2800
+Print B$(B1, 0); " ";: Input "MINUTES PER GAME "; MPG
+B%(B1, 16) = GP * -1
+B%(B1, 17) = MPG * GP * -1
+GoTo 100
 
-1380 OPEN D$(0) + "PROBBTMS." + YN$ FOR RANDOM AS #1 LEN = 1031
-	FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
-	FOR I = 0 TO 6
-	FIELD #1, 30 + I * 2 AS X$, 2 AS Q$(I + 2)
-	NEXT
-	FIELD #1, 44 AS X$, 2 AS Q$(9)
-	FOR I = 0 TO 34
-	FIELD #1, 46 + I * 2 AS X$, 2 AS Q$(I + 10)
-	NEXT
-	FOR I = 0 TO 14
-	FIELD #1, 116 + I * 57 AS X$, 15 AS Q$(I * 22 + 45), 2 AS Q$(I * 22 + 46)
-	FOR I1 = 0 TO 19
-	FIELD #1, 133 + I * 57 + I1 * 2 AS X$, 2 AS Q$(I * 22 + 47 + I1)
-	NEXT
-	NEXT
-	FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
-LSET Q$(0) = T$(0): LSET Q$(1) = T$(1): FOR I = 0 TO 6: LSET Q$(I + 2) = MKI$(L%(I)): NEXT
-LSET Q$(9) = MKI$(999)
-FOR I = 0 TO 34: LSET Q$(I + 10) = MKI$(T%(I)): NEXT
-FOR I = 0 TO 14
-LSET Q$(22 * I + 45) = B$(I, 0)
-LSET Q$(22 * I + 46) = B$(I, 1)
-FOR I1 = 0 TO 19
-LSET Q$(22 * I + 47 + I1) = MKI$(B%(I, I1))
-NEXT: NEXT
-LSET Q$(375) = T$(2): LSET Q$(376) = T$(3): LSET Q$(377) = T$(4)
-PUT #1, T1: CLOSE 1
+1380 Open D$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+Field #1, 15 As Q$(0), 15 As Q$(1)
+For I = 0 To 6
+    Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+Next
+Field #1, 44 As X$, 2 As Q$(9)
+For I = 0 To 34
+    Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+Next
+For I = 0 To 14
+    Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+    For I1 = 0 To 19
+        Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+    Next
+Next
+Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+LSet Q$(0) = T$(0): LSet Q$(1) = T$(1): For I = 0 To 6: LSet Q$(I + 2) = MKI$(L%(I)): Next
+LSet Q$(9) = MKI$(999)
+For I = 0 To 34: LSet Q$(I + 10) = MKI$(T%(I)): Next
+For I = 0 To 14
+    LSet Q$(22 * I + 45) = B$(I, 0)
+    LSet Q$(22 * I + 46) = B$(I, 1)
+    For I1 = 0 To 19
+        LSet Q$(22 * I + 47 + I1) = MKI$(B%(I, I1))
+Next: Next
+LSet Q$(375) = T$(2): LSet Q$(376) = T$(3): LSet Q$(377) = T$(4)
+Put #1, T1: Close 1
 
-1430 GOTO 60
+1430 GoTo 60
 
-181 COLOR 15, 0: CLS
-	JJ = 6
-	SN = 1: LOCATE 6, 8: COLOR 15, 4
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 7 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
-	LOCATE , 12: PRINT "ENTER DISK ID: ": PRINT
-	LOCATE , 12: PRINT "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-	LOCATE , 12: PRINT "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-	PRINT
-	LOCATE , 12: PRINT "ESC TO RETURN TO MAIN MENU"
+181 Color 15, 0: Cls
+JJ = 6
+SN = 1: Locate 6, 8: Color 15, 4
+Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
+Print " º"; String$(61, 32); "º ";: Next
+Locate 7 + JJ, 8
+Print " Ó"; String$(61, 196); "½ ";: Locate 7, 32
+Locate , 12: Print "ENTER DISK ID: ": Print
+Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+Print
+Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
 3057 I$ = GetKeyPress$
-	IF I$ = CHR$(27) THEN 60
-	IF I$ = CHR$(13) THEN GOSUB 1102: GOTO 3060
-	LOCATE 7, 27: PRINT I$
-	LOCATE 7, 28: LINE INPUT NY$
-	NY$ = I$ + NY$
-	COLOR 15, 0
-	IF NY$ = "" THEN GOSUB 1102: GOTO 3060
-	YN$ = NY$
-	FOR I = 1 TO 500: v$(I) = "": NEXT
-	GOSUB 1100
+If I$ = Chr$(27) Then 60
+If I$ = Chr$(13) Then GoSub 1102: GoTo 3060
+Locate 7, 27: Print I$
+Locate 7, 28: Line Input NY$
+NY$ = I$ + NY$
+Color 15, 0
+If NY$ = "" Then GoSub 1102: GoTo 3060
+YN$ = NY$
+For I = 1 To 500: v$(I) = "": Next
+GoSub 1100
 
-3060 IF BO% = 1 THEN BO% = 0: GOTO 181
+3060 If BO% = 1 Then BO% = 0: GoTo 181
 
-3058 LOCATE 2, 33: COLOR T%(33), T%(34): PRINT T$(0)
-	COLOR 15, 4: LOCATE , 33: PRINT "ANY CHANGE (YN)";
-	I$ = GetKeyPress$
-	IF UCASE$(I$) = "Y" THEN 181
-	COLOR 15, 0
-	GOTO 100
+3058 Locate 2, 33: Color T%(33), T%(34): Print T$(0)
+Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
+I$ = GetKeyPress$
+If UCase$(I$) = "Y" Then 181
+Color 15, 0
+GoTo 100
 
 1100 NTMS = 0
-OPEN D$(0) + "PROBBTMS." + YN$ FOR RANDOM AS #1 LEN = 1031
-	Y1 = LOF(1)
-	FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
-	FOR I = 0 TO 6
-	FIELD #1, 30 + I * 2 AS X$, 2 AS Q$(I + 2)
-	NEXT
-	FIELD #1, 44 AS X$, 2 AS Q$(9)
-	FOR I = 0 TO 34
-	FIELD #1, 46 + I * 2 AS X$, 2 AS Q$(I + 10)
-	NEXT
-	FOR I = 0 TO 14
-	FIELD #1, 116 + I * 57 AS X$, 15 AS Q$(I * 22 + 45), 2 AS Q$(I * 22 + 46)
-	FOR I1 = 0 TO 19
-	FIELD #1, 133 + I * 57 + I1 * 2 AS X$, 2 AS Q$(I * 22 + 47 + I1)
-	NEXT
-	NEXT
-	FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
-	FOR I1 = 1 TO Y1 / 1031
-	GET #1, I1
-	CK% = CVI(Q$(9))
-	IF CK% <> 999 THEN 1103
-	NTMS = NTMS + 1
-	v$(NTMS) = Q$(0): v%(NTMS) = I1
+Open D$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+Y1 = LOF(1)
+Field #1, 15 As Q$(0), 15 As Q$(1)
+For I = 0 To 6
+    Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+Next
+Field #1, 44 As X$, 2 As Q$(9)
+For I = 0 To 34
+    Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+Next
+For I = 0 To 14
+    Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+    For I1 = 0 To 19
+        Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+    Next
+Next
+Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+For I1 = 1 To Y1 / 1031
+    Get #1, I1
+    CK% = CVI(Q$(9))
+    If CK% <> 999 Then 1103
+    NTMS = NTMS + 1
+    v$(NTMS) = Q$(0): v%(NTMS) = I1
 
-1103 NEXT
-CLOSE 1
+1103 Next
+Close 1
 
 1102 SELECTION% = 1
-	Count% = NTMS
-	Start% = 1
-	FileFGColr% = 15:FileBGColr% = 4
-	HiLiteFGColr% = 0:HiLiteBGColr% = 7
-	Rows% = 20
-	Columns% = 4
-	Spacing% = 6
-	Row% = 4
-	Column% = 1
-	COLOR , 4: CLS : LOCATE , 33: COLOR 14
-	PRINT "TEAM SELECTION": COLOR 15
-	LOCATE 25, 1: COLOR 14: PRINT "ESC"; : COLOR 15
-	PRINT "-SELECT NEW ID  PGDN  PGUP  "; : COLOR 14
-	PRINT "ENTER"; : COLOR 15: PRINT "-SELECTS TEAM";
-	
+Count% = NTMS
+Start% = 1
+FileFGColr% = 15: FileBGColr% = 4
+HiLiteFGColr% = 0: HiLiteBGColr% = 7
+Rows% = 20
+Columns% = 4
+Spacing% = 6
+Row% = 4
+Column% = 1
+Color , 4: Cls: Locate , 33: Color 14
+Print "TEAM SELECTION": Color 15
+Locate 25, 1: Color 14: Print "ESC";: Color 15
+Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
+Print "ENTER";: Color 15: Print "-SELECTS TEAM";
+    
 _MouseShow "DEFAULT"
-120   MAMenu v$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+120 MAMenu v$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
-	IF EXITCODE% = 27 THEN BO% = 1: RETURN
-	IF EXITCODE% = -71 THEN Start% = 1: EXITCODE% = 3: SELECTION% = 1: GOTO 120
-	IF EXITCODE% = -79 THEN Start% = NTMS: EXITCODE% = 3: SELECTION% = NTMS: GOTO 120
-	IF EXITCODE% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
-	IF EXITCODE% = -81 THEN Start% = Start% + 80: IF Start% > NTMS THEN Start% = NTMS
-	IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = Start%: GOTO 120
-	T1 = v%(SELECTION%)
-OPEN D$(0) + "PROBBTMS." + YN$ FOR RANDOM AS #1 LEN = 1031
-	FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
-	FOR I = 0 TO 6
-	FIELD #1, 30 + I * 2 AS X$, 2 AS Q$(I + 2)
-	NEXT
-	FIELD #1, 44 AS X$, 2 AS Q$(9)
-	FOR I = 0 TO 34
-	FIELD #1, 46 + I * 2 AS X$, 2 AS Q$(I + 10)
-	NEXT
-	FOR I = 0 TO 14
-	FIELD #1, 116 + I * 57 AS X$, 15 AS Q$(I * 22 + 45), 2 AS Q$(I * 22 + 46)
-	FOR I1 = 0 TO 19
-	FIELD #1, 133 + I * 57 + I1 * 2 AS X$, 2 AS Q$(I * 22 + 47 + I1)
-	NEXT
-	NEXT
-	FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
-	GET #1, T1
-T$(0) = Q$(0): T$(1) = Q$(1): FOR I = 0 TO 6: L%(I) = CVI(Q$(I + 2)): NEXT
-FOR I = 0 TO 34: T%(I) = CVI(Q$(I + 10)): NEXT
-FOR I = 0 TO 14
-B$(I, 0) = Q$(22 * I + 45)
-B$(I, 1) = Q$(22 * I + 46)
-FOR I1 = 0 TO 19
-B%(I, I1) = CVI(Q$(22 * I + 47 + I1))
-NEXT: NEXT
+If EXITCODE% = 27 Then BO% = 1: Return
+If EXITCODE% = -71 Then Start% = 1: EXITCODE% = 3: SELECTION% = 1: GoTo 120
+If EXITCODE% = -79 Then Start% = NTMS: EXITCODE% = 3: SELECTION% = NTMS: GoTo 120
+If EXITCODE% = -73 Then Start% = Start% - 80: If Start% < 1 Then Start% = 1
+If EXITCODE% = -81 Then Start% = Start% + 80: If Start% > NTMS Then Start% = NTMS
+If EXITCODE% = -81 Or EXITCODE% = -73 Then EXITCODE% = 3: SELECTION% = Start%: GoTo 120
+T1 = v%(SELECTION%)
+Open D$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+Field #1, 15 As Q$(0), 15 As Q$(1)
+For I = 0 To 6
+    Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+Next
+Field #1, 44 As X$, 2 As Q$(9)
+For I = 0 To 34
+    Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+Next
+For I = 0 To 14
+    Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+    For I1 = 0 To 19
+        Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+    Next
+Next
+Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+Get #1, T1
+T$(0) = Q$(0): T$(1) = Q$(1): For I = 0 To 6: L%(I) = CVI(Q$(I + 2)): Next
+For I = 0 To 34: T%(I) = CVI(Q$(I + 10)): Next
+For I = 0 To 14
+    B$(I, 0) = Q$(22 * I + 45)
+    B$(I, 1) = Q$(22 * I + 46)
+    For I1 = 0 To 19
+        B%(I, I1) = CVI(Q$(22 * I + 47 + I1))
+Next: Next
 T$(2) = Q$(375): T$(3) = Q$(376): T$(4) = Q$(377)
-CLOSE
+Close
 
-1486 IF RIGHT$(T$(0), 1) = " " THEN T$(0) = LEFT$(T$(0), LEN(T$(0)) - 1): GOTO 1486
+1486 If Right$(T$(0), 1) = " " Then T$(0) = Left$(T$(0), Len(T$(0)) - 1): GoTo 1486
 
-1487 IF RIGHT$(T$(1), 1) = " " THEN T$(1) = LEFT$(T$(1), LEN(T$(1)) - 1): GOTO 1487
+1487 If Right$(T$(1), 1) = " " Then T$(1) = Left$(T$(1), Len(T$(1)) - 1): GoTo 1487
 
-1488 IF RIGHT$(T$(2), 1) = " " THEN T$(2) = LEFT$(T$(2), LEN(T$(2)) - 1): GOTO 1488
+1488 If Right$(T$(2), 1) = " " Then T$(2) = Left$(T$(2), Len(T$(2)) - 1): GoTo 1488
 
-1489 IF RIGHT$(T$(3), 1) = " " THEN T$(3) = LEFT$(T$(3), LEN(T$(3)) - 1): GOTO 1489
+1489 If Right$(T$(3), 1) = " " Then T$(3) = Left$(T$(3), Len(T$(3)) - 1): GoTo 1489
 
-1490 IF RIGHT$(T$(4), 1) = " " THEN T$(4) = LEFT$(T$(4), LEN(T$(4)) - 1): GOTO 1490
+1490 If Right$(T$(4), 1) = " " Then T$(4) = Left$(T$(4), Len(T$(4)) - 1): GoTo 1490
 
-1540 RETURN
+1540 Return
 
-2800 LOCATE 23, 1: PRINT "                                      "; : LOCATE 23, 1
+2800 Locate 23, 1: Print "                                      ";: Locate 23, 1
 
-2805 RETURN
+2805 Return
 
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'

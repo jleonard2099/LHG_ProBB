@@ -2,10 +2,10 @@ $Debug
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
-_Title "Basketball: The Pro Game"
-'$EXEICON:'lhg_pbb.ico'
-'_ICON
-
+_Title "Basketball: The Pro Game - HOOPS!"
+$ExeIcon:'./lhg_bbpro.ico'
+_Icon
+_AllowFullScreen
 
 DefInt A-Z
 DECLARE SUB ADJFOUL ()
@@ -24,7 +24,6 @@ DECLARE SUB DRAWBOX (I)
 DECLARE SUB EVENTS (COUNT, SPECIAL)
 DECLARE SUB FRAMEBOX ()
 DECLARE SUB GETATEAM (I1, YN$)
-DECLARE SUB INITIALIZE ()
 DECLARE SUB MADEFT ()
 DECLARE SUB MAKEPBP ()
 DECLARE SUB MISSFT ()
@@ -45,41 +44,49 @@ DECLARE SUB TICKERUPDATE ()
 DECLARE SUB UPDATESCREEN ()
 DECLARE SUB WINDEX ()
 
-Dim B1(1, 4), S(1, 14), V9(14), C1(1, 14), F5%(1, 4), Z2(14, 14) As Single, W2(1, 14), W3(1, 14)
-Dim D$(5), D2(1), D1(1), ZZ(2, 14), Z1(15) As Single, HT%(100), O%(100), HO$(100), H$(100)
-Dim F%(1, 9), PF%(1), TOF%(1), SC(1)
-Dim F1(14), S3(14), G4(14), G5(14), D8(6, 6), N0%(2, 2, 4), O0%(1), G9%(1)
-Dim NG%(18), AP%(2), YN$(3), SX%(32, 1, 14)
-Dim P$(1), P7$(1), TS$(1), SC$(1), TF(1), P2(1), VG(9), VH(9)
-Dim P7(1), R3(1), T0(1), T1(1), P5(5), P4(5), Z(15) As Single, W0(1, 14), W1(1, 14), PFA%(33)
-Dim PS$(4), X7(1), F7%(1, 9), CF%(1, 9), GF%(2, 9), OY%(2), OX%(2)
-Dim R$(14), TOA%(33), Q$(380), V%(500), V$(500), FT$(1), FR$(1), E%(13)
-Dim RB(9), ZF(1), Z5(1), Z6(1), Y$(1), CM$(1), PO$(1), LC$(2), U5$(3)
-Dim RC$(50, 4), REC(50, 2) As Single
-Dim SX$(32, 1), ST%(32), O$(2), X$(4), PB$(1), QQ(1, 8, 14, 14), QR(1, 7, 14)
-Dim T(1, 34), B$(3, 5), AA$(1, 14, 1), B%(1, 14, 19), A(1, 14, 25) As Single, M9(1) As Single, L%(1, 6), W%(1, 14, 1)
 
-Common Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$, U$, VG(), VH(), JJ, QQ(), QR()
-Common Shared CM%, RT%, TMT, P7$(), PS$(), OY%(), OX%(), CF%(), GF%(), TS$()
-Common Shared EG%, TS%, TE, TTS%, X8, P7(), E%(), PB$(), PB%, NM%, F3, B
-Common Shared F%(), T, H, P2(), NB%, T1(), D$(), D2(), O$(), O0%()
-Common Shared F5%(), A() As Single, B1(), B%(), F7%(), T(), SX$(), FF$, AP%(), B$(), SX%()
-Common Shared FTF As Single, TOF%(), PF%(), TOA%(), PFA%(), JY, L%(), PO, D1()
-Common Shared HT%
-Common Shared P, D, Z5(), Z6(), displayPause As Single, R$(), NL%, SC(), XY%, SC, X4%
-Common Shared PT%, DK%, Z3$, FT%, FB%, PZ%, NT, V$(), V%(), Y2$, PB$
-Common Shared SC$(), FT$(), FR$(), U5$(), LC$(), X$(), PO$(), CM$()
-Common Shared ST%(), Q$(), NG%(), YN$(), S(), AP, AD, N, ZZ()
-Common Shared T0(), O%(), HO$(), HT%(), H$(), TG As Single, HH%
-Common Shared W0(), W1(), W%(), Y$(), X1, P$(), AA$(), Z2() As Single
-Common Shared W2(), W3(), Z() As Single, Z1() As Single, V9(), R3(), TF()
-Common Shared X7(), FR%, M9() As Single, U5, P9, GP As Single, MPG As Single, CT, X
+Dim Shared AD, AP, B, CT, D, F3, H, JJ, JY, N, NT
+Dim Shared P, P7, P9, PO, QQ, QR, SC, T, T1, TE, TMT
+Dim Shared X, X1, X8, U5, VG, VH
 
-Clear: Color 7, 0: Cls
+Dim Shared A(1, 14, 25) As Single, B1(1, 4), C1(1, 14)
+Dim Shared D1(1), D2(1), D8(6, 6), F1(14), G4(14), G5(14)
+Dim Shared P2(1), P4(5), P5(5), P7(1), QQ(1, 8, 14, 14), QR(1, 7, 14)
+Dim Shared R3(1), RB(9), S(1, 14), S3(14), SC(1)
+Dim Shared T(1, 34), T0(1), T1(1), TF(1)
+Dim Shared V9(14), VG(9), VH(9), W0(1, 14), W1(1, 14), W2(1, 14), W3(1, 14)
+Dim Shared X$(4), X7(1), Z5(1), Z6(1), ZF(1), ZZ(2, 14)
+
+
+Dim Shared displayPause As Single, FTF As Single, GP As Single
+Dim Shared M9(1) As Single, MPG As Single, REC(50, 2) As Single
+Dim Shared TG As Single, Z(15) As Single, Z1(15) As Single, Z2(14, 14) As Single
+
+Dim Shared A1$, B1$, C1$, D$, D1$, E1$, F1$, FF$, G1$, H1$, O$
+Dim Shared P7$, PB$, PS$, TS$, U$, Y2$, Z3$
+
+Dim Shared AA$(1, 14, 1), B$(3, 5), CM$(1), D$(5), FR$(1), FT$(1)
+Dim Shared H$(100), HO$(100), LC$(2), O$(2), P$(1), PO$(1), P7$(1), PB$(1), PS$(4)
+Dim Shared Q$(380), R$(14), RC$(50, 4), SC$(1), SX$(32, 1)
+Dim Shared TS$(1), U5$(3), V$(500), Y$(1), YN$(3)
+
+Dim Shared CF%, CM%, DK%, EG%, FB%, FR%, FT%, GF%, HH%, HT%
+Dim Shared NB%, NL%, NM%, OX%, OY%, PB%, PT%, PZ%, RT%
+Dim Shared TS%, TTS%, X4%, XY%
+
+Dim Shared AP%(2), B%(1, 14, 19), CF%(1, 9), E%(13)
+Dim Shared F%(1, 9), F5%(1, 4), F7%(1, 9), G9%(1), GF%(2, 9)
+Dim Shared HT%(100), L%(1, 6), NG%(18)
+Dim Shared N0%(2, 2, 4), OX%(2), OY%(2), O%(100), O0%(1)
+Dim Shared PF%(1), PFA%(33), ST%(32), SX%(32, 1, 14)
+Dim Shared TOA%(33), TOF%(1), V%(500), W%(1, 14, 1)
+
+
+Clear
+Color 7, 0
+Cls
 
 Randomize Timer
-
-'Call INITIALIZE
 
 For I = 0 To 14
     Read R$(I)
@@ -924,7 +931,8 @@ If UCase$(I$) = "Z" Or I$ = "/" Then Call CHANGESTRATEGY(I$): GoTo 530
 P6 = Val(I$): If P6 < 1 Or P6 > 4 Then P6 = 0
 If P6 = 4 Then FT% = 1
 
-532 I$ = GetKeyPress$
+'Wait for keypress during Play-By-Play
+532 I$ = InKey$
 If UCase$(I$) = "T" Then Call TICKER
 If UCase$(I$) = "Z" Or I$ = "/" Then Call CHANGESTRATEGY(I$)
 If UCase$(I$) = "S" Then Call SCOUTREPORT
@@ -1144,6 +1152,7 @@ W5 = Val(I$): If W5 < 0 Or W5 > 4 Then 586
 
 589 T = T - 4: TE = 4
 GoSub 365
+
 Call UPDATESCREEN
 GoSub 630
 If displayPause = 0 Then 591
@@ -1191,6 +1200,7 @@ Next F3
 If S > A(P, B1(P, B), 1) Then 650
 GoSub 3000
 U$ = B$(P, 0) + " BALL AFTER SCORE"
+
 Call SELECTPBP
 GoSub 871
 GoSub 810
@@ -1207,12 +1217,14 @@ If PB% = 0 Then U$ = "BASKET GOOD BY " + AA$(P, B1(P, B), 0): Call DELAY
 If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print "BASKET GOOD BY " + AA$(P, B1(P, B), 0): Call MOREDELAY
 
 617 U$ = "... AND HE'S FOULED !!!": GoSub 729: F3 = 1
+
 Call MOREDELAY
 GoSub 1054
 F3 = 1
 S(P, H) = S(P, H) + 2
 S(P, 0) = S(P, 0) + 2
 A(P, B1(P, B), 8) = A(P, B1(P, B), 8) + 1
+
 Call UPDATESCREEN
 GoSub 630
 If displayPause = 0 Then 620
@@ -1908,11 +1920,19 @@ Data -3,-3,-4,-5,-6,-6,-7,-8,-9
 Data -6,-7,-8,-8,-8,-9,-10,-11,-12
 
 
+'------------------------------
+'      BOGUS Subroutine
+'------------------------------
+' ...explanation...
 Sub BOGUS (X)
     If X = 0 Then I$ = GetKeyPress$
 End Sub
 
 
+'------------------------------
+'      BOX2FILE Subroutine
+'------------------------------
+' ...explanation...
 Sub BOX2FILE ()
     If AP = 1 Then
         NM$ = "BOX" + Mid$(Str$(AP%(0) + AP%(2)), 2, Len(Str$(AP%(0) + AP%(2))))
@@ -2007,6 +2027,10 @@ Sub BOX2FILE ()
 End Sub
 
 
+'------------------------------
+'      BOX2PRN Subroutine
+'------------------------------
+' ...explanation...
 Sub BOX2PRN ()
     If N <> 2 Then LPrint "@ "; B$(N, 4): LPrint
     For I = 0 To 1
@@ -2086,6 +2110,11 @@ Sub BOX2PRN ()
     LPrint Chr$(12)
 End Sub
 
+
+'------------------------------
+'      BOX2SPC Subroutine
+'------------------------------
+' ...explanation...
 Sub BOX2SPC (NM$)
     Open P$(1) + NM$ For Output As #2
     If H - 1 > E%(1) Then Print #2, Using "MORE THAN ## QUARTERS"; E%(1)
@@ -2186,6 +2215,10 @@ Sub BOX2SPC (NM$)
 End Sub
 
 
+'------------------------------
+'    COMPILESTATS Subroutine
+'------------------------------
+' ...explanation...
 Sub COMPILESTATS ()
     Cls: J = 1
     Locate 8, 8
@@ -2222,6 +2255,11 @@ Sub COMPILESTATS ()
 
 9507 End Sub
 
+
+'------------------------------
+'   DISABLEPLAYERS Subroutine
+'------------------------------
+' ...explanation...
 Sub DISABLEPLAYERS ()
     Cls: Print "DISABLE UP TO 6 PLAYERS FOR ";: Color T(P9, 33), T(P9, 34): Print B$(P9, 0);: Color 15, 0: Print " (YN)";
     Print: Print
@@ -2262,6 +2300,10 @@ Sub DISABLEPLAYERS ()
 9210 End Sub
 
 
+'------------------------------
+'      DRAWBOX Subroutine
+'------------------------------
+' ...explanation...
 Sub DRAWBOX (I)
     JJ = 1
     Locate 6, 8: Color T(I, 33), T(I, 34)
@@ -2273,6 +2315,11 @@ Sub DRAWBOX (I)
 
 End Sub
 
+
+'------------------------------
+'      GETATEAM Subroutine
+'------------------------------
+' ...explanation...
 Sub GETATEAM (I1, YN$)
     Open P$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
     Field #1, 15 As Q$(0), 15 As Q$(1)
@@ -2349,11 +2396,10 @@ Sub GETATEAM (I1, YN$)
 9020 End Sub
 
 
-Sub INITIALIZE ()
-
-End Sub
-
-
+'------------------------------
+'      NEWSCREEN Subroutine
+'------------------------------
+' ...explanation...
 Sub NEWSCREEN ()
     '*** SCREEN UPDATING ***
     Cls
@@ -2451,6 +2497,11 @@ Sub NEWSCREEN ()
     Locate 16, 39: Print Chr$(206): Color 7, 0
 End Sub
 
+
+'------------------------------
+'   QUARTERTOTAL Subroutine
+'------------------------------
+' ...explanation...
 Sub QUARTERTOTAL ()
 
     For I = 0 To 1
@@ -2567,6 +2618,11 @@ Sub QUARTERTOTAL ()
     For I = 0 To 14: V9(I) = 0: Next
 End Sub
 
+
+'------------------------------
+'    RATINGTABLES Subroutine
+'------------------------------
+' ...explanation...
 Sub RATINGTABLES ()
     For I = 0 To 1
         F5%(I, 0) = 0
@@ -2585,6 +2641,11 @@ Sub RATINGTABLES ()
     Next
 End Sub
 
+
+'------------------------------
+'    SAVESTATFILES Subroutine
+'------------------------------
+' ...explanation...
 Sub SAVESTATFILES ()
     'SAVE STATS
     If Not _FileExists("GAME82") Then 6030
@@ -2759,6 +2820,11 @@ Sub SAVESTATFILES ()
 
 6292 End Sub
 
+
+'------------------------------
+'    SCOUTREPORT Subroutine
+'------------------------------
+' ...explanation...
 Sub SCOUTREPORT ()
     ' *** SCOUTING REPORT ***
     JJ = 13
@@ -2800,6 +2866,11 @@ Sub SCOUTREPORT ()
     Call NEWSCREEN
 End Sub
 
+
+'------------------------------
+'    SETUPRATINGS Subroutine
+'------------------------------
+' ...explanation...
 Sub SETUPRATINGS ()
     Dim X3 As Single, JX As Single
     '*** SET UP TEAM RATINGS***
@@ -2999,6 +3070,11 @@ Sub SETUPRATINGS ()
     9499 X3 = 0
 End Sub
 
+
+'------------------------------
+'    TICKERUPDATE Subroutine
+'------------------------------
+' ...explanation...
 Sub TICKERUPDATE ()
     If AP <> 1 Or AP%(2) > 31 Then GoTo 2580
     If H = 1 And T <= 480 And SX%(1 + AP%(2), 0, 1) = -1 Then SX%(1 + AP%(2), 0, 1) = S(0, 0): SX%(1 + AP%(2), 1, 1) = S(1, 0): GoTo 2580
@@ -3017,6 +3093,10 @@ Sub TICKERUPDATE ()
 2580 End Sub
 
 
+'------------------------------
+'      ADJFOUL Subroutine
+'------------------------------
+' ...explanation...
 Sub ADJFOUL ()
     For I = 0 To 14
         If A(P9, I, 12) >= 6 Then A(P9, I, 12) = 5: GoTo 8789
@@ -3025,6 +3105,10 @@ Sub ADJFOUL ()
 8789 End Sub
 
 
+'------------------------------
+'      BADFT Subroutine
+'------------------------------
+' ...explanation...
 Sub BADFT ()
     If F3 = 1 Then U$ = "FIRST FREE THROW IS MISSED"
     If F3 = 2 Then U$ = "SECOND FREE THROW IS MISSED"
@@ -3033,6 +3117,10 @@ Sub BADFT ()
 End Sub
 
 
+'------------------------------
+'   CHANGESTRATEGY Subroutine
+'------------------------------
+' ...explanation...
 Sub CHANGESTRATEGY (I$)
     If UCase$(I$) = "Z" And U5 = 1 And CT = 0 Or U5 = 2 Then 8155
     If I$ = "/" And U5 = 1 And CT = 1 Or U5 = 2 Then 8155
@@ -3082,11 +3170,18 @@ Sub CHANGESTRATEGY (I$)
 
 8166 End Sub
 
+
+'------------------------------
+'   COMPUTERCOACH Subroutine
+'------------------------------
+' ...explanation...
 Sub COMPUTERCOACH ()
     If P9 = 0 Then I6 = 1
     If P9 = 1 Then I6 = 0
     If S(P9, 0) - S(I6, 0) < 0 Then I5 = S(I6, 0) - S(P9, 0): GoTo 8867
-    R0 = Int(Rnd(1) * 100) + 1: P7(P9) = 0
+
+    R0 = Int(Rnd(1) * 100) + 1
+    P7(P9) = 0
     If H <= 4 And R0 >= 41 Then D2(P9) = 1
     If H <= 4 And R0 > 20 And R0 <= 40 Then D2(P9) = 4
     If H <= 4 And R0 <= 20 Then D2(P9) = 2
@@ -3120,6 +3215,11 @@ Sub COMPUTERCOACH ()
     If H >= 3 And S(P9, 0) - S(I6, 0) >= 0 And Int(Rnd(1) * 2) = 1 Then O0%(P9) = 2
 End Sub
 
+
+'------------------------------
+'   COMPUTERSUBS Subroutine
+'------------------------------
+' ...explanation...
 Sub COMPUTERSUBS ()
     For I2 = 0 To 4
         B1(P9, I2) = -1
@@ -3199,59 +3299,69 @@ Sub COMPUTERSUBS ()
 
 8788 End Sub
 
+
+'------------------------------
+'      DELAY Subroutine
+'------------------------------
+' ...explanation...
 Sub DELAY ()
 
-'Original code that was modified:
-'    If displayPause = 0 Or PB% = 1 Then 
-    If displayPause > 0 Or PB% = 0 Then 
-	
-		'-- Shouldn't we PadRight instead to 38 length
-		2249 If Len(U$) < 38 Then U$ = U$ + " ": GoTo 2249
-		U$ = Left$(U$, 38)
-	
-		Locate 8, 1
+    'Original code that was modified:
+    '    If displayPause = 0 Or PB% = 1 Then
+    If displayPause > 0 Or PB% = 0 Then
+    
+        '-- Shouldn't we PadRight instead to 38 length
+        2249 If Len(U$) < 38 Then U$ = U$ + " ": GoTo 2249
+        U$ = Left$(U$, 38)
+    
+        Locate 8, 1
 
-		If NL% = 1 Then A1$ = U$: VG(1) = T(P, 33): VH(1) = T(P, 34)
-		If NL% = 2 Then B1$ = U$: VG(2) = T(P, 33): VH(2) = T(P, 34)
-		If NL% = 3 Then C1$ = U$: VG(3) = T(P, 33): VH(3) = T(P, 34)
-		If NL% = 4 Then D1$ = U$: VG(4) = T(P, 33): VH(4) = T(P, 34)
-		If NL% = 5 Then E1$ = U$: VG(5) = T(P, 33): VH(5) = T(P, 34)
-		If NL% = 6 Then F1$ = U$: VG(6) = T(P, 33): VH(6) = T(P, 34)
-		If NL% = 7 Then G1$ = U$: VG(7) = T(P, 33): VH(7) = T(P, 34)
-		If NL% = 8 Then H1$ = U$: VG(8) = T(P, 33): VH(8) = T(P, 34)
-		If NL% > 8 Then
-			A1$ = B1$
-			B1$ = C1$
-			C1$ = D1$
-			D1$ = E1$
-			E1$ = F1$
-			F1$ = G1$
-			G1$ = H1$
-			H1$ = U$
-			For I = 1 To 7
-				VG(I) = VG(I + 1)
-				VH(I) = VH(I + 1)
-			Next
-			VG(8) = T(P, 33)
-			VH(8) = T(P, 34)
-		End If
-		
-		NL% = NL% + 1
-		
-		Color VG(1), VH(1): Print A1$
-		Color VG(2), VH(2): Print B1$
-		Color VG(3), VH(3): Print C1$
-		Color VG(4), VH(4): Print D1$
-		Color VG(5), VH(5): Print E1$
-		Color VG(6), VH(6): Print F1$
-		Color VG(7), VH(7): Print G1$
-		Color VG(8), VH(8): Print H1$
-		Color 15, 0
-		
-		_Delay displayPause
-	End If
+        If NL% = 1 Then A1$ = U$: VG(1) = T(P, 33): VH(1) = T(P, 34)
+        If NL% = 2 Then B1$ = U$: VG(2) = T(P, 33): VH(2) = T(P, 34)
+        If NL% = 3 Then C1$ = U$: VG(3) = T(P, 33): VH(3) = T(P, 34)
+        If NL% = 4 Then D1$ = U$: VG(4) = T(P, 33): VH(4) = T(P, 34)
+        If NL% = 5 Then E1$ = U$: VG(5) = T(P, 33): VH(5) = T(P, 34)
+        If NL% = 6 Then F1$ = U$: VG(6) = T(P, 33): VH(6) = T(P, 34)
+        If NL% = 7 Then G1$ = U$: VG(7) = T(P, 33): VH(7) = T(P, 34)
+        If NL% = 8 Then H1$ = U$: VG(8) = T(P, 33): VH(8) = T(P, 34)
+        If NL% > 8 Then
+            A1$ = B1$
+            B1$ = C1$
+            C1$ = D1$
+            D1$ = E1$
+            E1$ = F1$
+            F1$ = G1$
+            G1$ = H1$
+            H1$ = U$
+            For I = 1 To 7
+                VG(I) = VG(I + 1)
+                VH(I) = VH(I + 1)
+            Next
+            VG(8) = T(P, 33)
+            VH(8) = T(P, 34)
+        End If
+        
+        NL% = NL% + 1
+        
+        Color VG(1), VH(1): Print A1$
+        Color VG(2), VH(2): Print B1$
+        Color VG(3), VH(3): Print C1$
+        Color VG(4), VH(4): Print D1$
+        Color VG(5), VH(5): Print E1$
+        Color VG(6), VH(6): Print F1$
+        Color VG(7), VH(7): Print G1$
+        Color VG(8), VH(8): Print H1$
+        Color 15, 0
+        
+        _Delay displayPause
+    End If
 End Sub
 
+
+'------------------------------
+'      EVENTS Subroutine
+'------------------------------
+' ...explanation...
 Sub EVENTS (COUNT, SPECIAL)
     If Not _FileExists("EVENTS.BOX") Then 8450
     Open "EVENTS.BOX" For Input As #1
@@ -3284,6 +3394,11 @@ Sub EVENTS (COUNT, SPECIAL)
 
 8450 End Sub
 
+
+'------------------------------
+'      FRAMEBOX Subroutine
+'------------------------------
+' ...explanation...
 Sub FRAMEBOX ()
     SN = 1
     Locate 8, 8
@@ -3304,6 +3419,11 @@ Sub FRAMEBOX ()
 
 End Sub
 
+
+'------------------------------
+'      MADEFT Subroutine
+'------------------------------
+' ...explanation...
 Sub MADEFT ()
     A(P, B1(P, B), 10) = A(P, B1(P, B), 10) + 1
     If displayPause <> 0 Then
@@ -3317,6 +3437,11 @@ Sub MADEFT ()
     Call MOREDELAY
 End Sub
 
+
+'------------------------------
+'      MAKEPBP Subroutine
+'------------------------------
+' ...explanation...
 Sub MAKEPBP ()
     'PLAY BY PLAY
     If displayPause = 0 Then GoTo 1495
@@ -3941,6 +4066,11 @@ Sub MAKEPBP ()
 
 1495 End Sub
 
+
+'------------------------------
+'      MISSFT Subroutine
+'------------------------------
+' ...explanation...
 Sub MISSFT ()
     If displayPause = 0 Then 3699
     Call MOREDELAY
@@ -3951,12 +4081,23 @@ Sub MISSFT ()
     3699 Rem
 End Sub
 
+
+'------------------------------
+'      MOREDElAY Subroutine
+'------------------------------
+' ...explanation...
 Sub MOREDELAY ()
-    If displayPause <> 0 Then
-        _Delay displayPause
-    End If
+    'Do we really need the IF statement?
+    'If displayPause > 0 Then
+    _Delay displayPause
+    'End If
 End Sub
 
+
+'------------------------------
+'      ROSTER Subroutine
+'------------------------------
+' ...explanation...
 Sub ROSTER ()
     Cls
     Color T(P9, 33), T(P9, 34)
@@ -3994,12 +4135,22 @@ Sub ROSTER ()
 
 End Sub
 
+
+'------------------------------
+'    SELECTPBP Subroutine
+'------------------------------
+' ...explanation...
 Sub SELECTPBP ()
     If PB% = 0 Then Call DELAY
     If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
     Call MOREDELAY
 End Sub
 
+
+'------------------------------
+'      TEAMMENU Subroutine
+'------------------------------
+' ...explanation...
 Sub TEAMMENU (BO%, YN$)
     Dim Y2 As Long
     If BO% = 2 Then BO% = 0: GoTo 1102
@@ -4051,6 +4202,11 @@ Sub TEAMMENU (BO%, YN$)
 
 25 End Sub
 
+
+'------------------------------
+'      THREEFT Subroutine
+'------------------------------
+' ...explanation...
 Sub THREEFT ()
     A(P, B1(P, B), 10) = A(P, B1(P, B), 10) + 1
     RN = Int(Rnd(1) * 100) + 1
@@ -4068,6 +4224,11 @@ Sub THREEFT ()
     Call UPDATESCREEN
 End Sub
 
+
+'------------------------------
+'      TICKER Subroutine
+'------------------------------
+' ...explanation...
 Sub TICKER ()
     '*** TICKER ***
     If AP = 1 And U5 = 2 Then 2884
@@ -4242,6 +4403,11 @@ Sub TICKER ()
 
 2884 End Sub
 
+
+'------------------------------
+'   UPDATESCREEN Subroutine
+'------------------------------
+' ...explanation...
 Sub UPDATESCREEN ()
     'M A I N   S C R E E N
     Call TICKERUPDATE
@@ -4321,6 +4487,10 @@ Sub UPDATESCREEN ()
 2250 End Sub
 
 
+'------------------------------
+'      WINDEX Subroutine
+'------------------------------
+' ...explanation...
 Sub WINDEX ()
     If displayPause = 0 Then 4094
     For I = 8 To 15
@@ -4333,10 +4503,14 @@ Sub WINDEX ()
 End Sub
 
 
+'------------------------------
+'      RECORDSCHECK Subroutine
+'------------------------------
+' ...explanation...
 Sub RECORDSCHECK ()
-    Dim RC$(50, 4), REC(50, 2) As Single, TRC$(125, 3), TREC(125, 2) As Single
-    Dim V8(1, 14)
-    Dim SITE$(1)
+    'Dim RC$(50, 4), REC(50, 2) As Single, TRC$(125, 3), TREC(125, 2) As Single
+    'Dim V8(1, 14)
+    'Dim SITE$(1)
     SITE$(0) = "AT": SITE$(1) = "VS."
     If Not _FileExists(P$(1) + "RECORDS.GAM") Then
         TREC(2, 0) = 999

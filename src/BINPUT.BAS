@@ -1,698 +1,708 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
+_Title "Basketball: The Pro Game - Team Input"
+''$ExeIcon:'./lhg_bbpro.ico'
+'_Icon
+_AllowFullScreen
+
 DECLARE SUB TITLE ()
 
-DIM B%(15, 19), B$(15, 1), T%(35), L%(6), Q$(377), VV$(500), V%(500), T$(4)
-DIM D$(1), P$(2), A$(5), item$(5)
-	P$(0) = "G": P$(1) = "F": P$(2) = "C"
+Dim B%(15, 19), B$(15, 1), T%(35), L%(6), Q$(377), teamItems$(500), V%(500), T$(4)
+Dim D$(1), P$(2), A$(5), menuItems$(5)
+P$(0) = "G": P$(1) = "F": P$(2) = "C"
 
-OPEN "DEV.BAS" FOR INPUT AS #1
-	INPUT #1, D$(0): CLOSE #1
-CALL Comline(N, A$(), 10)     ' Get what was typed on the command line
+Open "DEV.BAS" For Input As #1
+Input #1, D$(0): Close #1
+Call Comline(N, A$(), 10) ' Get what was typed on the command line
 'FOR I = 1 TO N: PRINT A$(I): NEXT I
-	IF A$(1) = "1" THEN RN = 1: GOTO 900
-	IF A$(1) = "2" THEN RN = 2: GOTO 900
-	IF A$(1) = "3" THEN RN = 3: GOTO 900
-	IF A$(1) = "4" THEN RN = 4: GOTO 900
+If A$(1) = "1" Then RN = 1: GoTo 900
+If A$(1) = "2" Then RN = 2: GoTo 900
+If A$(1) = "3" Then RN = 3: GoTo 900
+If A$(1) = "4" Then RN = 4: GoTo 900
 
-100 CALL TITLE
-	item$(1) = "ENTER A NEW TEAM               "
-	item$(2) = "CHANGE OR EDIT AN EXISTING TEAM"
-	item$(3) = "PRINT A TEAM ROSTER            "
-	item$(4) = "VIEW A TEAM ROSTER             "
-	item$(5) = "EXIT TO MAIN MENU              "
-	SELECTION% = 1
-	Count% = 5
-	Start% = 1
-	SCANCODE% = 5
-	FileFGColr% = 15:FileBGColr% = 1
-	HiLiteFGColr% = 0:HiLiteBGColr% = 7
-	Spacing% = 1
-	Row% = 8
-	Column% = 25
+100 Call TITLE
+menuItems$(1) = "ENTER A NEW TEAM               "
+menuItems$(2) = "CHANGE OR EDIT AN EXISTING TEAM"
+menuItems$(3) = "PRINT A TEAM ROSTER            "
+menuItems$(4) = "VIEW A TEAM ROSTER             "
+menuItems$(5) = "EXIT TO MAIN MENU              "
+SELECTION% = 1
+Count% = 5
+Start% = 1
+SCANCODE% = 5
+FileFGColr% = 15: FileBGColr% = 1
+HiLiteFGColr% = 0: HiLiteBGColr% = 7
+Spacing% = 1
+Row% = 8
+Column% = 25
 
-CALL box0(7, 24, 13, 56, 2, 31)
-	
+Call box0(7, 24, 13, 56, 2, 31)
+    
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
-	COLOR , 0
-	RN = SELECTION%
-	IF SCANCODE% = 27 THEN RN = 5
+Color , 0
+RN = SELECTION%
+If SCANCODE% = 27 Then RN = 5
 
-901 IF RN = 5 AND D% >= 67 THEN RUN "HELLO.EXE 2"
-	IF RN = 5 THEN RUN "HELLO.EXE 2"
+901 If RN = 5 And D% >= 67 Then Run "HELLO.EXE 2"
+If RN = 5 Then Run "HELLO.EXE 2"
 
 900 Q = RN - 1
-	IF Q > 0 THEN 1435
+If Q > 0 Then 1435
 
-101 CLS : PRINT : COLOR 12: PRINT "DO YOU HAVE THE FOLLOWING INFORMATION :"
-	PRINT : COLOR 14: PRINT "(1) "; : COLOR 15: PRINT "TEAM/INDIVID STEALS "; : GOSUB 4000
-	IF I$=CHR$(27) THEN RN = 5:GOTO 901
-	PRINT I$: ST = I
-	PRINT : COLOR 14: PRINT "(2) "; : COLOR 15: PRINT "TEAM/INDIVID BLOCKS "; : GOSUB 4000
-	IF I$=CHR$(27) THEN RN = 5:GOTO 901
-	PRINT I$: BK = I
-	PRINT : COLOR 14: PRINT "(3) "; : COLOR 15: PRINT "TEAM/INDIVID OFF/DEF REB "; : GOSUB 4000
-	IF I$=CHR$(27) THEN RN = 5:GOTO 901
-	PRINT I$: RB = I
-	PRINT : COLOR 14: PRINT "(4) "; : COLOR 15: PRINT "TEAM TURNOVERS "; : GOSUB 4000
-	IF I$=CHR$(27) THEN RN = 5:GOTO 901
-	PRINT I$: T0 = I
-	PRINT : PRINT "ANY CHANGE (YN)"; : GOSUB 4000
-	IF I$=CHR$(27) THEN RN = 5:GOTO 901
-	IF I = 1 THEN 101
-	CLS : COLOR 14: PRINT "LEAGUE INFORMATION": COLOR 15
+101 Cls: Print: Color 12: Print "DO YOU HAVE THE FOLLOWING INFORMATION :"
+Print: Color 14: Print "(1) ";: Color 15: Print "TEAM/INDIVID STEALS ";: GoSub 4000
+If I$ = Chr$(27) Then RN = 5: GoTo 901
+Print I$: ST = I
+Print: Color 14: Print "(2) ";: Color 15: Print "TEAM/INDIVID BLOCKS ";: GoSub 4000
+If I$ = Chr$(27) Then RN = 5: GoTo 901
+Print I$: BK = I
+Print: Color 14: Print "(3) ";: Color 15: Print "TEAM/INDIVID OFF/DEF REB ";: GoSub 4000
+If I$ = Chr$(27) Then RN = 5: GoTo 901
+Print I$: RB = I
+Print: Color 14: Print "(4) ";: Color 15: Print "TEAM TURNOVERS ";: GoSub 4000
+If I$ = Chr$(27) Then RN = 5: GoTo 901
+Print I$: T0 = I
+Print: Print "ANY CHANGE (YN)";: GoSub 4000
+If I$ = Chr$(27) Then RN = 5: GoTo 901
+If I = 1 Then 101
+Cls: Color 14: Print "LEAGUE INFORMATION": Color 15
 
-120 LOCATE 3: INPUT "1. NUMBER OF GAMES "; L%(0): IF C1 = 1 THEN 190
+120 Locate 3: Input "1. NUMBER OF GAMES "; L%(0): If C1 = 1 Then 190
 
-130 LOCATE 4: INPUT "2. AVG FGA/G "; L%(1): IF C1 = 1 THEN 190
+130 Locate 4: Input "2. AVG FGA/G "; L%(1): If C1 = 1 Then 190
 
-140 LOCATE 5: INPUT "3. AVG RB/G "; L%(2): IF C1 = 1 THEN 190
+140 Locate 5: Input "3. AVG RB/G "; L%(2): If C1 = 1 Then 190
 
-150 LOCATE 6: INPUT "4. LEAGUE FG% "; L%(3): IF C1 = 1 THEN 190
+150 Locate 6: Input "4. LEAGUE FG% "; L%(3): If C1 = 1 Then 190
 
-160 LOCATE 7: INPUT "5. AVG PF/G "; L%(4): IF C1 = 1 THEN 190
+160 Locate 7: Input "5. AVG PF/G "; L%(4): If C1 = 1 Then 190
 
-170 LOCATE 8: INPUT "6. LEAGUE 3FG% "; L%(5): IF C1 = 1 THEN 190
+170 Locate 8: Input "6. LEAGUE 3FG% "; L%(5): If C1 = 1 Then 190
 
-171 LOCATE 9: INPUT "7. LEAGUE POWER ADJ "; L%(6): IF C1 = 1 THEN 190
+171 Locate 9: Input "7. LEAGUE POWER ADJ "; L%(6): If C1 = 1 Then 190
 
-172 LOCATE 10: INPUT "8. DISK ID "; YN$: IF C1 = 1 THEN 190
+172 Locate 10: Input "8. DISK ID "; YN$: If C1 = 1 Then 190
 
-173 LOCATE 11: INPUT "9. TEAM NUMBER "; T: IF C1 = 1 THEN 190
+173 Locate 11: Input "9. TEAM NUMBER "; T: If C1 = 1 Then 190
 
-190 C1 = 1: LOCATE 13: INPUT "# TO CHANGE (0 TO CONTINUE) "; B9: ON B9 GOTO 120, 130, 140, 150, 160, 170, 171, 172, 173
-	C1 = 0: IF X% > 0 THEN 700
-	C1 = 0
-	CLS : COLOR 14: PRINT "TEAM INFORMATION": COLOR 15
+190 C1 = 1: Locate 13: Input "# TO CHANGE (0 TO CONTINUE) "; B9: On B9 GOTO 120, 130, 140, 150, 160, 170, 171, 172, 173
+C1 = 0: If X% > 0 Then 700
+C1 = 0
+Cls: Color 14: Print "TEAM INFORMATION": Color 15
 
-205 LOCATE 2: INPUT "1. TEAM NAME "; T$(0): IF C1 = 1 THEN 250
+205 Locate 2: Input "1. TEAM NAME "; T$(0): If C1 = 1 Then 250
 
-210 LOCATE 3: INPUT "2. TEAM NICKNAME "; T$(1): IF C1 = 1 THEN 250
+210 Locate 3: Input "2. TEAM NICKNAME "; T$(1): If C1 = 1 Then 250
 
-215 LOCATE 4: INPUT "3. TEAM GAMES PLAYED "; T%(0): IF C1 = 1 THEN 250
+215 Locate 4: Input "3. TEAM GAMES PLAYED "; T%(0): If C1 = 1 Then 250
 
-220 LOCATE 5: INPUT "4. HOME WINS "; T%(1): IF C1 = 1 THEN 250
+220 Locate 5: Input "4. HOME WINS "; T%(1): If C1 = 1 Then 250
 
-225 LOCATE 6: INPUT "5. HOME LOSSES "; T%(2): IF C1 = 1 THEN 250
+225 Locate 6: Input "5. HOME LOSSES "; T%(2): If C1 = 1 Then 250
 
-230 LOCATE 7: INPUT "6. ROAD WINS "; T%(3): IF C1 = 1 THEN 250
+230 Locate 7: Input "6. ROAD WINS "; T%(3): If C1 = 1 Then 250
 
-235 LOCATE 8: INPUT "7. ROAD LOSSES "; T%(4): IF C1 = 1 THEN 250
+235 Locate 8: Input "7. ROAD LOSSES "; T%(4): If C1 = 1 Then 250
 
-240 LOCATE 9: INPUT "8. TEXT COLOR (0-15) "; T%(33): IF C1 = 1 THEN 250
+240 Locate 9: Input "8. TEXT COLOR (0-15) "; T%(33): If C1 = 1 Then 250
 
-245 LOCATE 10: INPUT "9. BCKGRND COLOR (0-7) "; T%(34): IF C1 = 1 THEN 250
+245 Locate 10: Input "9. BCKGRND COLOR (0-7) "; T%(34): If C1 = 1 Then 250
 
-246 LOCATE 11: INPUT "10. TEAM ABBREV (IE. BOS) "; T$(2): IF C1 = 1 THEN 250
+246 Locate 11: Input "10. TEAM ABBREV (IE. BOS) "; T$(2): If C1 = 1 Then 250
 
-247 LOCATE 12: INPUT "11. COACH'S NAME "; T$(3): IF C1 = 1 THEN 250
+247 Locate 12: Input "11. COACH'S NAME "; T$(3): If C1 = 1 Then 250
 
-248 LOCATE 13: INPUT "12. ARENA NAME "; T$(4): IF C1 = 1 THEN 250
+248 Locate 13: Input "12. ARENA NAME "; T$(4): If C1 = 1 Then 250
 
-250 LOCATE 15: COLOR T%(33), T%(34): PRINT "SAMPLE TEXT": COLOR 15, 0
+250 Locate 15: Color T%(33), T%(34): Print "SAMPLE TEXT": Color 15, 0
 
-255 C1 = 1: LOCATE 17: INPUT "# TO CHANGE (0 TO CONTINUE) "; B9: ON B9 GOTO 205, 210, 215, 220, 225, 230, 235, 240, 245, 246, 247, 248
-	C1 = 0: IF X% > 0 THEN 760
-	CLS : COLOR 14: PRINT "TEAM OFFENSIVE INFORMATION": COLOR 15
+255 C1 = 1: Locate 17: Input "# TO CHANGE (0 TO CONTINUE) "; B9: On B9 GOTO 205, 210, 215, 220, 225, 230, 235, 240, 245, 246, 247, 248
+C1 = 0: If X% > 0 Then 760
+Cls: Color 14: Print "TEAM OFFENSIVE INFORMATION": Color 15
 
-265 LOCATE 2: INPUT " 1. FGM "; T%(6): IF C1 = 1 THEN 335
+265 Locate 2: Input " 1. FGM "; T%(6): If C1 = 1 Then 335
 
-270 LOCATE 3: INPUT " 2. FGA "; T%(5): IF C1 = 1 THEN 335
+270 Locate 3: Input " 2. FGA "; T%(5): If C1 = 1 Then 335
 
-275 LOCATE 4: INPUT " 3. FTM "; T%(8): IF C1 = 1 THEN 335
+275 Locate 4: Input " 3. FTM "; T%(8): If C1 = 1 Then 335
 
-280 LOCATE 5: INPUT " 4. FTA "; T%(7): IF C1 = 1 THEN 335
+280 Locate 5: Input " 4. FTA "; T%(7): If C1 = 1 Then 335
 
-285 LOCATE 6: INPUT " 5. OFF REB "; T%(9): IF C1 = 1 THEN 335
+285 Locate 6: Input " 5. OFF REB "; T%(9): If C1 = 1 Then 335
 
-290 LOCATE 7: INPUT " 6. DEF REB "; T%(10): IF C1 = 1 THEN 335
-	IF T%(9) = 0 AND RB = 0 THEN T%(9) = .32 * T%(10): T%(10) = T%(10) - T%(9): LOCATE 6: PRINT " 5. OFF REB "; T%(9): LOCATE 7: PRINT " 6. DEF REB "; T%(10)
+290 Locate 7: Input " 6. DEF REB "; T%(10): If C1 = 1 Then 335
+If T%(9) = 0 And RB = 0 Then T%(9) = .32 * T%(10): T%(10) = T%(10) - T%(9): Locate 6: Print " 5. OFF REB "; T%(9): Locate 7: Print " 6. DEF REB "; T%(10)
 
-295 LOCATE 8: INPUT " 7. ASSISTS "; T%(11): IF C1 = 1 THEN 335
+295 Locate 8: Input " 7. ASSISTS "; T%(11): If C1 = 1 Then 335
 
-300 LOCATE 9: INPUT " 8. FOULS "; T%(12): IF C1 = 1 THEN 335
+300 Locate 9: Input " 8. FOULS "; T%(12): If C1 = 1 Then 335
 
-305 LOCATE 10: INPUT " 9. DISQ "; T%(13): IF C1 = 1 THEN 335
+305 Locate 10: Input " 9. DISQ "; T%(13): If C1 = 1 Then 335
 
-310 LOCATE 11: INPUT "10. STEALS "; T%(14): IF C1 = 1 THEN 335
+310 Locate 11: Input "10. STEALS "; T%(14): If C1 = 1 Then 335
 
-315 LOCATE 12: INPUT "11. TURNOVERS "; T%(15): IF C1 = 1 THEN 335
+315 Locate 12: Input "11. TURNOVERS "; T%(15): If C1 = 1 Then 335
 
-320 LOCATE 13: INPUT "12. BLK SHOTS "; T%(16): IF C1 = 1 THEN 335
+320 Locate 13: Input "12. BLK SHOTS "; T%(16): If C1 = 1 Then 335
 
-325 LOCATE 14: INPUT "13. 3-FGM "; T%(18): IF C1 = 1 THEN 335
+325 Locate 14: Input "13. 3-FGM "; T%(18): If C1 = 1 Then 335
 
-330 LOCATE 15: INPUT "14. 3-FGA "; T%(17): IF C1 = 1 THEN 335
+330 Locate 15: Input "14. 3-FGA "; T%(17): If C1 = 1 Then 335
 
-335 C1 = 1: LOCATE 17: INPUT "# TO CHANGE (0 TO CONTINUE) "; B9: ON B9 GOTO 265, 270, 275, 280, 285, 290, 295, 300, 305, 310, 315, 320, 325, 330
-	C1 = 0: IF X% > 0 THEN 840
-	CLS : COLOR 14: PRINT "TEAM DEFENSIVE INFORMATION": COLOR 15
+335 C1 = 1: Locate 17: Input "# TO CHANGE (0 TO CONTINUE) "; B9: On B9 GOTO 265, 270, 275, 280, 285, 290, 295, 300, 305, 310, 315, 320, 325, 330
+C1 = 0: If X% > 0 Then 840
+Cls: Color 14: Print "TEAM DEFENSIVE INFORMATION": Color 15
 
-345 LOCATE 2: INPUT " 1. FGM "; T%(20): IF C1 = 1 THEN 415
+345 Locate 2: Input " 1. FGM "; T%(20): If C1 = 1 Then 415
 
-350 LOCATE 3: INPUT " 2. FGA "; T%(19): IF C1 = 1 THEN 415
+350 Locate 3: Input " 2. FGA "; T%(19): If C1 = 1 Then 415
 
-355 LOCATE 4: INPUT " 3. FTM "; T%(22): IF C1 = 1 THEN 415
+355 Locate 4: Input " 3. FTM "; T%(22): If C1 = 1 Then 415
 
-360 LOCATE 5: INPUT " 4. FTA "; T%(21): IF C1 = 1 THEN 415
+360 Locate 5: Input " 4. FTA "; T%(21): If C1 = 1 Then 415
 
-365 LOCATE 6: INPUT " 5. OFF REB "; T%(23): IF C1 = 1 THEN 415
+365 Locate 6: Input " 5. OFF REB "; T%(23): If C1 = 1 Then 415
 
-370 LOCATE 7: INPUT " 6. DEF REB "; T%(24): IF C1 = 1 THEN 415
-	IF T%(23) = 0 AND RB = 0 THEN T%(23) = .35 * T%(24): T%(24) = T%(24) - T%(23): LOCATE 6: PRINT " 5. OFF REB "; T%(23): LOCATE 7: PRINT " 6. DEF REB "; T%(24)
+370 Locate 7: Input " 6. DEF REB "; T%(24): If C1 = 1 Then 415
+If T%(23) = 0 And RB = 0 Then T%(23) = .35 * T%(24): T%(24) = T%(24) - T%(23): Locate 6: Print " 5. OFF REB "; T%(23): Locate 7: Print " 6. DEF REB "; T%(24)
 
-375 LOCATE 8: INPUT " 7. ASSISTS "; T%(25): IF C1 = 1 THEN 415
+375 Locate 8: Input " 7. ASSISTS "; T%(25): If C1 = 1 Then 415
 
-380 LOCATE 9: INPUT " 8. FOULS "; T%(26): IF C1 = 1 THEN 415
+380 Locate 9: Input " 8. FOULS "; T%(26): If C1 = 1 Then 415
 
-385 LOCATE 10: INPUT " 9. DISQ "; T%(27): IF C1 = 1 THEN 415
+385 Locate 10: Input " 9. DISQ "; T%(27): If C1 = 1 Then 415
 
-390 LOCATE 11: INPUT "10. STEALS "; T%(28): IF C1 = 1 THEN 415
+390 Locate 11: Input "10. STEALS "; T%(28): If C1 = 1 Then 415
 
-395 LOCATE 12: INPUT "11. TURNOVERS "; T%(29): IF C1 = 1 THEN 415
+395 Locate 12: Input "11. TURNOVERS "; T%(29): If C1 = 1 Then 415
 
-400 LOCATE 13: INPUT "12. BLK SHOTS "; T%(30): IF C1 = 1 THEN 415
+400 Locate 13: Input "12. BLK SHOTS "; T%(30): If C1 = 1 Then 415
 
-405 LOCATE 14: INPUT "13. 3-FGM "; T%(32): IF C1 = 1 THEN 415
+405 Locate 14: Input "13. 3-FGM "; T%(32): If C1 = 1 Then 415
 
-410 LOCATE 15: INPUT "14. 3-FGA "; T%(31): IF C1 = 1 THEN 415
+410 Locate 15: Input "14. 3-FGA "; T%(31): If C1 = 1 Then 415
 
-415 C1 = 1: LOCATE 17: INPUT "# TO CHANGE (0 TO CONTINUE) "; B9: ON B9 GOTO 345, 350, 355, 360, 365, 370, 375, 380, 385, 390, 395, 400, 405, 410
-	C1 = 0: IF X% > 0 THEN 920
-	IF T%(28) = 0 AND ST = 0 THEN T%(28) = T%(5) * .1
-	IF T%(14) = 0 AND ST = 0 THEN T%(14) = T%(19) * .1
-	IF T%(16) = 0 AND BK = 0 THEN T%(16) = T%(19) * .06
-	IF T%(30) = 0 AND BK = 0 THEN T%(30) = T%(5) * .06
-	FOR I = 0 TO 14: CLS
-	COLOR 14: PRINT TAB(25); "PLAYER INFORMATION FOR PLAYER "; I + 1: COLOR 15
+415 C1 = 1: Locate 17: Input "# TO CHANGE (0 TO CONTINUE) "; B9: On B9 GOTO 345, 350, 355, 360, 365, 370, 375, 380, 385, 390, 395, 400, 405, 410
+C1 = 0: If X% > 0 Then 920
+If T%(28) = 0 And ST = 0 Then T%(28) = T%(5) * .1
+If T%(14) = 0 And ST = 0 Then T%(14) = T%(19) * .1
+If T%(16) = 0 And BK = 0 Then T%(16) = T%(19) * .06
+If T%(30) = 0 And BK = 0 Then T%(30) = T%(5) * .06
+For I = 0 To 14: Cls
+    Color 14: Print Tab(25); "PLAYER INFORMATION FOR PLAYER "; I + 1: Color 15
 
-424 LOCATE 2: INPUT " 1. NAME (END TO QUIT) "; B$(I, 0): IF C1 = 1 THEN 520
-	IF B$(I, 0) = "END" THEN FOR J = I TO 14: B$(J, 0) = "XXX": B$(J, 1) = "X": FOR I1 = 0 TO 19: B%(J, I1) = -1: NEXT: NEXT: GOTO 600
+    424 Locate 2: Input " 1. NAME (END TO QUIT) "; B$(I, 0): If C1 = 1 Then 520
+    If B$(I, 0) = "END" Then For J = I To 14: B$(J, 0) = "XXX": B$(J, 1) = "X": For I1 = 0 To 19: B%(J, I1) = -1: Next: Next: GoTo 600
 
-426 LOCATE 3: INPUT " 2. POSITION "; B$(I, 1): IF C1 = 1 THEN 520
+    426 Locate 3: Input " 2. POSITION "; B$(I, 1): If C1 = 1 Then 520
 
-430 LOCATE 4: INPUT " 3. GAMES "; B%(I, 0): IF C1 = 1 THEN 520
+    430 Locate 4: Input " 3. GAMES "; B%(I, 0): If C1 = 1 Then 520
 
-435 LOCATE 5: INPUT " 4. MINUTES "; B%(I, 1): IF C1 = 1 THEN 520
+    435 Locate 5: Input " 4. MINUTES "; B%(I, 1): If C1 = 1 Then 520
 
-440 LOCATE 6: INPUT " 5. FGM "; B%(I, 3): IF C1 = 1 THEN 520
+    440 Locate 6: Input " 5. FGM "; B%(I, 3): If C1 = 1 Then 520
 
-445 LOCATE 7: INPUT " 6. FGA "; B%(I, 2): IF C1 = 1 THEN 520
+    445 Locate 7: Input " 6. FGA "; B%(I, 2): If C1 = 1 Then 520
 
-450 LOCATE 8: INPUT " 7. FTM "; B%(I, 5): IF C1 = 1 THEN 520
+    450 Locate 8: Input " 7. FTM "; B%(I, 5): If C1 = 1 Then 520
 
-455 LOCATE 9: INPUT " 8. FTA "; B%(I, 4): IF C1 = 1 THEN 520
+    455 Locate 9: Input " 8. FTA "; B%(I, 4): If C1 = 1 Then 520
 
-460 LOCATE 10: INPUT " 9. OFF REB "; B%(I, 6): IF C1 = 1 THEN 520
+    460 Locate 10: Input " 9. OFF REB "; B%(I, 6): If C1 = 1 Then 520
 
-465 LOCATE 11: INPUT "10. DEF REB "; B%(I, 7): IF C1 = 1 THEN 520
-	IF B%(I, 6) = 0 AND RB = 0 THEN B%(I, 6) = .32 * B%(I, 7): B%(I, 7) = B%(I, 7) - B%(I, 6): LOCATE 10: PRINT " 9. OFF REB "; B%(I, 6): LOCATE 11: PRINT "10. DEF REB "; B%(I, 7)
+    465 Locate 11: Input "10. DEF REB "; B%(I, 7): If C1 = 1 Then 520
+    If B%(I, 6) = 0 And RB = 0 Then B%(I, 6) = .32 * B%(I, 7): B%(I, 7) = B%(I, 7) - B%(I, 6): Locate 10: Print " 9. OFF REB "; B%(I, 6): Locate 11: Print "10. DEF REB "; B%(I, 7)
 
-470 LOCATE 12: INPUT "11. ASSISTS "; B%(I, 8): IF C1 = 1 THEN 520
+    470 Locate 12: Input "11. ASSISTS "; B%(I, 8): If C1 = 1 Then 520
 
-475 LOCATE 13: INPUT "12. FOULS "; B%(I, 9): IF C1 = 1 THEN 520
-
-480 LOCATE 14: INPUT "13. DISQ "; B%(I, 10): IF C1 = 1 THEN 520
-	IF ST = 1 THEN 485
-	IF LEFT$(B$(I, 1), 1) = "C" THEN B%(I, 11) = B%(I, 1) / 48 * 1.2: GOSUB 4010: GOTO 486
-	IF LEFT$(B$(I, 1), 1) = "F" THEN B%(I, 11) = B%(I, 1) / 48 * 1.55: GOSUB 4010: GOTO 486
-	IF LEFT$(B$(I, 1), 1) = "G" THEN B%(I, 11) = B%(I, 1) / 48 * 2.3: GOSUB 4010: GOTO 486
-
-485 LOCATE 15: INPUT "14. STEALS   "; B%(I, 11): IF C1 = 1 THEN 520
-
-486 IF BK = 1 THEN 490
-	IF LEFT$(B$(I, 1), 1) = "C" THEN B%(I, 12) = B%(I, 1) / 48 * 2.5: GOSUB 4015: GOTO 495
-	IF LEFT$(B$(I, 1), 1) = "F" THEN B%(I, 12) = B%(I, 1) / 48 * 1.2: GOSUB 4015: GOTO 495
-	IF LEFT$(B$(I, 1), 1) = "G" THEN B%(I, 12) = B%(I, 1) / 48 * .4: GOSUB 4015: GOTO 495
-
-490 LOCATE 16: INPUT "15. BLOCKS "; B%(I, 12): IF C1 = 1 THEN 520
-
-495 LOCATE 17: INPUT "16. 3-FGM "; B%(I, 14): IF C1 = 1 THEN 520
-
-500 LOCATE 18: INPUT "17. 3-FGA "; B%(I, 13): IF C1 = 1 THEN 520
-
-505 LOCATE 19: INPUT "18. HI-GAME "; B%(I, 15): IF C1 = 1 THEN 520
-	'LOCATE 20:INPUT "19. PENETRATION (1-9) ";B%(I,16):IF C1=1 THEN 520
-	'LOCATE 21:INPUT "20. DEF ADJ (-5 TO 5) ";B%(I,17):IF C1=1 THEN 520
-
-516 LOCATE 22: INPUT "21. ACTIVE FLAG (0-YES 1-NO) "; B%(I, 18): IF C1 = 1 THEN 520
-
-520 C1 = 1: LOCATE 23: PRINT "# TO CHANGE (0 TO CONTINUE)"; : INPUT B9
-	ON B9 GOTO 424, 426, 430, 435, 440, 445, 450, 455, 460, 465, 470, 475, 480, 485, 490, 495, 500, 505, 520, 520, 516
-	C1 = 0: IF X% > 0 THEN 920
-	NEXT I
-
-600 CLS : COLOR 14: PRINT "CHANGE LEAGUE INFORMATION": X% = 2: COLOR 15: PRINT
-	PRINT "1. NUMBER OF GAMES "; L%(0)
-	PRINT "2. AVG FGA/G "; L%(1)
-	PRINT "3. AVG RB/G "; L%(2)
-	PRINT "4. LEAGUE FG% "; L%(3)
-	PRINT "5. AVG PF/G "; L%(4)
-	PRINT "6. LEAGUE 3FG% "; L%(5)
-	PRINT "7. LEAGUE POWER ADJ "; L%(6)
-	PRINT "8. DISK ID "; YN$
-	PRINT "9. TEAM NUMBER "; T
-	GOTO 190
-
-700 CLS : COLOR 14: PRINT "CHANGE TEAM INFORMATION": COLOR 15
-	PRINT "1. TEAM NAME "; T$(0)
-	PRINT "2. TEAM NICKNAME "; T$(1)
-	PRINT "3. TEAM GAMES PLAYED "; T%(0)
-	PRINT "4. HOME WINS "; T%(1)
-	PRINT "5. HOME LOSSES "; T%(2)
-	PRINT "6. ROAD WINS "; T%(3)
-	PRINT "7. ROAD LOSSES "; T%(4)
-	PRINT "8. TEXT COLOR (0-15) "; T%(33)
-	PRINT "9. BCKGRND COLOR (0-7) "; T%(34)
-	PRINT "10. TEAM ABBREV (IE. BOS) "; T$(2)
-	PRINT "11. COACH'S NAME "; T$(3)
-	PRINT "12. ARENA NAME "; T$(4)
-	LOCATE 15: COLOR T%(33), T%(34): PRINT "SAMPLE TEXT": COLOR 15, 0
-	GOTO 255
-
-760 CLS : COLOR 14: PRINT "CHANGE TEAM OFFENSIVE INFORMATION": X% = 2: COLOR 15
-	PRINT " 1. FGM "; T%(6)
-	PRINT " 2. FGA "; T%(5)
-	PRINT " 3. FTM "; T%(8)
-	PRINT " 4. FTA "; T%(7)
-	PRINT " 5. OFF REB "; T%(9)
-	PRINT " 6. DEF REB "; T%(10)
-	PRINT " 7. ASSISTS "; T%(11)
-	PRINT " 8. FOULS "; T%(12)
-	PRINT " 9. DISQ "; T%(13)
-	PRINT "10. STEALS "; T%(14)
-	PRINT "11. TURNOVERS "; T%(15)
-	PRINT "12. BLK SHOTS "; T%(16)
-	PRINT "13. 3-FGM "; T%(18)
-	PRINT "14. 3-FGA "; T%(17)
-	GOTO 335
-
-840 CLS : COLOR 14: PRINT "CHANGE TEAM DEFENSIVE INFORMATION": X% = 2: COLOR 15
-	PRINT " 1. FGM "; T%(20)
-	PRINT " 2. FGA "; T%(19)
-	PRINT " 3. FTM "; T%(22)
-	PRINT " 4. FTA "; T%(21)
-	PRINT " 5. OFF REB "; T%(23)
-	PRINT " 6. DEF REB "; T%(24)
-	PRINT " 7. ASSISTS "; T%(25)
-	PRINT " 8. FOULS "; T%(26)
-	PRINT " 9. DISQ "; T%(27)
-	PRINT "10. STEALS "; T%(28)
-	PRINT "11. TURNOVERS "; T%(29)
-	PRINT "12. BLK SHOTS "; T%(30)
-	PRINT "13. 3-FGM "; T%(32)
-	PRINT "14. 3-FGA "; T%(31)
-	GOTO 415
-
-920 CLS : COLOR 14: PRINT "CHANGE PLAYER STATS": X% = 2: COLOR 15
-	FOR I = 0 TO 14: PRINT USING "##"; I + 1; : PRINT "  "; B$(I, 0)
-	NEXT: PRINT : PRINT "# TO CHANGE (1-15) (0 TO CONTINUE) "; : INPUT I
-	LOCATE 1, 1: IF I = 0 THEN X% = 0: GOTO 1380
-	I = I - 1: LOCATE 1, 1
-	CLS : COLOR 14: PRINT TAB(31); "CHANGE PLAYER INFORMATION": COLOR 15
-	PRINT " 1. NAME (END TO QUIT) "; B$(I, 0)
-	PRINT " 2. POSITION "; B$(I, 1)
-	PRINT " 3. GAMES "; B%(I, 0)
-	PRINT " 4. MINUTES "; B%(I, 1)
-	PRINT " 5. FGM "; B%(I, 3)
-	PRINT " 6. FGA "; B%(I, 2)
-	PRINT " 7. FTM "; B%(I, 5)
-	PRINT " 8. FTA "; B%(I, 4)
-	PRINT " 9. OFF REB "; B%(I, 6)
-	PRINT "10. DEF REB "; B%(I, 7)
-	PRINT "11. ASSISTS "; B%(I, 8)
-	PRINT "12. FOULS "; B%(I, 9)
-	PRINT "13. DISQ "; B%(I, 10)
-	PRINT "14. STEALS "; B%(I, 11)
-	PRINT "15. BLOCKS "; B%(I, 12)
-	PRINT "16. 3-FGM "; B%(I, 14)
-	PRINT "17. 3-FGA "; B%(I, 13)
-	PRINT "18. HI-GAME "; B%(I, 15)
-	PRINT : 'PRINT "19. PENETRATION (1-9) ";B%(I,16)
-	PRINT : 'PRINT "20. DEF ADJ (-5 TO 5) ";B%(I,17)
-	PRINT "21. ACTIVE FLAG (0-YES 1-NO) "; B%(I, 18)
-	GOTO 520
+    475 Locate 13: Input "12. FOULS "; B%(I, 9): If C1 = 1 Then 520
+
+    480 Locate 14: Input "13. DISQ "; B%(I, 10): If C1 = 1 Then 520
+    If ST = 1 Then 485
+    If Left$(B$(I, 1), 1) = "C" Then B%(I, 11) = B%(I, 1) / 48 * 1.2: GoSub 4010: GoTo 486
+    If Left$(B$(I, 1), 1) = "F" Then B%(I, 11) = B%(I, 1) / 48 * 1.55: GoSub 4010: GoTo 486
+    If Left$(B$(I, 1), 1) = "G" Then B%(I, 11) = B%(I, 1) / 48 * 2.3: GoSub 4010: GoTo 486
+
+    485 Locate 15: Input "14. STEALS   "; B%(I, 11): If C1 = 1 Then 520
+
+    486 If BK = 1 Then 490
+    If Left$(B$(I, 1), 1) = "C" Then B%(I, 12) = B%(I, 1) / 48 * 2.5: GoSub 4015: GoTo 495
+    If Left$(B$(I, 1), 1) = "F" Then B%(I, 12) = B%(I, 1) / 48 * 1.2: GoSub 4015: GoTo 495
+    If Left$(B$(I, 1), 1) = "G" Then B%(I, 12) = B%(I, 1) / 48 * .4: GoSub 4015: GoTo 495
+
+    490 Locate 16: Input "15. BLOCKS "; B%(I, 12): If C1 = 1 Then 520
+
+    495 Locate 17: Input "16. 3-FGM "; B%(I, 14): If C1 = 1 Then 520
+
+    500 Locate 18: Input "17. 3-FGA "; B%(I, 13): If C1 = 1 Then 520
+
+    505 Locate 19: Input "18. HI-GAME "; B%(I, 15): If C1 = 1 Then 520
+    'LOCATE 20:INPUT "19. PENETRATION (1-9) ";B%(I,16):IF C1=1 THEN 520
+    'LOCATE 21:INPUT "20. DEF ADJ (-5 TO 5) ";B%(I,17):IF C1=1 THEN 520
+
+    516 Locate 22: Input "21. ACTIVE FLAG (0-YES 1-NO) "; B%(I, 18): If C1 = 1 Then 520
+
+    520 C1 = 1: Locate 23: Print "# TO CHANGE (0 TO CONTINUE)";: Input B9
+    On B9 GOTO 424, 426, 430, 435, 440, 445, 450, 455, 460, 465, 470, 475, 480, 485, 490, 495, 500, 505, 520, 520, 516
+    C1 = 0: If X% > 0 Then 920
+Next I
+
+600 Cls: Color 14: Print "CHANGE LEAGUE INFORMATION": X% = 2: Color 15: Print
+Print "1. NUMBER OF GAMES "; L%(0)
+Print "2. AVG FGA/G "; L%(1)
+Print "3. AVG RB/G "; L%(2)
+Print "4. LEAGUE FG% "; L%(3)
+Print "5. AVG PF/G "; L%(4)
+Print "6. LEAGUE 3FG% "; L%(5)
+Print "7. LEAGUE POWER ADJ "; L%(6)
+Print "8. DISK ID "; YN$
+Print "9. TEAM NUMBER "; T
+GoTo 190
+
+700 Cls: Color 14: Print "CHANGE TEAM INFORMATION": Color 15
+Print "1. TEAM NAME "; T$(0)
+Print "2. TEAM NICKNAME "; T$(1)
+Print "3. TEAM GAMES PLAYED "; T%(0)
+Print "4. HOME WINS "; T%(1)
+Print "5. HOME LOSSES "; T%(2)
+Print "6. ROAD WINS "; T%(3)
+Print "7. ROAD LOSSES "; T%(4)
+Print "8. TEXT COLOR (0-15) "; T%(33)
+Print "9. BCKGRND COLOR (0-7) "; T%(34)
+Print "10. TEAM ABBREV (IE. BOS) "; T$(2)
+Print "11. COACH'S NAME "; T$(3)
+Print "12. ARENA NAME "; T$(4)
+Locate 15: Color T%(33), T%(34): Print "SAMPLE TEXT": Color 15, 0
+GoTo 255
+
+760 Cls: Color 14: Print "CHANGE TEAM OFFENSIVE INFORMATION": X% = 2: Color 15
+Print " 1. FGM "; T%(6)
+Print " 2. FGA "; T%(5)
+Print " 3. FTM "; T%(8)
+Print " 4. FTA "; T%(7)
+Print " 5. OFF REB "; T%(9)
+Print " 6. DEF REB "; T%(10)
+Print " 7. ASSISTS "; T%(11)
+Print " 8. FOULS "; T%(12)
+Print " 9. DISQ "; T%(13)
+Print "10. STEALS "; T%(14)
+Print "11. TURNOVERS "; T%(15)
+Print "12. BLK SHOTS "; T%(16)
+Print "13. 3-FGM "; T%(18)
+Print "14. 3-FGA "; T%(17)
+GoTo 335
+
+840 Cls: Color 14: Print "CHANGE TEAM DEFENSIVE INFORMATION": X% = 2: Color 15
+Print " 1. FGM "; T%(20)
+Print " 2. FGA "; T%(19)
+Print " 3. FTM "; T%(22)
+Print " 4. FTA "; T%(21)
+Print " 5. OFF REB "; T%(23)
+Print " 6. DEF REB "; T%(24)
+Print " 7. ASSISTS "; T%(25)
+Print " 8. FOULS "; T%(26)
+Print " 9. DISQ "; T%(27)
+Print "10. STEALS "; T%(28)
+Print "11. TURNOVERS "; T%(29)
+Print "12. BLK SHOTS "; T%(30)
+Print "13. 3-FGM "; T%(32)
+Print "14. 3-FGA "; T%(31)
+GoTo 415
+
+920 Cls: Color 14: Print "CHANGE PLAYER STATS": X% = 2: Color 15
+For I = 0 To 14: Print Using "##"; I + 1;: Print "  "; B$(I, 0)
+Next: Print: Print "# TO CHANGE (1-15) (0 TO CONTINUE) ";: Input I
+Locate 1, 1: If I = 0 Then X% = 0: GoTo 1380
+I = I - 1: Locate 1, 1
+Cls: Color 14: Print Tab(31); "CHANGE PLAYER INFORMATION": Color 15
+Print " 1. NAME (END TO QUIT) "; B$(I, 0)
+Print " 2. POSITION "; B$(I, 1)
+Print " 3. GAMES "; B%(I, 0)
+Print " 4. MINUTES "; B%(I, 1)
+Print " 5. FGM "; B%(I, 3)
+Print " 6. FGA "; B%(I, 2)
+Print " 7. FTM "; B%(I, 5)
+Print " 8. FTA "; B%(I, 4)
+Print " 9. OFF REB "; B%(I, 6)
+Print "10. DEF REB "; B%(I, 7)
+Print "11. ASSISTS "; B%(I, 8)
+Print "12. FOULS "; B%(I, 9)
+Print "13. DISQ "; B%(I, 10)
+Print "14. STEALS "; B%(I, 11)
+Print "15. BLOCKS "; B%(I, 12)
+Print "16. 3-FGM "; B%(I, 14)
+Print "17. 3-FGA "; B%(I, 13)
+Print "18. HI-GAME "; B%(I, 15)
+Print: 'PRINT "19. PENETRATION (1-9) ";B%(I,16)
+Print: 'PRINT "20. DEF ADJ (-5 TO 5) ";B%(I,17)
+Print "21. ACTIVE FLAG (0-YES 1-NO) "; B%(I, 18)
+GoTo 520
 
 1100 NT = 0
-OPEN D$(0) + "PROBBTMS." + YN$ FOR RANDOM AS #1 LEN = 1031
-	Y = LOF(1)
-	FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
-	FOR I = 0 TO 6
-	FIELD #1, 30 + I * 2 AS X$, 2 AS Q$(I + 2)
-	NEXT
-	FIELD #1, 44 AS X$, 2 AS Q$(9)
-	FOR I = 0 TO 34
-	FIELD #1, 46 + I * 2 AS X$, 2 AS Q$(I + 10)
-	NEXT
-	FOR I = 0 TO 14
-	FIELD #1, 116 + I * 57 AS X$, 15 AS Q$(I * 22 + 45), 2 AS Q$(I * 22 + 46)
-	FOR I1 = 0 TO 19
-	FIELD #1, 133 + I * 57 + I1 * 2 AS X$, 2 AS Q$(I * 22 + 47 + I1)
-	NEXT
-	NEXT
-	FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
-	FOR I1 = 1 TO Y / 1031
-	GET #1, I1
-	CK% = CVI(Q$(9))
-	IF CK% <> 999 THEN 1103
-	NT = NT + 1
-	VV$(NT) = Q$(0): V%(NT) = I1
+Open D$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+Y = LOF(1)
+Field #1, 15 As Q$(0), 15 As Q$(1)
+For I = 0 To 6
+    Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+Next
+Field #1, 44 As X$, 2 As Q$(9)
+For I = 0 To 34
+    Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+Next
+For I = 0 To 14
+    Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+    For I1 = 0 To 19
+        Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+    Next
+Next
+Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+For I1 = 1 To Y / 1031
+    Get #1, I1
+    CK% = CVI(Q$(9))
+    If CK% <> 999 Then 1103
+    NT = NT + 1
+    teamItems$(NT) = Q$(0): V%(NT) = I1
 
-1103 NEXT
-CLOSE 1
-TS% = INT((NT - 1) / 80)
+1103 Next
+Close 1
+TS% = Int((NT - 1) / 80)
 
 1102 SELECTION% = 1
-	Count% = NT
-	Start% = 1
-	FileFGColr% = 15:FileBGColr% = 4
-	HiLiteFGColr% = 0:HiLiteBGColr% = 7
-	Rows% = 20
-	Columns% = 4
-	Spacing% = 6
-	Row% = 4
-	Column% = 1
-	COLOR , 4: CLS : LOCATE , 33: COLOR 14
-	PRINT "TEAM SELECTION": COLOR 15
-	LOCATE 25, 1: COLOR 14: PRINT "ESC"; : COLOR 15
-	PRINT "-SELECT NEW ID  PGDN  PGUP  "; : COLOR 14
-	PRINT "ENTER"; : COLOR 15: PRINT "-SELECTS TEAM";
-	
+Count% = NT
+Start% = 1
+FileFGColr% = 15: FileBGColr% = 4
+HiLiteFGColr% = 0: HiLiteBGColr% = 7
+Rows% = 20
+Columns% = 4
+Spacing% = 6
+Row% = 4
+Column% = 1
+Color , 4: Cls: Locate , 33: Color 14
+Print "TEAM SELECTION": Color 15
+Locate 25, 1: Color 14: Print "ESC";: Color 15
+Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
+Print "ENTER";: Color 15: Print "-SELECTS TEAM";
+    
 _MouseShow "DEFAULT"
-20   MAMenu VV$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+20 MAMenu teamItems$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
-	IF EXITCODE% = 27 THEN BO% = 1: RETURN
-	IF EXITCODE% = -71 THEN Start% = 1: EXITCODE% = 3: SELECTION% = 1: GOTO 20
-	IF EXITCODE% = -79 THEN Start% = NT: EXITCODE% = 3: SELECTION% = NT: GOTO 20
-	IF EXITCODE% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
-	IF EXITCODE% = -81 THEN Start% = Start% + 80: IF Start% > NT THEN Start% = NT
-	IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = Start%: GOTO 20
-	T = V%(SELECTION%)
-	GOTO 1480
+If EXITCODE% = 27 Then BO% = 1: Return
+If EXITCODE% = -71 Then Start% = 1: EXITCODE% = 3: SELECTION% = 1: GoTo 20
+If EXITCODE% = -79 Then Start% = NT: EXITCODE% = 3: SELECTION% = NT: GoTo 20
+If EXITCODE% = -73 Then Start% = Start% - 80: If Start% < 1 Then Start% = 1
+If EXITCODE% = -81 Then Start% = Start% + 80: If Start% > NT Then Start% = NT
+If EXITCODE% = -81 Or EXITCODE% = -73 Then EXITCODE% = 3: SELECTION% = Start%: GoTo 20
+T = V%(SELECTION%)
+GoTo 1480
 
-1380 GOSUB 2725
-OPEN D$(0) + "PROBBTMS." + YN$ FOR RANDOM AS #1 LEN = 1031
-	Y = LOF(1)
-	IF Q = 0 THEN T = Y / 1031 + 1
-	FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
-	FOR I = 0 TO 6
-	FIELD #1, 30 + I * 2 AS X$, 2 AS Q$(I + 2)
-	NEXT
-	FIELD #1, 44 AS X$, 2 AS Q$(9)
-	FOR I = 0 TO 34
-	FIELD #1, 46 + I * 2 AS X$, 2 AS Q$(I + 10)
-	NEXT
-	FOR I = 0 TO 14
-	FIELD #1, 116 + I * 57 AS X$, 15 AS Q$(I * 22 + 45), 2 AS Q$(I * 22 + 46)
-	FOR I1 = 0 TO 19
-	FIELD #1, 133 + I * 57 + I1 * 2 AS X$, 2 AS Q$(I * 22 + 47 + I1)
-	NEXT
-	NEXT
-	FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
-LSET Q$(0) = T$(0): LSET Q$(1) = T$(1): FOR I = 0 TO 6: LSET Q$(I + 2) = MKI$(L%(I)): NEXT
-LSET Q$(9) = MKI$(999)
-FOR I = 0 TO 34: LSET Q$(I + 10) = MKI$(T%(I)): NEXT
-FOR I = 0 TO 14
-LSET Q$(22 * I + 45) = B$(I, 0)
-LSET Q$(22 * I + 46) = B$(I, 1)
-FOR I1 = 0 TO 19
-LSET Q$(22 * I + 47 + I1) = MKI$(B%(I, I1))
-NEXT: NEXT
-LSET Q$(375) = T$(2): LSET Q$(376) = T$(3): LSET Q$(377) = T$(4)
-PUT #1, T: CLOSE 1
-	GOTO 100
+1380 GoSub 2725
+Open D$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+Y = LOF(1)
+If Q = 0 Then T = Y / 1031 + 1
+Field #1, 15 As Q$(0), 15 As Q$(1)
+For I = 0 To 6
+    Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+Next
+Field #1, 44 As X$, 2 As Q$(9)
+For I = 0 To 34
+    Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+Next
+For I = 0 To 14
+    Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+    For I1 = 0 To 19
+        Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+    Next
+Next
+Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+LSet Q$(0) = T$(0): LSet Q$(1) = T$(1): For I = 0 To 6: LSet Q$(I + 2) = MKI$(L%(I)): Next
+LSet Q$(9) = MKI$(999)
+For I = 0 To 34: LSet Q$(I + 10) = MKI$(T%(I)): Next
+For I = 0 To 14
+    LSet Q$(22 * I + 45) = B$(I, 0)
+    LSet Q$(22 * I + 46) = B$(I, 1)
+    For I1 = 0 To 19
+        LSet Q$(22 * I + 47 + I1) = MKI$(B%(I, I1))
+Next: Next
+LSet Q$(375) = T$(2): LSet Q$(376) = T$(3): LSet Q$(377) = T$(4)
+Put #1, T: Close 1
+GoTo 100
 
 1435 '
 
-1440 COLOR 15, 0: CLS
-	JJ = 7
-	LOCATE 6, 8: COLOR 15, 4
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 7 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
-	LOCATE , 12: PRINT "ENTER DISK ID: ": PRINT
-	LOCATE , 12: PRINT "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-	LOCATE , 12: PRINT "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-	LOCATE , 12: PRINT "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
-	LOCATE , 12: PRINT "HIT <ENTER> TO USE PREVIOUS ID"
-	LOCATE 7, 27: INPUT NY$
-	IF NY$ = "" THEN GOSUB 1102: GOTO 182
-	YN$ = NY$
-	FOR I = 1 TO 500: VV$(I) = "": V%(I) = 1: NEXT
-	GOSUB 1100
+1440 Color 15, 0: Cls
+JJ = 7
+Locate 6, 8: Color 15, 4
+Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
+Print " º"; String$(61, 32); "º ";: Next
+Locate 7 + JJ, 8
+Print " Ó"; String$(61, 196); "½ ";: Locate 7, 32
+Locate , 12: Print "ENTER DISK ID: ": Print
+Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+Locate , 12: Print "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
+Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
+Locate 7, 27: Input NY$
+If NY$ = "" Then GoSub 1102: GoTo 182
+YN$ = NY$
+For I = 1 To 500: teamItems$(I) = "": V%(I) = 1: Next
+GoSub 1100
 
-182 IF BO% = 1 THEN BO% = 0: GOTO 1440
+182 If BO% = 1 Then BO% = 0: GoTo 1440
 
-183 LOCATE 2, 33: COLOR T%(33), T%(34): PRINT T$(0): COLOR 15, 4
-	LOCATE , 33: PRINT "ANY CHANGE (YN)";
-	I$=GetKeyPress$
-	IF UCASE$(I$) = "Y" THEN 1440
-	GOTO 1530
+183 Locate 2, 33: Color T%(33), T%(34): Print T$(0): Color 15, 4
+Locate , 33: Print "ANY CHANGE (YN)";
+I$ = GetKeyPress$
+If UCase$(I$) = "Y" Then 1440
+GoTo 1530
 
-1480 OPEN D$(0) + "PROBBTMS." + YN$ FOR RANDOM AS #1 LEN = 1031
-	Y = LOF(1)
-	FIELD #1, 15 AS Q$(0), 15 AS Q$(1)
-	FOR I = 0 TO 6
-	FIELD #1, 30 + I * 2 AS X$, 2 AS Q$(I + 2)
-	NEXT
-	FIELD #1, 44 AS X$, 2 AS Q$(9)
-	FOR I = 0 TO 34
-	FIELD #1, 46 + I * 2 AS X$, 2 AS Q$(I + 10)
-	NEXT
-	FOR I = 0 TO 14
-	FIELD #1, 116 + I * 57 AS X$, 15 AS Q$(I * 22 + 45), 2 AS Q$(I * 22 + 46)
-	FOR I1 = 0 TO 19
-	FIELD #1, 133 + I * 57 + I1 * 2 AS X$, 2 AS Q$(I * 22 + 47 + I1)
-	NEXT
-	NEXT
-	FIELD #1, 971 AS X$, 5 AS Q$(375), 15 AS Q$(376), 40 AS Q$(377)
-GET #1, T
-T$(0) = Q$(0): T$(1) = Q$(1): FOR I = 0 TO 6: L%(I) = CVI(Q$(I + 2)): NEXT
-FOR I = 0 TO 34: T%(I) = CVI(Q$(I + 10)): NEXT
-FOR I = 0 TO 14
-B$(I, 0) = Q$(22 * I + 45)
-B$(I, 1) = Q$(22 * I + 46)
-FOR I1 = 0 TO 19
-B%(I, I1) = CVI(Q$(22 * I + 47 + I1))
-NEXT: NEXT
+1480 Open D$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+Y = LOF(1)
+Field #1, 15 As Q$(0), 15 As Q$(1)
+For I = 0 To 6
+    Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+Next
+Field #1, 44 As X$, 2 As Q$(9)
+For I = 0 To 34
+    Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+Next
+For I = 0 To 14
+    Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+    For I1 = 0 To 19
+        Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+    Next
+Next
+Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+Get #1, T
+T$(0) = Q$(0): T$(1) = Q$(1): For I = 0 To 6: L%(I) = CVI(Q$(I + 2)): Next
+For I = 0 To 34: T%(I) = CVI(Q$(I + 10)): Next
+For I = 0 To 14
+    B$(I, 0) = Q$(22 * I + 45)
+    B$(I, 1) = Q$(22 * I + 46)
+    For I1 = 0 To 19
+        B%(I, I1) = CVI(Q$(22 * I + 47 + I1))
+Next: Next
 T$(2) = Q$(375): T$(3) = Q$(376): T$(4) = Q$(377)
-CLOSE 1
+Close 1
 
-1486 IF RIGHT$(T$(0), 1) = " " THEN T$(0) = LEFT$(T$(0), LEN(T$(0)) - 1): GOTO 1486
+1486 If Right$(T$(0), 1) = " " Then T$(0) = Left$(T$(0), Len(T$(0)) - 1): GoTo 1486
 
-1487 IF RIGHT$(T$(1), 1) = " " THEN T$(1) = LEFT$(T$(1), LEN(T$(1)) - 1): GOTO 1487
+1487 If Right$(T$(1), 1) = " " Then T$(1) = Left$(T$(1), Len(T$(1)) - 1): GoTo 1487
 
-1488 IF RIGHT$(T$(2), 1) = " " THEN T$(2) = LEFT$(T$(2), LEN(T$(2)) - 1): GOTO 1488
+1488 If Right$(T$(2), 1) = " " Then T$(2) = Left$(T$(2), Len(T$(2)) - 1): GoTo 1488
 
-1489 IF RIGHT$(T$(3), 1) = " " THEN T$(3) = LEFT$(T$(3), LEN(T$(3)) - 1): GOTO 1489
+1489 If Right$(T$(3), 1) = " " Then T$(3) = Left$(T$(3), Len(T$(3)) - 1): GoTo 1489
 
-1490 IF RIGHT$(T$(4), 1) = " " THEN T$(4) = LEFT$(T$(4), LEN(T$(4)) - 1): GOTO 1490
-	RETURN
+1490 If Right$(T$(4), 1) = " " Then T$(4) = Left$(T$(4), Len(T$(4)) - 1): GoTo 1490
+Return
 
-1530 COLOR , 0
-	IF Q = 2 THEN 1740
-	IF Q = 3 THEN 2000
-	GOTO 600
+1530 Color , 0
+If Q = 2 Then 1740
+If Q = 3 Then 2000
+GoTo 600
 
-1740 LPRINT CHR$(15): WIDTH "LPT1:", 137
-	LPRINT : LPRINT "DISK ID:"; YN$
-	LPRINT "TEAM NAME: "; T$(0); " "; T$(1)
-	LPRINT USING "RECORD ##"; T%(1) + T%(3); : LPRINT "-"; : LPRINT USING "##    HOME ##"; T%(2) + T%(4); T%(1);
-	LPRINT "-"; : LPRINT USING "##    ROAD ##"; T%(2); T%(3); : LPRINT "-"; : LPRINT USING "##"; T%(4): LPRINT
-	LPRINT "                                                      OFF DEF  TOT"
-	LPRINT "PLAYER        PS  G  MIN  FGA  FGM  PCT  FTA FTM  PCT REB REB  REB  AST  PF STL BLK  PTS  AVG HI"
-	FOR I = 0 TO 14
-	IF B$(I, 0) = "" OR B$(I, 0) = "XXX" THEN 1860
-	LPRINT LEFT$(B$(I, 0), 14); TAB(15); B$(I, 1); TAB(18);
-	LPRINT USING "## #### #### #### "; B%(I, 0); B%(I, 1); B%(I, 2); B%(I, 3);
-	IF B%(I, 2) = B%(I, 3) AND B%(I, 3) <> 0 THEN LPRINT "1.000";
-	IF B%(I, 2) <> B%(I, 3) THEN LPRINT USING ".###"; B%(I, 3) / B%(I, 2);
-	LPRINT TAB(42);
-	LPRINT USING "### ### "; B%(I, 4); B%(I, 5);
-	IF B%(I, 4) = B%(I, 5) AND B%(I, 5) <> 0 THEN LPRINT "1.000 ";
-	IF B%(I, 4) <> B%(I, 5) THEN LPRINT USING ".### "; B%(I, 5) / B%(I, 4);
-	LPRINT TAB(55);
-	LPRINT USING "### ### #### #### ### ### ### #### "; B%(I, 6); B%(I, 7); B%(I, 6) + B%(I, 7); B%(I, 8); B%(I, 9); B%(I, 11); B%(I, 12); B%(I, 3) * 2 + B%(I, 5) + B%(I, 14);
-	LPRINT USING "##.# ##"; (B%(I, 3) * 2 + B%(I, 5) + B%(I, 14)) / B%(I, 0); B%(I, 15)
+1740 LPrint Chr$(15) ': WIDTH "LPT1:", 137
+LPrint: LPrint "DISK ID:"; YN$
+LPrint "TEAM NAME: "; T$(0); " "; T$(1)
+LPrint Using "RECORD ##"; T%(1) + T%(3);: LPrint "-";: LPrint Using "##    HOME ##"; T%(2) + T%(4); T%(1);
+LPrint "-";: LPrint Using "##    ROAD ##"; T%(2); T%(3);: LPrint "-";: LPrint Using "##"; T%(4): LPrint
+LPrint "                                                      OFF DEF  TOT"
+LPrint "PLAYER        PS  G  MIN  FGA  FGM  PCT  FTA FTM  PCT REB REB  REB  AST  PF STL BLK  PTS  AVG HI"
+For I = 0 To 14
+    If B$(I, 0) = "" Or B$(I, 0) = "XXX" Then 1860
+    LPrint Left$(B$(I, 0), 14); Tab(15); B$(I, 1); Tab(18);
+    LPrint Using "## #### #### #### "; B%(I, 0); B%(I, 1); B%(I, 2); B%(I, 3);
+    If B%(I, 2) = B%(I, 3) And B%(I, 3) <> 0 Then LPrint "1.000";
+    If B%(I, 2) <> B%(I, 3) Then LPrint Using ".###"; B%(I, 3) / B%(I, 2);
+    LPrint Tab(42);
+    LPrint Using "### ### "; B%(I, 4); B%(I, 5);
+    If B%(I, 4) = B%(I, 5) And B%(I, 5) <> 0 Then LPrint "1.000 ";
+    If B%(I, 4) <> B%(I, 5) Then LPrint Using ".### "; B%(I, 5) / B%(I, 4);
+    LPrint Tab(55);
+    LPrint Using "### ### #### #### ### ### ### #### "; B%(I, 6); B%(I, 7); B%(I, 6) + B%(I, 7); B%(I, 8); B%(I, 9); B%(I, 11); B%(I, 12); B%(I, 3) * 2 + B%(I, 5) + B%(I, 14);
+    LPrint Using "##.# ##"; (B%(I, 3) * 2 + B%(I, 5) + B%(I, 14)) / B%(I, 0); B%(I, 15)
 
-1860 NEXT
-	LPRINT CHR$(18): LPRINT CHR$(12)
-	GOTO 100
+1860 Next
+LPrint Chr$(18): LPrint Chr$(12)
+GoTo 100
 4000 I$ = GetKeyPress$
-	IF UCASE$(I$) = "Y" THEN I = 1: GOTO 4005
-	IF UCASE$(I$) = "N" THEN I = 0: GOTO 4005
-	IF I$ = CHR$(27) THEN 4005
-	GOTO 4000
+If UCase$(I$) = "Y" Then I = 1: GoTo 4005
+If UCase$(I$) = "N" Then I = 0: GoTo 4005
+If I$ = Chr$(27) Then 4005
+GoTo 4000
 
-4005 RETURN
+4005 Return
 
-4010 LOCATE 15: PRINT "14. STEALS "; B%(I, 11): RETURN
+4010 Locate 15: Print "14. STEALS "; B%(I, 11): Return
 
-4015 LOCATE 16: PRINT "15. BLOCKS "; B%(I, 12): RETURN
+4015 Locate 16: Print "15. BLOCKS "; B%(I, 12): Return
 
-2725 CLS
-	RETURN
+2725 Cls
+Return
 
-2000 COLOR 0, 0: CLS
-	COLOR T%(33), T%(34): PRINT T$(0); " "; T$(1);
-	COLOR 14, 0: PRINT TAB(40); "WON - "; : COLOR 15
-	PRINT USING "##"; T%(1) + T%(3); : COLOR 14
-	PRINT TAB(50); "LOST - "; : COLOR 15: PRINT USING "##"; T%(2) + T%(4)
+2000 Color 0, 0: Cls
+Color T%(33), T%(34): Print T$(0); " "; T$(1);
+Color 14, 0: Print Tab(40); "WON - ";: Color 15
+Print Using "##"; T%(1) + T%(3);: Color 14
+Print Tab(50); "LOST - ";: Color 15: Print Using "##"; T%(2) + T%(4)
 
-61 LOCATE 3: COLOR 15: PRINT "NAME          POS   G  MIN  FGA  FGM  PCT  FTA  FTM  PCT OREB DREB ASST  FLS"
+61 Locate 3: Color 15: Print "NAME          POS   G  MIN  FGA  FGM  PCT  FTA  FTM  PCT OREB DREB ASST  FLS"
 
-62 LOCATE 4: FOR I = 0 TO 14
+62 Locate 4: For I = 0 To 14
 
-63 IF LEFT$(B$(I, 0), 3) = "XXX" THEN 1001
+    63 If Left$(B$(I, 0), 3) = "XXX" Then 1001
 
-65 COLOR 3: PRINT LEFT$(B$(I, 0), 14);
-	COLOR 7: PRINT TAB(15); B$(I, 1);
+    65 Color 3: Print Left$(B$(I, 0), 14);
+    Color 7: Print Tab(15); B$(I, 1);
 
-66 PRINT TAB(20); USING "##"; B%(I, 0);
+    66 Print Tab(20); Using "##"; B%(I, 0);
 
-67 PRINT TAB(23); USING "####"; B%(I, 1);
+    67 Print Tab(23); Using "####"; B%(I, 1);
 
-68 PRINT TAB(28); USING "####"; B%(I, 2);
+    68 Print Tab(28); Using "####"; B%(I, 2);
 
-69 PRINT TAB(33); USING "####"; B%(I, 3);
+    69 Print Tab(33); Using "####"; B%(I, 3);
 
-70 IF B%(I, 3) = 0 THEN PRINT TAB(38); ".000";
-	IF B%(I, 3) > 0 THEN PRINT TAB(38); USING ".###"; B%(I, 3) / B%(I, 2);
+    70 If B%(I, 3) = 0 Then Print Tab(38); ".000";
+    If B%(I, 3) > 0 Then Print Tab(38); Using ".###"; B%(I, 3) / B%(I, 2);
 
-71 PRINT TAB(43); USING "####"; B%(I, 4);
+    71 Print Tab(43); Using "####"; B%(I, 4);
 
-72 PRINT TAB(48); USING "####"; B%(I, 5);
+    72 Print Tab(48); Using "####"; B%(I, 5);
 
-73  IF B%(I, 5) = 0 THEN PRINT TAB(53); ".000";
-	IF B%(I, 5) > 0 THEN PRINT TAB(53); USING ".###"; B%(I, 5) / B%(I, 4);
+    73 If B%(I, 5) = 0 Then Print Tab(53); ".000";
+    If B%(I, 5) > 0 Then Print Tab(53); Using ".###"; B%(I, 5) / B%(I, 4);
 
-74 PRINT TAB(58); USING "####"; B%(I, 6);
+    74 Print Tab(58); Using "####"; B%(I, 6);
 
-75 PRINT TAB(63); USING "####"; B%(I, 7);
+    75 Print Tab(63); Using "####"; B%(I, 7);
 
-76 PRINT TAB(68); USING "####"; B%(I, 8);
+    76 Print Tab(68); Using "####"; B%(I, 8);
 
-77 PRINT TAB(73); USING "####"; B%(I, 9)
+    77 Print Tab(73); Using "####"; B%(I, 9)
 
-1001 NEXT
-	COLOR 14: PRINT : PRINT "TOTALS-OFF";
+1001 Next
+Color 14: Print: Print "TOTALS-OFF";
 
-102 PRINT TAB(20); USING "##"; L%(0);
+102 Print Tab(20); Using "##"; L%(0);
 
-103 PRINT TAB(28); USING "####"; T%(5);
+103 Print Tab(28); Using "####"; T%(5);
 
-104 PRINT TAB(33); USING "####"; T%(6);
+104 Print Tab(33); Using "####"; T%(6);
 
-105 PRINT TAB(38); USING ".###"; T%(6) / T%(5);
+105 Print Tab(38); Using ".###"; T%(6) / T%(5);
 
-106 PRINT TAB(43); USING "####"; T%(7);
+106 Print Tab(43); Using "####"; T%(7);
 
-107 PRINT TAB(48); USING "####"; T%(8);
+107 Print Tab(48); Using "####"; T%(8);
 
-108 PRINT TAB(53); USING ".###"; T%(8) / T%(7);
+108 Print Tab(53); Using ".###"; T%(8) / T%(7);
 
-109 PRINT TAB(58); USING "####"; T%(9);
+109 Print Tab(58); Using "####"; T%(9);
 
-110 PRINT TAB(63); USING "####"; T%(10);
+110 Print Tab(63); Using "####"; T%(10);
 
-111 PRINT TAB(68); USING "####"; T%(11);
+111 Print Tab(68); Using "####"; T%(11);
 
-112 PRINT TAB(73); USING "####"; T%(12)
+112 Print Tab(73); Using "####"; T%(12)
 
-121 COLOR 11: PRINT "TOTALS-DEF";
+121 Color 11: Print "TOTALS-DEF";
 
-123 PRINT TAB(28); USING "####"; T%(19);
+123 Print Tab(28); Using "####"; T%(19);
 
-124 PRINT TAB(33); USING "####"; T%(20);
+124 Print Tab(33); Using "####"; T%(20);
 
-125 PRINT TAB(38); USING ".###"; T%(20) / T%(19);
+125 Print Tab(38); Using ".###"; T%(20) / T%(19);
 
-126 PRINT TAB(43); USING "####"; T%(21);
+126 Print Tab(43); Using "####"; T%(21);
 
-127 PRINT TAB(48); USING "####"; T%(22);
+127 Print Tab(48); Using "####"; T%(22);
 
-128 PRINT TAB(53); USING ".###"; T%(22) / T%(21);
+128 Print Tab(53); Using ".###"; T%(22) / T%(21);
 
-129 PRINT TAB(58); USING "####"; T%(23);
-	PRINT TAB(63); USING "####"; T%(24);
+129 Print Tab(58); Using "####"; T%(23);
+Print Tab(63); Using "####"; T%(24);
 
-131 PRINT TAB(68); USING "####"; T%(25);
+131 Print Tab(68); Using "####"; T%(25);
 
-132 PRINT TAB(73); USING "####"; T%(26)
-	COLOR 15: LOCATE 23: PRINT "HIT ANY KEY TO CONTINUE"
+132 Print Tab(73); Using "####"; T%(26)
+Color 15: Locate 23: Print "HIT ANY KEY TO CONTINUE"
 141 I$ = GetKeyPress$
-	CLS : COLOR T%(33), T%(34): PRINT T$(0); " "; T$(1): COLOR , 0
+Cls: Color T%(33), T%(34): Print T$(0); " "; T$(1): Color , 0
 
-151 LOCATE 3: COLOR 15: PRINT "NAME           STL  BLK 3FGA 3FGM  PCT   HI-GAME"
+151 Locate 3: Color 15: Print "NAME           STL  BLK 3FGA 3FGM  PCT   HI-GAME"
 
-152 LOCATE 4: FOR I = 0 TO 14
+152 Locate 4: For I = 0 To 14
 
-153 IF LEFT$(B$(I, 0), 3) = "XXX" THEN 200
+    153 If Left$(B$(I, 0), 3) = "XXX" Then 200
 
-154 COLOR 3: PRINT LEFT$(B$(I, 0), 14);
+    154 Color 3: Print Left$(B$(I, 0), 14);
 
-155 COLOR 7: PRINT TAB(15); USING "####"; B%(I, 11);
+    155 Color 7: Print Tab(15); Using "####"; B%(I, 11);
 
-156 PRINT TAB(20); USING "####"; B%(I, 12);
+    156 Print Tab(20); Using "####"; B%(I, 12);
 
-157 PRINT TAB(25); USING "####"; B%(I, 13);
+    157 Print Tab(25); Using "####"; B%(I, 13);
 
-158 PRINT TAB(30); USING "####"; B%(I, 14);
+    158 Print Tab(30); Using "####"; B%(I, 14);
 
-159 IF B%(I, 14) = 0 THEN PRINT TAB(35); ".000";
-	IF B%(I, 14) > 0 THEN PRINT TAB(35); USING ".###"; B%(I, 14) / B%(I, 13);
-	PRINT TAB(43); USING "####"; B%(I, 15)
-'161 PRINT TAB(53); USING "####"; B%(I, 16);
-'162 PRINT TAB(65); USING "####"; B%(I, 17)
+    159 If B%(I, 14) = 0 Then Print Tab(35); ".000";
+    If B%(I, 14) > 0 Then Print Tab(35); Using ".###"; B%(I, 14) / B%(I, 13);
+    Print Tab(43); Using "####"; B%(I, 15)
+    '161 PRINT TAB(53); USING "####"; B%(I, 16);
+    '162 PRINT TAB(65); USING "####"; B%(I, 17)
 
-200 NEXT
+200 Next
 
-201 COLOR 14: PRINT : PRINT "TOTALS-OFF";
+201 Color 14: Print: Print "TOTALS-OFF";
 
-202 PRINT TAB(15); USING "####"; T%(14);
+202 Print Tab(15); Using "####"; T%(14);
 
-203 PRINT TAB(20); USING "####"; T%(16);
+203 Print Tab(20); Using "####"; T%(16);
 
-204 PRINT TAB(25); USING "####"; T%(17);
-	PRINT TAB(30); USING "####"; T%(18);
+204 Print Tab(25); Using "####"; T%(17);
+Print Tab(30); Using "####"; T%(18);
 
-208 IF T%(18) = 0 THEN PRINT TAB(35); ".000"
-	IF T%(18) > 0 THEN PRINT TAB(35); USING ".###"; T%(18) / T%(17)
+208 If T%(18) = 0 Then Print Tab(35); ".000"
+If T%(18) > 0 Then Print Tab(35); Using ".###"; T%(18) / T%(17)
 
-221 COLOR 11: PRINT "TOTALS-DEF";
+221 Color 11: Print "TOTALS-DEF";
 
-223 PRINT TAB(15); USING "####"; T%(28);
+223 Print Tab(15); Using "####"; T%(28);
 
-224 PRINT TAB(20); USING "####"; T%(30);
-	PRINT TAB(25); USING "####"; T%(31);
+224 Print Tab(20); Using "####"; T%(30);
+Print Tab(25); Using "####"; T%(31);
 
-226 PRINT TAB(30); USING "####"; T%(32);
+226 Print Tab(30); Using "####"; T%(32);
 
-228 IF T%(32) = 0 THEN PRINT TAB(35); ".000"
-	IF T%(32) > 0 THEN PRINT TAB(35); USING ".###"; T%(32) / T%(31)
-	COLOR 15: PRINT : PRINT "VIEW AGAIN (Y/N)"
+228 If T%(32) = 0 Then Print Tab(35); ".000"
+If T%(32) > 0 Then Print Tab(35); Using ".###"; T%(32) / T%(31)
+Color 15: Print: Print "VIEW AGAIN (Y/N)"
 251 I$ = GetKeyPress$
 
-252 IF UCASE$(I$) = "Y" THEN 2000
-	GOTO 100
+252 If UCase$(I$) = "Y" Then 2000
+GoTo 100
 
-SUB TITLE ()
-	COLOR , 0: KEY OFF: CLS
-	COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 27: COLOR 12
-	PRINT "BASKETBALL: THE PRO GAME V4.0"
-	LOCATE 24, 1: PRINT TAB(80); : LOCATE , 1
-	PRINT "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994"; TAB(70); LEFT$(TIME$, 5);
-	LOCATE 3, 1: COLOR 2, 0
-	COLOR 15: PRINT "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
-	  PRINT "     FOR TECHNICAL SUPPORT, CALL (615) 366-8088 OR SportGames@AOL.COM"
-	COLOR 10
-END SUB
+
+'------------------------------
+'      TITLE Subroutine
+'------------------------------
+' Displays window title / game copyright
+Sub TITLE ()
+    Color , 0: KEY Off: Cls
+    Color , 1: Locate 1, 1: Print Tab(80);: Locate , 27: Color 12
+    Print "BASKETBALL: THE PRO GAME V4.0"
+    Locate 24, 1: Print Tab(80);: Locate , 1
+    Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994"; Tab(70); Left$(Time$, 5);
+    Locate 3, 1: Color 2, 0
+    Color 15: Print "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
+    Print "     FOR TECHNICAL SUPPORT, CALL (615) 366-8088 OR SportGames@AOL.COM"
+    Color 10
+End Sub
 
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'
