@@ -64,7 +64,6 @@ Contact me directly if interested in contributing. Only considering people who s
 - [Lance Haffner Sports Sims](https://www.facebook.com/groups/115923978469802) Facebook group admin Philip Lupi, for his hard work keeping Lance's games alive and active with fans old and new.
 - [Manual images created by Cool Clips](http://search.coolclips.com/)
 - [Game icons created by Joseph Gan (Icon-Icons)](https://icon-icons.com/users/XHgnBHIfJk0ZlajSy0A0x/icon-sets/)
-- [Basketball-court icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/basketball-court)
 
 # License
 GNU GPL v3
