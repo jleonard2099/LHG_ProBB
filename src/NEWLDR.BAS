@@ -7,19 +7,20 @@ _Title "Basketball: The Pro Game - Stats / Standings"
 _AllowFullScreen
 
 DECLARE SUB TITLE ()
-DECLARE SUB CATEGORIES ()
 DECLARE SUB BUILDSTATS ()
 
-'Dim A$(15), A(15, 14), W0(15), W1(15)
-'Dim Z(15), Z1(15), ZA$(40)
-Dim Z1$(40), GM(40), GM1(40)
-Dim AL$(600), W0L(600), W1L(600), TT(40, 15), TT1(40, 15), TT$(40, 15), TT1$(40, 15)
-Dim TMA$(600), TP$(31), TP1$(39)
-Dim D$(1), menuItems$(4)
+Dim Shared A$, D$, Z1$
 
-    Dim Shared Z1$, D$, A$, A, W0, W1, JB, AL$, TMA$, GMA, Z, Z1
-Dim Shared Y, TS, TT, TT$, GM, TBN, K1, AL, TTS, TT1, TT1$, GM1
-Dim Shared W0L, W1L, F$
+Dim menuItems$(4), TP$(31), TP1$(39)
+Dim Shared A$(15), AL$(600), D$(1)
+Dim Shared TMA$(600), TT$(40, 15), TT1$(40, 15), Z1$(40)
+
+Dim Shared JB, TBN, TMR, TS, TT, YY
+
+Dim Shared A(15, 14), GM(40), GM1(40)
+Dim Shared TT(40, 15), TT1(40, 15)
+Dim Shared W0(15), W1(15), W0L(600), W1L(600), Z(15), Z1(15)
+
 
 Cls
 
@@ -42,6 +43,7 @@ Data OPP. OFFENSIVE REBOUNDS,OPP. DEFENSIVE REBOUNDS,OPP. TOTAL REBOUNDS,OPP. RE
 For I = 0 To 38: Read TP1$(I): Next
 
 5 Call TITLE
+ERASE menuItems$
 menuItems$(1) = "VIEW EXPANDED LEAGUE STATISTICS "
 menuItems$(2) = "VIEW EXPANDED STANDINGS         "
 menuItems$(3) = "RETURN TO LEAGUE LEADER MENU    "
@@ -80,6 +82,7 @@ Cls
 Call BUILDSTATS
 
 70 Call TITLE
+ERASE menuItems$
 menuItems$(1) = "VIEW INDIVIDUAL PLAYER LEADERS  "
 menuItems$(2) = "VIEW TEAM TOTALS                "
 menuItems$(3) = "RETURN TO LEAGUE LEADER MENU    "
@@ -834,18 +837,6 @@ Sub BUILDSTATS
     For I = 1 To 40: For I1 = 0 To 14: Write #1, TT(I, I1), TT$(I, I1): Next: Color 14: Locate 18, 45: TMR = TMR - 1: Print Using "#####"; TMR: Write #1, GM(I): Next
     For I = 1 To 40: For I1 = 0 To 14: Write #1, TT1(I, I1), TT1$(I, I1): Next: Color 14: Locate 18, 45: TMR = TMR - 1: Print Using "#####"; TMR: Write #1, GM1(I): Next
     Close #1
-End Sub
-
-
-'------------------------------
-'     CATEGORIES Subroutine
-'------------------------------
-' ...explanation...
-Sub CATEGORIES ()
-    'Hopefully this is an accurate number...(73)
-    'This was copied from Football as the sub
-    'wasn't here in the original source
-    For I = 0 To 73: Read TP$(I): Next
 End Sub
 
 

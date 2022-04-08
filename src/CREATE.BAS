@@ -31,8 +31,8 @@ Cls
     Z1$(X) = "XXX": Z2$(X) = "XXX": Z1%(X) = -1
 Next
 Call TITLE
-menuItems$(2) = "ADD / REVIEW LEAGUE MEMBERS     "
 menuItems$(1) = "CREATE / DEFINE NEW LEAGUES     "
+menuItems$(2) = "ADD / REVIEW LEAGUE MEMBERS     "
 menuItems$(3) = "RETURN TO STANDINGS/LEADERS MENU"
 SELECTION% = 1
 Count% = 3
@@ -300,7 +300,7 @@ Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
 Locate 7, 27: Input NY$
 If NY$ = "" Then GoSub 1102: GoTo 182
 YN$ = NY$
-For I = 1 To 200: teamItems$(I) = "": Next
+ERASE teamItems$
 
 1441 GoSub 1100
 

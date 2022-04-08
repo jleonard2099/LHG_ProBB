@@ -10,7 +10,7 @@ DECLARE SUB TITLE ()
 
 Dim Q$(377), T%(34), B%(14, 19), B$(14), OP%(100), OP$(100), HP%(100), HP$(100)
 Dim teamItems$(500), A$(15), A(15, 14), Z(15), Z1(15), W0(15), W1(15), AA$(15, 1), PS$(15), V%(500)
-Dim D$(1), menuItems$(4), L%(6), T$(0)
+Dim D$(1), menuItems$(3), L%(6), T$(0)
 Open "DEV.BAS" For Input As #2: For I = 0 To 1: Input #2, D$(I): Next
 Close #2
 
@@ -53,7 +53,7 @@ Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
 Locate 7, 27: Input NY$
 If NY$ = "" Then GoSub 1102: GoTo 182
 YN$ = NY$
-For I = 1 To 200: teamItems$(I) = "": Next
+ERASE teamItems$
 
 1441 GoSub 1100
 

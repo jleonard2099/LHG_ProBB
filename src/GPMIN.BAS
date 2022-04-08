@@ -7,7 +7,7 @@ _Title "Basketball: The Pro Game - Adjust Game Time"
 _AllowFullScreen
 
 10 Dim T$(4), B%(15, 19), B$(15, 1), T%(35), L%(6), Q$(377), v$(500), v%(500)
-Dim P$(3), D$(1), menuItems$(5)
+Dim P$(3), D$(1), menuItems$(3)
 
 20 P$(0) = "G": P$(1) = "F": P$(2) = "C"
 

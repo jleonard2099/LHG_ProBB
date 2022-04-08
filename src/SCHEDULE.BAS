@@ -67,6 +67,7 @@ FT$(1) = "3 TO MAKE 2 / 2 TO MAKE 1"
 FR$(0) = "ONLY IN BONUS OR ACT OF SHOOTING"
 FR$(1) = "SHOOT ON ALL FOULS              "
 Call TITLE
+ERASE menuItems$
 menuItems$(1) = "ENTER A NEW SCHEDULE                             "
 menuItems$(2) = "RETRIEVE/EDIT/PLAY AN EXISTING SCHEDULE          "
 menuItems$(3) = "EXTRACT ONE TEAM'S SCHEDULE FROM LEAGUE SCHEDULE "
@@ -496,7 +497,7 @@ Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
 Locate 7, 27: Input NY$
 If NY$ = "" Then GoSub 1102: GoTo 730
 YN$ = NY$
-For I = 1 To 200: teamItems$(I) = "": Next
+ERASE teamItems$
 GoSub 1100
 
 730 If BO% = 1 Then BO% = 0: GoTo 725
@@ -847,6 +848,7 @@ Return
 
 4500 'BOXSCORE MAINTENANCE
 Call TITLE
+ERASE menuItems$
 menuItems$(1) = "SET PARAMETERS TO SAVE SPECIAL EVENTS BOXSCORES  "
 menuItems$(2) = "ACCESS USER SAVED AND SPECIAL EVENTS BOXSCORES   "
 menuItems$(3) = "DELETE ALL SCHEDULE GENERATED BOXSCORES          "

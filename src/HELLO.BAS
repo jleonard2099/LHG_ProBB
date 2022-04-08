@@ -11,7 +11,7 @@ _AllowFullScreen
 DefInt A-Z
 DECLARE FUNCTION PadRight$ (X$, Length)
 
-Dim D$(3), menuItems$(18)
+Dim D$(3), menuItems$(9)
 Dim A$(1 To 15)
 
 Open "DEV.BAS" For Input As #1
@@ -27,6 +27,7 @@ If A$(1) = "3" Then A$(1) = "": GoTo 800
 If A$(1) = "4" Then A$(1) = "": GoTo 750
 
 1 Call TITLE
+ERASE menuItems$
 menuItems$(1) = "PLAY SINGLE GAME                "
 menuItems$(2) = "TEAM MANAGEMENT / ORGANIZATION  "
 menuItems$(3) = "REPLAY STATISTICS AND REPORTS   "
@@ -119,6 +120,7 @@ If X$ <> "Y" GoTo Done 'insist on either Y or N or up-arrow
 GoTo 1
 
 700 Call TITLE
+ERASE menuItems$
 menuItems$(1) = "INPUT A NEW TEAM              "
 menuItems$(2) = "EDIT AN EXISTING TEAM         "
 menuItems$(3) = "PRINT TEAM ROSTER / REPORT    "
@@ -154,6 +156,7 @@ If SELECTION% = 7 Then Run "GPMIN.EXE"
 If SELECTION% = 8 Then 1
 
 750 Call TITLE
+ERASE menuItems$
 menuItems$(1) = "VIEW / PRINT COMPILED STATISTICS "
 menuItems$(2) = "ENCYCLOPEDIA/ TEAM REPLAY OPTIONS"
 menuItems$(3) = "COMPARE REPLAY STATS TO ACTUAL   "
@@ -184,6 +187,7 @@ If SELECTION% = 4 Then Run "MERGE.EXE"
 If SELECTION% = 5 Then 1
 
 800 Call TITLE
+ERASE menuItems$
 menuItems$(1) = "CREATE/ EDIT A LEAGUE         "
 menuItems$(2) = "UPDATE TOP 10'S/ STANDINGS    "
 menuItems$(3) = "VIEW/ PRINT TOP 10'S/STANDINGS"
@@ -240,7 +244,7 @@ Sub TITLE ()
     Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1997"; Tab(70); Left$(Time$, 5);
     Locate 3, 1: Color 2, 0
     Color 15: Print "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
-    Print "       FOR TECHNICAL SUPPORT, CALL (800) 477-7032 OR ecciLR@AOL.COM"
+    Print "       FOR TECHNICAL SUPPORT, CALL (800) 477-7032 OR SportGames@AOL.COM"
     Color 10
 End Sub
 

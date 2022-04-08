@@ -10,7 +10,7 @@ DefInt A-Z
 DECLARE SUB TITLE ()
 
 Dim L%(1, 6), T%(1, 34), B%(1, 14, 19), B$(1, 14, 1), A$(1, 4), Q$(377), V$(500), V%(500)
-Dim YR$(52), LG%(52, 5), LT%(14, 34), menuItems$(3), D$(2), YN$(2)
+Dim YR$(52), LG%(52, 5), LT%(14, 34), menuItems$(4), D$(2), YN$(2)
 Dim TTL(34) As Single, Y As Long
 GoSub 8500
 
