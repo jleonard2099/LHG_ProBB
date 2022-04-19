@@ -46,7 +46,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-Call box0(7, 24, 16, 57, 2, 31)
+CALL box0(7, 24, 16, 57, 2,  15, 1)
     
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -138,7 +138,7 @@ HiLiteFGColr% = 0: HiLiteBGColr% = 7
 Spacing% = 1
 Row% = 8
 Column% = 27
-Call box0(7, 26, 16, 57, 2, 31)
+CALL box0(7, 26, 16, 57, 2,  15, 1)
     
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -172,7 +172,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-Call box0(7, 24, 13, 58, 2, 31)
+CALL box0(7, 24, 13, 58, 2,  15, 1)
     
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -205,7 +205,7 @@ HiLiteFGColr% = 0: HiLiteBGColr% = 7
 Spacing% = 1
 Row% = 8
 Column% = 26
-Call box0(7, 25, 15, 56, 2, 31)
+CALL box0(7, 25, 15, 56, 2,  15, 1)
     
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%

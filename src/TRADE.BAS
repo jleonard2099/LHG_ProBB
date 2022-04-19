@@ -30,7 +30,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-Call box0(7, 24, 10, 49, 2, 31)
+CALL box0(7, 24, 10, 49, 2,  15, 1)
     
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -46,10 +46,10 @@ If SELECTION% = 1 Then 2111
 Color 15, 0: Cls
 JJ = 7
 Locate 6, 8: Color 15, 4
-Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
-Print " º"; String$(61, 32); "º ";: Next
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
 Locate 7 + JJ, 8
-Print " Ó"; String$(61, 196); "½ ";: Locate 7, 32
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
 Locate , 12: Print "ENTER DISK ID FOR TEAM A: ": Print
 Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
 Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -85,10 +85,10 @@ Cls
 Color 15, 0: Cls
 JJ = 7
 Locate 6, 8: Color 15, 4
-Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
-Print " º"; String$(61, 32); "º ";: Next
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
 Locate 7 + JJ, 8
-Print " Ó"; String$(61, 196); "½ ";: Locate 7, 32
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
 Locate , 12: Print "ENTER DISK ID FOR TEAM B: ": Print
 Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
 Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -371,7 +371,8 @@ Return
 9150 Locate 6, 8: Color T%(J, 33), T%(J, 34)
 Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
 For II = 1 To JJ: Locate 6 + II, 8
-Print " º"; String$(61, 32); "º ";: Next
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
 Locate 7 + JJ, 8
 Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7
 Return

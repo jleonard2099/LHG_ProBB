@@ -29,7 +29,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-Call box0(7, 24, 10, 55, 2, 31)
+CALL box0(7, 24, 10, 55, 2,  15, 1)
     
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -39,8 +39,8 @@ Color , 0
 If SCANCODE% = 27 Or SELECTION% = 2 Then Run "NEWLDR.EXE"
 
 2500 Spec$ = D$(1) + "*.TMS": GoSub 1440
-LG$ = F$
-Open D$(1) + F$ + ".TMS" For Input As #2
+LG$ = targetFile$
+Open D$(1) + targetFile$ + ".TMS" For Input As #2
 Input #2, LG$
 Input #2, D1$: Input #2, D2$: Input #2, D3$: Input #2, D4$
 For X = 1 To 40
@@ -299,13 +299,13 @@ GoTo 2300
 1440 null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 Count% = DirCount%
 If Count% = 0 Then 4600
-ReDim F$(0 To Count%)
+ReDim leagueFiles$0 To Count%)
 For X = 1 To Count%
-    F$(X) = Space$(12)
+    leagueFiles$X) = Space$(12)
 Next
-F$(0) = Spec$
-Call ReadFile(F$())
-'CALL SortStr(VARPTR(F$(1)), Count%, 0)
+leagueFiles$0) = Spec$
+Call ReadFile(leagueFiles$))
+'CALL SortStr(VARPTR(leagueFiles$1)), Count%, 0)
 
 1445 Cls
 Color , 1
@@ -328,20 +328,20 @@ Print "ENTER";: Color 15
 Print "-SELECTS LEAGUE";
 
 _MouseShow "DEFAULT"
-MAMenu F$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+MAMenu leagueFiles$), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If ExitCode% = 27 Then 2300
-F$ = F$(SELECTION%)
-Locate 2, 33: Print F$
+targetFile$ = leagueFiles$SELECTION%)
+Locate 2, 33: Print targetFile$
 Locate , 33: Print "ANY CHANGE (YN)";
 Color 15, 0
 3912 I$ = GetKeyPress$
 If UCase$(I$) = "Y" Then 1445
 
-3913 F$ = RTrim$(F$)
-F$ = Left$(F$, Len(F$) - 4)
-LG$ = F$
+3913 targetFile$ = RTrim$(targetFile$)
+targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
+LG$ = targetFile$
 Return
 
 4600 Locate 10, 8
