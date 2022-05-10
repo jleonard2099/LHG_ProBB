@@ -1,3 +1,4 @@
+$Debug
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 DECLARE SUB TITLE ()
@@ -9,11 +10,15 @@ _AllowFullScreen
 
 Cls
 
-Dim O%(100), O$(100), T%(100), H$(100), Z1$(40), HW(50), AW(50), HL(50), AL(50), R1(50), R2(50), R3(50), R4(50)
-Dim Q$(377), T(34), B$(14), teamItems$(500), VV%(500), Z2$(40)
-'Dim ZA$(40), B%(14, 19), A$(14, 1), TM1$(40), OPP$(100), Z1%(40), Z3$(40)
-Dim TAW(40), DV$(4), THW(40), menuItems$(3), THL(40), TAL(40), TR3(40), TR4(40), D$(1)
-Dim TR1(40), TR2(40), QQ$(1)
+Dim B$(14), D$(1), DV$(4), O$(100), H$(100), menuItems$(3)
+Dim Q$(377), QQ$(1), teamItems$(500), Z1$(40), Z2$(40)
+
+Dim AL(50), AW(50), HL(50), HW(50), R1(50), R2(50), R3(50), R4(50)
+Dim T(34), TAL(40), TAW(40), THL(40), THW(40)
+'Dim ZA$(40), B%(14, 19), A$(14, 1), TM1$(40), OPP$(100), Z3$(40)
+Dim TR1(40), TR2(40), TR3(40), TR4(40)
+
+Dim O%(100), T%(100), VV%(500), Z1%(40)
 
 Open "DEV.BAS" For Input As #2
 For I = 0 To 1: Input #2, D$(I): Next
@@ -32,7 +37,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-CALL box0(7, 24, 10, 48, 2,  15, 1)
+Call box0(7, 24, 10, 48, 2, 15, 1)
     
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -487,7 +492,7 @@ Color 15, 0
 
 If NY$ = "" Then GoSub 1102: GoTo 3060
 YN$ = NY$
-ERASE teamItems$
+Erase teamItems$
 GoSub 1101
 
 3060 If BO% = 1 Then BO% = 0: GoTo 3056
@@ -647,7 +652,7 @@ Color 15, 0
 If UCase$(I$) = "Y" Then 1445
 
 3913 targetFile$ = RTrim$(targetFile$)
-targetFile$ = Left$(targetFile$, Len(F$) - 4)
+targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
 Return
 
 4600 Locate 10, 8

@@ -477,28 +477,53 @@ XS = 1
 P2(0) = 0
 P2(1) = 0
 X = 0
+
 U$ = "END OF QUARTER!"
-If PB% = 0 Then Call DELAY
-If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+Select Case PB%
+    Case 0: Color 7, 0: Call WINDEX: Print U$
+    Case 1: If displayPause > 0 Then Call WINDEX: Print U$ ': Call MOREDELAY
+End Select
 GoSub 178
+
 If H < 5 And U5 <> 0 Then GoSub 175
 If H < 5 Then GoSub 159: B = -1: GoSub 220: T = 720: Call UPDATESCREEN: GoTo 250
 GoSub 159
-If H = 5 Then U$ = "END OF REGULATION"
-If H = 5 And PB% = 0 Then Call DELAY
-If H = 5 And PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
-If S(0, 0) = S(1, 0) And PB% = 0 Then U$ = "OVERTIME !!!": Call DELAY
-If S(0, 0) = S(1, 0) And PB% = 1 Then Call WINDEX: Print "OVERTIME !!!": Call MOREDELAY
-If S(0, 0) = S(1, 0) Then 190
-I$ = GetKeyPress$
+
+If H = 5 Then
+    U$ = "END OF REGULATION"
+    Select Case PB%
+        Case 0: Color 7, 0: Call WINDEX: Print U$
+        Case 1: If displayPause > 0 Then Call WINDEX: Print U$ ': Call MOREDELAY
+    End Select
+End If
+Locate 2, 31: Print "END OF REGULATION"
+
+If S(0, 0) = S(1, 0) Then
+    U$ = "OVERTIME !!!"
+    Select Case PB%
+        Case 0: Color 7, 0: Call WINDEX: Print U$
+        Case 1: Call WINDEX: Print U$: Call MOREDELAY
+    End Select
+    GoTo 190
+End If
+
+If Not (AP = 1 And U5 = 2) Then
+    I$ = GetKeyPress
+End If
 GoTo 8400
 
 175 If U5 = 1 Then P9 = CT: Call COMPUTERSUBS
 If U5 = 2 Then P9 = 0: Call COMPUTERSUBS: P9 = 1: Call COMPUTERSUBS
 Return
 
-178 If H = 3 And PB% = 0 Then U$ = "HALFTIME!": Call DELAY: GoSub 8515
-If H = 3 And PB% = 1 Then Call WINDEX: Print "HALFTIME!": GoSub 8515
+178 If H = 3 Then
+    U$ = "HALFTIME!"
+    Select Case PB%
+        Case 0: Color 7, 0: Call WINDEX: Print U$
+        Case 1: Call WINDEX: Print U$: Call MOREDELAY
+    End Select
+    GoSub 8515
+End If
 Return
 
 190 T1(0) = T1(0) + 1: T1(1) = T1(1) + 1: T = 300: ZF(0) = 0: ZF(1) = 0: Call UPDATESCREEN: B = -1: GoSub 220: GoTo 250
@@ -560,7 +585,11 @@ P = Int(Rnd(1) * 2): JB = P
 252 If P = 0 Then D = 1
 If P = 1 Then D = 0
 GoSub 3000: GoSub 210
-If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+
+' removed this before GOTO 170:
+' Call UPDATESCREEN:
+If T <= 0 Then TE = T: GoSub 365: T = 0: GoTo 170
+
 GoSub 1033
 If H = 1 Or H > 4 Then
     If PB% = 0 Then U$ = B$(JB, 0) + " GETS THE JUMP": Call DELAY
@@ -630,7 +659,11 @@ GoSub 1033
 T = T - 4
 TE = 4
 GoSub 365
-If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+
+' removed this before GOTO 170:
+' Call UPDATESCREEN:
+If T <= 0 Then TE = T: GoSub 365: GoTo 170
+
 Call UPDATESCREEN
 GoTo 670
 
@@ -817,7 +850,9 @@ Call DELAY
 T0(P) = T0(P) + 1
 Call UPDATESCREEN
 C1 = 2: P9 = D
-If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+' removed this before GOTO 170:
+' Call UPDATESCREEN:
+If T <= 0 Then TE = T: GoSub 365: GoTo 170
 GoSub 3000: FB% = 1: GoTo 300
 
 515 GoSub 210: GoSub 1033: A(P, B1(P, B), 23) = A(P, B1(P, B), 23) + 1: T0(P) = T0(P) + 1
@@ -833,11 +868,18 @@ GoSub 729
 Call MOREDELAY
 Call UPDATESCREEN
 Locate 10, 1
-If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+
+' removed this before GOTO 170:
+' Call UPDATESCREEN:
+If T <= 0 Then TE = T: GoSub 365: GoTo 170
 GoSub 3000: GoSub 220: GoTo 300
 
 520 GoSub 210
-If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+
+' removed this before GOTO 170:
+' Call UPDATESCREEN:
+If T <= 0 Then TE = T: GoSub 365: GoTo 170
+
 If PZ% = 4 And F3S% <= 0 Then F3S% = 3
 If displayPause = 0 Then 529
 If F > 70 And FB% = 1 And PASS% = 1 Then PT% = 6: PZ% = 8: Call MAKEPBP: Call DELAY: GoTo 529
@@ -971,7 +1013,11 @@ GoSub 1033
 546 T = T - 4
 TE = 4
 GoSub 365
-If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+
+' removed this before GOTO 170:
+' Call UPDATESCREEN:
+If T <= 0 Then TE = T: GoSub 365: GoTo 170
+
 Call UPDATESCREEN
 GoTo 670
 
@@ -1056,13 +1102,19 @@ GoSub 1033
 T = T - 4
 TE = 4
 GoSub 365
-If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+
+' removed this before GOTO 170:
+' Call UPDATESCREEN:
+If T <= 0 Then TE = T: GoSub 365: GoTo 170
 Call UPDATESCREEN: GoSub 3000: GoSub 810: GoSub 260: GoTo 300
 
 565 GoSub 630
 
 566 If P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then 570
-If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+
+' removed this before GOTO 170:
+' Call UPDATESCREEN:
+If T <= 0 Then TE = T: GoSub 365: GoTo 170
 If FR% = 0 Then
     GoSub 220
     GoSub 4090
@@ -1103,7 +1155,11 @@ If S <= FX% And PB% = 1 Then Call MADEFT
 If S > FX% And PB% = 0 Then Call BADFT
 If S > FX% And PB% = 1 Then Call MISSFT
 LT = 0
-If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+
+' removed this before GOTO 170:
+' Call UPDATESCREEN:
+If T <= 0 Then TE = T: GoSub 365: GoTo 170
+
 If S > FX% Then 650
 GoSub 3000
 U$ = B$(P, 0) + " BALL AFTER SCORE"
@@ -1130,7 +1186,11 @@ GoSub 630
 P2(D) = P2(D) - 1
 B = W5
 If P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then 570
-If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+
+' removed this before GOTO 170:
+' Call UPDATESCREEN:
+If T <= 0 Then TE = T: GoSub 365: GoTo 170
+
 U$ = "OFFENSIVE FOUL"
 If PB% = 0 Then Call DELAY
 If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
@@ -1140,7 +1200,11 @@ GoSub 871: B = 6: Call DELAY
 T0(D) = T0(D) + 1: Call UPDATESCREEN: GoSub 220: GoSub 260: GoTo 300
 
 584 IN = 99: GoSub 210
-If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+
+' removed this before GOTO 170:
+' Call UPDATESCREEN:
+If T <= 0 Then TE = T: GoSub 365: GoTo 170
+
 C1 = 2: P9 = D
 U$ = "DESIGNATED FOULER (0-4)"
 Call SELECTPBP
@@ -1196,7 +1260,10 @@ For F3 = 1 To 3
     If F3 = 2 And (RT% = 0 Or RT% = 1 And (P2(D) <= NB% And H <= 4 Or P2(D) <= 3 And H > 4)) Then 596
 Next F3
 
-596 If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+' removed this before GOTO 170:
+' Call UPDATESCREEN:
+596 If T <= 0 Then TE = T: GoSub 365: GoTo 170
+
 If S > A(P, B1(P, B), 1) Then 650
 GoSub 3000
 U$ = B$(P, 0) + " BALL AFTER SCORE"
@@ -1265,7 +1332,10 @@ For F3 = 1 To 2
     If F3 = 1 And (RT% = 0 Or RT% = 1 And (P2(D) <= NB% And H <= 4 Or P2(D) <= 3 And H > 4)) Then 624
 Next F3
 
-624 If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+' removed this before GOTO 170:
+' Call UPDATESCREEN:
+624 If T <= 0 Then TE = T: GoSub 365: GoTo 170
+
 X = 99: If S > FX% Then 670
 GoSub 3000
 U$ = B$(P, 0) + " BALL AFTER SCORE"
@@ -1333,7 +1403,7 @@ GoSub 795: GoTo 800
 
 670 A6 = 1: P6 = 0: A4 = 0: D6 = 0: GoSub 1033: GoTo 700
 
-698 If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN
+698 If T <= 0 Then TE = T: GoSub 365 ': T = 0: Call UPDATESCREEN
 Return
 
 700 S = 0: A4 = 0: D6 = 0: R0 = Int(Rnd(1) * 100) + 1
@@ -1427,7 +1497,11 @@ R3(P) = R3(P) + 1: Call UPDATESCREEN
 U$ = AA$(P, B1(P, B), 0) + " HAS THE OFFENSIVE REBOUND"
 If PB% = 0 And displayPause <> 0 Then Call DELAY
 If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Print "FOR " + B$(P, 0): Call MOREDELAY
-If T <= 0 Then TE = T: GoSub 365: T = 0: Call UPDATESCREEN: GoTo 170
+
+' removed this before GOTO 170:
+' Call UPDATESCREEN:
+If T <= 0 Then TE = T: GoSub 365: GoTo 170
+
 PB$ = AA$(P, B1(P, B), 0)
 R0 = Int(Rnd(1) * 10) + 1: GoSub 920
 If H > 4 Or H = 4 And T <= 120 Then 765
@@ -1925,7 +1999,11 @@ Data -6,-7,-8,-8,-8,-9,-10,-11,-12
 '------------------------------
 ' ...explanation...
 Sub BOGUS (X)
-    If X = 0 Then I$ = GetKeyPress$
+    If X = 0 Then
+        If Not (AP = 1 And U5 = 2) Then
+            I$ = GetKeyPress
+        End If
+    End If
 End Sub
 
 
@@ -1952,10 +2030,9 @@ Sub BOX2FILE ()
         If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) Then Print #2, Tab(32); Str$(S(I, 6));
         If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) Then Print #2, Tab(32); "- "; S(I, 0): _Continue
         Print #2, Tab(35); "- "; S(I, 0)
-
     Next I
 
-    For I0 = 0 To 1
+    For I = 0 To 1
         Print #2,: Print #2, B$(I, 0)
         Print #2, "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
         For I1 = 0 To 14
@@ -2020,7 +2097,7 @@ Sub BOX2FILE ()
 
             If X = 0 Then Cls
         End If
-    Next I0
+    Next I
 
     Print #2, Chr$(12)
     Close 2
@@ -3309,11 +3386,11 @@ Sub DELAY ()
     'Original code that was modified:
     '    If displayPause = 0 Or PB% = 1 Then
     If displayPause > 0 Or PB% = 0 Then
-    
+
         '-- Shouldn't we PadRight instead to 38 length
         2249 If Len(U$) < 38 Then U$ = U$ + " ": GoTo 2249
         U$ = Left$(U$, 38)
-    
+
         Locate 8, 1
 
         If NL% = 1 Then A1$ = U$: VG(1) = T(P, 33): VH(1) = T(P, 34)
@@ -3340,9 +3417,9 @@ Sub DELAY ()
             VG(8) = T(P, 33)
             VH(8) = T(P, 34)
         End If
-        
+
         NL% = NL% + 1
-        
+
         Color VG(1), VH(1): Print A1$
         Color VG(2), VH(2): Print B1$
         Color VG(3), VH(3): Print C1$
@@ -3352,9 +3429,11 @@ Sub DELAY ()
         Color VG(7), VH(7): Print G1$
         Color VG(8), VH(8): Print H1$
         Color 15, 0
-        
+
         _Delay displayPause
+
     End If
+
 End Sub
 
 
@@ -4492,14 +4571,14 @@ Sub UPDATESCREEN ()
 '------------------------------
 ' ...explanation...
 Sub WINDEX ()
-    If displayPause = 0 Then 4094
+    'If displayPause > 0 Then 4094
     For I = 8 To 15
         Locate I, 1
-        Print "                                      "
+        Print Space$(38);
     Next I
+    'End If
     Locate 8, 1
 
-    4094 Rem
 End Sub
 
 
@@ -4508,9 +4587,10 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub RECORDSCHECK ()
-    'Dim RC$(50, 4), REC(50, 2) As Single, TRC$(125, 3), TREC(125, 2) As Single
-    'Dim V8(1, 14)
-    'Dim SITE$(1)
+    'Dim RC$(50, 4), REC(50, 2) As Single
+    Dim TRC$(125, 3), TREC(125, 2) As Single
+    Dim V8(1, 14)
+    Dim SITE$(1)
     SITE$(0) = "AT": SITE$(1) = "VS."
     If Not _FileExists(P$(1) + "RECORDS.GAM") Then
         TREC(2, 0) = 999

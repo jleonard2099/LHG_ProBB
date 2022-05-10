@@ -1,3 +1,4 @@
+$Debug
 '$INCLUDE: 'Config.BI'
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
@@ -9,12 +10,12 @@ _AllowFullScreen
 
 DECLARE SUB TITLE ()
 
-Dim T$(40), O1(40), O2(40)
 'Dim P$(260), TT(120, 4)
 'Dim S$(40), BA$(120), ER$(20)
+Dim DL(40, 20), O1(40), O2(40), Z(260), Z1(260)
 Dim P(40)
-Dim Z2$(260), Z3$(260), Z(260), Z1(260), OL$(40), OL(40, 20), DL$(40), DL(40, 20)
-Dim D$(1)
+Dim D$(1), DL$(40), OL$(40), OL(40, 20)
+Dim T$(40), Z2$(260), Z3$(260)
 
 H$ = " 1/2"
 Open "DEV.BAS" For Input As #1: For I = 0 To 1: Input #1, D$(I): Next: Close 1
@@ -140,7 +141,11 @@ For P = 11 To 20: If T$(P) = "" Or T$(P) = "*" Then 1267
     If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
     If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-    1266 Print "    "; T$(P); Tab(16);: Print Using "   ##   ##   #.###"; O1(P); O2(P); O1(P) / (O1(P) + O2(P));: Print BK$
+    1266 Print "    "; T$(P); Tab(16);
+
+    'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
+    Print Using "   ##   ##   #.###"; O1(P); O2(P); (O1(P) / (O1(P) + O2(P)));
+    Print BK$
 
 1267 Next P: GoSub 7900
 Cls
@@ -764,7 +769,7 @@ Return
 Locate 6, 8: Color 15, 1
 Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
 For II = 1 To JJ: Locate 6 + II, 8
-Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
 Next
 Locate 7 + JJ, 8
 Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7

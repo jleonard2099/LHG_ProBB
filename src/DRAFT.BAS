@@ -1,3 +1,4 @@
+$Debug
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
@@ -40,7 +41,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-CALL box0(7, 24, 11, 50, 2,  15, 1)
+Call box0(7, 24, 11, 50, 2, 15, 1)
     
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -383,10 +384,20 @@ GoTo 9100
 2000 Color 15, 0: Cls
 JJ = 7
 Locate 6, 8: Color 15, 4
-Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+'Print box top
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+'Print box sides
+For II = 1 To JJ
+    Locate 6 + II, 8
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
+
+'Print box bottom
 Locate 7 + JJ, 8
-Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+Locate 7, 32
 Locate , 12: Print "ENTER DISK ID: ": Print
 Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
 Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -394,7 +405,7 @@ Locate , 12: Print "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
 Locate 7, 27: Input NY$
 If NY$ = "" Then GoSub 1102: GoTo 2001
 YN$(0) = NY$
-For I = 1 To 500: V$(I) = "": Next
+Erase V$
 GoSub 1200
 
 2001 If BO% = 1 Then BO% = 0: GoTo 2000

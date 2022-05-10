@@ -33,7 +33,7 @@ See future revisions to this for possible links to bug trackers / etc. as they a
 ## Phase 1
 
 First work from this point will focus on further code efficiency and cleanup such as:
-- Removing extraneous lines and flow control (GOSUB/GOTO)
+- Removing extraneous lines and improve flow control (no GOSUB/GOTO)
 - Use of color constants for easier visualization of code
 - Make wording of menus and options consistent for all products
 
@@ -42,14 +42,15 @@ The following improvements to functionality are also planned:
 - Improve error handling to catch / provide helpful messages
 - Update key input handling / routines (handling Esc vs. Ctrl+C, etc.)
 
-Finally, the first efforts will be made to migrate the project to rely on fewer EXEs by converting several of the files to subroutines.
+Finally, the first efforts will be made to migrate the project to rely on fewer EXEs by converting supporting files to subroutines.
+This will prepare the way forward for cross-platform support.
 
 ## Phase 2
 This phase will involve these short and simple goals:
 - Updating the games to support modern rules
 - Bug fixes / etc. as reported by longtime users and playtesters
 
-##Phase 3
+## Phase 3
 This final phase will involve the following:
 - Updating code to work with databases instead of flat files.
 - Bringing modern interface concepts to the design (including GUI)

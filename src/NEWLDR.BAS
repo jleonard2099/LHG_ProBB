@@ -1,3 +1,4 @@
+$Debug
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
@@ -11,8 +12,8 @@ DECLARE SUB BUILDSTATS ()
 
 Dim Shared A$, D$, Z1$
 
-Dim menuItems$(4), TP$(31), TP1$(39)
-Dim Shared A$(15), AL$(600), D$(1)
+Dim Shared A$(15), AL$(600), D$(1), menuItems$(4)
+Dim TP$(31), TP1$(39)
 Dim Shared TMA$(600), TT$(40, 15), TT1$(40, 15), Z1$(40)
 
 Dim Shared JB, TBN, TMR, TS, TT, YY
@@ -25,7 +26,7 @@ Dim Shared W0(15), W1(15), W0L(600), W1L(600), Z(15), Z1(15)
 Cls
 
 ReDim TMM(600) As String * 15, TPP(600) As String * 15, TYP(600)
-ReDim AL(600, 14), GMA(600)
+ReDim Shared AL(600, 14), GMA(600)
 
 K = 0: K1 = 0: PK = 0: PK1 = 0: JB = 0: JP = 0: TBN = 0: TPN = 0: YY = 0: TMR = 1280: TS = 0: PV = 0
 
@@ -43,7 +44,7 @@ Data OPP. OFFENSIVE REBOUNDS,OPP. DEFENSIVE REBOUNDS,OPP. TOTAL REBOUNDS,OPP. RE
 For I = 0 To 38: Read TP1$(I): Next
 
 5 Call TITLE
-ERASE menuItems$
+Erase menuItems$
 menuItems$(1) = "VIEW EXPANDED LEAGUE STATISTICS "
 menuItems$(2) = "VIEW EXPANDED STANDINGS         "
 menuItems$(3) = "RETURN TO LEAGUE LEADER MENU    "
@@ -57,7 +58,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-CALL box0(7, 24, 11, 57, 2,  15, 1)
+Call box0(7, 24, 11, 57, 2, 15, 1)
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
@@ -82,7 +83,7 @@ Cls
 Call BUILDSTATS
 
 70 Call TITLE
-ERASE menuItems$
+Erase menuItems$
 menuItems$(1) = "VIEW INDIVIDUAL PLAYER LEADERS  "
 menuItems$(2) = "VIEW TEAM TOTALS                "
 menuItems$(3) = "RETURN TO LEAGUE LEADER MENU    "
@@ -96,7 +97,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-CALL box0(7, 24, 11, 57, 2,  15, 1)
+Call box0(7, 24, 11, 57, 2, 15, 1)
 
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -745,12 +746,12 @@ Locate 11 + J, 20: Print " " + Chr$(211); String$(30, 196); "½ ": Locate 11
 1440 null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 Count% = DirCount%
 If Count% = 0 Then 4600
-ReDim leagueFiles$0 To Count%)
+ReDim leagueFiles$(0 To Count%)
 For X = 1 To Count%
-    leagueFiles$X) = Space$(12)
+    leagueFiles$(X) = Space$(12)
 Next
-leagueFiles$0) = Spec$
-Call ReadFile(leagueFiles$))
+leagueFiles$(0) = Spec$
+Call ReadFile(leagueFiles$())
 'CALL SortStr(VARPTR(leagueFiles$1)), Count%, 0)
 
 1445 Cls
@@ -774,11 +775,11 @@ Print "ENTER";: Color 15
 Print "-SELECTS LEAGUE";
 
 _MouseShow "DEFAULT"
-MAMenu leagueFiles$), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+MAMenu leagueFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If ExitCode% = 27 Then 5
-targetFile$ = leagueFiles$SELECTION%)
+targetFile$ = leagueFiles$(SELECTION%)
 Locate 2, 33: Print targetFile$
 Locate , 33: Print "ANY CHANGE (YN)";
 Color 15, 0
@@ -821,9 +822,15 @@ Sub BUILDSTATS
         For I = 0 To 14
             If A$(I) = "XXX" Then 35
 
-            33 JB = JB + 1: AL$(JB) = A$(I): TBN = TBN + 1: TMA$(TBN) = B$: GMA(JB) = Y
-            K1 = 0: For I1 = 0 To 13: K1 = K1 + 1: AL(JB, K1) = A(I, I1)
-
+            33 JB = JB + 1
+            AL$(JB) = A$(I)
+            TBN = TBN + 1
+            TMA$(TBN) = B$
+            GMA(JB) = Y
+            K1 = 0
+            For I1 = 0 To 13
+                K1 = K1 + 1
+                AL(JB, K1) = A(I, I1)
             35 Next I1
             W0L(JB) = W0(I): W1L(JB) = W1(I)
         Next I

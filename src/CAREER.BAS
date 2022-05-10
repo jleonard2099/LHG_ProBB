@@ -6,12 +6,17 @@ _Title "Basketball: The Pro Game - Career Stats"
 '_Icon
 _AllowFullScreen
 
-Dim A$(62), A(62, 14), W0(62), W1(62), Z(15), Z1(15)
+Dim A(62, 14), BLYR(21), BL(21)
+Dim W0(62), W1(62), Z(15), Z1(15)
 'Dim ZR(15), Z1R(15), AR(62, 15), W0R(72), W1R(62)
-Dim AR$(62), BLYR(21), BL(21), BL$(21)
-Dim W0S(15, 62), W1S(15, 62), T%(34), Q$(500)
-Dim menuItems$(7), vv%(500), p$(2)
-ReDim teamItems$(500), ars(15, 62, 15)
+
+Dim A$(62), AR$(62), BL$(21), Q$(500)
+Dim menuItems$(7), p$(2), teamItems$(500)
+Dim W0S(15, 62), W1S(15, 62)
+
+Dim T%(34), vv%(500)
+
+ReDim ars(15, 62, 15)
 
 1 Cls: CH = 0: TMR = 945: TMR1 = 1875: NB = -1: NP = -1
 
@@ -37,7 +42,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-CALL box0(7, 24, 14, 59, 2,  15, 1)
+Call box0(7, 24, 14, 59, 2, 15, 1)
     
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -520,7 +525,7 @@ Color 15, 0
 
 If NY$ = "" Then GoSub 1102: GoTo 3060
 YN$ = NY$
-ERASE teamItems$
+Erase teamItems$
 GoSub 1100
 
 3060 If BO% = 1 Then BO% = 0: GoTo 3056
@@ -535,21 +540,28 @@ Return
 1100 NTMS = 0
 Open p$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
 Y1 = LOF(1)
+
 Field #1, 15 As Q$(0), 15 As Q$(1)
+
 For I = 0 To 6
     Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
 Next
+
 Field #1, 44 As X$, 2 As Q$(9)
+
 For I = 0 To 34
     Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
 Next
+
 For I = 0 To 14
     Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
     For I1 = 0 To 19
         Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
     Next
 Next
+
 Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+
 For I1 = 1 To Y1 / 1031
     Get #1, I1
     CK% = CVI(Q$(9))
@@ -633,7 +645,7 @@ Clear: GoTo 1
 Locate 6, 8: Color 15, 1
 Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
 For II = 1 To JJ: Locate 6 + II, 8
-Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
 Next
 Locate 7 + JJ, 8
 Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7

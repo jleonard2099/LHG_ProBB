@@ -1,3 +1,4 @@
+$Debug
 '$INCLUDE: 'Config.BI'
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
@@ -11,14 +12,21 @@ DefInt A-Z
 DECLARE SUB TITLE ()
 'DECLARE SUB QEdit (array$(), Ky$, Action, Ed AS EditInfo)
 
-Dim teamItems$(200), V%(200)
-Dim Q$(377), AP%(1)
+'-- 1400 is number of games that can be loaded???
+
+Dim AP%(1), e%(13), HS%(1400), V%(200), VS%(1400)
+
+Dim CM$(1), FR$(1), FT$(1), H$(20)
+Dim LC$(2), menuItems$(8), MO$(3)
+Dim P$(2), PO$(1), Q$(377), SC$(1)
+Dim teamItems$(200), TS$(1), TE$(2), U5$(4)
+Dim V$(20)
+
 'Dim A$(11), A%(18), LO$(1)
-Dim H$(20), V$(20), MO$(3), menuItems$(8)
-Dim HS%(1300), VS%(1300), P$(2), e%(13)
 'Dim Z1$(40), Z2$(40), Z2%(40)
-Dim TS$(1), SC$(1), U5$(4), TE$(2), CM$(1), LC$(2)
-Dim T(34), FT$(1), FR$(1), PO$(1)
+
+Dim T(34)
+
 Dim Y As Long, U6 As Single, M As Long
 Dim D As Long
 ' DIM Ed AS EditInfo              'create the editor's data structure
@@ -38,8 +46,8 @@ Next
 Data HH,CV,CH,CC: For X = 0 To 3: Read MO$(X): Next
 
 10 Color 7, 0: Cls
-ReDim YN$(1300, 1), NG%(1300, 18)
-ReDim DY(1300) As Long
+ReDim YN$(1400, 1), NG%(1400, 18)
+ReDim DY(1400) As Long
 Color 7, 0: Cls
 NG%(0, 8) = 0
 NG%(0, 3) = 1
@@ -67,7 +75,7 @@ FT$(1) = "3 TO MAKE 2 / 2 TO MAKE 1"
 FR$(0) = "ONLY IN BONUS OR ACT OF SHOOTING"
 FR$(1) = "SHOOT ON ALL FOULS              "
 Call TITLE
-ERASE menuItems$
+Erase menuItems$
 menuItems$(1) = "ENTER A NEW SCHEDULE                             "
 menuItems$(2) = "RETRIEVE/EDIT/PLAY AN EXISTING SCHEDULE          "
 menuItems$(3) = "EXTRACT ONE TEAM'S SCHEDULE FROM LEAGUE SCHEDULE "
@@ -85,7 +93,7 @@ Spacing% = 1
 Row% = 6
 Column% = 16
 
-CALL box0(5, 15, 13, 65, 2,  15, 1)
+Call box0(5, 15, 13, 65, 2, 15, 1)
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
@@ -111,8 +119,8 @@ Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
 'Print box sides
 For II = 1 To JJ
-Locate 6 + II, 8
-Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Locate 6 + II, 8
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
 Next
 
 'Print box bottom
@@ -330,8 +338,8 @@ Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
 'Print box sides
 For II = 1 To JJ
-Locate 6 + II, 8
-Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Locate 6 + II, 8
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
 Next
 
 'Print box bottom
@@ -402,8 +410,8 @@ Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
 'Print box sides
 For II = 1 To JJ
-Locate 6 + II, 8
-Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Locate 6 + II, 8
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
 Next
 
 'Print box bottom
@@ -442,11 +450,15 @@ Close 2
 350 ' *** SAVE SCHEDULE FILE ***
 
 351 If _FileExists(P$(0) + targetFile$ + ".SCD") Then Kill P$(0) + targetFile$ + ".SCD"
+
 Open P$(0) + targetFile$ + ".SCD" For Random As #1 Len = 48
+
 For X = 0 To 18
     Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
 Next
+
 Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+
 For I = 1 To AP%(0)
     For X = 0 To 18: LSet Q$(X + 1) = MKI$(NG%(I, X)): Next
     For X = 0 To 1: LSet Q$(20 + X) = YN$(I, X): Next
@@ -500,8 +512,8 @@ Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
 'Print box sides
 For II = 1 To JJ
-Locate 6 + II, 8
-Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Locate 6 + II, 8
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
 Next
 
 'Print box bottom
@@ -530,8 +542,8 @@ Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
 'Print box sides
 For II = 1 To JJ
-Locate 6 + II, 8
-Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Locate 6 + II, 8
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
 Next
 
 'Print box bottom
@@ -547,7 +559,7 @@ Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
 Locate 7, 27: Input NY$
 If NY$ = "" Then GoSub 1102: GoTo 730
 YN$ = NY$
-ERASE teamItems$
+Erase teamItems$
 GoSub 1100
 
 730 If BO% = 1 Then BO% = 0: GoTo 725
@@ -898,7 +910,7 @@ Return
 
 4500 'BOXSCORE MAINTENANCE
 Call TITLE
-ERASE menuItems$
+Erase menuItems$
 menuItems$(1) = "SET PARAMETERS TO SAVE SPECIAL EVENTS BOXSCORES  "
 menuItems$(2) = "ACCESS USER SAVED AND SPECIAL EVENTS BOXSCORES   "
 menuItems$(3) = "DELETE ALL SCHEDULE GENERATED BOXSCORES          "
@@ -914,7 +926,7 @@ HiLiteFGColr% = 0: HiLiteBGColr% = 7
 Spacing% = 1
 Row% = 6
 Column% = 16
-CALL box0(5, 15, 12, 65, 2,  15, 1)
+Call box0(5, 15, 12, 65, 2, 15, 1)
     
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -1086,7 +1098,7 @@ GoTo 2900
 Locate 6, 8: Color 15, 1
 Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
 For II = 1 To JJ: Locate 6 + II, 8
-Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
 Next
 Locate 7 + JJ, 8
 Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7
