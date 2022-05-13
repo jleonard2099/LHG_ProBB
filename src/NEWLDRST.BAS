@@ -29,7 +29,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-CALL box0(7, 24, 10, 55, 2,  15, 1)
+Call box0(7, 24, 10, 55, 2, 15, 1)
     
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -299,13 +299,13 @@ GoTo 2300
 1440 null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 Count% = DirCount%
 If Count% = 0 Then 4600
-ReDim leagueFiles$0 To Count%)
+ReDim leagueFiles$(0 To Count%)
 For X = 1 To Count%
-    leagueFiles$X) = Space$(12)
+    leagueFiles$(X) = Space$(12)
 Next
-leagueFiles$0) = Spec$
-Call ReadFile(leagueFiles$))
-'CALL SortStr(VARPTR(leagueFiles$1)), Count%, 0)
+leagueFiles$(0) = Spec$
+Call ReadFile(leagueFiles$())
+'CALL SortStr(VARPTR(leagueFiles$(1)), Count%, 0)
 
 1445 Cls
 Color , 1
@@ -328,11 +328,11 @@ Print "ENTER";: Color 15
 Print "-SELECTS LEAGUE";
 
 _MouseShow "DEFAULT"
-MAMenu leagueFiles$), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+MAMenu leagueFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If ExitCode% = 27 Then 2300
-targetFile$ = leagueFiles$SELECTION%)
+targetFile$ = leagueFiles$(SELECTION%)
 Locate 2, 33: Print targetFile$
 Locate , 33: Print "ANY CHANGE (YN)";
 Color 15, 0

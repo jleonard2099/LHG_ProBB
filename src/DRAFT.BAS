@@ -10,7 +10,7 @@ _AllowFullScreen
 DefInt A-Z
 DECLARE SUB TITLE ()
 
-Dim L%(1, 6), T%(1, 34), B%(1, 14, 19), B$(1, 14, 1), A$(1, 4), Q$(377), V$(500), V%(500)
+Dim L%(1, 6), T%(1, 34), B%(1, 14, 19), B$(1, 14, 1), A$(1, 4), Q$(377), teamItems$(500), V%(500)
 Dim YR$(52), LG%(52, 5), LT%(14, 34), menuItems$(4), D$(2), YN$(2)
 Dim TTL(34) As Single, Y As Long
 GoSub 8500
@@ -27,6 +27,7 @@ For I = 0 To 14
     For I1 = 0 To 19
         B%(0, I, I1) = 0
 Next: Next
+
 Call TITLE
 menuItems$(1) = "DRAFT A NEW TEAM         "
 menuItems$(2) = "DRAFT TO AN EXISTING TEAM"
@@ -42,7 +43,6 @@ Row% = 8
 Column% = 25
 
 Call box0(7, 24, 11, 50, 2, 15, 1)
-    
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
@@ -180,10 +180,10 @@ Next
 
 454 Locate 21, 1
 Color 14: Print "(1) ";: Color 15: Print "DRAFT PLAYER"
-Color 14: Print "(Z) ";: Color 15: Print "SAVE TEAM"
+Color 14: Print "(2) ";: Color 15: Print "SAVE TEAM"
 455 I$ = GetKeyPress$
 
-456 If UCase$(I$) = "Z" Then 1000
+456 If UCase$(I$) = "2" Then 1000
 
 457 If I$ = "1" Then 470
 
@@ -209,7 +209,7 @@ Locate , 12: Print "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
 Locate 7, 27: Input NY$
 If NY$ = "" Then GoSub 1102: GoTo 182
 YN$(1) = NY$
-For I = 1 To 500: V$(I) = "": Next
+Erase teamItems$
 GoSub 1100
 
 182 If BO% = 1 Then BO% = 0: GoTo 1440
@@ -287,7 +287,7 @@ For I1 = 1 To Y / 1031
     CK% = CVI(Q$(9))
     If CK% <> 999 Then 1103
     NT = NT + 1
-    V$(NT) = Q$(0): V%(NT) = I1
+    teamItems$(NT) = Q$(0): V%(NT) = I1
 
 1103 Next
 Close 1
@@ -309,7 +309,7 @@ Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
 Print "ENTER";: Color 15: Print "-SELECTS TEAM";
     
 _MouseShow "DEFAULT"
-120 MAMenu V$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+120 MAMenu teamItems$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If EXITCODE% = 27 Then BO% = 1: Return
@@ -346,10 +346,11 @@ For I1 = 1 To Y / 1031
     CK% = CVI(Q$(9))
     If CK% <> 999 Then 1203
     NT = NT + 1
-    V$(NT) = Q$(0): V%(NT) = I1
+    teamItems$(NT) = Q$(0): V%(NT) = I1
 
 1203 Next
 Close 1
+
 TS% = Int((NT - 1) / 80)
 
 1202 SELECTION% = 1
@@ -369,7 +370,7 @@ Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
 Print "ENTER";: Color 15: Print "-SELECTS TEAM";
     
 _MouseShow "DEFAULT"
-220 MAMenu V$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+220 MAMenu teamItems$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If EXITCODE% = 27 Then BO% = 1: Return
@@ -405,7 +406,7 @@ Locate , 12: Print "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
 Locate 7, 27: Input NY$
 If NY$ = "" Then GoSub 1102: GoTo 2001
 YN$(0) = NY$
-Erase V$
+Erase teamItems$
 GoSub 1200
 
 2001 If BO% = 1 Then BO% = 0: GoTo 2000
