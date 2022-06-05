@@ -1,18 +1,14 @@
-'$INCLUDE: 'KeyInput.BI'
-'$INCLUDE: 'QPProEqu.BI'
+SUB ALIGN ()
+
+Dim alignA$(15), AN$(15), AR$(15)
+
+Dim AN(15, 14), AR(15, 14)
+Dim W0(15), W1(15), W0R(15), WR1(15), W0N(15), WN1(15)
+Dim Z(15), Z1(15), ZR(15), ZR1(15)
 
 _Title "Basketball: The Pro Game - Align Stats"
-''$ExeIcon:'./lhg_bbpro.ico'
-'_Icon
-_AllowFullScreen
 
-1 Cls
-
-5 Dim Z(15), Z1(15), A$(15), A(15, 14), W0(15), W1(15)
-
-7 Dim ZR(15), ZR1(15), AR$(15), AR(15, 14), W0R(15), WR1(15)
-
-8 Dim AN$(15), AN(15, 14), W0N(15), WN1(15)
+Cls
 
 12 Color 12, 0: Cls: Locate 2, 5: Print "ENTER COMPLETE PATH FOR TEAM STATS TO ALIGN"
 
@@ -24,9 +20,11 @@ _AllowFullScreen
 
 16 Locate , 5: Print "          D:\BASKET"
 
-20 For J = 10 To 13: Locate J
-
-21 Print "                                                              ": Next
+'-- can't this just be blank lines?
+20 For J = 10 To 13: 
+	Locate J
+	Print Space$(62)
+Next
 
 25 Color 10: Locate 10, 5: Line Input "ROAD STATS:     "; PR$
 
@@ -37,9 +35,9 @@ _AllowFullScreen
 28 I$ = GetKeyPress$
 29 If UCase$(I$) = "Y" Then 20
 
-45 Locate 15, 5: Print "                                                       "
+45 Locate 15, 5: Print Space$(55)
 
-46 Locate 16, 5: Print "                                                       "
+46 Locate 16, 5: Print Space$(55)
 
 47 Color 11: Locate 15, 5: Input "ENTER NAME OF STAT FILE (EX.- MINNESOT.90)"; Z$
 
@@ -48,7 +46,13 @@ _AllowFullScreen
 60 I$ = GetKeyPress$
 70 If UCase$(I$) = "Y" Then 45
 
-110 If Not _FileExists(PR$ + "\" + Z$) Then 950
+
+110 If Not _FileExists(PR$ + "\" + Z$) Then 
+	Cls: Locate 2, 10: Color 7: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
+	Print: Locate , 10: Line Input "HIT ENTER TO RE-ENTER INFORMATION"; DUMMY$
+	GoTo 12
+End If
+
 
 120 Open PR$ + "\" + Z$ For Input As #1
 
@@ -64,13 +68,19 @@ _AllowFullScreen
 
 160 Close #1
 
-210 If Not _FileExists(PC$ + "\" + Z$) Then 950
+
+210 If Not _FileExists(PC$ + "\" + Z$) Then 
+	Cls: Locate 2, 10: Color 7: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
+	Print: Locate , 10: Line Input "HIT ENTER TO RE-ENTER INFORMATION"; DUMMY$
+	GoTo 12
+End If
+
 
 220 Open PC$ + "\" + Z$ For Input As #1
 
 221 Input #1, B$
 
-222 For I = 0 To 14: Input #1, A$(I)
+222 For I = 0 To 14: Input #1, alignA$(I)
 
 223 For J = 0 To 13: Input #1, A(I, J): Next: Input #1, W0(I): Input #1, W1(I): Next
 
@@ -80,13 +90,30 @@ _AllowFullScreen
 
 260 Close #1
 
-400 GoTo 1000
+400 'GoTo 1000
+
+1000 Cls: Locate 1, 32: Color 12: Print "STAT ROSTERS"
+
+1001 Locate , 26: Color 15: Print "CURRENT  ";: Color 7: Print "             ROAD"
+
+1002 For I = O To 14: Locate I + 4, 22: Color 12: Print Using "##"; I;: Print " ";: Color 15: Print alignA$(I);: Color 12: Print Tab(44); Using "##"; I;: Print " ";: Color 7: Print AR$(I): Next
+
+1003 Color 11: Locate 22: Line Input "HIT ENTER TO ALIGN"; DUMMY$
+
+1004 'GoTo 1209
+
+1209 Color 11: Locate 22: Print "ALIGNING FILES . . .             "
+
+1212 'GoTo 404
 
 404 N = 0
 
+
+'-- Need to build a loop here
+
 405 For J = 0 To 14
 
-    410 If A$(N) = AR$(J) Then 420 Else GoTo 424
+    410 If alignA$(N) = AR$(J) Then 420 Else GoTo 424
 
     420 AN$(N) = AR$(J)
 
@@ -98,82 +125,63 @@ _AllowFullScreen
 
 425 N = N + 1
 
-426 If N = 15 Then GoTo 820 Else GoTo 405
+426 If N = 15 Then 
+		KKK = 1
+		1300 Locate 22: Print "                                                     "
 
-820 KKK = 1: GoTo 1300
+		1301 SEQ = 0
 
-821 Open PR$ + "\" + Z$ For Output As #1
-Write #1, BR$
+		1302 For K = 0 To 14
 
-822 For I = 0 To 14: Write #1, AN$(I)
+			1303 If AN$(K) = alignA$(K) Then 1305 Else GoTo 1304
 
-823 For J = 0 To 13: Write #1, AN(I, J): Next: Write #1, W0N(I): Write #1, WN1(I): Next
+			1304 SEQ = SEQ + 1
 
-824 For L = 0 To 15: Write #1, ZR(L): Next
+		1305 Next
 
-825 For L = 0 To 15: Write #1, ZR1(L): Next
+		1320 If SEQ = 0 Then 
+			1010 Cls: Locate 1, 32: Color 12: Print "STAT ROSTERS"
 
-860 Close #1
+			1011 Locate , 26: Color 15: Print "CURRENT  ";: Color 7: Print "             ROAD"
 
-869 Locate 19, 20: Print "                                                  "
+			1021 For I = O To 14: Locate I + 4, 22: Color 12: Print Using "##"; I;: Print " ";: Color 15: Print alignA$(I);: Color 12: Print Tab(44); Using "##"; I;: Print " ";: Color 7: Print AN$(I): Next
 
-880 Color 15: Cls: Locate 8, 20: Print "RE-ALIGNMENT COMPLETED"
+			1022 Color 11: Locate 22: Line Input "HIT ENTER TO ALIGN"; DUMMY$
 
-881 Print: Locate 12, 20: Color 12: Line Input "HIT ENTER TO CONTINUE"; DUMMY$
+			1023 'GoTo 821
 
-900 Run "MERGE.EXE"
+			821 Open PR$ + "\" + Z$ For Output As #1
+			Write #1, BR$
 
-950 Cls: Locate 2, 10: Color 7: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
+			822 For I = 0 To 14: Write #1, AN$(I)
 
-951 Print: Locate , 10: Line Input "HIT ENTER TO RE-ENTER INFORMATION"; DUMMY$
+			823 For J = 0 To 13: Write #1, AN(I, J): Next: Write #1, W0N(I): Write #1, WN1(I): Next
 
-952 GoTo 12
+			824 For L = 0 To 15: Write #1, ZR(L): Next
 
-1000 Cls: Locate 1, 32: Color 12: Print "STAT ROSTERS"
+			825 For L = 0 To 15: Write #1, ZR1(L): Next
 
-1001 Locate , 26: Color 15: Print "CURRENT  ";: Color 7: Print "             ROAD"
+			860 Close #1
 
-1002 For I = O To 14: Locate I + 4, 22: Color 12: Print Using "##"; I;: Print " ";: Color 15: Print A$(I);: Color 12: Print Tab(44); Using "##"; I;: Print " ";: Color 7: Print AR$(I): Next
+			869 Locate 19, 20: Print "                                                  "
 
-1003 Color 11: Locate 22: Line Input "HIT ENTER TO ALIGN"; DUMMY$
+			880 Color 15: Cls: Locate 8, 20: Print "RE-ALIGNMENT COMPLETED"
 
-1004 GoTo 1209
+			881 Print: Locate 12, 20: Color 12: Line Input "HIT ENTER TO CONTINUE"; DUMMY$
 
-1010 Cls: Locate 1, 32: Color 12: Print "STAT ROSTERS"
+		Else 
+			1400 Locate 20: Color 14: Print "WARNING !! - - ROAD STAT FILE CONTAINS PLAYERS NOT IN EXISTING STATS.  YOU MUST"
 
-1011 Locate , 26: Color 15: Print "CURRENT  ";: Color 7: Print "             ROAD"
+			1402 Print "CHANGE ROAD STAT FILE USING OPTION #6 ON GAME MENU BEFORE ATTEMPTING STAT MERGE."
 
-1021 For I = O To 14: Locate I + 4, 22: Color 12: Print Using "##"; I;: Print " ";: Color 15: Print A$(I);: Color 12: Print Tab(44); Using "##"; I;: Print " ";: Color 7: Print AN$(I): Next
+			1405 Locate 23, 30: Color 13: Line Input "HIT ENTER TO CONTINUE"; DUMMY$
 
-1022 Color 11: Locate 22: Line Input "HIT ENTER TO ALIGN"; DUMMY$
+		End If
+				
+	Else 
+		GoTo 405
+	End If
 
-1023 GoTo 821
+'-- Need to end the loop here
 
-1209 Color 11: Locate 22: Print "ALIGNING FILES . . .             "
-
-1212 GoTo 404
-
-1300 Locate 22: Print "                                                     "
-
-1301 SEQ = 0
-
-1302 For K = 0 To 14
-
-    1303 If AN$(K) = A$(K) Then 1305 Else GoTo 1304
-
-    1304 SEQ = SEQ + 1
-
-1305 Next
-
-1320 If SEQ = 0 Then 1010 Else GoTo 1400
-
-1400 Locate 20: Color 14: Print "WARNING !! - - ROAD STAT FILE CONTAINS PLAYERS NOT IN EXISTING STATS.  YOU MUST"
-
-1402 Print "CHANGE ROAD STAT FILE USING OPTION #6 ON GAME MENU BEFORE ATTEMPTING STAT MERGE."
-
-1405 Locate 23, 30: Color 13: Line Input "HIT ENTER TO CONTINUE"; DUMMY$
-
-1406 GoTo 900
-
-'$INCLUDE: 'KeyInput.BM'
-'$INCLUDE: 'QPProEqu.BM'
+END SUB

@@ -1,34 +1,24 @@
-'$INCLUDE: 'Config.BI'
-'$INCLUDE: 'KeyInput.BI'
-'$INCLUDE: 'QPProEqu.BI'
+SUB BLANK ()
+
+Dim H1$(40)
 
 _Title "Basketball: The Pro Game - Erase League"
-''$ExeIcon:'./lhg_bbpro.ico'
-'_Icon
-_AllowFullScreen
-
-DefInt A-Z
-
-'Dim O1(40), TM$(40), JS(46, 42) As Single, ZM%(46), NM$(46)
-Dim H1$(40), D$(2)
-'Dim PS$(40),BA$(40)
-'Dim DFT(40, 20) As Single, ER$(40), OFT(40, 20) As Single
-'Dim O2(40), Z2$(255), Z3$(255), Z1(255, 2) As Single, BAT(24), PIT(23)
-'Dim J As Single
-
-4 Open "DEV.BAS" For Input As #2
-For I = 0 To 1
-    Input #2, D$(I)
-Next
-Close 2
 
 5 Cls
+
 APP = 0
 
 4000 Spec$ = D$(1) + "*.LIB"
 null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 Count% = DirCount%
-If Count% = 0 Then 4500
+If Count% = 0 Then
+	Locate 10, 8
+	Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+	I$ = GetKeyPress$
+	Call CSMsgBox("", 0, Pass) 
+	Exit Sub
+End If
+
 ReDim leagueFiles$(0 To Count%)
 For X = 1 To Count%
     leagueFiles$(X) = Space$(12)
@@ -64,7 +54,7 @@ _MouseShow "DEFAULT"
 MAMenu leagueFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
-If ExitCode% = 27 Then 99
+If ExitCode% = 27 Then Exit Sub 'Run "HELLO.EXE"
 targetFile$ = leagueFiles$(SELECTION%)
 Locate 2, 33: Print targetFile$
 Locate , 33: Print "ANY CHANGE (YN)";
@@ -104,14 +94,4 @@ Close 2
 Cls
 GoTo 4000
 
-99 Run "HELLO.EXE"
-
-4500 Locate 10, 8
-Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-I$ = GetKeyPress$
-Call CSMsgBox("", 0, Pass)
-GoTo 99
-
-
-'$INCLUDE: 'KeyInput.BM'
-'$INCLUDE: 'QPProEqu.BM'
+END SUB

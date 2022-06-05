@@ -1,0 +1,38 @@
+'------------------------------
+'      TITLE Subroutine
+'------------------------------
+' Displays window title / game copyright
+Sub TITLE_HEADER ()
+    Color , 0
+	KEY Off
+	Cls
+    Color , 1
+	Locate 1, 1: Print Tab(80);: Locate , 27: Color 12
+    Print "BASKETBALL: THE PRO GAME V4.0"
+    Locate 3, 1: Color 2, 0
+End Sub
+
+'------------------------------
+'      TITLE Subroutine
+'------------------------------
+' Displays window title / game copyright
+Sub TITLE ()
+	Color , 0
+	KEY Off
+	Cls
+	Color , 1
+
+	'Header
+	Locate 1, 1: Print Tab(80);: Locate , 27: Color 12
+	Print "BASKETBALL: THE PRO GAME V4.0"
+
+	'Footer
+	Locate 24, 1: Print Tab(80);: Locate , 1
+	Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994"; Tab(70); Left$(Time$, 5);
+
+	'Contact
+	Locate 3, 1: Color 2, 0
+	Color 15: Print "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
+	Print "     FOR TECHNICAL SUPPORT, CALL (615) 366-8088 OR SportGames@AOL.COM"
+	Color 10
+End Sub

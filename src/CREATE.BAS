@@ -1,39 +1,29 @@
-'$INCLUDE: 'Config.BI'
-'$INCLUDE: 'KeyInput.BI'
-'$INCLUDE: 'QPProEqu.BI'
+SUB CREATE ()
+ 
+Dim T1$(1), Z2$(40)
+ReDim menuChoices$(1 to 3)
 
-_Title "Basketball: The Pro Game - Manage "
-''$ExeIcon:'./lhg_bbpro.ico'
-'_Icon
-_AllowFullScreen
+Dim createT%(34), intZ1%(40)
 
-DefInt A-Z
-DECLARE SUB TITLE ()
-DECLARE FUNCTION PadRight$ (X$, Length)
-
-Dim Z1$(40), Z2$(40), Z1%(40), D$(1), T%(34), T1$(1)
-Dim Q$(500), teamItems$(200), V%(200), menuItems$(4)
 Dim Y As Long
+
+_Title "Basketball: The Pro Game - Manage Leagues"
 
 'determine if the monitor is mono or color
 FG = 0
 BG = 7
-'Colr = OneColor%(FG, BG) 'pack FG and BG into a single byte
 
-Open "DEV.BAS" For Input As #2
-For I = 0 To 1
-    Input #2, D$(I)
-Next
-Close 2
 Cls
 
 50 For X = 1 To 40
-    Z1$(X) = "XXX": Z2$(X) = "XXX": Z1%(X) = -1
+    Z1$(X) = "XXX": Z2$(X) = "XXX": intZ1%(X) = -1
 Next
+
 Call TITLE
-menuItems$(1) = "CREATE / DEFINE NEW LEAGUES     "
-menuItems$(2) = "ADD / REVIEW LEAGUE MEMBERS     "
-menuItems$(3) = "RETURN TO STANDINGS/LEADERS MENU"
+'Erase menuChoices$
+menuChoices$(1) = "CREATE / DEFINE NEW LEAGUES     "
+menuChoices$(2) = "ADD / REVIEW LEAGUE MEMBERS     "
+menuChoices$(3) = "RETURN TO STANDINGS/LEADERS MENU"
 SELECTION% = 1
 Count% = 3
 Start% = 1
@@ -45,9 +35,8 @@ Row% = 8
 Column% = 25
 
 CALL box0(7, 24, 11, 57, 2,  15, 1)
-    
 _MouseShow "DEFAULT"
-MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuChoices$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -155,7 +144,7 @@ Color 14: Print "(3) ";: Color 15: Print "END AND SAVE SETTINGS"
 
 310 GoSub 1440
 
-390 Z1$(B) = T1$: Z2$(B) = YN$: Z1%(B) = D
+390 Z1$(B) = T1$: Z2$(B) = YN$: intZ1%(B) = D
 
 400 GoTo 220
 
@@ -164,7 +153,7 @@ Color 14: Print "(3) ";: Color 15: Print "END AND SAVE SETTINGS"
 970 Open D$(1) + LG$ + ".LIB" For Output As #2
 Print #2, LG$: Print #2, D1$: Print #2, D2$: Print #2, D3$: Print #2, D4$
 For X = 1 To 40
-    Print #2, Z1$(X): Print #2, Z1%(X): Print #2, Z2$(X)
+    Print #2, Z1$(X): Print #2, intZ1%(X): Print #2, Z2$(X)
 Next
 Close 2
 For X = 1 To 40
@@ -203,7 +192,8 @@ Next
 1090 Close 2
 
 1195 Cls
-Run "HELLO.EXE"
+'Run "HELLO.EXE"
+Exit Sub
 End
 
 1100 NT = 0
@@ -229,7 +219,7 @@ For I1 = 1 To Y / 1031
     CK% = CVI(Q$(9))
     If CK% <> 999 Then 1103
     NT = NT + 1
-    teamItems$(NT) = Q$(0): V%(NT) = I1
+    teamNames$(NT) = Q$(0): teamIndex%(NT) = I1
 
 1103 Next
 Close 1
@@ -251,7 +241,7 @@ Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
 Print "ENTER";: Color 15: Print "-SELECTS TEAM";
     
 _MouseShow "DEFAULT"
-20 MAMenu teamItems$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+20 MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If ExitCode% = 27 Then BO% = 1: Return
@@ -260,7 +250,7 @@ If ExitCode% = -79 Then Start% = NT: ExitCode% = 3: SELECTION% = NT: GoTo 20
 If ExitCode% = -73 Then Start% = Start% - 80: If Start% < 1 Then Start% = 1
 If ExitCode% = -81 Then Start% = Start% + 80: If Start% > NT Then Start% = NT
 If ExitCode% = -81 Or ExitCode% = -73 Then ExitCode% = 3: SELECTION% = Start%: GoTo 20
-D = V%(SELECTION%)
+D = teamIndex%(SELECTION%)
 Locate 2, 33: Color 31: Print "LOADING..."
 
 1300 Open D$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
@@ -281,7 +271,7 @@ Next
 Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 Get #1, D
 T1$(0) = Q$(0)
-For I = 0 To 34: T%(I) = CVI(Q$(I + 10)): Next
+For I = 0 To 34: createT%(I) = CVI(Q$(I + 10)): Next
 Close 1
 T1$ = RTrim$(T1$(0))
 Return
@@ -300,13 +290,13 @@ Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
 Locate 7, 27: Input NY$
 If NY$ = "" Then GoSub 1102: GoTo 182
 YN$ = NY$
-ERASE teamItems$
+ERASE teamNames$
 
 1441 GoSub 1100
 
 182 If BO% = 1 Then BO% = 0: GoTo 1440
 
-183 Locate 2, 33: Color 15, 0: Color T%(33), T%(34): Print T1$: Color 15, 4
+183 Locate 2, 33: Color 15, 0: Color createT%(33), createT%(34): Print T1$: Color 15, 4
 Locate , 33: Print "ANY CHANGE (YN)";
 I$ = GetKeyPress$
 If UCase$(I$) = "Y" Then 1440
@@ -319,7 +309,14 @@ Return
 4000 Spec$ = D$(1) + "*.LIB"
 null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 Count% = DirCount%
-If Count% = 0 Then 4500
+If Count% = 0 Then 
+	Locate 10, 8
+	Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+	I$ = GetKeyPress$
+	Call CSMsgBox("", 0, Pass)
+	Call Create
+End If
+
 ReDim leagueFiles$(0 To Count%)
 For X = 1 To Count%
     leagueFiles$(X) = Space$(12)
@@ -365,43 +362,10 @@ LG$ = Left$(targetFile$, Len(targetFile$) - 4)
 Open D$(1) + LG$ + ".LIB" For Input As #2
 Input #2, LG$: Input #2, D1$: Input #2, D2$: Input #2, D3$: Input #2, D4$
 For X = 1 To 40
-    Input #2, Z1$(X): Input #2, Z1%(X): Input #2, Z2$(X)
+    Input #2, Z1$(X): Input #2, intZ1%(X): Input #2, Z2$(X)
 Next
 Close 2
 Color 15, 1
 GoTo 25
 
-4500 Locate 10, 8
-Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-I$ = GetKeyPress$
-Call CSMsgBox("", 0, Pass)
-GoTo 50
-
-
-'------------------------------
-'      PadRight Function
-'------------------------------
-' Pads string to the right with spaces
-Function PadRight$ (X$, Length)
-    PadRight$ = X$ + Space$(Length - Len(X$)) 'for display only
-End Function
-
-
-'------------------------------
-'      TITLE Subroutine
-'------------------------------
-' Displays window title / game copyright
-Sub TITLE ()
-    Color , 0: KEY Off: Cls
-    Color , 1: Locate 1, 1: Print Tab(80);: Locate , 30: Color 12
-    Print "HAT TRICK HOCKEY V4.0"
-    Locate 24, 1: Print Tab(80);: Locate , 1
-    Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994"; Tab(70); Left$(Time$, 5);
-    Locate 3, 1: Color 2, 0
-    Color 15: Print "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
-    Print "              FOR TECHNICAL SUPPORT, CALL (615) 366-8088"
-    Color 10
-End Sub
-
-'$INCLUDE: 'KeyInput.BM'
-'$INCLUDE: 'QPProEqu.BM'
+END SUB
