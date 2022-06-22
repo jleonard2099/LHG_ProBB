@@ -34,18 +34,17 @@ Sub CAREER ()
     _MouseHide
 
     Color , 0
-    I = SELECTION%
+    'I = SELECTION%
     If Not (SCANCODE% = 27) Then
-        If I = 1 Then Call InitializeCareerFile
-        If I = 2 Then Call MergeCareerFiles
-
-        '-- These are basically doing the same thing, it's redundant
-        '-- just combine it into a View/Print option
-        If I = 3 Then Call CARVIEW
-        If I = 4 Then Call CARVIEW
-
-        If I = 5 Then Call ViewCareerRecords
-        If I = 6 Then Call Main_Menu(1)
+		Select Case SELECTION%
+			Case 1: Call InitializeCareerFile
+			Case 2: Call MergeCareerFiles
+			'-- These are basically doing the same thing, it's redundant
+			'-- just combine it into a View/Print option
+			Case 3 To 4: Call CARVIEW
+			Case 5: Call ViewCareerRecords
+			Case 6: Call Main_Menu(1)
+		End Select
     End If
 
     '5 Run "HELLO.EXE"
@@ -84,6 +83,7 @@ Sub InitializeCareerFile ()
     For J = 15 To 18: Locate J: Print "                                                                    "
     Next
     Color 11: Locate 15, 5: Input "ENTER NAME OF CAREER STAT FILE (MAX. - 8 CHARACTERS)"; Z$
+	'This will open the team and load the data
     Call GetTeam
 
     B$ = A$
@@ -121,7 +121,7 @@ Sub InitializeCareerFile ()
         Color 7: Print "UNABLE TO LOCATE STAT FILE . . . PLEASE RE-ENTER"
         Print
         Line Input "HIT ENTER TO CONTINUE"; DUMMY$
-        Call CAREER
+        Exit Sub
     End If
 
     'Read in the stat file Z1$ to arrays)
@@ -140,10 +140,11 @@ Sub InitializeCareerFile ()
 
     For I = 0 To 61
         N = 1
-        If initA$(I) = "END" Or initA$(I) = "XXX" Or initA$(I) = "" Then 404
-        NB = NB + 1: GoTo 408
-
-        404 initA$(I) = ""
+        If initA$(I) = "END" Or initA$(I) = "XXX" Or initA$(I) = "" Then 
+			initA$(I) = ""
+		Else
+			NB = NB + 1
+		End If
 
         408 For J = 0 To 13
             ars(N, I, J) = initA(I, J)
@@ -155,10 +156,8 @@ Sub InitializeCareerFile ()
     Next I
 
     For I = 0 To 61: AR$(I) = initA$(I): Next
-    If JX = 1 Then 704
-    If JX = 0 Then 705
-
-    704 Call ReadCareerLeaders
+    If JX = 1 Then Call ReadCareerLeaders
+    'If JX = 0 Then 705
 
     705 Locate 20, 20: Color 15: Print "MERGING CAREER STATS . . . . PLEASE WAIT"
 
@@ -177,7 +176,7 @@ Sub InitializeCareerFile ()
     Next N
     Close #2
 
-    Call CAREER
+    'Call CAREER
 
 End Sub
 
@@ -187,11 +186,6 @@ End Sub
 '----------------------------------------
 '... explain here ...
 Sub MergeCareerFiles ()
-    Dim initA$(62), AR$(62)
-    Dim mergeA(15, 62)
-    ReDim AL(600, 14)
-    Dim W0(62), W1(62), Z(15), Z1(15)
-	Shared ars(), W0S(), W1S()
 
     2000 Color 14, 0: Cls: Locate 5, 27: Print "- - - C A U T I O N - - -"
     Color 15: Locate 8, 1: Print "THIS OPTION SHOULD ONLY BE USED WHEN ADDING YEARS TO AN EXISTING STAT"
@@ -207,7 +201,10 @@ Sub MergeCareerFiles ()
     Print: Print
     Color 12: Locate , 25: Print "DO YOU WISH TO CONTINUE? (Y/N)"
     2018 I$ = GetKeyPress$
-    If UCase$(I$) = "N" Then Call CAREER
+
+	'---shouldn't this be an Exit Sub
+    If UCase$(I$) = "N" Then Exit Sub
+
     1150 Spec$ = D$(1) + "*.CAR"
     null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
     Count% = DirCount%
@@ -216,7 +213,8 @@ Sub MergeCareerFiles ()
         Call CSMsgBox("NO CAREER FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
         I$ = GetKeyPress$
         Call CSMsgBox("", 0, Pass)
-        Call CAREER
+		'---shouldn't this be an Exit Sub
+        Exit Sub
     End If
 
     ReDim careerFiles$(0 To Count%)
@@ -227,45 +225,69 @@ Sub MergeCareerFiles ()
     Call ReadFile(careerFiles$())
     'CALL SortStr(VARPTR(careerFiles$(1)), Count%, 0)
 
-    1311 Cls
-    Color , 1
-    Cls
-    Locate , 28
-    Color 14
-    Print "SELECT FILE TO UPDATE": Color 15
-    SELECTION% = 1
-    Start% = 1
-    FileFGColr% = 15: FileBGColr% = 1
-    HiLiteFGColr% = 0: HiLiteBGColr% = 7
-    Rows% = 20
-    Columns% = 4
-    Spacing% = 6
-    Row% = 4
-    Column% = 1
-    Locate 25, 1
-    Color 14
-    Print "ENTER";: Color 15
-    Print "-SELECTS TEAM LIBRARY";
+	Do
+		1311 Cls
+		Color , 1
+		Cls
+		Locate , 28
+		Color 14
+		Print "SELECT FILE TO UPDATE": Color 15
+		SELECTION% = 1
+		Start% = 1
+		FileFGColr% = 15: FileBGColr% = 1
+		HiLiteFGColr% = 0: HiLiteBGColr% = 7
+		Rows% = 20
+		Columns% = 4
+		Spacing% = 6
+		Row% = 4
+		Column% = 1
+		Locate 25, 1
+		Color 14
+		Print "ENTER";: Color 15
+		Print "-SELECTS TEAM LIBRARY";
 
-    _MouseShow "DEFAULT"
-    20 MAMenu careerFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-    _MouseHide
+		_MouseShow "DEFAULT"
+		20 MAMenu careerFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+		_MouseHide
 
-    If EXITCODE% = 27 Then Exit Sub
-    If EXITCODE% = -71 Then Start% = 1: EXITCODE% = 3: SELECTION% = 1: GoTo 20
-    If EXITCODE% = -79 Then Start% = Count%: EXITCODE% = 3: SELECTION% = Count%: GoTo 20
-    If EXITCODE% = -73 Then Start% = Start% - 80: If Start% < 1 Then Start% = 1
-    If EXITCODE% = -81 Then Start% = Start% + 80: If Start% > Count% Then Start% = Count%
-    If EXITCODE% = -81 Or EXITCODE% = -73 Then EXITCODE% = 3: SELECTION% = Start%: GoTo 20
-    targetFile$ = careerFiles$(SELECTION%)
-    Locate 2, 33: Print targetFile$
-    Locate , 33: Print "ANY CHANGE (YN)";
-    Color 15, 0
-    3910 I$ = GetKeyPress$
-    If UCase$(I$) = "Y" Then 1311
+			Select Case EXITCODE%
+				Case 27: Exit Sub
+				Case -71: 
+					Start% = 1
+					EXITCODE% = 3
+					SELECTION% = 1
+					GoTo 20
+				Case -79: 
+					Start% = Count%
+					EXITCODE% = 3
+					SELECTION% = Count%
+					GoTo 20
+				Case -73: 
+					Start% = Start% - 80
+					If Start% < 1 Then Start% = 1
+					EXITCODE% = 3
+					SELECTION% = Start%
+					GoTo 20
+				Case -81: 
+					Start% = Start% + 80
+					If Start% > Count% Then Start% = Count%
+					EXITCODE% = 3
+					SELECTION% = Start%
+					GoTo 20
+			End Select
+
+		targetFile$ = careerFiles$(SELECTION%)
+		Locate 2, 33: Print targetFile$
+		Locate , 33: Print "ANY CHANGE (YN)";
+		Color 15, 0
+		3910 I$ = GetKeyPress$
+    Loop Until UCase$(I$) = "N"
+
     targetFile$ = RTrim$(targetFile$)
     Z$ = Left$(targetFile$, Len(targetFile$) - 4)
-    Call GetTeam
+	
+	'This will open the team and load the data
+	Call GetTeam
     B$ = A$
 
     For XX = 4 To 11: If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
@@ -279,20 +301,44 @@ Sub MergeCareerFiles ()
         If Not (Mid$(B$, XX, 1) = "_") Then
             Exit For
         End If
-    6615 Next XX
+    Next XX
 
     Z1$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
+
+	Call AddYear (Z$, Z1$)
+	
+    'This should be the exit
+    'GoTo 1
+
+End Sub
+
+
+'----------------------------------------
+'     		AddYear Subroutine
+'----------------------------------------
+'... explain here ...
+Sub AddYear (selectedFile$, statFile$)
+    Dim initA$(62), AR$(62)
+    Dim mergeA(15, 62)
+    ReDim AL(600, 14)
+    Dim W0(62), W1(62), Z(15), Z1(15)
+	Shared ars(), W0S(), W1S()
+
+	'needs to be a constant???
+    TMR = 945
+    TMR1 = 1875
+	
     Cls: Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; Y
     Locate 9, 25: Print "ANY CHANGE (YN)"
     160 I$ = GetKeyPress$
-    If UCase$(I$) = "Y" Then Call CAREER
+    If UCase$(I$) = "Y" Then Exit Sub
     vv = 0: Locate , 5: Print "IS THIS THE FINAL UPDATE FOR THE CURRENT SEASON? (Y/N)"
     176 I$ = GetKeyPress$
     If UCase$(I$) = "Y" Then JX = 1
     If UCase$(I$) = "N" Then JX = 0
     Locate 20, 5: Color 15: Print "MERGING CAREER STATS AND UPDATING CAREER LEADER FILE . . . . PLEASE WAIT"
 
-    Open D$(1) + Z$ + ".CAR" For Input As #2
+    Open D$(1) + selectedFile$ + ".CAR" For Input As #2
     Input #2, NB, B$
 
     For N = 1 To 15
@@ -308,106 +354,103 @@ Sub MergeCareerFiles ()
     Close #2
 
     1266 Locate 20, 20: Color 15: Print "MERGING CAREER STATS . . . . PLEASE WAIT"
-    If Not _FileExists(D$(1) + Z1$) Then
+
+    If  _FileExists(D$(1) + statFile$) Then
+		Open D$(1) + statFile$ For Input As #1
+		Input #1, B$
+		
+		For I = 0 To 14
+			Input #1, initA$(I)
+			For J = 0 To 13: Input #1, mergeA(I, J): Next
+			Input #1, W0(I)
+			Input #1, W1(I)
+			TMR1 = TMR1 - 1
+			Locate 21, 38: Color 5: Print Using "####"; TMR1
+		Next
+		
+		For L = 0 To 15: Input #1, Z(L): Next
+		For L = 0 To 15: Input #1, Z1(L): Next
+		Close #1
+
+		For I = 0 To 14
+			RR = 0
+			CHK = 0
+
+			For J = 0 To 61
+				If AR$(J) = initA$(I) Then 
+					For W = 1 To 15
+						If ars(W, J, 15) = Y Then 
+							1412 CHK = CHK + 1
+						End If
+					Next W
+
+					If CHK <= 0 Then 
+						N = ars(1, J, 14) + ars(2, J, 14) + ars(3, J, 14) + ars(4, J, 14)
+						N = N + ars(5, J, 14) + ars(6, J, 14) + ars(7, J, 14) + ars(8, J, 14)
+						N = N + ars(9, J, 14) + ars(10, J, 14) + ars(11, J, 14)
+						N = N + ars(12, J, 14) + ars(13, J, 14) + ars(14, J, 14) + ars(15, J, 14) + 1
+					Else
+						N = ars(1, J, 14) + ars(2, J, 14) + ars(3, J, 14) + ars(4, J, 14)
+						N = N + ars(5, J, 14) + ars(6, J, 14) + ars(7, J, 14) + ars(8, J, 14)
+						N = N + ars(9, J, 14) + ars(10, J, 14) + ars(11, J, 14)
+						N = N + ars(12, J, 14) + ars(13, J, 14) + ars(14, J, 14) + ars(15, J, 14)
+					End If
+
+					1420 For K = 0 To 13
+						ars(N, J, K) = mergeA(I, K)
+					Next K
+					ars(N, J, 14) = 1
+					ars(N, J, 15) = Y
+					W0S(N, J) = W0(J)
+					W1S(N, J) = W1(J)
+				Else			
+					1424 RR = RR + 1
+					If RR = 62 Then
+						If Not (initA$(I) = "END" Or initA$(I) = "XXX" Or initA$(I) = "") Then
+
+							NB = NB + 1
+							AR$(NB) = initA$(I)
+							N = 1
+
+							For K = 0 To 13: ars(N, NB, K) = mergeA(I, K): Next K
+
+							ars(N, NB, 14) = 1
+							ars(N, NB, 15) = Y
+							W0S(N, NB) = W0(NB)
+							W1S(N, NB) = W1(NB)
+						End If
+					End If
+
+				End If
+				
+			Next J
+
+		1430 Next I
+
+		' Can JX be anything other than 0/1 ???
+		1700 If JX = 1 Then Call ReadCareerLeaders
+
+		1705 Locate 20, 20: Color 15: Print "MERGING CAREER STATS . . . . PLEASE WAIT"
+
+		Open D$(1) + Z$ + ".CAR" For Output As #2
+		Write #2, NB, B$
+		For N = 1 To 15
+			For I = 0 To 61: Write #2, AR$(I)
+				For J = 0 To 15: Write #2, ars(N, I, J): Next J
+				Write #2, W0S(N, I)
+				Write #2, W1S(N, I)
+				TMR1 = TMR1 - 1
+				Locate 21, 38: Color 5: Print Using "####"; TMR1
+			Next I
+		Next N
+		Close #2
+		
+	Else
         Cls
         Color 7: Print "UNABLE TO LOCATE STAT FILE . . . PLEASE RE-ENTER"
         Print
         Line Input "HIT ENTER TO CONTINUE"; DUMMY$
-        Call CAREER
-    End If
-
-    Open D$(1) + Z1$ For Input As #1
-    Input #1, B$
-    For I = 0 To 14
-		Input #1, initA$(I)
-        For J = 0 To 13: Input #1, mergeA(I, J): Next
-        Input #1, W0(I)
-        Input #1, W1(I)
-        TMR1 = TMR1 - 1
-        Locate 21, 38: Color 5: Print Using "####"; TMR1
-    Next
-    For L = 0 To 15: Input #1, Z(L): Next
-    For L = 0 To 15: Input #1, Z1(L): Next
-    Close #1
-
-    For I = 0 To 14
-        RR = 0
-        CHK = 0
-
-        For J = 0 To 61
-            If AR$(J) <> initA$(I) Then 1424
-
-            1411 For W = 1 To 15
-                If ars(W, J, 15) <> Y Then 1413
-
-                1412 CHK = CHK + 1
-
-            1413 Next W
-            If CHK <= 0 Then 1419
-
-            1418 N = ars(1, J, 14) + ars(2, J, 14) + ars(3, J, 14) + ars(4, J, 14)
-            N = N + ars(5, J, 14) + ars(6, J, 14) + ars(7, J, 14) + ars(8, J, 14)
-            N = N + ars(9, J, 14) + ars(10, J, 14) + ars(11, J, 14)
-            N = N + ars(12, J, 14) + ars(13, J, 14) + ars(14, J, 14) + ars(15, J, 14)
-            GoTo 1420
-
-            1419 N = ars(1, J, 14) + ars(2, J, 14) + ars(3, J, 14) + ars(4, J, 14)
-            N = N + ars(5, J, 14) + ars(6, J, 14) + ars(7, J, 14) + ars(8, J, 14)
-            N = N + ars(9, J, 14) + ars(10, J, 14) + ars(11, J, 14)
-            N = N + ars(12, J, 14) + ars(13, J, 14) + ars(14, J, 14) + ars(15, J, 14) + 1
-
-            1420 For K = 0 To 13
-                ars(N, J, K) = mergeA(I, K)
-            Next K
-            ars(N, J, 14) = 1
-            ars(N, J, 15) = Y
-            W0S(N, J) = W0(J)
-            W1S(N, J) = W1(J)
-            GoTo 1430
-
-            1424 RR = RR + 1
-            If RR = 62 Then
-                If Not (initA$(I) = "END" Or initA$(I) = "XXX" Or initA$(I) = "") Then
-
-                    NB = NB + 1
-                    AR$(NB) = initA$(I)
-                    N = 1
-
-                    For K = 0 To 13: ars(N, NB, K) = mergeA(I, K): Next K
-
-                    ars(N, NB, 14) = 1
-                    ars(N, NB, 15) = Y
-                    W0S(N, NB) = W0(NB)
-                    W1S(N, NB) = W1(NB)
-                End If
-            End If
-        Next J
-
-    1430 Next I
-
-    ' Can JX be anything other than 0/1 ???
-    1700 If JX = 1 Then 1704
-    If JX = 0 Then 1705
-
-    1704 Call ReadCareerLeaders
-
-    1705 Locate 20, 20: Color 15: Print "MERGING CAREER STATS . . . . PLEASE WAIT"
-
-    Open D$(1) + Z$ + ".CAR" For Output As #2
-    Write #2, NB, B$
-    For N = 1 To 15
-        For I = 0 To 61: Write #2, AR$(I)
-            For J = 0 To 15: Write #2, ars(N, I, J): Next J
-            Write #2, W0S(N, I)
-            Write #2, W1S(N, I)
-            TMR1 = TMR1 - 1
-            Locate 21, 38: Color 5: Print Using "####"; TMR1
-        Next I
-    Next N
-    Close #2
-
-    'This should be the exit
-    'GoTo 1
+	End If
 
 End Sub
 
@@ -416,19 +459,21 @@ End Sub
 '     ReadCareerFile Subroutine
 '----------------------------------------
 '... explain here ...
-Sub ReadCareerLeaders
+Sub ReadCareerLeaders ()
     '--- Variables here need to be Shared
     Dim BL(62), BLYR(21)
     Dim initA$(62), AR$(62)
     Dim BL$(0 To 20)
 	Shared ars(), W0S(), W1S()
 
-    2080 If Not _FileExists(D$(1) + Z$ + ".cld") Then 2100
-    Open D$(1) + Z$ + ".CLD" For Input As #1
-    For I = 0 To 20
-    Input #1, BLYR(I), BL$(I), BL(I): Next
-    Close #1
-
+    2080 If _FileExists(D$(1) + Z$ + ".cld") Then
+		Open D$(1) + Z$ + ".CLD" For Input As #1
+		For I = 0 To 20
+			Input #1, BLYR(I), BL$(I), BL(I)
+		Next
+		Close #1
+	End If
+	
     2100 For I = 0 To 61
         If AR$(I) = "" Or AR$(I) = "XXX" Or AR$(I) = "END" Then 2360
         For J = 1 To 15
@@ -506,14 +551,12 @@ Sub ReadCareerLeaders
 
     2360 Next I
 
-    If vv = 1 Then 2805
-    If vv = 0 Then 2810
+	'-- What the ???
+    If vv = 1 Then Open D$(1) + Z$ + ".CLD" For Output As #1
+    If vv = 0 Then Open D$(1) + Z$ + ".CLD" For Output As #1
 
-    2805 Open D$(1) + Z$ + ".CLD" For Output As #1: GoTo 2811
-
-    2810 Open D$(1) + Z$ + ".CLD" For Output As #1
-
-    2811 For I = 0 To 20: Write #1, BLYR(I), BL$(I), BL(I): Next
+    For I = 0 To 20
+		Write #1, BLYR(I), BL$(I), BL(I): Next
     Close #1
 
 End Sub
@@ -524,139 +567,171 @@ End Sub
 '----------------------------------------
 '... explain here ...
 Sub ViewCareerRecords ()
+
     Dim BLYR(21)
     Dim BL$(0 To 20)
-    Dim careerT%(34)
 
-    3000 Spec$ = D$(1) + "*.CLD"
-    null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-    Count% = DirCount%
-    If Count% = 0 Then
-        Locate , 10
-        Call CSMsgBox("NO CAREER FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
-        Exit Sub
-    End If
+	Do
+	'Display list of files...
 
-    ReDim conferenceLeaderFiles$(0 To Count%)
-    For X = 1 To Count%
-        conferenceLeaderFiles$(X) = Space$(12)
-    Next
-    conferenceLeaderFiles$(0) = Spec$
-    Call ReadFile(conferenceLeaderFiles$())
-    'CALL SortStr(VARPTR(conferenceLeaderFiles$(1)), Count%, 0)
+		3000 Spec$ = D$(1) + "*.CLD"
+		null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
+		Count% = DirCount%
+		If Count% = 0 Then
+			Locate , 10
+			Call CSMsgBox("NO CAREER FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+			I$ = GetKeyPress$
+			Call CSMsgBox("", 0, Pass)
+			Exit Sub
+		End If
 
-    1310 Cls
-    Color , 1
-    Cls
-    Locate , 28
-    Color 14
-    Print "SELECT FILE TO VIEW": Color 15
-    SELECTION% = 1
-    Start% = 1
-    FileFGColr% = 15: FileBGColr% = 1
-    HiLiteFGColr% = 0: HiLiteBGColr% = 7
-    Rows% = 20
-    Columns% = 4
-    Spacing% = 6
-    Row% = 4
-    Column% = 1
-    Locate 25, 1
-    Color 14
-    Print "ENTER";: Color 15
-    Print "-SELECTS FILE";
+		ReDim conferenceLeaderFiles$(0 To Count%)
+		For X = 1 To Count%
+			conferenceLeaderFiles$(X) = Space$(12)
+		Next
+		conferenceLeaderFiles$(0) = Spec$
+		Call ReadFile(conferenceLeaderFiles$())
+		'CALL SortStr(VARPTR(conferenceLeaderFiles$(1)), Count%, 0)
 
-    _MouseShow "DEFAULT"
-    202 MAMenu conferenceLeaderFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-    _MouseHide
+		Do
+			1310 Cls
+			Color , 1
+			Cls
+			Locate , 28
+			Color 14
+			Print "SELECT FILE TO VIEW": Color 15
+			SELECTION% = 1
+			Start% = 1
+			FileFGColr% = 15: FileBGColr% = 1
+			HiLiteFGColr% = 0: HiLiteBGColr% = 7
+			Rows% = 20
+			Columns% = 4
+			Spacing% = 6
+			Row% = 4
+			Column% = 1
+			Locate 25, 1
+			Color 14
+			Print "ENTER";: Color 15
+			Print "-SELECTS FILE";
 
-    If EXITCODE% = 27 Then Call CAREER
-    If EXITCODE% = -71 Then Start% = 1: EXITCODE% = 3: SELECTION% = 1: GoTo 202
-    If EXITCODE% = -79 Then Start% = Count%: EXITCODE% = 3: SELECTION% = Count%: GoTo 202
-    If EXITCODE% = -73 Then Start% = Start% - 80: If Start% < 1 Then Start% = 1
-    If EXITCODE% = -81 Then Start% = Start% + 80: If Start% > Count% Then Start% = Count%
-    If EXITCODE% = -81 Or EXITCODE% = -73 Then EXITCODE% = 3: SELECTION% = Start%: GoTo 202
-    targetFile$ = conferenceLeaderFiles$(SELECTION%)
-    Locate 2, 33: Print targetFile$
-    Locate , 33: Print "ANY CHANGE (YN)";
-    Color 15, 0
-    3912 I$ = GetKeyPress$
-    If UCase$(I$) = "Y" Then 1310
-    targetFile$ = RTrim$(targetFile$)
-    ZZ$ = Left$(targetFile$, Len(targetFile$) - 4)
+			_MouseShow "DEFAULT"
+			202 MAMenu conferenceLeaderFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+			_MouseHide
 
-    Open D$(1) + ZZ$ + ".CLD" For Input As #1
-    For I = 0 To 20: Input #1, BLYR(I), BL$(I), BL(I): Next
-    Close #1
+			Select Case EXITCODE%
+				Case 27: Exit Sub
+				Case -71: 
+					Start% = 1
+					EXITCODE% = 3
+					SELECTION% = 1
+					GoTo 20
+				Case -79: 
+					Start% = Count%
+					EXITCODE% = 3
+					SELECTION% = Count%
+					GoTo 202
+				Case -73: 
+					Start% = Start% - 80
+					If Start% < 1 Then Start% = 1
+					EXITCODE% = 3
+					SELECTION% = Start%
+					GoTo 202
+				Case -81: 
+					Start% = Start% + 80
+					If Start% > Count% Then Start% = Count%
+					EXITCODE% = 3
+					SELECTION% = Start%
+					GoTo 202
+			End Select
 
-    Locate 15, 10: Color 12: Print "V";: Color 7: Print "iew or ";: Color 12: Print "P";: Color 7: Print "rint"
-    3151 I$ = GetKeyPress$
-    If UCase$(I$) = "V" Then 3200
-    If UCase$(I$) = "P" Then 3500
-    If UCase$(I$) <> "V" And UCase$(I$) <> "P" Then 3151
+			targetFile$ = conferenceLeaderFiles$(SELECTION%)
+			Locate 2, 33: Print targetFile$
+			Locate , 33: Print "ANY CHANGE (YN)";
+			Color 15, 0
+			3912 I$ = GetKeyPress$
+			'If UCase$(I$) = "Y" Then 1310
+		Loop Until UCase$(I$) = "N"
 
-    3200 Cls
-    Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
-    Print
-    Color 3: Print "FIELD GOALS MADE";: Color 7: Print Tab(33); Using "####"; BL(0);: Print Tab(47); BL$(0);: Print Tab(66); BLYR(0)
-    Color 3: Print "FIELD GOAL ATTEMPTS";: Color 7: Print Tab(33); Using "####"; BL(1);: Print Tab(47); BL$(1);: Print Tab(66); BLYR(1)
-    Color 3: Print "FIELD GOAL PCT.";: Color 7: Print Tab(32); Using "#.###"; BL(2);: Print Tab(47); BL$(2);: Print Tab(66); BLYR(2)
-    Color 3: Print "FREE THROWS MADE";: Color 7: Print Tab(33); Using "####"; BL(3);: Print Tab(47); BL$(3);: Print Tab(66); BLYR(3)
-    Color 3: Print "FREE THROW ATTEMPTS";: Color 7: Print Tab(33); Using "####"; BL(4);: Print Tab(47); BL$(4);: Print Tab(66); BLYR(4)
-    Color 3: Print "FREE THROW PCT.";: Color 7: Print Tab(32); Using "#.###"; BL(5);: Print Tab(47); BL$(5);: Print Tab(66); BLYR(5)
-    Color 3: Print "3 PT. FIELD GOALS MADE";: Color 7: Print Tab(33); Using "####"; BL(6);: Print Tab(47); BL$(6);: Print Tab(66); BLYR(6)
-    Color 3: Print "3 PT. FILED GOAL ATTEMPTS";: Color 7: Print Tab(33); Using "####"; BL(7);: Print Tab(47); BL$(7);: Print Tab(66); BLYR(7)
-    Color 3: Print "3 PT. FIELD GOAL PCT.";: Color 7: Print Tab(32); Using "#.###"; BL(8);: Print Tab(47); BL$(8);: Print Tab(66); BLYR(8)
-    Color 3: Print "POINTS";: Color 7: Print Tab(32); Using "#####"; BL(9);: Print Tab(47); BL$(9);: Print Tab(66); BLYR(9)
-    Color 3: Print "POINTS PER GAME";: Color 7: Print Tab(32); Using "###.#"; BL(10);: Print Tab(47); BL$(10);: Print Tab(66); BLYR(10)
-    Color 3: Print "OFFENSIVE REBOUNDS";: Color 7: Print Tab(32); Using "#####"; BL(11);: Print Tab(47); BL$(11);: Print Tab(66); BLYR(11)
-    Color 3: Print "DEFENSIVE REBOUNDS";: Color 7: Print Tab(32); Using "#####"; BL(12);: Print Tab(47); BL$(12);: Print Tab(66); BLYR(12)
-    Color 3: Print "TOTAL REBOUNDS";: Color 7: Print Tab(32); Using "#####"; BL(13);: Print Tab(47); BL$(13);: Print Tab(66); BLYR(13)
-    Color 3: Print "REBOUNDS PER GAME";: Color 7: Print Tab(32); Using "###.#"; BL(14);: Print Tab(47); BL$(14);: Print Tab(66); BLYR(14)
-    Color 15: Locate 22: Print "HIT ANY KEY TO CONTINUE"
-    3271 I$ = GetKeyPress$
-    Cls
-    Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
-    Print
-    Color 3: Print "PERSONAL FOULS";: Color 7: Print Tab(33); Using "####"; BL(15);: Print Tab(47); BL$(15);: Print Tab(66); BLYR(15)
-    Color 3: Print "ASSISTS";: Color 7: Print Tab(32); Using "#####"; BL(16);: Print Tab(47); BL$(16);: Print Tab(66); BLYR(16)
-    Color 3: Print "SHOTS BLOCKED";: Color 7: Print Tab(33); Using "####"; BL(17);: Print Tab(47); BL$(17);: Print Tab(66); BLYR(17)
-    Color 3: Print "STEALS";: Color 7: Print Tab(32); Using "#####"; BL(18);: Print Tab(47); BL$(18);: Print Tab(66); BLYR(18)
-    Color 3: Print "TURNOVERS";: Color 7: Print Tab(32); Using "#####"; BL(19);: Print Tab(47); BL$(19);: Print Tab(66); BLYR(19)
-    Color 3: Print "HI-GAME (POINTS)";: Color 7: Print Tab(33); Using "####"; BL(20);: Print Tab(47); BL$(20);: Print Tab(66); BLYR(20)
-    Color 15: Locate 22: Print "VIEW AGAIN (Y/N)"
-    3391 I$ = GetKeyPress$
-    If UCase$(I$) = "Y" Then 3200
-    Call CAREER
+		targetFile$ = RTrim$(targetFile$)
+		ZZ$ = Left$(targetFile$, Len(targetFile$) - 4)
 
-    3500 LPrint "CATEGORY                     RECORD           PLAYER              YEAR"
-    LPrint
-    LPrint "FIELD GOALS MADE";: LPrint Tab(33); Using "####"; BL(0);: LPrint Tab(47); BL$(0);: LPrint Tab(66); BLYR(0)
-    LPrint "FIELD GOAL ATTEMPTS";: LPrint Tab(33); Using "####"; BL(1);: LPrint Tab(47); BL$(1);: LPrint Tab(66); BLYR(1)
-    LPrint "FIELD GOAL PCT.";: LPrint Tab(32); Using "#.###"; BL(2);: LPrint Tab(47); BL$(2);: LPrint Tab(66); BLYR(2)
-    LPrint "FREE THROWS MADE";: LPrint Tab(33); Using "####"; BL(3);: LPrint Tab(47); BL$(3);: LPrint Tab(66); BLYR(3)
-    LPrint "FREE THROW ATTEMPTS";: LPrint Tab(33); Using "####"; BL(4);: LPrint Tab(47); BL$(4);: LPrint Tab(66); BLYR(4)
-    LPrint "FREE THROW PCT.";: LPrint Tab(32); Using "#.###"; BL(5);: LPrint Tab(47); BL$(5);: LPrint Tab(66); BLYR(5)
-    LPrint "3 PT. FIELD GOALS MADE";: LPrint Tab(33); Using "####"; BL(6);: LPrint Tab(47); BL$(6);: LPrint Tab(66); BLYR(6)
-    LPrint "3 PT. FILED GOAL ATTEMPTS";: LPrint Tab(33); Using "####"; BL(7);: LPrint Tab(47); BL$(7);: LPrint Tab(66); BLYR(7)
-    LPrint "3 PT. FIELD GOAL PCT.";: LPrint Tab(32); Using "#.###"; BL(8);: LPrint Tab(47); BL$(8);: LPrint Tab(66); BLYR(8)
-    LPrint "POINTS";: LPrint Tab(32); Using "#####"; BL(9);: LPrint Tab(47); BL$(9);: LPrint Tab(66); BLYR(9)
-    LPrint "POINTS PER GAME";: LPrint Tab(32); Using "###.#"; BL(10);: LPrint Tab(47); BL$(10);: LPrint Tab(66); BLYR(10)
-    LPrint "OFFENSIVE REBOUNDS";: LPrint Tab(32); Using "#####"; BL(11);: LPrint Tab(47); BL$(11);: LPrint Tab(66); BLYR(11)
-    LPrint "DEFENSIVE REBOUNDS";: LPrint Tab(32); Using "#####"; BL(12);: LPrint Tab(47); BL$(12);: LPrint Tab(66); BLYR(12)
-    LPrint "TOTAL REBOUNDS";: LPrint Tab(32); Using "#####"; BL(13);: LPrint Tab(47); BL$(13);: LPrint Tab(66); BLYR(13)
-    LPrint "REBOUNDS PER GAME";: LPrint Tab(32); Using "###.#"; BL(14);: LPrint Tab(47); BL$(14);: LPrint Tab(66); BLYR(14)
-    LPrint "PERSONAL FOULS";: LPrint Tab(33); Using "####"; BL(15);: LPrint Tab(47); BL$(15);: LPrint Tab(66); BLYR(15)
-    LPrint "ASSISTS";: LPrint Tab(32); Using "#####"; BL(16);: LPrint Tab(47); BL$(16);: LPrint Tab(66); BLYR(16)
-    LPrint "SHOTS BLOCKED";: LPrint Tab(33); Using "####"; BL(17);: LPrint Tab(47); BL$(17);: LPrint Tab(66); BLYR(17)
-    LPrint "STEALS";: LPrint Tab(32); Using "#####"; BL(18);: LPrint Tab(47); BL$(18);: LPrint Tab(66); BLYR(18)
-    LPrint "TURNOVERS";: LPrint Tab(32); Using "#####"; BL(19);: LPrint Tab(47); BL$(19);: LPrint Tab(66); BLYR(19)
-    LPrint "HI-GAME (POINTS)";: LPrint Tab(33); Using "####"; BL(20);: LPrint Tab(47); BL$(20);: LPrint Tab(66); BLYR(20)
-    LPrint Chr$(12)
-    Call CAREER
+		Open D$(1) + ZZ$ + ".CLD" For Input As #1
+		For I = 0 To 20: Input #1, BLYR(I), BL$(I), BL(I): Next
+		Close #1
 
-    6620 'Return
+		Locate 15, 10: Color 12: Print "V";: Color 7: Print "iew or ";: Color 12: Print "P";: Color 7: Print "rint"
+		Do
+			3151 I$ = GetKeyPress$
+				Select Case UCase$(I$)
+					Case "V":
+						Do
+						3200 Cls
+							Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
+							Print
+							Color 3: Print "FIELD GOALS MADE";: Color 7: Print Tab(33); Using "####"; BL(0);: Print Tab(47); BL$(0);: Print Tab(66); BLYR(0)
+							Color 3: Print "FIELD GOAL ATTEMPTS";: Color 7: Print Tab(33); Using "####"; BL(1);: Print Tab(47); BL$(1);: Print Tab(66); BLYR(1)
+							Color 3: Print "FIELD GOAL PCT.";: Color 7: Print Tab(32); Using "#.###"; BL(2);: Print Tab(47); BL$(2);: Print Tab(66); BLYR(2)
+							Color 3: Print "FREE THROWS MADE";: Color 7: Print Tab(33); Using "####"; BL(3);: Print Tab(47); BL$(3);: Print Tab(66); BLYR(3)
+							Color 3: Print "FREE THROW ATTEMPTS";: Color 7: Print Tab(33); Using "####"; BL(4);: Print Tab(47); BL$(4);: Print Tab(66); BLYR(4)
+							Color 3: Print "FREE THROW PCT.";: Color 7: Print Tab(32); Using "#.###"; BL(5);: Print Tab(47); BL$(5);: Print Tab(66); BLYR(5)
+							Color 3: Print "3 PT. FIELD GOALS MADE";: Color 7: Print Tab(33); Using "####"; BL(6);: Print Tab(47); BL$(6);: Print Tab(66); BLYR(6)
+							Color 3: Print "3 PT. FILED GOAL ATTEMPTS";: Color 7: Print Tab(33); Using "####"; BL(7);: Print Tab(47); BL$(7);: Print Tab(66); BLYR(7)
+							Color 3: Print "3 PT. FIELD GOAL PCT.";: Color 7: Print Tab(32); Using "#.###"; BL(8);: Print Tab(47); BL$(8);: Print Tab(66); BLYR(8)
+							Color 3: Print "POINTS";: Color 7: Print Tab(32); Using "#####"; BL(9);: Print Tab(47); BL$(9);: Print Tab(66); BLYR(9)
+							Color 3: Print "POINTS PER GAME";: Color 7: Print Tab(32); Using "###.#"; BL(10);: Print Tab(47); BL$(10);: Print Tab(66); BLYR(10)
+							Color 3: Print "OFFENSIVE REBOUNDS";: Color 7: Print Tab(32); Using "#####"; BL(11);: Print Tab(47); BL$(11);: Print Tab(66); BLYR(11)
+							Color 3: Print "DEFENSIVE REBOUNDS";: Color 7: Print Tab(32); Using "#####"; BL(12);: Print Tab(47); BL$(12);: Print Tab(66); BLYR(12)
+							Color 3: Print "TOTAL REBOUNDS";: Color 7: Print Tab(32); Using "#####"; BL(13);: Print Tab(47); BL$(13);: Print Tab(66); BLYR(13)
+							Color 3: Print "REBOUNDS PER GAME";: Color 7: Print Tab(32); Using "###.#"; BL(14);: Print Tab(47); BL$(14);: Print Tab(66); BLYR(14)
+							Color 15: Locate 22: Print "HIT ANY KEY TO CONTINUE"
+							3271 I$ = GetKeyPress$
+							
+							Cls
+							Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
+							Print
+							Color 3: Print "PERSONAL FOULS";: Color 7: Print Tab(33); Using "####"; BL(15);: Print Tab(47); BL$(15);: Print Tab(66); BLYR(15)
+							Color 3: Print "ASSISTS";: Color 7: Print Tab(32); Using "#####"; BL(16);: Print Tab(47); BL$(16);: Print Tab(66); BLYR(16)
+							Color 3: Print "SHOTS BLOCKED";: Color 7: Print Tab(33); Using "####"; BL(17);: Print Tab(47); BL$(17);: Print Tab(66); BLYR(17)
+							Color 3: Print "STEALS";: Color 7: Print Tab(32); Using "#####"; BL(18);: Print Tab(47); BL$(18);: Print Tab(66); BLYR(18)
+							Color 3: Print "TURNOVERS";: Color 7: Print Tab(32); Using "#####"; BL(19);: Print Tab(47); BL$(19);: Print Tab(66); BLYR(19)
+							Color 3: Print "HI-GAME (POINTS)";: Color 7: Print Tab(33); Using "####"; BL(20);: Print Tab(47); BL$(20);: Print Tab(66); BLYR(20)
+							Color 15: Locate 22: Print "VIEW AGAIN (Y/N)"
+							3391 I$ = GetKeyPress$
+						Loop Until UCase$(I$) = "N"
+					
+					Case "P": 
+						3500 LPrint "CATEGORY                     RECORD           PLAYER              YEAR"
+						LPrint
+						LPrint "FIELD GOALS MADE";: LPrint Tab(33); Using "####"; BL(0);: LPrint Tab(47); BL$(0);: LPrint Tab(66); BLYR(0)
+						LPrint "FIELD GOAL ATTEMPTS";: LPrint Tab(33); Using "####"; BL(1);: LPrint Tab(47); BL$(1);: LPrint Tab(66); BLYR(1)
+						LPrint "FIELD GOAL PCT.";: LPrint Tab(32); Using "#.###"; BL(2);: LPrint Tab(47); BL$(2);: LPrint Tab(66); BLYR(2)
+						LPrint "FREE THROWS MADE";: LPrint Tab(33); Using "####"; BL(3);: LPrint Tab(47); BL$(3);: LPrint Tab(66); BLYR(3)
+						LPrint "FREE THROW ATTEMPTS";: LPrint Tab(33); Using "####"; BL(4);: LPrint Tab(47); BL$(4);: LPrint Tab(66); BLYR(4)
+						LPrint "FREE THROW PCT.";: LPrint Tab(32); Using "#.###"; BL(5);: LPrint Tab(47); BL$(5);: LPrint Tab(66); BLYR(5)
+						LPrint "3 PT. FIELD GOALS MADE";: LPrint Tab(33); Using "####"; BL(6);: LPrint Tab(47); BL$(6);: LPrint Tab(66); BLYR(6)
+						LPrint "3 PT. FILED GOAL ATTEMPTS";: LPrint Tab(33); Using "####"; BL(7);: LPrint Tab(47); BL$(7);: LPrint Tab(66); BLYR(7)
+						LPrint "3 PT. FIELD GOAL PCT.";: LPrint Tab(32); Using "#.###"; BL(8);: LPrint Tab(47); BL$(8);: LPrint Tab(66); BLYR(8)
+						LPrint "POINTS";: LPrint Tab(32); Using "#####"; BL(9);: LPrint Tab(47); BL$(9);: LPrint Tab(66); BLYR(9)
+						LPrint "POINTS PER GAME";: LPrint Tab(32); Using "###.#"; BL(10);: LPrint Tab(47); BL$(10);: LPrint Tab(66); BLYR(10)
+						LPrint "OFFENSIVE REBOUNDS";: LPrint Tab(32); Using "#####"; BL(11);: LPrint Tab(47); BL$(11);: LPrint Tab(66); BLYR(11)
+						LPrint "DEFENSIVE REBOUNDS";: LPrint Tab(32); Using "#####"; BL(12);: LPrint Tab(47); BL$(12);: LPrint Tab(66); BLYR(12)
+						LPrint "TOTAL REBOUNDS";: LPrint Tab(32); Using "#####"; BL(13);: LPrint Tab(47); BL$(13);: LPrint Tab(66); BLYR(13)
+						LPrint "REBOUNDS PER GAME";: LPrint Tab(32); Using "###.#"; BL(14);: LPrint Tab(47); BL$(14);: LPrint Tab(66); BLYR(14)
+						LPrint "PERSONAL FOULS";: LPrint Tab(33); Using "####"; BL(15);: LPrint Tab(47); BL$(15);: LPrint Tab(66); BLYR(15)
+						LPrint "ASSISTS";: LPrint Tab(32); Using "#####"; BL(16);: LPrint Tab(47); BL$(16);: LPrint Tab(66); BLYR(16)
+						LPrint "SHOTS BLOCKED";: LPrint Tab(33); Using "####"; BL(17);: LPrint Tab(47); BL$(17);: LPrint Tab(66); BLYR(17)
+						LPrint "STEALS";: LPrint Tab(32); Using "#####"; BL(18);: LPrint Tab(47); BL$(18);: LPrint Tab(66); BLYR(18)
+						LPrint "TURNOVERS";: LPrint Tab(32); Using "#####"; BL(19);: LPrint Tab(47); BL$(19);: LPrint Tab(66); BLYR(19)
+						LPrint "HI-GAME (POINTS)";: LPrint Tab(33); Using "####"; BL(20);: LPrint Tab(47); BL$(20);: LPrint Tab(66); BLYR(20)
+						LPrint Chr$(12)
+					
+				End Select
+		Loop Until UCase$(I$) = "V" Or UCase$(I$) = "P"
+
+		6620 'Return
+		
+	'...Until we press ESC
+	Loop Until ExitCode% = 27 or Count % = 0
 
 End Sub
 
@@ -667,124 +742,170 @@ End Sub
 '... explain here ...
 Sub GetTeam ()
 
+	Do
+		Color 15, 0
+		Cls
+		JJ = 6
+		SN = 1: Locate 6, 8: Color 15, 4
+		Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+		Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+		Locate 7 + JJ, 8
+		Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+		Locate , 12: Print "ENTER DISK ID: ": Print
+		Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+		Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+		Print
+		Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
+
+		3057 I$ = GetKeyPress$
+		If I$ = Chr$(27) Then Exit Sub
+		If I$ = Chr$(13) Then 
+			Call LoadTeam_CAREER (YN$, NTMS)
+			If BO% = 1 Then BO% = 0
+		Else
+
+			Locate 7, 27: Print I$
+			Locate 7, 28: Line Input NY$
+			NY$ = I$ + NY$
+			Color 15, 0
+
+			If NY$ = "" Then 
+				Call LoadTeam_CAREER (YN$, NTMS)
+				If BO% = 1 Then BO% = 0
+			Else
+				YN$ = NY$
+				Erase teamNames$
+
+				1100 NTMS = 0
+				Open D$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+				Y1 = LOF(1)
+
+				Field #1, 15 As Q$(0), 15 As Q$(1)
+
+				For I = 0 To 6
+					Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+				Next
+
+				Field #1, 44 As X$, 2 As Q$(9)
+
+				For I = 0 To 34
+					Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+				Next
+
+				For I = 0 To 14
+					Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+					For I1 = 0 To 19
+						Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+					Next
+				Next
+
+				Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+
+				For I1 = 1 To Y1 / 1031
+					Get #1, I1
+					CK% = CVI(Q$(9))
+					If CK% <> 999 Then 1103
+					NTMS = NTMS + 1
+					teamNames$(NTMS) = Q$(0): teamIndex%(NTMS) = I1
+
+				1103 Next
+				Close 1
+
+				Call LoadTeam_CAREER (YN$, NTMS)
+				
+			End If 'End checking if NY$ = ""
+
+		End If	'End processing Disk ID
+			
+	Loop Until UCase$(I$) = "N" Or EXITCODE% = 27
+		
+	Color 15, 0
+	
+End Sub
+
+
+'----------------------------------------
+'       LoadTeam_CAREER Subroutine
+'----------------------------------------
+'...explanation...
+Sub LoadTeam_CAREER (yearNumber$, numberTeams)
+
     Dim careerT%(0 To 34)
+	
+	1102 SELECTION% = 1
+	Count% = numberTeams
+	Start% = 1
+	FileFGColr% = 15: FileBGColr% = 4
+	HiLiteFGColr% = 0: HiLiteBGColr% = 7
+	Rows% = 20
+	Columns% = 4
+	Spacing% = 6
+	Row% = 4
+	Column% = 1
+	Color , 4: Cls: Locate , 33: Color 14
+	Print "TEAM SELECTION": Color 15
+	Locate 25, 1: Color 14: Print "ESC";: Color 15
+	Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
+	Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
-    3056 Color 15, 0
-    Cls
-    JJ = 6
-    SN = 1: Locate 6, 8: Color 15, 4
-    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
-    Locate 7 + JJ, 8
-    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
-    Locate , 12: Print "ENTER DISK ID: ": Print
-    Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-    Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-    Print
-    Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
-    3057 I$ = GetKeyPress$
-    If I$ = Chr$(27) Then Exit Sub
-    If I$ = Chr$(13) Then GoSub 1102: If BO% = 1 Then BO% = 0: GoTo 3056 'Call GetTeam
-    Locate 7, 27: Print I$
-    Locate 7, 28: Line Input NY$
-    NY$ = I$ + NY$
-    Color 15, 0
+	_MouseShow "DEFAULT"
+	120 MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+	_MouseHide
 
-    If NY$ = "" Then GoSub 1102: If BO% = 1 Then BO% = 0: GoTo 3056 'Call GetTeam
-    YN$ = NY$
-    Erase teamNames$
+	Select Case EXITCODE%
+		Case 27: BO% = 1: Exit Sub 'Return
+		Case -71: 
+			Start% = 1
+			EXITCODE% = 3
+			SELECTION% = 1
+			GoTo 120
+		Case -79: 
+			Start% = Count%
+			EXITCODE% = 3
+			SELECTION% = Count%
+			GoTo 120
+		Case -73: 
+			Start% = Start% - 80
+			If Start% < 1 Then Start% = 1
+			EXITCODE% = 3
+			SELECTION% = Start%
+			GoTo 120
+		Case -81: 
+			Start% = Start% + 80
+			If Start% > Count% Then Start% = Count%
+			EXITCODE% = 3
+			SELECTION% = Start%
+			GoTo 120
+	End Select
+	
+	T1 = teamIndex%(SELECTION%)
 
-    1100 NTMS = 0
-    Open D$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
-    Y1 = LOF(1)
+	Open D$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+	Field #1, 15 As Q$(0), 15 As Q$(1)
+	For I = 0 To 6
+		Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+	Next
+	Field #1, 44 As X$, 2 As Q$(9)
+	For I = 0 To 34
+		Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+	Next
+	For I = 0 To 14
+		Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+		For I1 = 0 To 19
+			Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+		Next
+	Next
+	Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+	Get #1, T1
+	A$ = Q$(0)
+	For I = 0 To 34: careerT%(I) = CVI(Q$(I + 10)): Next
+	Close 1
 
-    Field #1, 15 As Q$(0), 15 As Q$(1)
+	9005 If Right$(A$, 1) = " " Then A$ = Left$(A$, Len(A$) - 1): GoTo 9005
+	B$ = A$
 
-    For I = 0 To 6
-        Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-    Next
-
-    Field #1, 44 As X$, 2 As Q$(9)
-
-    For I = 0 To 34
-        Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-    Next
-
-    For I = 0 To 14
-        Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-        For I1 = 0 To 19
-            Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-        Next
-    Next
-
-    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-
-    For I1 = 1 To Y1 / 1031
-        Get #1, I1
-        CK% = CVI(Q$(9))
-        If CK% <> 999 Then 1103
-        NTMS = NTMS + 1
-        teamNames$(NTMS) = Q$(0): teamIndex%(NTMS) = I1
-
-    1103 Next
-    Close 1
-
-    1102 SELECTION% = 1
-    Count% = NTMS
-    Start% = 1
-    FileFGColr% = 15: FileBGColr% = 4
-    HiLiteFGColr% = 0: HiLiteBGColr% = 7
-    Rows% = 20
-    Columns% = 4
-    Spacing% = 6
-    Row% = 4
-    Column% = 1
-    Color , 4: Cls: Locate , 33: Color 14
-    Print "TEAM SELECTION": Color 15
-    Locate 25, 1: Color 14: Print "ESC";: Color 15
-    Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
-    Print "ENTER";: Color 15: Print "-SELECTS TEAM";
-
-    _MouseShow "DEFAULT"
-    120 MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-    _MouseHide
-
-    If EXITCODE% = 27 Then BO% = 1: Exit Sub
-    If EXITCODE% = -71 Then Start% = 1: EXITCODE% = 3: SELECTION% = 1: GoTo 120
-    If EXITCODE% = -79 Then Start% = NTMS: EXITCODE% = 3: SELECTION% = NTMS: GoTo 120
-    If EXITCODE% = -73 Then Start% = Start% - 80: If Start% < 1 Then Start% = 1
-    If EXITCODE% = -81 Then Start% = Start% + 80: If Start% > NTMS Then Start% = NTMS
-    If EXITCODE% = -81 Or EXITCODE% = -73 Then EXITCODE% = 3: SELECTION% = Start%: GoTo 120
-    T1 = teamIndex%(SELECTION%)
-
-    Open D$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
-    Field #1, 15 As Q$(0), 15 As Q$(1)
-    For I = 0 To 6
-        Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-    Next
-    Field #1, 44 As X$, 2 As Q$(9)
-    For I = 0 To 34
-        Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-    Next
-    For I = 0 To 14
-        Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-        For I1 = 0 To 19
-            Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-        Next
-    Next
-    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-    Get #1, T1
-    A$ = Q$(0)
-    For I = 0 To 34: careerT%(I) = CVI(Q$(I + 10)): Next
-    Close 1
-
-    9005 If Right$(A$, 1) = " " Then A$ = Left$(A$, Len(A$) - 1): GoTo 9005
-    B$ = A$
-
-    3058 Locate 2, 33: Color careerT%(33), careerT%(34): Print A$
-    Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
-    I$ = GetKeyPress$
-    If UCase$(I$) = "Y" Then 3056
-    Color 15, 0
+	3058 Locate 2, 33: Color careerT%(33), careerT%(34): Print A$
+	Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
+	I$ = GetKeyPress$
 
 End Sub

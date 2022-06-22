@@ -1571,8 +1571,7 @@ For I1 = 0 To 14
     If I1 > 4 Then 937
     M6 = A(P9, B1(P9, I1), 3) - A(P9, B1(P9, I1), 7) - A(P9, B1(P9, I1), 11) - A(P9, B1(P9, I1), 12)
     If M6 <= 0 And H < 4 Or M6 <= 0 And H = 4 And T > 120 Then M3 = M3 + 1
-    IF AA$(P9, B1(P9, I1), 0) = "XXX" OR A(P9, B1(P9, I1), 12) >= 6 OR B%(P9, B1(P9, I1), 18) <> 0 OR H = 1 AND A(P9, B1(P9, I1), 12) >= 2 OR H = 2 AND A(P9, B1(P9, I1), 12) >= 4 OR H = 3 AND A(P9, B1(P9, I1), 12) >= 5 OR H = 4 AND T > 300 AND A(P9 _
-, B1(P9, I1), 12) = 5 THEN M4 = M4 + 1
+    IF AA$(P9, B1(P9, I1), 0) = "XXX" OR A(P9, B1(P9, I1), 12) >= 6 OR B%(P9, B1(P9, I1), 18) <> 0 OR H = 1 AND A(P9, B1(P9, I1), 12) >= 2 OR H = 2 AND A(P9, B1(P9, I1), 12) >= 4 OR H = 3 AND A(P9, B1(P9, I1), 12) >= 5 OR H = 4 AND T > 300 AND A(P9, B1(P9, I1), 12) = 5 THEN M4 = M4 + 1
 
 937 Next I1
 If M3 >= 1 And 5 - M3 < 15 - M1 Or H = 4 And T < 120 Or H > 4 Or M4 >= 1 And M2 < 14 Then Call COMPUTERSUBS

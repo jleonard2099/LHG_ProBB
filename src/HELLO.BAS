@@ -14,10 +14,6 @@ DECLARE SUB CONFIG_DRIVES ()
 
 DefInt A-Z
 
-
-'Dim A$(15)
-'Dim BL(21), BLYR(21)
-
 Dim menuChoices$(1 To 8)
 Dim YY
 ReDim AL(600, 14)
@@ -40,13 +36,27 @@ Dim Shared A$, Z1$
 Dim Shared TMR, TMR1
 Dim Shared A(15, 14)
 
-'Dim Shared T%(1, 34)
 
+
+'----------------------------------------
+'Shared across BINPUT.BAS routines
+'----------------------------------------
+Dim inputB%(15, 19), inputT%(35), inputL%(6)
+Dim inputB$(15, 1)
 
 '----------------------------------------
 'Shared across CAREER.BAS routines
 '----------------------------------------
 Dim ars(15, 62, 15), W0S(15, 62), W1S(15, 62)
+
+'----------------------------------------
+'Shared across COMPARE.BAS routines
+'----------------------------------------
+Dim compareA$(15), compareAA$(15, 1), compareB$(14)
+Dim compareT$(0), comparePS$(15)
+
+Dim compareB%(15, 19)
+Dim compareW0(15), compareW1(15), compareZ(15), compareZ1(15)
 
 
 '----------------------------------------
@@ -129,7 +139,6 @@ For I = 1 To 52
     Next
 Next
 
-
 '----------------------------------------
 'Shared across GPMIN.BAS routines
 '----------------------------------------
@@ -138,20 +147,44 @@ Dim adjustB%(0 To 14, 19), adjustL%(0 To 6), adjustT%(0 To 34)
 
 
 '----------------------------------------
+'Shared across HD2HD.BAS routines
+'----------------------------------------
+Dim Shared QQ$(1)
+'--> could be converted to Dim / Shared split
+Dim head2headT(34) 
+Dim AL(50), AW(50), HL(50), HW(50), R1(50), R2(50), R3(50), R4(50)
+Dim TAL(40), TAW(40), THL(40), THW(40)
+Dim TR1(40), TR2(40), TR3(40), TR4(40)
+	
+'----------------------------------------
 'Shared across LOOKY.BAS routines
 '----------------------------------------
-Dim categories$(0 To 25), lookyA$(0 To 14)
+Dim categories$(0 To 25), H$(0 To 100), lookyA$(0 To 14), O$(0 To 100)
 Dim values(0 To 14, 0 To 24), W0(0 To 14), W1(0 To 14)
+Dim O%(0 To 100)
 
 Data NAME,G,MIN,MIN/G,FGM,FGA,FG PCT,3FGM,3FGA,3FG PCT,FTM,FTA,FT PCT
 Data NAME,PTS,PTG/G,HI,OFF REB,DEF REB,TOT REB,REB/G,PF,AST,BLK,STL,TO
 For I = 0 To 25: Read categories$(I): Next
 
+'----------------------------------------
+'Shared across LEAGCMPL.BAS, 
+'	SEELEAG.BAS routines
+'----------------------------------------
+Dim DL(40, 20), DT(21), LD(250, 2), S(14, 26)
+Dim DL$(40), N$(14), Z2$(260), Z3$(260)
+
+Dim O1(40), O2(40), OL(40, 20)
+Dim P(40), Z(260), Z1(260)
+
+Dim OL$(40), leagT$(40)
 
 '----------------------------------------
 'Shared across NEWLDR.BAS routines
 '----------------------------------------
-Dim TP$(0 To 31), TP1$(0 To 38)
+Dim TP$(0 To 31), TP1$(0 To 38), TYP(600)
+Dim TPP$(32), TMM$(32)
+Dim PV, LG
 
 Data GAMES,MINUTES,FIELD GOALS MADE,FIELD GOAL ATTEMPS,F.G. PCT. (3.65 FGM/GAME),THREE POINTS MADE,THREE POINT ATTEMPTS,3FG (.30 3FGM/GAME),FREE THROWS MADE,FREE THROWS ATTEMPTED,F.T. PCT. (1.52 FTM/GAME)
 Data POINTS,SCORING AVERAGE,HI-GAME,OFFENSIVE REBOUNDS,DEFENSIVE REBOUNDS,TOTAL REBOUNDS,AVERAGE REBOUNDS PER GAME,FOULS,ASSISTS,BLOCKED SHOTS,STEALS,TURNOVERS
@@ -173,6 +206,10 @@ Next
 'Shared across REC.BAS routines
 '----------------------------------------
 Dim teamRecords$(20), indRecords$(25)
+Dim BRC$(25, 1), TRC$(21), TRC1$(21)
+Dim BRC(25), TRC(21), TRC1(21)
+
+
 Data GAMES PLAYED,FIELD GOALS ATTEMPTED,FIELD GOALS MADE,FIELD GOAL %,3-FIELD GOALS ATTEMPTED,3-FIELD GOALS MADE,3-FIELD GOAL %
 Data FREE THROWS ATTEMPTED,FREE THROWS MADE,FREE THROW %,MINUTES PLAYED,POINTS,SCORING AVERAGE,HI-GAME,OFFENSIVE REBOUNDS
 Data DEFENSIVE REBOUNDS,TOTAL REBOUNDS,REBOUNDS PER GAME,PERSONAL FOULS,STEALS,ASSISTS,BLOCKS,TURNOVERS,MINUTES PER GAME,MVP VOTING
@@ -183,6 +220,14 @@ Data FREE THROWS ATTEMPTED,FREE THROWS MADE,FREE THROW %,OFFENSIVE REBOUNDS,DEFE
 Data PERSONAL FOULS,STEALS,ASSISTS,BLOCKS,TURNOVERS,POINTS,POINTS PER GAME
 
 For I = 1 To 20: Read teamRecords$(I): Next
+
+
+'----------------------------------------
+'Shared across RECORDS.BAS routines
+'----------------------------------------
+Dim RC$(50, 4), recordsTRC$(125, 3)
+Dim allRecords(50, 2), TotalRecords(125, 2)
+Dim HALF$(2), QTR$(4)
 
 
 '----------------------------------------
@@ -198,6 +243,15 @@ Dim NG%(MAX_GAMES, 18)
 ReDim scheduleH$(20), scheduleYN$(MAX_GAMES, 1)
 Dim Shared scheduleT(0 To 34)
 
+
+'----------------------------------------
+'Shared across TRADE.BAS routines
+'----------------------------------------
+Dim B1(2, 14, 14), tradeT(1)
+Dim W0trade(2, 14), W1trade(2, 14), 
+Dim tradeAA$(1, 6), tradeB$(2, 14, 1)
+Dim teamSettings%(1, 34)
+	
 
 
 '----------------------------------------
@@ -215,9 +269,7 @@ For I = 0 To 1
 Next
 Close 1
 
-
 SELECTION% = 1
-
 
 Do
     Call Main_Menu(SELECTION%)
@@ -225,6 +277,7 @@ Loop Until SELECTION% = 8
 
 End
 
+SYSTEM
 
 
 '----------------------------------------
@@ -235,45 +288,49 @@ Sub Main_Menu (menuSelection%)
 
     _Title "Basketball: The Pro Game - Menu"
 
-    menuChoices$(1) = "PLAY SINGLE GAME                "
-    menuChoices$(2) = "TEAM MANAGEMENT / ORGANIZATION  "
-    menuChoices$(3) = "REPLAY STATISTICS AND REPORTS   "
-    menuChoices$(4) = "LEADERS / STANDINGS / RECORDS   "
-    menuChoices$(5) = "SCHEDULER / AUTOPLAY / BOXSCORES"
-    menuChoices$(6) = "HARD DRIVE INSTALLATION         "
-    menuChoices$(7) = "CONFIGURE DRIVES FOR TEAMS,STATS"
-    menuChoices$(8) = "EXIT TO DOS                     "
+	Do
+		menuChoices$(1) = "PLAY SINGLE GAME                "
+		menuChoices$(2) = "TEAM MANAGEMENT / ORGANIZATION  "
+		menuChoices$(3) = "REPLAY STATISTICS AND REPORTS   "
+		menuChoices$(4) = "LEADERS / STANDINGS / RECORDS   "
+		menuChoices$(5) = "SCHEDULER / AUTOPLAY / BOXSCORES"
+		menuChoices$(6) = "HARD DRIVE INSTALLATION         "
+		menuChoices$(7) = "CONFIGURE DRIVES FOR TEAMS,STATS"
+		menuChoices$(8) = "EXIT TO DOS                     "
 
-    'SCANCODE% = 8
-    menuSelection% = 1
-    Count% = 8
-    FileFGColr% = 15: FileBGColr% = 1
-    HiLiteFGColr% = 0: HiLiteBGColr% = 7
-    Spacing% = 1
-    Column% = 25
+		'SCANCODE% = 8
+		menuSelection% = 1
+		Count% = 8
+		FileFGColr% = 15: FileBGColr% = 1
+		HiLiteFGColr% = 0: HiLiteBGColr% = 7
+		Spacing% = 1
+		Column% = 25
 
-    Cls
-    Call TITLE
-    Call box0(7, 24, 16, 57, 2, 15, 1)
-    Start% = 1
-    Row% = 8
-    _MouseShow "DEFAULT"
-    MMenuVert menuChoices$(), menuSelection%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
-    _MouseHide
+		Cls
+		Call TITLE
+		Call box0(7, 24, 16, 57, 2, 15, 1)
+		Start% = 1
+		Row% = 8
+		_MouseShow "DEFAULT"
+		MMenuVert menuChoices$(), menuSelection%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+		_MouseHide
 
-    Color , 0
+		Color , 0
 
-    If Not (SCANCODE% = 27) Then
-        If menuSelection% = 1 Then Run "PROHOOP.EXE"
-        If menuSelection% = 2 Then Call TEAM_MENU
-        If menuSelection% = 3 Then Call REPLAY_STATS_MENU
-        If menuSelection% = 4 Then Call LEADERS_MENU
-        If menuSelection% = 5 Then Call SCHEDULE
-        'If menuSelection% = 6 Then Run "INSTALL.EXE"
-        If menuSelection% = 7 Then Call CONFIG_DRIVES
-    Else
-        menuSelection% = 8
-    End If
+		If Not (SCANCODE% = 27) Then
+			Select Case menuSelection%
+				Case 1: Run "PROHOOP.EXE"
+				Case 2: Call TEAM_MENU
+				Case 3: Call REPLAY_STATS_MENU
+				Case 4: Call LEADERS_MENU
+				Case 5: Call SCHEDULE
+				'Case 6: Run "INSTALL.EXE"
+				Case 7: Call CONFIG_DRIVES
+				Case 8: Cls
+			End Select 
+		End If
+
+	Loop Until menuSelection% = 8 Or SCANCODE% = 27
 
 End Sub
 
@@ -282,8 +339,9 @@ End Sub
 '       Team_Menu Subroutine
 '----------------------------------------
 Sub TEAM_MENU ()
-    ReDim menuChoices$(1 To 8)
 
+    ReDim menuChoices$(1 To 8)
+    
     SELECTION% = 1
 
     Do
@@ -314,19 +372,19 @@ Sub TEAM_MENU ()
         Color , 0
 
         If Not (SCANCODE% = 27) Then
-            If SELECTION% = 1 Then Call BINPUT(1)
-            If SELECTION% = 2 Then Call BINPUT(2)
-            If SELECTION% = 3 Then Call BINPUT(3)
-            If SELECTION% = 4 Then Call BINPUT(4)
-            If SELECTION% = 5 Then Call DRAFT
-            If SELECTION% = 6 Then Call TRADE
-            If SELECTION% = 7 Then Call GPMIN
-            'If SELECTION% = 8 Then Call Main_Menu(1)
-        Else
-            SELECTION% = 8
-        End If
-
-    Loop Until SELECTION% = 8
+			Select Case SELECTION%
+				Case 1: Call BINPUT(1)
+				Case 2: Call BINPUT(2)
+				Case 3: Call BINPUT(3)
+				Case 4: Call BINPUT(4)
+				Case 5: Call DRAFT
+				Case 6: Call TRADE
+				Case 7: Call GPMIN
+				Case 8: Cls
+			End Select 
+		End If
+    
+	Loop Until SELECTION% = 8 Or SCANCODE% = 27
 
 End Sub
 
@@ -365,15 +423,16 @@ Sub REPLAY_STATS_MENU ()
 
         Color , 0
         If Not (SCANCODE% = 27) Then
-            If SELECTION% = 1 Then Call LOOKY
-            If SELECTION% = 2 Then Call CAREER
-            If SELECTION% = 3 Then Call COMPARE
-            If SELECTION% = 4 Then Call MERGE
-        Else
-            SELECTION% = 5
-        End If
-
-    Loop Until SELECTION% = 5
+			Select Case SELECTION%
+				Case 1: Call LOOKY
+				Case 2: Call CAREER
+				Case 3: Call COMPARE
+				Case 4: Call MERGE
+				Case 5: Cls
+			End Select 
+		End If
+    
+	Loop Until SELECTION% = 5 Or SCANCODE% = 27
 
 End Sub
 
@@ -414,18 +473,19 @@ Sub LEADERS_MENU ()
 
         Color , 0
         If Not (SCANCODE% = 27) Then
-            If SELECTION% = 1 Then Call CREATE
-            If SELECTION% = 2 Then Call LEAGCMPL
-            If SELECTION% = 3 Then Call SEELEAG
-            If SELECTION% = 4 Then Call HD2HD
-            If SELECTION% = 5 Then Call REC
-            If SELECTION% = 6 Then Call NEWLDR
-            If SELECTION% = 7 Then Call BLANK
-        Else
-            SELECTION% = 8
-        End If
-
-    Loop Until SELECTION% = 8
+			Select Case SELECTION%
+				Case 1: Call CREATE
+				Case 2: Call LEAGCMPL
+				Case 3: Call SEELEAG
+				Case 4: Call HD2HD
+				Case 5: Call REC
+				Case 6: Call NEWLDR
+				Case 7: Call BLANK
+				Case 8: Cls
+			End Select 
+		End If
+		
+    Loop Until SELECTION% = 8 Or SCANCODE% = 27
 
 End Sub
 
@@ -495,12 +555,12 @@ End Sub
 
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'
+'$INCLUDE: 'MainRoutines.BM'
 '$INCLUDE: 'PadRight.BM'
 '$INCLUDE: 'TITLE.BM'
 '$INCLUDE: 'ALIGN.BAS'
 '$INCLUDE: 'BLANK.BAS'
 '$INCLUDE: 'BINPUT.BAS'
-'$INCLUDE: 'BUILDSTATS.BAS'
 '$INCLUDE: 'CAREER.BAS'
 '$INCLUDE: 'CARVIEW.BAS'
 '$INCLUDE: 'COMPARE.BAS'

@@ -20,31 +20,34 @@ Cls
 
 16 Locate , 5: Print "          D:\BASKET"
 
-'-- can't this just be blank lines?
-20 For J = 10 To 13: 
-	Locate J
-	Print Space$(62)
-Next
+Do
+	'-- can't this just be blank lines?
+	20 For J = 10 To 13: 
+		Locate J
+		Print Space$(62)
+	Next
 
-25 Color 10: Locate 10, 5: Line Input "ROAD STATS:     "; PR$
+	25 Color 10: Locate 10, 5: Line Input "ROAD STATS:     "; PR$
 
-26 Locate , 5: Line Input "CURRENT STATS:  "; PC$
+	26 Locate , 5: Line Input "CURRENT STATS:  "; PC$
 
-27 Color 14: Locate 13, 5: Print "ANY CHANGE (Y/N)"
+	27 Color 14: Locate 13, 5: Print "ANY CHANGE (Y/N)"
 
-28 I$ = GetKeyPress$
-29 If UCase$(I$) = "Y" Then 20
+	28 I$ = GetKeyPress$
+Loop Until UCase$(I$) = "N"
 
-45 Locate 15, 5: Print Space$(55)
 
-46 Locate 16, 5: Print Space$(55)
+Do
+	45 Locate 15, 5: Print Space$(55)
 
-47 Color 11: Locate 15, 5: Input "ENTER NAME OF STAT FILE (EX.- MINNESOT.90)"; Z$
+	46 Locate 16, 5: Print Space$(55)
 
-50 Locate , 5: Print "ANY CHANGE (YN)"
+	47 Color 11: Locate 15, 5: Input "ENTER NAME OF STAT FILE (EX.- MINNESOT.90)"; Z$
 
-60 I$ = GetKeyPress$
-70 If UCase$(I$) = "Y" Then 45
+	50 Locate , 5: Print "ANY CHANGE (YN)"
+
+	60 I$ = GetKeyPress$
+Loop Until UCase$(I$) = "N"
 
 
 110 If Not _FileExists(PR$ + "\" + Z$) Then 
@@ -108,19 +111,18 @@ End If
 
 404 N = 0
 
-
-'-- Need to build a loop here
+Do 
 
 405 For J = 0 To 14
 
-    410 If alignA$(N) = AR$(J) Then 420 Else GoTo 424
+		410 If alignA$(N) <> AR$(J) Then
+			420 AN$(N) = AR$(J)
 
-    420 AN$(N) = AR$(J)
-
-    421 For K = 0 To 13: AN(N, K) = AR(J, K): W0N(N) = W0R(J): WN1(N) = WR1(J)
-
-    422 Next K
-
+			421 For K = 0 To 13
+				AN(N, K) = AR(J, K): W0N(N) = W0R(J): WN1(N) = WR1(J)
+			422 Next K
+		End If
+		
 424 Next J
 
 425 N = N + 1
@@ -133,10 +135,10 @@ End If
 
 		1302 For K = 0 To 14
 
-			1303 If AN$(K) = alignA$(K) Then 1305 Else GoTo 1304
-
-			1304 SEQ = SEQ + 1
-
+			1303 If AN$(K) <> alignA$(K) Then 
+				SEQ = SEQ + 1
+			End If
+			
 		1305 Next
 
 		1320 If SEQ = 0 Then 
@@ -178,9 +180,10 @@ End If
 
 		End If
 				
-	Else 
-		GoTo 405
 	End If
+
+Loop Until N = 15
+
 
 '-- Need to end the loop here
 

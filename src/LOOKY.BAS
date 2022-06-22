@@ -136,8 +136,9 @@ End Sub
 '------------------------------
 Sub ReadStats (Z$, teamRatings%())
 
-    Dim O%(0 To 100), P%(0 To 100)
-    Dim H$(0 To 100), O$(0 To 100)
+    Dim P%(0 To 100)
+    Shared O%(), H$(), O$() 
+	
     Dim Z(0 To 15), Z1(0 To 15)
 
 	Shared categories$(), lookyA$()
@@ -212,8 +213,6 @@ Sub ReadStats (Z$, teamRatings%())
     Next
 
 
-
-
 	'-----
     'Print stats to screen
     815 Call TITLE_HEADER
@@ -277,6 +276,15 @@ Sub ReadStats (Z$, teamRatings%())
 	'Print
     If UCase$(I$) = "P" Then 
 		Call PrintStatsSchedule(totalGames%, teamRatings%(), O%(), O$(), H$())
+		
+		LPrint
+		LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
+		LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
+		LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
+		LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
+		LPrint Chr$(12)
+		I$ = GetKeyPress$
+
 		Call PrintStatsSummary(totalGames%, Z(), Z1())
 		GoTo 870
 	End If
@@ -357,6 +365,13 @@ Sub ReadStats (Z$, teamRatings%())
 	'Print
     If UCase$(I$) = "P" Then
 		Call PrintStatsSchedule(totalGames%, teamRatings%(), O%(), O$(), H$())
+		LPrint
+		LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
+		LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
+		LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
+		LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
+		LPrint Chr$(12)
+		I$ = GetKeyPress$
 		Call PrintStatsSummary(totalGames%, Z(), Z1())
 		GoTo 970
 	End If
@@ -371,9 +386,6 @@ Sub ReadStats (Z$, teamRatings%())
 	'Esc
     If I$ = Chr$(27) Then Exit Sub
     GoTo 970
-
-
-
 
  
 	'-----
@@ -505,7 +517,14 @@ Sub ReadStats (Z$, teamRatings%())
 
 	'Print
     If UCase$(I$) = "P" Then 	
-		Call PrintStatsSchedule(totalGames%, teamRatings%(), O%(), O$(), H$())
+		Call PrintStatsSchedule(totalGames%, teamRatings%())
+		LPrint
+		LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
+		LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
+		LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
+		LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
+		LPrint Chr$(12)
+		I$ = GetKeyPress$
 		Call PrintStatsSummary(totalGames%, Z(), Z1())
 		GoTo 230
 	End If	
@@ -612,7 +631,14 @@ Sub ReadStats (Z$, teamRatings%())
 		End If
 
 		If UCase$(I$) = "P" Then 
-			Call PrintStatsSchedule(totalGames%, teamRatings%(), O%(), O$(), H$())
+			Call PrintStatsSchedule(totalGames%, teamRatings%())
+			LPrint
+			LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
+			LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
+			LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
+			LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
+			LPrint Chr$(12)
+			I$ = GetKeyPress$
 			Call PrintStatsSummary(totalGames%, Z(), Z1())
 			GoTo 370
 		End If
@@ -655,6 +681,7 @@ End Sub 'LOOKY
 
 '------------------------------
 Sub SortStats (CP%)
+
 	Shared values(), W0(), W1()
 	Shared lookyA$()
 	
@@ -722,12 +749,32 @@ Sub TeamSelection_LOOKY (yearNumber$, numberTeams, teamInfo%(), BO%)
     20 MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    If EXITCODE% = 27 Then BO% = 1: Exit Sub
-    If EXITCODE% = -71 Then Start% = 1: EXITCODE% = 3: SELECTION% = 1: GoTo 20
-    If EXITCODE% = -79 Then Start% = NTMS: EXITCODE% = 3: SELECTION% = NTMS: GoTo 20
-    If EXITCODE% = -73 Then Start% = Start% - 80: If Start% < 1 Then Start% = 1
-    If EXITCODE% = -81 Then Start% = Start% + 80: If Start% > NTMS Then Start% = NTMS
-    If EXITCODE% = -81 Or EXITCODE% = -73 Then EXITCODE% = 3: SELECTION% = Start%: GoTo 20
+	Select Case EXITCODE%
+		Case 27: BO% = 1: Exit Sub 'Return
+		Case -71: 
+			Start% = 1
+			EXITCODE% = 3
+			SELECTION% = 1
+			GoTo 20
+		Case -79: 
+			Start% = Count%
+			EXITCODE% = 3
+			SELECTION% = Count%
+			GoTo 20
+		Case -73: 
+			Start% = Start% - 80
+			If Start% < 1 Then Start% = 1
+			EXITCODE% = 3
+			SELECTION% = Start%
+			GoTo 20
+		Case -81: 
+			Start% = Start% + 80
+			If Start% > Count% Then Start% = Count%
+			EXITCODE% = 3
+			SELECTION% = Start%
+			GoTo 20
+	End Select
+
     T1 = teamIndex%(SELECTION%)
 
     Open D$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
@@ -760,35 +807,29 @@ End Sub
 
 
 '------------------------------
-Sub PrintStatsSchedule (totalGames%, teamRatings%(), O%(), O$(), H$())
+Sub PrintStatsSchedule (totalGames%, teamRatings%())
 
-		LPrint "SCHEDULE RESULTS FOR "; B$
-		LPrint
-		For I = 1 To 28
-			LPrint Using "###"; O%(I);
-			LPrint Tab(5); Left$(O$(I), 14);
-			LPrint Tab(20); Using "###"; teamRatings%(I);
-			LPrint Tab(24); H$(I); Tab(27);
-			If I + 28 > totalGames% Then LPrint: GoTo 880
-			LPrint Using "###"; O%(I + 28);
-			LPrint Tab(31); Left$(O$(I + 28), 14);
-			LPrint Tab(46); Using "###"; teamRatings%(I + 28);
-			LPrint Tab(50); H$(I + 28); Tab(53);
-			If I + 56 > totalGames% Then LPrint: GoTo 880
-			LPrint Using "###"; O%(I + 56);
-			LPrint Tab(57); Left$(O$(I + 56), 14);
-			LPrint Tab(72); Using "###"; teamRatings%(I + 56);
-			LPrint Tab(76); H$(I + 56)
+    Shared O%(), H$(), O$() 
 
-		880 Next I
-		LPrint
-		LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
-		LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
-		LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
-		LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
-		LPrint Chr$(12)
+	LPrint "SCHEDULE RESULTS FOR "; B$
+	LPrint
+	For I = 1 To 28
+		LPrint Using "###"; O%(I);
+		LPrint Tab(5); Left$(O$(I), 14);
+		LPrint Tab(20); Using "###"; teamRatings%(I);
+		LPrint Tab(24); H$(I); Tab(27);
+		If I + 28 > totalGames% Then LPrint: GoTo 880
+		LPrint Using "###"; O%(I + 28);
+		LPrint Tab(31); Left$(O$(I + 28), 14);
+		LPrint Tab(46); Using "###"; teamRatings%(I + 28);
+		LPrint Tab(50); H$(I + 28); Tab(53);
+		If I + 56 > totalGames% Then LPrint: GoTo 880
+		LPrint Using "###"; O%(I + 56);
+		LPrint Tab(57); Left$(O$(I + 56), 14);
+		LPrint Tab(72); Using "###"; teamRatings%(I + 56);
+		LPrint Tab(76); H$(I + 56)
 
-		125 I$ = GetKeyPress$
+	880 Next I
 
 End Sub
 
