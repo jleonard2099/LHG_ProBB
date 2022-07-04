@@ -42,7 +42,7 @@ Sub REC ()
 			SELECTION% = 1
 			Count% = 7
 			Start% = 1
-			SCANCODE% = 7
+			EXITCODE% = 7
 			FileFGColr% = 15: FileBGColr% = 1
 			HiLiteFGColr% = 0: HiLiteBGColr% = 7
 			Spacing% = 1
@@ -51,20 +51,23 @@ Sub REC ()
 
 			CALL box0(7, 24, 15, 50, 2,  15, 1)
 			_MouseShow "DEFAULT"
-			MMenuVert menuChoices$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+			MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 			_MouseHide
 
-			Color , 0
-			Select Case SELECTION% 
-				Case 1: Call ViewSeasonRecords
-				Case 2: Call PrintSeasonRecords
-				Case 3: If _FileExists(D$(1) + "RECORDS.PBB") Then Kill D$(1) + "RECORDS.PBB"
-				Case 4: Call RECORDS(1)
-				Case 5: Call RECORDS(2)
-				Case 6: If _FileExists(D$(1) + "RECORDS.GAM") Then Kill D$(1) + "RECORDS.GAM"
-			End Select
-			
-		Loop Until SELECTION% = 7 OR SCANCODE% = 27
+			If NOT (EXITCODE% = 27) THEN
+				Color , 0
+				Select Case SELECTION% 
+					Case 1: Call ViewSeasonRecords
+					Case 2: Call PrintSeasonRecords
+					Case 3: If _FileExists(D$(1) + "RECORDS.PBB") Then Kill D$(1) + "RECORDS.PBB"
+					Case 4: Call RECORDS(1)
+					Case 5: Call RECORDS(2)
+					Case 6: If _FileExists(D$(1) + "RECORDS.GAM") Then Kill D$(1) + "RECORDS.GAM"
+					Case 7: '
+				End Select
+			End If
+
+		Loop Until SELECTION% = 7 OR EXITCODE% = 27
 		
 	Else
 		Call TITLE

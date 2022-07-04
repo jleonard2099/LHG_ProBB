@@ -22,6 +22,7 @@ ReDim AL(600, 14)
 '----------------------------------------
 ' Used across more than one source file
 '----------------------------------------
+Dim Shared A(15, 14)
 Dim Shared D$(3), Q$(0 To 377)
 Dim Shared teamNames$(MAX_TEAMS), Z1$(40)
 Dim Shared teamIndex%(MAX_TEAMS)
@@ -32,17 +33,16 @@ Dim Shared DirCount%
 Dim Shared Y As Long
 
 
-Dim Shared A$, Z1$
+Dim Shared BO%
+Dim Shared A$, YN$, Z1$
 Dim Shared TMR, TMR1
-Dim Shared A(15, 14)
-
 
 
 '----------------------------------------
 'Shared across BINPUT.BAS routines
 '----------------------------------------
-Dim inputB%(15, 19), inputT%(35), inputL%(6)
-Dim inputB$(15, 1)
+Dim inputB%(0 To 14, 0 To 19), inputT%(35), inputL%(0 To 6)
+Dim inputB$(15, 1), inputT$(4)
 
 '----------------------------------------
 'Shared across CAREER.BAS routines
@@ -55,9 +55,13 @@ Dim ars(15, 62, 15), W0S(15, 62), W1S(15, 62)
 Dim compareA$(15), compareAA$(15, 1), compareB$(14)
 Dim compareT$(0), comparePS$(15)
 
-Dim compareB%(15, 19)
-Dim compareW0(15), compareW1(15), compareZ(15), compareZ1(15)
+Dim compareB%(15, 19), compareL%(6), compareT%(34)
+Dim compareW0(15), compareW1(15), compareZ(1 To 15), compareZ1(1 To 15)
 
+'----------------------------------------
+'Shared across CREATE.BAS routines
+'----------------------------------------
+Dim intZ1%(40)
 
 '----------------------------------------
 'Shared across DRAFT.BAS routines
@@ -151,13 +155,14 @@ Dim adjustB%(0 To 14, 19), adjustL%(0 To 6), adjustT%(0 To 34)
 '----------------------------------------
 Dim Shared QQ$(1)
 '--> could be converted to Dim / Shared split
-Dim head2headT(34) 
-Dim AL(50), AW(50), HL(50), HW(50), R1(50), R2(50), R3(50), R4(50)
+Dim hd2hdT(34)
+Dim hd2hdAL(50), AW(50), HL(50), HW(50), R1(50), R2(50), R3(50), R4(50)
 Dim TAL(40), TAW(40), THL(40), THW(40)
 Dim TR1(40), TR2(40), TR3(40), TR4(40)
-	
+    
 '----------------------------------------
-'Shared across LOOKY.BAS routines
+'Shared across LOOKY.BAS,
+'   LEAGCMPL.BAS routines
 '----------------------------------------
 Dim categories$(0 To 25), H$(0 To 100), lookyA$(0 To 14), O$(0 To 100)
 Dim values(0 To 14, 0 To 24), W0(0 To 14), W1(0 To 14)
@@ -168,16 +173,16 @@ Data NAME,PTS,PTG/G,HI,OFF REB,DEF REB,TOT REB,REB/G,PF,AST,BLK,STL,TO
 For I = 0 To 25: Read categories$(I): Next
 
 '----------------------------------------
-'Shared across LEAGCMPL.BAS, 
-'	SEELEAG.BAS routines
+'Shared across LEAGCMPL.BAS,
+'   SEELEAG.BAS routines
 '----------------------------------------
 Dim DL(40, 20), DT(21), LD(250, 2), S(14, 26)
 Dim DL$(40), N$(14), Z2$(260), Z3$(260)
 
-Dim O1(40), O2(40), OL(40, 20)
+Dim O1(40), O2(40), OL(40, 20), OT(21)
 Dim P(40), Z(260), Z1(260)
 
-Dim OL$(40), leagT$(40)
+Dim H1$(40), OL$(40), leagT$(40)
 
 '----------------------------------------
 'Shared across NEWLDR.BAS routines
@@ -248,20 +253,20 @@ Dim Shared scheduleT(0 To 34)
 'Shared across TRADE.BAS routines
 '----------------------------------------
 Dim B1(2, 14, 14), tradeT(1)
-Dim W0trade(2, 14), W1trade(2, 14), 
-Dim tradeAA$(1, 6), tradeB$(2, 14, 1)
+Dim tradeW0(2, 14), tradeW1(2, 14)
+Dim tradeAA$(1, 6), tradeB$(0 To 1, 0 To 14, 0 To 1)
+Dim SA$(1)
 Dim teamSettings%(1, 34)
-	
+Dim tradeB%(0 To 1, 0 To 14, 0 To 19), tradeL%(0 To 1, 0 To 6)
 
 
 '----------------------------------------
 '               MAIN CODE
 '----------------------------------------
-
+_Title "Basketball: The Pro Game - Menu"
 $ExeIcon:'./lhg_probb.ico'
 _Icon
 _AllowFullScreen
-
 
 Open "DEV.BAS" For Input As #1
 For I = 0 To 1
@@ -277,60 +282,64 @@ Loop Until SELECTION% = 8
 
 End
 
-SYSTEM
+System
 
 
 '----------------------------------------
 '       Main_Menu Subroutine
 '----------------------------------------
 Sub Main_Menu (menuSelection%)
+
     ReDim menuChoices$(1 To 8)
 
-    _Title "Basketball: The Pro Game - Menu"
+    Do
 
-	Do
-		menuChoices$(1) = "PLAY SINGLE GAME                "
-		menuChoices$(2) = "TEAM MANAGEMENT / ORGANIZATION  "
-		menuChoices$(3) = "REPLAY STATISTICS AND REPORTS   "
-		menuChoices$(4) = "LEADERS / STANDINGS / RECORDS   "
-		menuChoices$(5) = "SCHEDULER / AUTOPLAY / BOXSCORES"
-		menuChoices$(6) = "HARD DRIVE INSTALLATION         "
-		menuChoices$(7) = "CONFIGURE DRIVES FOR TEAMS,STATS"
-		menuChoices$(8) = "EXIT TO DOS                     "
+        Cls
+        
+        Call TITLE
+        
+        menuChoices$(1) = "PLAY SINGLE GAME                "
+        menuChoices$(2) = "TEAM MANAGEMENT / ORGANIZATION  "
+        menuChoices$(3) = "REPLAY STATISTICS AND REPORTS   "
+        menuChoices$(4) = "LEADERS / STANDINGS / RECORDS   "
+        menuChoices$(5) = "SCHEDULER / AUTOPLAY / BOXSCORES"
+        menuChoices$(6) = "HARD DRIVE INSTALLATION         "
+        menuChoices$(7) = "CONFIGURE DRIVES FOR TEAMS,STATS"
+        menuChoices$(8) = "EXIT TO DOS                     "
 
-		'SCANCODE% = 8
-		menuSelection% = 1
-		Count% = 8
-		FileFGColr% = 15: FileBGColr% = 1
-		HiLiteFGColr% = 0: HiLiteBGColr% = 7
-		Spacing% = 1
-		Column% = 25
+        'EXITCODE% = 8
+        menuSelection% = 1
+        Count% = 8
+        FileFGColr% = 15: FileBGColr% = 1
+        HiLiteFGColr% = 0: HiLiteBGColr% = 7
+        Spacing% = 1
+        Column% = 25
 
-		Cls
-		Call TITLE
-		Call box0(7, 24, 16, 57, 2, 15, 1)
-		Start% = 1
-		Row% = 8
-		_MouseShow "DEFAULT"
-		MMenuVert menuChoices$(), menuSelection%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
-		_MouseHide
+        Call box0(7, 24, 16, 57, 2, 15, 1)
+        Start% = 1
+        Row% = 8
+        _MouseShow "DEFAULT"
+        MMenuVert menuChoices$(), menuSelection%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        _MouseHide
 
-		Color , 0
+        Color , 0
 
-		If Not (SCANCODE% = 27) Then
-			Select Case menuSelection%
-				Case 1: Run "PROHOOP.EXE"
-				Case 2: Call TEAM_MENU
-				Case 3: Call REPLAY_STATS_MENU
-				Case 4: Call LEADERS_MENU
-				Case 5: Call SCHEDULE
-				'Case 6: Run "INSTALL.EXE"
-				Case 7: Call CONFIG_DRIVES
-				Case 8: Cls
-			End Select 
-		End If
+        If Not (EXITCODE% = 27) Then
+            Select Case menuSelection%
+                Case 1: Run "PROHOOP.EXE"
+                Case 2: Call TEAM_MENU
+                Case 3: Call REPLAY_STATS_MENU
+                Case 4: Call LEADERS_MENU
+                Case 5: Call SCHEDULE
+                    'Case 6: Run "INSTALL.EXE"
+                Case 7: Call CONFIG_DRIVES
+                Case 8: Cls
+            End Select
+        End If
 
-	Loop Until menuSelection% = 8 Or SCANCODE% = 27
+    Loop Until menuSelection% = 8 Or EXITCODE% = 27
+
+    If EXITCODE% = 27 Then menuSelection% = 8
 
 End Sub
 
@@ -341,7 +350,7 @@ End Sub
 Sub TEAM_MENU ()
 
     ReDim menuChoices$(1 To 8)
-    
+
     SELECTION% = 1
 
     Do
@@ -357,7 +366,7 @@ Sub TEAM_MENU ()
         menuChoices$(8) = "RETURN TO MAIN MENU           "
         Count% = 8
         Start% = 1
-        SCANCODE% = 8
+        EXITCODE% = 8
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -366,25 +375,25 @@ Sub TEAM_MENU ()
         Call box0(7, 26, 16, 57, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
-        If Not (SCANCODE% = 27) Then
-			Select Case SELECTION%
-				Case 1: Call BINPUT(1)
-				Case 2: Call BINPUT(2)
-				Case 3: Call BINPUT(3)
-				Case 4: Call BINPUT(4)
-				Case 5: Call DRAFT
-				Case 6: Call TRADE
-				Case 7: Call GPMIN
-				Case 8: Cls
-			End Select 
-		End If
-    
-	Loop Until SELECTION% = 8 Or SCANCODE% = 27
+        If Not (EXITCODE% = 27) Then
+            Select Case SELECTION%
+                Case 1: Call BINPUT(1)
+                Case 2: Call BINPUT(2)
+                Case 3: Call BINPUT(3)
+                Case 4: Call BINPUT(4)
+                Case 5: Call DRAFT
+                Case 6: Call TRADE
+                Case 7: Call GPMIN
+                Case 8: Cls
+            End Select
+        End If
+
+    Loop Until SELECTION% = 8 Or EXITCODE% = 27
 
 End Sub
 
@@ -408,7 +417,7 @@ Sub REPLAY_STATS_MENU ()
         menuChoices$(5) = "RETURN TO MAIN MENU              "
         Count% = 5
         Start% = 1
-        SCANCODE% = 5
+        EXITCODE% = 5
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -418,21 +427,21 @@ Sub REPLAY_STATS_MENU ()
         Call box0(7, 24, 13, 58, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
-        If Not (SCANCODE% = 27) Then
-			Select Case SELECTION%
-				Case 1: Call LOOKY
-				Case 2: Call CAREER
-				Case 3: Call COMPARE
-				Case 4: Call MERGE
-				Case 5: Cls
-			End Select 
-		End If
+        If Not (EXITCODE% = 27) Then
+            Select Case SELECTION%
+                Case 1: Call LOOKY
+                Case 2: Call CAREER
+                Case 3: Call COMPARE
+                Case 4: Call MERGE
+                Case 5: Cls
+            End Select
+        End If
     
-	Loop Until SELECTION% = 5 Or SCANCODE% = 27
+    Loop Until SELECTION% = 5 Or EXITCODE% = 27
 
 End Sub
 
@@ -459,7 +468,7 @@ Sub LEADERS_MENU ()
         SELECTION% = 1
         Count% = 8
         Start% = 1
-        SCANCODE% = 8
+        EXITCODE% = 8
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -468,24 +477,24 @@ Sub LEADERS_MENU ()
         Call box0(7, 25, 16, 56, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
-        If Not (SCANCODE% = 27) Then
-			Select Case SELECTION%
-				Case 1: Call CREATE
-				Case 2: Call LEAGCMPL
-				Case 3: Call SEELEAG
-				Case 4: Call HD2HD
-				Case 5: Call REC
-				Case 6: Call NEWLDR
-				Case 7: Call BLANK
-				Case 8: Cls
-			End Select 
-		End If
-		
-    Loop Until SELECTION% = 8 Or SCANCODE% = 27
+        If Not (EXITCODE% = 27) Then
+            Select Case SELECTION%
+                Case 1: Call CREATE
+                Case 2: Call LEAGCMPL
+                Case 3: Call SEELEAG
+                Case 4: Call HD2HD
+                Case 5: Call REC
+                Case 6: Call NEWLDR
+                Case 7: Call BLANK
+                Case 8: Cls
+            End Select
+        End If
+        
+    Loop Until SELECTION% = 8 Or EXITCODE% = 27
 
 End Sub
 

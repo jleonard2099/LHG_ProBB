@@ -5,21 +5,19 @@
 'It also creates/updates RECORDS.PBB
 Sub LEAGCMPL ()
 
-    Dim O%(100), leagueT%(100)
-
-    Dim BRC$(32, 1), H1$(40)
-    Dim O$(100), OL$(40)
-    Dim TRC$(21), TRC1$(21)
-
+	Dim leagueT%(100)
     Dim BRC(32)
-    Dim O1(40), O2(40), OL(40, 20), OT(21)
-    Dim TRC(21), TRC1(21)
-    Dim W0(15), W1(15)
 
+    Shared O%()
 
-	Shared DT(), DL()
-	Shared LD(), S()
-	Shared DL$(), N$(), Z2$(), Z3$()
+	Shared DT(), DL(), LD()
+    Shared O1(), O2(), OL(), OT(), S()
+    Shared TRC(), TRC1(), W0(), W1()
+	
+    Shared BRC$(), DL$(), H1$()
+    Shared N$(), O$(), OL$()
+    Shared TRC$(), TRC1$(), Z2$(), Z3$()
+	
 	Shared TN$
 
     _Title "Basketball: The Pro Game - Update Standings"
@@ -151,211 +149,217 @@ Sub LEAGCMPL ()
     Close 2
 
     For XW = 1 To 40
-		700 WN = 0: LS = 0: CW = 0: CL = 0
-		If H1$(XW) = Chr$(42) Then Return 'to where?
 		WN = 0: LS = 0: CW = 0: CL = 0
+		If H1$(XW) <> Chr$(42) Then
 
-		If _FileExists(D$(1) + H1$(XW) + "S") Then
-			Open D$(1) + H1$(XW) + "S" For Input As #3
-			Input #3, Y%
-			For I = 1 To 100: Input #3, O%(I): Next I
-			For I = 1 To 100: Input #3, O$(I): Next I
-			For I = 1 To 100: Input #3, leagueT%(I): Next I
-			Close 2
 			WN = 0: LS = 0: CW = 0: CL = 0
-			For I = 1 To Y%
-				5600 For P = 4 To 11: If Mid$(O$(I), P, 1) = " " Or Mid$(O$(I), P, 1) = "." Then Mid$(O$(I), P, 1) = "_"
-				Next P
-				For P = 12 To 14: If Mid$(O$(I), P, 2) = "ST" Then Mid$(O$(I), 9, 1) = "_": Mid$(O$(I), 10, 2) = "ST"
-				Next P
-				QQ = 8
-				For P = 11 To 4 Step -1
-					If Mid$(O$(I), P, 1) = "_" Then 
-						QQ = P - 4
-					Else
-						Exit For
-					End If
-				Next P
 
-				5608 targetFile$ = Mid$(O$(I), 4, QQ): R$ = targetFile$ + "." + Left$(O$(I), 2)
-				O$(I) = R$
+			If _FileExists(D$(1) + H1$(XW) + "S") Then
+				Open D$(1) + H1$(XW) + "S" For Input As #3
+				Input #3, Y%
+				For I = 1 To 100: Input #3, O%(I): Next I
+				For I = 1 To 100: Input #3, O$(I): Next I
+				For I = 1 To 100: Input #3, leagueT%(I): Next I
+				Close 2
+				WN = 0: LS = 0: CW = 0: CL = 0
+				For I = 1 To Y%
+					5600 For P = 4 To 11: If Mid$(O$(I), P, 1) = " " Or Mid$(O$(I), P, 1) = "." Then Mid$(O$(I), P, 1) = "_"
+					Next P
+					For P = 12 To 14: If Mid$(O$(I), P, 2) = "ST" Then Mid$(O$(I), 9, 1) = "_": Mid$(O$(I), 10, 2) = "ST"
+					Next P
+					QQ = 8
+					For P = 11 To 4 Step -1
+						If Mid$(O$(I), P, 1) = "_" Then 
+							QQ = P - 4
+						Else
+							Exit For
+						End If
+					Next P
 
-				For EC = 1 To 40
-					If O$(I) = H1$(EC) Then 
-						If O%(I) > leagueT%(I) Then CW = CW + 1: WN = WN + 1
-						If O%(I) < leagueT%(I) Then CL = CL + 1: LS = LS + 1
-					End If
-				Next EC
-				
-				If O%(I) > leagueT%(I) Then WN = WN + 1
-				If O%(I) < leagueT%(I) Then LS = LS + 1
-				'GoTo 5520
-				EC = 0
+					5608 targetFile$ = Mid$(O$(I), 4, QQ): R$ = targetFile$ + "." + Left$(O$(I), 2)
+					O$(I) = R$
+
+					For EC = 1 To 40
+						If O$(I) = H1$(EC) Then 
+							If O%(I) > leagueT%(I) Then CW = CW + 1: WN = WN + 1
+							If O%(I) < leagueT%(I) Then CL = CL + 1: LS = LS + 1
+						End If
+					Next EC
+					
+					If O%(I) > leagueT%(I) Then WN = WN + 1
+					If O%(I) < leagueT%(I) Then LS = LS + 1
+					'GoTo 5520
+					EC = 0
+				Next I
+				Close 3
+
+				Cls
+				Locate 4, 5
+				Color 14: Print "FINDING ";
+				Color 15: Print H1$(XW);
+				Color 14: Print " STATS            "
+			End If 'Done checking if file exists
+			
+		End If 'Done checking H1$(XW)
+			
+		L = Len(H1$(XW)): WT$ = ""
+		For X = 1 To L: A = Asc(Mid$(H1$(XW), X, 1))
+		WT$ = WT$ + Chr$(A): Next X
+		For X = 1 To 40
+			If Z1$(X) = WT$ Then
+				If O1(X) = WN And O2(X) = LS Then GoTo 919
+				O1(X) = WN: O2(X) = LS
+			End If
+		Next X
+
+		For I = 0 To 14
+			For J = 0 To 22
+				S(I, J) = 0
+			Next
+		Next
+
+		If _FileExists(D$(1) + H1$(XW)) Then
+			Open D$(1) + H1$(XW) For Input As #2
+			Input #2, TN$
+			For I = 0 To 14
+				Input #2, N$(I)
+				For J = 0 To 13: Input #2, S(I, J): Next
+				Input #2, W0(I)
+				Input #2, W1(I)
 			Next I
-			Close 3
-
-			Cls
-			Locate 4, 5
-			Color 14: Print "FINDING ";
-			Color 15: Print H1$(XW);
-			Color 14: Print " STATS            "
-
-			L = Len(H1$(XW)): WT$ = ""
-			For X = 1 To L: A = Asc(Mid$(H1$(XW), X, 1))
-			WT$ = WT$ + Chr$(A): Next X
-			For X = 1 To 40
-				If Z1$(X) = WT$ Then
-					If O1(X) = WN And O2(X) = LS Then GoTo 919
-					O1(X) = WN: O2(X) = LS
-				End If
-			Next X
+			For L = 1 To 16: Input #2, OT(L): Next
+			For L = 1 To 16: Input #2, DT(L): Next
+			Close 2
 
 			For I = 0 To 14
-				For J = 0 To 22
-					S(I, J) = 0
-				Next
-			Next
+				S(I, 25) = S(I, 13)
+				S(I, 26) = S(I, 12)
+				S(I, 12) = S(I, 2) * 2 + W0(I) + S(I, 4): ' *** PTS ***
 
-			If _FileExists(D$(1) + H1$(XW)) Then
-				Open D$(1) + H1$(XW) For Input As #2
-				Input #2, TN$
-				For I = 0 To 14
-					Input #2, N$(I)
-					For J = 0 To 13: Input #2, S(I, J): Next
-					Input #2, W0(I)
-					Input #2, W1(I)
-				Next I
-				For L = 1 To 16: Input #2, OT(L): Next
-				For L = 1 To 16: Input #2, DT(L): Next
-				Close 2
+				If S(I, 0) <> 0 Then 
+					S(I, 13) = S(I, 5) / S(I, 0): ' *** RB/G ***
+					S(I, 14) = S(I, 6) / S(I, 0): ' *** FOULS/G ***
+					S(I, 15) = S(I, 7) / S(I, 0): ' *** STEALS/G ***
+					S(I, 16) = S(I, 8) / S(I, 0): ' *** ASSISTS/G ***
+					S(I, 17) = S(I, 9) / S(I, 0): ' *** BLOCKS/G ***
+					S(I, 24) = S(I, 5) + S(I, 12) - S(I, 6) + S(I, 8) + S(I, 9) + S(I, 7) - 2 * S(I, 11)
+					S(I, 18) = S(I, 10) / 60 / S(I, 0): ' *** MIN/G ***
 
-				For I = 0 To 14
-					S(I, 25) = S(I, 13)
-					S(I, 26) = S(I, 12)
-					S(I, 12) = S(I, 2) * 2 + W0(I) + S(I, 4): ' *** PTS ***
-
-					If S(I, 0) <> 0 Then 
-						S(I, 13) = S(I, 5) / S(I, 0): ' *** RB/G ***
-						S(I, 14) = S(I, 6) / S(I, 0): ' *** FOULS/G ***
-						S(I, 15) = S(I, 7) / S(I, 0): ' *** STEALS/G ***
-						S(I, 16) = S(I, 8) / S(I, 0): ' *** ASSISTS/G ***
-						S(I, 17) = S(I, 9) / S(I, 0): ' *** BLOCKS/G ***
-						S(I, 24) = S(I, 5) + S(I, 12) - S(I, 6) + S(I, 8) + S(I, 9) + S(I, 7) - 2 * S(I, 11)
-						S(I, 18) = S(I, 10) / 60 / S(I, 0): ' *** MIN/G ***
-
-						If Not( S(I, 1) = 0 Or (S(I, 2) / S(I, 0)) < 3.65) Then
-							S(I, 19) = S(I, 2) / S(I, 1): ' *** FG% ***
-						End If
-						
-						If Not (S(I, 3) = 0 Or (S(I, 4) / S(I, 0)) < 1.52) Then
-							S(I, 20) = S(I, 4) / S(I, 3): ' *** FT% ***
-						End If
-						
-						If Not (W1(I) = 0 Or W0(I) / S(I, 0) < .3) Then
-							S(I, 21) = W0(I) / W1(I): ' *** 3FG% ***
-						End If
-						
-						831 S(I, 22) = S(I, 12) / S(I, 0): ' *** PTS/G ***
-						If S(I, 0) > BRC(1) Then BRC(1) = S(I, 0): BRC$(1, 0) = N$(I): BRC$(1, 1) = TN$
-						If S(I, 1) > BRC(2) Then BRC(2) = S(I, 1): BRC$(2, 0) = N$(I): BRC$(2, 1) = TN$
-						If S(I, 2) > BRC(3) Then BRC(3) = S(I, 2): BRC$(3, 0) = N$(I): BRC$(3, 1) = TN$
-						If S(I, 19) > BRC(4) And UCase$(finalUpdate$) = "Y" And S(I, 2) / S(I, 0) >= 3.65 Then BRC(4) = S(I, 19): BRC$(4, 0) = N$(I): BRC$(4, 1) = TN$
-						If W1(I) > BRC(5) Then BRC(5) = W1(I): BRC$(5, 0) = N$(I): BRC$(5, 1) = TN$
-						If W0(I) > BRC(6) Then BRC(6) = W0(I): BRC$(6, 0) = N$(I): BRC$(6, 1) = TN$
-						If S(I, 21) > BRC(7) And UCase$(finalUpdate$) = "Y" And W0(I) / S(I, 0) >= .3 Then BRC(7) = S(I, 21): BRC$(7, 0) = N$(I): BRC$(7, 1) = TN$
-						If S(I, 3) > BRC(8) Then BRC(8) = S(I, 3): BRC$(8, 0) = N$(I): BRC$(8, 1) = TN$
-						If S(I, 4) > BRC(9) Then BRC(9) = S(I, 4): BRC$(9, 0) = N$(I): BRC$(9, 1) = TN$
-						If S(I, 20) > BRC(10) And UCase$(finalUpdate$) = "Y" And S(I, 4) / S(I, 0) >= 1.52 Then BRC(10) = S(I, 20): BRC$(10, 0) = N$(I): BRC$(10, 1) = TN$
-						If S(I, 10) / 60 > BRC(11) Then BRC(11) = S(I, 10) / 60: BRC$(11, 0) = N$(I): BRC$(11, 1) = TN$
-						If S(I, 12) > BRC(12) Then BRC(12) = S(I, 12): BRC$(12, 0) = N$(I): BRC$(12, 1) = TN$
-						If S(I, 22) > BRC(13) And UCase$(finalUpdate$) = "Y" Then BRC(13) = S(I, 22): BRC$(13, 0) = N$(I): BRC$(13, 1) = TN$
-						If S(I, 25) > BRC(14) Then BRC(14) = S(I, 25): BRC$(14, 0) = N$(I): BRC$(14, 1) = TN$
-						If S(I, 26) > BRC(15) Then BRC(15) = S(I, 26): BRC$(15, 0) = N$(I): BRC$(15, 1) = TN$
-						If S(I, 5) - S(I, 26) > BRC(16) Then BRC(16) = S(I, 5) - S(I, 26): BRC$(16, 0) = N$(I): BRC$(16, 1) = TN$
-						If S(I, 5) > BRC(17) Then BRC(17) = S(I, 5): BRC$(17, 0) = N$(I): BRC$(17, 1) = TN$
-						If S(I, 13) > BRC(18) And UCase$(finalUpdate$) = "Y" Then BRC(18) = S(I, 13): BRC$(18, 0) = N$(I): BRC$(18, 1) = TN$
-						If S(I, 6) > BRC(19) Then BRC(19) = S(I, 6): BRC$(19, 0) = N$(I): BRC$(19, 1) = TN$
-						If S(I, 7) > BRC(20) Then BRC(20) = S(I, 7): BRC$(20, 0) = N$(I): BRC$(20, 1) = TN$
-						If S(I, 8) > BRC(21) Then BRC(21) = S(I, 8): BRC$(21, 0) = N$(I): BRC$(21, 1) = TN$
-						If S(I, 9) > BRC(22) Then BRC(22) = S(I, 9): BRC$(22, 0) = N$(I): BRC$(22, 1) = TN$
-						If S(I, 11) > BRC(23) Then BRC(23) = S(I, 11): BRC$(23, 0) = N$(I): BRC$(23, 1) = TN$
-						If S(I, 18) > BRC(24) And UCase$(finalUpdate$) = "Y" Then BRC(24) = S(I, 18): BRC$(24, 0) = N$(I): BRC$(24, 1) = TN$
-						If S(I, 24) > BRC(25) Then BRC(25) = S(I, 24): BRC$(25, 0) = N$(I): BRC$(25, 1) = TN$
-					
+					If Not( S(I, 1) = 0 Or (S(I, 2) / S(I, 0)) < 3.65) Then
+						S(I, 19) = S(I, 2) / S(I, 1): ' *** FG% ***
 					End If
 					
-				Next
+					If Not (S(I, 3) = 0 Or (S(I, 4) / S(I, 0)) < 1.52) Then
+						S(I, 20) = S(I, 4) / S(I, 3): ' *** FT% ***
+					End If
+					
+					If Not (W1(I) = 0 Or W0(I) / S(I, 0) < .3) Then
+						S(I, 21) = W0(I) / W1(I): ' *** 3FG% ***
+					End If
+					
+					831 S(I, 22) = S(I, 12) / S(I, 0): ' *** PTS/G ***
+					If S(I, 0) > BRC(1) Then BRC(1) = S(I, 0): BRC$(1, 0) = N$(I): BRC$(1, 1) = TN$
+					If S(I, 1) > BRC(2) Then BRC(2) = S(I, 1): BRC$(2, 0) = N$(I): BRC$(2, 1) = TN$
+					If S(I, 2) > BRC(3) Then BRC(3) = S(I, 2): BRC$(3, 0) = N$(I): BRC$(3, 1) = TN$
+					If S(I, 19) > BRC(4) And UCase$(finalUpdate$) = "Y" And S(I, 2) / S(I, 0) >= 3.65 Then BRC(4) = S(I, 19): BRC$(4, 0) = N$(I): BRC$(4, 1) = TN$
+					If W1(I) > BRC(5) Then BRC(5) = W1(I): BRC$(5, 0) = N$(I): BRC$(5, 1) = TN$
+					If W0(I) > BRC(6) Then BRC(6) = W0(I): BRC$(6, 0) = N$(I): BRC$(6, 1) = TN$
+					If S(I, 21) > BRC(7) And UCase$(finalUpdate$) = "Y" And W0(I) / S(I, 0) >= .3 Then BRC(7) = S(I, 21): BRC$(7, 0) = N$(I): BRC$(7, 1) = TN$
+					If S(I, 3) > BRC(8) Then BRC(8) = S(I, 3): BRC$(8, 0) = N$(I): BRC$(8, 1) = TN$
+					If S(I, 4) > BRC(9) Then BRC(9) = S(I, 4): BRC$(9, 0) = N$(I): BRC$(9, 1) = TN$
+					If S(I, 20) > BRC(10) And UCase$(finalUpdate$) = "Y" And S(I, 4) / S(I, 0) >= 1.52 Then BRC(10) = S(I, 20): BRC$(10, 0) = N$(I): BRC$(10, 1) = TN$
+					If S(I, 10) / 60 > BRC(11) Then BRC(11) = S(I, 10) / 60: BRC$(11, 0) = N$(I): BRC$(11, 1) = TN$
+					If S(I, 12) > BRC(12) Then BRC(12) = S(I, 12): BRC$(12, 0) = N$(I): BRC$(12, 1) = TN$
+					If S(I, 22) > BRC(13) And UCase$(finalUpdate$) = "Y" Then BRC(13) = S(I, 22): BRC$(13, 0) = N$(I): BRC$(13, 1) = TN$
+					If S(I, 25) > BRC(14) Then BRC(14) = S(I, 25): BRC$(14, 0) = N$(I): BRC$(14, 1) = TN$
+					If S(I, 26) > BRC(15) Then BRC(15) = S(I, 26): BRC$(15, 0) = N$(I): BRC$(15, 1) = TN$
+					If S(I, 5) - S(I, 26) > BRC(16) Then BRC(16) = S(I, 5) - S(I, 26): BRC$(16, 0) = N$(I): BRC$(16, 1) = TN$
+					If S(I, 5) > BRC(17) Then BRC(17) = S(I, 5): BRC$(17, 0) = N$(I): BRC$(17, 1) = TN$
+					If S(I, 13) > BRC(18) And UCase$(finalUpdate$) = "Y" Then BRC(18) = S(I, 13): BRC$(18, 0) = N$(I): BRC$(18, 1) = TN$
+					If S(I, 6) > BRC(19) Then BRC(19) = S(I, 6): BRC$(19, 0) = N$(I): BRC$(19, 1) = TN$
+					If S(I, 7) > BRC(20) Then BRC(20) = S(I, 7): BRC$(20, 0) = N$(I): BRC$(20, 1) = TN$
+					If S(I, 8) > BRC(21) Then BRC(21) = S(I, 8): BRC$(21, 0) = N$(I): BRC$(21, 1) = TN$
+					If S(I, 9) > BRC(22) Then BRC(22) = S(I, 9): BRC$(22, 0) = N$(I): BRC$(22, 1) = TN$
+					If S(I, 11) > BRC(23) Then BRC(23) = S(I, 11): BRC$(23, 0) = N$(I): BRC$(23, 1) = TN$
+					If S(I, 18) > BRC(24) And UCase$(finalUpdate$) = "Y" Then BRC(24) = S(I, 18): BRC$(24, 0) = N$(I): BRC$(24, 1) = TN$
+					If S(I, 24) > BRC(25) Then BRC(25) = S(I, 24): BRC$(25, 0) = N$(I): BRC$(25, 1) = TN$
+				
+				End If 'Done checking S(I, 0)
+				
+			Next
 
-				OT(16) = Y%: DT(16) = Y%: OT(17) = OT(3) / OT(2): DT(17) = DT(3) / DT(2)
-				OT(18) = OT(5) / OT(4): DT(18) = DT(5) / DT(4)
-				OT(20) = OT(11): DT(20) = DT(11)
-				If OT(15) <> 0 Then OT(21) = OT(14) / OT(15) Else OT(21) = 0
-				If DT(15) <> 0 Then DT(21) = DT(14) / DT(15) Else DT(21) = 999
-				OT(19) = OT(20) / Y%: DT(19) = DT(20) / Y%
-				If OT(2) > TRC(1) Then TRC(1) = OT(2): TRC$(1) = TN$
-				If OT(3) > TRC(2) Then TRC(2) = OT(3): TRC$(2) = TN$
-				If OT(17) > TRC(3) And UCase$(finalUpdate$) = "Y" Then TRC(3) = OT(17): TRC$(3) = TN$
-				If OT(15) > TRC(4) Then TRC(4) = OT(15): TRC$(4) = TN$
-				If OT(14) > TRC(5) Then TRC(5) = OT(14): TRC$(5) = TN$
-				If OT(21) > TRC(6) And UCase$(finalUpdate$) = "Y" Then TRC(6) = OT(21): TRC$(6) = TN$
-				If OT(4) > TRC(7) Then TRC(7) = OT(4): TRC$(7) = TN$
-				If OT(5) > TRC(8) Then TRC(8) = OT(5): TRC$(8) = TN$
-				If OT(18) > TRC(9) And UCase$(finalUpdate$) = "Y" Then TRC(9) = OT(18): TRC$(9) = TN$
-				If OT(13) > TRC(10) Then TRC(10) = OT(13): TRC$(10) = TN$
-				If OT(6) - OT(13) > TRC(11) Then TRC(11) = OT(6) - OT(13): TRC$(11) = TN$
-				If OT(6) > TRC(12) Then TRC(12) = OT(6): TRC$(12) = TN$
-				If OT(6) / Y% > TRC(13) And UCase$(finalUpdate$) = "Y" Then TRC(13) = OT(6) / Y%: TRC$(13) = TN$
-				If OT(7) < TRC(14) And UCase$(finalUpdate$) = "Y" Then TRC(14) = OT(7): TRC$(14) = TN$
-				If OT(8) > TRC(15) Then TRC(15) = OT(8): TRC$(15) = TN$
-				If OT(9) > TRC(16) Then TRC(16) = OT(9): TRC$(16) = TN$
-				If OT(10) > TRC(17) Then TRC(17) = OT(10): TRC$(17) = TN$
-				If OT(12) < TRC(18) And UCase$(finalUpdate$) = "Y" Then TRC(18) = OT(12): TRC$(18) = TN$
-				If OT(11) > TRC(19) Then TRC(19) = OT(11): TRC$(19) = TN$
-				If OT(11) / Y% > TRC(20) And UCase$(finalUpdate$) = "Y" Then TRC(20) = OT(11) / Y%: TRC$(20) = TN$
-				If WN > TRC(21) Then TRC(21) = WN: TRC$(21) = TN$
-				If DT(2) < TRC1(1) Then TRC1(1) = DT(2): TRC1$(1) = TN$
-				If DT(3) < TRC1(2) Then TRC1(2) = DT(3): TRC1$(2) = TN$
-				If DT(17) < TRC1(3) And UCase$(finalUpdate$) = "Y" Then TRC1(3) = DT(17): TRC1$(3) = TN$
-				If DT(15) < TRC1(4) Then TRC1(4) = DT(15): TRC1$(4) = TN$
-				If DT(14) < TRC1(5) Then TRC1(5) = DT(14): TRC1$(5) = TN$
-				If DT(21) < TRC1(6) And DT(15) <> 0 And UCase$(finalUpdate$) = "Y" Then TRC1(6) = DT(21): TRC1$(6) = TN$
-				If DT(4) < TRC1(7) Then TRC1(7) = DT(4): TRC1$(7) = TN$
-				If DT(5) < TRC1(8) Then TRC1(8) = DT(5): TRC1$(8) = TN$
-				If DT(18) < TRC1(9) And UCase$(finalUpdate$) = "Y" Then TRC1(9) = DT(18): TRC1$(9) = TN$
-				If DT(13) < TRC1(10) Then TRC1(10) = DT(13): TRC1$(10) = TN$
-				If DT(6) - DT(13) < TRC1(11) Then TRC1(11) = DT(6) - DT(13): TRC1$(11) = TN$
-				If DT(6) < TRC1(12) Then TRC1(12) = DT(6): TRC1$(12) = TN$
-				If DT(6) / Y% < TRC1(13) And UCase$(finalUpdate$) = "Y" Then TRC1(13) = DT(6) / Y%: TRC1$(13) = TN$
-				If DT(7) > TRC1(14) And UCase$(finalUpdate$) = "Y" Then TRC1(14) = DT(7): TRC1$(14) = TN$
-				If DT(8) < TRC1(15) Then TRC1(15) = DT(8): TRC1$(15) = TN$
-				If DT(9) < TRC1(16) Then TRC1(16) = DT(9): TRC1$(16) = TN$
-				If DT(10) < TRC1(17) Then TRC1(17) = DT(10): TRC1$(17) = TN$
-				If DT(12) > TRC1(18) And UCase$(finalUpdate$) = "Y" Then TRC1(18) = DT(12): TRC1$(18) = TN$
-				If DT(11) < TRC1(19) Then TRC1(19) = DT(11): TRC1$(19) = TN$
-				If DT(11) / Y% < TRC1(20) And UCase$(finalUpdate$) = "Y" Then TRC1(20) = DT(11) / Y%: TRC1$(20) = TN$
-				If LS > TRC1(21) Then TRC1(21) = LS: TRC1$(21) = TN$
+			OT(16) = Y%: DT(16) = Y%: OT(17) = OT(3) / OT(2): DT(17) = DT(3) / DT(2)
+			OT(18) = OT(5) / OT(4): DT(18) = DT(5) / DT(4)
+			OT(20) = OT(11): DT(20) = DT(11)
+			If OT(15) <> 0 Then OT(21) = OT(14) / OT(15) Else OT(21) = 0
+			If DT(15) <> 0 Then DT(21) = DT(14) / DT(15) Else DT(21) = 999
+			OT(19) = OT(20) / Y%: DT(19) = DT(20) / Y%
+			If OT(2) > TRC(1) Then TRC(1) = OT(2): TRC$(1) = TN$
+			If OT(3) > TRC(2) Then TRC(2) = OT(3): TRC$(2) = TN$
+			If OT(17) > TRC(3) And UCase$(finalUpdate$) = "Y" Then TRC(3) = OT(17): TRC$(3) = TN$
+			If OT(15) > TRC(4) Then TRC(4) = OT(15): TRC$(4) = TN$
+			If OT(14) > TRC(5) Then TRC(5) = OT(14): TRC$(5) = TN$
+			If OT(21) > TRC(6) And UCase$(finalUpdate$) = "Y" Then TRC(6) = OT(21): TRC$(6) = TN$
+			If OT(4) > TRC(7) Then TRC(7) = OT(4): TRC$(7) = TN$
+			If OT(5) > TRC(8) Then TRC(8) = OT(5): TRC$(8) = TN$
+			If OT(18) > TRC(9) And UCase$(finalUpdate$) = "Y" Then TRC(9) = OT(18): TRC$(9) = TN$
+			If OT(13) > TRC(10) Then TRC(10) = OT(13): TRC$(10) = TN$
+			If OT(6) - OT(13) > TRC(11) Then TRC(11) = OT(6) - OT(13): TRC$(11) = TN$
+			If OT(6) > TRC(12) Then TRC(12) = OT(6): TRC$(12) = TN$
+			If OT(6) / Y% > TRC(13) And UCase$(finalUpdate$) = "Y" Then TRC(13) = OT(6) / Y%: TRC$(13) = TN$
+			If OT(7) < TRC(14) And UCase$(finalUpdate$) = "Y" Then TRC(14) = OT(7): TRC$(14) = TN$
+			If OT(8) > TRC(15) Then TRC(15) = OT(8): TRC$(15) = TN$
+			If OT(9) > TRC(16) Then TRC(16) = OT(9): TRC$(16) = TN$
+			If OT(10) > TRC(17) Then TRC(17) = OT(10): TRC$(17) = TN$
+			If OT(12) < TRC(18) And UCase$(finalUpdate$) = "Y" Then TRC(18) = OT(12): TRC$(18) = TN$
+			If OT(11) > TRC(19) Then TRC(19) = OT(11): TRC$(19) = TN$
+			If OT(11) / Y% > TRC(20) And UCase$(finalUpdate$) = "Y" Then TRC(20) = OT(11) / Y%: TRC$(20) = TN$
+			If WN > TRC(21) Then TRC(21) = WN: TRC$(21) = TN$
+			If DT(2) < TRC1(1) Then TRC1(1) = DT(2): TRC1$(1) = TN$
+			If DT(3) < TRC1(2) Then TRC1(2) = DT(3): TRC1$(2) = TN$
+			If DT(17) < TRC1(3) And UCase$(finalUpdate$) = "Y" Then TRC1(3) = DT(17): TRC1$(3) = TN$
+			If DT(15) < TRC1(4) Then TRC1(4) = DT(15): TRC1$(4) = TN$
+			If DT(14) < TRC1(5) Then TRC1(5) = DT(14): TRC1$(5) = TN$
+			If DT(21) < TRC1(6) And DT(15) <> 0 And UCase$(finalUpdate$) = "Y" Then TRC1(6) = DT(21): TRC1$(6) = TN$
+			If DT(4) < TRC1(7) Then TRC1(7) = DT(4): TRC1$(7) = TN$
+			If DT(5) < TRC1(8) Then TRC1(8) = DT(5): TRC1$(8) = TN$
+			If DT(18) < TRC1(9) And UCase$(finalUpdate$) = "Y" Then TRC1(9) = DT(18): TRC1$(9) = TN$
+			If DT(13) < TRC1(10) Then TRC1(10) = DT(13): TRC1$(10) = TN$
+			If DT(6) - DT(13) < TRC1(11) Then TRC1(11) = DT(6) - DT(13): TRC1$(11) = TN$
+			If DT(6) < TRC1(12) Then TRC1(12) = DT(6): TRC1$(12) = TN$
+			If DT(6) / Y% < TRC1(13) And UCase$(finalUpdate$) = "Y" Then TRC1(13) = DT(6) / Y%: TRC1$(13) = TN$
+			If DT(7) > TRC1(14) And UCase$(finalUpdate$) = "Y" Then TRC1(14) = DT(7): TRC1$(14) = TN$
+			If DT(8) < TRC1(15) Then TRC1(15) = DT(8): TRC1$(15) = TN$
+			If DT(9) < TRC1(16) Then TRC1(16) = DT(9): TRC1$(16) = TN$
+			If DT(10) < TRC1(17) Then TRC1(17) = DT(10): TRC1$(17) = TN$
+			If DT(12) > TRC1(18) And UCase$(finalUpdate$) = "Y" Then TRC1(18) = DT(12): TRC1$(18) = TN$
+			If DT(11) < TRC1(19) Then TRC1(19) = DT(11): TRC1$(19) = TN$
+			If DT(11) / Y% < TRC1(20) And UCase$(finalUpdate$) = "Y" Then TRC1(20) = DT(11) / Y%: TRC1$(20) = TN$
+			If LS > TRC1(21) Then TRC1(21) = LS: TRC1$(21) = TN$
 
-			End If
-			'822
-		End If 'Done checking for .xxS file
+		End If
+		'822
+		
+		'End If 'Done checking for .xxS file
 
 		Call CheckLeagueStats
 
 		919 '
         Close 3
-    Next XW
+    
+	Next XW
 	
     AA = 1: ZZ = 10
-	Call Complex (O1(), O2())
+	Call Complex
     
 	AA = 11: ZZ = 20
-	Call Complex (O1(), O2())
+	Call Complex
     
 	AA = 21: ZZ = 30
-	Call Complex (O1(), O2())
+	Call Complex
     
 	AA = 31: ZZ = 40
-	Call Complex (O1(), O2())
+	Call Complex
     
     4000 Cls
     Print
@@ -401,9 +405,10 @@ End Sub
 ' This does some complicated logic stuff
 'It really shouldn't need to be a sub
 'but I haven't figured out what to do yet
-Sub Complex (O1(), O2())
+Sub Complex ()
 
-	950 '
+	Shared O1(), O2()
+
     For X = AA To ZZ - 1
 		For Y = X + 1 To ZZ
 			DiffX = O1(X) - O2(X)
@@ -428,9 +433,10 @@ End Sub
 '----------------------------------------
 Sub CheckLeagueStats ()
 
-	Shared DT(), DL(), DL$()
-	Shared LD(), S()
-	Shared N$(), Z2$(), Z3$()
+	Shared DT(), DL(), OL(), OT()
+	Shared LD(), S(), W0(), W1()
+	Shared DL$(), N$(), OL$()
+	Shared Z2$(), Z3$()
 	Shared TN$
 
     3100 'CLS:PRINT "CHECKING ";H1$(XW);" STATS"
@@ -562,7 +568,10 @@ Sub CheckLeagueStats ()
 
         3460 'FOR Z=121 TO 130
         If S(X, 21) > LD(130, 1) Then
-			LD(130, 1) = S(X, 21): LD(130, 2) = W1(X): Z2$(130) = N$(X): Z3$(130) = TN$
+			LD(130, 1) = S(X, 21)
+			LD(130, 2) = W1(X)
+			Z2$(130) = N$(X)
+			Z3$(130) = TN$
 			For Z = 121 To 129
 				For Z1 = Z + 1 To 130
 					If LD(Z, 1) < LD(Z1, 1) Then
@@ -832,6 +841,9 @@ End Sub
 'I quite literally can't tell where 
 ' this code may have been used
 Sub Nothing ()
+
+	Shared H1$()
+
 	'9131
 	H1$(XW) = Right$(H1$(XW), 2) + " " + Left$(H1$(XW), Len(H1$(XW)) - 3)
 

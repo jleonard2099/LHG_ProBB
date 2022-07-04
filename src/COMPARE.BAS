@@ -11,7 +11,7 @@ Sub COMPARE ()
     SELECTION% = 1
     Count% = 2
     Start% = 1
-    SCANCODE% = 2
+    EXITCODE% = 2
     FileFGColr% = 15: FileBGColr% = 1
     HiLiteFGColr% = 0: HiLiteBGColr% = 7
     Spacing% = 1
@@ -20,12 +20,12 @@ Sub COMPARE ()
 
     Call box0(8, 23, 11, 58, 2, 15, 1)
     _MouseShow "DEFAULT"
-    MMenuVert menuChoices$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+    MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
     _MouseHide
 
     Color , 0
     I1 = SELECTION%
-    If Not (SCANCODE% = 27) Then
+    If Not (EXITCODE% = 27) Then
         If I1 = 1 Then
             Call ViewComparisons
         End If
@@ -46,141 +46,142 @@ Sub ViewComparisons ()
 
     Dim HP$(100), OP$(100)
 
-    Dim HP%(100), compareL%(6), OP%(100), compareT%(34)
+    Dim HP%(100), OP%(100)
 
-	Shared compareA$(), compareAA$(), compareB$(), comparePS$(), compareT$()
-	Shared compareW0(), compareW1(), compareZ(), compareZ1()
+    Shared compareL%(), compareT%()
+    Shared compareA$(), compareAA$(), compareB$(), comparePS$(), compareT$()
+    Shared compareW0(), compareW1(), compareZ(), compareZ1()
 
-	Do
+    Do
 
-		40 Color 15, 0
-		Cls
+        40 Color 15, 0
+        Cls
 
-		JJ = 7
-		Locate 6, 8: Color 15, 4
-		Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-		Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
-		Locate 7 + JJ, 8
-		Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
-		Locate , 12: Print "ENTER DISK ID: ": Print
-		Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-		Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-		Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
-		Locate 7, 27: Input NY$
-		If NY$ = "" Then 
-			Call SelectTeam_COMPARE (NY$, NTMS)
-		Else
-			YN$ = NY$
-			Erase teamNames$
-			Call ReadTeamData_COMPARE (YN$, NTMS)
-			Call SelectTeam_COMPARE (YN$, NTMS)
+        JJ = 7
+        Locate 6, 8: Color 15, 4
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+        Locate 7 + JJ, 8
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+        Locate , 12: Print "ENTER DISK ID: ": Print
+        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+        Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
+        Locate 7, 27: Input NY$
+        If NY$ = "" Then 
+            Call SelectTeam_COMPARE (NY$, NTMS)
+        Else
+            YN$ = NY$
+            Erase teamNames$
+            Call ReadTeamData_COMPARE (YN$, NTMS)
+            Call SelectTeam_COMPARE (YN$, NTMS)
 
-			'Determine stat file for team
-			1486 If Right$(compareB$(0), 1) = " " Then compareB$(0) = Left$(compareB$(0), Len(compareB$(0)) - 1): GoTo 1486
+            'Determine stat file for team
+            1486 If Right$(compareB$(0), 1) = " " Then compareB$(0) = Left$(compareB$(0), Len(compareB$(0)) - 1): GoTo 1486
 
-			1487 If Right$(compareB$(1), 1) = " " Then compareB$(1) = Left$(compareB$(1), Len(compareB$(1)) - 1): GoTo 1487
+            1487 If Right$(compareB$(1), 1) = " " Then compareB$(1) = Left$(compareB$(1), Len(compareB$(1)) - 1): GoTo 1487
 
-			1488 If Right$(compareB$(2), 1) = " " Then compareB$(2) = Left$(compareB$(2), Len(compareB$(2)) - 1): GoTo 1488
+            1488 If Right$(compareB$(2), 1) = " " Then compareB$(2) = Left$(compareB$(2), Len(compareB$(2)) - 1): GoTo 1488
 
-			1489 If Right$(compareB$(3), 1) = " " Then compareB$(3) = Left$(compareB$(3), Len(compareB$(3)) - 1): GoTo 1489
+            1489 If Right$(compareB$(3), 1) = " " Then compareB$(3) = Left$(compareB$(3), Len(compareB$(3)) - 1): GoTo 1489
 
-			1490 If Right$(compareB$(4), 1) = " " Then compareB$(4) = Left$(compareB$(4), Len(compareB$(4)) - 1): GoTo 1490
-			
-			B$ = compareB$(0)
-			For XX = 4 To 11
-				If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
-			Next XX
+            1490 If Right$(compareB$(4), 1) = " " Then compareB$(4) = Left$(compareB$(4), Len(compareB$(4)) - 1): GoTo 1490
+            
+            B$ = compareB$(0)
+            For XX = 4 To 11
+                If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
+            Next XX
 
-			For XX = 12 To 14: If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
-			Next XX
+            For XX = 12 To 14: If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
+            Next XX
 
-			QQ = 8
-			For XX = 11 To 4 Step -1
-				If Not (Mid$(B$, XX, 1) = "_") Then
-					Exit For
-				End If
-			6615 Next XX
+            QQ = 8
+            For XX = 11 To 4 Step -1
+                If Not (Mid$(B$, XX, 1) = "_") Then
+                    Exit For
+                End If
+            6615 Next XX
 
-			6620 Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
+            6620 Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
-			If Not _FileExists(D$(1) + Z$) Then
-				Locate , 30
-				Call CSMsgBox("NO COMPILED STATS WERE FOUND... PRESS ANY KEY TO RETURN TO CONTINUE", 26, Pass)
-				I$ = GetKeyPress$
-				Call CSMsgBox("", 0, Pass)
-				BO% = 1
-			Else
+            If Not _FileExists(D$(1) + Z$) Then
+                Locate , 30
+                Call CSMsgBox("NO COMPILED STATS WERE FOUND... PRESS ANY KEY TO RETURN TO CONTINUE", 26, Pass)
+                I$ = GetKeyPress$
+                Call CSMsgBox("", 0, Pass)
+                BO% = 1
+            Else
 
-				120 Open D$(1) + Z$ For Input As #1
+                120 Open D$(1) + Z$ For Input As #1
 
-				122 Input #1, B$
+                122 Input #1, B$
 
-				For I = 0 To 14
-					INPUT #1, compareA$(I)
-					For J = 0 To 13
-						Input #1, A(I, J)
-					Next
-					Input #1, compareW0(I)
-					Input #1, compareW1(I)
-				Next
+                For I = 0 To 14
+                    INPUT #1, compareA$(I)
+                    For J = 0 To 13
+                        Input #1, A(I, J)
+                    Next
+                    Input #1, compareW0(I)
+                    Input #1, compareW1(I)
+                Next
 
-				125 For L = 0 To 15: Input #1, compareZ(L): Next
+                125 For L = 0 To 15: Input #1, compareZ(L): Next
 
-				126 For L = 0 To 15: Input #1, compareZ1(L): Next
+                126 For L = 0 To 15: Input #1, compareZ1(L): Next
 
-				160 Close #1
+                160 Close #1
 
-				9000 For I = 0 To 14
-					If compareAA$(I, 1) = "F" Then comparePS$(I) = "FORWARD"
-					If compareAA$(I, 1) = "C" Then comparePS$(I) = "CENTER"
-					If compareAA$(I, 1) = "G" Then comparePS$(I) = "GUARD"
-					If compareAA$(I, 1) = "FC" Then comparePS$(I) = "FORWARD/GUARD"
-					If compareAA$(I, 1) = "FG" Then comparePS$(I) = "FORWARD/CENTER"
-					If compareAA$(I, 1) = "GF" Then comparePS$(I) = "GUARD/FORWARD"
-					If compareAA$(I, 1) = "CF" Then comparePS$(I) = "CENTER/FORWARD"
-				Next
+                9000 For I = 0 To 14
+                    If compareAA$(I, 1) = "F" Then comparePS$(I) = "FORWARD"
+                    If compareAA$(I, 1) = "C" Then comparePS$(I) = "CENTER"
+                    If compareAA$(I, 1) = "G" Then comparePS$(I) = "GUARD"
+                    If compareAA$(I, 1) = "FC" Then comparePS$(I) = "FORWARD/GUARD"
+                    If compareAA$(I, 1) = "FG" Then comparePS$(I) = "FORWARD/CENTER"
+                    If compareAA$(I, 1) = "GF" Then comparePS$(I) = "GUARD/FORWARD"
+                    If compareAA$(I, 1) = "CF" Then comparePS$(I) = "CENTER/FORWARD"
+                Next
 
-				9100 HW = 0: HL = 0: AW = 0: AL = 0
+                9100 HW = 0: HL = 0: AW = 0: AL = 0
 
-				9103 Open D$(1) + Z$ + "S" For Input As #1
+                9103 Open D$(1) + Z$ + "S" For Input As #1
 
-				9105 Input #1, Y
+                9105 Input #1, Y
 
-				9110 For J = 1 To 100: Input #1, OP%(J): Next
+                9110 For J = 1 To 100: Input #1, OP%(J): Next
 
-				9112 For J = 1 To 100: Input #1, OP$(J): Next
+                9112 For J = 1 To 100: Input #1, OP$(J): Next
 
-				9113 For J = 1 To 100: Input #1, HP%(J): Next
+                9113 For J = 1 To 100: Input #1, HP%(J): Next
 
-				9114 For J = 1 To 100: Input #1, HP$(J): Next
+                9114 For J = 1 To 100: Input #1, HP$(J): Next
 
-				9120 Close #1
+                9120 Close #1
 
-				9130 For I = 1 To Y
+                9130 For I = 1 To Y
 
-					9131 If OP%(I) < HP%(I) And Left$(HP$(I), 1) = "H" Then HL = HL + 1
+                    9131 If OP%(I) < HP%(I) And Left$(HP$(I), 1) = "H" Then HL = HL + 1
 
-					9132 If OP%(I) > HP%(I) And Left$(HP$(I), 1) = "H" Then HW = HW + 1
+                    9132 If OP%(I) > HP%(I) And Left$(HP$(I), 1) = "H" Then HW = HW + 1
 
-					9133 If OP%(I) < HP%(I) And Left$(HP$(I), 1) = "V" Then AL = AL + 1
+                    9133 If OP%(I) < HP%(I) And Left$(HP$(I), 1) = "V" Then AL = AL + 1
 
-					9134 If OP%(I) > HP%(I) And Left$(HP$(I), 1) = "V" Then AW = AW + 1
+                    9134 If OP%(I) > HP%(I) And Left$(HP$(I), 1) = "V" Then AW = AW + 1
 
-				9135 Next
+                9135 Next
 
-			End If
+            End If
 
-		End If
-		
-		182 If BO% = 1 Then BO% = 0: Exit Sub
+        End If
+        
+        182 If BO% = 1 Then BO% = 0: Exit Sub
 
-		183 Locate 2, 33: Color 15, 0: Color compareT%(33), compareT%(34)
-		Print compareB$(0): Color 15, 4
-		Locate , 33: Print "ANY CHANGE (YN)";
-		I$ = GetKeyPress$
+        183 Locate 2, 33: Color 15, 0: Color compareT%(33), compareT%(34)
+        Print compareB$(0): Color 15, 4
+        Locate , 33: Print "ANY CHANGE (YN)";
+        I$ = GetKeyPress$
 
-	Loop Until UCase$(I$) = "N"
-		
+    Loop Until UCase$(I$) = "N"
+        
 
     170 Color 15, 0: Cls
     JJ = 4
@@ -194,19 +195,19 @@ Sub ViewComparisons ()
     Color 7
     Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
     Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
-	Do
-		8651 I$ = GetKeyPress$
-		If I$ = Chr$(27) Then Exit Sub
+    Do
+        8651 I$ = GetKeyPress$
+        If I$ = Chr$(27) Then Exit Sub
     Loop Until UCase$(I$) = "P" Or UCase$(I$) = "S"
 
     Color 14, 0
-	Select Case UCase$(I$)
-		Case "S": 
-			Call StatsToScreen
-		Case "P": 
-			'GoTo 700
-			' Where did this go to??
-	End Select
+    Select Case UCase$(I$)
+        Case "S": 
+            Call StatsToScreen
+        Case "P": 
+            'GoTo 700
+            ' Where did this go to??
+    End Select
 
 
 End Sub
@@ -241,9 +242,9 @@ Sub ReadTeamData_COMPARE (yearNumber$, numberTeams)
         Get #1, I1
         CK% = CVI(Q$(9))
         If CK% = 999 Then 
-			numberTeams = numberTeams + 1
-			teamNames$(numberTeams) = Q$(0): teamIndex%(numberTeams) = I1
-		End If
+            numberTeams = numberTeams + 1
+            teamNames$(numberTeams) = Q$(0): teamIndex%(numberTeams) = I1
+        End If
     1103 Next
     Close 1
 End Sub
@@ -255,8 +256,8 @@ End Sub
 '...explanation...
 Sub SelectTeam_COMPARE (yearNumber$, numberTeams)
 
-	Shared compareAA$(), compareB$()
-	Shared compareB%()
+    Shared compareAA$(), compareB$()
+    Shared compareB%(), compareL%(), compareT%()
 
     1102 SELECTION% = 1
     Count% = numberTeams
@@ -278,32 +279,32 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams)
     20 MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-	'What is done with BO% ???
-	Select Case EXITCODE%
-		Case 27: BO% = 1: Exit Sub 'Return
-		Case -71: 
-			Start% = 1
-			EXITCODE% = 3
-			SELECTION% = 1
-			GoTo 20
-		Case -79: 
-			Start% = Count%
-			EXITCODE% = 3
-			SELECTION% = Count%
-			GoTo 20
-		Case -73: 
-			Start% = Start% - 80
-			If Start% < 1 Then Start% = 1
-			EXITCODE% = 3
-			SELECTION% = Start%
-			GoTo 20
-		Case -81: 
-			Start% = Start% + 80
-			If Start% > Count% Then Start% = Count%
-			EXITCODE% = 3
-			SELECTION% = Start%
-			GoTo 20
-	End Select
+    'What is done with BO% ???
+    Select Case EXITCODE%
+        Case 27: BO% = 1: Exit Sub 'Return
+        Case -71: 
+            Start% = 1
+            EXITCODE% = 3
+            SELECTION% = 1
+            GoTo 20
+        Case -79: 
+            Start% = Count%
+            EXITCODE% = 3
+            SELECTION% = Count%
+            GoTo 20
+        Case -73: 
+            Start% = Start% - 80
+            If Start% < 1 Then Start% = 1
+            EXITCODE% = 3
+            SELECTION% = Start%
+            GoTo 20
+        Case -81: 
+            Start% = Start% + 80
+            If Start% > Count% Then Start% = Count%
+            EXITCODE% = 3
+            SELECTION% = Start%
+            GoTo 20
+    End Select
 
     T1 = teamIndex%(SELECTION%)
 
@@ -325,9 +326,13 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams)
     Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
     Get #1, T1
     compareB$(0) = Q$(0)
-	compareB$(1) = Q$(1)
-	For I = 0 To 6: compareL%(I) = CVI(Q$(I + 2)): Next
-    For I = 0 To 34: compareT%(I) = CVI(Q$(I + 10)): Next
+    compareB$(1) = Q$(1)
+    For I = 0 To 6 
+        compareL%(I) = CVI(Q$(I + 2))
+    Next
+    For I = 0 To 34
+        compareT%(I) = CVI(Q$(I + 10))
+    Next
     For I = 0 To 14
         compareAA$(I, 0) = Q$(22 * I + 45)
 
@@ -337,8 +342,8 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams)
         9005 If Right$(compareAA$(I, 1), 1) = " " Then compareAA$(I, 1) = Left$(compareAA$(I, 1), Len(compareAA$(I, 1)) - 1): GoTo 9005
         For I1 = 0 To 19
             compareB%(I, I1) = CVI(Q$(22 * I + 47 + I1))
-		Next
-	Next
+        Next
+    Next
     compareB$(2) = Q$(375): compareB$(3) = Q$(376): compareB$(4) = Q$(377)
     Close 1
 
@@ -351,10 +356,10 @@ End Sub
 '...explanation...
 Sub StatsToScreen ()
 
-	Shared compareA$(), compareB$()
-	Shared compareB%(), compareT%()
-	Shared PS$(), T$()
-	Shared W0(), W1(), Z(), Z1()
+    Shared compareA$(), compareB$()
+    Shared compareB%(), compareT%()
+    Shared comparePS$(), compareT$()
+    Shared W0(), W1(), Z(), Z1()
 
     '200 GoTo 2000
 
@@ -487,13 +492,11 @@ Sub StatsToScreen ()
     Locate 5, 16: Print Using "#########"; compareZ(1);
 
     2210 If compareZ(1) = 0 Then Locate 6, 16: Print "      0.0";
-
     2211 If compareZ(1) > 0 Then Locate 6, 16: Print "     ";: Print Using ".###"; (compareZ(2) / compareZ(1));
     Locate 7, 16: Print Using "#########"; compareZ(4);
     Locate 8, 16: Print Using "#########"; compareZ(3);
 
     2220 If compareZ(3) = 0 Then Locate 9, 16: Print "      0.0";
-
     2221 If compareZ(3) > 0 Then Locate 9, 16: Print "     ";: Print Using ".###"; (compareZ(4) / compareZ(3));
     Locate 10, 16: Print Using "#########"; compareZ(12);
     Locate 11, 16: Print Using "#########"; compareZ(5) - compareZ(12) - compareZ(15);
@@ -511,7 +514,7 @@ Sub StatsToScreen ()
     If compareZ1(1) > 0 Then statPCT! = (compareZ1(2) / compareZ1(1)): Locate 6, 68: Print "    ";: Print Using ".###"; statPCT!;
     Locate 7, 68: Print Using "########"; compareZ1(4);
 
-	'Is compareZ1(3) ever 0???
+    'Is compareZ1(3) ever 0???
     Locate 8, 68: Print Using "########"; compareZ1(3);
     If compareZ1(13) = 0 Then Locate 9, 68: Print "     0.0";
     If compareZ1(13) > 0 Then statPCT! = (compareZ1(4) / compareZ1(3)): Locate 9, 68: Print "    ";: Print Using ".###"; statPCT!;
@@ -538,282 +541,274 @@ Sub StatsToScreen ()
 
     '2900 GoTo 201
 
-	Do
+    Do
 
-		201 Cls: Color 9: Locate 3, 12: Print "STAT COMPARISONS FOR ";: Color 15: Print compareB$(0)
+        201 Cls: Color 9: Locate 3, 12: Print "STAT COMPARISONS FOR ";: Color 15: Print compareB$(0)
 
-		202 For I = O To 14: Color 12: Locate I + 5, 15: Print Using "##"; I + 1;: Print ". ";: Color 7: Print compareA$(I): Next
+        202 For I = O To 14: Color 12: Locate I + 5, 15: Print Using "##"; I + 1;: Print ". ";: Color 7: Print compareA$(I): Next
 
-		203 Color 12: Locate 5, 35: Print "16. ";: Color 3: Print "View Players In Sequence"
+        203 Color 12: Locate 5, 35: Print "16. ";: Color 3: Print "View Players In Sequence"
 
-		204 Color 12: Locate 6, 35: Print "17. ";: Color 3: Print "View Another Team"
+        204 Color 12: Locate 6, 35: Print "17. ";: Color 3: Print "View Another Team"
 
-		206 Color 12: Locate 7, 35: Print "18. ";: Color 3: Print "Return To Main Menu"
+        206 Color 12: Locate 7, 35: Print "18. ";: Color 3: Print "Return To Main Menu"
 
-		219 Color 15: Locate 23, 15: Input "ENTER # TO VIEW "; B9
+        219 Color 15: Locate 23, 15: Input "ENTER # TO VIEW "; B9
 
-		220 If B9 >= 1 Or B9 <= 18 Then 
+        If B9 >= 1 And B9 <= 18 Then
 
-			221 If B9 >= 1 And B9 <= 15 Then 
-				I = B9 - 1
-				Cls
-				For dc = 1 To 19
-					Color 15, 0: Locate dc
-					Print String$(78, 177)
-				Next
-				'-- again, how do I get inside that loop??
-				GoTo 300
+            If B9 >= 1 And B9 <= 15 Then
+                I = B9 - 1
+                Cls
+                For dc = 1 To 19
+                    Color 15, 0: Locate dc
+                    Print String$(78, 177)
+                Next
+                '-- again, how do I get inside that loop??
+                GoTo 300
 
-			End If
-			
-			236 If B9 = 16 Then BI = 1: Cls: GoTo 260
+            End If
+            
+            If B9 = 16 Then
+                BI = 1: Cls
+            Else
+                If B9 = 17 Then Call ViewComparisons
+                If B9 = 18 Then Exit Sub
+            End if
 
-			237 If B9 = 17 Then Call ViewComparisons
+            For dc = 1 To 19
+                Color 15, 0: Locate dc
+                Print String$(78, 177)
+            Next
 
-			239 If B9 = 18 Then Exit Sub
+            I = I + 1
 
-			For dc = 1 To 19
-				Color 15, 0: Locate dc
-				Print String$(78, 177)
-			Next
+            For I = 0 To 14
 
-			262 I = I + 1
+                If compareA$(I) <> "XXX" And compareA$(I) <> "END" And compareA$(I) <> "" Then
 
-			263 For I = 0 To 14
+                    300 Color 11: Locate 2, 2: Print compareT$(0)
 
-				264 If compareA$(I) <> "XXX" And compareA$(I) <> "END" And compareA$(I) <> "" Then
+                    301 Color 15, 0: Locate 2, 14: Print String$(34, 177): Color 14: Locate 2, 14: Print compareA$(I);: Print " - ";: Color 11: Print comparePS$(I)
 
-					300 Color 11: Locate 2, 2: Print compareT$(0)
+                    302 Color 12: Locate 5, 2: Print "REGULAR "
 
-					301 Color 15, 0: Locate 2, 14: Print String$(34, 177): Color 14: Locate 2, 14: Print compareA$(I);: Print " - ";: Color 11: Print comparePS$(I)
+                    303 Locate 6, 2: Print "LEAGUE  ";: Color 7, 0: Print String$(2, 177)
+                    Locate 7, 4: Print String$(8, 177)
 
-					302 Color 12: Locate 5, 2: Print "REGULAR "
+                    305 Color 0, 11: Locate 4, 14: Print "  G ";
 
-					303 Locate 6, 2: Print "LEAGUE  ";: Color 7, 0: Print String$(2, 177)
-					Locate 7, 4: Print String$(8, 177)
+                    306 Locate , 18: Print " MIN ";
 
-					305 Color 0, 11: Locate 4, 14: Print "  G ";
+                    307 Locate , 23: Print " FGM ";
 
-					306 Locate , 18: Print " MIN ";
+                    308 Locate , 28: Print " FGA ";
 
-					307 Locate , 23: Print " FGM ";
+                    309 Locate , 33: Print " FG-PCT ";
 
-					308 Locate , 28: Print " FGA ";
+                    310 Locate , 41: Print " FTM ";
 
-					309 Locate , 33: Print " FG-PCT ";
+                    311 Locate , 46: Print " FTA ";
 
-					310 Locate , 41: Print " FTM ";
+                    312 Locate , 51: Print " FT-PCT ";
 
-					311 Locate , 46: Print " FTA ";
+                    313 Locate , 59: Print " O.REB ";
 
-					312 Locate , 51: Print " FT-PCT ";
+                    314 Locate , 65: Print "  O.REB/G"
+                    Color 12, 0: Locate 10, 2: Print "REGULAR "
+                    Locate 11, 2: Print "LEAGUE  ";: Color 7, 0: Print String$(2, 177)
+                    Locate 12, 4: Print String$(8, 177)
 
-					313 Locate , 59: Print " O.REB ";
+                    315 Color 0, 11: Locate 9, 14: Print " D.REB ";
 
-					314 Locate , 65: Print "  O.REB/G"
-					Color 12, 0: Locate 10, 2: Print "REGULAR "
-					Locate 11, 2: Print "LEAGUE  ";: Color 7, 0: Print String$(2, 177)
-					Locate 12, 4: Print String$(8, 177)
+                    316 Locate , 21: Print " D.REB/G ";
 
-					315 Color 0, 11: Locate 9, 14: Print " D.REB ";
+                    317 Locate , 30: Print " ASST ";
 
-					316 Locate , 21: Print " D.REB/G ";
+                    318 Locate , 36: Print " ASST/G ";
 
-					317 Locate , 30: Print " ASST ";
-
-					318 Locate , 36: Print " ASST/G ";
-
-					319 Locate , 44: Print " FOULS ";
-					Locate , 51: Print " F/G ";
-					Locate , 56: Print " TREB ";
-					Locate , 62: Print " STL ";
-					Locate , 67: Print " STL/G"
-					Color 12, 0: Locate 15, 2: Print "REGULAR "
-					Locate 16, 2: Print "LEAGUE  ";: Color 7, 0: Print String$(2, 177)
-					Locate 17, 4: Print String$(8, 177)
-					Color 0, 11: Locate 14, 14: Print " BLK ";
-					Locate , 19: Print " BLK/G ";
-					Locate , 26: Print " 3-FGM ";
-					Locate , 33: Print " 3-FGA ";
-					Locate , 40: Print " 3-FG-PCT ";
-					Locate , 50: Print " HI-GM ";
-					Locate , 57: Print "  PTS";
-					Locate , 62: Print " PTS/G ";
-					Locate , 69: Print " MIN/G"
-
-					321 Color 1, 11: Locate 5, 14: Print Using "###"; compareB%(I, 0);
-					Locate , 17: Print Using "#####"; compareB%(I, 1);
-					Locate , 22: Print Using "#####"; compareB%(I, 3);
-					Locate , 27: Print Using "#####"; compareB%(I, 2);
-					If compareB%(I, 3) = 0 Then Locate , 32: Print "    0.0";: Print "%";
-					If compareB%(I, 3) > 0 Then Locate , 32: Print Using "#####.#"; (compareB%(I, 3) / compareB%(I, 2)) * 100;: Print "%";
-					Locate , 40: Print Using "#####"; compareB%(I, 5);
-					Locate , 45: Print Using "#####"; compareB%(I, 4);
-					If compareB%(I, 5) = 0 Then Locate , 50: Print "    0.0";: Print "%";
-					If compareB%(I, 5) > 0 Then Locate , 50: Print Using "#####.#"; (compareB%(I, 5) / compareB%(I, 4)) * 100;: Print "%";
-					Locate , 58: Print Using "#######"; compareB%(I, 6);
-					If compareB%(I, 0) = 0 Or compareB%(I, 6) = 0 Then Locate , 65: Print "      0.0";
-					If compareB%(I, 0) > 0 And compareB%(I, 6) = 0 Then Locate , 65: Print "      0.0";
-					If compareB%(I, 0) > 0 And compareB%(I, 6) > 0 Then Locate , 65: Print Using "#######.#"; compareB%(I, 6) / compareB%(I, 0);
-					Color 7, 0: Print String$(2, 177)
-					Color 1, 11: Locate 10, 14: Print Using "######"; compareB%(I, 7);
-					If compareB%(I, 0) = 0 Or compareB%(I, 7) = 0 Then Locate , 20: Print "      0.0";
-					If compareB%(I, 0) > 0 And compareB%(I, 7) = 0 Then Locate , 20: Print "      0.0";
-					If compareB%(I, 0) > 0 And compareB%(I, 7) > 0 Then Locate , 20: Print Using "#######.#"; compareB%(I, 7) / compareB%(I, 0);
-					Locate , 29: Print Using "######"; compareB%(I, 8);
-					If compareB%(I, 0) = 0 Or compareB%(I, 8) = 0 Then Locate , 35: Print "     0.0";
-					If compareB%(I, 0) > 0 And compareB%(I, 8) = 0 Then Locate , 35: Print "     0.0";
-					If compareB%(I, 0) > 0 And compareB%(I, 8) > 0 Then Locate , 35: Print Using "######.#"; compareB%(I, 8) / compareB%(I, 0);
-					Locate , 43: Print Using "#######"; compareB%(I, 9);
-					If compareB%(I, 0) = 0 Or compareB%(I, 9) = 0 Then Locate , 50: Print "  0.0";
-					If compareB%(I, 0) > 0 And compareB%(I, 9) = 0 Then Locate , 50: Print "  0.0";
-					If compareB%(I, 0) > 0 And compareB%(I, 9) > 0 Then Locate , 50: Print Using "###.#"; compareB%(I, 9) / compareB%(I, 0);
-					Locate , 55: Print Using "######"; compareB%(I, 6) + compareB%(I, 7);
-					Locate , 61: Print Using "#####"; compareB%(I, 11);
-
-					330 If compareB%(I, 0) = 0 Or compareB%(I, 11) = 0 Then Locate , 66: Print "    0.0";
-
-					331 If compareB%(I, 0) > 0 And compareB%(I, 11) = 0 Then Locate , 66: Print "    0.0";
-
-					332 If compareB%(I, 0) > 0 And compareB%(I, 11) > 0 Then Locate , 66: Print Using "#####.#"; compareB%(I, 11) / compareB%(I, 0);
-					Color 7, 0: Print String$(2, 177)
-
-					335 Color 1, 11: Locate 15, 14: Print Using "####"; compareB%(I, 12);
-
-					337 If compareB%(I, 0) = 0 Or compareB%(I, 12) = 0 Then Locate , 18: Print "    0.0";
-
-					338 If compareB%(I, 0) > 0 And compareB%(I, 12) = 0 Then Locate , 18: Print "    0.0";
-
-					339 If compareB%(I, 0) > 0 And compareB%(I, 12) > 0 Then Locate , 18: Print Using "#####.#"; compareB%(I, 12) / compareB%(I, 0);
-
-					341 Locate , 25: Print Using "#######"; compareB%(I, 14);
-
-					344 Locate , 32: Print Using "#######"; compareB%(I, 13);
-
-					346 If compareB%(I, 14) = 0 Then Locate , 39: Print "      0.0";: Print "%";
-
-					347 If compareB%(I, 14) > 0 Then Locate , 39: Print Using "#######.#"; (compareB%(I, 14) / compareB%(I, 13)) * 100;: Print "%";
-
-					351 Locate , 49: Print Using "#######"; compareB%(I, 15);
-
-					353 Locate , 56: Print Using "######"; (compareB%(I, 3) * 2) + compareB%(I, 5) + compareB%(I, 14);
-
-					357 If (compareB%(I, 3) * 2) + compareB%(I, 5) + compareB%(I, 14) = 0 Then Locate , 62: Print "   0.0";
-
-					358 If (compareB%(I, 3) * 2) + compareB%(I, 5) + compareB%(I, 14) > 0 Then Locate , 62: Print Using "####.#"; ((compareB%(I, 3) * 2) + compareB%(I, 5) + compareB%(I, 14)) / compareB%(I, 0);
-
-					367 If compareB%(I, 1) = 0 Then Locate , 68: Print "    0.0";
-
-					368 If compareB%(I, 1) > 0 Then Locate , 68: Print Using "#####.#"; compareB%(I, 1) / compareB%(I, 0);
-					Color 7, 0: Print String$(2, 177)
-
-					400 Color 14, 11: Locate 6, 14: Print Using "###"; A(I, 0);
-					If A(I, 10) = 0 Then Locate , 17: Print "    0";
-					If A(I, 10) > 0 Then Locate , 17: Print Using "#####"; (A(I, 10) + 30) / 60;
-					Locate , 22: Print Using "#####"; A(I, 2);
-					Locate , 27: Print Using "#####"; A(I, 1);
-					If A(I, 2) = 0 Then Locate , 32: Print "    0.0";: Print "%";
-					If A(I, 2) > 0 Then Locate , 32: Print Using "#####.#"; (A(I, 2) / A(I, 1)) * 100;: Print "%";
-					Locate 6, 40: Print Using "#####"; A(I, 4);
-					Locate 6, 45: Print Using "#####"; A(I, 3);
-					If A(I, 4) = 0 Then Locate , 50: Print "    0.0";: Print "%";
-					If A(I, 4) > 0 Then Locate , 50: Print Using "#####.#"; A(I, 4) / A(I, 3) * 100;: Print "%";
-					Locate , 58: Print Using "#######"; A(I, 12);
-					If A(I, 0) = 0 Or A(I, 12) = 0 Then Locate , 65: Print "      0.0";
-					If A(I, 0) > 0 And A(I, 12) = 0 Then Locate , 65: Print "      0.0";
-					If A(I, 0) > 0 And A(I, 12) > 0 Then Locate , 65: Print Using "#######.#"; A(I, 12) / A(I, 0);
-					Color 7, 0: Print String$(2, 177)
-					Locate , 16: Print String$(60, 177)
-					Color 14, 11: Locate 11, 14: Print Using "######"; A(I, 5) - A(I, 12);
-					If A(I, 0) = 0 Or (A(I, 5) - A(I, 12)) = 0 Then Locate , 20: Print "      0.0";
-					If A(I, 0) > 0 And (A(I, 5) - A(I, 12)) = 0 Then Locate , 20: Print "      0.0";
-					If A(I, 0) > 0 And (A(I, 5) - A(I, 12)) > 0 Then Locate , 20: Print Using "#######.#"; (A(I, 5) - A(I, 12)) / A(I, 0);
-					Locate , 29: Print Using "######"; A(I, 8);
-					If A(I, 0) = 0 Or A(I, 8) = 0 Then Locate , 35: Print "     0.0";
-					If A(I, 0) > 0 And A(I, 8) = 0 Then Locate , 35: Print "     0.0";
-					If A(I, 0) > 0 And A(I, 8) > 0 Then Locate , 35: Print Using "######.#"; A(I, 8) / A(I, 0);
-					Locate , 43: Print Using "#######"; A(I, 6);
-					If A(I, 0) = 0 Or A(I, 6) = 0 Then Locate , 50: Print "  0.0";
-					If A(I, 0) > 0 And A(I, 6) = 0 Then Locate , 50: Print "  0.0";
-					If A(I, 0) > 0 And A(I, 6) > 0 Then Locate , 50: Print Using "###.#"; A(I, 6) / A(I, 0);
-
-					406 Locate , 55: Print Using "######"; A(I, 5);
-
-					408 Locate , 61: Print Using "#####"; A(I, 7);
-
-					410 If A(I, 0) = 0 Or A(I, 7) = 0 Then Locate , 66: Print "    0.0";
-
-					411 If A(I, 0) > 0 And A(I, 7) = 0 Then Locate , 66: Print "    0.0";
-
-					412 If A(I, 0) > 0 And A(I, 7) > 0 Then Locate , 66: Print Using "#####.#"; A(I, 7) / A(I, 0);
-					Color 7, 0: Print String$(2, 177)
-					Locate , 16: Print String$(59, 177)
-					Color 14, 11: Locate 16, 14: Print Using "####"; A(I, 9);
-
-					417 If A(I, 0) = 0 Or A(I, 9) = 0 Then Locate , 18: Print "    0.0";
-
-					418 If A(I, 0) > 0 And A(I, 9) = 0 Then Locate , 18: Print "    0.0";
-
-					419 If A(I, 0) > 0 And A(I, 9) > 0 Then Locate , 18: Print Using "#####.#"; A(I, 9) / A(I, 0);
-
-					421 Locate , 25: Print Using "#######"; compareW0(I);
-
-					424 Locate , 32: Print Using "#######"; compareW1(I);
-
-					426 If compareW0(I) = 0 Then Locate , 39: Print "      0.0";: Print "%";
-
-					427 If compareW0(I) > 0 Then Locate , 39: Print Using "#######.#"; compareW0(I) / compareW1(I) * 100;: Print "%";
-
-					431 Locate , 49: Print Using "#######"; A(I, 13);
-
-					433 Locate , 56: Print Using "######"; (A(I, 2) * 2) + A(I, 4) + compareW0(I);
-
-					437 If (A(I, 2) * 2) + A(I, 4) + compareW0(I) = 0 Then Locate , 62: Print "   0.0";
-
-					438 If (A(I, 2) * 2) + A(I, 4) + compareW0(I) > 0 Then Locate , 62: Print Using "####.#"; ((A(I, 2) * 2) + A(I, 4) + compareW0(I)) / A(I, 0);
-
-					440 If A(I, 10) = 0 Then Locate , 68: Print "    0.0";
-
-					441 If A(I, 10) > 0 Then Locate , 68: Print Using "#####.#"; ((A(I, 10) + 30) / 60) / A(I, 0);
-					Color 7, 0: Print String$(2, 177)
-					Locate , 16: Print String$(61, 177)
-
-					578 Color 15, 0: Locate 22: Print "HIT ENTER TO CONTINUE"
-
-					579 If BI = 1 Then 
-						Locate 22, 23: Print "OR ESC TO RETURN TO MENU"
-					End If
-
-					581 I$ = GetKeyPress$
-
-					582 If Not (I$ = Chr$(0)) Then
-
-						583 If I$ = Chr$(27) Then 
-							BI = 0
-						End If
-						
-						584 If BI = 0 Then 
-							Cls
-							Exit Do
-						End If
-
-						'585 If BI = 1 Then 591
-						590 If BI <> 1 Or I >= 14 Then Exit For
-
-						'586 If I >= 14 Then Exit For						
-						'End If
-						
-					End If
-				
-				End If 'done chceking for null player
-				
-			591 Next I
-
-			'592 If BI = 1 Then GoTo 201
-		
-		End If 'Done checking for valid input
-		
-	Loop Until BI <> 1
+                    319 Locate , 44: Print " FOULS ";
+                    Locate , 51: Print " F/G ";
+                    Locate , 56: Print " TREB ";
+                    Locate , 62: Print " STL ";
+                    Locate , 67: Print " STL/G"
+                    Color 12, 0: Locate 15, 2: Print "REGULAR "
+                    Locate 16, 2: Print "LEAGUE  ";: Color 7, 0: Print String$(2, 177)
+                    Locate 17, 4: Print String$(8, 177)
+                    Color 0, 11: Locate 14, 14: Print " BLK ";
+                    Locate , 19: Print " BLK/G ";
+                    Locate , 26: Print " 3-FGM ";
+                    Locate , 33: Print " 3-FGA ";
+                    Locate , 40: Print " 3-FG-PCT ";
+                    Locate , 50: Print " HI-GM ";
+                    Locate , 57: Print "  PTS";
+                    Locate , 62: Print " PTS/G ";
+                    Locate , 69: Print " MIN/G"
+
+                    321 Color 1, 11: Locate 5, 14: Print Using "###"; compareB%(I, 0);
+                    Locate , 17: Print Using "#####"; compareB%(I, 1);
+                    Locate , 22: Print Using "#####"; compareB%(I, 3);
+                    Locate , 27: Print Using "#####"; compareB%(I, 2);
+                    If compareB%(I, 3) = 0 Then Locate , 32: Print "    0.0";: Print "%";
+                    If compareB%(I, 3) > 0 Then Locate , 32: Print Using "#####.#"; (compareB%(I, 3) / compareB%(I, 2)) * 100;: Print "%";
+                    Locate , 40: Print Using "#####"; compareB%(I, 5);
+                    Locate , 45: Print Using "#####"; compareB%(I, 4);
+                    If compareB%(I, 5) = 0 Then Locate , 50: Print "    0.0";: Print "%";
+                    If compareB%(I, 5) > 0 Then Locate , 50: Print Using "#####.#"; (compareB%(I, 5) / compareB%(I, 4)) * 100;: Print "%";
+                    Locate , 58: Print Using "#######"; compareB%(I, 6);
+                    If compareB%(I, 0) = 0 Or compareB%(I, 6) = 0 Then Locate , 65: Print "      0.0";
+                    If compareB%(I, 0) > 0 And compareB%(I, 6) = 0 Then Locate , 65: Print "      0.0";
+                    If compareB%(I, 0) > 0 And compareB%(I, 6) > 0 Then Locate , 65: Print Using "#######.#"; compareB%(I, 6) / compareB%(I, 0);
+                    Color 7, 0: Print String$(2, 177)
+                    Color 1, 11: Locate 10, 14: Print Using "######"; compareB%(I, 7);
+                    If compareB%(I, 0) = 0 Or compareB%(I, 7) = 0 Then Locate , 20: Print "      0.0";
+                    If compareB%(I, 0) > 0 And compareB%(I, 7) = 0 Then Locate , 20: Print "      0.0";
+                    If compareB%(I, 0) > 0 And compareB%(I, 7) > 0 Then Locate , 20: Print Using "#######.#"; compareB%(I, 7) / compareB%(I, 0);
+                    Locate , 29: Print Using "######"; compareB%(I, 8);
+                    If compareB%(I, 0) = 0 Or compareB%(I, 8) = 0 Then Locate , 35: Print "     0.0";
+                    If compareB%(I, 0) > 0 And compareB%(I, 8) = 0 Then Locate , 35: Print "     0.0";
+                    If compareB%(I, 0) > 0 And compareB%(I, 8) > 0 Then Locate , 35: Print Using "######.#"; compareB%(I, 8) / compareB%(I, 0);
+                    Locate , 43: Print Using "#######"; compareB%(I, 9);
+                    If compareB%(I, 0) = 0 Or compareB%(I, 9) = 0 Then Locate , 50: Print "  0.0";
+                    If compareB%(I, 0) > 0 And compareB%(I, 9) = 0 Then Locate , 50: Print "  0.0";
+                    If compareB%(I, 0) > 0 And compareB%(I, 9) > 0 Then Locate , 50: Print Using "###.#"; compareB%(I, 9) / compareB%(I, 0);
+                    Locate , 55: Print Using "######"; compareB%(I, 6) + compareB%(I, 7);
+                    Locate , 61: Print Using "#####"; compareB%(I, 11);
+
+                    330 If compareB%(I, 0) = 0 Or compareB%(I, 11) = 0 Then Locate , 66: Print "    0.0";
+
+                    331 If compareB%(I, 0) > 0 And compareB%(I, 11) = 0 Then Locate , 66: Print "    0.0";
+
+                    332 If compareB%(I, 0) > 0 And compareB%(I, 11) > 0 Then Locate , 66: Print Using "#####.#"; compareB%(I, 11) / compareB%(I, 0);
+                    Color 7, 0: Print String$(2, 177)
+
+                    335 Color 1, 11: Locate 15, 14: Print Using "####"; compareB%(I, 12);
+
+                    337 If compareB%(I, 0) = 0 Or compareB%(I, 12) = 0 Then Locate , 18: Print "    0.0";
+
+                    338 If compareB%(I, 0) > 0 And compareB%(I, 12) = 0 Then Locate , 18: Print "    0.0";
+
+                    339 If compareB%(I, 0) > 0 And compareB%(I, 12) > 0 Then Locate , 18: Print Using "#####.#"; compareB%(I, 12) / compareB%(I, 0);
+
+                    341 Locate , 25: Print Using "#######"; compareB%(I, 14);
+
+                    344 Locate , 32: Print Using "#######"; compareB%(I, 13);
+
+                    346 If compareB%(I, 14) = 0 Then Locate , 39: Print "      0.0";: Print "%";
+
+                    347 If compareB%(I, 14) > 0 Then Locate , 39: Print Using "#######.#"; (compareB%(I, 14) / compareB%(I, 13)) * 100;: Print "%";
+
+                    351 Locate , 49: Print Using "#######"; compareB%(I, 15);
+
+                    353 Locate , 56: Print Using "######"; (compareB%(I, 3) * 2) + compareB%(I, 5) + compareB%(I, 14);
+
+                    357 If (compareB%(I, 3) * 2) + compareB%(I, 5) + compareB%(I, 14) = 0 Then Locate , 62: Print "   0.0";
+
+                    358 If (compareB%(I, 3) * 2) + compareB%(I, 5) + compareB%(I, 14) > 0 Then Locate , 62: Print Using "####.#"; ((compareB%(I, 3) * 2) + compareB%(I, 5) + compareB%(I, 14)) / compareB%(I, 0);
+
+                    367 If compareB%(I, 1) = 0 Then Locate , 68: Print "    0.0";
+
+                    368 If compareB%(I, 1) > 0 Then Locate , 68: Print Using "#####.#"; compareB%(I, 1) / compareB%(I, 0);
+                    Color 7, 0: Print String$(2, 177)
+
+                    400 Color 14, 11: Locate 6, 14: Print Using "###"; A(I, 0);
+                    If A(I, 10) = 0 Then Locate , 17: Print "    0";
+                    If A(I, 10) > 0 Then Locate , 17: Print Using "#####"; (A(I, 10) + 30) / 60;
+                    Locate , 22: Print Using "#####"; A(I, 2);
+                    Locate , 27: Print Using "#####"; A(I, 1);
+                    If A(I, 2) = 0 Then Locate , 32: Print "    0.0";: Print "%";
+                    If A(I, 2) > 0 Then Locate , 32: Print Using "#####.#"; (A(I, 2) / A(I, 1)) * 100;: Print "%";
+                    Locate 6, 40: Print Using "#####"; A(I, 4);
+                    Locate 6, 45: Print Using "#####"; A(I, 3);
+                    If A(I, 4) = 0 Then Locate , 50: Print "    0.0";: Print "%";
+                    If A(I, 4) > 0 Then Locate , 50: Print Using "#####.#"; A(I, 4) / A(I, 3) * 100;: Print "%";
+                    Locate , 58: Print Using "#######"; A(I, 12);
+                    If A(I, 0) = 0 Or A(I, 12) = 0 Then Locate , 65: Print "      0.0";
+                    If A(I, 0) > 0 And A(I, 12) = 0 Then Locate , 65: Print "      0.0";
+                    If A(I, 0) > 0 And A(I, 12) > 0 Then Locate , 65: Print Using "#######.#"; A(I, 12) / A(I, 0);
+                    Color 7, 0: Print String$(2, 177)
+                    Locate , 16: Print String$(60, 177)
+                    Color 14, 11: Locate 11, 14: Print Using "######"; A(I, 5) - A(I, 12);
+                    If A(I, 0) = 0 Or (A(I, 5) - A(I, 12)) = 0 Then Locate , 20: Print "      0.0";
+                    If A(I, 0) > 0 And (A(I, 5) - A(I, 12)) = 0 Then Locate , 20: Print "      0.0";
+                    If A(I, 0) > 0 And (A(I, 5) - A(I, 12)) > 0 Then Locate , 20: Print Using "#######.#"; (A(I, 5) - A(I, 12)) / A(I, 0);
+                    Locate , 29: Print Using "######"; A(I, 8);
+                    If A(I, 0) = 0 Or A(I, 8) = 0 Then Locate , 35: Print "     0.0";
+                    If A(I, 0) > 0 And A(I, 8) = 0 Then Locate , 35: Print "     0.0";
+                    If A(I, 0) > 0 And A(I, 8) > 0 Then Locate , 35: Print Using "######.#"; A(I, 8) / A(I, 0);
+                    Locate , 43: Print Using "#######"; A(I, 6);
+                    If A(I, 0) = 0 Or A(I, 6) = 0 Then Locate , 50: Print "  0.0";
+                    If A(I, 0) > 0 And A(I, 6) = 0 Then Locate , 50: Print "  0.0";
+                    If A(I, 0) > 0 And A(I, 6) > 0 Then Locate , 50: Print Using "###.#"; A(I, 6) / A(I, 0);
+
+                    Locate , 55: Print Using "######"; A(I, 5);
+                    Locate , 61: Print Using "#####"; A(I, 7);
+
+                    If A(I, 0) = 0 Or A(I, 7) = 0 Then Locate , 66: Print "    0.0";
+                    If A(I, 0) > 0 And A(I, 7) = 0 Then Locate , 66: Print "    0.0";
+                    If A(I, 0) > 0 And A(I, 7) > 0 Then Locate , 66: Print Using "#####.#"; A(I, 7) / A(I, 0);
+
+                    Color 7, 0: Print String$(2, 177)
+                    Locate , 16: Print String$(59, 177)
+                    Color 14, 11: Locate 16, 14: Print Using "####"; A(I, 9);
+
+                    If A(I, 0) = 0 Or A(I, 9) = 0 Then Locate , 18: Print "    0.0";
+                    If A(I, 0) > 0 And A(I, 9) = 0 Then Locate , 18: Print "    0.0";
+                    If A(I, 0) > 0 And A(I, 9) > 0 Then Locate , 18: Print Using "#####.#"; A(I, 9) / A(I, 0);
+
+                    Locate , 25: Print Using "#######"; compareW0(I);
+                    Locate , 32: Print Using "#######"; compareW1(I);
+
+                    If compareW0(I) = 0 Then Locate , 39: Print "      0.0";: Print "%";
+                    If compareW0(I) > 0 Then Locate , 39: Print Using "#######.#"; compareW0(I) / compareW1(I) * 100;: Print "%";
+
+                    Locate , 49: Print Using "#######"; A(I, 13);
+                    Locate , 56: Print Using "######"; (A(I, 2) * 2) + A(I, 4) + compareW0(I);
+
+                    If (A(I, 2) * 2) + A(I, 4) + compareW0(I) = 0 Then Locate , 62: Print "   0.0";
+                    If (A(I, 2) * 2) + A(I, 4) + compareW0(I) > 0 Then Locate , 62: Print Using "####.#"; ((A(I, 2) * 2) + A(I, 4) + compareW0(I)) / A(I, 0);
+                    If A(I, 10) = 0 Then Locate , 68: Print "    0.0";
+                    If A(I, 10) > 0 Then Locate , 68: Print Using "#####.#"; ((A(I, 10) + 30) / 60) / A(I, 0);
+
+                    Color 7, 0: Print String$(2, 177)
+                    Locate , 16: Print String$(61, 177)
+
+                    Color 15, 0: Locate 22: Print "HIT ENTER TO CONTINUE"
+
+                    If BI = 1 Then
+                        Locate 22, 23: Print "OR ESC TO RETURN TO MENU"
+                    End If
+
+                    I$ = GetKeyPress$
+
+                    If Not (I$ = Chr$(0)) Then
+
+                        583 If I$ = Chr$(27) Then 
+                            BI = 0
+                        End If
+                        
+                        584 If BI = 0 Then 
+                            Cls
+                            Exit Do
+                        End If
+
+                        '585 If BI = 1 Then 591
+                        590 If BI <> 1 Or I >= 14 Then Exit For
+
+                        '586 If I >= 14 Then Exit For                       
+                        'End If
+                        
+                    End If
+                
+                End If 'done chceking for null player
+                
+            Next I
+
+            '592 If BI = 1 Then GoTo 201
+        
+        End If 'Done checking for valid input
+        
+    Loop Until BI <> 1
 
     '9200 Color 15, 0: Cls
 

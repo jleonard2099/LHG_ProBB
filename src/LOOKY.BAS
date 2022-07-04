@@ -1,9 +1,9 @@
 Sub LOOKY ()
-	
-	Dim teamRatings%(0 To 100)
- 
-	Shared categories$(), lookyA$()
-	
+
+    Dim teamRatings%(0 To 100)
+
+    Shared categories$(), lookyA$()
+
     DefInt A-Z
 
     _Title "Basketball: The Pro Game - View Stats"
@@ -13,136 +13,142 @@ Sub LOOKY ()
 
     Call TITLE_HEADER
 
+    newTeam = 0
 
-	Do
-		'Pick a team to view stats for
-		3056 Color 15, 0
-		Cls
-		JJ = 6
-		SN = 1: Locate 6, 8: Color 15, 4
-		Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-		Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
-		Locate 7 + JJ, 8
-		Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
-		Locate , 12: Print "ENTER DISK ID: ": Print
-		Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-		Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-		Print
-		Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
+    Do
+        'Pick a team to view stats for
+        3056 Color 15, 0
+        Cls
+        JJ = 6
+        SN = 1: Locate 6, 8: Color 15, 4
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+        Locate 7 + JJ, 8
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+        Locate , 12: Print "ENTER DISK ID: ": Print
+        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+        Print
+        Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
 
-		'Check first character to see if ESC/ENTER
-		3057 I$ = GetKeyPress$
+        'Check first character to see if ESC/ENTER
+        3057 I$ = GetKeyPress$
 
-		'ESC = return to menu
-		If Not( I$ = Chr$(27)) Then 
+        'ESC = return to menu
+        If Not (I$ = Chr$(27)) Then
 
-			'ENTER = perform selection on file with NO extension
-			If I$ = Chr$(13) Then 
-				Call TeamSelection_LOOKY(YN$, NTMS, teamRatings%(), BO%)
-				If BO% = 1 Then BO% = 0: GoTo 3056
-			End If
+            'ENTER = perform selection on file with NO extension
+            If I$ = Chr$(13) Then
+                Call SelectTeam_LOOKY(YN$, NTMS, teamRatings%())
+                If BO% = 1 Then BO% = 0: GoTo 3056
+            End If
 
-			'At this point we assume they're typing more than one 1 char
-			Locate 7, 27: Print I$
-			Locate 7, 28: Line Input NY$
-			NY$ = I$ + NY$
-			Color 15, 0
+            'At this point we assume they're typing more than one 1 char
+            Locate 7, 27: Print I$
+            Locate 7, 28: Line Input NY$
+            NY$ = I$ + NY$
+            Color 15, 0
 
-			If NY$ = "" Then Call TeamSelection_LOOKY(YN$, NTMS, teamRatings%(), BO%): If BO% = 1 Then BO% = 0: GoTo 3056
+            If NY$ = "" Then
+                Call SelectTeam_LOOKY(YN$, NTMS, teamRatings%())
+                If BO% = 1 Then BO% = 0: GoTo 3056
+            End If
 
-			YN$ = NY$
-			Erase teamNames$
+            YN$ = NY$
+            Erase teamNames$
 
-			1100 NTMS = 0
-			Open D$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
-			Y = LOF(1)
-			Field #1, 15 As Q$(0), 15 As Q$(1)
-			For I = 0 To 6
-				Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-			Next
-			Field #1, 44 As X$, 2 As Q$(9)
-			For I = 0 To 34
-				Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-			Next
-			For I = 0 To 14
-				Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-				For I1 = 0 To 19
-					Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-				Next
-			Next
-			Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-			For I1 = 1 To Y / 1031
-				Get #1, I1
-				CK% = CVI(Q$(9))
-				If CK% <> 999 Then 1103
-				NTMS = NTMS + 1
-				teamNames$(NTMS) = Q$(0): teamIndex%(NTMS) = I1
+            NTMS = 0
+            Open D$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+            Y = LOF(1)
+            Field #1, 15 As Q$(0), 15 As Q$(1)
+            For I = 0 To 6
+                Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+            Next
+            Field #1, 44 As X$, 2 As Q$(9)
+            For I = 0 To 34
+                Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+            Next
+            For I = 0 To 14
+                Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+                For I1 = 0 To 19
+                    Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+                Next
+            Next
+            Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+            For I1 = 1 To Y / 1031
+                Get #1, I1
+                CK% = CVI(Q$(9))
+                If CK% = 999 Then
+                    NTMS = NTMS + 1
+                    teamNames$(NTMS) = Q$(0): teamIndex%(NTMS) = I1
+                End If
+            Next
+            Close 1
 
-			1103 Next
-			Close 1
+            'This is where most calls to the function will happen
+            Call SelectTeam_LOOKY(YN$, NTMS, teamRatings%())
 
-			'This is where most calls to the function will happen
-			Call TeamSelection_LOOKY(YN$, NTMS, teamRatings%(), BO%)
+            If BO% = 1 Then
+                BO% = 0
+            Else
+                A$ = Q$(0)
+                While Right$(A$, 1) = " "
+                    A$ = Left$(A$, Len(A$) - 1)
+                Wend
 
-			3060 If BO% = 1 Then 
-				BO% = 0
-				GoTo 3056
-			Else
-				A$ = Q$(0)
-				9005 If Right$(A$, 1) = " " Then A$ = Left$(A$, Len(A$) - 1): GoTo 9005
-				B$ = A$
+                B$ = A$
 
-				3058 Locate 2, 33: Color teamRatings%(33), teamRatings%(34): Print A$
-				Color 15, 4
-				Locate , 33: Print "ANY CHANGE (YN)";
-				I$ = GetKeyPress$
-				If UCase$(I$) = "Y" Then 3056
+                Locate 2, 33: Color teamRatings%(33), teamRatings%(34): Print A$
+                Color 15, 4
+                Locate , 33: Print "ANY CHANGE (YN)";
+                I$ = GetKeyPress$
+                If UCase$(I$) = "N" Then
 
-				Color 15, 0
-				'Look for special char's in team name
-				6585 For XX = 4 To 11: If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
-				Next XX
+                    Color 15, 0
+                    'Look for special char's in team name
+                    6585 For XX = 4 To 11: If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
+                    Next XX
 
-				For XX = 12 To 14: If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
-				Next XX
+                    For XX = 12 To 14: If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
+                    Next XX
 
-				QQ = 8
+                    QQ = 8
 
-				For XX = 11 To 4 Step -1
-					If Not (Mid$(B$, XX, 1) = "_") Then
-						Exit For
-					End If
-				6615 Next XX
+                    For XX = 11 To 4 Step -1
+                        If Not (Mid$(B$, XX, 1) = "_") Then
+                            Exit For
+                        End If
+                    Next XX
 
-				'Determine stats file name
-				Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
+                    'Determine stats file name
+                    Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
-				' 90 If UCase$(Z$) = "END" Then Run "HELLO.EXE 4"
+                    Call ReadStats(Z$, teamRatings%(), newTeam)
 
-				Call ReadStats (Z$, teamRatings%())
-				
-			End If
+                End If 'Done checking if user wants to continue
 
-		End If
-		
-	Loop Until I$ = Chr$(27)
-	
+            End If 'Done checking BO%
+
+        End If
+
+    Loop Until I$ = Chr$(27) Or UCase$(I$) = "N" Or newTeam = 0
+
 End Sub
 
 
-
-
-
-'------------------------------
-Sub ReadStats (Z$, teamRatings%())
+'----------------------------------------
+'       ReadStats Subroutine
+'----------------------------------------
+'...explanation...
+Sub ReadStats (Z$, teamRatings%(), teamChoice)
 
     Dim P%(0 To 100)
-    Shared O%(), H$(), O$() 
-	
+    Shared O%(), H$(), O$()
+
     Dim Z(0 To 15), Z1(0 To 15)
 
-	Shared categories$(), lookyA$()
-	Shared values(), W0(), W1()
+    Shared categories$(), lookyA$()
+    Shared values(), W0(), W1()
 
     ' *** READ IN TEAM STATS ***
     '-- update to be IF (FileExists) Do Stuff ELSE Print Error and Call (at end of SUB)
@@ -152,7 +158,7 @@ Sub ReadStats (Z$, teamRatings%())
         Exit Sub
     End If
 
-	CP% = 1
+    CP% = 1
     PX = 0
     P%(0) = 0
     P%(1) = 0
@@ -213,7 +219,7 @@ Sub ReadStats (Z$, teamRatings%())
     Next
 
 
-	'-----
+    '-----
     'Print stats to screen
     815 Call TITLE_HEADER
 
@@ -265,47 +271,46 @@ Sub ReadStats (Z$, teamRatings%())
     Color 14: Print "[P]";
     Locate 3, 1
 
-    870 I$ = GetKeyPress$
-    'Pg Down
-    If I$ = Chr$(0) + "Q" Then 
-		Color , 0
-		Cls
-		GoTo 915
-	End If
+    Do
+        I$ = GetKeyPress$
 
-	'Print
-    If UCase$(I$) = "P" Then 
-		Call PrintStatsSchedule(totalGames%, teamRatings%(), O%(), O$(), H$())
-		
-		LPrint
-		LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
-		LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
-		LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
-		LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
-		LPrint Chr$(12)
-		I$ = GetKeyPress$
+        'Pg Down
+        If I$ = Chr$(0) + "Q" Then
+            Color , 0
+            Cls
+        Else
+            'Print
+            If UCase$(I$) = "P" Then
 
-		Call PrintStatsSummary(totalGames%, Z(), Z1())
-		GoTo 870
-	End If
+                Call PrintStatsSchedule(totalGames%, teamRatings%())
 
-	'Delete
-    If UCase$(I$) = "D" Then 
-		Kill D$(1) + Z$
-		Kill D$(1) + Z$ + "S"
-		GoTo 870
-	End If
+                LPrint
+                LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
+                LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
+                LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
+                LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
+                LPrint Chr$(12)
+                I$ = GetKeyPress$
 
-	'Esc
-    If I$ = Chr$(27) Then Exit Sub
+                Call PrintStatsSummary(totalGames%, Z(), Z1())
+            End If
 
-    GoTo 870
+            'Delete
+            If UCase$(I$) = "D" Then
+                Kill D$(1) + Z$
+                Kill D$(1) + Z$ + "S"
+            End If
 
+            'Esc
+            If I$ = Chr$(27) Then teamChoice = 1: Exit Sub
 
+        End If
 
+    Loop Until I$ = Chr$(0) + "Q"
 
 
-	'-----
+    '-----
+
     915 Color , 1: Locate 1, 1: Print Tab(80);: Locate , 31: Color 14
     Ycoord = Len(B$): Ycoord = Int((80 - Ycoord) / 2): Locate , Ycoord: Print B$
     Locate 25, 1: Print Tab(80);: Locate , 1
@@ -345,50 +350,55 @@ Sub ReadStats (Z$, teamRatings%())
     Color 15: Print "PRINT STATS ";
     Color 14: Print "[P]";
     Locate 3, 1
-    
-	970 I$ = GetKeyPress$
+
+
+
+    '-----
+    970 I$ = GetKeyPress$
 
     'Pg Down
-    If I$ = Chr$(0) + "Q" Then 
-		Color , 0
-		Cls
-		GoTo 142
-	End If
+    If I$ = Chr$(0) + "Q" Then
+        Color , 0
+        Cls
+        GoTo 142
+    End If
 
     'Pg Up
-    If I$ = Chr$(0) + "I" Then 
-		Color , 0
-		Cls
-		GoTo 815
-	End If
-	
-	'Print
+    If I$ = Chr$(0) + "I" Then
+        Color , 0
+        Cls
+        GoTo 815
+    End If
+
+    'Print
     If UCase$(I$) = "P" Then
-		Call PrintStatsSchedule(totalGames%, teamRatings%(), O%(), O$(), H$())
-		LPrint
-		LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
-		LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
-		LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
-		LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
-		LPrint Chr$(12)
-		I$ = GetKeyPress$
-		Call PrintStatsSummary(totalGames%, Z(), Z1())
-		GoTo 970
-	End If
+        Call PrintStatsSchedule(totalGames%, teamRatings%())
+        LPrint
+        LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
+        LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
+        LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
+        LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
+        LPrint Chr$(12)
+        I$ = GetKeyPress$
+        Call PrintStatsSummary(totalGames%, Z(), Z1())
+        GoTo 970
+    End If
 
-	'Delete
-    If UCase$(I$) = "D" Then 
-		Kill D$(1) + Z$
-		Kill D$(1) + Z$ + "S"
-		GoTo 970
-	End If
+    'Delete
+    If UCase$(I$) = "D" Then
+        Kill D$(1) + Z$
+        Kill D$(1) + Z$ + "S"
+        GoTo 970
+    End If
 
-	'Esc
-    If I$ = Chr$(27) Then Exit Sub
+    'Esc
+    If I$ = Chr$(27) Then teamChoice = 1: Exit Sub
+
     GoTo 970
 
- 
-	'-----
+
+
+    '-----
     ' *** DISPLAYING STATS ***
     142 Call TITLE_HEADER
     Color , 1
@@ -480,19 +490,21 @@ Sub ReadStats (Z$, teamRatings%())
 
 
 
+    '-----
+    '-- another loop?
     230 I$ = GetKeyPress$
 
     'Pg Down
-    If I$ = Chr$(0) + "Q" Then 
-		CP% = 14
-		GoTo 235
-	End If
-	
+    If I$ = Chr$(0) + "Q" Then
+        CP% = 14
+        GoTo 235
+    End If
+
     'Pg Up
     If I$ = Chr$(0) + "I" Then
-		Cls
-		GoTo 915
-	End If
+        Cls
+        GoTo 915
+    End If
 
     'Right Arrow
     If I$ = Chr$(0) + "M" Then
@@ -508,41 +520,41 @@ Sub ReadStats (Z$, teamRatings%())
         GoTo 230
     End If
 
-	'Delete
-    If UCase$(I$) = "D" Then 
-		Kill D$(1) + Z$
-		Kill D$(1) + Z$ + "S"
-		GoTo 230
-	End If
+    'Delete
+    If UCase$(I$) = "D" Then
+        Kill D$(1) + Z$
+        Kill D$(1) + Z$ + "S"
+        GoTo 230
+    End If
 
-	'Print
-    If UCase$(I$) = "P" Then 	
-		Call PrintStatsSchedule(totalGames%, teamRatings%())
-		LPrint
-		LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
-		LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
-		LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
-		LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
-		LPrint Chr$(12)
-		I$ = GetKeyPress$
-		Call PrintStatsSummary(totalGames%, Z(), Z1())
-		GoTo 230
-	End If	
+    'Print
+    If UCase$(I$) = "P" Then
+        Call PrintStatsSchedule(totalGames%, teamRatings%())
+        LPrint
+        LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
+        LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
+        LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
+        LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
+        LPrint Chr$(12)
+        I$ = GetKeyPress$
+        Call PrintStatsSummary(totalGames%, Z(), Z1())
+        GoTo 230
+    End If
 
-	'Enter
-    If I$ = Chr$(13) Then 
-		Call SortStats(CP%)
-		GoTo 142
-	End If
+    'Enter
+    If I$ = Chr$(13) Then
+        Call SortStats(CP%)
+        GoTo 142
+    End If
 
-    If I$ = Chr$(27) Then Exit Sub
+    'Esc
+    If I$ = Chr$(27) Then teamChoice = 1: Exit Sub
+
     GoTo 230
 
 
 
-
-
-	'-----
+    '-----
     235 Cls
     Call TITLE_HEADER
     Color , 1
@@ -601,72 +613,69 @@ Sub ReadStats (Z$, teamRatings%())
     Print Using " #### #### #### #### ####"; Z1(6); Z1(8); Z1(9); Z1(7); Z1(11): Color 3
 
 
-	Do
-		370 I$ = GetKeyPress$
-		
-		'Pg Up
-		If I$ = Chr$(0) + "I" Then 
-			Cls
-			CP% = 1
-			GoTo 142
-		End If
-		
-		'Right Arrow
-		If I$ = Chr$(0) + "M" Then
-			655 CP% = CP% + 1: If CP% > 25 Then CP% = 14
-			Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
-			GoTo 370
-		End If
+    Do
+        370 I$ = GetKeyPress$
 
-		'Left Arrow
-		If I$ = Chr$(0) + "K" Then
-			665 CP% = CP% - 1: If CP% < 14 Then CP% = 25
-			Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
-			GoTo 370
-		End If
+        'Pg Up
+        If I$ = Chr$(0) + "I" Then
+            Cls
+            CP% = 1
+            GoTo 142
+        End If
 
-		If I$ = Chr$(13) Then 
-			Call SortStats(CP%)
-			GoTo 235
-		End If
+        'Right Arrow
+        If I$ = Chr$(0) + "M" Then
+            655 CP% = CP% + 1: If CP% > 25 Then CP% = 14
+            Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
+            GoTo 370
+        End If
 
-		If UCase$(I$) = "P" Then 
-			Call PrintStatsSchedule(totalGames%, teamRatings%())
-			LPrint
-			LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
-			LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
-			LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
-			LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
-			LPrint Chr$(12)
-			I$ = GetKeyPress$
-			Call PrintStatsSummary(totalGames%, Z(), Z1())
-			GoTo 370
-		End If
+        'Left Arrow
+        If I$ = Chr$(0) + "K" Then
+            665 CP% = CP% - 1: If CP% < 14 Then CP% = 25
+            Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
+            GoTo 370
+        End If
 
-		If UCase$(I$) = "D" Then
-			Kill D$(1) + Z$
-			Kill D$(1) + Z$ + "S"
-			GoTo 370
-		End If
+        If I$ = Chr$(13) Then
+            Call SortStats(CP%)
+            GoTo 235
+        End If
 
-	Loop Until I$ = Chr$(27)
+        If UCase$(I$) = "P" Then
+            Call PrintStatsSchedule(totalGames%, teamRatings%())
+            LPrint
+            LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
+            LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
+            LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
+            LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
+            LPrint Chr$(12)
+            I$ = GetKeyPress$
+            Call PrintStatsSummary(totalGames%, Z(), Z1())
+            GoTo 370
+        End If
 
-Exit Sub
+        If UCase$(I$) = "D" Then
+            Kill D$(1) + Z$
+            Kill D$(1) + Z$ + "S"
+            GoTo 370
+        End If
 
+    Loop Until I$ = Chr$(27)
 
     '--- I don't think we ever get here
-'    Cls
-'    Call TITLE_HEADER
-'    Print "RESET STATS TO 0 ? (YN)";:
-'    455 I$ = GetKeyPress$
-'    If UCase$(I$) <> "Y" Then 45
+    '    Cls
+    '    Call TITLE_HEADER
+    '    Print "RESET STATS TO 0 ? (YN)";:
+    '    455 I$ = GetKeyPress$
+    '    If UCase$(I$) <> "Y" Then 45
 
-'    Print
-'    Print "ARE YOU SURE ? (YN) ";
-'    470 I$ = GetKeyPress$
-'    If UCase$(I$) = "N" Then Exit Sub
+    '    Print
+    '    Print "ARE YOU SURE ? (YN) ";
+    '    470 I$ = GetKeyPress$
+    '    If UCase$(I$) = "N" Then Exit Sub
 
-'   Cls
+    '   Cls
     'Exit Sub
     '--- I don't think we ever get here
 
@@ -675,16 +684,15 @@ Exit Sub
 End Sub 'LOOKY
 
 
-
-
-
-
-'------------------------------
+'----------------------------------------
+'       SortStats Subroutine
+'----------------------------------------
+'...explanation...
 Sub SortStats (CP%)
 
-	Shared values(), W0(), W1()
-	Shared lookyA$()
-	
+    Shared values(), W0(), W1()
+    Shared lookyA$()
+
     600 'SORT BASED ON CATEGORY
     If CP% = 1 Then SG% = 0
     If CP% = 2 Then SG% = 10
@@ -727,7 +735,7 @@ End Sub
 
 
 '------------------------------
-Sub TeamSelection_LOOKY (yearNumber$, numberTeams, teamInfo%(), BO%)
+Sub SelectTeam_LOOKY (yearNumber$, numberTeams, teamInfo%())
 
     1102 SELECTION% = 1
     Count% = numberTeams
@@ -749,31 +757,31 @@ Sub TeamSelection_LOOKY (yearNumber$, numberTeams, teamInfo%(), BO%)
     20 MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-	Select Case EXITCODE%
-		Case 27: BO% = 1: Exit Sub 'Return
-		Case -71: 
-			Start% = 1
-			EXITCODE% = 3
-			SELECTION% = 1
-			GoTo 20
-		Case -79: 
-			Start% = Count%
-			EXITCODE% = 3
-			SELECTION% = Count%
-			GoTo 20
-		Case -73: 
-			Start% = Start% - 80
-			If Start% < 1 Then Start% = 1
-			EXITCODE% = 3
-			SELECTION% = Start%
-			GoTo 20
-		Case -81: 
-			Start% = Start% + 80
-			If Start% > Count% Then Start% = Count%
-			EXITCODE% = 3
-			SELECTION% = Start%
-			GoTo 20
-	End Select
+    Select Case EXITCODE%
+        Case 27: BO% = 1: Exit Sub 'Return
+        Case -71:
+            Start% = 1
+            EXITCODE% = 3
+            SELECTION% = 1
+            GoTo 20
+        Case -79:
+            Start% = Count%
+            EXITCODE% = 3
+            SELECTION% = Count%
+            GoTo 20
+        Case -73:
+            Start% = Start% - 80
+            If Start% < 1 Then Start% = 1
+            EXITCODE% = 3
+            SELECTION% = Start%
+            GoTo 20
+        Case -81:
+            Start% = Start% + 80
+            If Start% > Count% Then Start% = Count%
+            EXITCODE% = 3
+            SELECTION% = Start%
+            GoTo 20
+    End Select
 
     T1 = teamIndex%(SELECTION%)
 
@@ -803,46 +811,46 @@ Sub TeamSelection_LOOKY (yearNumber$, numberTeams, teamInfo%(), BO%)
 End Sub
 
 
-
-
-
-'------------------------------
+'----------------------------------------
+'    PrintStatsSchedule Subroutine
+'----------------------------------------
+'...explanation...
 Sub PrintStatsSchedule (totalGames%, teamRatings%())
 
-    Shared O%(), H$(), O$() 
+    Shared O%(), H$(), O$()
 
-	LPrint "SCHEDULE RESULTS FOR "; B$
-	LPrint
-	For I = 1 To 28
-		LPrint Using "###"; O%(I);
-		LPrint Tab(5); Left$(O$(I), 14);
-		LPrint Tab(20); Using "###"; teamRatings%(I);
-		LPrint Tab(24); H$(I); Tab(27);
-		If I + 28 > totalGames% Then LPrint: GoTo 880
-		LPrint Using "###"; O%(I + 28);
-		LPrint Tab(31); Left$(O$(I + 28), 14);
-		LPrint Tab(46); Using "###"; teamRatings%(I + 28);
-		LPrint Tab(50); H$(I + 28); Tab(53);
-		If I + 56 > totalGames% Then LPrint: GoTo 880
-		LPrint Using "###"; O%(I + 56);
-		LPrint Tab(57); Left$(O$(I + 56), 14);
-		LPrint Tab(72); Using "###"; teamRatings%(I + 56);
-		LPrint Tab(76); H$(I + 56)
+    LPrint "SCHEDULE RESULTS FOR "; B$
+    LPrint
+    For I = 1 To 28
+        LPrint Using "###"; O%(I);
+        LPrint Tab(5); Left$(O$(I), 14);
+        LPrint Tab(20); Using "###"; teamRatings%(I);
+        LPrint Tab(24); H$(I); Tab(27);
+        If I + 28 > totalGames% Then LPrint: GoTo 880
+        LPrint Using "###"; O%(I + 28);
+        LPrint Tab(31); Left$(O$(I + 28), 14);
+        LPrint Tab(46); Using "###"; teamRatings%(I + 28);
+        LPrint Tab(50); H$(I + 28); Tab(53);
+        If I + 56 > totalGames% Then LPrint: GoTo 880
+        LPrint Using "###"; O%(I + 56);
+        LPrint Tab(57); Left$(O$(I + 56), 14);
+        LPrint Tab(72); Using "###"; teamRatings%(I + 56);
+        LPrint Tab(76); H$(I + 56)
 
-	880 Next I
+    880 Next I
 
 End Sub
 
 
-
-
-
-'------------------------------
+'----------------------------------------
+'      PrintStatsSummary Subroutine
+'----------------------------------------
+'...explanation...
 Sub PrintStatsSummary (totalGames%, Z(), Z1())
 
-	Shared values(), W0(), W1()
-	Shared lookyA$()
-	
+    Shared values(), W0(), W1()
+    Shared lookyA$()
+
     530 LPrint "STATISTICS SUMMARY FOR "; B$
     LPrint "NAME"; Tab(15);
     LPrint " G  MIN AVG   FGM  FGA  PCT  3FGM 3FGA  PCT   FTM  FTA  PCT"
