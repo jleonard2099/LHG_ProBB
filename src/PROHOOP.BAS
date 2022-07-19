@@ -106,7 +106,7 @@ OY%(1) = 2: OY%(2) = -2: OX%(1) = 10: OX%(2) = -10
 D2(0) = 1: D2(1) = 1
 
 For I = 1 To 5
-    Read D$(I)
+    Read defenseStyles$(I)
 Next I
 
 For I = 0 To 1
@@ -387,7 +387,7 @@ GoSub 105: Return
 
 105 Color 14: Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
 Locate 21, 32: Color 15: Print "O";: Color 3: Print "FFENSE STYLE-";: Color 7: Print O$(O0%(P9))
-Locate 22, 32: Color 3: Print "DE";: Color 15: Print "F";: Color 3: Print "ENSE STYLE-";: Color 7: Print D$(D2(P9))
+Locate 22, 32: Color 3: Print "DE";: Color 15: Print "F";: Color 3: Print "ENSE STYLE-";: Color 7: Print defenseStyles$(D2(P9))
 Locate 23, 32: Color 3: Print "FULL COURT ";: Color 15: Print "P";: Color 3: Print "RESS-";: Color 7: Print P7$(P7(P9))
 Return
 

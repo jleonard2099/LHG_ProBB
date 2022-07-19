@@ -87,9 +87,9 @@ Sub AdjustGames (selectedIndex)
 
 				NTMS = 0
 
-				Open D$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+				Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
 
-				Y1 = LOF(1)
+				Y = LOF(1)
 
 				Field #1, 15 As Q$(0), 15 As Q$(1)
 
@@ -112,7 +112,7 @@ Sub AdjustGames (selectedIndex)
 
 				Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 
-				For I1 = 1 To Y1 / 1031
+				For I1 = 1 To Y / 1031
 					Get #1, I1
 					CK% = CVI(Q$(9))
 					If CK% = 999 Then
@@ -193,7 +193,7 @@ Sub AdjustGames (selectedIndex)
 				adjustB%(B1, 16) = GP * -1
 				adjustB%(B1, 17) = MPG * GP * -1
 			Else
-				Open D$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+				Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
 
 				Field #1, 15 As Q$(0), 15 As Q$(1)
 				For I = 0 To 6
@@ -261,38 +261,14 @@ Sub SelectTeam_GPMIN (yearNumber$, numberTeams, selectedIndex)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    120 MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-	Select Case EXITCODE%
-		Case 27: BO% = 1: Exit Sub 'Return
-		Case -71: 
-			Start% = 1
-			EXITCODE% = 3
-			SELECTION% = 1
-			GoTo 120
-		Case -79: 
-			Start% = Count%
-			EXITCODE% = 3
-			SELECTION% = Count%
-			GoTo 120
-		Case -73: 
-			Start% = Start% - 80
-			If Start% < 1 Then Start% = 1
-			EXITCODE% = 3
-			SELECTION% = Start%
-			GoTo 120
-		Case -81: 
-			Start% = Start% + 80
-			If Start% > Count% Then Start% = Count%
-			EXITCODE% = 3
-			SELECTION% = Start%
-			GoTo 120
-	End Select
-
+	If EXITCODE% = 27 Then BO% = 1: Exit Sub
+		
     selectedIndex = teamIndex%(SELECTION%)
 
-    Open D$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
     Field #1, 15 As Q$(0), 15 As Q$(1)
     For I = 0 To 6
         Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)

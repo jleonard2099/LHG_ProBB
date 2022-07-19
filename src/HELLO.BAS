@@ -1,5 +1,9 @@
+Const GAME_VERSION$ = "4.25"
 Const MAX_TEAMS = 500
-Const MAX_GAMES = 1400
+Const MAX_GAMES = 1500
+Const MAX_FILES = 1024 '1048576
+Const TEAMS_PER_CONFERENCE = 40
+Const DIVS_PER_CONFERENCE = 4
 
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
@@ -23,7 +27,7 @@ ReDim AL(600, 14)
 ' Used across more than one source file
 '----------------------------------------
 Dim Shared A(15, 14)
-Dim Shared D$(3), Q$(0 To 377)
+Dim Shared diskPaths$(3), Q$(0 To 377)
 Dim Shared teamNames$(MAX_TEAMS), Z1$(40)
 Dim Shared teamIndex%(MAX_TEAMS)
 
@@ -47,7 +51,8 @@ Dim inputB$(15, 1), inputT$(4)
 '----------------------------------------
 'Shared across CAREER.BAS routines
 '----------------------------------------
-Dim ars(15, 62, 15), W0S(15, 62), W1S(15, 62)
+Dim ars!(15, 62, 15), W0S!(15, 62), W1S!(15, 62)
+Dim AR$(62)
 
 '----------------------------------------
 'Shared across COMPARE.BAS routines
@@ -56,7 +61,8 @@ Dim compareA$(15), compareAA$(15, 1), compareB$(14)
 Dim compareT$(0), comparePS$(15)
 
 Dim compareB%(15, 19), compareL%(6), compareT%(34)
-Dim compareW0(15), compareW1(15), compareZ(1 To 15), compareZ1(1 To 15)
+Dim compareW0(15), compareW1(15)
+Dim compareZ!(0 To 15), compareZ1!(0 To 15)
 
 '----------------------------------------
 'Shared across CREATE.BAS routines
@@ -176,13 +182,15 @@ For I = 0 To 25: Read categories$(I): Next
 'Shared across LEAGCMPL.BAS,
 '   SEELEAG.BAS routines
 '----------------------------------------
-Dim DL(40, 20), DT(21), LD(250, 2), S(14, 26)
+Dim DL!(40, 20), LD(250, 2), S(14, 26)
 Dim DL$(40), N$(14), Z2$(260), Z3$(260)
 
-Dim O1(40), O2(40), OL(40, 20), OT(21)
-Dim P(40), Z(260), Z1(260)
+Dim O1(40), O2(40), OL!(40, 20)
+Dim P(40), Z!(260), Z1!(260)
 
 Dim H1$(40), OL$(40), leagT$(40)
+
+Dim DT(21) As Single, OT(21) As Single
 
 '----------------------------------------
 'Shared across NEWLDR.BAS routines
@@ -212,7 +220,7 @@ Next
 '----------------------------------------
 Dim teamRecords$(20), indRecords$(25)
 Dim BRC$(25, 1), TRC$(21), TRC1$(21)
-Dim BRC(25), TRC(21), TRC1(21)
+Dim BRC(25), TRC!(21), TRC1!(21)
 
 
 Data GAMES PLAYED,FIELD GOALS ATTEMPTED,FIELD GOALS MADE,FIELD GOAL %,3-FIELD GOALS ATTEMPTED,3-FIELD GOALS MADE,3-FIELD GOAL %
@@ -270,7 +278,7 @@ _AllowFullScreen
 
 Open "DEV.BAS" For Input As #1
 For I = 0 To 1
-    Input #1, D$(I)
+    Input #1, diskPaths$(I)
 Next
 Close 1
 
@@ -508,7 +516,7 @@ Sub CONFIG_DRIVES ()
     FG = 0
     BG = 7
     For I = 0 To 1
-        D$(I) = Left$(D$(I), Len(D$(I)) - 1)
+        diskPaths$(I) = Left$(diskPaths$(I), Len(diskPaths$(I)) - 1)
     Next
 
     Cls: Locate , 16: Print "SPECIFY PATHS FOR YOUR TEAMS AND COMPILED STATS": Print
@@ -519,24 +527,24 @@ Sub CONFIG_DRIVES ()
 
     520 Locate , 31: Print "C:\PROBB\TEAMS"
     Locate 7, 1: QPrint "Path for Teams ", 14, 1, -1
-    Locate , 16: QPrint PadRight$(D$(0), 30), FG, BG, -1
+    Locate , 16: QPrint PadRight$(diskPaths$(0), 30), FG, BG, -1
     Locate 9, 1: QPrint "Path for Stats ", 14, 1, -1
-    Locate , 16: QPrint PadRight$(D$(1), 30), FG, BG, -1
+    Locate , 16: QPrint PadRight$(diskPaths$(1), 30), FG, BG, -1
 
     GetDiv1:
     Locate 7, 16 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 30 'specify field parameters
-    Call TextIn(D$(0), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+    Call TextIn(diskPaths$(0), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
-    D$(0) = _Trim$(D$(0))
+    diskPaths$(0) = _Trim$(diskPaths$(0))
     GetDiv2:
     Locate 9, 16 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 30 'specify field parameters
-    Call TextIn(D$(1), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+    Call TextIn(diskPaths$(1), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
-    D$(1) = _Trim$(D$(1))
+    diskPaths$(1) = _Trim$(diskPaths$(1))
 
     Done:
     Locate 23, 1
@@ -551,11 +559,11 @@ Sub CONFIG_DRIVES ()
 
     580 Open "DEV.BAS" For Output As #1
 
-    585 For R = 0 To 2: D$(R) = D$(R) + "\": Next R
+    585 For R = 0 To 2: diskPaths$(R) = diskPaths$(R) + "\": Next R
 
-    590 Print #1, D$(0)
+    590 Print #1, diskPaths$(0)
 
-    595 Print #1, D$(1)
+    595 Print #1, diskPaths$(1)
 
     600 Close #1
 
@@ -564,7 +572,6 @@ End Sub
 
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'
-'$INCLUDE: 'MainRoutines.BM'
 '$INCLUDE: 'PadRight.BM'
 '$INCLUDE: 'TITLE.BM'
 '$INCLUDE: 'ALIGN.BAS'

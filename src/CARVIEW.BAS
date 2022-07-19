@@ -1,7 +1,7 @@
 Sub CARVIEW ()
 
     Dim A$(62)
-	Shared ars(), W0S(), W1S()
+	Shared ars!(), W0S!(), W1S!()
 
     _Title "Basketball: The Pro Game - View Careers"
 
@@ -9,23 +9,23 @@ Sub CARVIEW ()
 
 	Cls
 
-    30 Spec$ = D$(1) + "*.CAR"
+    30 Spec$ = diskPaths$(1) + "*.CAR"
 
-    COUNT% = FCount%(Spec$)
-    If COUNT% = 0 Then
+    Count% = FCount%(Spec$)
+    If Count% = 0 Then
         Call CSMsgBox("NO CAREER FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
         I$ = GetKeyPress$
         Call CSMsgBox("", 0, Pass)
 	Else
-		ReDim careerFiles$(0 To COUNT%)
-		For X = 1 To COUNT%
+		ReDim careerFiles$(0 To Count%)
+		For X = 1 To Count%
 			careerFiles$(X) = Space$(12)
 		Next
 
 		careerFiles$(0) = Spec$
 
 		Call ReadFile(careerFiles$())
-		'CALL SortStr(VARPTR(careerFiles$(1)), COUNT%, 0)
+		'CALL SortStr(VARPTR(careerFiles$(1)), Count%, 0)
 
 		Do
 			1310 Cls
@@ -49,34 +49,10 @@ Sub CARVIEW ()
 			Print "-SELECTS FILE";
 
 			_MouseShow "DEFAULT"
-			20 MAMenu careerFiles$(), SELECTION%, START%, COUNT%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+			20 MAMenu careerFiles$(), SELECTION%, START%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 			_MouseHide
 
-			Select Case EXITCODE%
-				Case 27: Exit Sub
-				Case -71: 
-					Start% = 1
-					EXITCODE% = 3
-					SELECTION% = 1
-					GoTo 20
-				Case -79: 
-					Start% = Count%
-					EXITCODE% = 3
-					SELECTION% = Count%
-					GoTo 20
-				Case -73: 
-					Start% = Start% - 80
-					If Start% < 1 Then Start% = 1
-					EXITCODE% = 3
-					SELECTION% = Start%
-					GoTo 20
-				Case -81: 
-					Start% = Start% + 80
-					If Start% > Count% Then Start% = Count%
-					EXITCODE% = 3
-					SELECTION% = Start%
-					GoTo 20
-			End Select
+			If EXITCODE% = 27 Then Exit Sub
 
 			targetFile$ = careerFiles$(SELECTION%)
 			Locate 2, 33: Print F$
@@ -92,16 +68,16 @@ Sub CARVIEW ()
 
 		Color 15: Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 
-		Open D$(1) + Z$ + ".CAR" For Input As #2
+		Open diskPaths$(1) + Z$ + ".CAR" For Input As #2
 		Input #2, NB, B$
 		For N = 1 To 15
 			For I = 0 To 61
 				Input #2, A$(I)
 				For J = 0 To 15
-					Input #2, ARS(N, I, J)
+					Input #2, ars!(N, I, J)
 				Next J
-				Input #2, W0S(N, I)
-				Input #2, W1S(N, I)
+				Input #2, W0S!(N, I)
+				Input #2, W1S!(N, I)
 				TMR = TMR - 1 
 				Locate 12, 52: Color 5: Print Using "####"; TMR
 			Next I
@@ -124,7 +100,7 @@ Sub CARVIEW ()
 					If A$(I) <> "" And A$(I) <> "XXX" Then 
 						'Process player
 						TT1 = 0: TT2 = 0: TT3 = 0: TT4 = 0: TT5 = 0: TT6 = 0: TT7 = 0: TT8 = 0: TT9 = 0: TT10 = 0: TT11 = 0: TT12 = 0: TT13 = 0: TT14 = 0: TT15 = 0: TT16 = 0: TT17 = 0
-						VV = ARS(1, I, 14) + ARS(2, I, 14) + ARS(3, I, 14) + ARS(4, I, 14) + ARS(5, I, 14) + ARS(6, I, 14) + ARS(7, I, 14) + ARS(8, I, 14) + ARS(9, I, 14) + ARS(10, I, 14) + ARS(11, I, 14) + ARS(12, I, 14) + ARS(13, I, 14) + ARS(14, I, 14) + ARS(15, I, 14)
+						VV = ars!(1, I, 14) + ars!(2, I, 14) + ars!(3, I, 14) + ars!(4, I, 14) + ars!(5, I, 14) + ars!(6, I, 14) + ars!(7, I, 14) + ars!(8, I, 14) + ars!(9, I, 14) + ars!(10, I, 14) + ars!(11, I, 14) + ars!(12, I, 14) + ars!(13, I, 14) + ars!(14, I, 14) + ars!(15, I, 14)
 						
 						If 55 - PTN < VV Then 
 							3000 LPrint Chr$(12)
@@ -135,56 +111,56 @@ Sub CARVIEW ()
 							1112 LPrint Left$(A$(I), 11);
 							For V = 1 To VV
 								PTN = PTN + 1
-								LPrint Tab(12); ARS(V, I, 15);
-								LPrint Tab(19); Using "##"; ARS(V, I, 0);
-								LPrint Tab(23); Using "###"; ARS(V, I, 2);
-								LPrint Tab(28); Using "####"; ARS(V, I, 1);
-								If ARS(V, I, 2) = 0 Then LPrint Tab(34); "--.-";
-								If ARS(V, I, 2) > 0 Then LPrint Tab(33); Using "###.#"; (ARS(V, I, 2) / ARS(V, I, 1)) * 100;
-								LPrint Tab(39); Using "###"; ARS(V, I, 4);
-								LPrint Tab(45); Using "###"; ARS(V, I, 3);
-								If ARS(V, I, 4) = 0 Then LPrint Tab(50); "--.-";
-								If ARS(V, I, 4) > 0 Then LPrint Tab(49); Using "###.#"; (ARS(V, I, 4) / ARS(V, I, 3)) * 100;
-								LPrint Tab(55); Using "####"; ARS(V, I, 2) * 2 + ARS(V, I, 4) + W0S(V, I);
-								If ARS(V, I, 2) * 2 + ARS(V, I, 4) + W0S(V, I) = 0 Then LPrint Tab(61); " 0.0";
-								If ARS(V, I, 2) * 2 + ARS(V, I, 4) + W0S(V, I) > 0 Then LPrint Tab(61); Using "##.#"; (ARS(V, I, 2) * 2 + ARS(V, I, 4) + W0S(V, I)) / ARS(V, I, 0);
-								LPrint Tab(68); Using "###"; W0S(V, I);
-								LPrint Tab(73); Using "###"; W1S(V, I);
-								If W0S(V, I) = 0 Then LPrint Tab(78); "--.-";
-								If W0S(V, I) > 0 Then LPrint Tab(77); Using "###.#"; (W0S(V, I) / W1S(V, I)) * 100;
-								LPrint Tab(83); Using "###"; ARS(V, I, 5);
-								If ARS(V, I, 5) = 0 Then LPrint Tab(88); " 0.0";
-								If ARS(V, I, 5) > 0 Then LPrint Tab(88); Using "##.#"; ARS(V, I, 5) / ARS(V, I, 0);
-								LPrint Tab(94); Using "###"; ARS(V, I, 6);
-								LPrint Tab(99); Using "###"; ARS(V, I, 8);
-								LPrint Tab(104); Using "###"; ARS(V, I, 9);
-								LPrint Tab(109); Using "###"; ARS(V, I, 7);
-								LPrint Tab(113); Using "###"; ARS(V, I, 13);
-								If ARS(V, I, 10) = 0 Then LPrint Tab(118); "   0";
-								If ARS(V, I, 10) > 0 Then LPrint Tab(118); Using "####"; Int((ARS(V, I, 10) + 30) / 60);
-								If ARS(V, I, 10) = 0 Then LPrint Tab(125); " 0"
-								If ARS(V, I, 10) > 0 Then LPrint Tab(125); Using "##"; Int(((ARS(V, I, 10) / 60) / ARS(V, I, 0)) + .5)
+								LPrint Tab(12); ars!(V, I, 15);
+								LPrint Tab(19); Using "##"; ars!(V, I, 0);
+								LPrint Tab(23); Using "###"; ars!(V, I, 2);
+								LPrint Tab(28); Using "####"; ars!(V, I, 1);
+								If ars!(V, I, 2) = 0 Then LPrint Tab(34); "--.-";
+								If ars!(V, I, 2) > 0 Then LPrint Tab(33); Using "###.#"; (ars!(V, I, 2) / ars!(V, I, 1)) * 100;
+								LPrint Tab(39); Using "###"; ars!(V, I, 4);
+								LPrint Tab(45); Using "###"; ars!(V, I, 3);
+								If ars!(V, I, 4) = 0 Then LPrint Tab(50); "--.-";
+								If ars!(V, I, 4) > 0 Then LPrint Tab(49); Using "###.#"; (ars!(V, I, 4) / ars!(V, I, 3)) * 100;
+								LPrint Tab(55); Using "####"; ars!(V, I, 2) * 2 + ars!(V, I, 4) + W0S!(V, I);
+								If ars!(V, I, 2) * 2 + ars!(V, I, 4) + W0S!(V, I) = 0 Then LPrint Tab(61); " 0.0";
+								If ars!(V, I, 2) * 2 + ars!(V, I, 4) + W0S!(V, I) > 0 Then LPrint Tab(61); Using "##.#"; (ars!(V, I, 2) * 2 + ars!(V, I, 4) + W0S!(V, I)) / ars!(V, I, 0);
+								LPrint Tab(68); Using "###"; W0S!(V, I);
+								LPrint Tab(73); Using "###"; W1S!(V, I);
+								If W0S!(V, I) = 0 Then LPrint Tab(78); "--.-";
+								If W0S!(V, I) > 0 Then LPrint Tab(77); Using "###.#"; (W0S!(V, I) / W1S!(V, I)) * 100;
+								LPrint Tab(83); Using "###"; ars!(V, I, 5);
+								If ars!(V, I, 5) = 0 Then LPrint Tab(88); " 0.0";
+								If ars!(V, I, 5) > 0 Then LPrint Tab(88); Using "##.#"; ars!(V, I, 5) / ars!(V, I, 0);
+								LPrint Tab(94); Using "###"; ars!(V, I, 6);
+								LPrint Tab(99); Using "###"; ars!(V, I, 8);
+								LPrint Tab(104); Using "###"; ars!(V, I, 9);
+								LPrint Tab(109); Using "###"; ars!(V, I, 7);
+								LPrint Tab(113); Using "###"; ars!(V, I, 13);
+								If ars!(V, I, 10) = 0 Then LPrint Tab(118); "   0";
+								If ars!(V, I, 10) > 0 Then LPrint Tab(118); Using "####"; Int((ars!(V, I, 10) + 30) / 60);
+								If ars!(V, I, 10) = 0 Then LPrint Tab(125); " 0"
+								If ars!(V, I, 10) > 0 Then LPrint Tab(125); Using "##"; Int(((ars!(V, I, 10) / 60) / ars!(V, I, 0)) + .5)
 							Next V
 
-							1600 VV = ARS(1, I, 14) + ARS(2, I, 14) + ARS(3, I, 14) + ARS(4, I, 14) + ARS(5, I, 14) + ARS(6, I, 14) + ARS(7, I, 14) + ARS(8, I, 14) + ARS(9, I, 14) + ARS(10, I, 14) + ARS(11, I, 14) + ARS(12, I, 14) + ARS(13, I, 14) + ARS(14, I, 14) + ARS(15, I, 14)
+							1600 VV = ars!(1, I, 14) + ars!(2, I, 14) + ars!(3, I, 14) + ars!(4, I, 14) + ars!(5, I, 14) + ars!(6, I, 14) + ars!(7, I, 14) + ars!(8, I, 14) + ars!(9, I, 14) + ars!(10, I, 14) + ars!(11, I, 14) + ars!(12, I, 14) + ars!(13, I, 14) + ars!(14, I, 14) + ars!(15, I, 14)
 							For V = 1 To VV
-								TT1 = TT1 + ARS(V, I, 0)
-								TT2 = TT2 + ARS(V, I, 2)
-								TT3 = TT3 + ARS(V, I, 1)
-								TT4 = TT4 + ARS(V, I, 4)
-								TT5 = TT5 + ARS(V, I, 3)
-								TT6 = TT6 + (ARS(V, I, 2) * 2 + ARS(V, I, 4) + W0S(V, I))
-								TT7 = TT7 + W0S(V, I)
-								TT8 = TT8 + W1S(V, I)
-								TT9 = TT9 + ARS(V, I, 5)
-								TT10 = TT10 + ARS(V, I, 6)
-								TT11 = TT11 + ARS(V, I, 8)
-								TT12 = TT12 + ARS(V, I, 9)
-								TT13 = TT13 + ARS(V, I, 7)
-								TT14 = TT14 + ARS(V, I, 10)
-								TT16 = TT16 + ARS(V, I, 11)
-								TT17 = TT17 + ARS(V, I, 12)
-								If ARS(V, I, 13) > TT15 Then TT15 = ARS(V, I, 13)
+								TT1 = TT1 + ars!(V, I, 0)
+								TT2 = TT2 + ars!(V, I, 2)
+								TT3 = TT3 + ars!(V, I, 1)
+								TT4 = TT4 + ars!(V, I, 4)
+								TT5 = TT5 + ars!(V, I, 3)
+								TT6 = TT6 + (ars!(V, I, 2) * 2 + ars!(V, I, 4) + W0S!(V, I))
+								TT7 = TT7 + W0S!(V, I)
+								TT8 = TT8 + W1S!(V, I)
+								TT9 = TT9 + ars!(V, I, 5)
+								TT10 = TT10 + ars!(V, I, 6)
+								TT11 = TT11 + ars!(V, I, 8)
+								TT12 = TT12 + ars!(V, I, 9)
+								TT13 = TT13 + ars!(V, I, 7)
+								TT14 = TT14 + ars!(V, I, 10)
+								TT16 = TT16 + ars!(V, I, 11)
+								TT17 = TT17 + ars!(V, I, 12)
+								If ars!(V, I, 13) > TT15 Then TT15 = ars!(V, I, 13)
 							Next V
 							LPrint "  TOTALS";
 							LPrint Tab(15); Using "##"; VV;
@@ -257,7 +233,7 @@ End Sub
 '...explanation...
 Sub ViewRoster (A$())
 
-	Shared ars(), W0S(), W1S()
+	Shared ars!(), W0S!(), W1S!()
 
 	Do
 		100 Cls
@@ -272,38 +248,38 @@ Sub ViewRoster (A$())
 				Print "PLAYER         YEAR  G FGM  FGA   PCT FTM FTA   PCT 3FGM 3FGA PCT  PTS  AVG"
 				Locate 3: Color 15: Print Left$(A$(I), 13);
 
-				VV = ARS(1, I, 14) + ARS(2, I, 14) + ARS(3, I, 14) + ARS(4, I, 14) + ARS(5, I, 14) + ARS(6, I, 14) + ARS(7, I, 14) + ARS(8, I, 14) + ARS(9, I, 14) + ARS(10, I, 14) + ARS(11, I, 14) + ARS(12, I, 14) + ARS(13, I, 14) + ARS(14, I, 14) + ARS(15, I, 14)
+				VV = ars!(1, I, 14) + ars!(2, I, 14) + ars!(3, I, 14) + ars!(4, I, 14) + ars!(5, I, 14) + ars!(6, I, 14) + ars!(7, I, 14) + ars!(8, I, 14) + ars!(9, I, 14) + ars!(10, I, 14) + ars!(11, I, 14) + ars!(12, I, 14) + ars!(13, I, 14) + ars!(14, I, 14) + ars!(15, I, 14)
 
 				For V = 1 To VV
-					Color 7: Print Tab(15); ARS(V, I, 15);
-					Print Tab(21); Using "##"; ARS(V, I, 0);
-					Print Tab(24); Using "###"; ARS(V, I, 2);
-					Print Tab(28); Using "####"; ARS(V, I, 1);
-					If ARS(V, I, 2) = 0 Then Print Tab(33); " --.-";
-					If ARS(V, I, 2) > 0 Then Print Tab(33); Using "###.#"; (ARS(V, I, 2) / ARS(V, I, 1)) * 100;
-					Print Tab(39); Using "###"; ARS(V, I, 4);
-					Print Tab(43); Using "###"; ARS(V, I, 3);
-					If ARS(V, I, 4) = 0 Then Print Tab(47); " --.-";
-					If ARS(V, I, 4) > 0 Then Print Tab(47); Using "###.#"; (ARS(V, I, 4) / ARS(V, I, 3)) * 100;
-					Print Tab(53); Using "###"; W0S(V, I);
-					Print Tab(57); Using "###"; W1S(V, I);
-					If W0S(V, I) = 0 Then Print Tab(61); " --.-";
-					If W0S(V, I) > 0 Then Print Tab(61); Using "###.#"; (W0S(V, I) / W1S(V, I)) * 100;
-					Print Tab(67); Using "####"; ARS(V, I, 2) * 2 + ARS(V, I, 4) + W0S(V, I);
-					If ARS(V, I, 2) * 2 + ARS(V, I, 4) + W0S(V, I) = 0 Then Print Tab(72); " 0.0";
-					If ARS(V, I, 2) * 2 + ARS(V, I, 4) + W0S(V, I) > 0 Then Print Tab(72); Using "##.#"; (ARS(V, I, 2) * 2 + ARS(V, I, 4) + W0S(V, I)) / ARS(V, I, 0);
+					Color 7: Print Tab(15); ars!(V, I, 15);
+					Print Tab(21); Using "##"; ars!(V, I, 0);
+					Print Tab(24); Using "###"; ars!(V, I, 2);
+					Print Tab(28); Using "####"; ars!(V, I, 1);
+					If ars!(V, I, 2) = 0 Then Print Tab(33); " --.-";
+					If ars!(V, I, 2) > 0 Then Print Tab(33); Using "###.#"; (ars!(V, I, 2) / ars!(V, I, 1)) * 100;
+					Print Tab(39); Using "###"; ars!(V, I, 4);
+					Print Tab(43); Using "###"; ars!(V, I, 3);
+					If ars!(V, I, 4) = 0 Then Print Tab(47); " --.-";
+					If ars!(V, I, 4) > 0 Then Print Tab(47); Using "###.#"; (ars!(V, I, 4) / ars!(V, I, 3)) * 100;
+					Print Tab(53); Using "###"; W0S!(V, I);
+					Print Tab(57); Using "###"; W1S!(V, I);
+					If W0S!(V, I) = 0 Then Print Tab(61); " --.-";
+					If W0S!(V, I) > 0 Then Print Tab(61); Using "###.#"; (W0S!(V, I) / W1S!(V, I)) * 100;
+					Print Tab(67); Using "####"; ars!(V, I, 2) * 2 + ars!(V, I, 4) + W0S!(V, I);
+					If ars!(V, I, 2) * 2 + ars!(V, I, 4) + W0S!(V, I) = 0 Then Print Tab(72); " 0.0";
+					If ars!(V, I, 2) * 2 + ars!(V, I, 4) + W0S!(V, I) > 0 Then Print Tab(72); Using "##.#"; (ars!(V, I, 2) * 2 + ars!(V, I, 4) + W0S!(V, I)) / ars!(V, I, 0);
 				Next V
 
-				600 VV = ARS(1, I, 14) + ARS(2, I, 14) + ARS(3, I, 14) + ARS(4, I, 14) + ARS(5, I, 14) + ARS(6, I, 14) + ARS(7, I, 14) + ARS(8, I, 14) + ARS(9, I, 14) + ARS(10, I, 14) + ARS(11, I, 14) + ARS(12, I, 14) + ARS(13, I, 14) + ARS(14, I, 14) + ARS(15, I, 14)
+				600 VV = ars!(1, I, 14) + ars!(2, I, 14) + ars!(3, I, 14) + ars!(4, I, 14) + ars!(5, I, 14) + ars!(6, I, 14) + ars!(7, I, 14) + ars!(8, I, 14) + ars!(9, I, 14) + ars!(10, I, 14) + ars!(11, I, 14) + ars!(12, I, 14) + ars!(13, I, 14) + ars!(14, I, 14) + ars!(15, I, 14)
 				For V = 1 To VV
-					TT1 = TT1 + ARS(V, I, 0)
-					TT2 = TT2 + ARS(V, I, 2)
-					TT3 = TT3 + ARS(V, I, 1)
-					TT4 = TT4 + ARS(V, I, 4)
-					TT5 = TT5 + ARS(V, I, 3)
-					TT6 = TT6 + (ARS(V, I, 2) * 2 + ARS(V, I, 4) + W0S(V, I))
-					TT7 = TT7 + W0S(V, I)
-					TT8 = TT8 + W1S(V, I)
+					TT1 = TT1 + ars!(V, I, 0)
+					TT2 = TT2 + ars!(V, I, 2)
+					TT3 = TT3 + ars!(V, I, 1)
+					TT4 = TT4 + ars!(V, I, 4)
+					TT5 = TT5 + ars!(V, I, 3)
+					TT6 = TT6 + (ars!(V, I, 2) * 2 + ars!(V, I, 4) + W0S!(V, I))
+					TT7 = TT7 + W0S!(V, I)
+					TT8 = TT8 + W1S!(V, I)
 				Next V
 
 				Print
@@ -339,35 +315,35 @@ Sub ViewRoster (A$())
 				Color 15: Print Left$(A$(I), 13);
 
 				For V = 1 To VV
-					Color 7: Print Tab(15); ARS(V, I, 15);
-					Print Tab(21); Using "####"; ARS(V, I, 12);
-					Print Tab(26); Using "####"; ARS(V, I, 5) - ARS(V, I, 12);
-					Print Tab(31); Using "####"; ARS(V, I, 5);
-					If ARS(V, I, 5) = 0 Then Print Tab(36); " 0.0";
-					If ARS(V, I, 5) > 0 Then Print Tab(36); Using "##.#"; ARS(V, I, 5) / ARS(V, I, 0);
-					Print Tab(41); Using "###"; ARS(V, I, 6);
-					Print Tab(46); Using "###"; ARS(V, I, 8);
-					Print Tab(50); Using "###"; ARS(V, I, 9);
-					Print Tab(54); Using "###"; ARS(V, I, 7);
-					Print Tab(58); Using "###"; ARS(V, I, 11);
-					Print Tab(61); Using "###"; ARS(V, I, 13);
-					If ARS(V, I, 10) = 0 Then Print Tab(65); "   0";
-					If ARS(V, I, 10) > 0 Then Print Tab(66); Using "####"; Int((ARS(V, I, 10) + 30) / 60);
-					If ARS(V, I, 10) = 0 Then Print Tab(73); " 0";
-					If ARS(V, I, 10) > 0 Then Print Tab(73); Using "##"; Int(((ARS(V, I, 10) / 60) / ARS(V, I, 0)) + .5);
+					Color 7: Print Tab(15); ars!(V, I, 15);
+					Print Tab(21); Using "####"; ars!(V, I, 12);
+					Print Tab(26); Using "####"; ars!(V, I, 5) - ars!(V, I, 12);
+					Print Tab(31); Using "####"; ars!(V, I, 5);
+					If ars!(V, I, 5) = 0 Then Print Tab(36); " 0.0";
+					If ars!(V, I, 5) > 0 Then Print Tab(36); Using "##.#"; ars!(V, I, 5) / ars!(V, I, 0);
+					Print Tab(41); Using "###"; ars!(V, I, 6);
+					Print Tab(46); Using "###"; ars!(V, I, 8);
+					Print Tab(50); Using "###"; ars!(V, I, 9);
+					Print Tab(54); Using "###"; ars!(V, I, 7);
+					Print Tab(58); Using "###"; ars!(V, I, 11);
+					Print Tab(61); Using "###"; ars!(V, I, 13);
+					If ars!(V, I, 10) = 0 Then Print Tab(65); "   0";
+					If ars!(V, I, 10) > 0 Then Print Tab(66); Using "####"; Int((ars!(V, I, 10) + 30) / 60);
+					If ars!(V, I, 10) = 0 Then Print Tab(73); " 0";
+					If ars!(V, I, 10) > 0 Then Print Tab(73); Using "##"; Int(((ars!(V, I, 10) / 60) / ars!(V, I, 0)) + .5);
 				Next V
 				
-				VV = ARS(1, I, 14) + ARS(2, I, 14) + ARS(3, I, 14) + ARS(4, I, 14) + ARS(5, I, 14) + ARS(6, I, 14) + ARS(7, I, 14) + ARS(8, I, 14) + ARS(9, I, 14) + ARS(10, I, 14) + ARS(11, I, 14) + ARS(12, I, 14) + ARS(13, I, 14) + ARS(14, I, 14) + ARS(15, I, 14)
+				VV = ars!(1, I, 14) + ars!(2, I, 14) + ars!(3, I, 14) + ars!(4, I, 14) + ars!(5, I, 14) + ars!(6, I, 14) + ars!(7, I, 14) + ars!(8, I, 14) + ars!(9, I, 14) + ars!(10, I, 14) + ars!(11, I, 14) + ars!(12, I, 14) + ars!(13, I, 14) + ars!(14, I, 14) + ars!(15, I, 14)
 				For V = 1 To VV
-					TT9 = TT9 + ARS(V, I, 5)
-					TT10 = TT10 + ARS(V, I, 6)
-					TT11 = TT11 + ARS(V, I, 8)
-					TT12 = TT12 + ARS(V, I, 9)
-					TT13 = TT13 + ARS(V, I, 7)
-					TT14 = TT14 + ARS(V, I, 10)
-					TT16 = TT16 + ARS(V, I, 11)
-					TT17 = TT17 + ARS(V, I, 12)
-					If ARS(V, I, 13) > TT15 Then TT15 = ARS(V, I, 13)
+					TT9 = TT9 + ars!(V, I, 5)
+					TT10 = TT10 + ars!(V, I, 6)
+					TT11 = TT11 + ars!(V, I, 8)
+					TT12 = TT12 + ars!(V, I, 9)
+					TT13 = TT13 + ars!(V, I, 7)
+					TT14 = TT14 + ars!(V, I, 10)
+					TT16 = TT16 + ars!(V, I, 11)
+					TT17 = TT17 + ars!(V, I, 12)
+					If ars!(V, I, 13) > TT15 Then TT15 = ars!(V, I, 13)
 				Next V
 				Print: Color 3
 				Print
@@ -417,7 +393,7 @@ End Sub
 '...explanation...
 Sub ViewPlayer (A$())
 
-	Shared ars(), W0S(), W1S()
+	Shared ars!(), W0S!(), W1S!()
 
 	2010 Cls: Color 12: Print Z$
 	For I = 0 To 15: Locate I + 2: Color 3: Print Using "##"; I;: Print " ";: Color 7: Print A$(I): Next
@@ -433,36 +409,36 @@ Sub ViewPlayer (A$())
 	Color 11: Locate 1: Print Z$
 	Color 12: Locate 2: Print "PLAYER         YEAR  G  FGM  FGA  PCT FTM  FTA  PCT 3FGM 3FGA  PCT  PTS  AVG."
 	Locate 3: Color 15: Print Left$(A$(B9), 13);
-	VV = ARS(1, B9, 14) + ARS(2, B9, 14) + ARS(3, B9, 14) + ARS(4, B9, 14) + ARS(5, B9, 14) + ARS(6, B9, 14) + ARS(7, B9, 14) + ARS(8, B9, 14) + ARS(9, B9, 14) + ARS(10, B9, 14) + ARS(11, B9, 14) + ARS(12, B9, 14) + ARS(13, B9, 14) + ARS(14, B9, 14) + ARS(15, B9, 14)
+	VV = ars!(1, B9, 14) + ars!(2, B9, 14) + ars!(3, B9, 14) + ars!(4, B9, 14) + ars!(5, B9, 14) + ars!(6, B9, 14) + ars!(7, B9, 14) + ars!(8, B9, 14) + ars!(9, B9, 14) + ars!(10, B9, 14) + ars!(11, B9, 14) + ars!(12, B9, 14) + ars!(13, B9, 14) + ars!(14, B9, 14) + ars!(15, B9, 14)
 	For V = 1 To VV
-		Color 7: Print Tab(15); ARS(V, B9, 15);
-		Print Tab(21); Using "##"; ARS(V, B9, 0);
-		Print Tab(25); Using "###"; ARS(V, B9, 2);
-		Print Tab(29); Using "####"; ARS(V, B9, 1);
-		If ARS(V, B9, 2) = 0 Then Print Tab(35); "--.-";
-		If ARS(V, B9, 2) > 0 Then Print Tab(34); Using "###.#"; (ARS(V, B9, 2) / ARS(V, B9, 1)) * 100;
-		Print Tab(39); Using "###"; ARS(V, B9, 4);
-		Print Tab(44); Using "###"; ARS(V, B9, 3);
-		If ARS(V, B9, 4) = 0 Then Print Tab(49); "--.-";
-		If ARS(V, B9, 4) > 0 Then Print Tab(48); Using "###.#"; (ARS(V, B9, 4) / ARS(V, B9, 3)) * 100;
-		Print Tab(54); Using "###"; W0S(V, B9);
-		Print Tab(59); Using "###"; W1S(V, B9);
-		If W0S(V, B9) = 0 Then Print Tab(64); "--.-";
-		If W0S(V, B9) > 0 Then Print Tab(63); Using "###.#"; (W0S(V, B9) / W1S(V, B9)) * 100;
-		Print Tab(68); Using "####"; ARS(V, B9, 2) * 2 + ARS(V, B9, 4) + W0S(V, B9);
-		If ARS(V, B9, 2) * 2 + ARS(V, B9, 4) + W0S(V, B9) = 0 Then Print Tab(74); " 0.0";
-		If ARS(V, B9, 2) * 2 + ARS(V, B9, 4) + W0S(V, B9) > 0 Then Print Tab(74); Using "##.#"; (ARS(V, B9, 2) * 2 + ARS(V, B9, 4) + W0S(V, B9)) / ARS(V, B9, 0);
+		Color 7: Print Tab(15); ars!(V, B9, 15);
+		Print Tab(21); Using "##"; ars!(V, B9, 0);
+		Print Tab(25); Using "###"; ars!(V, B9, 2);
+		Print Tab(29); Using "####"; ars!(V, B9, 1);
+		If ars!(V, B9, 2) = 0 Then Print Tab(35); "--.-";
+		If ars!(V, B9, 2) > 0 Then Print Tab(34); Using "###.#"; (ars!(V, B9, 2) / ars!(V, B9, 1)) * 100;
+		Print Tab(39); Using "###"; ars!(V, B9, 4);
+		Print Tab(44); Using "###"; ars!(V, B9, 3);
+		If ars!(V, B9, 4) = 0 Then Print Tab(49); "--.-";
+		If ars!(V, B9, 4) > 0 Then Print Tab(48); Using "###.#"; (ars!(V, B9, 4) / ars!(V, B9, 3)) * 100;
+		Print Tab(54); Using "###"; W0S!(V, B9);
+		Print Tab(59); Using "###"; W1S!(V, B9);
+		If W0S!(V, B9) = 0 Then Print Tab(64); "--.-";
+		If W0S!(V, B9) > 0 Then Print Tab(63); Using "###.#"; (W0S!(V, B9) / W1S!(V, B9)) * 100;
+		Print Tab(68); Using "####"; ars!(V, B9, 2) * 2 + ars!(V, B9, 4) + W0S!(V, B9);
+		If ars!(V, B9, 2) * 2 + ars!(V, B9, 4) + W0S!(V, B9) = 0 Then Print Tab(74); " 0.0";
+		If ars!(V, B9, 2) * 2 + ars!(V, B9, 4) + W0S!(V, B9) > 0 Then Print Tab(74); Using "##.#"; (ars!(V, B9, 2) * 2 + ars!(V, B9, 4) + W0S!(V, B9)) / ars!(V, B9, 0);
 	Next V
 	
 	2600 For V = 1 To VV
-		TT1 = TT1 + ARS(V, B9, 0)
-		TT2 = TT2 + ARS(V, B9, 2)
-		TT3 = TT3 + ARS(V, B9, 1)
-		TT4 = TT4 + ARS(V, B9, 4)
-		TT5 = TT5 + ARS(V, B9, 3)
-		TT6 = TT6 + (ARS(V, B9, 2) * 2 + ARS(V, B9, 4) + W0S(V, B9))
-		TT7 = TT7 + W0S(V, B9)
-		TT8 = TT8 + W1S(V, B9)
+		TT1 = TT1 + ars!(V, B9, 0)
+		TT2 = TT2 + ars!(V, B9, 2)
+		TT3 = TT3 + ars!(V, B9, 1)
+		TT4 = TT4 + ars!(V, B9, 4)
+		TT5 = TT5 + ars!(V, B9, 3)
+		TT6 = TT6 + (ars!(V, B9, 2) * 2 + ars!(V, B9, 4) + W0S!(V, B9))
+		TT7 = TT7 + W0S!(V, B9)
+		TT8 = TT8 + W1S!(V, B9)
 	Next V
 	
 	Print: Color 3
@@ -496,34 +472,34 @@ Sub ViewPlayer (A$())
 	Color 12: Print "PLAYER         YEAR OREB DREB  TRB  AVG  PF  AST BLK  ST  TO HI   MIN  AVG."
 	Locate 3: Color 15: Print Left$(A$(B9), 13);
 	For V = 1 To VV
-		Color 7: Print Tab(15); ARS(V, B9, 15);
-		Print Tab(21); Using "####"; ARS(V, B9, 12);
-		Print Tab(26); Using "####"; ARS(V, B9, 5) - ARS(V, B9, 12);
-		Print Tab(31); Using "####"; ARS(V, B9, 5);
-		If ARS(V, B9, 5) = 0 Then Print Tab(36); " 0.0";
-		If ARS(V, B9, 5) > 0 Then Print Tab(36); Using "##.#"; ARS(V, B9, 5) / ARS(V, B9, 0);
-		Print Tab(41); Using "###"; ARS(V, B9, 6);
-		Print Tab(46); Using "###"; ARS(V, B9, 8);
-		Print Tab(50); Using "###"; ARS(V, B9, 9);
-		Print Tab(54); Using "###"; ARS(V, B9, 7);
-		Print Tab(58); Using "###"; ARS(V, B9, 11);
-		Print Tab(61); Using "###"; ARS(V, B9, 13);
-		If ARS(V, B9, 10) = 0 Then Print Tab(65); "   0";
-		If ARS(V, B9, 10) > 0 Then Print Tab(66); Using "####"; Int((ARS(V, B9, 10) + 30) / 60);
-		If ARS(V, B9, 10) = 0 Then Print Tab(73); " 0";
-		If ARS(V, B9, 10) > 0 Then Print Tab(73); Using "##"; Int(((ARS(V, B9, 10) / 60) / ARS(V, B9, 0)) + .5);
+		Color 7: Print Tab(15); ars!(V, B9, 15);
+		Print Tab(21); Using "####"; ars!(V, B9, 12);
+		Print Tab(26); Using "####"; ars!(V, B9, 5) - ars!(V, B9, 12);
+		Print Tab(31); Using "####"; ars!(V, B9, 5);
+		If ars!(V, B9, 5) = 0 Then Print Tab(36); " 0.0";
+		If ars!(V, B9, 5) > 0 Then Print Tab(36); Using "##.#"; ars!(V, B9, 5) / ars!(V, B9, 0);
+		Print Tab(41); Using "###"; ars!(V, B9, 6);
+		Print Tab(46); Using "###"; ars!(V, B9, 8);
+		Print Tab(50); Using "###"; ars!(V, B9, 9);
+		Print Tab(54); Using "###"; ars!(V, B9, 7);
+		Print Tab(58); Using "###"; ars!(V, B9, 11);
+		Print Tab(61); Using "###"; ars!(V, B9, 13);
+		If ars!(V, B9, 10) = 0 Then Print Tab(65); "   0";
+		If ars!(V, B9, 10) > 0 Then Print Tab(66); Using "####"; Int((ars!(V, B9, 10) + 30) / 60);
+		If ars!(V, B9, 10) = 0 Then Print Tab(73); " 0";
+		If ars!(V, B9, 10) > 0 Then Print Tab(73); Using "##"; Int(((ars!(V, B9, 10) / 60) / ars!(V, B9, 0)) + .5);
 	Next V
 
 	2650 For V = 1 To VV
-		TT9 = TT9 + ARS(V, B9, 5)
-		TT10 = TT10 + ARS(V, B9, 6)
-		TT11 = TT11 + ARS(V, B9, 8)
-		TT12 = TT12 + ARS(V, B9, 9)
-		TT13 = TT13 + ARS(V, B9, 7)
-		TT14 = TT14 + ARS(V, B9, 10)
-		TT16 = TT16 + ARS(V, B9, 11)
-		TT17 = TT17 + ARS(V, B9, 12)
-		If ARS(V, B9, 13) > TT15 Then TT15 = ARS(V, B9, 13)
+		TT9 = TT9 + ars!(V, B9, 5)
+		TT10 = TT10 + ars!(V, B9, 6)
+		TT11 = TT11 + ars!(V, B9, 8)
+		TT12 = TT12 + ars!(V, B9, 9)
+		TT13 = TT13 + ars!(V, B9, 7)
+		TT14 = TT14 + ars!(V, B9, 10)
+		TT16 = TT16 + ars!(V, B9, 11)
+		TT17 = TT17 + ars!(V, B9, 12)
+		If ars!(V, B9, 13) > TT15 Then TT15 = ars!(V, B9, 13)
 	Next V
 	
 	Print

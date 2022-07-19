@@ -36,7 +36,7 @@ Sub NEWLDR ()
             End Select
         End If
 
-    Loop Until SELECTION% = 3
+    Loop Until SELECTION% = 3 Or EXITCODE% = 27
 
 End Sub
 
@@ -61,12 +61,12 @@ Sub ViewLeagueStats ()
     TS = 0
     PV = 0
 
-    2500 For X = 1 To 40
+    For X = 1 To TEAMS_PER_CONFERENCE
         Z1$(X) = "XXX"
     Next
-    Spec$ = D$(1) + "*.TMS"
+    Spec$ = diskPaths$(1) + "*.TMS"
 
-    1440 null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
+    null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
     Count% = DirCount%
     If Count% = 0 Then
         Locate 10, 8
@@ -124,13 +124,13 @@ Sub ViewLeagueStats ()
                 LG$ = targetFile$
 
                 LG$ = targetFile$
-                Open D$(1) + targetFile$ + ".TMS" For Input As #2
+                Open diskPaths$(1) + targetFile$ + ".TMS" For Input As #2
                 Input #2, LG$
                 Input #2, D1$
                 Input #2, D2$
                 Input #2, D3$
                 Input #2, D4$
-                For X = 1 To 40
+                For X = 1 To TEAMS_PER_CONFERENCE
                     Input #2, Z1$(X)
                 Next
                 Close 2
@@ -191,14 +191,14 @@ Sub ViewInidividualLeaders ()
 
     Dim JB, TBN, TS
 
-    Dim AL(600, 14), GM(40), GM1(40)
-    Dim TT(40, 15), TT1(40, 15), W0L(600), W1L(600)
+    Dim AL(600, 14), GM(TEAMS_PER_CONFERENCE), GM1(TEAMS_PER_CONFERENCE)
+    Dim TT!(TEAMS_PER_CONFERENCE, 15), TT1!(TEAMS_PER_CONFERENCE, 15), W0L(600), W1L(600)
 
     Dim AL$(600)
     ReDim menuChoices$(1 To 3)
 
     '--> replace 600 with a CONST
-    Dim TMA$(600), TT$(40, 15), TT1$(40, 15)
+    Dim TMA$(600), TT$(TEAMS_PER_CONFERENCE, 15), TT1$(TEAMS_PER_CONFERENCE, 15)
     ReDim GMA(600)
 
     Shared TMM$(), TP$(), TP1$()
@@ -780,7 +780,7 @@ Sub ViewTotalLeaders ()
 
 
     3500 Cls: For I = 1 To TS
-    TMM$(I) = TT$(I, X): TYP(I) = TT(I, X): Next
+    TMM$(I) = TT$(I, X): TYP(I) = TT!(I, X): Next
 
     For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
         For J = TS To I Step -1
@@ -793,9 +793,9 @@ Sub ViewTotalLeaders ()
     Call PrintTeamView_NEWLDR (PV, QW, TVN)
 
     3510 Cls: For I = 1 To TS
-        If TT(I, X1) = 0 Then 3513 Else GoTo 3512
+        If TT!(I, X1) = 0 Then 3513 Else GoTo 3512
 
-        3512 TMM$(I) = TT$(I, X): TYP(I) = TT(I, X) / TT(I, X1): GoTo 3514
+        3512 TMM$(I) = TT$(I, X): TYP(I) = TT!(I, X) / TT!(I, X1): GoTo 3514
 
         3513 TMM$(I) = TT$(I, X): TYP(I) = 0
 
@@ -812,7 +812,7 @@ Sub ViewTotalLeaders ()
     Call PrintTeamView_NEWLDR (PV, QW, TVN)
 
     3520 Cls: For I = 1 To TS
-    TMM$(I) = TT$(I, X): TYP(I) = TT(I, X) - TT(I, X1): Next
+    TMM$(I) = TT$(I, X): TYP(I) = TT!(I, X) - TT!(I, X1): Next
 
     For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
         For J = TS To I Step -1
@@ -824,7 +824,7 @@ Sub ViewTotalLeaders ()
     TVN = 1: QW = TS
     Call PrintTeamView_NEWLDR (PV, QW, TVN)
     3530 Cls: For I = 1 To TS
-    TMM$(I) = TT$(I, X): TYP(I) = TT(I, X) / GM(I): Next
+    TMM$(I) = TT$(I, X): TYP(I) = TT!(I, X) / GM(I): Next
 
     For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
         For J = TS To I Step -1
@@ -836,7 +836,7 @@ Sub ViewTotalLeaders ()
     TVN = 3: QW = TS
     Call PrintTeamView_NEWLDR (PV, QW, TVN)
     3540 Cls: For I = 1 To TS
-    TMM$(I) = TT$(I, X): TYP(I) = ((TT(I, X) * 2) + TT(I, X1) + TT(I, X2)) / GM(I): Next
+    TMM$(I) = TT$(I, X): TYP(I) = ((TT!(I, X) * 2) + TT!(I, X1) + TT!(I, X2)) / GM(I): Next
 
     For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
         For J = TS To I Step -1
@@ -848,7 +848,7 @@ Sub ViewTotalLeaders ()
     TVN = 3: QW = TS
     Call PrintTeamView_NEWLDR (PV, QW, TVN)
     3600 Cls: For I = 1 To TTS
-    TMM$(I) = TT1$(I, X): TYP(I) = TT1(I, X): Next
+    TMM$(I) = TT1$(I, X): TYP(I) = TT1!(I, X): Next
 
     For I = 2 To TTS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
         For J = TTS To I Step -1
@@ -861,10 +861,10 @@ Sub ViewTotalLeaders ()
     Call PrintTeamView_NEWLDR (PV, QW, TVN)
     3610 Cls
     For I = 1 To TTS
-        If TT1(I, X1) = 0 Then 
+        If TT1!(I, X1) = 0 Then 
             TMM$(I) = TT1$(I, X): TYP(I) = 0 
         Else 
-            TMM$(I) = TT1$(I, X): TYP(I) = TT1(I, X) / TT1(I, X1)
+            TMM$(I) = TT1$(I, X): TYP(I) = TT1!(I, X) / TT1!(I, X1)
         End If
     Next
 
@@ -879,7 +879,7 @@ Sub ViewTotalLeaders ()
     Call PrintTeamView_NEWLDR (PV, QW, TVN)
 
     3620 Cls: For I = 1 To TTS
-    TMM$(I) = TT1$(I, X): TYP(I) = TT1(I, X) - TT1(I, X1): Next
+    TMM$(I) = TT1$(I, X): TYP(I) = TT1!(I, X) - TT1!(I, X1): Next
 
     For I = 2 To TTS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
         For J = TTS To I Step -1
@@ -891,7 +891,7 @@ Sub ViewTotalLeaders ()
     TVN = 1: QW = TTS
     Call PrintTeamView_NEWLDR (PV, QW, TVN)
     3630 Cls: For I = 1 To TTS
-    TMM$(I) = TT1$(I, X): TYP(I) = TT1(I, X) / GM1(I): Next
+    TMM$(I) = TT1$(I, X): TYP(I) = TT1!(I, X) / GM1(I): Next
 
     For I = 2 To TTS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
         For J = TTS To I Step -1
@@ -903,7 +903,7 @@ Sub ViewTotalLeaders ()
     TVN = 3: QW = TTS
     Call PrintTeamView_NEWLDR (PV, QW, TVN)
     3640 Cls: For I = 1 To TTS
-    TMM$(I) = TT1$(I, X): TYP(I) = ((TT1(I, X) * 2) + TT1(I, X1) + TT1(I, X2)) / GM1(I): Next
+    TMM$(I) = TT1$(I, X): TYP(I) = ((TT1!(I, X) * 2) + TT1!(I, X1) + TT1!(I, X2)) / GM1(I): Next
 
     For I = 2 To TTS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
         For J = TTS To I Step -1
@@ -1095,4 +1095,89 @@ Sub GetListLength (maxQW, listLength)
     'GoTo 8015
     '8015 Return
     
+End Sub
+
+
+
+'------------------------------
+'     BUILDSTATS Subroutine
+'------------------------------
+' This creates an .LDS file for your league
+Sub BUILDSTATS (statFile$)
+    Dim buildA$(0 to 14), AL$(600)
+    Dim TMA$(600), TT$(40, 15), TT1$(40, 15)
+
+    Dim AL(600, 14)
+    Dim GM(40), GM1(40), TT!(40, 15), TT1!(40, 15)
+    Dim W0(15), W1(15)
+	Dim Z!(15), Z1!(15)
+
+    Dim W0L(600), W1L(600)
+    ReDim GMA(600), TYP(600)
+
+	Shared A()
+	Shared YY
+
+    11 For KK = 1 To 40: YY = YY + 1
+        If Z1$(KK) <> "*" Then
+
+			Print "CONVERTING STAT FILE OF "; Z1$(KK)
+			If _FileExists(D$(1) + Z1$(KK)) Then
+
+				Open D$(1) + Z1$(KK) For Input As #1
+				Input #1, B$
+				For I = 0 To 14
+					Input #1, buildA$(I)
+					For J = 0 To 13
+						Input #1, A(I, J)
+					Next
+					Input #1, W0(I)
+					Input #1, W1(I)
+				Next
+
+				'This currently causes an overflow
+				'Are the stat files not getting created correctly??
+				For L = 0 To 15: Input #1, Z!(L): Next
+				For L = 0 To 15: Input #1, Z1!(L): Next
+				Close #1
+
+				Open D$(1) + Z1$(KK) + "S" For Input As #1
+				Input #1, Y
+				Close #1
+
+				TS = TS + 1
+				For I = 0 To 14: TT!(TS, I) = Z!(I): TT$(TS, I) = B$: GM(TS) = Y: Next
+				TTS = TTS + 1
+				For I = 0 To 14: TT1!(TTS, I) = Z1!(I): TT1$(TTS, I) = B$: GM1(TTS) = Y: Next
+				For I = 0 To 14
+					If buildA$(I) = "XXX" Then 35
+
+					33 JB = JB + 1
+					AL$(JB) = buildA$(I)
+					TBN = TBN + 1
+					TMA$(TBN) = B$
+					GMA(JB) = Y
+					K1 = 0
+					For I1 = 0 To 13
+						K1 = K1 + 1
+						AL(JB, K1) = A(I, I1)
+					35 Next I1
+					W0L(JB) = W0(I): W1L(JB) = W1(I)
+				Next I
+
+			End If
+
+		End If
+		
+    Next KK
+    
+	Print "SAVING LEADER FILES . . . . PLEASE WAIT"
+
+    Open D$(1) + statFile$ + ".LDS" For Output As #1
+    Write #1, JB, TS, TTS
+    For I = 1 To 600: Write #1, AL$(I), TMA$(I), GMA(I): Color 14: Locate 18, 45: TMR = TMR - 1: Print Using "#####"; TMR
+    For I1 = 1 To 14: Write #1, AL(I, I1): Next I1: Write #1, W0L(I): Write #1, W1L(I): Color 14: Locate 18, 45: TMR = TMR - 1: Print Using "#####"; TMR: Next I
+    For I = 1 To 40: For I1 = 0 To 14: Write #1, TT!(I, I1), TT$(I, I1): Next: Color 14: Locate 18, 45: TMR = TMR - 1: Print Using "#####"; TMR: Write #1, GM(I): Next
+    For I = 1 To 40: For I1 = 0 To 14: Write #1, TT1!(I, I1), TT1$(I, I1): Next: Color 14: Locate 18, 45: TMR = TMR - 1: Print Using "#####"; TMR: Write #1, GM1(I): Next
+    Close #1
 End Sub

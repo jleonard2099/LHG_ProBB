@@ -3,10 +3,10 @@ Sub HD2HD ()
     Cls
 
     Dim DV$(4), O$(100), H$(1 To 100)
-    Dim Z2$(40)
+    Dim Z2$(TEAMS_PER_CONFERENCE)
     ReDim menuChoices$(1 To 2)
 
-    Dim O%(100), intT%(100), intZ1%(40)
+    Dim O%(100), intT%(100), intZ1%(TEAMS_PER_CONFERENCE)
 
     Shared AW(), hd2hdAL(), hd2hdT(), HL(), HW()
     Shared R1(), R2(), R3(), R4()
@@ -67,7 +67,7 @@ Sub HD2HD ()
 
                     Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
-                    If Not _FileExists(D$(1) + Z$ + "S") Then
+                    If Not _FileExists(diskPaths$(1) + Z$ + "S") Then
                         Cls
                         Locate 10, 18
                         Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
@@ -76,7 +76,7 @@ Sub HD2HD ()
                         Color , 0
                         'GoTo 600
                     Else
-                        Open D$(1) + Z$ + "S" For Input As #4
+                        Open diskPaths$(1) + Z$ + "S" For Input As #4
                         Input #4, Y
                         For J = 1 To 100: Input #4, O%(J): Next
                         For J = 1 To 100: Input #4, O$(J): Next
@@ -108,30 +108,30 @@ Sub HD2HD ()
                             If UCase$(I$) = "S" Then VPP = 1
 
                             78 W$ = LG$ + ".LIB"
-                            Open D$(1) + W$ For Input As #1
+                            Open diskPaths$(1) + W$ For Input As #1
                             Input #1, LG$
                             Input #1, D1$: Input #1, D2$: Input #1, D3$: Input #1, D4$
-                            For X = 1 To 40
+                            For X = 1 To TEAMS_PER_CONFERENCE
                                 Input #1, Z1$(X): Input #1, intZ1%(X): Input #1, Z2$(X)
                             Next
-                            NT = 40
+                            NT = TEAMS_PER_CONFERENCE
                             Close 1
 
                             Cls
                             Color 15: Locate 18, 18: Print "COMPUTING W/L/T RECORDS . . . PLEASE WAIT"
-                            For Q = 1 To 40
+                            For Q = 1 To TEAMS_PER_CONFERENCE
                                 AW(Q) = 0: HW(Q) = 0
                                 hd2hdAL(Q) = 0: HL(Q) = 0
                                 R1(Q) = 0: R2(Q) = 0
                                 R3(Q) = 0: R4(Q) = 0
                             Next
-                            For K = 1 To 4
+                            For K = 1 To DIVS_PER_CONFERENCE
                                 THW(K) = 0: THL(K) = 0
                                 TAW(K) = 0: TAL(K) = 0
                                 TR1(K) = 0: TR2(K) = 0
                                 TR3(K) = 0: TR4(K) = 0
                             Next
-                            For K = 1 To 40
+                            For K = 1 To TEAMS_PER_CONFERENCE
                                 If Z1$(K) <> "XXX" Then
                                     For I = 1 To Y
                                         If O%(I) > intT%(I) And Left$(H$(I), 1) = "V" And O$(I) = Z1$(K) Then AW(K) = AW(K) + 1
@@ -151,7 +151,7 @@ Sub HD2HD ()
                             Else
                                 'Not sending to printer
                                 '--This should be a sub
-                                190 DV$(1) = D1$
+                                DV$(1) = D1$
                                 DV$(2) = D2$
                                 DV$(3) = D3$
                                 DV$(4) = D4$
@@ -259,11 +259,12 @@ Sub HD2HD ()
 
                                 Loop Until RDD = 4
 
-                                400 Cls: Color 12: Locate 2, 35: Color hd2hdT(33), hd2hdT(34): Print Z$: Color 0, 0
+                                Cls: Color 12: Locate 2, 35: Color hd2hdT(33), hd2hdT(34): Print Z$: Color 0, 0
                                 Color 3: Locate 4: Print Tab(9); String$(8, 196); " HOME "; String$(9, 196); Tab(32); Chr$(194); String$(8, 196); " AWAY "; String$(9, 196); Tab(56); Chr$(194); String$(7, 196); " TOTALS "; String$(8, 196)
                                 Locate 5: Print Tab(10); "W"; Tab(13); "L"; Tab(17); "PCT."; Tab(22); "PF/G"; Tab(28); "PA/G"; Tab(32); Chr$(179); Tab(34); "W"; Tab(37); "L"; Tab(41); "PCT."; Tab(46); "PF/G"; Tab(52); "PA/G"; Tab(56); Chr$(179); Tab(58); "W"; Tab(61); "L"; Tab(65); "PCT."; Tab(70); "PF/G"; Tab(76); "PA/G"
                                 Color 3: Print Tab(32); Chr$(179); Tab(56); Chr$(179)
-                                For W = 1 To 4
+								
+                                For W = 1 To DIVS_PER_CONFERENCE
                                     If DV$(W) <> "XXX" And DV$(W) <> "" Then
                                         461 Color 15: Locate , 1: Print Left$(DV$(W), 10);
                                         Color 7: Locate , 9: Print Using "##"; THW(W);
@@ -301,13 +302,13 @@ Sub HD2HD ()
                                 490 Next W
                                 THWW = 0: THLL = 0: TAWW = 0: TALL = 0
 
-                                For I = 1 To 4
+                                For I = 1 To DIVS_PER_CONFERENCE
                                     THWW = THWW + THW(I): THLL = THLL + THL(I): TAWW = TAWW + TAW(I): TALL = TALL + TAL(I)
                                 Next
 
                                 TR11 = 0: TR22 = 0: TR33 = 0: TR44 = 0
 
-                                For I = 1 To 4
+                                For I = 1 To DIVS_PER_CONFERENCE
                                     TR11 = TR11 + TR1(I): TR22 = TR22 + TR2(I): TR33 = TR33 + TR3(I): TR44 = TR44 + TR4(I)
                                 Next
 
@@ -480,7 +481,7 @@ Sub PrintHD2HD ()
     1401 LPrint: LPrint: LPrint Tab(22); "--------- HOME ----------"; Tab(54); "--------- AWAY ----------"; Tab(86); "---------- TOTALS ----------"
     LPrint Tab(22); "W"; Tab(26); "L"; Tab(30); "PCT."; Tab(36); "PF/G"; Tab(43); "PA/G"; Tab(54); "W"; Tab(58); "L"; Tab(62); "PCT."; Tab(68); "PF/G"; Tab(75); "PA/G"; Tab(86); "W"; Tab(91); "L"; Tab(97); "PCT."; Tab(103); "PF/G"; Tab(110); "PA/G"
     LPrint
-    For W = 1 To 4
+    For W = 1 To DIVS_PER_CONFERENCE
 
         If DV$(W) <> "XXX" And DV$(W) <> "" Then
             1461 LPrint Tab(2); DV$(W);
@@ -514,14 +515,19 @@ Sub PrintHD2HD ()
         End If
 
     1490 Next W
+	
     THWW = 0: THLL = 0: TAWW = 0: TALL = 0
-    For I = 1 To 4
+    
+	For I = 1 To DIVS_PER_CONFERENCE
         THWW = THWW + THW(I): THLL = THLL + THL(I): TAWW = TAWW + TAW(I): TALL = TALL + TAL(I)
     Next
+	
     TR11 = 0: TR22 = 0: TR33 = 0: TR44 = 0
-    For I = 1 To 4
+	
+    For I = 1 To DIVS_PER_CONFERENCE
         TR11 = TR11 + TR1(I): TR22 = TR22 + TR2(I): TR33 = TR33 + TR3(I): TR44 = TR44 + TR4(I)
     Next
+	
     LPrint Tab(5); "TOTALS";
     LPrint Tab(20); Using "###"; THWW;
     LPrint Tab(24); Using "###"; THLL;
@@ -613,7 +619,7 @@ Sub GetTeam_HD2HD ()
 
         End If
 
-    Loop Until UCase$(A$) = "N"
+    Loop Until UCase$(A$) = "N" Or I$ = Chr$(27)
 
 End Sub
 
@@ -625,7 +631,7 @@ End Sub
 Sub SelectLeague_HD2HD (targetFile$)
 
     Do
-        Spec$ = D$(1) + "*.LIB"
+        Spec$ = diskPaths$(1) + "*.LIB"
         null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
         Count% = DirCount%
 
@@ -698,7 +704,7 @@ End Sub
 Sub ReadTeamData_HD2HD (yearNumber$, numberTeams)
 
     1101 numberTeams = 0
-    Open D$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
     Y = LOF(1)
     Field #1, 15 As Q$(0), 15 As Q$(1)
     For I = 0 To 6
@@ -757,34 +763,10 @@ Sub SelectTeam_HD2HD (yearNumber$, numberTeams)
     20 MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    Select Case ExitCode%
-        Case 27: BO% = 1: Exit Sub 'Return
-        Case -71:
-            Start% = 1
-            ExitCode% = 3
-            SELECTION% = 1
-            GoTo 20
-        Case -79:
-            Start% = Count%
-            ExitCode% = 3
-            SELECTION% = Count%
-            GoTo 20
-        Case -73:
-            Start% = Start% - 80
-            If Start% < 1 Then Start% = 1
-            ExitCode% = 3
-            SELECTION% = Start%
-            GoTo 20
-        Case -81:
-            Start% = Start% + 80
-            If Start% > Count% Then Start% = Count%
-            ExitCode% = 3
-            SELECTION% = Start%
-            GoTo 20
-    End Select
-
+	If EXITCODE% = 27 Then BO% = 1: Exit Sub
+		
     T1 = teamIndex%(SELECTION%)
-    Open D$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
     Field #1, 15 As Q$(0), 15 As Q$(1)
     For I = 0 To 6
         Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)

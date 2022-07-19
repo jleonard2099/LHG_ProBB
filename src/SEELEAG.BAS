@@ -1,7 +1,10 @@
 Sub SEELEAG ()
 
-    Shared DL(), O1(), O2(), OL()
-    Shared Z(), Z1()
+    Shared O1(), O2()
+
+	Shared DL!(), OL!()
+    Shared Z!(), Z1!()
+
     Shared DL$(), OL$()
     Shared leagT$(), Z2$(), Z3$()
 
@@ -9,10 +12,10 @@ Sub SEELEAG ()
 
     H$ = " 1/2"
 
-    4000 Spec$ = D$(1) + "*.LDR"
-    COUNT% = FCount%(Spec$)
+    Spec$ = diskPaths$(1) + "*.LDR"
+    Count% = FCount%(Spec$)
 
-    If COUNT% = 0 Then
+    If Count% = 0 Then
         Locate , 12
         Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
         I$ = GetKeyPress$
@@ -20,13 +23,13 @@ Sub SEELEAG ()
         Exit Sub
         'Call LEADERS_MENU 'Run "HELLO.EXE 3"
     Else
-        ReDim leagueLeaderFiles$(0 To COUNT%)
-        For X = 1 To COUNT%
+        ReDim leagueLeaderFiles$(0 To Count%)
+        For X = 1 To Count%
             leagueLeaderFiles$(X) = Space$(12)
         Next
         leagueLeaderFiles$(0) = Spec$
         Call ReadFile(leagueLeaderFiles$())
-        'CALL SortStr(VARPTR(leagueLeaderFiles$(1)), COUNT%, 0)
+        'CALL SortStr(VARPTR(leagueLeaderFiles$(1)), Count%, 0)
 
         Do
             1310 Cls
@@ -50,34 +53,11 @@ Sub SEELEAG ()
             Print "-SELECTS LEAGUE  ESC - EXIT PROGRAM";
 
             _MouseShow "DEFAULT"
-            20 MAMenu leagueLeaderFiles$(), SELECTION%, START%, COUNT%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            MAMenu leagueLeaderFiles$(), SELECTION%, START%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
 
-            Select Case EXITCODE%
-                Case 27: Exit Sub
-                Case -71:
-                    START% = 1
-                    EXITCODE% = 3
-                    SELECTION% = 1
-                    GoTo 20
-                Case -79:
-                    START% = COUNT%
-                    EXITCODE% = 3
-                    SELECTION% = COUNT%
-                    GoTo 20
-                Case -73:
-                    START% = START% - 80
-                    If START% < 1 Then START% = 1
-                    EXITCODE% = 3
-                    SELECTION% = START%
-                    GoTo 20
-                Case -81:
-                    START% = START% + 80
-                    If START% > COUNT% Then START% = COUNT%
-                    EXITCODE% = 3
-                    SELECTION% = START%
-                    GoTo 20
-            End Select
+			If EXITCODE% = 27 Then Exit Sub
+		
 
             targetFile$ = leagueLeaderFiles$(SELECTION%)
             Locate 2, 33: Print targetFile$
@@ -89,12 +69,11 @@ Sub SEELEAG ()
 
                 targetFile$ = RTrim$(targetFile$)
                 WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-                'GoTo 7
 
                 '-- this should probably be it's own sub
                 7 WE$ = Left$(WE$, 8)
 
-                Open D$(1) + WE$ + ".TMS" For Input As #2
+                Open diskPaths$(1) + WE$ + ".TMS" For Input As #2
                 Input #2, FF$, D1$, D2$, D3$, D4$
                 Close 2
 
@@ -109,21 +88,29 @@ Sub SEELEAG ()
                 Cls
                 Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
 
-                Open D$(1) + WE$ + ".LDR" For Input As #2
-                For X = 1 To 40
+                Open diskPaths$(1) + WE$ + ".LDR" For Input As #2
+				
+                For X = 1 To TEAMS_PER_CONFERENCE
                     Input #2, leagT$(X), O1(X), O2(X)
                 Next
+
                 For X = 1 To 250
-                    Input #2, Z2$(X), Z3$(X), Z(X), Z1(X)
+                    Input #2, Z2$(X), Z3$(X), Z!(X), Z1!(X)
                 Next
-                For X = 1 To 40
+
+                For X = 1 To TEAMS_PER_CONFERENCE
                     Input #2, OL$(X)
                     For M = 1 To 20
-                        Input #2, OL(X, M)
+                        Input #2, OL!(X, M)
                     Next
                 Next
 
-                For X = 1 To 40: Input #2, DL$(X): For M = 1 To 20: Input #2, DL(X, M): Next: Next
+                For X = 1 To TEAMS_PER_CONFERENCE
+					Input #2, DL$(X)
+					For M = 1 To 20
+						Input #2, DL!(X, M)
+					Next
+				Next
                 Close #2
 
                 Do
@@ -208,9 +195,12 @@ End Sub
 '... explain here ...
 Sub LeagueStatsToScreen ()
 
-    Shared DL(), O1(), O2(), OL()
-    Shared Z(), Z1()
-    Shared DL$(), OL$(), OL()
+    Shared O1(), O2()
+
+	Shared DL!(), OL!()
+    Shared Z!(), Z1!()
+
+    Shared DL$(), OL$(), OL!()
     Shared leagT$(), Z2$(), Z3$()
 
     1200 Cls
@@ -249,14 +239,15 @@ Sub LeagueStatsToScreen ()
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            1266 Print "    "; leagT$(P); Tab(16);
+            Print "    "; leagT$(P); Tab(16);
 
             'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
             PCT = O1(P) / (O1(P) + O2(P))
-            Print Using "   ##   ##   #.###"; O1(P); O2(P); PCT;
+            
+			Print Using "   ##   ##   #.###"; O1(P); O2(P); PCT;
             Print BK$
         End If
-    1267 Next P
+    Next P
 
     HZ = 1: VT = 24
     Locate VT, HZ: Print "                          ";
@@ -274,10 +265,13 @@ Sub LeagueStatsToScreen ()
             If D = 1 Then BK$ = "     "
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
-            PCT = O1(P) / (O1(P) + O2(P))
-            1276 Print "    "; leagT$(P); Tab(16);: Print Using "   ##   ##   #.###"; O1(P); O2(P); PCT;: Print BK$
+            
+			PCT = O1(P) / (O1(P) + O2(P))
+            
+			Print "    "; leagT$(P); Tab(16);
+			Print Using "   ##   ##   #.###"; O1(P); O2(P); PCT;: Print BK$
         End If
-    1277 Next P
+    Next P
 
     HZ = 1: VT = 24
     Locate VT, HZ: Print "                          ";
@@ -289,16 +283,17 @@ Sub LeagueStatsToScreen ()
     For P = 31 To 40
         If leagT$(P) <> "" And leagT$(P) <> "*" Then
             D1 = O1(31) - O2(31)
-            D = O1(P) - O2(P): D = D1 - D
+            D = O1(P) - O2(P)
+			D = D1 - D
             BK$ = "     " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
             If D = 1 Then BK$ = "     "
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
             PCT = O1(P) / (O1(P) + O2(P))
-            1286 Print "    "; leagT$(P); Tab(16);: Print Using "   ##   ##   #.###"; O1(P); O2(P); PCT;: Print BK$
+            Print "    "; leagT$(P); Tab(16);: Print Using "   ##   ##   #.###"; O1(P); O2(P); PCT;: Print BK$
         End If
-    1287 Next P
+    Next P
 
     HZ = 1: VT = 24
     Locate VT, HZ: Print "                          ";
@@ -311,7 +306,7 @@ Sub LeagueStatsToScreen ()
     For P = 41 To 60
         If Z2$(P) <> "*" Then
             Print Left$(Z2$(P), 10) + ", " + Z3$(P);: Locate , 28
-            Print Using "##.#  ####"; Z(P) * 100; Z1(P)
+            Print Using "##.#  ####"; Z!(P) * 100; Z1!(P)
         End If
     1305 Next
 
@@ -319,7 +314,7 @@ Sub LeagueStatsToScreen ()
     For P = 61 To 80
         If Z2$(P) <> "*" Then
             Locate , 41: Print Left$(Z2$(P), 10) + ", " + Z3$(P);: Locate , 68
-            Print Using "##.#  ####"; Z(P) * 100; Z1(P)
+            Print Using "##.#  ####"; Z!(P) * 100; Z1!(P)
         End If
     1313 Next
 
@@ -333,7 +328,7 @@ Sub LeagueStatsToScreen ()
     For P = 1 To 20
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);: Locate , 34
-            Print Using "##.#"; Z(P)
+            Print Using "###.#"; Z!(P)
         End If
     1330 Next
 
@@ -342,7 +337,7 @@ Sub LeagueStatsToScreen ()
     For P = 21 To 40
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);: Locate , 74
-            Print Using "####"; Z(P)
+            Print Using "####"; Z!(P)
         End If
     1333 Next
 
@@ -355,7 +350,7 @@ Sub LeagueStatsToScreen ()
     For P = 81 To 90
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);: Locate , 34
-            Print Using "##.#"; Z(P)
+            Print Using "###.#"; Z!(P)
         End If
     1420 Next
 
@@ -363,7 +358,7 @@ Sub LeagueStatsToScreen ()
     For P = 91 To 100
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);: Locate , 74
-            Print Using "####"; Z(P)
+            Print Using "####"; Z!(P)
         End If
     1426 Next
 
@@ -371,7 +366,7 @@ Sub LeagueStatsToScreen ()
     For P = 101 To 110
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);: Locate , 34
-            Print Using "##.#"; Z(P)
+            Print Using "###.#"; Z!(P)
         End If
     1432 Next
 
@@ -379,7 +374,7 @@ Sub LeagueStatsToScreen ()
     For P = 111 To 120
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);: Locate , 74
-            Print Using "####"; Z(P)
+            Print Using "####"; Z!(P)
         End If
     1433 Next
 
@@ -392,7 +387,7 @@ Sub LeagueStatsToScreen ()
     For P = 121 To 130
         If Z2$(P) <> "" Then
             Print Z2$(P) + ", " + Z3$(P);: Locate , 34
-            Print Using "##.#"; Z(P) * 100
+            Print Using "###.#"; Z!(P) * 100
         End If
     1443 Next P
 
@@ -401,7 +396,7 @@ Sub LeagueStatsToScreen ()
     For P = 141 To 150
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);: Locate , 74
-            Print Using "##.#"; Z(P)
+            Print Using "###.#"; Z!(P)
         End If
     1449 Next P
 
@@ -410,7 +405,7 @@ Sub LeagueStatsToScreen ()
     For P = 131 To 140
         If Z2$(P) <> "" Then
             Print Z2$(P) + ", " + Z3$(P);: Locate , 34
-            Print Using "####"; Z(P)
+            Print Using "####"; Z!(P)
         End If
     1450 Next
 
@@ -418,7 +413,7 @@ Sub LeagueStatsToScreen ()
     For P = 151 To 160
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);: Locate , 74
-            Print Using "####"; Z(P)
+            Print Using "####"; Z!(P)
         End If
     1451 Next
 
@@ -431,7 +426,7 @@ Sub LeagueStatsToScreen ()
     For P = 161 To 170
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);: Locate , 34
-            Print Using "##.#"; Z(P)
+            Print Using "###.#"; Z!(P)
         End If
     1452 Next
 
@@ -439,7 +434,7 @@ Sub LeagueStatsToScreen ()
     For P = 171 To 180
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);: Locate , 74
-            Print Using "####"; Z(P)
+            Print Using "####"; Z!(P)
         End If
     1453 Next
 
@@ -447,7 +442,7 @@ Sub LeagueStatsToScreen ()
     For P = 181 To 190
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);: Locate , 34
-            Print Using "##.#"; Z(P)
+            Print Using "###.#"; Z!(P)
         End If
     1454 Next
 
@@ -455,7 +450,7 @@ Sub LeagueStatsToScreen ()
     For P = 191 To 200
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);: Locate , 74
-            Print Using "####"; Z(P)
+            Print Using "####"; Z!(P)
         End If
     1455 Next
 
@@ -468,7 +463,7 @@ Sub LeagueStatsToScreen ()
     For P = 201 To 210
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);: Locate , 34
-            Print Using "####"; Z(P)
+            Print Using "####"; Z!(P)
         End If
     1456 Next
 
@@ -476,14 +471,14 @@ Sub LeagueStatsToScreen ()
     For P = 211 To 220
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);: Locate , 74
-            Print Using "####"; Z(P)
+            Print Using "####"; Z!(P)
         End If
     1457 Next
     Locate 13: Color 14: Print "FOULS PER GAME": Color 15
     For P = 221 To 230
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);: Locate , 34
-            Print Using "##.#"; Z(P)
+            Print Using "###.#"; Z!(P)
         End If
     1458 Next
 
@@ -491,7 +486,7 @@ Sub LeagueStatsToScreen ()
     For P = 231 To 240
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);: Locate , 74
-            Print Using "####"; Z(P)
+            Print Using "####"; Z!(P)
         End If
     1459 Next
 
@@ -504,7 +499,7 @@ Sub LeagueStatsToScreen ()
     For P = 241 To 250
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);: Locate , 34
-            Print Using "####"; Z(P)
+            Print Using "####"; Z!(P)
         End If
     1460 Next
 
@@ -520,18 +515,18 @@ Sub LeagueStatsToScreen ()
 
         If Not (OL$(X) = "" Or OL$(X) = "*" Or OL$(X) = " ") Then
 
-            Print Left$(OL$(X), 11); Tab(13);: Print Using "##"; OL(X, 16);: Print Tab(16);: Print Using "####"; OL(X, 2);: Print Tab(21);
-            Print Using "####"; OL(X, 3);: Print Tab(26);
+            Print Left$(OL$(X), 11); Tab(13);: Print Using "##"; OL!(X, 16);: Print Tab(16);: Print Using "####"; OL!(X, 2);: Print Tab(21);
+            Print Using "####"; OL!(X, 3);: Print Tab(26);
 
-            Print Using ".###"; OL(X, 17);
+            Print Using ".###"; OL!(X, 17);
             Print Tab(31);
-            Print Using "#### #### .###"; OL(X, 4); OL(X, 5); OL(X, 18);
+            Print Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);
 
-            Print Tab(46);: Print Using "####"; OL(X, 6);: Print Tab(51);: Print Using "####"; OL(X, 9);: Print Tab(56);: Print Using "####"; OL(X, 7);: Print Tab(61);
+            Print Tab(46);: Print Using "####"; OL!(X, 6);: Print Tab(51);: Print Using "####"; OL!(X, 9);: Print Tab(56);: Print Using "####"; OL!(X, 7);: Print Tab(61);
 
-            Print Using "###"; OL(X, 8);: Print Tab(65);: Print Using "###"; OL(X, 10);: Print Tab(69);: Print Using "#####"; OL(X, 20);
+            Print Using "###"; OL!(X, 8);: Print Tab(65);: Print Using "###"; OL!(X, 10);: Print Tab(69);: Print Using "#####"; OL!(X, 20);
 
-            Print Tab(75);: Print Using "###.#"; OL(X, 19)
+            Print Tab(75);: Print Using "###.#"; OL!(X, 19)
         End If
 
     1980 Next
@@ -544,14 +539,21 @@ Sub LeagueStatsToScreen ()
     Color 12: Print "                      OFFENSIVE TOTALS (cont)"
     Color 14: Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG": Color 15
     For X = 21 To 40
-        If OL$(X) = "" Or OL$(X) = "*" Or OL$(X) = " " Then 1985
-        Print Left$(OL$(X), 11); Tab(13);: Print Using "##"; OL(X, 16);: Print Tab(16);: Print Using "####"; OL(X, 2);: Print Tab(21);: Print Using "####"; OL(X, 3);: Print Tab(26);
-        Print Using ".###"; OL(X, 17);: Print Tab(31);: Print Using "#### #### .###"; OL(X, 4); OL(X, 5); OL(X, 18);
-        Print Tab(46);: Print Using "####"; OL(X, 6);: Print Tab(51);: Print Using "####"; OL(X, 9);: Print Tab(56);: Print Using "####"; OL(X, 7);: Print Tab(61);
-        Print Using "###"; OL(X, 8);: Print Tab(65);: Print Using "###"; OL(X, 10);: Print Tab(69);: Print Using "#####"; OL(X, 20);
-        Print Tab(75);: Print Using "###.#"; OL(X, 19)
-
-    1985 Next
+        If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
+			Print Left$(OL$(X), 11); Tab(13);: Print Using "##"; OL!(X, 16);
+			Print Tab(16);: Print Using "####"; OL!(X, 2);
+			Print Tab(21);: Print Using "####"; OL!(X, 3);
+			Print Tab(26);:	Print Using ".###"; OL!(X, 17);
+			Print Tab(31);: Print Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);
+			Print Tab(46);: Print Using "####"; OL!(X, 6);
+			Print Tab(51);: Print Using "####"; OL!(X, 9);
+			Print Tab(56);: Print Using "####"; OL!(X, 7);
+			Print Tab(61);: Print Using "###"; OL!(X, 8);
+			Print Tab(65);: Print Using "###"; OL!(X, 10);
+			Print Tab(69);: Print Using "#####"; OL!(X, 20);
+			Print Tab(75);: Print Using "###.#"; OL!(X, 19)
+		End If
+    Next
 
     HZ = 1: VT = 24
     Locate VT, HZ: Print "                          ";
@@ -565,15 +567,15 @@ Sub LeagueStatsToScreen ()
 
         2910 If DL$(X) = "" Or DL$(X) = "*" Or DL$(X) = " " Then 2980
 
-        2915 Print Left$(DL$(X), 11); Tab(13);: Print Using "##"; DL(X, 16);: Print Tab(16);: Print Using "####"; DL(X, 2);: Print Tab(21);: Print Using "####"; DL(X, 3);: Print Tab(26);
+        2915 Print Left$(DL$(X), 11); Tab(13);: Print Using "##"; DL!(X, 16);: Print Tab(16);: Print Using "####"; DL!(X, 2);: Print Tab(21);: Print Using "####"; DL!(X, 3);: Print Tab(26);
 
-        2920 Print Using ".###"; DL(X, 17);: Print Tab(31);: Print Using "#### #### .###"; DL(X, 4); DL(X, 5); DL(X, 18);
+        2920 Print Using ".###"; DL!(X, 17);: Print Tab(31);: Print Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);
 
-        2930 Print Tab(46);: Print Using "#### ####"; DL(X, 6); DL(X, 9);: Print Tab(56);: Print Using "####"; DL(X, 7);: Print Tab(61);
+        2930 Print Tab(46);: Print Using "#### ####"; DL!(X, 6); DL!(X, 9);: Print Tab(56);: Print Using "####"; DL!(X, 7);: Print Tab(61);
 
-        2935 Print Using "###"; DL(X, 8);: Print Tab(65);: Print Using "###"; DL(X, 10);: Print Tab(69);: Print Using "#####"; DL(X, 20);
+        2935 Print Using "###"; DL!(X, 8);: Print Tab(65);: Print Using "###"; DL!(X, 10);: Print Tab(69);: Print Using "#####"; DL!(X, 20);
 
-        2940 Print Tab(75);: Print Using "###.#"; DL(X, 19)
+        2940 Print Tab(75);: Print Using "###.#"; DL!(X, 19)
 
     2980 Next
 
@@ -585,11 +587,11 @@ Sub LeagueStatsToScreen ()
     Color 14: Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG": Color 15
     For X = 21 To 40
         If DL$(X) = "" Or DL$(X) = "*" Or DL$(X) = " " Then 2985
-        Print Left$(DL$(X), 11); Tab(13);: Print Using "##"; DL(X, 16);: Print Tab(16);: Print Using "####"; DL(X, 2);: Print Tab(21);: Print Using "####"; DL(X, 3);: Print Tab(26);
-        Print Using ".###"; DL(X, 17);: Print Tab(31);: Print Using "#### #### .###"; DL(X, 4); DL(X, 5); DL(X, 18);
-        Print Tab(46);: Print Using "#### ####"; DL(X, 6); DL(X, 9);: Print Tab(56);: Print Using "####"; DL(X, 7);: Print Tab(61);
-        Print Using "###"; DL(X, 8);: Print Tab(65);: Print Using "###"; DL(X, 10);: Print Tab(69);: Print Using "#####"; DL(X, 20);
-        Print Tab(75);: Print Using "###.#"; DL(X, 19)
+        Print Left$(DL$(X), 11); Tab(13);: Print Using "##"; DL!(X, 16);: Print Tab(16);: Print Using "####"; DL!(X, 2);: Print Tab(21);: Print Using "####"; DL!(X, 3);: Print Tab(26);
+        Print Using ".###"; DL!(X, 17);: Print Tab(31);: Print Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);
+        Print Tab(46);: Print Using "#### ####"; DL!(X, 6); DL!(X, 9);: Print Tab(56);: Print Using "####"; DL!(X, 7);: Print Tab(61);
+        Print Using "###"; DL!(X, 8);: Print Tab(65);: Print Using "###"; DL!(X, 10);: Print Tab(69);: Print Using "#####"; DL!(X, 20);
+        Print Tab(75);: Print Using "###.#"; DL!(X, 19)
 
     2985 Next
 
@@ -610,12 +612,15 @@ End Sub
 '   <> 1 is Printer (creates file and prints it)
 Sub SavePrintLeagueStats (statFile$, destination)
 
-    Shared DL(), O1(), O2(), OL()
-    Shared Z(), Z1()
+    Shared O1(), O2()
+
+	Shared DL!(), OL!()
+    Shared Z!(), Z1!()
+
     Shared Z2$(), Z3$()
 
     'Save Report File
-    3200 Cls
+    Cls
     If destination <> 1 Then
         Open "REPORT" For Output As #2
     Else
@@ -637,8 +642,9 @@ Sub SavePrintLeagueStats (statFile$, destination)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
             Print #2, "    "; leagT$(P); Tab(16);: Print #2, Using "   ##   ##   #.###"; O1(P); O2(P); O1(P) / (O1(P) + O2(P));: Print #2, BK$
         End If
-    3201 Next P
-    Print #2,
+    Next P
+    
+	Print #2,
     Print #2, "    "; D2$; " DIVISION": Print #2,
     Print #2, "                   W    L     PCT   GB"
     For P = 11 To 20
@@ -653,8 +659,9 @@ Sub SavePrintLeagueStats (statFile$, destination)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
             Print #2, "    "; leagT$(P); Tab(16);: Print #2, Using "   ##   ##   #.###"; O1(P); O2(P); O1(P) / (O1(P) + O2(P));: Print #2, BK$
         End If
-    3202 Next P
-    Print #2,
+    Next P
+    
+	Print #2,
     Print #2, "    "; D3$; " DIVISION": Print #2,
     Print #2, "                   W    L     PCT   GB"
     For P = 21 To 30
@@ -669,7 +676,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
             Print #2, "    "; leagT$(P); Tab(16);: Print #2, Using "   ##   ##   #.###"; O1(P); O2(P); O1(P) / (O1(P) + O2(P));: Print #2, BK$
         End If
-    3203 Next P
+    Next P
 
     Print #2,
     Print #2, "    "; D4$; " DIVISION": Print #2,
@@ -698,7 +705,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Left$(Z2$(P), 10) + ", " + Z3$(P);
             Print #2, Tab(28);
-            Print #2, Using "##.#  ####"; Z(P) * 100; Z1(P);
+            Print #2, Using "##.#  ####"; Z!(P) * 100; Z1!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 20) = "" Then
@@ -706,7 +713,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Left$(Z2$(P + 20), 10) + ", " + Z3$(P + 20);
             Print #2, Tab(68);
-            Print #2, Using "##.#  ####"; Z(P + 20) * 100; Z1(P)
+            Print #2, Using "##.#  ####"; Z!(P + 20) * 100; Z1!(P)
         End If
 
     3320 Next
@@ -719,7 +726,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "##.#"; Z(P);
+            Print #2, Using "###.#"; Z!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 20) = "" Then
@@ -727,10 +734,9 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 20) + ", " + Z3$(P + 20);
             Print #2, Tab(74);
-            Print #2, Using "####"; Z(P + 20)
+            Print #2, Using "####"; Z!(P + 20)
         End If
-
-    3340 Next
+    Next
 
     Print #2, Chr$(12)
     Print #2, "STEALS PER GAME"; Tab(41); "STEALS"
@@ -740,7 +746,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "##.#"; Z(P);
+            Print #2, Using "###.#"; Z!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 10) = "" Then
@@ -748,10 +754,9 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; Z(P + 10)
+            Print #2, Using "####"; Z!(P + 10)
         End If
-
-    3360 Next
+	Next
 
     Print #2,
     Print #2, "ASSISTS PER GAME"; Tab(41); "ASSISTS"
@@ -761,7 +766,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "##.#"; Z(P);
+            Print #2, Using "###.#"; Z!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 10) = "" Then
@@ -769,10 +774,9 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; Z(P + 10)
+            Print #2, Using "####"; Z!(P + 10)
         End If
-
-    3370 Next
+	Next
 
     Print #2,
     Print #2, "THREE FIELD GOAL %"; Tab(41); "MINUTES PER GAME"
@@ -782,7 +786,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "##.#"; Z(P) * 100;
+            Print #2, Using "###.#"; Z!(P) * 100;
             Print #2, Tab(41);
         End If
         If Z2$(P + 20) = "" Then
@@ -790,10 +794,9 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 20) + ", " + Z3$(P + 20);
             Print #2, Tab(74);
-            Print #2, Using "##.#"; Z(P + 20)
+            Print #2, Using "###.#"; Z!(P + 20)
         End If
-
-    3361 Next
+	Next
 
     Print #2,
     Print #2, "THREE POINT FIELD GOALS MADE"; Tab(41); "MINUTES"
@@ -803,7 +806,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "####"; Z(P);
+            Print #2, Using "####"; Z!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 20) = "" Then
@@ -811,11 +814,10 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 20) + ", " + Z3$(P + 20);
             Print #2, Tab(74);
-            Print #2, Using "####"; Z(P + 20)
+            Print #2, Using "####"; Z!(P + 20)
         End If
-
-    3371 Next
-
+	Next
+	
     Print #2,
     Print #2, Chr$(12)
     Print #2, "REBOUNDS PER GAME"; Tab(41); "REBOUNDS"
@@ -825,7 +827,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "##.#"; Z(P);
+            Print #2, Using "###.#"; Z!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 10) = "" Then
@@ -833,10 +835,9 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; Z(P + 10)
+            Print #2, Using "####"; Z!(P + 10)
         End If
-
-    3362 Next
+	Next
 
     Print #2,
     Print #2, "BLOCKS PER GAME"; Tab(41); "BLOCKS"
@@ -846,7 +847,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "##.#"; Z(P);
+            Print #2, Using "###.#"; Z!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 10) = "" Then
@@ -854,20 +855,19 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; Z(P + 20)
+            Print #2, Using "####"; Z!(P + 20)
         End If
-
-    3372 Next
+	Next
 
     Print #2,
     Print #2, "FIELD GOALS MADE"; Tab(41); "FREE THROWS MADE"
-    For P = 201 To 210
+	For P = 201 To 210
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "####"; Z(P);
+            Print #2, Using "####"; Z!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 10) = "" Then
@@ -875,10 +875,9 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; Z(P + 10)
+            Print #2, Using "####"; Z!(P + 10)
         End If
-
-    3363 Next
+	Next
 
     Print #2,
     Print #2, "FOULS PER GAME"; Tab(41); "FOULS"
@@ -888,7 +887,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "##.#"; Z(P);
+            Print #2, Using "###.#"; Z!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 10) = "" Then
@@ -896,45 +895,64 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; Z(P + 10)
+            Print #2, Using "####"; Z!(P + 10)
         End If
-
-    3373 Next
+    Next
+	
     Print #2,
-    Print #2, "MOST VALUABLE PLAYER"
+	Print #2, "MOST VALUABLE PLAYER"
     For P = 241 To 250
-        If Z2$(P) = "" Then 3364
-        Print #2, Z2$(P) + ", " + Z3$(P);
-        Print #2, Tab(34);
-        Print #2, Using "####"; Z(P)
-
-    3364 Next
+        If Z2$(P) <> "" Then
+			Print #2, Z2$(P) + ", " + Z3$(P);
+			Print #2, Tab(34);
+			Print #2, Using "####"; Z!(P)
+		End If
+    Next
 
     Print #2,
     Print #2, Chr$(12)
     Print #2, "                         OFFENSIVE TOTALS"
     Print #2, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
-    For X = 1 To 40
-        If OL$(X) = "" Or OL$(X) = "*" Or OL$(X) = " " Then 1981
-        Print #2, Left$(OL$(X), 11); Tab(13);: Print #2, Using "##"; OL(X, 16);: Print #2, Tab(16);: Print #2, Using "####"; OL(X, 2);: Print #2, Tab(21);: Print #2, Using "####"; OL(X, 3);: Print #2, Tab(26);
-        Print #2, Using ".###"; OL(X, 17);: Print #2, Tab(31);: Print #2, Using "#### #### .###"; OL(X, 4); OL(X, 5); OL(X, 18);
-        Print #2, Tab(46);: Print #2, Using "####"; OL(X, 6);: Print #2, Tab(51);: Print #2, Using "####"; OL(X, 9);: Print #2, Tab(56);: Print #2, Using "####"; OL(X, 7);: Print #2, Tab(61);
-        Print #2, Using "###"; OL(X, 8);: Print #2, Tab(65);: Print #2, Using "###"; OL(X, 10);: Print #2, Tab(69);: Print #2, Using "#####"; OL(X, 20);
-        Print #2, Tab(75);: Print #2, Using "###.#"; OL(X, 19)
 
-    1981 Next
+    For X = 1 To TEAMS_PER_CONFERENCE
+        If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
+			Print #2, Left$(OL$(X), 11); Tab(13);
+			Print #2, Using "##"; OL!(X, 16);: Print #2, Tab(16);
+			Print #2, Using "####"; OL!(X, 2);: Print #2, Tab(21);
+			Print #2, Using "####"; OL!(X, 3);: Print #2, Tab(26);
+			Print #2, Using ".###"; OL!(X, 17);: Print #2, Tab(31);
+			Print #2, Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);
+			Print #2, Tab(46);
+			Print #2, Using "####"; OL!(X, 6);: Print #2, Tab(51);
+			Print #2, Using "####"; OL!(X, 9);: Print #2, Tab(56);
+			Print #2, Using "####"; OL!(X, 7);: Print #2, Tab(61);
+			Print #2, Using "###"; OL!(X, 8);: Print #2, Tab(65);
+			Print #2, Using "###"; OL!(X, 10);: Print #2, Tab(69);
+			Print #2, Using "#####"; OL!(X, 20);
+			Print #2, Tab(75);: Print #2, Using "###.#"; OL!(X, 19)
+		End If
+    Next
+	
     Print #2, Chr$(12)
     Print #2, "                         DEFENSIVE TOTALS"
     Print #2, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG": Color 15
-    For X = 1 To 40
-        If DL$(X) = "" Or DL$(X) = "*" Or DL$(X) = " " Then 2981
-        Print #2, Left$(DL$(X), 11); Tab(13);: Print #2, Using "##"; DL(X, 16);: Print #2, Tab(16);: Print #2, Using "####"; DL(X, 2);: Print #2, Tab(21);: Print #2, Using "####"; DL(X, 3);: Print #2, Tab(26);
-        Print #2, Using ".###"; DL(X, 17);: Print #2, Tab(31);: Print #2, Using "#### #### .###"; DL(X, 4); DL(X, 5); DL(X, 18);
-        Print #2, Tab(46);: Print #2, Using "#### ####"; DL(X, 6); DL(X, 9);: Print #2, Tab(56);: Print #2, Using "####"; DL(X, 7);: Print #2, Tab(61);
-        Print #2, Using "###"; DL(X, 8);: Print #2, Tab(65);: Print #2, Using "###"; DL(X, 10);: Print #2, Tab(69);: Print #2, Using "#####"; DL(X, 20);
-        Print #2, Tab(75);: Print #2, Using "###.#"; DL(X, 19)
-
-    2981 Next
+    For X = 1 To TEAMS_PER_CONFERENCE
+        If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
+			Print #2, Left$(DL$(X), 11); Tab(13);
+			Print #2, Using "##"; DL!(X, 16);: Print #2, Tab(16);
+			Print #2, Using "####"; DL!(X, 2);: Print #2, Tab(21);
+			Print #2, Using "####"; DL!(X, 3);: Print #2, Tab(26);
+			Print #2, Using ".###"; DL!(X, 17);: Print #2, Tab(31);
+			Print #2, Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);
+			Print #2, Tab(46);
+			Print #2, Using "#### ####"; DL!(X, 6); DL!(X, 9);: Print #2, Tab(56);
+			Print #2, Using "####"; DL!(X, 7);: Print #2, Tab(61);
+			Print #2, Using "###"; DL!(X, 8);: Print #2, Tab(65);
+			Print #2, Using "###"; DL!(X, 10);: Print #2, Tab(69);
+			Print #2, Using "#####"; DL!(X, 20);
+			Print #2, Tab(75);: Print #2, Using "###.#"; DL!(X, 19)
+		End If
+    Next
 
     Close 2
 

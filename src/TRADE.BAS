@@ -76,7 +76,7 @@ Sub TradePlayers ()
             Erase teamNames$
 
             NT = 0
-            Open D$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
+            Open diskPaths$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
             Y = LOF(1)
             Field #1, 15 As Q$(0), 15 As Q$(1)
             For I = 0 To 6
@@ -150,8 +150,8 @@ Sub TradePlayers ()
                 YR$ = Left$(SA$(J), 2)
                 F$(J) = Mid$(SA$(J), 4, QQ) + "." + YR$
 
-                If _FileExists(D$(1) + F$(J)) Then
-                    Open D$(1) + F$(J) For Input As #1
+                If _FileExists(diskPaths$(1) + F$(J)) Then
+                    Open diskPaths$(1) + F$(J) For Input As #1
                     Input #1, A1$(J)
                     For I = 0 To 14: Input #1, B1$(J, I)
                         For I1 = 0 To 13: Input #1, B1(J, I, I1): Next I1
@@ -194,7 +194,7 @@ Sub TradePlayers ()
             YN$(J) = NY$(J)
             Erase teamNames$
             NT = 0
-            Open D$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
+            Open diskPaths$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
             Y = LOF(1)
             Field #1, 15 As Q$(0), 15 As Q$(1)
             For I = 0 To 6
@@ -271,8 +271,8 @@ Sub TradePlayers ()
                 YR$ = Left$(SA$(J), 2)
                 F$(J) = Mid$(SA$(J), 4, QQ) + "." + YR$
 
-                If _FileExists(D$(1) + F$(J)) Then
-                    Open D$(1) + F$(J) For Input As #1
+                If _FileExists(diskPaths$(1) + F$(J)) Then
+                    Open diskPaths$(1) + F$(J) For Input As #1
                     Input #1, A1$(J)
                     For I = 0 To 14: Input #1, B1$(J, I)
                         For I1 = 0 To 13: Input #1, B1(J, I, I1): Next I1
@@ -378,7 +378,7 @@ Sub TradePlayers ()
 			'No more trades
 		
             For J = 0 To 1
-                Open D$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
+                Open diskPaths$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
                 Field #1, 15 As Q$(0), 15 As Q$(1)
                 For I = 0 To 6
                     Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
@@ -418,7 +418,7 @@ Sub TradePlayers ()
             For J = 0 To 1
                 If S(J) <> 1 Then
                     Cls
-                    Open D$(1) + F$(J) For Output As #1
+                    Open diskPaths$(1) + F$(J) For Output As #1
                     Print #1, A1$(J): For I = 0 To 14: Print #1, B1$(J, I): For I1 = 0 To 13: Print #1, B1(J, I, I1): Next I1: Print #1, tradeW0(J, I): Print #1, tradeW1(J, I): Next I
                     For L = 0 To 15: Print #1, ZZtrade(J, L): Next L
                     For L = 0 To 15: Print #1, ZZ1trade(J, L): Next L
@@ -462,38 +462,14 @@ Sub SelectTeam_TRADE (J, numberTeams, YN$())
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    20 MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    Select Case EXITCODE%
-        Case 27: BO% = 1: Exit Sub 'Return
-        Case -71: 
-            Start% = 1
-            EXITCODE% = 3
-            SELECTION% = 1
-            GoTo 20
-        Case -79: 
-            Start% = Count%
-            EXITCODE% = 3
-            SELECTION% = Count%
-            GoTo 20
-        Case -73: 
-            Start% = Start% - 80
-            If Start% < 1 Then Start% = 1
-            EXITCODE% = 3
-            SELECTION% = Start%
-            GoTo 20
-        Case -81: 
-            Start% = Start% + 80
-            If Start% > Count% Then Start% = Count%
-            EXITCODE% = 3
-            SELECTION% = Start%
-            GoTo 20
-    End Select
-
+	If EXITCODE% = 27 Then BO% = 1: Exit Sub
+		
     tradeT(J) = teamIndex%(SELECTION%)
 
-    Open D$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
+    Open diskPaths$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
 
     Field #1, 15 As Q$(0), 15 As Q$(1)
     For J0 = 0 To 6

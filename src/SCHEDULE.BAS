@@ -1,7 +1,8 @@
-	Sub SCHEDULE ()
+Sub SCHEDULE ()
 
     Dim targetFile$
     ReDim menuChoices$(1 To 7)
+
     Shared NS%
     Shared scheduleAP%(), NG%()
     
@@ -108,23 +109,26 @@
 					'Retrieve
                     Call LoadSchedule(targetFile$)
 
-                    Cls
-						
-                    'Edit / Extract / Change
-                    If SELECTION% >= 3 And SELECTION% <= 5 Then
-						'3 = "EXTRACT ONE TEAM'S SCHEDULE FROM LEAGUE SCHEDULE
-						'4 = "CHANGE THE MODE OF PLAY FOR A TEAM IN A SCHEDULE
-						'5 = "MAKE GLOBAL CHANGES TO A SCHEDULE
+					If targetFile$ <> "" Then
+						Cls
 
-                        Call ExtractSchedule(SELECTION%, targetFile$)
+						'Edit / Extract / Change
+						If SELECTION% >= 3 And SELECTION% <= 5 Then
+							'3 = "EXTRACT ONE TEAM'S SCHEDULE FROM LEAGUE SCHEDULE
+							'4 = "CHANGE THE MODE OF PLAY FOR A TEAM IN A SCHEDULE
+							'5 = "MAKE GLOBAL CHANGES TO A SCHEDULE
 
-                        If SELECTION% >= 4 Then Call SaveScheduleFile(targetFile$)
-                    Else
-                        'Selection = 2
-						'Retrieve / Edit Play
-                        Call NewSchedule(targetFile$)
-                    End If
+							Call ExtractSchedule(SELECTION%, targetFile$)
 
+							If SELECTION% >= 4 Then Call SaveScheduleFile(targetFile$)
+						Else
+							'Selection = 2
+							'Retrieve / Edit Play
+							Call NewSchedule(targetFile$)
+						End If
+					
+					End If
+					
                 Case 6: Call BoxscoreMaintenance
                 Case 7: Cls
             End Select
@@ -140,6 +144,7 @@ End Sub 'Menu
 '----------------------------------------
 '...explanation...
 Sub NewSchedule (scheduleFile$)
+
     Dim gameNumber%
 
     Dim MO$(0 To 3), SC$(0 To 1)
@@ -292,7 +297,7 @@ Sub NewSchedule (scheduleFile$)
             '       I$ = "G"
             '   Else
             '       NS% = INT((NG% - 1) / 20)
-            '       BN$ = D$(1) + "box" + Mid$(Str$(NG%), 2, Len(Str$(NG%)))
+            '       BN$ = diskPaths$(1) + "box" + Mid$(Str$(NG%), 2, Len(Str$(NG%)))
             '       GOSUB 5050
             '       Call NewSchedule
             '   End If
@@ -804,16 +809,16 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
 							NG%(I, 4) = U6
 
 							750 If Not (scheduleAction% = 4) Then
-								Locate 1, 1: Print NG% + 1; " MATCHES"
-								'IF _FILEEXISTS(D$(0) + subSchedFile$ + ".SCD") THEN
-								Open D$(0) + subSchedFile$ + ".SCD" For Random As #1 Len = 48
-								Y = LOF(1): GoTo 753
 
-								'Else
+								Locate 1, 1: Print numberGames% + 1; " MATCHES"
+								Open diskPaths$(0) + subSchedFile$ + ".SCD" For Random As #1 Len = 48
+								Y = LOF(1)
+								'GoTo 753
+
 								'752 Y = 0
-								'End If
 
-								753 NG% = Y / 48
+								753 numberGames% = Y / 48
+
 								For X = 0 To 18
 									Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
 								Next
@@ -826,7 +831,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
 
 								LSet Q$(22) = MKI$(scheduleVS%(I)): LSet Q$(23) = MKI$(scheduleHS%(I))
 
-								Put #1, NG% + 1
+								Put #1, numberGames% + 1
 
 								Close 1
 
@@ -959,7 +964,7 @@ Sub BoxscoreMaintenance ()
             Select Case SELECTION%
                 Case 1: Call EditParameters: Exit Sub
                 Case 2
-                    5060 Spec$ = D$(1) + "*.SPC"
+                    5060 Spec$ = diskPaths$(1) + "*.SPC"
                     null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
                     FileCount% = DirCount%
                     If FileCount% = 0 Then
@@ -1011,22 +1016,22 @@ Sub BoxscoreMaintenance ()
                     Color 15, 0
                     3912 I$ = GetKeyPress$
                     If UCase$(I$) = "Y" Then 5065
-                    BN$ = D$(1) + targetFile$
+                    BN$ = diskPaths$(1) + targetFile$
                     'ReDim array$(500) 'holds the main editor string array
                     '-- Since we don't actually support using QEdit,
                     '-- we should give the user an error message
                 Case 3
-                    Spec$ = D$(1) + "BOX*."
+                    Spec$ = diskPaths$(1) + "BOX*."
                     Call DeleteSchedules(SELECTION%, Spec$)
                     '-- we should give the user a confirmation message
                 Case 4
-                    Spec$ = D$(1) + "*.SPC"
+                    Spec$ = diskPaths$(1) + "*.SPC"
                     Call DeleteSchedules(SELECTION%, Spec$)
                     '-- we should give the user a confirmation message
                 Case 5
-                    Spec$ = D$(1) + "*.SPC"
+                    Spec$ = diskPaths$(1) + "*.SPC"
                     Call DeleteSchedules(SELECTION%, Spec$)
-                    Spec$ = D$(1) + "BOX*."
+                    Spec$ = diskPaths$(1) + "BOX*."
                     Call DeleteSchedules(SELECTION%, Spec$)
                     '-- we should give the user a confirmation message
                 Case 6: Cls
@@ -1054,9 +1059,9 @@ Sub SaveScheduleFile (saveFile$)
     Shared NG%()
     Shared scheduleYN$()
     
-    If _FileExists(D$(0) + saveFile$ + ".SCD") Then Kill D$(0) + saveFile$ + ".SCD"
+    If _FileExists(diskPaths$(0) + saveFile$ + ".SCD") Then Kill diskPaths$(0) + saveFile$ + ".SCD"
 
-    Open D$(0) + saveFile$ + ".SCD" For Random As #1 Len = 48
+    Open diskPaths$(0) + saveFile$ + ".SCD" For Random As #1 Len = 48
 
     For X = 0 To 18
         Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
@@ -1223,11 +1228,8 @@ Sub ChangeGlobalSettings ()
 End Sub 'ChangeGlobalSettings
 
 
-
-
-
 '----------------------------------------
-'   LoadSchedule SubRoutine
+'   	LoadSchedule SubRoutine
 '----------------------------------------
 '...explanation...
 Sub LoadSchedule (newFile$)
@@ -1238,7 +1240,7 @@ Sub LoadSchedule (newFile$)
     Shared NG%()
     Shared scheduleYN$()
 
-    Spec$ = D$(0) + "*.SCD"
+    Spec$ = diskPaths$(0) + "*.SCD"
     
     Do
     'Display list of files...
@@ -1285,38 +1287,13 @@ Sub LoadSchedule (newFile$)
                 320 MAMenu scheduleFiles$(), SELECTION%, Start%, FileCount%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
                 _MouseHide
 
-                Select Case EXITCODE%
-                    Case 27: Cls: Exit Sub
-                    Case -71: 
-                        Start% = 1
-                        EXITCODE% = 3
-                        SELECTION% = 1
-                        GoTo 320
-                    Case -79: 
-                        Start% = FileCount%
-                        EXITCODE% = 3
-                        SELECTION% = FileCount%
-                        GoTo 320
-                    Case -73: 
-                        Start% = Start% - 80
-                        If Start% < 1 Then Start% = 1
-                        EXITCODE% = 3
-                        SELECTION% = Start%
-                        GoTo 320
-                    Case -81: 
-                        Start% = Start% + 80
-                        If Start% > FileCount% Then Start% = FileCount%
-                        EXITCODE% = 3
-                        SELECTION% = Start%
-                        GoTo 320
-                End Select
+				If EXITCODE% = 27 Then Exit Sub
 
                 newFile$ = scheduleFiles$(SELECTION%)
                 Locate 2, 33: Print newFile$
                 Locate , 33: Print "ANY CHANGE (YN)";
                 Color 15, 0
-                3910 I$ = GetKeyPress$
-                'If UCase$(I$) = "Y" Then 1310
+                I$ = GetKeyPress$
             Loop Until UCase$(I$) = "N"
 
             newFile$ = RTrim$(newFile$)
@@ -1329,9 +1306,9 @@ Sub LoadSchedule (newFile$)
 
         End if
         
-    Loop Until Count% = 0 Or EXITCODE%% = 27 Or EXITCODE%% = 13
+    Loop Until Count% = 0 Or EXITCODE% = 27 Or EXITCODE% = 13
 
-    Open D$(0) + newFile$ + ".SCD" For Random As #1 Len = 48
+    Open diskPaths$(0) + newFile$ + ".SCD" For Random As #1 Len = 48
     Y = LOF(1)
     Close 1
 
@@ -1341,7 +1318,7 @@ Sub LoadSchedule (newFile$)
     'BS% = number of pages to display (20 / page)
     BS% = Int((scheduleAP%(0) - 1) / 20)
 
-    Open D$(0) + newFile$ + ".SCD" For Random As #1 Len = 48
+    Open diskPaths$(0) + newFile$ + ".SCD" For Random As #1 Len = 48
 
     For X = 0 To 18
         Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
@@ -1353,7 +1330,8 @@ Sub LoadSchedule (newFile$)
         Get #1, I
         For X = 0 To 18: NG%(I, X) = CVI(Q$(X + 1)): Next
         For X = 0 To 1: scheduleYN$(I, X) = Q$(20 + X): Next
-        scheduleVS%(I) = CVI(Q$(22)): scheduleHS%(I) = CVI(Q$(23))
+        scheduleVS%(I) = CVI(Q$(22))
+		scheduleHS%(I) = CVI(Q$(23))
     Next
 
     Close 1
@@ -1370,7 +1348,7 @@ End Sub 'LoadSchedule
 '...explanation...
 Sub SelectTeam_Schedule (yearNumber$, numberTeams)
 
-    Open D$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
 
     Y = LOF(1)
 
@@ -1420,28 +1398,8 @@ Sub GetTeam_Schedule (numberTeams, yearNumber$, teamInfo)
     206 MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    Select Case EXITCODE%
-        Case 27: 
-            BO% = 1
-            Exit Sub
-        Case -71: 
-            Start% = 1
-            EXITCODE% = 3
-            SELECTION% = 1
-            GoTo 206
-        Case -79: 
-            Start% = numberTeams
-            EXITCODE% = 3
-            SELECTION% = numberTeams
-            GoTo 206
-        Case -73:
-            Start% = Start% - 80
-            If Start% < 1 Then Start% = 1: EXITCODE% = 3: SELECTION% = Start%: GoTo 206
-        Case -81: 
-            Start% = Start% + 80
-            If Start% > numberTeams Then Start% = numberTeams: EXITCODE% = 3: SELECTION% = Start%: GoTo 206
-    End Select
-
+	If EXITCODE% = 27 Then BO% = 1: Exit Sub
+		
     teamInfo = teamIndex%(SELECTION%)
     Call CheckTeam_Schedule(teamInfo, yearNumber$)
 
@@ -1456,7 +1414,7 @@ Sub CheckTeam_Schedule (teamInfo, yearNumber$)
 
     Shared scheduleT()
 
-    Open D$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
 
     Field #1, 15 As Q$(0)
 
@@ -1510,7 +1468,7 @@ Sub DeleteSchedules (fileChoice%, fileSpec$)
         boxFiles$(0) = fileSpec$
         Call ReadFile(boxFiles$())
         For X = 1 To FileCount%
-            Kill (D$(1) + boxFiles$(X))
+            Kill (diskPaths$(1) + boxFiles$(X))
             Locate 12, 34: Print "DELETING "; boxFiles$(X)
         Next
 

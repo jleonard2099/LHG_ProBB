@@ -3,7 +3,7 @@ Sub DRAFT ()
     ReDim menuChoices$(1 To 3)
     Shared draftAA$(), draftB$(), draftYears$()
     Shared draftB%(), draftL%(), draftLT%(), draftT%()
-    Dim TTL!(34)
+    Dim TTL%(34)
 
     _Title "Basketball: The Pro Game - Team Draft"
     
@@ -54,7 +54,7 @@ Sub DRAFT ()
     
     For I = 0 To 34
         draftT%(0, I) = 0
-        TTL!(I) = 0
+        TTL%(I) = 0
     Next
     
     For I = 0 To 14
@@ -96,8 +96,8 @@ Sub DRAFT ()
 
         Color , 0
         If Not (EXITCODE% = 27) Then
-            If SELECTION% = 1 Then DNT% = 0: Call DraftNewTeam (TTL!())
-            If SELECTION% = 2 Then DNT% = 1: Call DraftExistingTeam (TTL!())
+            If SELECTION% = 1 Then DNT% = 0: Call DraftNewTeam (TTL%())
+            If SELECTION% = 2 Then DNT% = 1: Call DraftExistingTeam (TTL%())
         Else
             SELECTION% = 3
         End If
@@ -113,7 +113,7 @@ End Sub
 '       DraftNewTeam SubRoutine
 '----------------------------------------
 '...explanation...
-Sub DraftNewTeam (TTL!())
+Sub DraftNewTeam (TTL%())
 
     Shared draftAA$(), draftYN$()
     Shared draftL%(), draftLG%(), draftT%()
@@ -152,7 +152,7 @@ Sub DraftNewTeam (TTL!())
 
     258 C1 = 0
 
-    Call DoTheDraft (TTL!())
+    Call DoTheDraft (TTL%())
 
     1008 'GoTo 10
 
@@ -163,7 +163,7 @@ End Sub
 '      DraftExistingTeam SubRoutine
 '----------------------------------------
 '...explanation...
-Sub DraftExistingTeam (TTL!())
+Sub DraftExistingTeam (TTL%())
     
     Shared draftAA$(), draftB$(), draftYears$(), draftYN$()
     Shared draftB%(), draftL%(), draftLT%(), draftT%()
@@ -192,14 +192,15 @@ Sub DraftExistingTeam (TTL!())
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
         Locate , 12: Print "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
         Locate 7, 27: Input NY$
-        If NY$ = "" Then 
+        
+		If NY$ = "" Then 
             Call SelectTeam_Draft(NT)
         Else
             draftYN$(0) = NY$
             Erase teamNames$
 
             NT = 0
-            Open D$(0) + "PROBBTMS." + draftYN$(0) For Random As #1 Len = 1031
+            Open diskPaths$(0) + "PROBBTMS." + draftYN$(0) For Random As #1 Len = 1031
 
             Y = LOF(1)
 
@@ -260,71 +261,80 @@ Sub DraftExistingTeam (TTL!())
             MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
 
-            If EXITCODE% = 27 Then Exit Sub
+            If EXITCODE% <> 27 Then
 
-            T = teamIndex%(SELECTION%)
+				T = teamIndex%(SELECTION%)
 
-            Open D$(0) + "PROBBTMS." + draftYN$(0) For Random As #1 Len = 1031
+				Open diskPaths$(0) + "PROBBTMS." + draftYN$(0) For Random As #1 Len = 1031
 
-            Field #1, 15 As Q$(0), 15 As Q$(1)
+				Field #1, 15 As Q$(0), 15 As Q$(1)
 
-            For J% = 0 To 6
-                Field #1, 30 + J% * 2 As X$, 2 As Q$(J% + 2)
-            Next
+				For J% = 0 To 6
+					Field #1, 30 + J% * 2 As X$, 2 As Q$(J% + 2)
+				Next
 
-            Field #1, 44 As X$, 2 As Q$(9)
+				Field #1, 44 As X$, 2 As Q$(9)
 
-            For J% = 0 To 34
-                Field #1, 46 + J% * 2 As X$, 2 As Q$(J% + 10)
-            Next
+				For J% = 0 To 34
+					Field #1, 46 + J% * 2 As X$, 2 As Q$(J% + 10)
+				Next
 
-            For J% = 0 To 14
-                Field #1, 116 + J% * 57 As X$, 15 As Q$(J% * 22 + 45), 2 As Q$(J% * 22 + 46)
-                For J1 = 0 To 19
-                    Field #1, 133 + J% * 57 + J1 * 2 As X$, 2 As Q$(J% * 22 + 47 + J1)
-                Next
-            Next
-            
-            Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-            
-            Get #1, T
+				For J% = 0 To 14
+					Field #1, 116 + J% * 57 As X$, 15 As Q$(J% * 22 + 45), 2 As Q$(J% * 22 + 46)
+					For J1 = 0 To 19
+						Field #1, 133 + J% * 57 + J1 * 2 As X$, 2 As Q$(J% * 22 + 47 + J1)
+					Next
+				Next
+				
+				Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+				
+				Get #1, T
 
-            draftAA$(0, 0) = Q$(0)
-            draftAA$(0, 1) = Q$(1)
+				draftAA$(0, 0) = Q$(0)
+				draftAA$(0, 1) = Q$(1)
 
-            For I = 0 To 6: draftL%(0, I) = CVI(Q$(I + 2)): Next
+				For I = 0 To 6: draftL%(0, I) = CVI(Q$(I + 2)): Next
 
-            9102 If Right$(draftAA$(0, 0), 1) = " " Then draftAA$(0, 0) = Left$(draftAA$(0, 0), Len(draftAA$(0, 0)) - 1): GoTo 9102
-            For I = 0 To 34: draftT%(0, I) = CVI(Q$(I + 10)): Next
+				9102 If Right$(draftAA$(0, 0), 1) = " " Then draftAA$(0, 0) = Left$(draftAA$(0, 0), Len(draftAA$(0, 0)) - 1): GoTo 9102
+				
+				For I = 0 To 34
+					draftT%(0, I) = CVI(Q$(I + 10))
+				Next
 
-            For I = 0 To 14
-                draftB$(0, I, 0) = Q$(22 * I + 45)
+				For I = 0 To 14
+					draftB$(0, I, 0) = Q$(22 * I + 45)
 
-                9104 If Right$(draftB$(0, I, 0), 1) = " " Then draftB$(0, I, 0) = Left$(draftB$(0, I, 0), Len(draftB$(0, I, 0)) - 1): GoTo 9104
-                draftB$(0, I, 1) = Q$(22 * I + 46)
+					9104 If Right$(draftB$(0, I, 0), 1) = " " Then draftB$(0, I, 0) = Left$(draftB$(0, I, 0), Len(draftB$(0, I, 0)) - 1): GoTo 9104
 
-                9105 If Right$(draftB$(0, I, 1), 1) = " " Then draftB$(0, I, 1) = Left$(draftB$(0, I, 1), Len(draftB$(0, I, 1)) - 1): GoTo 9105
-                For I1 = 0 To 19
-                    draftB%(0, I, I1) = CVI(Q$(22 * I + 47 + I1))
-                Next
-            Next
+					draftB$(0, I, 1) = Q$(22 * I + 46)
 
-            draftAA$(0, 2) = Q$(375): draftAA$(0, 3) = Q$(376): draftAA$(0, 4) = Q$(377)
+					9105 If Right$(draftB$(0, I, 1), 1) = " " Then draftB$(0, I, 1) = Left$(draftB$(0, I, 1), Len(draftB$(0, I, 1)) - 1): GoTo 9105
 
-            Close 1
+					For I1 = 0 To 19
+						draftB%(0, I, I1) = CVI(Q$(22 * I + 47 + I1))
+					Next
+				Next
 
-            9106 If Right$(draftAA$(0, 2), 1) = " " Then draftAA$(0, 2) = Left$(draftAA$(0, 2), Len(draftAA$(0, 2)) - 1): GoTo 9106
+				draftAA$(0, 2) = Q$(375): draftAA$(0, 3) = Q$(376): draftAA$(0, 4) = Q$(377)
 
-            9107 If Right$(draftAA$(0, 3), 1) = " " Then draftAA$(0, 3) = Left$(draftAA$(0, 3), Len(draftAA$(0, 3)) - 1): GoTo 9107
+				Close 1
 
-            9108 If Right$(draftAA$(0, 4), 1) = " " Then draftAA$(0, 4) = Left$(draftAA$(0, 4), Len(draftAA$(0, 4)) - 1): GoTo 9108
-            For I1 = 0 To 14
-                For I = 0 To 34
-                    draftLT%(I1, I) = draftT%(0, I)
-                Next
-            Next
+				9106 If Right$(draftAA$(0, 2), 1) = " " Then draftAA$(0, 2) = Left$(draftAA$(0, 2), Len(draftAA$(0, 2)) - 1): GoTo 9106
 
-        End If
+				9107 If Right$(draftAA$(0, 3), 1) = " " Then draftAA$(0, 3) = Left$(draftAA$(0, 3), Len(draftAA$(0, 3)) - 1): GoTo 9107
+
+				9108 If Right$(draftAA$(0, 4), 1) = " " Then draftAA$(0, 4) = Left$(draftAA$(0, 4), Len(draftAA$(0, 4)) - 1): GoTo 9108
+
+				For I1 = 0 To 14
+					For I = 0 To 34
+						draftLT%(I1, I) = draftT%(0, I)
+					Next
+				Next
+
+			End If 'Done checking for ESC
+		
+		End If 'Done checking empty input
+		
         If BO% = 1 Then 
             BO% = 0
         Else
@@ -337,7 +347,7 @@ Sub DraftExistingTeam (TTL!())
 
     Loop Until UCase$(I$) = "N"
 
-    Call DoTheDraft (TTL!())
+    Call DoTheDraft (TTL%())
 
 End Sub
 
@@ -442,7 +452,7 @@ End Sub
 '       DoTheDraft SubRoutine
 '----------------------------------------
 '...explanation...
-Sub DoTheDraft (TTL!())
+Sub DoTheDraft (TTL%())
 
     Dim NP
 
@@ -498,7 +508,7 @@ Sub DoTheDraft (TTL!())
 
                         NT = 0
 
-                        Open D$(0) + "PROBBTMS." + draftYN$(1) For Random As #1 Len = 1031
+                        Open diskPaths$(0) + "PROBBTMS." + draftYN$(1) For Random As #1 Len = 1031
                         Y = LOF(1)
 
                         Field #1, 15 As Q$(0), 15 As Q$(1)
@@ -600,17 +610,17 @@ Sub DoTheDraft (TTL!())
                 For I = 0 To 14
                     If draftB$(0, I, 0) <> "XXX" Then
                         For I1 = 0 To 32
-                            TTL!(I1) = TTL!(I1) + draftLT%(I, I1)
+                            TTL%(I1) = TTL%(I1) + draftLT%(I, I1)
                         Next I1
                     End If
                 Next I
 
                 For I1 = 0 To 32
-                    TTL!(I1) = TTL!(I1) / NP
-                    draftT%(0, I1) = TTL!(I1)
+                    TTL%(I1) = TTL%(I1) / NP
+                    draftT%(0, I1) = TTL%(I1)
                 Next
 
-                Open D$(0) + "PROBBTMS." + draftYN$(0) For Random As #1 Len = 1031
+                Open diskPaths$(0) + "PROBBTMS." + draftYN$(0) For Random As #1 Len = 1031
 
                 Y = LOF(1)
                 If DNT% = 0 Then T = Y / 1031 + 1
@@ -672,7 +682,7 @@ Sub SelectTeam_Draft (numberTeams)
     Shared draftAA$(), draftB$(), draftYears$(), draftYN$()
     Shared draftB%(), draftL%(), draftT%()
 
-    1102 SELECTION% = 1
+    SELECTION% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -692,59 +702,67 @@ Sub SelectTeam_Draft (numberTeams)
     MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    If EXITCODE% = 27 Then Exit Sub
+    If EXITCODE% <> 27 Then
 
-    D = teamIndex%(SELECTION%)
+		D = teamIndex%(SELECTION%)
 
-    9000 Open D$(0) + "PROBBTMS." + draftYN$(1) For Random As #1 Len = 1031
+		Open diskPaths$(0) + "PROBBTMS." + draftYN$(1) For Random As #1 Len = 1031
 
-    Field #1, 15 As Q$(0), 15 As Q$(1)
+		Field #1, 15 As Q$(0), 15 As Q$(1)
 
-    For J% = 0 To 6
-        Field #1, 30 + J% * 2 As X$, 2 As Q$(J% + 2)
-    Next
+		For J% = 0 To 6
+			Field #1, 30 + J% * 2 As X$, 2 As Q$(J% + 2)
+		Next
 
-    Field #1, 44 As X$, 2 As Q$(9)
+		Field #1, 44 As X$, 2 As Q$(9)
 
-    For J% = 0 To 34
-        Field #1, 46 + J% * 2 As X$, 2 As Q$(J% + 10)
-    Next
+		For J% = 0 To 34
+			Field #1, 46 + J% * 2 As X$, 2 As Q$(J% + 10)
+		Next
 
-    For J% = 0 To 14
-        Field #1, 116 + J% * 57 As X$, 15 As Q$(J% * 22 + 45), 2 As Q$(J% * 22 + 46)
-        For J1 = 0 To 19
-            Field #1, 133 + J% * 57 + J1 * 2 As X$, 2 As Q$(J% * 22 + 47 + J1)
-        Next
-    Next
+		For J% = 0 To 14
+			Field #1, 116 + J% * 57 As X$, 15 As Q$(J% * 22 + 45), 2 As Q$(J% * 22 + 46)
+			For J1 = 0 To 19
+				Field #1, 133 + J% * 57 + J1 * 2 As X$, 2 As Q$(J% * 22 + 47 + J1)
+			Next
+		Next
 
-    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-    Get #1, D
-    draftAA$(1, 0) = Q$(0): draftAA$(1, 1) = Q$(1)
+		Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+		Get #1, D
+		draftAA$(1, 0) = Q$(0): draftAA$(1, 1) = Q$(1)
 
-    For I = 0 To 6: draftL%(1, I) = CVI(Q$(I + 2)): Next
+		For I = 0 To 6: draftL%(1, I) = CVI(Q$(I + 2)): Next
 
-    9002 If Right$(draftAA$(1, 0), 1) = " " Then draftAA$(1, 0) = Left$(draftAA$(1, 0), Len(draftAA$(1, 0)) - 1): GoTo 9002
-    For I = 0 To 34: draftT%(1, I) = CVI(Q$(I + 10)): Next
-    For I = 0 To 14
-        draftB$(1, I, 0) = Q$(22 * I + 45)
+		9002 If Right$(draftAA$(1, 0), 1) = " " Then draftAA$(1, 0) = Left$(draftAA$(1, 0), Len(draftAA$(1, 0)) - 1): GoTo 9002
+		
+		For I = 0 To 34
+			draftT%(1, I) = CVI(Q$(I + 10))
+		Next
+		
+		For I = 0 To 14
+			draftB$(1, I, 0) = Q$(22 * I + 45)
 
-        9004 If Right$(draftB$(1, I, 0), 1) = " " Then draftB$(1, I, 0) = Left$(draftB$(1, I, 0), Len(draftB$(1, I, 0)) - 1): GoTo 9004
-        draftB$(1, I, 1) = Q$(22 * I + 46)
+			9004 If Right$(draftB$(1, I, 0), 1) = " " Then draftB$(1, I, 0) = Left$(draftB$(1, I, 0), Len(draftB$(1, I, 0)) - 1): GoTo 9004
+		
+			draftB$(1, I, 1) = Q$(22 * I + 46)
 
-        9005 If Right$(draftB$(1, I, 1), 1) = " " Then draftB$(1, I, 1) = Left$(draftB$(1, I, 1), Len(draftB$(1, I, 1)) - 1): GoTo 9005
-        For I1 = 0 To 19
-            draftB%(1, I, I1) = CVI(Q$(22 * I + 47 + I1))
-        Next
-    Next
+			9005 If Right$(draftB$(1, I, 1), 1) = " " Then draftB$(1, I, 1) = Left$(draftB$(1, I, 1), Len(draftB$(1, I, 1)) - 1): GoTo 9005
+			
+			For I1 = 0 To 19
+				draftB%(1, I, I1) = CVI(Q$(22 * I + 47 + I1))
+			Next
+		Next
 
-    draftAA$(1, 2) = Q$(375): draftAA$(1, 3) = Q$(376): draftAA$(1, 4) = Q$(377)
+		draftAA$(1, 2) = Q$(375): draftAA$(1, 3) = Q$(376): draftAA$(1, 4) = Q$(377)
 
-    Close 1
+		Close 1
 
-    9006 If Right$(draftAA$(1, 2), 1) = " " Then draftAA$(1, 2) = Left$(draftAA$(1, 2), Len(draftAA$(1, 2)) - 1): GoTo 9006
+		9006 If Right$(draftAA$(1, 2), 1) = " " Then draftAA$(1, 2) = Left$(draftAA$(1, 2), Len(draftAA$(1, 2)) - 1): GoTo 9006
 
-    9007 If Right$(draftAA$(1, 3), 1) = " " Then draftAA$(1, 3) = Left$(draftAA$(1, 3), Len(draftAA$(1, 3)) - 1): GoTo 9007
+		9007 If Right$(draftAA$(1, 3), 1) = " " Then draftAA$(1, 3) = Left$(draftAA$(1, 3), Len(draftAA$(1, 3)) - 1): GoTo 9007
 
-    9008 If Right$(draftAA$(1, 4), 1) = " " Then draftAA$(1, 4) = Left$(draftAA$(1, 4), Len(draftAA$(1, 4)) - 1): GoTo 9008
+		9008 If Right$(draftAA$(1, 4), 1) = " " Then draftAA$(1, 4) = Left$(draftAA$(1, 4), Len(draftAA$(1, 4)) - 1): GoTo 9008
+
+	End If
 
 End Sub

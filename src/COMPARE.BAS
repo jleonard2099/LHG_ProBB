@@ -50,7 +50,8 @@ Sub ViewComparisons ()
 
     Shared compareL%(), compareT%()
     Shared compareA$(), compareAA$(), compareB$(), comparePS$(), compareT$()
-    Shared compareW0(), compareW1(), compareZ(), compareZ1()
+    Shared compareW0(), compareW1()
+    Shared compareZ!(), compareZ1!()
 
     Do
 
@@ -68,13 +69,13 @@ Sub ViewComparisons ()
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
         Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
         Locate 7, 27: Input NY$
-        If NY$ = "" Then 
-            Call SelectTeam_COMPARE (NY$, NTMS)
+        If NY$ = "" Then
+            Call SelectTeam_COMPARE(NY$, NTMS)
         Else
             YN$ = NY$
             Erase teamNames$
-            Call ReadTeamData_COMPARE (YN$, NTMS)
-            Call SelectTeam_COMPARE (YN$, NTMS)
+            Call ReadTeamData_COMPARE(YN$, NTMS)
+            Call SelectTeam_COMPARE(YN$, NTMS)
 
             'Determine stat file for team
             1486 If Right$(compareB$(0), 1) = " " Then compareB$(0) = Left$(compareB$(0), Len(compareB$(0)) - 1): GoTo 1486
@@ -86,7 +87,7 @@ Sub ViewComparisons ()
             1489 If Right$(compareB$(3), 1) = " " Then compareB$(3) = Left$(compareB$(3), Len(compareB$(3)) - 1): GoTo 1489
 
             1490 If Right$(compareB$(4), 1) = " " Then compareB$(4) = Left$(compareB$(4), Len(compareB$(4)) - 1): GoTo 1490
-            
+
             B$ = compareB$(0)
             For XX = 4 To 11
                 If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
@@ -104,7 +105,7 @@ Sub ViewComparisons ()
 
             6620 Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
-            If Not _FileExists(D$(1) + Z$) Then
+            If Not _FileExists(diskPaths$(1) + Z$) Then
                 Locate , 30
                 Call CSMsgBox("NO COMPILED STATS WERE FOUND... PRESS ANY KEY TO RETURN TO CONTINUE", 26, Pass)
                 I$ = GetKeyPress$
@@ -112,12 +113,12 @@ Sub ViewComparisons ()
                 BO% = 1
             Else
 
-                120 Open D$(1) + Z$ For Input As #1
+                120 Open diskPaths$(1) + Z$ For Input As #1
 
                 122 Input #1, B$
 
                 For I = 0 To 14
-                    INPUT #1, compareA$(I)
+                    Input #1, compareA$(I)
                     For J = 0 To 13
                         Input #1, A(I, J)
                     Next
@@ -125,9 +126,9 @@ Sub ViewComparisons ()
                     Input #1, compareW1(I)
                 Next
 
-                125 For L = 0 To 15: Input #1, compareZ(L): Next
+                125 For L = 0 To 15: Input #1, compareZ!(L): Next
 
-                126 For L = 0 To 15: Input #1, compareZ1(L): Next
+                126 For L = 0 To 15: Input #1, compareZ1!(L): Next
 
                 160 Close #1
 
@@ -143,7 +144,7 @@ Sub ViewComparisons ()
 
                 9100 HW = 0: HL = 0: AW = 0: AL = 0
 
-                9103 Open D$(1) + Z$ + "S" For Input As #1
+                9103 Open diskPaths$(1) + Z$ + "S" For Input As #1
 
                 9105 Input #1, Y
 
@@ -172,7 +173,7 @@ Sub ViewComparisons ()
             End If
 
         End If
-        
+
         182 If BO% = 1 Then BO% = 0: Exit Sub
 
         183 Locate 2, 33: Color 15, 0: Color compareT%(33), compareT%(34)
@@ -181,7 +182,7 @@ Sub ViewComparisons ()
         I$ = GetKeyPress$
 
     Loop Until UCase$(I$) = "N"
-        
+
 
     170 Color 15, 0: Cls
     JJ = 4
@@ -202,9 +203,9 @@ Sub ViewComparisons ()
 
     Color 14, 0
     Select Case UCase$(I$)
-        Case "S": 
+        Case "S":
             Call StatsToScreen
-        Case "P": 
+        Case "P":
             'GoTo 700
             ' Where did this go to??
     End Select
@@ -220,7 +221,7 @@ End Sub
 Sub ReadTeamData_COMPARE (yearNumber$, numberTeams)
 
     1100 numberTeams = 0
-    Open D$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
     Y = LOF(1)
 
     Field #1, 15 As Q$(0), 15 As Q$(1)
@@ -241,7 +242,7 @@ Sub ReadTeamData_COMPARE (yearNumber$, numberTeams)
     For I1 = 1 To Y / 1031
         Get #1, I1
         CK% = CVI(Q$(9))
-        If CK% = 999 Then 
+        If CK% = 999 Then
             numberTeams = numberTeams + 1
             teamNames$(numberTeams) = Q$(0): teamIndex%(numberTeams) = I1
         End If
@@ -276,39 +277,15 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    20 MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
     'What is done with BO% ???
-    Select Case EXITCODE%
-        Case 27: BO% = 1: Exit Sub 'Return
-        Case -71: 
-            Start% = 1
-            EXITCODE% = 3
-            SELECTION% = 1
-            GoTo 20
-        Case -79: 
-            Start% = Count%
-            EXITCODE% = 3
-            SELECTION% = Count%
-            GoTo 20
-        Case -73: 
-            Start% = Start% - 80
-            If Start% < 1 Then Start% = 1
-            EXITCODE% = 3
-            SELECTION% = Start%
-            GoTo 20
-        Case -81: 
-            Start% = Start% + 80
-            If Start% > Count% Then Start% = Count%
-            EXITCODE% = 3
-            SELECTION% = Start%
-            GoTo 20
-    End Select
+    If EXITCODE% = 27 Then BO% = 1: Exit Sub
 
     T1 = teamIndex%(SELECTION%)
 
-    Open D$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
     Field #1, 15 As Q$(0), 15 As Q$(1)
     For I = 0 To 6
         Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
@@ -327,7 +304,7 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams)
     Get #1, T1
     compareB$(0) = Q$(0)
     compareB$(1) = Q$(1)
-    For I = 0 To 6 
+    For I = 0 To 6
         compareL%(I) = CVI(Q$(I + 2))
     Next
     For I = 0 To 34
@@ -359,7 +336,8 @@ Sub StatsToScreen ()
     Shared compareA$(), compareB$()
     Shared compareB%(), compareT%()
     Shared comparePS$(), compareT$()
-    Shared W0(), W1(), Z(), Z1()
+    Shared W0(), W1()
+    Shared compareZ!(), compareZ1!()
 
     '200 GoTo 2000
 
@@ -488,53 +466,53 @@ Sub StatsToScreen ()
     Locate 16, 45: Print Using "####"; compareT%(4);: Print " ";
     Color 14, 0: Locate 17, 41: Print Using "####"; AW;
     Locate 17, 45: Print Using "####"; AL;: Print " ";
-    Locate 4, 16: Print Using "#########"; compareZ(2);
-    Locate 5, 16: Print Using "#########"; compareZ(1);
+    Locate 4, 16: Print Using "#########"; compareZ!(2);
+    Locate 5, 16: Print Using "#########"; compareZ!(1);
 
-    2210 If compareZ(1) = 0 Then Locate 6, 16: Print "      0.0";
-    2211 If compareZ(1) > 0 Then Locate 6, 16: Print "     ";: Print Using ".###"; (compareZ(2) / compareZ(1));
-    Locate 7, 16: Print Using "#########"; compareZ(4);
-    Locate 8, 16: Print Using "#########"; compareZ(3);
+    2210 If compareZ!(1) = 0 Then Locate 6, 16: Print "      0.0";
+    2211 If compareZ!(1) > 0 Then Locate 6, 16: Print "     ";: Print Using ".###"; (compareZ!(2) / compareZ!(1));
+    Locate 7, 16: Print Using "#########"; compareZ!(4);
+    Locate 8, 16: Print Using "#########"; compareZ!(3);
 
-    2220 If compareZ(3) = 0 Then Locate 9, 16: Print "      0.0";
-    2221 If compareZ(3) > 0 Then Locate 9, 16: Print "     ";: Print Using ".###"; (compareZ(4) / compareZ(3));
-    Locate 10, 16: Print Using "#########"; compareZ(12);
-    Locate 11, 16: Print Using "#########"; compareZ(5) - compareZ(12) - compareZ(15);
-    Locate 12, 16: Print Using "#########"; compareZ(5) - compareZ(15);
-    Locate 13, 16: Print Using "#########"; compareZ(8);
-    Locate 14, 16: Print Using "#########"; compareZ(6);
-    Locate 15, 16: Print Using "#########"; compareZ(7);
-    Locate 16, 16: Print Using "#########"; compareZ(11);
-    Locate 17, 16: Print Using "#########"; compareZ(9);
-    Locate 18, 16: Print Using "#########"; compareZ(13);
-    Locate 19, 16: Print Using "#########"; compareZ(14);
-    Locate 4, 68: Print Using "########"; compareZ1(2);
-    Locate 5, 68: Print Using "########"; compareZ1(1);
-    If compareZ1(1) = 0 Then Locate 6, 68: Print "     0.0";
-    If compareZ1(1) > 0 Then statPCT! = (compareZ1(2) / compareZ1(1)): Locate 6, 68: Print "    ";: Print Using ".###"; statPCT!;
-    Locate 7, 68: Print Using "########"; compareZ1(4);
+    2220 If compareZ!(3) = 0 Then Locate 9, 16: Print "      0.0";
+    2221 If compareZ!(3) > 0 Then Locate 9, 16: Print "     ";: Print Using ".###"; (compareZ!(4) / compareZ!(3));
+    Locate 10, 16: Print Using "#########"; compareZ!(12);
+    Locate 11, 16: Print Using "#########"; compareZ!(5) - compareZ!(12) - compareZ!(15);
+    Locate 12, 16: Print Using "#########"; compareZ!(5) - compareZ!(15);
+    Locate 13, 16: Print Using "#########"; compareZ!(8);
+    Locate 14, 16: Print Using "#########"; compareZ!(6);
+    Locate 15, 16: Print Using "#########"; compareZ!(7);
+    Locate 16, 16: Print Using "#########"; compareZ!(11);
+    Locate 17, 16: Print Using "#########"; compareZ!(9);
+    Locate 18, 16: Print Using "#########"; compareZ!(13);
+    Locate 19, 16: Print Using "#########"; compareZ!(14);
+    Locate 4, 68: Print Using "########"; compareZ1!(2);
+    Locate 5, 68: Print Using "########"; compareZ1!(1);
+    If compareZ1!(1) = 0 Then Locate 6, 68: Print "     0.0";
+    If compareZ1!(1) > 0 Then statPCT! = (compareZ1!(2) / compareZ1!(1)): Locate 6, 68: Print "    ";: Print Using ".###"; statPCT!;
+    Locate 7, 68: Print Using "########"; compareZ1!(4);
 
-    'Is compareZ1(3) ever 0???
-    Locate 8, 68: Print Using "########"; compareZ1(3);
-    If compareZ1(13) = 0 Then Locate 9, 68: Print "     0.0";
-    If compareZ1(13) > 0 Then statPCT! = (compareZ1(4) / compareZ1(3)): Locate 9, 68: Print "    ";: Print Using ".###"; statPCT!;
+    'Is compareZ1!(3) ever 0???
+    Locate 8, 68: Print Using "########"; compareZ1!(3);
+    If compareZ1!(13) = 0 Then Locate 9, 68: Print "     0.0";
+    If compareZ1!(13) > 0 Then statPCT! = (compareZ1!(4) / compareZ1!(3)): Locate 9, 68: Print "    ";: Print Using ".###"; statPCT!;
 
-    Locate 10, 68: Print Using "########"; compareZ1(12);
-    Locate 11, 68: Print Using "########"; compareZ1(5) - compareZ1(12) - compareZ1(15);
-    Locate 12, 68: Print Using "########"; compareZ1(5) - compareZ1(15);
-    Locate 13, 68: Print Using "########"; compareZ1(8);
-    Locate 14, 68: Print Using "########"; compareZ1(6);
-    Locate 15, 68: Print Using "########"; compareZ1(7);
-    Locate 16, 68: Print Using "########"; compareZ1(11);
-    Locate 17, 68: Print Using "########"; compareZ1(9);
-    Locate 18, 68: Print Using "########"; compareZ1(13);
-    Locate 19, 68: Print Using "########"; compareZ1(14);
-    If compareZ1(13) = 0 Then Locate 20, 68: Print "     0.0";
-    If compareZ1(13) > 0 Then statPCT! = (compareZ1(13) / compareZ1(14)): Locate 20, 68: Print "    ";: Print Using ".###"; statPCT!;
+    Locate 10, 68: Print Using "########"; compareZ1!(12);
+    Locate 11, 68: Print Using "########"; compareZ1!(5) - compareZ1!(12) - compareZ1!(15);
+    Locate 12, 68: Print Using "########"; compareZ1!(5) - compareZ1!(15);
+    Locate 13, 68: Print Using "########"; compareZ1!(8);
+    Locate 14, 68: Print Using "########"; compareZ1!(6);
+    Locate 15, 68: Print Using "########"; compareZ1!(7);
+    Locate 16, 68: Print Using "########"; compareZ1!(11);
+    Locate 17, 68: Print Using "########"; compareZ1!(9);
+    Locate 18, 68: Print Using "########"; compareZ1!(13);
+    Locate 19, 68: Print Using "########"; compareZ1!(14);
+    If compareZ1!(13) = 0 Then Locate 20, 68: Print "     0.0";
+    If compareZ1!(13) > 0 Then statPCT! = (compareZ1!(13) / compareZ1!(14)): Locate 20, 68: Print "    ";: Print Using ".###"; statPCT!;
 
-    2230 If compareZ(13) = 0 Then Locate 20, 16: Print "      0.0";
+    2230 If compareZ!(13) = 0 Then Locate 20, 16: Print "      0.0";
 
-    2231 If compareZ(13) > 0 Then statPCT! = (compareZ(13) / compareZ(14)): Locate 20, 16: Print "     ";: Print Using ".###"; statPCT!;
+    2231 If compareZ!(13) > 0 Then statPCT! = (compareZ!(13) / compareZ!(14)): Locate 20, 16: Print "     ";: Print Using ".###"; statPCT!;
 
     2800 Locate 23, 28: Color 15, 0: Print "HIT ANY KEY TO CONTINUE"
     2801 I$ = GetKeyPress$
@@ -568,13 +546,13 @@ Sub StatsToScreen ()
                 GoTo 300
 
             End If
-            
+
             If B9 = 16 Then
                 BI = 1: Cls
             Else
                 If B9 = 17 Then Call ViewComparisons
                 If B9 = 18 Then Exit Sub
-            End if
+            End If
 
             For dc = 1 To 19
                 Color 15, 0: Locate dc
@@ -783,11 +761,11 @@ Sub StatsToScreen ()
 
                     If Not (I$ = Chr$(0)) Then
 
-                        583 If I$ = Chr$(27) Then 
+                        583 If I$ = Chr$(27) Then
                             BI = 0
                         End If
-                        
-                        584 If BI = 0 Then 
+
+                        584 If BI = 0 Then
                             Cls
                             Exit Do
                         End If
@@ -795,19 +773,19 @@ Sub StatsToScreen ()
                         '585 If BI = 1 Then 591
                         590 If BI <> 1 Or I >= 14 Then Exit For
 
-                        '586 If I >= 14 Then Exit For                       
+                        '586 If I >= 14 Then Exit For
                         'End If
-                        
+
                     End If
-                
+
                 End If 'done chceking for null player
-                
+
             Next I
 
             '592 If BI = 1 Then GoTo 201
-        
+
         End If 'Done checking for valid input
-        
+
     Loop Until BI <> 1
 
     '9200 Color 15, 0: Cls

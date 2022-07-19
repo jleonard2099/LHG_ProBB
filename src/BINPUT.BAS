@@ -96,7 +96,7 @@ Sub DoTheInput (action)
                 Erase teamNames$
                 NT = 0
 
-                Open D$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+                Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
                 Y = LOF(1)
 
                 Field #1, 15 As Q$(0), 15 As Q$(1)
@@ -184,7 +184,7 @@ Sub DoTheInput (action)
                         LPrint Tab(55);
                         'Rebounds / AST / PF / STL / BLK / PTS / AVG HI
                         LPrint Using "### ### #### #### ### ### ### #### "; inputB%(I, 6); inputB%(I, 7); inputB%(I, 6) + inputB%(I, 7); inputB%(I, 8); inputB%(I, 9); inputB%(I, 11); inputB%(I, 12); inputB%(I, 3) * 2 + inputB%(I, 5) + inputB%(I, 14);
-                        LPrint Using "##.# ##"; (inputB%(I, 3) * 2 + inputB%(I, 5) + inputB%(I, 14)) / inputB%(I, 0); inputB%(I, 15)
+                        LPrint Using "###.# ##"; (inputB%(I, 3) * 2 + inputB%(I, 5) + inputB%(I, 14)) / inputB%(I, 0); inputB%(I, 15)
                     
                     End If
                     
@@ -926,35 +926,11 @@ Sub SelectTeam_BINPUT (yearNumber$, numberTeams)
     20 MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    Select Case EXITCODE%
-        Case 27: BO% = 1: Exit Sub 'Return
-        Case -71: 
-            Start% = 1
-            EXITCODE% = 3
-            SELECTION% = 1
-            GoTo 20
-        Case -79: 
-            Start% = Count%
-            EXITCODE% = 3
-            SELECTION% = Count%
-            GoTo 20
-        Case -73: 
-            Start% = Start% - 80
-            If Start% < 1 Then Start% = 1
-            EXITCODE% = 3
-            SELECTION% = Start%
-            GoTo 20
-        Case -81: 
-            Start% = Start% + 80
-            If Start% > Count% Then Start% = Count%
-            EXITCODE% = 3
-            SELECTION% = Start%
-            GoTo 20
-    End Select
+	If EXITCODE% = 27 Then Exit Sub
 
     T = teamIndex%(SELECTION%)
 
-    Open D$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
     Y = LOF(1)
 
     Field #1, 15 As Q$(0), 15 As Q$(1)
@@ -1030,7 +1006,7 @@ Sub SaveTeamFile (yearNumber$)
 
     'Cls
     
-    Open D$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
     
     Y = LOF(1)
 

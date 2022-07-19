@@ -4,13 +4,13 @@ Sub REC ()
 
 	Shared teamRecords$(), indRecords$()
     Shared BRC$(), TRC$(), TRC1$()
-    Shared BRC(), TRC(), TRC1()
+    Shared BRC(), TRC!(), TRC1!()
 
 	_Title "Basketball: The Pro Game - League Records"
 
-    If _FileExists(D$(1) + "RECORDS.PBB") Then
+    If _FileExists(diskPaths$(1) + "RECORDS.PBB") Then
 
-		Open D$(1) + "RECORDS.PBB" For Input As #1
+		Open diskPaths$(1) + "RECORDS.PBB" For Input As #1
 
 		For I = 1 To 25
 			Input #1, BRC(I)
@@ -18,14 +18,14 @@ Sub REC ()
 			Input #1, BRC$(I, 1)
 		Next
 		For I = 1 To 21
-			Input #1, TRC(I)
+			Input #1, TRC!(I)
 			Input #1, TRC$(I)
-			If TRC(I) = 19999 Then TRC(I) = 0: TRC$(I) = ""
+			If TRC!(I) = 19999 Then TRC!(I) = 0: TRC$(I) = ""
 		Next
 		For I = 1 To 21
-			Input #1, TRC1(I)
+			Input #1, TRC1!(I)
 			Input #1, TRC1$(I)
-			If TRC1(I) = 19999 Then TRC1(I) = 0: TRC1$(I) = ""
+			If TRC1!(I) = 19999 Then TRC1!(I) = 0: TRC1$(I) = ""
 		Next
 		Close 1
 
@@ -59,10 +59,10 @@ Sub REC ()
 				Select Case SELECTION% 
 					Case 1: Call ViewSeasonRecords
 					Case 2: Call PrintSeasonRecords
-					Case 3: If _FileExists(D$(1) + "RECORDS.PBB") Then Kill D$(1) + "RECORDS.PBB"
+					Case 3: If _FileExists(diskPaths$(1) + "RECORDS.PBB") Then Kill diskPaths$(1) + "RECORDS.PBB"
 					Case 4: Call RECORDS(1)
 					Case 5: Call RECORDS(2)
-					Case 6: If _FileExists(D$(1) + "RECORDS.GAM") Then Kill D$(1) + "RECORDS.GAM"
+					Case 6: If _FileExists(diskPaths$(1) + "RECORDS.GAM") Then Kill diskPaths$(1) + "RECORDS.GAM"
 					Case 7: '
 				End Select
 			End If
@@ -88,7 +88,7 @@ Sub ViewSeasonRecords ()
 
 	Shared teamRecords$(), indRecords$()
     Shared BRC$(), TRC$(), TRC1$()
-    Shared BRC(), TRC(), TRC1()
+    Shared BRC(), TRC!(), TRC1!()
 
 	Color 0, 0
 	Cls
@@ -175,21 +175,21 @@ Sub ViewSeasonRecords ()
 	Print
 	Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 	Color 14
-	Locate , 4: Print teamRecords$(1); Tab(33); TRC$(1); Tab(53); Using "####"; TRC(1)
-	Locate , 4: Print teamRecords$(2); Tab(33); TRC$(2); Tab(53); Using "####"; TRC(2)
-	Locate , 4: Print teamRecords$(3); Tab(33); TRC$(3); Tab(53); Using "##.#"; TRC(3) * 100
-	Locate , 4: Print teamRecords$(4); Tab(33); TRC$(4); Tab(53); Using "####"; TRC(4)
-	Locate , 4: Print teamRecords$(5); Tab(33); TRC$(5); Tab(53); Using "####"; TRC(5)
-	Locate , 4: Print teamRecords$(6); Tab(33); TRC$(6); Tab(53); Using "##.#"; TRC(6) * 100
-	Locate , 4: Print teamRecords$(7); Tab(33); TRC$(7); Tab(53); Using "####"; TRC(7)
-	Locate , 4: Print teamRecords$(8); Tab(33); TRC$(8); Tab(53); Using "####"; TRC(8)
-	Locate , 4: Print teamRecords$(9); Tab(33); TRC$(9); Tab(53); Using "##.#"; TRC(9) * 100
-	Locate , 4: Print teamRecords$(10); Tab(33); TRC$(10); Tab(53); Using "####"; TRC(10)
-	Locate , 4: Print teamRecords$(11); Tab(33); TRC$(11); Tab(53); Using "####"; TRC(11)
-	Locate , 4: Print teamRecords$(12); Tab(33); TRC$(12); Tab(53); Using "####"; TRC(12)
-	Locate , 4: Print teamRecords$(13); Tab(33); TRC$(13); Tab(53); Using "##.#"; TRC(13)
-	Locate , 4: Print teamRecords$(14); Tab(33); TRC$(14); Tab(53); Using "####"; TRC(14)
-	Locate , 4: Print teamRecords$(15); Tab(33); TRC$(15); Tab(53); Using "####"; TRC(15)
+	Locate , 4: Print teamRecords$(1); Tab(33); TRC$(1); Tab(53); Using "####"; TRC!(1)
+	Locate , 4: Print teamRecords$(2); Tab(33); TRC$(2); Tab(53); Using "####"; TRC!(2)
+	Locate , 4: Print teamRecords$(3); Tab(33); TRC$(3); Tab(53); Using "##.#"; TRC!(3) * 100
+	Locate , 4: Print teamRecords$(4); Tab(33); TRC$(4); Tab(53); Using "####"; TRC!(4)
+	Locate , 4: Print teamRecords$(5); Tab(33); TRC$(5); Tab(53); Using "####"; TRC!(5)
+	Locate , 4: Print teamRecords$(6); Tab(33); TRC$(6); Tab(53); Using "##.#"; TRC!(6) * 100
+	Locate , 4: Print teamRecords$(7); Tab(33); TRC$(7); Tab(53); Using "####"; TRC!(7)
+	Locate , 4: Print teamRecords$(8); Tab(33); TRC$(8); Tab(53); Using "####"; TRC!(8)
+	Locate , 4: Print teamRecords$(9); Tab(33); TRC$(9); Tab(53); Using "##.#"; TRC!(9) * 100
+	Locate , 4: Print teamRecords$(10); Tab(33); TRC$(10); Tab(53); Using "####"; TRC!(10)
+	Locate , 4: Print teamRecords$(11); Tab(33); TRC$(11); Tab(53); Using "####"; TRC!(11)
+	Locate , 4: Print teamRecords$(12); Tab(33); TRC$(12); Tab(53); Using "####"; TRC!(12)
+	Locate , 4: Print teamRecords$(13); Tab(33); TRC$(13); Tab(53); Using "##.#"; TRC!(13)
+	Locate , 4: Print teamRecords$(14); Tab(33); TRC$(14); Tab(53); Using "####"; TRC!(14)
+	Locate , 4: Print teamRecords$(15); Tab(33); TRC$(15); Tab(53); Using "####"; TRC!(15)
 	Color 7
 
 	I$ = GetKeyPress$
@@ -214,12 +214,12 @@ Sub ViewSeasonRecords ()
 	Print
 	Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 	Color 14
-	Locate , 4: Print teamRecords$(16); Tab(33); TRC$(16); Tab(53); Using "####"; TRC(16)
-	Locate , 4: Print teamRecords$(17); Tab(33); TRC$(17); Tab(53); Using "####"; TRC(17)
-	Locate , 4: Print teamRecords$(18); Tab(33); TRC$(18); Tab(53); Using "####"; TRC(18)
-	Locate , 4: Print teamRecords$(19); Tab(33); TRC$(19); Tab(52); Using "#####"; TRC(19)
-	Locate , 4: Print teamRecords$(20); Tab(33); TRC$(20); Tab(52); Using "###.#"; TRC(20)
-	Locate , 4: Print "WINS"; Tab(33); TRC$(21); Tab(53); Using "####"; TRC(21)
+	Locate , 4: Print teamRecords$(16); Tab(33); TRC$(16); Tab(53); Using "####"; TRC!(16)
+	Locate , 4: Print teamRecords$(17); Tab(33); TRC$(17); Tab(53); Using "####"; TRC!(17)
+	Locate , 4: Print teamRecords$(18); Tab(33); TRC$(18); Tab(53); Using "####"; TRC!(18)
+	Locate , 4: Print teamRecords$(19); Tab(33); TRC$(19); Tab(52); Using "#####"; TRC!(19)
+	Locate , 4: Print teamRecords$(20); Tab(33); TRC$(20); Tab(52); Using "###.#"; TRC!(20)
+	Locate , 4: Print "WINS"; Tab(33); TRC$(21); Tab(53); Using "####"; TRC!(21)
 	Color 7
 
 	I$ = GetKeyPress$
@@ -243,21 +243,21 @@ Sub ViewSeasonRecords ()
 	Print
 	Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 	Color 15
-	Locate , 4: Print teamRecords$(1); Tab(33); TRC1$(1); Tab(53); Using "####"; TRC1(1)
-	Locate , 4: Print teamRecords$(2); Tab(33); TRC1$(2); Tab(53); Using "####"; TRC1(2)
-	Locate , 4: Print teamRecords$(3); Tab(33); TRC1$(3); Tab(53); Using "##.#"; TRC1(3) * 100
-	Locate , 4: Print teamRecords$(4); Tab(33); TRC1$(4); Tab(53); Using "####"; TRC1(4)
-	Locate , 4: Print teamRecords$(5); Tab(33); TRC1$(5); Tab(53); Using "####"; TRC1(5)
-	Locate , 4: Print teamRecords$(6); Tab(33); TRC1$(6); Tab(53); Using "##.#"; TRC1(6) * 100
-	Locate , 4: Print teamRecords$(7); Tab(33); TRC1$(7); Tab(53); Using "####"; TRC1(7)
-	Locate , 4: Print teamRecords$(8); Tab(33); TRC1$(8); Tab(53); Using "####"; TRC1(8)
-	Locate , 4: Print teamRecords$(9); Tab(33); TRC1$(9); Tab(53); Using "##.#"; TRC1(9) * 100
-	Locate , 4: Print teamRecords$(10); Tab(33); TRC1$(10); Tab(53); Using "####"; TRC1(10)
-	Locate , 4: Print teamRecords$(11); Tab(33); TRC1$(11); Tab(53); Using "####"; TRC1(11)
-	Locate , 4: Print teamRecords$(12); Tab(33); TRC1$(12); Tab(53); Using "####"; TRC1(12)
-	Locate , 4: Print teamRecords$(13); Tab(33); TRC1$(13); Tab(53); Using "##.#"; TRC1(13)
-	Locate , 4: Print teamRecords$(14); Tab(33); TRC1$(14); Tab(53); Using "####"; TRC1(14)
-	Locate , 4: Print teamRecords$(15); Tab(33); TRC1$(15); Tab(53); Using "####"; TRC1(15)
+	Locate , 4: Print teamRecords$(1); Tab(33); TRC1$(1); Tab(53); Using "####"; TRC1!(1)
+	Locate , 4: Print teamRecords$(2); Tab(33); TRC1$(2); Tab(53); Using "####"; TRC1!(2)
+	Locate , 4: Print teamRecords$(3); Tab(33); TRC1$(3); Tab(53); Using "##.#"; TRC1!(3) * 100
+	Locate , 4: Print teamRecords$(4); Tab(33); TRC1$(4); Tab(53); Using "####"; TRC1!(4)
+	Locate , 4: Print teamRecords$(5); Tab(33); TRC1$(5); Tab(53); Using "####"; TRC1!(5)
+	Locate , 4: Print teamRecords$(6); Tab(33); TRC1$(6); Tab(53); Using "##.#"; TRC1!(6) * 100
+	Locate , 4: Print teamRecords$(7); Tab(33); TRC1$(7); Tab(53); Using "####"; TRC1!(7)
+	Locate , 4: Print teamRecords$(8); Tab(33); TRC1$(8); Tab(53); Using "####"; TRC1!(8)
+	Locate , 4: Print teamRecords$(9); Tab(33); TRC1$(9); Tab(53); Using "##.#"; TRC1!(9) * 100
+	Locate , 4: Print teamRecords$(10); Tab(33); TRC1$(10); Tab(53); Using "####"; TRC1!(10)
+	Locate , 4: Print teamRecords$(11); Tab(33); TRC1$(11); Tab(53); Using "####"; TRC1!(11)
+	Locate , 4: Print teamRecords$(12); Tab(33); TRC1$(12); Tab(53); Using "####"; TRC1!(12)
+	Locate , 4: Print teamRecords$(13); Tab(33); TRC1$(13); Tab(53); Using "##.#"; TRC1!(13)
+	Locate , 4: Print teamRecords$(14); Tab(33); TRC1$(14); Tab(53); Using "####"; TRC1!(14)
+	Locate , 4: Print teamRecords$(15); Tab(33); TRC1$(15); Tab(53); Using "####"; TRC1!(15)
 	Color 7
 
 	I$ = GetKeyPress$
@@ -281,12 +281,12 @@ Sub ViewSeasonRecords ()
 	Print
 	Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 	Color 15
-	Locate , 4: Print teamRecords$(16); Tab(33); TRC1$(16); Tab(53); Using "####"; TRC1(16)
-	Locate , 4: Print teamRecords$(17); Tab(33); TRC1$(17); Tab(53); Using "####"; TRC1(17)
-	Locate , 4: Print teamRecords$(18); Tab(33); TRC1$(18); Tab(53); Using "####"; TRC1(18)
-	Locate , 4: Print teamRecords$(19); Tab(33); TRC1$(19); Tab(52); Using "#####"; TRC1(19)
-	Locate , 4: Print teamRecords$(20); Tab(33); TRC1$(20); Tab(52); Using "###.#"; TRC1(20)
-	Locate , 4: Print "LOSSES"; Tab(33); TRC1$(21); Tab(53); Using "####"; TRC1(21)
+	Locate , 4: Print teamRecords$(16); Tab(33); TRC1$(16); Tab(53); Using "####"; TRC1!(16)
+	Locate , 4: Print teamRecords$(17); Tab(33); TRC1$(17); Tab(53); Using "####"; TRC1!(17)
+	Locate , 4: Print teamRecords$(18); Tab(33); TRC1$(18); Tab(53); Using "####"; TRC1!(18)
+	Locate , 4: Print teamRecords$(19); Tab(33); TRC1$(19); Tab(52); Using "#####"; TRC1!(19)
+	Locate , 4: Print teamRecords$(20); Tab(33); TRC1$(20); Tab(52); Using "###.#"; TRC1!(20)
+	Locate , 4: Print "LOSSES"; Tab(33); TRC1$(21); Tab(53); Using "####"; TRC1!(21)
 	Color 7
 	I$ = GetKeyPress$
 	For I = 4 To 21: Locate I, 4
@@ -304,7 +304,7 @@ Sub PrintSeasonRecords ()
 
 	Shared teamRecords$(), indRecords$()
     Shared BRC$(), TRC$(), TRC1$()
-    Shared BRC(), TRC(), TRC1()
+    Shared BRC(), TRC!(), TRC1!()
 
 	3200 ' PRINT RECORDS
 	LPrint Tab(23); "******* INDIVIDUAL PLAYER RECORDS *******"
@@ -339,52 +339,52 @@ Sub PrintSeasonRecords ()
 	LPrint Tab(23); "*******  OFFENSIVE TEAM RECORDS *******"
 	LPrint
 	LPrint "CATEGORY                        TEAM             RECORD            "
-	LPrint teamRecords$(1); Tab(33); TRC$(1); Tab(53); Using "####"; TRC(1)
-	LPrint teamRecords$(2); Tab(33); TRC$(2); Tab(53); Using "####"; TRC(2)
-	LPrint teamRecords$(3); Tab(33); TRC$(3); Tab(53); Using "##.#"; TRC(3) * 100
-	LPrint teamRecords$(4); Tab(33); TRC$(4); Tab(53); Using "####"; TRC(4)
-	LPrint teamRecords$(5); Tab(33); TRC$(5); Tab(53); Using "####"; TRC(5)
-	LPrint teamRecords$(6); Tab(33); TRC$(6); Tab(53); Using "##.#"; TRC(6) * 100
-	LPrint teamRecords$(7); Tab(33); TRC$(7); Tab(53); Using "####"; TRC(7)
-	LPrint teamRecords$(8); Tab(33); TRC$(8); Tab(53); Using "####"; TRC(8)
-	LPrint teamRecords$(9); Tab(33); TRC$(9); Tab(53); Using "##.#"; TRC(9) * 100
-	LPrint teamRecords$(10); Tab(33); TRC$(10); Tab(53); Using "####"; TRC(10)
-	LPrint teamRecords$(11); Tab(33); TRC$(11); Tab(53); Using "####"; TRC(11)
-	LPrint teamRecords$(12); Tab(33); TRC$(12); Tab(53); Using "####"; TRC(12)
-	LPrint teamRecords$(13); Tab(33); TRC$(13); Tab(53); Using "##.#"; TRC(13)
-	LPrint teamRecords$(14); Tab(33); TRC$(14); Tab(53); Using "####"; TRC(14)
-	LPrint teamRecords$(15); Tab(33); TRC$(15); Tab(53); Using "####"; TRC(15)
-	LPrint teamRecords$(16); Tab(33); TRC$(16); Tab(53); Using "####"; TRC(16)
-	LPrint teamRecords$(17); Tab(33); TRC$(17); Tab(53); Using "####"; TRC(17)
-	LPrint teamRecords$(18); Tab(33); TRC$(18); Tab(53); Using "####"; TRC(18)
-	LPrint teamRecords$(19); Tab(33); TRC$(19); Tab(52); Using "#####"; TRC(19)
-	LPrint teamRecords$(20); Tab(33); TRC$(20); Tab(52); Using "###.#"; TRC(20)
-	LPrint "WINS"; Tab(33); TRC$(21); Tab(53); Using "####"; TRC(21)
+	LPrint teamRecords$(1); Tab(33); TRC$(1); Tab(53); Using "####"; TRC!(1)
+	LPrint teamRecords$(2); Tab(33); TRC$(2); Tab(53); Using "####"; TRC!(2)
+	LPrint teamRecords$(3); Tab(33); TRC$(3); Tab(53); Using "##.#"; TRC!(3) * 100
+	LPrint teamRecords$(4); Tab(33); TRC$(4); Tab(53); Using "####"; TRC!(4)
+	LPrint teamRecords$(5); Tab(33); TRC$(5); Tab(53); Using "####"; TRC!(5)
+	LPrint teamRecords$(6); Tab(33); TRC$(6); Tab(53); Using "##.#"; TRC!(6) * 100
+	LPrint teamRecords$(7); Tab(33); TRC$(7); Tab(53); Using "####"; TRC!(7)
+	LPrint teamRecords$(8); Tab(33); TRC$(8); Tab(53); Using "####"; TRC!(8)
+	LPrint teamRecords$(9); Tab(33); TRC$(9); Tab(53); Using "##.#"; TRC!(9) * 100
+	LPrint teamRecords$(10); Tab(33); TRC$(10); Tab(53); Using "####"; TRC!(10)
+	LPrint teamRecords$(11); Tab(33); TRC$(11); Tab(53); Using "####"; TRC!(11)
+	LPrint teamRecords$(12); Tab(33); TRC$(12); Tab(53); Using "####"; TRC!(12)
+	LPrint teamRecords$(13); Tab(33); TRC$(13); Tab(53); Using "##.#"; TRC!(13)
+	LPrint teamRecords$(14); Tab(33); TRC$(14); Tab(53); Using "####"; TRC!(14)
+	LPrint teamRecords$(15); Tab(33); TRC$(15); Tab(53); Using "####"; TRC!(15)
+	LPrint teamRecords$(16); Tab(33); TRC$(16); Tab(53); Using "####"; TRC!(16)
+	LPrint teamRecords$(17); Tab(33); TRC$(17); Tab(53); Using "####"; TRC!(17)
+	LPrint teamRecords$(18); Tab(33); TRC$(18); Tab(53); Using "####"; TRC!(18)
+	LPrint teamRecords$(19); Tab(33); TRC$(19); Tab(52); Using "#####"; TRC!(19)
+	LPrint teamRecords$(20); Tab(33); TRC$(20); Tab(52); Using "###.#"; TRC!(20)
+	LPrint "WINS"; Tab(33); TRC$(21); Tab(53); Using "####"; TRC!(21)
 	LPrint
 	LPrint Tab(23); "*******  DEFENSIVE TEAM RECORDS *******"
 	LPrint
 	LPrint "CATEGORY                        TEAM             RECORD            "
-	LPrint teamRecords$(1); Tab(33); TRC1$(1); Tab(53); Using "####"; TRC1(1)
-	LPrint teamRecords$(2); Tab(33); TRC1$(2); Tab(53); Using "####"; TRC1(2)
-	LPrint teamRecords$(3); Tab(33); TRC1$(3); Tab(53); Using "##.#"; TRC1(3) * 100
-	LPrint teamRecords$(4); Tab(33); TRC1$(4); Tab(53); Using "####"; TRC1(4)
-	LPrint teamRecords$(5); Tab(33); TRC1$(5); Tab(53); Using "####"; TRC1(5)
-	LPrint teamRecords$(6); Tab(33); TRC1$(6); Tab(53); Using "##.#"; TRC1(6) * 100
-	LPrint teamRecords$(7); Tab(33); TRC1$(7); Tab(53); Using "####"; TRC1(7)
-	LPrint teamRecords$(8); Tab(33); TRC1$(8); Tab(53); Using "####"; TRC1(8)
-	LPrint teamRecords$(9); Tab(33); TRC1$(9); Tab(53); Using "##.#"; TRC1(9) * 100
-	LPrint teamRecords$(10); Tab(33); TRC1$(10); Tab(53); Using "####"; TRC1(10)
-	LPrint teamRecords$(11); Tab(33); TRC1$(11); Tab(53); Using "####"; TRC1(11)
-	LPrint teamRecords$(12); Tab(33); TRC1$(12); Tab(53); Using "####"; TRC1(12)
-	LPrint teamRecords$(13); Tab(33); TRC1$(13); Tab(53); Using "##.#"; TRC1(13)
-	LPrint teamRecords$(14); Tab(33); TRC1$(14); Tab(53); Using "####"; TRC1(14)
-	LPrint teamRecords$(15); Tab(33); TRC1$(15); Tab(53); Using "####"; TRC1(15)
-	LPrint teamRecords$(16); Tab(33); TRC1$(16); Tab(53); Using "####"; TRC1(16)
-	LPrint teamRecords$(17); Tab(33); TRC1$(17); Tab(53); Using "####"; TRC1(17)
-	LPrint teamRecords$(18); Tab(33); TRC1$(18); Tab(53); Using "####"; TRC1(18)
-	LPrint teamRecords$(19); Tab(33); TRC1$(19); Tab(52); Using "#####"; TRC1(19)
-	LPrint teamRecords$(20); Tab(33); TRC1$(20); Tab(52); Using "###.#"; TRC1(20)
-	LPrint "LOSSES"; Tab(33); TRC1$(21); Tab(53); Using "####"; TRC1(21)
+	LPrint teamRecords$(1); Tab(33); TRC1$(1); Tab(53); Using "####"; TRC1!(1)
+	LPrint teamRecords$(2); Tab(33); TRC1$(2); Tab(53); Using "####"; TRC1!(2)
+	LPrint teamRecords$(3); Tab(33); TRC1$(3); Tab(53); Using "##.#"; TRC1!(3) * 100
+	LPrint teamRecords$(4); Tab(33); TRC1$(4); Tab(53); Using "####"; TRC1!(4)
+	LPrint teamRecords$(5); Tab(33); TRC1$(5); Tab(53); Using "####"; TRC1!(5)
+	LPrint teamRecords$(6); Tab(33); TRC1$(6); Tab(53); Using "##.#"; TRC1!(6) * 100
+	LPrint teamRecords$(7); Tab(33); TRC1$(7); Tab(53); Using "####"; TRC1!(7)
+	LPrint teamRecords$(8); Tab(33); TRC1$(8); Tab(53); Using "####"; TRC1!(8)
+	LPrint teamRecords$(9); Tab(33); TRC1$(9); Tab(53); Using "##.#"; TRC1!(9) * 100
+	LPrint teamRecords$(10); Tab(33); TRC1$(10); Tab(53); Using "####"; TRC1!(10)
+	LPrint teamRecords$(11); Tab(33); TRC1$(11); Tab(53); Using "####"; TRC1!(11)
+	LPrint teamRecords$(12); Tab(33); TRC1$(12); Tab(53); Using "####"; TRC1!(12)
+	LPrint teamRecords$(13); Tab(33); TRC1$(13); Tab(53); Using "##.#"; TRC1!(13)
+	LPrint teamRecords$(14); Tab(33); TRC1$(14); Tab(53); Using "####"; TRC1!(14)
+	LPrint teamRecords$(15); Tab(33); TRC1$(15); Tab(53); Using "####"; TRC1!(15)
+	LPrint teamRecords$(16); Tab(33); TRC1$(16); Tab(53); Using "####"; TRC1!(16)
+	LPrint teamRecords$(17); Tab(33); TRC1$(17); Tab(53); Using "####"; TRC1!(17)
+	LPrint teamRecords$(18); Tab(33); TRC1$(18); Tab(53); Using "####"; TRC1!(18)
+	LPrint teamRecords$(19); Tab(33); TRC1$(19); Tab(52); Using "#####"; TRC1!(19)
+	LPrint teamRecords$(20); Tab(33); TRC1$(20); Tab(52); Using "###.#"; TRC1!(20)
+	LPrint "LOSSES"; Tab(33); TRC1$(21); Tab(53); Using "####"; TRC1!(21)
 	LPrint Chr$(12)
 
 End Sub

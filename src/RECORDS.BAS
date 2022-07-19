@@ -12,7 +12,7 @@ Sub RECORDS (menuChoice%)
     QTR$(3) = " (3RD QTR)"
     QTR$(4) = " (4TH QTR)"
 
-    Open D$(1) + "RECORDS.GAM" For Input As #1
+    Open diskPaths$(1) + "RECORDS.GAM" For Input As #1
 
     For I = 0 To 48
         For I1 = 0 To 2

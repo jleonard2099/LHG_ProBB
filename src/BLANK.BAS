@@ -4,114 +4,113 @@ Sub BLANK ()
 
     _Title "Basketball: The Pro Game - Erase League"
 
-    5 Cls
+    Cls
 
     APP = 0
 
     Do
         'Display list of files...
 
-        4000 Spec$ = D$(1) + "*.LIB"
-    null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-    Count% = DirCount%
+        Spec$ = diskPaths$(1) + "*.LIB"
+		null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
+		Count% = DirCount%
 
-    If Count% = 0 Then
-        Locate 10, 8
-        Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass) 
-    Else
-        ReDim leagueFiles$(0 To Count%)
-        For X = 1 To Count%
-            leagueFiles$(X) = Space$(12)
-        Next
-        leagueFiles$(0) = Spec$
-        Call ReadFile(leagueFiles$())
-        'CALL SortStr(VARPTR(leagueFiles$(1)), Count%, 0)
+		If Count% = 0 Then
+			Locate 10, 8
+			Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+			I$ = GetKeyPress$
+			Call CSMsgBox("", 0, Pass) 
+		Else
+			ReDim leagueFiles$(0 To Count%)
+			For X = 1 To Count%
+				leagueFiles$(X) = Space$(12)
+			Next
+			leagueFiles$(0) = Spec$
+			Call ReadFile(leagueFiles$())
+			'CALL SortStr(VARPTR(leagueFiles$(1)), Count%, 0)
 
-        1310 '
-        Do
+			1310 '
+			Do
 
-            Cls
-            Color , 1
-            Cls
-            Locate , 28
-            Color 14
-            Print "SELECT LEAGUE TO ERASE": Color 15
-            SELECTION% = 1
-            Start% = 1
-            FileFGColr% = 15: FileBGColr% = 1
-            HiLiteFGColr% = 0: HiLiteBGColr% = 7
-            Rows% = 20
-            Columns% = 4
-            Spacing% = 6
-            Row% = 4
-            Column% = 1
-            Locate 25, 1
-            Color 14
-            Print "ENTER";: Color 15
-            Print "-SELECTS LEAGUE   ";
-            Color 14
-            Print "HIT ESCAPE KEY TO EXIT";
-            Color 15
+				Cls
+				Color , 1
+				Cls
+				Locate , 28
+				Color 14
+				Print "SELECT LEAGUE TO ERASE": Color 15
+				SELECTION% = 1
+				Start% = 1
+				FileFGColr% = 15: FileBGColr% = 1
+				HiLiteFGColr% = 0: HiLiteBGColr% = 7
+				Rows% = 20
+				Columns% = 4
+				Spacing% = 6
+				Row% = 4
+				Column% = 1
+				Locate 25, 1
+				Color 14
+				Print "ENTER";: Color 15
+				Print "-SELECTS LEAGUE   ";
+				Color 14
+				Print "HIT ESCAPE KEY TO EXIT";
+				Color 15
 
-            _MouseShow "DEFAULT"
-            MAMenu leagueFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-            _MouseHide
+				_MouseShow "DEFAULT"
+				MAMenu leagueFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+				_MouseHide
 
-            If ExitCode% = 27 Then Exit Sub 'Run "HELLO.EXE"
-            targetFile$ = leagueFiles$(SELECTION%)
-            Locate 2, 33: Print targetFile$
-            Locate , 33: Print "ANY CHANGE (YN)";
-            Color 15, 0
-            
-            Do
-            3910 I$ = GetKeyPress$
-            Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
+				If ExitCode% = 27 Then Exit Sub 'Run "HELLO.EXE"
+				targetFile$ = leagueFiles$(SELECTION%)
+				Locate 2, 33: Print targetFile$
+				Locate , 33: Print "ANY CHANGE (YN)";
+				Color 15, 0
+				
+				Do
+				3910 I$ = GetKeyPress$
+				Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
 
-            If UCase$(I$) = "Y" Then
-            'proceed with erasing all files
-                3911 targetFile$ = RTrim$(targetFile$)
-                WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-                LH$ = Left$(WE$, 8)
+				If UCase$(I$) = "Y" Then
+				'proceed with erasing all files
+					3911 targetFile$ = RTrim$(targetFile$)
+					WE$ = Left$(targetFile$, Len(targetFile$) - 4)
+					LH$ = Left$(WE$, 8)
 
-                Cls
-                Locate 10, 8
-                Call CSMsgBox("WARNING!!!::: THIS WILL ERASE ALL COMPILED STATS AND LEAGUE FILES FOR THIS LEAGUE. IF YOU STILL WISH TO ERASE ALL LEAGUE FILES AND STATS, HIT 'Y' FOR YES", 26, Pass)
-                A$ = GetKeyPress$
-                Call CSMsgBox("", 0, Pass)
+					Cls
+					Locate 10, 8
+					Call CSMsgBox("WARNING!!!::: THIS WILL ERASE ALL COMPILED STATS AND LEAGUE FILES FOR THIS LEAGUE. IF YOU STILL WISH TO ERASE ALL LEAGUE FILES AND STATS, HIT 'Y' FOR YES", 26, Pass)
+					A$ = GetKeyPress$
+					Call CSMsgBox("", 0, Pass)
 
-                If A$ = "Y" Then 
+					If A$ = "Y" Then 
 
-                    30 Open D$(1) + LH$ + ".TMS" For Input As #2
-                    Input #2, LG$, D1$, D2$, D3$, D4$
-                    For XW = 1 To 40
-                        35 Input #2, H1$(XW)
-                    Next
-                    Close 2
+						Open diskPaths$(1) + LH$ + ".TMS" For Input As #2
+						Input #2, LG$, D1$, D2$, D3$, D4$
+						For XW = 1 To TEAMS_PER_CONFERENCE
+							Input #2, H1$(XW)
+						Next
+						Close 2
 
-                    71 For XW = 1 To 40
-                        If H1$(XW) <> Chr$(42) Then                     
-                            Print "DELETING "; H1$(XW); " STATS"
-                            Kill (D$(1) + H1$(XW))
-                            Kill (D$(1) + H1$(XW) + "R")
-                            Kill (D$(1) + H1$(XW) + "S")
-                            Kill (D$(1) + H1$(XW) + "D")
-                        End If
-                        
-                    74 Next
-                    Cls
-                End If
-                
-            End If
-        
-        'Done looping through league selection / confirmation
-        Loop Until ExitCode% = 27
+						For XW = 1 To TEAMS_PER_CONFERENCE
+							If H1$(XW) <> Chr$(42) Then                     
+								Print "DELETING "; H1$(XW); " STATS"
+								Kill (diskPaths$(1) + H1$(XW))
+								Kill (diskPaths$(1) + H1$(XW) + "R")
+								Kill (diskPaths$(1) + H1$(XW) + "S")
+								Kill (diskPaths$(1) + H1$(XW) + "D")
+							End If
+						Next
+						Cls
+					End If
+					
+				End If
+			
+			'Done looping through league selection / confirmation
+			Loop Until ExitCode% = 27
 
-    End If 'Done checking file count
+		End If 'Done checking file count
 
-'...Until we press ESC
-Loop Until ExitCode% = 27 Or Count% = 0
+	'...Until we press ESC
+	Loop Until ExitCode% = 27 Or Count% = 0
 
 END SUB
