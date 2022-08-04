@@ -30,7 +30,7 @@ Sub REC ()
 		Close 1
 
 		Do
-			2300 Call TITLE
+			Call TITLE
 			'Erase menuChoices$
 			menuChoices$(1) = "VIEW SEASON RECORDS      "
 			menuChoices$(2) = "PRINT SEASON RECORDS     "
@@ -39,10 +39,10 @@ Sub REC ()
 			menuChoices$(5) = "PRINT SINGLE GAME RECORDS"
 			menuChoices$(6) = "DELETE GAME RECORDS      "
 			menuChoices$(7) = "RETURN TO GAME MENU      "
-			SELECTION% = 1
+			Selection% = 1
 			Count% = 7
 			Start% = 1
-			EXITCODE% = 7
+			ExitCode% = 7
 			FileFGColr% = 15: FileBGColr% = 1
 			HiLiteFGColr% = 0: HiLiteBGColr% = 7
 			Spacing% = 1
@@ -51,12 +51,12 @@ Sub REC ()
 
 			CALL box0(7, 24, 15, 50, 2,  15, 1)
 			_MouseShow "DEFAULT"
-			MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+			MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 			_MouseHide
 
-			If NOT (EXITCODE% = 27) THEN
+			If ExitCode% <> 27 THEN
 				Color , 0
-				Select Case SELECTION% 
+				Select Case Selection% 
 					Case 1: Call ViewSeasonRecords
 					Case 2: Call PrintSeasonRecords
 					Case 3: If _FileExists(diskPaths$(1) + "RECORDS.PBB") Then Kill diskPaths$(1) + "RECORDS.PBB"
@@ -67,7 +67,7 @@ Sub REC ()
 				End Select
 			End If
 
-		Loop Until SELECTION% = 7 OR EXITCODE% = 27
+		Loop Until Selection% = 7 OR ExitCode% = 27
 		
 	Else
 		Call TITLE
@@ -94,12 +94,16 @@ Sub ViewSeasonRecords ()
 	Cls
 	J = 20
 	Locate 1, 1: Color 15, 4: Print " " + Chr$(214); String$(73, 196); "· ";
+
 	For II = 1 To J
 		Color 15, 4
 		Locate 1 + II, 1
 		Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";: Color 7, 4: Print String$(2, 177)
 	Next
-	Color 15, 4: Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";: Color 7, 4: Print String$(2, 177)
+
+	Color 15, 4
+	Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";
+	Color 7, 4: Print String$(2, 177)
 	Locate , 3: Print String$(77, 177)
 
 	Color 15: Locate 2, 23: Print "******* INDIVIDUAL PLAYER RECORDS *******"
@@ -119,8 +123,11 @@ Sub ViewSeasonRecords ()
 	Locate , 4: Print indRecords$(11); Tab(28); BRC$(11, 0); Tab(42); BRC$(11, 1); Tab(62); Using "####"; BRC(11)
 	Locate , 4: Print indRecords$(12); Tab(28); BRC$(12, 0); Tab(42); BRC$(12, 1); Tab(62); Using "####"; BRC(12)
 	Locate , 4: Print indRecords$(13); Tab(28); BRC$(13, 0); Tab(42); BRC$(13, 1); Tab(62); Using "####"; BRC(13)
-	Color 15: Locate 22, 30: Print "HIT ANY KEY TO CONTINUE"
+	Color 15
+	Locate 22, 30: Print "HIT ANY KEY TO CONTINUE"
+	
 	I$ = GetKeyPress$
+	
 	For I = 4 To 21: Locate I, 4
 		Print Space$(72)
 	Next
@@ -129,12 +136,15 @@ Sub ViewSeasonRecords ()
 	Cls
 	J = 20
 	Locate 1, 1: Color 15, 4: Print " " + Chr$(214); String$(73, 196); "· ";
+
 	For II = 1 To J
 		Color 15, 4
 		Locate 1 + II, 1
 		Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";: Color 7, 4: Print String$(2, 177)
 	Next
-	Color 15, 4: Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";: Color 7, 4: Print String$(2, 177)
+
+	Color 15, 4: Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";
+	Color 7, 4: Print String$(2, 177)
 	Locate , 3: Print String$(77, 177)
 
 	Color 15: Locate 2, 23: Print "******* INDIVIDUAL PLAYER RECORDS *******"
@@ -193,24 +203,31 @@ Sub ViewSeasonRecords ()
 	Color 7
 
 	I$ = GetKeyPress$
-	For I = 4 To 21: Locate I, 4
+	For I = 4 To 21
+		Locate I, 4
 		Print Space$(72)
 	Next
 
 	Color 0, 0
 	Cls
 	J = 20
-	Locate 1, 1: Color 15, 1: Print " " + Chr$(214); String$(73, 196); "· ";
+	Locate 1, 1
+	Color 15, 1: Print " " + Chr$(214); String$(73, 196); "· ";
+	
 	For II = 1 To J
 		Color 15, 1
 		Locate 1 + II, 1
-		Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";: Color 7, 1: Print String$(2, 177)
+		Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";
+		Color 7, 1: Print String$(2, 177)
 	Next
 
-	Color 15, 1: Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";: Color 7, 1: Print String$(2, 177)
+	Color 15, 1
+	Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";
+	Color 7, 1: Print String$(2, 177)
 	Locate , 3: Print String$(77, 177)
 
-	Color 15: Locate 2, 23: Print "*******  OFFENSIVE TEAM RECORDS *******"
+	Color 15
+	Locate 2, 23: Print "*******  OFFENSIVE TEAM RECORDS *******"
 	Print
 	Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 	Color 14
@@ -223,23 +240,32 @@ Sub ViewSeasonRecords ()
 	Color 7
 
 	I$ = GetKeyPress$
-	For I = 4 To 21: Locate I, 4
+	For I = 4 To 21
+		Locate I, 4
 		Print Space$(72)
 	Next
 
 	Color 0, 0
 	Cls
 	J = 20
-	Locate 1, 1: Color 15, 4: Print " " + Chr$(214); String$(73, 196); "· ";
+
+	Locate 1, 1
+	Color 15, 4: Print " " + Chr$(214); String$(73, 196); "· ";
+	
 	For II = 1 To J
 		Color 15, 4
 		Locate 1 + II, 1
-		Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";: Color 7, 4: Print String$(2, 177)
+		Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";
+		Color 7, 4: Print String$(2, 177)
 	Next
-	Color 15, 4: Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";: Color 7, 4: Print String$(2, 177)
+	
+	Color 15, 4
+	Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";
+	Color 7, 4: Print String$(2, 177)
 	Locate , 3: Print String$(77, 177)
 
-	Color 14: Locate 2, 23: Print "*******  DEFENSIVE TEAM RECORDS *******"
+	Color 14
+	Locate 2, 23: Print "*******  DEFENSIVE TEAM RECORDS *******"
 	Print
 	Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 	Color 15
@@ -268,16 +294,21 @@ Sub ViewSeasonRecords ()
 	Color 0, 0
 	Cls
 	J = 20
-	Locate 1, 1: Color 15, 4: Print " " + Chr$(214); String$(73, 196); "· ";
+	Locate 1, 1
+	Color 15, 4: Print " " + Chr$(214); String$(73, 196); "· ";
 	For II = 1 To J
 		Color 15, 4
 		Locate 1 + II, 1
-		Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";: Color 7, 4: Print String$(2, 177)
+		Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";
+		Color 7, 4: Print String$(2, 177)
 	Next
-	Color 15, 4: Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";: Color 7, 4: Print String$(2, 177)
+	Color 15, 4
+	Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";
+	Color 7, 4: Print String$(2, 177)
 	Locate , 3: Print String$(77, 177)
 
-	Color 14: Locate 2, 23: Print "*******  DEFENSIVE TEAM RECORDS *******"
+	Color 14
+	Locate 2, 23: Print "*******  DEFENSIVE TEAM RECORDS *******"
 	Print
 	Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 	Color 15
@@ -288,11 +319,13 @@ Sub ViewSeasonRecords ()
 	Locate , 4: Print teamRecords$(20); Tab(33); TRC1$(20); Tab(52); Using "###.#"; TRC1!(20)
 	Locate , 4: Print "LOSSES"; Tab(33); TRC1$(21); Tab(53); Using "####"; TRC1!(21)
 	Color 7
+
 	I$ = GetKeyPress$
+	
 	For I = 4 To 21: Locate I, 4
 		Print Space$(72)
 	Next
-	'GoTo 2300
+
 End Sub
 
 
@@ -306,7 +339,7 @@ Sub PrintSeasonRecords ()
     Shared BRC$(), TRC$(), TRC1$()
     Shared BRC(), TRC!(), TRC1!()
 
-	3200 ' PRINT RECORDS
+	' PRINT RECORDS
 	LPrint Tab(23); "******* INDIVIDUAL PLAYER RECORDS *******"
 	LPrint
 	LPrint "CATEGORY                PLAYER           TEAM            RECORD"
@@ -388,6 +421,3 @@ Sub PrintSeasonRecords ()
 	LPrint Chr$(12)
 
 End Sub
-
-'	3750 Locate 23, 1: Print "PRESS ANY KEY TO CONTINUE";
-'	3751 I$ = GetKeyPress$

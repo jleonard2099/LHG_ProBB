@@ -18,14 +18,14 @@ Sub HD2HD ()
     Do
         Cls
 
-        600 Call TITLE
+        Call TITLE
         'Erase menuChoices$
         menuChoices$(1) = "VIEW TEAM VS LEAGUE    "
         menuChoices$(2) = "RETURN TO PRO GAME MENU"
-        SELECTION% = 1
+        Selection% = 1
         Count% = 2
         Start% = 1
-        EXITCODE% = 2
+        ExitCode% = 2
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -34,17 +34,16 @@ Sub HD2HD ()
 
         Call box0(7, 24, 10, 48, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
-        If Not (EXITCODE% = 27) Then
-            Select Case SELECTION%
+        If ExitCode% <> 27 Then
+            Select Case Selection%
                 Case 1:
 
-                    630 RDD = 0
-
-                    39 ER = 0
+                    RDD = 0
+                    ER = 0
 
                     Call GetTeam_HD2HD
 
@@ -74,7 +73,6 @@ Sub HD2HD ()
                         I$ = GetKeyPress$
                         Call CSMsgBox("", 0, Pass)
                         Color , 0
-                        'GoTo 600
                     Else
                         Open diskPaths$(1) + Z$ + "S" For Input As #4
                         Input #4, Y
@@ -86,7 +84,7 @@ Sub HD2HD ()
                         Call SelectLeague_HD2HD(LG$)
 
                         If LG$ <> "" Then
-                            49 Cls
+                            Cls
                             J = 5
                             Locate 8, 8
                             Color 15, 1: Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
@@ -107,30 +105,34 @@ Sub HD2HD ()
                             If UCase$(I$) = "P" Then X1 = 1
                             If UCase$(I$) = "S" Then VPP = 1
 
-                            78 W$ = LG$ + ".LIB"
+                            W$ = LG$ + ".LIB"
                             Open diskPaths$(1) + W$ For Input As #1
                             Input #1, LG$
                             Input #1, D1$: Input #1, D2$: Input #1, D3$: Input #1, D4$
                             For X = 1 To TEAMS_PER_CONFERENCE
                                 Input #1, Z1$(X): Input #1, intZ1%(X): Input #1, Z2$(X)
                             Next
-                            NT = TEAMS_PER_CONFERENCE
+                            NTMS = TEAMS_PER_CONFERENCE
                             Close 1
 
                             Cls
-                            Color 15: Locate 18, 18: Print "COMPUTING W/L/T RECORDS . . . PLEASE WAIT"
+                            Color 15
+							Locate 18, 18: Print "COMPUTING W/L/T RECORDS . . . PLEASE WAIT"
+
                             For Q = 1 To TEAMS_PER_CONFERENCE
                                 AW(Q) = 0: HW(Q) = 0
                                 hd2hdAL(Q) = 0: HL(Q) = 0
                                 R1(Q) = 0: R2(Q) = 0
                                 R3(Q) = 0: R4(Q) = 0
                             Next
+
                             For K = 1 To DIVS_PER_CONFERENCE
                                 THW(K) = 0: THL(K) = 0
                                 TAW(K) = 0: TAL(K) = 0
                                 TR1(K) = 0: TR2(K) = 0
                                 TR3(K) = 0: TR4(K) = 0
                             Next
+
                             For K = 1 To TEAMS_PER_CONFERENCE
                                 If Z1$(K) <> "XXX" Then
                                     For I = 1 To Y
@@ -157,10 +159,13 @@ Sub HD2HD ()
                                 DV$(4) = D4$
 
                                 Do
-                                    200 Cls
+                                    Cls
                                     Color 12
-                                    Locate 2, 35: Color hd2hdT(33), hd2hdT(34): Print Z$: Color 0, 0
-                                    Color 3: Locate 4: Print Tab(15); String$(7, 196); " HOME "; String$(8, 196); Tab(36); Chr$(194); String$(7, 196); " AWAY "; String$(8, 196); Tab(58); Chr$(194); String$(6, 196); " TOTALS "; String$(7, 196)
+                                    Locate 2, 35
+									Color hd2hdT(33), hd2hdT(34): Print Z$
+									Color 0, 0
+                                    Color 3
+									Locate 4: Print Tab(15); String$(7, 196); " HOME "; String$(8, 196); Tab(36); Chr$(194); String$(7, 196); " AWAY "; String$(8, 196); Tab(58); Chr$(194); String$(6, 196); " TOTALS "; String$(7, 196)
                                     Locate 5: Print Tab(15); "W"; Tab(17); "L"; Tab(21); "PCT."; Tab(26); "PF/G"; Tab(32); "PA/G"; Tab(36); Chr$(179); Tab(37); "W"; Tab(39); "L"; Tab(43); "PCT."; Tab(48); "PF/G"; Tab(54); "PA/G"; Tab(58); Chr$(179); Tab(59); "W"; Tab(61); "L"; Tab(65); "PCT."; Tab(70); "PF/G"; Tab(76); "PA/G"
 
                                     RDD = RDD + 1
@@ -179,13 +184,17 @@ Sub HD2HD ()
                                             If DV$(RDD) = "XXX" Or DV$(RDD) = "" Then Exit Do
                                     End Select
 
-                                    215 Color 11: Print DV$(RDD);: Color 3: Print Tab(36); Chr$(179); Tab(58); Chr$(179)
+                                    Color 11: Print DV$(RDD);: Color 3: Print Tab(36); Chr$(179); Tab(58); Chr$(179)
+
                                     For K = DD To EE
                                         If Z1$(K) = "XXX" Or Z1$(K) = Q$(0) Then 250
 
-                                        Color 15: Locate , 1: Print Left$(Z1$(K), 13);
-                                        Color 7: Locate , 15: Print Using "#"; HW(K);
+                                        Color 15
+										Locate , 1: Print Left$(Z1$(K), 13);
+                                        Color 7
+										Locate , 15: Print Using "#"; HW(K);
                                         Locate , 17: Print Using "#"; HL(K);
+
                                         If HW(K) = HW(K) + HL(K) And HW(K) <> 0 Then Locate , 19: Print "1.000";
                                         If HW(K) = 0 Then Locate , 20: Print ".000";
                                         If HW(K) > 0 And HW(K) < HW(K) + HL(K) Then Locate , 20: Print Using ".###"; (HW(K) / (HW(K) + HL(K)));
@@ -194,8 +203,10 @@ Sub HD2HD ()
                                         If R2(K) = 0 Then Locate , 31: Print "  0.0";
                                         If R2(K) > 0 Then Locate , 31: Print Using "###.#"; R2(K) / (HW(K) + HL(K));
                                         Color 3: Print Tab(36); Chr$(179);
-                                        Color 7: Locate , 37: Print Using "#"; AW(K);
+                                        Color 7
+										Locate , 37: Print Using "#"; AW(K);
                                         Locate , 39: Print Using "#"; hd2hdAL(K);
+
                                         If AW(K) = AW(K) + hd2hdAL(K) And AW(K) <> 0 Then Locate , 41: Print "1.000";
                                         If AW(K) = 0 Then Locate , 42: Print ".000";
                                         If AW(K) > 0 And AW(K) < AW(K) + hd2hdAL(K) Then Locate , 42: Print Using ".###"; (AW(K) / (AW(K) + hd2hdAL(K)));
@@ -203,9 +214,12 @@ Sub HD2HD ()
                                         If R3(K) > 0 Then Locate , 47: Print Using "###.#"; R3(K) / (AW(K) + hd2hdAL(K));
                                         If R4(K) = 0 Then Locate , 53: Print "  0.0";
                                         If R4(K) > 0 Then Locate , 53: Print Using "###.#"; R4(K) / (AW(K) + hd2hdAL(K));
+
                                         Color 3: Print Tab(58); Chr$(179);
-                                        Color 7: Locate , 59: Print Using "##"; HW(K) + AW(K);
+                                        Color 7
+										Locate , 59: Print Using "##"; HW(K) + AW(K);
                                         Locate , 61: Print Using "##"; HL(K) + hd2hdAL(K);
+
                                         If (HW(K) + AW(K)) = (HW(K) + AW(K) + HL(K) + hd2hdAL(K)) And (HW(K) + AW(K)) <> 0 Then Locate , 63: Print "1.000";
                                         If (HW(K) + AW(K)) = 0 Then Locate , 64: Print ".000";
                                         If (HW(K) + AW(K)) > 0 And (HW(K) + AW(K)) < (HW(K) + AW(K) + HL(K) + hd2hdAL(K)) Then Locate , 64: Print Using ".###"; ((HW(K) + AW(K)) / (HW(K) + AW(K) + HL(K) + hd2hdAL(K)));
@@ -213,7 +227,9 @@ Sub HD2HD ()
                                         If R1(K) + R3(K) > 0 Then Locate , 69: Print Using "###.#"; (R1(K) + R3(K)) / (HW(K) + HL(K) + AW(K) + hd2hdAL(K));
                                         If R2(K) + R4(K) = 0 Then Locate , 75: Print "  0.0";
                                         If R2(K) + R4(K) > 0 Then Locate , 75: Print Using "###.#"; (R2(K) + R4(K)) / (HW(K) + HL(K) + AW(K) + hd2hdAL(K))
+
                                         Color 3: Print Tab(36); Chr$(179); Tab(58); Chr$(179);
+
                                         THW(RDD) = THW(RDD) + HW(K)
                                         THL(RDD) = THL(RDD) + HL(K)
                                         TAW(RDD) = TAW(RDD) + AW(K)
@@ -223,35 +239,47 @@ Sub HD2HD ()
                                         TR3(RDD) = TR3(RDD) + R3(K)
                                         TR4(RDD) = TR4(RDD) + R4(K)
 
-                                    250 Next K
+                                    Next K
 
                                     Print
 
-                                    Color 11: Locate , 14: Print Using "##"; THW(RDD);
+                                    Color 11
+									Locate , 14: Print Using "##"; THW(RDD);
+
                                     If THW(RDD) = THW(RDD) + THL(RDD) And THW(RDD) <> 0 Then Locate , 19: Print "1.000";
                                     If THW(RDD) = 0 Then Locate , 20: Print ".000";
                                     If THW(RDD) > 0 And THW(RDD) < THW(RDD) + THL(RDD) Then Locate , 20: Print Using ".###"; (THW(RDD) / (THW(RDD) + THL(RDD)));
                                     If TR2(RDD) < 1 Then Locate , 32: Print " 0.0";
                                     If TR2(RDD) > 0 Then Locate , 31: Print Using "###.#"; TR2(RDD) / (THW(RDD) + THL(RDD));
+
                                     Locate , 38: Print Using "##"; TAL(RDD);
+
                                     If TR3(RDD) < 1 Then Locate , 48: Print " 0.0";
                                     If TR3(RDD) > 0 Then Locate , 47: Print Using "###.#"; TR3(RDD) / (TAW(RDD) + TAL(RDD));
+
                                     Locate , 57: Print Using "###"; THW(RDD) + TAW(RDD);
-                                    Color 11: If THW(RDD) + TAW(RDD) = THW(RDD) + THL(RDD) + TAW(RDD) + TAL(RDD) And THW(RDD) + TAW(RDD) <> 0 Then Locate , 63: Print "1.000";
+                                    Color 11
+
+									If THW(RDD) + TAW(RDD) = THW(RDD) + THL(RDD) + TAW(RDD) + TAL(RDD) And THW(RDD) + TAW(RDD) <> 0 Then Locate , 63: Print "1.000";
                                     If THW(RDD) + TAW(RDD) = 0 Then Locate , 64: Print ".000";
                                     If THW(RDD) + TAW(RDD) > 0 And THW(RDD) + TAW(RDD) < THW(RDD) + TAW(RDD) + THL(RDD) + TAL(RDD) Then Locate , 64: Print Using ".###"; (THW(RDD) + TAW(RDD)) / (THW(RDD) + TAW(RDD) + THL(RDD) + TAL(RDD));
                                     If TR2(RDD) + TR4(RDD) < 1 Then Locate , 76: Print " 0.0"
                                     If TR2(RDD) + TR4(RDD) > 0 Then Locate , 75: Print Using "###.#"; (TR2(RDD) + TR4(RDD)) / (THW(RDD) + THL(RDD) + TAW(RDD) + TAL(RDD))
+
                                     Locate , 5: Print "TOTALS";
+
                                     If TR1(RDD) < 1 Then Locate , 26: Print " 0.0";
                                     If TR1(RDD) > 0 Then Locate , 25: Print Using "###.#"; TR1(RDD) / (THW(RDD) + THL(RDD));
+
                                     Color 11: If TAW(RDD) = TAW(RDD) + TAL(RDD) And TAW(RDD) <> 0 Then Locate , 41: Print "1.000";
+
                                     If TAW(RDD) = 0 Then Locate , 42: Print ".000";
                                     If TAW(RDD) > 0 And TAW(RDD) < TAW(RDD) + TAL(RDD) Then Locate , 42: Print Using ".###"; (TAW(RDD) / (TAW(RDD) + TAL(RDD)));
                                     If TR4(RDD) < 1 Then Locate , 54: Print " 0.0";
                                     If TR4(RDD) > 0 Then Locate , 53: Print Using "###.#"; TR4(RDD) / (TAW(RDD) + TAL(RDD));
                                     If TR1(RDD) + TR3(RDD) = 0 Then Locate , 70: Print " 0.0";
                                     If TR1(RDD) + TR3(RDD) > 0 Then Locate , 69: Print Using "###.#"; (TR1(RDD) + TR3(RDD)) / (THW(RDD) + THL(RDD) + TAW(RDD) + TAL(RDD));
+
                                     Locate , 16: Print Using "##"; THL(RDD);
                                     Locate , 36: Print Using "##"; TAW(RDD);
                                     Locate , 59: Print Using "###"; THL(RDD) + TAL(RDD)
@@ -259,16 +287,22 @@ Sub HD2HD ()
 
                                 Loop Until RDD = 4
 
-                                Cls: Color 12: Locate 2, 35: Color hd2hdT(33), hd2hdT(34): Print Z$: Color 0, 0
-                                Color 3: Locate 4: Print Tab(9); String$(8, 196); " HOME "; String$(9, 196); Tab(32); Chr$(194); String$(8, 196); " AWAY "; String$(9, 196); Tab(56); Chr$(194); String$(7, 196); " TOTALS "; String$(8, 196)
+                                Cls
+								Color 12
+								Locate 2, 35
+								Color hd2hdT(33), hd2hdT(34): Print Z$
+								Color 0, 0
+                                Color 3
+								Locate 4: Print Tab(9); String$(8, 196); " HOME "; String$(9, 196); Tab(32); Chr$(194); String$(8, 196); " AWAY "; String$(9, 196); Tab(56); Chr$(194); String$(7, 196); " TOTALS "; String$(8, 196)
                                 Locate 5: Print Tab(10); "W"; Tab(13); "L"; Tab(17); "PCT."; Tab(22); "PF/G"; Tab(28); "PA/G"; Tab(32); Chr$(179); Tab(34); "W"; Tab(37); "L"; Tab(41); "PCT."; Tab(46); "PF/G"; Tab(52); "PA/G"; Tab(56); Chr$(179); Tab(58); "W"; Tab(61); "L"; Tab(65); "PCT."; Tab(70); "PF/G"; Tab(76); "PA/G"
                                 Color 3: Print Tab(32); Chr$(179); Tab(56); Chr$(179)
 								
                                 For W = 1 To DIVS_PER_CONFERENCE
                                     If DV$(W) <> "XXX" And DV$(W) <> "" Then
-                                        461 Color 15: Locate , 1: Print Left$(DV$(W), 10);
+                                        Color 15: Locate , 1: Print Left$(DV$(W), 10);
                                         Color 7: Locate , 9: Print Using "##"; THW(W);
                                         Locate , 12: Print Using "##"; THL(W);
+
                                         If THW(W) = THW(W) + THL(W) And THW(W) <> 0 Then Locate , 15: Print "1.000";
                                         If THW(W) = 0 Then Locate , 16: Print ".000";
                                         If THW(W) > 0 And THW(W) < THW(W) + THL(W) Then Locate , 16: Print Using ".###"; (THW(W) / (THW(W) + THL(W)));
@@ -276,9 +310,11 @@ Sub HD2HD ()
                                         If TR1(W) > 0 Then Locate , 21: Print Using "###.#"; TR1(W) / (THW(W) + THL(W));
                                         If TR2(W) = 0 Then Locate , 27: Print "  0.0";
                                         If TR2(W) > 0 Then Locate , 27: Print Using "###.#"; TR2(W) / (THW(W) + THL(W));
+
                                         Color 3: Print Tab(32); Chr$(179);
                                         Color 7: Locate , 33: Print Using "##"; TAW(W);
                                         Locate , 36: Print Using "##"; TAL(W);
+
                                         If TAW(W) = TAW(W) + TAL(W) And TAW(W) <> 0 Then Locate , 39: Print "1.000";
                                         If TAW(W) = 0 Then Locate , 40: Print ".000";
                                         If TAW(W) > 0 And TAW(W) < TAW(W) + TAL(W) Then Locate , 40: Print Using ".###"; (TAW(W) / (TAW(W) + TAL(W)));
@@ -286,9 +322,12 @@ Sub HD2HD ()
                                         If TR3(W) > 0 Then Locate , 45: Print Using "###.#"; TR3(W) / (TAW(W) + TAL(W));
                                         If TR4(W) = 0 Then Locate , 51: Print "  0.0";
                                         If TR4(W) > 0 Then Locate , 51: Print Using "###.#"; TR4(W) / (TAW(W) + TAL(W));
+
                                         Color 3: Print Tab(56); Chr$(179);
-                                        Color 7: Locate , 57: Print Using "##"; THW(W) + TAW(W);
+                                        Color 7
+										Locate , 57: Print Using "##"; THW(W) + TAW(W);
                                         Locate , 60: Print Using "##"; THL(W) + TAL(W);
+
                                         If THW(W) + TAW(W) = THW(W) + TAW(W) + THL(W) + TAL(W) And THW(W) + TAW(W) <> 0 Then Locate , 63: Print "1.000";
                                         If (THW(W) + TAW(W)) = 0 Then Locate , 64: Print ".000";
                                         If (THW(W) + TAW(W)) > 0 And THW(W) + TAW(W) < THW(W) + TAW(W) + THL(W) + TAL(W) Then Locate , 64: Print Using ".###"; ((THW(W) + TAW(W)) / (THW(W) + TAW(W) + THL(W) + TAL(W)));
@@ -296,11 +335,13 @@ Sub HD2HD ()
                                         If TR1(W) + TR3(W) > 0 Then Locate , 69: Print Using "###.#"; (TR1(W) + TR3(W)) / (THW(W) + THL(W) + TAW(W) + TAL(W));
                                         If TR2(W) + TR4(W) = 0 Then Locate , 75: Print "  0.0";
                                         If TR2(W) + TR4(W) > 0 Then Locate , 75: Print Using "###.#"; (TR2(W) + TR4(W)) / (THW(W) + THL(W) + TAW(W) + TAL(W))
+
                                         Color 3: Print Tab(32); Chr$(179); Tab(56); Chr$(179);
                                     End If
 
-                                490 Next W
-                                THWW = 0: THLL = 0: TAWW = 0: TALL = 0
+                                Next W
+                                
+								THWW = 0: THLL = 0: TAWW = 0: TALL = 0
 
                                 For I = 1 To DIVS_PER_CONFERENCE
                                     THWW = THWW + THW(I): THLL = THLL + THL(I): TAWW = TAWW + TAW(I): TALL = TALL + TAL(I)
@@ -316,16 +357,19 @@ Sub HD2HD ()
                                 Color 11: Print "TOTALS";
                                 Locate , 9: Print Using "##"; THWW;
                                 Locate , 12: Print Using "##"; THLL;
-                                If THWW = THWW + THLL And THWW <> 0 Then Locate , 15: Print "1.000";
+                                
+								If THWW = THWW + THLL And THWW <> 0 Then Locate , 15: Print "1.000";
                                 If THWW = 0 Then Locate , 16: Print ".000";
                                 If THWW > 0 And THWW < THWW + THLL Then Locate , 16: Print Using ".###"; THWW / (THWW + THLL);
                                 If TR11 = 0 Then Locate , 21: Print "  0.0";
                                 If TR11 > 0 Then Locate , 21: Print Using "###.#"; TR11 / (THWW + THLL);
                                 If TR22 = 0 Then Locate , 27: Print "  0.0";
                                 If TR22 > 0 Then Locate , 27: Print Using "###.#"; TR22 / (THWW + THLL);
-                                Color 3: Print Tab(32); Chr$(179);
+                                
+								Color 3: Print Tab(32); Chr$(179);
                                 Color 11: Locate , 33: Print Using "##"; TAWW;
                                 Locate , 36: Print Using "##"; TALL;
+
                                 If TAWW = TAWW + TALL And TAWW <> 0 Then Locate , 39: Print "1.000";
                                 If TAWW = 0 Then Locate , 40: Print ".000";
                                 If TAWW > 0 And TAWW < TAWW + TALL Then Locate , 40: Print Using ".###"; TAWW / (TAWW + TALL);
@@ -333,9 +377,11 @@ Sub HD2HD ()
                                 If TR33 > 0 Then Locate , 45: Print Using "###.#"; TR33 / (TAWW + TALL);
                                 If TR44 = 0 Then Locate , 51: Print "  0.0";
                                 If TR44 > 0 Then Locate , 51: Print Using "###.#"; TR44 / (TAWW + TALL);
+
                                 Color 3: Print Tab(56); Chr$(179);
                                 Color 11: Locate , 57: Print Using "##"; THWW + TAWW;
                                 Locate , 60: Print Using "##"; THLL + TALL;
+
                                 If THWW + TAWW = THWW + TAWW + THLL + TALL And THWW + TAWW <> 0 Then Locate , 63: Print "1.000";
                                 If THWW + TAWW = 0 Then Locate , 64: Print ".000";
                                 If THWW + TAWW > 0 And THWW + TAWW < THWW + TAWW + THLL + TALL Then Locate , 64: Print Using ".###"; (THWW + TAWW) / (THWW + TAWW + THLL + TALL);
@@ -357,7 +403,7 @@ Sub HD2HD ()
 
         End If
 
-    Loop Until SELECTION% = 2 Or EXITCODE% = 27 Or LG$ = ""
+    Loop Until Selection% = 2 Or ExitCode% = 27 Or LG$ = ""
 
 End Sub
 
@@ -374,8 +420,8 @@ Sub PrintHD2HD ()
     Shared TAL(), TAW(), THL(), THW()
     Shared TR1(), TR2(), TR3(), TR4()
 
-    1200 LPrint Chr$(15)
-    '    WIDTH "LPT1:1", 130
+    LPrint Chr$(15)
+    'WIDTH "LPT1:1", 130
     DV$(1) = D1$
     DV$(2) = D2$
     DV$(3) = D3$
@@ -386,7 +432,7 @@ Sub PrintHD2HD ()
     LPrint Tab(22); "W"; Tab(26); "L"; Tab(30); "PCT."; Tab(36); "PF/G"; Tab(43); "PA/G"; Tab(54); "W"; Tab(58); "L"; Tab(62); "PCT."; Tab(68); "PF/G"; Tab(75); "PA/G"; Tab(86); "W"; Tab(91); "L"; Tab(97); "PCT."; Tab(103); "PF/G"; Tab(110); "PA/G"
 
     Do
-        1204 RDD = RDD + 1
+        RDD = RDD + 1
 
         Select Case RDD
             Case 1:
@@ -403,13 +449,14 @@ Sub PrintHD2HD ()
                 If DV$(RDD) = "XXX" Or DV$(RDD) = "" Then Exit Do
         End Select
 
-        1215 LPrint Tab(2); DV$(RDD)
+        LPrint Tab(2); DV$(RDD)
         For K = DD To EE
 
             If Z1$(K) <> "XXX" And Z1$(K) <> Q$(0) Then
                 LPrint Z1$(K);
                 LPrint Tab(22); Using "#"; HW(K);
                 LPrint Tab(26); Using "#"; HL(K);
+
                 If HW(K) = HW(K) + HL(K) And HW(K) <> 0 Then LPrint Tab(28); "1.000";
                 If HW(K) = 0 Then LPrint Tab(29); ".000";
                 If HW(K) > 0 And HW(K) < HW(K) + HL(K) Then LPrint Tab(29); Using ".###"; (HW(K) / (HW(K) + HL(K)));
@@ -417,8 +464,10 @@ Sub PrintHD2HD ()
                 If R1(K) > 0 Then LPrint Tab(35); Using "###.#"; R1(K) / (HW(K) + HL(K));
                 If R2(K) = 0 Then LPrint Tab(42); "  0.0";
                 If R2(K) > 0 Then LPrint Tab(42); Using "###.#"; R2(K) / (HW(K) + HL(K));
+
                 LPrint Tab(54); Using "#"; AW(K);
                 LPrint Tab(58); Using "#"; hd2hdAL(K);
+
                 If AW(K) = AW(K) + hd2hdAL(K) And AW(K) <> 0 Then LPrint Tab(60); "1.000";
                 If AW(K) = 0 Then LPrint Tab(61); ".000";
                 If AW(K) > 0 And AW(K) < AW(K) + hd2hdAL(K) Then LPrint Tab(61); Using ".###"; (AW(K) / (AW(K) + hd2hdAL(K)));
@@ -426,8 +475,10 @@ Sub PrintHD2HD ()
                 If R3(K) > 0 Then LPrint Tab(67); Using "###.#"; R3(K) / (AW(K) + hd2hdAL(K));
                 If R4(K) = 0 Then LPrint Tab(74); "  0.0";
                 If R4(K) > 0 Then LPrint Tab(74); Using "###.#"; R4(K) / (AW(K) + hd2hdAL(K));
+
                 LPrint Tab(86); Using "##"; HW(K) + AW(K);
                 LPrint Tab(91); Using "##"; HL(K) + hd2hdAL(K);
+
                 If HW(K) + AW(K) = HW(K) + AW(K) + HL(K) + hd2hdAL(K) And HW(K) + AW(K) <> 0 Then LPrint Tab(95); "1.000";
                 If (HW(K) + AW(K)) = 0 Then LPrint Tab(96); ".000";
                 If (HW(K) + AW(K)) > 0 And (HW(K) + AW(K)) < (HW(K) + AW(K) + HL(K) + hd2hdAL(K)) Then LPrint Tab(96); Using ".###"; ((HW(K) + AW(K)) / (HW(K) + AW(K) + HL(K) + hd2hdAL(K)));
@@ -435,6 +486,7 @@ Sub PrintHD2HD ()
                 If R1(K) + R3(K) > 0 Then LPrint Tab(102); Using "###.#"; (R1(K) + R3(K)) / (HW(K) + HL(K) + AW(K) + hd2hdAL(K));
                 If R2(K) + R4(K) = 0 Then LPrint Tab(109); "  0.0"
                 If R2(K) + R4(K) > 0 Then LPrint Tab(109); Using "###.#"; (R2(K) + R4(K)) / (HW(K) + HL(K) + AW(K) + hd2hdAL(K))
+
                 THW(RDD) = THW(RDD) + HW(K)
                 THL(RDD) = THL(RDD) + HL(K)
                 TAW(RDD) = TAW(RDD) + AW(K)
@@ -444,11 +496,12 @@ Sub PrintHD2HD ()
                 TR3(RDD) = TR3(RDD) + R3(K)
                 TR4(RDD) = TR4(RDD) + R4(K)
             End If
-        1250 Next K
+        Next K
 
         LPrint Tab(5); "TOTALS";
         LPrint Tab(21); Using "##"; THW(RDD);
         LPrint Tab(25); Using "##"; THL(RDD);
+
         If THW(RDD) = THW(RDD) + THL(RDD) And THW(RDD) <> 0 Then LPrint Tab(28); "1.000";
         If THW(RDD) = 0 Then LPrint Tab(29); ".000";
         If THW(RDD) > 0 And THW(RDD) < THW(RDD) + THL(RDD) Then LPrint Tab(29); Using ".###"; (THW(RDD) / (THW(RDD) + THL(RDD)));
@@ -456,8 +509,10 @@ Sub PrintHD2HD ()
         If TR1(RDD) > 0 Then LPrint Tab(35); Using "###.#"; TR1(RDD) / (THW(RDD) + THL(RDD));
         If TR2(RDD) = 0 Then LPrint Tab(42); "  0.0";
         If TR2(RDD) > 0 Then LPrint Tab(42); Using "###.#"; TR2(RDD) / (THW(RDD) + THL(RDD));
+
         LPrint Tab(53); Using "##"; TAW(RDD);
         LPrint Tab(57); Using "##"; TAL(RDD);
+
         If TAW(RDD) = TAW(RDD) + TAL(RDD) And TAW(RDD) <> 0 Then LPrint Tab(60); "1.000";
         If TAW(RDD) = 0 Then LPrint Tab(61); ".000";
         If TAW(RDD) > 0 And TAW(RDD) < TAW(RDD) + TAL(RDD) Then LPrint Tab(61); Using ".###"; (TAW(RDD) / (TAW(RDD) + TAL(RDD)));
@@ -465,8 +520,10 @@ Sub PrintHD2HD ()
         If TR3(RDD) > 0 Then LPrint Tab(67); Using "###.#"; TR3(RDD) / (TAW(RDD) + TAL(RDD));
         If TR4(RDD) = 0 Then LPrint Tab(74); "  0.0";
         If TR4(RDD) > 0 Then LPrint Tab(74); Using "###.#"; TR4(RDD) / (TAW(RDD) + TAL(RDD));
+
         LPrint Tab(84); Using "###"; THW(RDD) + TAW(RDD);
         LPrint Tab(89); Using "###"; THL(RDD) + TAL(RDD);
+
         If THW(RDD) + TAW(RDD) = THW(RDD) + TAW(RDD) + THL(RDD) + TAL(RDD) And THW(RDD) + TAW(RDD) <> 0 Then LPrint Tab(95); "1.000";
         If THW(RDD) + TAW(RDD) = 0 Then LPrint Tab(96); ".000";
         If THW(RDD) + TAW(RDD) > 0 And THW(RDD) + TAW(RDD) < THW(RDD) + TAW(RDD) + THL(RDD) + TAL(RDD) Then LPrint Tab(96); Using ".###"; ((THW(RDD) + TAW(RDD)) / (THW(RDD) + TAW(RDD) + THL(RDD) + TAL(RDD)));
@@ -478,13 +535,16 @@ Sub PrintHD2HD ()
 
     Loop Until RDD = 4
 
-    1401 LPrint: LPrint: LPrint Tab(22); "--------- HOME ----------"; Tab(54); "--------- AWAY ----------"; Tab(86); "---------- TOTALS ----------"
+    LPrint
+	LPrint
+	LPrint Tab(22); "--------- HOME ----------"; Tab(54); "--------- AWAY ----------"; Tab(86); "---------- TOTALS ----------"
     LPrint Tab(22); "W"; Tab(26); "L"; Tab(30); "PCT."; Tab(36); "PF/G"; Tab(43); "PA/G"; Tab(54); "W"; Tab(58); "L"; Tab(62); "PCT."; Tab(68); "PF/G"; Tab(75); "PA/G"; Tab(86); "W"; Tab(91); "L"; Tab(97); "PCT."; Tab(103); "PF/G"; Tab(110); "PA/G"
     LPrint
+
     For W = 1 To DIVS_PER_CONFERENCE
 
         If DV$(W) <> "XXX" And DV$(W) <> "" Then
-            1461 LPrint Tab(2); DV$(W);
+            LPrint Tab(2); DV$(W);
             LPrint Tab(21); Using "##"; THW(W);
             LPrint Tab(25); Using "##"; THL(W);
             If THW(W) = THW(W) + THL(W) And THW(W) <> 0 Then LPrint Tab(28); "1.000";
@@ -514,7 +574,7 @@ Sub PrintHD2HD ()
             If TR2(W) + TR4(W) > 0 Then LPrint Tab(109); Using "###.#"; (TR2(W) + TR4(W)) / (THW(W) + THL(W) + TAW(W) + TAL(W))
         End If
 
-    1490 Next W
+    Next W
 	
     THWW = 0: THLL = 0: TAWW = 0: TALL = 0
     
@@ -531,6 +591,7 @@ Sub PrintHD2HD ()
     LPrint Tab(5); "TOTALS";
     LPrint Tab(20); Using "###"; THWW;
     LPrint Tab(24); Using "###"; THLL;
+
     If THWW = THWW + THLL And THWW <> 0 Then LPrint Tab(28); "1.000";
     If THWW = 0 Then LPrint Tab(29); ".000";
     If THWW > 0 And THWW < THWW + THLL Then LPrint Tab(29); Using ".###"; THWW / (THWW + THLL);
@@ -538,8 +599,10 @@ Sub PrintHD2HD ()
     If TR11 > 0 Then LPrint Tab(35); Using "###.#"; TR11 / (THWW + THLL);
     If TR22 = 0 Then LPrint Tab(42); "  0.0";
     If TR22 > 0 Then LPrint Tab(42); Using "###.#"; TR22 / (THWW + THLL);
+
     LPrint Tab(52); Using "###"; TAWW;
     LPrint Tab(56); Using "###"; TALL;
+
     If TAWW = TAWW + TALL And TAWW <> 0 Then LPrint Tab(60); "1.000";
     If TAWW = 0 Then LPrint Tab(61); ".000";
     If TAWW > 0 And TAWW < TAWW + TALL Then LPrint Tab(61); Using ".###"; TAWW / (TAWW + TALL);
@@ -547,8 +610,10 @@ Sub PrintHD2HD ()
     If TR33 > 0 Then LPrint Tab(67); Using "###.#"; TR33 / (TAWW + TALL);
     If TR44 = 0 Then LPrint Tab(74); "  0.0";
     If TR44 > 0 Then LPrint Tab(74); Using "###.#"; TR44 / (TAWW + TALL);
+
     LPrint Tab(84); Using "###"; THWW + TAWW;
     LPrint Tab(89); Using "###"; THLL + TALL;
+
     If THWW + TAWW = THWW + TAWW + THLL + TALL And THWW + TAWW <> 0 Then LPrint Tab(95); "1.000";
     If THWW + TAWW = 0 Then LPrint Tab(96); ".000";
     If THWW + TAWW > 0 And THWW + TAWW < THWW + TAWW + THLL + TALL Then LPrint Tab(96); Using ".###"; (THWW + TAWW) / (THWW + TAWW + THLL + TALL);
@@ -557,12 +622,11 @@ Sub PrintHD2HD ()
     If TR22 + TR44 = 0 Then LPrint Tab(109); "  0.0";
     If TR22 + TR44 > 0 Then LPrint Tab(109); Using "###.#"; (TR22 + TR44) / (THWW + THLL + TAWW + TALL)
     LPrint Chr$(18)
-    '    WIDTH "LPT1:1", 80
+    'WIDTH "LPT1:1", 80
     LPrint Chr$(12)
-    'GoTo 600
 
     Color 15, 0
-    'Return
+
 End Sub
 
 
@@ -589,7 +653,7 @@ Sub GetTeam_HD2HD ()
         Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
         I$ = GetKeyPress$
 
-        If Not (I$ = Chr$(27)) Then
+        If I$ <> Chr$(27) Then
             If I$ = Chr$(13) Then
                 Call SelectTeam_HD2HD(NY$, numberTeams)
             Else
@@ -656,7 +720,7 @@ Sub SelectLeague_HD2HD (targetFile$)
                 Locate , 28
                 Color 14
                 Print "SELECT LEAGUE": Color 15
-                SELECTION% = 1
+                Selection% = 1
                 Start% = 1
                 FileFGColr% = 15: FileBGColr% = 1
                 HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -671,11 +735,11 @@ Sub SelectLeague_HD2HD (targetFile$)
                 Print "-SELECTS LEAGUE";
 
                 _MouseShow "DEFAULT"
-                MAMenu leagueFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+                MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
                 _MouseHide
 
-                If Not (ExitCode% = 27) Then
-                    targetFile$ = leagueFiles$(SELECTION%)
+                If ExitCode% <> 27 Then
+                    targetFile$ = RTrim$(leagueFiles$(Selection%))
                     Locate 2, 33: Print targetFile$
                     Locate , 33: Print "ANY CHANGE (YN)";
                     Color 15, 0
@@ -684,8 +748,7 @@ Sub SelectLeague_HD2HD (targetFile$)
 
             Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
-            If Not (ExitCode% = 27) Then
-                targetFile$ = RTrim$(targetFile$)
+            If ExitCode% <> 27 Then
                 targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
             End If
 
@@ -703,25 +766,34 @@ End Sub
 '...explanation...
 Sub ReadTeamData_HD2HD (yearNumber$, numberTeams)
 
-    1101 numberTeams = 0
-    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
-    Y = LOF(1)
-    Field #1, 15 As Q$(0), 15 As Q$(1)
-    For I = 0 To 6
+    numberTeams = 0
+    
+	Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+    
+	Y = LOF(1)
+    
+	Field #1, 15 As Q$(0), 15 As Q$(1)
+    
+	For I = 0 To 6
         Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
     Next
-    Field #1, 44 As X$, 2 As Q$(9)
-    For I = 0 To 34
+    
+	Field #1, 44 As X$, 2 As Q$(9)
+    
+	For I = 0 To 34
         Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
     Next
-    For I = 0 To 14
+    
+	For I = 0 To 14
         Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
         For I1 = 0 To 19
             Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
         Next
     Next
-    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-    For I1 = 1 To Y / 1031
+    
+	Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+    
+	For I1 = 1 To Y / 1031
         Get #1, I1
         CK% = CVI(Q$(9))
         If CK% = 999 Then
@@ -729,7 +801,7 @@ Sub ReadTeamData_HD2HD (yearNumber$, numberTeams)
             teamNames$(numberTeams) = Q$(0): teamIndex%(numberTeams) = I1
         End If
 
-    1103 Next
+    Next
     Close 1
 End Sub
 
@@ -743,7 +815,7 @@ Sub SelectTeam_HD2HD (yearNumber$, numberTeams)
 
     Shared hd2hdT()
 
-    1102 SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -760,36 +832,47 @@ Sub SelectTeam_HD2HD (yearNumber$, numberTeams)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    20 MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-	If EXITCODE% = 27 Then BO% = 1: Exit Sub
+	If ExitCode% <> 27 Then
+			
+		T1 = teamIndex%(Selection%)
+		Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
 		
-    T1 = teamIndex%(SELECTION%)
-    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
-    Field #1, 15 As Q$(0), 15 As Q$(1)
-    For I = 0 To 6
-        Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-    Next
-    Field #1, 44 As X$, 2 As Q$(9)
-    For I = 0 To 34
-        Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-    Next
-    For I = 0 To 14
-        Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-        For I1 = 0 To 19
-            Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-        Next
-    Next
-    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-    Get #1, T1
-    TM$ = Q$(0): QQ$(1) = Q$(0)
-    For I = 0 To 34: hd2hdT(I) = CVI(Q$(I + 10)): Next
-    Close 1
+		Field #1, 15 As Q$(0), 15 As Q$(1)
+		
+		For I = 0 To 6
+			Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+		Next
+		
+		Field #1, 44 As X$, 2 As Q$(9)
+		
+		For I = 0 To 34
+			Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+		Next
+		
+		For I = 0 To 14
+			Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+			For I1 = 0 To 19
+				Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+			Next
+		Next
+		
+		Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+		Get #1, T1
+		
+		TM$ = Q$(0)
+		QQ$(1) = RTRim$(Q$(0))
+		
+		For I = 0 To 34: hd2hdT(I) = CVI(Q$(I + 10)): Next
+		
+		Close 1
 
-    9005 If Right$(QQ$(1), 1) = " " Then QQ$(1) = Left$(QQ$(1), Len(QQ$(1)) - 1): GoTo 9005
-    Q$(0) = QQ$(1)
+		Q$(0) = QQ$(1)
 
-    '6620 Return
+	Else
+		BO% = 1
+	End If
 
 End Sub

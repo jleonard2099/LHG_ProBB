@@ -8,14 +8,14 @@ Sub TRADE ()
 
     Do
     
-        99 Call TITLE
+        Call TITLE
         'Erase menuChoices$
         menuChoices$(1) = "TRADE PLAYERS           "
         menuChoices$(2) = "RETURN TO PRO GAME MENU "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 2
         Start% = 1
-        EXITCODE% = 2
+        ExitCode% = 2
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -25,18 +25,17 @@ Sub TRADE ()
         Call box0(7, 24, 10, 49, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
-        If Not (EXITCODE% = 27) Then
-            If SELECTION% = 1 Then Call TradePlayers
+        If ExitCode% <> 27 Then
+            If Selection% = 1 Then Call TradePlayers
         End If
     
-    Loop Until SELECTION% = 2 Or EXITCODE% = 27
+    Loop Until Selection% = 2 Or ExitCode% = 27
 
 End Sub
-
 
 
 '----------------------------------------
@@ -59,8 +58,12 @@ Sub TradePlayers ()
         Color 15, 0: Cls
         JJ = 7
         Locate 6, 8: Color 15, 4
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+		
+		For II = 1 To JJ: Locate 6 + II, 8
+			Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+		Next
+		
         Locate 7 + JJ, 8
         Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
         Locate , 12: Print "ENTER DISK ID FOR TEAM A: ": Print
@@ -69,43 +72,52 @@ Sub TradePlayers ()
         Locate , 12: Print
         Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
         Locate 7, 38: Input NY$(J)
+
         If NY$(J) = "" Then 
-            Call SelectTeam_TRADE (J,NT, YN$())
+            Call SelectTeam_TRADE (J, NTMS, YN$())
         Else
             YN$(J) = NY$(J)
             Erase teamNames$
 
-            NT = 0
+            NTMS = 0
+
             Open diskPaths$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
             Y = LOF(1)
             Field #1, 15 As Q$(0), 15 As Q$(1)
+
             For I = 0 To 6
                 Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
             Next
+
             Field #1, 44 As X$, 2 As Q$(9)
+
             For I = 0 To 34
                 Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
             Next
+
             For I = 0 To 14
                 Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
                 For I1 = 0 To 19
                     Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
                 Next
             Next
+
             Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+
             For I1 = 1 To Y / 1031
                 Get #1, I1
                 CK% = CVI(Q$(9))
                 If CK% = 999 Then
-                    NT = NT + 1
-                    teamNames$(NT) = Q$(0): teamIndex%(NT) = I1
+                    NTMS = NTMS + 1
+                    teamNames$(NTMS) = Q$(0): teamIndex%(NTMS) = I1
                 End If
             Next
+
             Close 1
 
-            TS% = INT((NT - 1) / 80)
+            'TS% = INT((NTMS - 1) / 80)
 
-            Call SelectTeam_TRADE (J,NT, YN$())
+            Call SelectTeam_TRADE (J, NTMS, YN$())
         End If
         
         If BO% = 1 Then 
@@ -125,26 +137,32 @@ Sub TradePlayers ()
 
     Locate 6, 8: Color teamSettings%(J, 33), teamSettings%(J, 34)
     Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
+
     For II = 1 To JJ: Locate 6 + II, 8
         Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
     Next
+
     Locate 7 + JJ, 8
     Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7
     U$ = "DOES THIS TEAM HAVE SAVED STATS (YN)"
+
     Locate , (80 - Len(U$)) / 2
     Print U$
     Color 15, 0
     I$ = GetKeyPress$
 	
     If UCase$(I$) = "Y" Then 
-        '2145 GoSub 100
-        For XX = 4 To 11: If Mid$(SA$(J), XX, 1) = " " Or Mid$(SA$(J), XX, 1) = "/" Or Mid$(SA$(J), XX, 1) = "." Then Mid$(SA$(J), XX, 1) = "_"
+        For XX = 4 To 11
+			If Mid$(SA$(J), XX, 1) = " " Or Mid$(SA$(J), XX, 1) = "/" Or Mid$(SA$(J), XX, 1) = "." Then Mid$(SA$(J), XX, 1) = "_"
         Next XX
-        For XX = 12 To 14: If Mid$(SA$(J), XX, 2) = "ST" Then Mid$(SA$(J), 9, 1) = "_": Mid$(SA$(J), 10, 2) = "ST"
+
+        For XX = 12 To 14
+			If Mid$(SA$(J), XX, 2) = "ST" Then Mid$(SA$(J), 9, 1) = "_": Mid$(SA$(J), 10, 2) = "ST"
         Next XX
 
         QQ = 8
         For XX = 11 To 4 Step -1
+
             If Not (Mid$(SA$(J), XX, 1) = "_") Then 
 
                 YR$ = Left$(SA$(J), 2)
@@ -174,12 +192,15 @@ Sub TradePlayers ()
     End If
     
     Do
-        2150 J = 1
+        J = 1
         Color 15, 0: Cls
         JJ = 7
         Locate 6, 8: Color 15, 4
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+		For II = 1 To JJ: Locate 6 + II, 8
+			Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+		Next
+
         Locate 7 + JJ, 8
         Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
         Locate , 12: Print "ENTER DISK ID FOR TEAM B: ": Print
@@ -188,12 +209,13 @@ Sub TradePlayers ()
         Locate , 12: Print
         Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
         Locate 7, 38: Input NY$(J)
+
         If NY$(J) = "" Then 
-            Call SelectTeam_TRADE (J,NT, YN$())
+            Call SelectTeam_TRADE (J, NTMS, YN$())
         Else
             YN$(J) = NY$(J)
             Erase teamNames$
-            NT = 0
+            NTMS = 0
             Open diskPaths$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
             Y = LOF(1)
             Field #1, 15 As Q$(0), 15 As Q$(1)
@@ -215,15 +237,15 @@ Sub TradePlayers ()
                 Get #1, I1
                 CK% = CVI(Q$(9))
                 If CK% = 999 Then
-                    NT = NT + 1
-                    teamNames$(NT) = Q$(0): teamIndex%(NT) = I1
+                    NTMS = NTMS + 1
+                    teamNames$(NTMS) = Q$(0): teamIndex%(NTMS) = I1
                 End If
             Next
             Close 1
 
-            TS% = INT((NT - 1) / 80)
+            'TS% = INT((NTMS - 1) / 80)
 
-            Call SelectTeam_TRADE (J,NT, YN$())
+            Call SelectTeam_TRADE (J, NTMS, YN$())
         End If
         
         If BO% = 1 Then 
@@ -265,7 +287,8 @@ Sub TradePlayers ()
         Next XX
 
         QQ = 8
-        For XX = 11 To 4 Step -1
+    
+		For XX = 11 To 4 Step -1
             If Not (Mid$(SA$(J), XX, 1) = "_") Then 
 
                 YR$ = Left$(SA$(J), 2)
@@ -295,8 +318,9 @@ Sub TradePlayers ()
     'Ready to trade
     Do
 
-        200 Cls
-        Color 15: Print "T";: Color 3: Print "RADE PLAYERS": Print
+        Cls
+        Color 15: Print "T";: Color 3: Print "RADE PLAYERS"
+		Print
         Color 15: Print "N";: Color 3: Print "O MORE TRADES"
         I$ = GetKeyPress$
 
@@ -361,7 +385,7 @@ Sub TradePlayers ()
             Swap B1$(0, I), B1$(1, I1)
             
             If S(0) = 1 Or S(1) = 1 Or W1 = 0 Then 
-                240 For I2 = 0 To 13: B1(0, I, I2) = 0: B1(1, I1, I2) = 0: Next
+                For I2 = 0 To 13: B1(0, I, I2) = 0: B1(1, I1, I2) = 0: Next
                 tradeW0(1, I1) = 0: tradeW1(1, I1) = 0: tradeW0(0, I) = 0: tradeW1(0, I) = 0
             Else
                 For I2 = 0 To 13: Swap B1(0, I, I2), B1(1, I1, I2): Next I2
@@ -384,9 +408,11 @@ Sub TradePlayers ()
                     Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
                 Next
                 Field #1, 44 As X$, 2 As Q$(9)
+
                 For I = 0 To 34
                     Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
                 Next
+
                 For I = 0 To 14
                     Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
                     For I1 = 0 To 19
@@ -397,11 +423,15 @@ Sub TradePlayers ()
                 Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
                 LSet Q$(0) = tradeAA$(J, 0)
 				LSet Q$(1) = tradeAA$(J, 1)
+
 				For I = 0 To 6: 
 					LSet Q$(I + 2) = MKI$(tradeL%(J, I))
 				Next
+
                 LSet Q$(9) = MKI$(999)
+
                 For I = 0 To 34: LSet Q$(I + 10) = MKI$(teamSettings%(J, I)): Next
+
                 For I = 0 To 14
                     LSet Q$(22 * I + 45) = tradeB$(J, I, 0)
                     LSet Q$(22 * I + 46) = tradeB$(J, I, 1)
@@ -409,6 +439,7 @@ Sub TradePlayers ()
                         LSet Q$(22 * I + 47 + I1) = MKI$(tradeB%(J, I, I1))
 					Next
 				Next
+
                 LSet Q$(375) = tradeAA$(J, 2)
 				LSet Q$(376) = tradeAA$(J, 3)
 				LSet Q$(377) = tradeAA$(J, 4)
@@ -417,7 +448,6 @@ Sub TradePlayers ()
 
             For J = 0 To 1
                 If S(J) <> 1 Then
-                    Cls
                     Open diskPaths$(1) + F$(J) For Output As #1
                     Print #1, A1$(J): For I = 0 To 14: Print #1, B1$(J, I): For I1 = 0 To 13: Print #1, B1(J, I, I1): Next I1: Print #1, tradeW0(J, I): Print #1, tradeW1(J, I): Next I
                     For L = 0 To 15: Print #1, ZZtrade(J, L): Next L
@@ -445,7 +475,7 @@ Sub SelectTeam_TRADE (J, numberTeams, YN$())
 	Shared teamSettings%()
 	Shared tradeB%(), tradeL%()
 
-    SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -462,73 +492,71 @@ Sub SelectTeam_TRADE (J, numberTeams, YN$())
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-	If EXITCODE% = 27 Then BO% = 1: Exit Sub
+	If ExitCode% <> 27 Then 
 		
-    tradeT(J) = teamIndex%(SELECTION%)
+		tradeT(J) = teamIndex%(Selection%)
 
-    Open diskPaths$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
+		Open diskPaths$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
 
-    Field #1, 15 As Q$(0), 15 As Q$(1)
-    For J0 = 0 To 6
-        Field #1, 30 + J0 * 2 As X$, 2 As Q$(J0 + 2)
-    Next
-    Field #1, 44 As X$, 2 As Q$(9)
-    For J0 = 0 To 34
-        Field #1, 46 + J0 * 2 As X$, 2 As Q$(J0 + 10)
-    Next
-    For J0 = 0 To 14
-        Field #1, 116 + J0 * 57 As X$, 15 As Q$(J0 * 22 + 45), 2 As Q$(J0 * 22 + 46)
-        For J1 = 0 To 19
-            Field #1, 133 + J0 * 57 + J1 * 2 As X$, 2 As Q$(J0 * 22 + 47 + J1)
-        Next
-    Next
+		Field #1, 15 As Q$(0), 15 As Q$(1)
 
-    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+		For J0 = 0 To 6
+			Field #1, 30 + J0 * 2 As X$, 2 As Q$(J0 + 2)
+		Next
 
-    Get #1, tradeT(J)
+		Field #1, 44 As X$, 2 As Q$(9)
 
-    tradeAA$(J, 0) = Q$(0): tradeAA$(J, 1) = Q$(1)
+		For J0 = 0 To 34
+			Field #1, 46 + J0 * 2 As X$, 2 As Q$(J0 + 10)
+		Next
 
-    For I = 0 To 6
-		tradeL%(J, I) = CVI(Q$(I + 2))
-	Next
+		For J0 = 0 To 14
+			Field #1, 116 + J0 * 57 As X$, 15 As Q$(J0 * 22 + 45), 2 As Q$(J0 * 22 + 46)
+			For J1 = 0 To 19
+				Field #1, 133 + J0 * 57 + J1 * 2 As X$, 2 As Q$(J0 * 22 + 47 + J1)
+			Next
+		Next
 
-    9002 If Right$(tradeAA$(J, 0), 1) = " " Then tradeAA$(J, 0) = Left$(tradeAA$(J, 0), Len(tradeAA$(J, 0)) - 1): GoTo 9002
+		Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 
-    For I = 0 To 34
-		teamSettings%(J, I) = CVI(Q$(I + 10))
-	Next
+		Get #1, tradeT(J)
 
-    For I = 0 To 14
-        tradeB$(J, I, 0) = Q$(22 * I + 45)
+		tradeAA$(J, 0) = RTrim$(Q$(0))
+		tradeAA$(J, 1) = Q$(1)
 
-        9004 If Right$(tradeB$(J, I, 0), 1) = " " Then tradeB$(J, I, 0) = Left$(tradeB$(J, I, 0), Len(tradeB$(J, I, 0)) - 1): GoTo 9004
-        tradeB$(J, I, 1) = Q$(22 * I + 46)
+		For I = 0 To 6
+			tradeL%(J, I) = CVI(Q$(I + 2))
+		Next
 
-        9005 If Right$(tradeB$(J, I, 1), 1) = " " Then tradeB$(J, I, 1) = Left$(tradeB$(J, I, 1), Len(tradeB$(J, I, 1)) - 1): GoTo 9005
+		For I = 0 To 34
+			teamSettings%(J, I) = CVI(Q$(I + 10))
+		Next
 
-        For I1 = 0 To 19
-            tradeB%(J, I, I1) = CVI(Q$(22 * I + 47 + I1))
-        Next
-    Next
-    tradeAA$(J, 2) = Q$(375)
-	tradeAA$(J, 3) = Q$(376)
-	tradeAA$(J, 4) = Q$(377)
-    Close 1
+		For I = 0 To 14
+			tradeB$(J, I, 0) = RTrim$(Q$(22 * I + 45))
+			tradeB$(J, I, 1) = RTrim$(Q$(22 * I + 46))
 
-    SA$(J) = tradeAA$(J, 0)
+			For I1 = 0 To 19
+				tradeB%(J, I, I1) = CVI(Q$(22 * I + 47 + I1))
+			Next
+		Next
 
-    9006 If Right$(tradeAA$(J, 2), 1) = " " Then tradeAA$(J, 2) = Left$(tradeAA$(J, 2), Len(tradeAA$(J, 2)) - 1): GoTo 9006
+		tradeAA$(J, 2) = RTrim$(Q$(375))
+		tradeAA$(J, 3) = RTrim$(Q$(376))
+		tradeAA$(J, 4) = RTrim$(Q$(377))
 
-    9007 If Right$(tradeAA$(J, 3), 1) = " " Then tradeAA$(J, 3) = Left$(tradeAA$(J, 3), Len(tradeAA$(J, 3)) - 1): GoTo 9007
+		Close 1
 
-    9008 If Right$(tradeAA$(J, 4), 1) = " " Then tradeAA$(J, 4) = Left$(tradeAA$(J, 4), Len(tradeAA$(J, 4)) - 1): GoTo 9008
+		SA$(J) = tradeAA$(J, 0)
 
+	Else
+		BO% = 1
+	End If
+	
 End Sub
-
 
 
 '----------------------------------------

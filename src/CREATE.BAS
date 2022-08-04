@@ -28,10 +28,10 @@ Sub CREATE ()
     menuChoices$(1) = "CREATE / DEFINE NEW LEAGUES     "
     menuChoices$(2) = "ADD / REVIEW LEAGUE MEMBERS     "
     menuChoices$(3) = "RETURN TO STANDINGS/LEADERS MENU"
-    SELECTION% = 1
+    Selection% = 1
     Count% = 3
     Start% = 1
-    EXITCODE% = 3
+    ExitCode% = 3
     FileFGColr% = 15: FileBGColr% = 1
     HiLiteFGColr% = 0: HiLiteBGColr% = 7
     Spacing% = 1
@@ -40,14 +40,14 @@ Sub CREATE ()
 
     CALL box0(7, 24, 11, 57, 2,  15, 1)
     _MouseShow "DEFAULT"
-    MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+    MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
     _MouseHide
 
     Color , 0
     newLeague = 0
 
-    If Not (EXITCODE% = 27) Then
-        I1 = SELECTION%
+    If ExitCode% <> 27 Then
+        I1 = Selection%
         Select Case I1
             Case 1: 
                 'I = 1
@@ -91,7 +91,6 @@ Sub CREATE ()
                     Next
                     leagueFiles$(0) = Spec$
                     Call ReadFile(leagueFiles$())
-                    'CALL SortStr(VARPTR(leagueFiles$(1)), Count, 0)
 
                     Do
 
@@ -101,7 +100,7 @@ Sub CREATE ()
                         Locate , 28
                         Color 14
                         Print "SELECT LEAGUE TO EDIT  ESC-TO EXIT": Color 15
-                        SELECTION% = 1
+                        Selection% = 1
                         Start% = 1
                         FileFGColr% = 15: FileBGColr% = 1
                         HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -116,20 +115,19 @@ Sub CREATE ()
                         Print "-SELECTS TEAM";
 
                         _MouseShow "DEFAULT"
-                        MAMenu leagueFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+                        MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
                         _MouseHide
 
-                        If Not (ExitCode% = 27) Then
-                            targetFile$ = leagueFiles$(SELECTION%)
+                        If ExitCode% <> 27 Then
+                            targetFile$ = RTrim$(leagueFiles$(Selection%))
                             Locate 2, 33: Print F$
                             Locate , 33: Print "ANY CHANGE (YN)";
                             Color 15, 0
                             I$ = GetKeyPress$
                         End If
-                        'If UCase$(I$) = "Y" Then 1310
+
                     Loop Until UCase$(I$) = "N"
 
-                    targetFile$ = RTrim$(targetFile$)
                     LG$ = Left$(targetFile$, Len(targetFile$) - 4)
 
                     Open diskPaths$(1) + LG$ + ".LIB" For Input As #2
@@ -155,10 +153,9 @@ Sub CREATE ()
 
     End If
 
-Loop Until SELECTION% = 3
+Loop Until Selection% = 3
 
 Cls
-'Run "HELLO.EXE"
 
 End Sub
 
@@ -276,12 +273,12 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
                     Locate 7, 27: Input NY$
 
                     If NY$ = "" Then
-                        Call SelectTeam_CREATE (YN$, NT, D)
+                        Call SelectTeam_CREATE (YN$, NTMS, D)
                     Else
                         YN$ = NY$
                         ERASE teamNames$
                     
-                        NT = 0
+                        NTMS = 0
                         Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
                         Y = LOF(1)
                         Field #1, 15 As Q$(0), 15 As Q$(1)
@@ -303,24 +300,22 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
                             Get #1, I1
                             CK% = CVI(Q$(9))
                             If CK% = 999 Then
-                                NT = NT + 1
-                                teamNames$(NT) = Q$(0): teamIndex%(NT) = I1
+                                NTMS = NTMS + 1
+                                teamNames$(NTMS) = Q$(0)
+								teamIndex%(NTMS) = I1
                             End If
                         Next
                         Close 1
                     
-                        Call SelectTeam_CREATE (YN$, NT, D)
+                        Call SelectTeam_CREATE (YN$, NTMS, D)
                     End If
 
-                    T1$(0) = Q$(0)
+                    T1$(0) = RTrim$(Q$(0))
 
                     For I = 0 To 34: createT%(I) = CVI(Q$(I + 10)): Next
                     Close 1
 
-                    T1$ = RTrim$(T1$(0))
-
                     Locate 2, 33: Color 31: Print "LOADING..."
-
 
                     If BO% = 1 Then
                         BO% = 0
@@ -402,7 +397,7 @@ End Sub
 
 Sub SelectTeam_CREATE (yearNumber$, numberTeams, selectedIndex)
 
-    SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -419,30 +414,33 @@ Sub SelectTeam_CREATE (yearNumber$, numberTeams, selectedIndex)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    20 MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    If EXITCODE% = 27 Then BO% = 1: Exit Sub
+    If ExitCode% <> 27 Then
 
-    selectedIndex = teamIndex%(SELECTION%)
+		selectedIndex = teamIndex%(Selection%)
 
-    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
-    Field #1, 15 As Q$(0), 15 As Q$(1)
-    For I = 0 To 6
-        Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-    Next
-    Field #1, 44 As X$, 2 As Q$(9)
-    For I = 0 To 34
-        Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-    Next
-    For I = 0 To 14
-        Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-        For I1 = 0 To 19
-            Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-        Next
-    Next
-    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+		Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+		Field #1, 15 As Q$(0), 15 As Q$(1)
+		For I = 0 To 6
+			Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+		Next
+		Field #1, 44 As X$, 2 As Q$(9)
+		For I = 0 To 34
+			Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+		Next
+		For I = 0 To 14
+			Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+			For I1 = 0 To 19
+				Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+			Next
+		Next
+		Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 
-    Get #1, D
+		Get #1, D
+	Else
+		BO% = 1
+	End If
 
 End Sub

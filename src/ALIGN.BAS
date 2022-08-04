@@ -42,7 +42,6 @@ SUB ALIGN ()
 		Locate 16, 5: Print Space$(55)
 		Color 11
 		Locate 15, 5: Input "ENTER NAME OF STAT FILE (EX.- MINNESOT.90)"; Z$
-
 		Locate , 5: Print "ANY CHANGE (YN)"
 
 		I$ = GetKeyPress$
@@ -50,8 +49,10 @@ SUB ALIGN ()
 		If UCase$(I$) = "N" Then
 		
 			If Not _FileExists(PR$ + "\" + Z$) Then 
-				Cls: Locate 2, 10: Color 7: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
-				Print: Locate , 10: Line Input "HIT ENTER TO RE-ENTER INFORMATION"; DUMMY$
+				Cls
+				Locate 2, 10: Color 7: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
+				Print
+				Locate , 10: Line Input "HIT ENTER TO RE-ENTER INFORMATION"; DUMMY$
 			Else
 
 				Open PR$ + "\" + Z$ For Input As #1
@@ -63,6 +64,7 @@ SUB ALIGN ()
 					Input #1, W0R(I)
 					Input #1, WR1(I)
 				Next
+
 				For L = 0 To 15: Input #1, ZR(L): Next
 				For L = 0 To 15: Input #1, ZR1(L): Next
 
@@ -70,8 +72,10 @@ SUB ALIGN ()
 
 
 				If Not _FileExists(PC$ + "\" + Z$) Then 
-					Cls: Locate 2, 10: Color 7: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
-					Print: Locate , 10: Line Input "HIT ENTER TO RE-ENTER INFORMATION"; DUMMY$
+					Cls
+					Locate 2, 10: Color 7: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
+					Print
+					Locate , 10: Line Input "HIT ENTER TO RE-ENTER INFORMATION"; DUMMY$
 				Else
 					Open PC$ + "\" + Z$ For Input As #1
 

@@ -7,9 +7,11 @@
     ' Postions (Guard / Forward / Center)
     Dim P$(0 To 2)
 
-    20 P$(0) = "G": P$(1) = "F": P$(2) = "C"
+    P$(0) = "G"
+	P$(1) = "F"
+	P$(2) = "C"
 
-    SELECTION% = 1
+    Selection% = 1
 
     Do
 
@@ -20,7 +22,7 @@
         menuChoices$(2) = "EXIT TO MAIN MENU                 "
         Count% = 2
         Start% = 1
-        EXITCODE% = 2
+        ExitCode% = 2
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -29,19 +31,18 @@
 
         Call box0(7, 24, 10, 59, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
-        If Not (EXITCODE% = 27) Then
-            If SELECTION% = 1 Then Call AdjustGames (T1)
+        If ExitCode% <> 27 Then
+            If Selection% = 1 Then Call AdjustGames (T1)
         Else
-            SELECTION% = 2
+            Selection% = 2
         End If
 
-    Loop Until SELECTION% = 2
-
+    Loop Until Selection% = 2 Or ExitCode% = 27
 
 End Sub
 
@@ -70,167 +71,171 @@ Sub AdjustGames (selectedIndex)
 		Print
 		Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
 		I$ = GetKeyPress$
-		If I$ = Chr$(27) Then Exit Sub
+
+		If I$ <> Chr$(27) Then
 	
-		If I$ = Chr$(13) Then 
-			Call SelectTeam_GPMIN(YN$, NTMS, selectedIndex)
-		Else
-			Locate 7, 27: Print I$
-			Locate 7, 28: Line Input NY$
-			NY$ = I$ + NY$
-			Color 15, 0
-			If NY$ = "" Then 
+			If I$ = Chr$(13) Then 
 				Call SelectTeam_GPMIN(YN$, NTMS, selectedIndex)
 			Else
-				YN$ = NY$
-				Erase teamNames$
+				Locate 7, 27: Print I$
+				Locate 7, 28: Line Input NY$
+				NY$ = I$ + NY$
+				Color 15, 0
+				If NY$ = "" Then 
+					Call SelectTeam_GPMIN(YN$, NTMS, selectedIndex)
+				Else
+					YN$ = NY$
+					Erase teamNames$
 
-				NTMS = 0
+					NTMS = 0
 
-				Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+					Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
 
-				Y = LOF(1)
+					Y = LOF(1)
 
-				Field #1, 15 As Q$(0), 15 As Q$(1)
+					Field #1, 15 As Q$(0), 15 As Q$(1)
 
-				For I = 0 To 6
-					Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-				Next
-
-				Field #1, 44 As X$, 2 As Q$(9)
-
-				For I = 0 To 34
-					Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-				Next
-
-				For I = 0 To 14
-					Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-					For I1 = 0 To 19
-						Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+					For I = 0 To 6
+						Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
 					Next
-				Next
 
-				Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+					Field #1, 44 As X$, 2 As Q$(9)
 
-				For I1 = 1 To Y / 1031
-					Get #1, I1
-					CK% = CVI(Q$(9))
-					If CK% = 999 Then
-						NTMS = NTMS + 1
-						teamNames$(NTMS) = Q$(0)
-						teamIndex%(NTMS) = I1
-					End If
-				Next
-				Close 1
+					For I = 0 To 34
+						Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+					Next
 
-				Call SelectTeam_GPMIN(YN$, NTMS, selectedIndex)
+					For I = 0 To 14
+						Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+						For I1 = 0 To 19
+							Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+						Next
+					Next
+
+					Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+
+					For I1 = 1 To Y / 1031
+						Get #1, I1
+						CK% = CVI(Q$(9))
+						If CK% = 999 Then
+							NTMS = NTMS + 1
+							teamNames$(NTMS) = Q$(0)
+							teamIndex%(NTMS) = I1
+						End If
+					Next
+					Close 1
+
+					Call SelectTeam_GPMIN(YN$, NTMS, selectedIndex)
+
+				End If
 
 			End If
+			
+			If BO% = 1 Then 
+				BO% = 0
+			Else
+				Locate 2, 33: Color adjustT%(33), adjustT%(34): Print adjustT$(0)
+				Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
+				A$ = GetKeyPress$
+			End If
 
-		End If
+		End If 'Done checking for ESC
 		
-		If BO% = 1 Then 
-			BO% = 0
-		Else
-			Locate 2, 33: Color adjustT%(33), adjustT%(34): Print adjustT$(0)
-			Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
-			A$ = GetKeyPress$
-		End If
-	
-	Loop Until UCase$(A$) = "N"
+	Loop Until UCase$(A$) = "N" Or I$ = Chr$(27)
 
-    Color 15, 0	
-
-	Do
-	
-		Color , 0
-		Cls
-		Color adjustT%(33), adjustT%(34): Print adjustT$(0)
-		Color 15, 0
-		Print "   PLAYERS                 ACTUAL           ADJUSTED"
-		Print "                          GP   MPG          GP    MPG"
-
-		GP = 0
-		MIN = 0
-
-		For I = 0 To 14
-			If adjustB%(I, 16) >= 0 Or adjustB%(I, 17) >= 0 Then 
-				adjustB%(I, 16) = adjustB%(I, 0) * -1
-				adjustB%(I, 17) = adjustB%(I, 1) * -1
-			End If
-
-			GP = GP + adjustB%(I, 0)
-			MIN = MIN + adjustB%(I, 17) * -1
-
-			If Left$(adjustB$(I, 0), 3) <> "XXX" Then
-				Print Using "## "; I;: Print adjustB$(I, 0); " "; adjustB$(I, 1); Tab(27);
-				actualMPG! = adjustB%(I, 1) / adjustB%(I, 0)
-				adjustedMPG! = adjustB%(I, 17) / adjustB%(I, 16)
-				adjustedGP! = adjustB%(I, 16) * -1
-				'Print Using "##   ##.#         ##   ##.#"; adjustB%(I, 0); actualMPG!; adjustedGP; adjustedMPG!
-				Print Using "##"; adjustB%(I, 0);: Print "  ";
-				Print Using "##.#"; actualMPG!;: Print "         ";
-				Print Using "##"; adjustedGP!;: Print "   ";
-				Print Using "##.#"; adjustedMPG!
-			End If
-		Next
-
-		Print "15 END AND SAVE CHANGES"
-		Print
-		Print "TEAM MIN/G SHOULD BE APPROXIMATELY 240, OVERTIME WILL INCREASE THIS FIGURE"
-		teamTotalMins! = MIN / adjustT%(0)
-		Print Using "TEAM MIN/G = ###.#"; teamTotalMins!
+	If I$ <> Chr$(27) Then
+		Color 15, 0	
 
 		Do
-			Locate 23, 1
-			Input "ENTER SELECTION "; B1
 		
-			If B1 < 15 Then 
-				Locate 23, 1: Print Space$(38);: Locate 23, 1
-				Print adjustB$(B1, 0); " ";: Input "GAMES PLAYED "; GP
-				Locate 23, 1: Print Space$(38);: Locate 23, 1
-				Print adjustB$(B1, 0); " ";: Input "MINUTES PER GAME "; MPG
-				adjustB%(B1, 16) = GP * -1
-				adjustB%(B1, 17) = MPG * GP * -1
-			Else
-				Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+			Color , 0
+			Cls
+			Color adjustT%(33), adjustT%(34): Print adjustT$(0)
+			Color 15, 0
+			Print "   PLAYERS                 ACTUAL           ADJUSTED"
+			Print "                          GP   MPG          GP    MPG"
 
-				Field #1, 15 As Q$(0), 15 As Q$(1)
-				For I = 0 To 6
-					Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-				Next
-				Field #1, 44 As X$, 2 As Q$(9)
-				For I = 0 To 34
-					Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-				Next
-				For I = 0 To 14
-					Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-					For I1 = 0 To 19
-						Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-					Next
-				Next
-				Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-				LSet Q$(0) = adjustT$(0): LSet Q$(1) = adjustT$(1): For I = 0 To 6: LSet Q$(I + 2) = MKI$(adjustL%(I)): Next
-				LSet Q$(9) = MKI$(999)
-				For I = 0 To 34: LSet Q$(I + 10) = MKI$(adjustT%(I)): Next
-				For I = 0 To 14
-					LSet Q$(22 * I + 45) = adjustB$(I, 0)
-					LSet Q$(22 * I + 46) = adjustB$(I, 1)
-					For I1 = 0 To 19
-						LSet Q$(22 * I + 47 + I1) = MKI$(adjustB%(I, I1))
-				Next: Next
-				LSet Q$(375) = adjustT$(2): LSet Q$(376) = adjustT$(3): LSet Q$(377) = adjustT$(4)
-				Put #1, selectedIndex
+			GP = 0
+			MIN = 0
 
-				Close 1
+			For I = 0 To 14
+				If adjustB%(I, 16) >= 0 Or adjustB%(I, 17) >= 0 Then 
+					adjustB%(I, 16) = adjustB%(I, 0) * -1
+					adjustB%(I, 17) = adjustB%(I, 1) * -1
+				End If
+
+				GP = GP + adjustB%(I, 0)
+				MIN = MIN + adjustB%(I, 17) * -1
+
+				If Left$(adjustB$(I, 0), 3) <> "XXX" Then
+					Print Using "## "; I;: Print adjustB$(I, 0); " "; adjustB$(I, 1); Tab(27);
+					actualMPG! = adjustB%(I, 1) / adjustB%(I, 0)
+					adjustedMPG! = adjustB%(I, 17) / adjustB%(I, 16)
+					adjustedGP! = adjustB%(I, 16) * -1
+					'Print Using "##   ##.#         ##   ##.#"; adjustB%(I, 0); actualMPG!; adjustedGP; adjustedMPG!
+					Print Using "##"; adjustB%(I, 0);: Print "  ";
+					Print Using "##.#"; actualMPG!;: Print "         ";
+					Print Using "##"; adjustedGP!;: Print "   ";
+					Print Using "##.#"; adjustedMPG!
+				End If
+			Next
+
+			Print "15 END AND SAVE CHANGES"
+			Print
+			Print "TEAM MIN/G SHOULD BE APPROXIMATELY 240, OVERTIME WILL INCREASE THIS FIGURE"
+			teamTotalMins! = MIN / adjustT%(0)
+			Print Using "TEAM MIN/G = ###.#"; teamTotalMins!
+
+			Do
+				Locate 23, 1
+				Input "ENTER SELECTION "; B1
 			
-			End If
+				If B1 < 15 Then 
+					Locate 23, 1: Print Space$(38);: Locate 23, 1
+					Print adjustB$(B1, 0); " ";: Input "GAMES PLAYED "; GP
+					Locate 23, 1: Print Space$(38);: Locate 23, 1
+					Print adjustB$(B1, 0); " ";: Input "MINUTES PER GAME "; MPG
+					adjustB%(B1, 16) = GP * -1
+					adjustB%(B1, 17) = MPG * GP * -1
+				Else
+					Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
 
-		Loop Until B1 >= 1 And B1 <= 15
-		
-	Loop Until B1 = 15
+					Field #1, 15 As Q$(0), 15 As Q$(1)
+					For I = 0 To 6
+						Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+					Next
+					Field #1, 44 As X$, 2 As Q$(9)
+					For I = 0 To 34
+						Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+					Next
+					For I = 0 To 14
+						Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+						For I1 = 0 To 19
+							Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+						Next
+					Next
+					Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+					LSet Q$(0) = adjustT$(0): LSet Q$(1) = adjustT$(1): For I = 0 To 6: LSet Q$(I + 2) = MKI$(adjustL%(I)): Next
+					LSet Q$(9) = MKI$(999)
+					For I = 0 To 34: LSet Q$(I + 10) = MKI$(adjustT%(I)): Next
+					For I = 0 To 14
+						LSet Q$(22 * I + 45) = adjustB$(I, 0)
+						LSet Q$(22 * I + 46) = adjustB$(I, 1)
+						For I1 = 0 To 19
+							LSet Q$(22 * I + 47 + I1) = MKI$(adjustB%(I, I1))
+					Next: Next
+					LSet Q$(375) = adjustT$(2): LSet Q$(376) = adjustT$(3): LSet Q$(377) = adjustT$(4)
+					Put #1, selectedIndex
 
-    1430 'GoTo 60
+					Close 1
+				
+				End If
+
+			Loop Until B1 >= 1 And B1 <= 15
+			
+		Loop Until B1 = 15
+
+	End If 'Done checking for ESC
 
 End Sub
 
@@ -244,7 +249,7 @@ Sub SelectTeam_GPMIN (yearNumber$, numberTeams, selectedIndex)
 	Shared adjustB$(), adjustT$()
 	Shared adjustB%(), adjustL%(), adjustT%()
 	
-    SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -261,56 +266,53 @@ Sub SelectTeam_GPMIN (yearNumber$, numberTeams, selectedIndex)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-	If EXITCODE% = 27 Then BO% = 1: Exit Sub
+	If ExitCode% <> 27 Then
 		
-    selectedIndex = teamIndex%(SELECTION%)
+		selectedIndex = teamIndex%(Selection%)
 
-    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
-    Field #1, 15 As Q$(0), 15 As Q$(1)
-    For I = 0 To 6
-        Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-    Next
-    Field #1, 44 As X$, 2 As Q$(9)
-    For I = 0 To 34
-        Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-    Next
-    For I = 0 To 14
-        Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-        For I1 = 0 To 19
-            Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-        Next
-    Next
-    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-    
-	Get #1, selectedIndex
-	
-    adjustT$(0) = Q$(0)
-    adjustT$(1) = Q$(1)
-    
-	For I = 0 To 6: adjustL%(I) = CVI(Q$(I + 2)): Next
-    For I = 0 To 34: adjustT%(I) = CVI(Q$(I + 10)): Next
-    For I = 0 To 14
-        adjustB$(I, 0) = Q$(22 * I + 45)
-        adjustB$(I, 1) = Q$(22 * I + 46)
-        For I1 = 0 To 19
-            adjustB%(I, I1) = CVI(Q$(22 * I + 47 + I1))
-        Next
-    Next
-    adjustT$(2) = Q$(375): adjustT$(3) = Q$(376): adjustT$(4) = Q$(377)
-    Close
+		Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+		Field #1, 15 As Q$(0), 15 As Q$(1)
+		For I = 0 To 6
+			Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+		Next
+		Field #1, 44 As X$, 2 As Q$(9)
+		For I = 0 To 34
+			Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+		Next
+		For I = 0 To 14
+			Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+			For I1 = 0 To 19
+				Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+			Next
+		Next
+		Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+		
+		Get #1, selectedIndex
+		
+		adjustT$(0) = RTrim$(Q$(0))
+		adjustT$(1) = RTrim$(Q$(1))
+		
+		For I = 0 To 6: adjustL%(I) = CVI(Q$(I + 2)): Next
+		For I = 0 To 34: adjustT%(I) = CVI(Q$(I + 10)): Next
+		For I = 0 To 14
+			adjustB$(I, 0) = Q$(22 * I + 45)
+			adjustB$(I, 1) = Q$(22 * I + 46)
+			For I1 = 0 To 19
+				adjustB%(I, I1) = CVI(Q$(22 * I + 47 + I1))
+			Next
+		Next
+		
+		adjustT$(2) = RTrim$(Q$(375))
+		adjustT$(3) = RTrim$(Q$(376))
+		adjustT$(4) = RTrim$(Q$(377))
+		
+		Close
 
-    1486 If Right$(adjustT$(0), 1) = " " Then adjustT$(0) = Left$(adjustT$(0), Len(adjustT$(0)) - 1): GoTo 1486
-
-    1487 If Right$(adjustT$(1), 1) = " " Then adjustT$(1) = Left$(adjustT$(1), Len(adjustT$(1)) - 1): GoTo 1487
-
-    1488 If Right$(adjustT$(2), 1) = " " Then adjustT$(2) = Left$(adjustT$(2), Len(adjustT$(2)) - 1): GoTo 1488
-
-    1489 If Right$(adjustT$(3), 1) = " " Then adjustT$(3) = Left$(adjustT$(3), Len(adjustT$(3)) - 1): GoTo 1489
-
-    1490 If Right$(adjustT$(4), 1) = " " Then adjustT$(4) = Left$(adjustT$(4), Len(adjustT$(4)) - 1): GoTo 1490
-
-    1540 '
+	Else
+		BO% = 1
+	End If
+		
 End Sub

@@ -19,7 +19,7 @@ Sub LOOKY ()
 
     Do
         'Pick a team to view stats for
-        3056 Color 15, 0
+        Color 15, 0
         Cls
         JJ = 6
         SN = 1: Locate 6, 8: Color 15, 4
@@ -37,7 +37,7 @@ Sub LOOKY ()
         I$ = GetKeyPress$
 	
         'ESC = return to menu
-        If Not (I$ = Chr$(27)) Then
+        If I$ <> Chr$(27) Then
 
 			'Do
 
@@ -95,11 +95,7 @@ Sub LOOKY ()
 				If BO% = 1 Then
 					BO% = 0
 				Else
-					A$ = Q$(0)
-					While Right$(A$, 1) = " "
-						A$ = Left$(A$, Len(A$) - 1)
-					Wend
-
+					A$ = RTrim$(Q$(0))
 					B$ = A$
 
 					Locate 2, 33: Color teamRatings%(33), teamRatings%(34): Print A$
@@ -110,10 +106,12 @@ Sub LOOKY ()
 
 						Color 15, 0
 						'Look for special char's in team name
-						6585 For XX = 4 To 11: If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
+						For XX = 4 To 11: 
+							If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
 						Next XX
 
-						For XX = 12 To 14: If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
+						For XX = 12 To 14: 
+							If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
 						Next XX
 
 						QQ = 8
@@ -237,30 +235,33 @@ Sub ReadStats (Z$, teamRatings%(), teamChoice)
     For I = 1 To totalGames%
         Color 7
         If I / 2 = Int(I / 2) Then Color 15
-        If I > 54 Then 860
-        If I > 36 Then 827
-        If I > 18 Then 826
-        Print Using "###"; O%(I);
-        Print Tab(5); Left$(O$(I), 14);
-        Print Tab(20); Using "###"; teamRatings%(I);
-        Print Tab(24); H$(I)
-        GoTo 830
+        
+		If I > 54 Then Exit For
+        
+		If I > 36 Then 
+			Locate I - 35, 53: Print Using "###"; O%(I);
+			Print Tab(57); Left$(O$(I), 14);
+			Print Tab(72); Using "###"; teamRatings%(I);
+			Print Tab(76); H$(I)			
+		Else
+			If I > 18 Then 
+				Locate I - 17, 27: Print Using "###"; O%(I);
+				Print Tab(31); Left$(O$(I), 14);
+				Print Tab(46); Using "###"; teamRatings%(I);
+				Print Tab(50); H$(I)
+			
+			Else
+				Print Using "###"; O%(I);
+				Print Tab(5); Left$(O$(I), 14);
+				Print Tab(20); Using "###"; teamRatings%(I);
+				Print Tab(24); H$(I)
+			End If
+		
+    Next I
 
-        826 Locate I - 17, 27: Print Using "###"; O%(I);
-        Print Tab(31); Left$(O$(I), 14);
-        Print Tab(46); Using "###"; teamRatings%(I);
-        Print Tab(50); H$(I)
-        GoTo 830
-
-        827 Locate I - 35, 53: Print Using "###"; O%(I);
-        Print Tab(57); Left$(O$(I), 14);
-        Print Tab(72); Using "###"; teamRatings%(I);
-        Print Tab(76); H$(I)
-
-    830 Next I
     Print
 
-    860 Locate 21, 27
+    Locate 21, 27
     Color 14: Print "OVERALL RECORD ";: Color 15: Print "("; W%; "-"; L%; ")"
     Locate , 27: Color 14: Print "HOME RECORD    ";: Color 15: Print "("; HW%; "-"; HL%; ")"
     Locate , 27: Color 14: Print "ROAD RECORD    ";: Color 15: Print "("; VW%; "-"; VL%; ")"
@@ -310,7 +311,7 @@ Sub ReadStats (Z$, teamRatings%(), teamChoice)
 
     '-----
 
-    915 Color , 1: Locate 1, 1: Print Tab(80);: Locate , 31: Color 14
+    Color , 1: Locate 1, 1: Print Tab(80);: Locate , 31: Color 14
     Ycoord = Len(B$): Ycoord = Int((80 - Ycoord) / 2): Locate , Ycoord: Print B$
     Locate 25, 1: Print Tab(80);: Locate , 1
     Locate 2, 1
@@ -391,8 +392,12 @@ Sub ReadStats (Z$, teamRatings%(), teamChoice)
     If I$ = Chr$(27) Then Exit Sub
 
     '-----
+	' First Sub Here
+    '-----
+	
+	142' 
     ' *** DISPLAYING STATS ***
-    142 Call TITLE_HEADER
+    Call TITLE_HEADER
     Color , 1
     Locate 24, 1: Print Tab(80);: Locate , 1
     Color 15, 1: Print "SCHEDULE ";
@@ -426,30 +431,60 @@ Sub ReadStats (Z$, teamRatings%(), teamChoice)
 
             'FGM, FGA, FG PCT
             Locate , 28: Print Using "#### ####"; values(I, 2); values(I, 1);: Locate , 38
-            If values(I, 1) = 0 Then Print ".---";: GoTo 160
-            If values(I, 2) = values(I, 1) Then Print "1.00";: GoTo 160
-            If values(I, 2) = 0 Then Print ".000";: GoTo 160
-            fgPCT! = values(I, 2) / values(I, 1)
-            Print Using ".###"; fgPCT!;
-
+    
+			If values(I, 1) = 0 Then 
+				Print ".---";
+			Else
+				If values(I, 2) = values(I, 1) Then 
+					Print "1.00";
+				Else
+					If values(I, 2) = 0 Then 
+						Print ".000";
+					Else
+						fgPCT! = values(I, 2) / values(I, 1)
+						Print Using ".###"; fgPCT!;
+					End If
+				End If
+			End If
+			
             '3FGM, 3FGA, 3FG PCT
-            160 Locate , 44: Print Using "#### ####"; W0(I); W1(I);: Locate , 54
-            If W1(I) = 0 Then Print ".---";: GoTo 161
-            If W1(I) = W0(I) Then Print "1.00";: GoTo 161
-            If W0(I) = 0 Then Print ".000";: GoTo 161
-            threeFGPCT! = W0(I) / W1(I)
-            Print Using ".###"; threeFGPCT!;
+            Locate , 44: Print Using "#### ####"; W0(I); W1(I);: Locate , 54
+            If W1(I) = 0 Then 
+				Print ".---";
+			Else
+				If W1(I) = W0(I) Then 
+					Print "1.00";
+				Else
+					If W0(I) = 0 Then 
+						Print ".000";
+					Else
+						threeFGPCT! = W0(I) / W1(I)
+						Print Using ".###"; threeFGPCT!;
+					End If
+				End If
+			End If
 
             'FTM, FTA, FT PCT
-            161 Locate , 60: Print Using "#### ####"; values(I, 4); values(I, 3);: Locate , 70
-            If values(I, 3) = 0 Then Print ".---": GoTo 165
-            If values(I, 3) = values(I, 4) Then Print "1.00": GoTo 165
-            If values(I, 4) = 0 Then Print ".000": GoTo 165
-            ftPCT! = values(I, 4) / values(I, 3)
-            Print Using ".###"; ftPCT!
+            Locate , 60: Print Using "#### ####"; values(I, 4); values(I, 3);: Locate , 70
+            If values(I, 3) = 0 Then 
+				Print ".---"
+			Else
+				If values(I, 3) = values(I, 4) Then 
+					Print "1.00"
+				Else
+					If values(I, 4) = 0 Then 
+						Print ".000"
+					Else
+						ftPCT! = values(I, 4) / values(I, 3)
+						Print Using ".###"; ftPCT!
+					End If
+				End If
+			End If
+
+
         End If
 
-    165 Next
+    Next
 
     Color 12: Print: Print "TOTALS";: Locate , 15
     'Games
@@ -483,179 +518,175 @@ Sub ReadStats (Z$, teamRatings%(), teamChoice)
     If Z1!(3) <> 0 Then ftPCT! = Z1!(4) / Z1!(3): Locate , 70: Print Using ".###"; ftPCT!
 
 
+	Do
+		I$ = GetKeyPress$
+		Select Case I$
 
-    '-----
-    '-- another loop?
-    230 I$ = GetKeyPress$
+			'Pg Down
+			Case Chr$(0) + "Q"
+				CP% = 14
 
-    'Pg Down
-    If I$ = Chr$(0) + "Q" Then
-        CP% = 14
-        GoTo 235
-    End If
+			'Pg Up
+			Case Chr$(0) + "I"
+				Cls
+				GoTo 915
 
-    'Pg Up
-    If I$ = Chr$(0) + "I" Then
-        Cls
-        GoTo 915
-    End If
+			'Right Arrow
+			Case Chr$(0) + "M"
+				CP% = CP% + 1
+				If CP% > 12 Then CP% = 1
+				Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
 
-    'Right Arrow
-    If I$ = Chr$(0) + "M" Then
-        650 CP% = CP% + 1: If CP% > 12 Then CP% = 1
-        Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
-        GoTo 230
-    End If
+			'Left Arrow
+			Case Chr$(0) + "K"
+				CP% = CP% - 1
+				If CP% < 1 Then CP% = 12
+				Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
 
-    'Left Arrow
-    If I$ = Chr$(0) + "K" Then
-        660 CP% = CP% - 1: If CP% < 1 Then CP% = 12
-        Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
-        GoTo 230
-    End If
+			'Delete
+			Case "D"
+				Kill diskPaths$(1) + Z$
+				Kill diskPaths$(1) + Z$ + "S"
 
-    'Delete
-    If UCase$(I$) = "D" Then
-        Kill diskPaths$(1) + Z$
-        Kill diskPaths$(1) + Z$ + "S"
-        GoTo 230
-    End If
+			'Print
+			If UCase$(I$) = "P" Then
+				Call PrintStatsSchedule(totalGames%, teamRatings%())
+				LPrint
+				LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
+				LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
+				LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
+				LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
+				LPrint Chr$(12)
+				I$ = GetKeyPress$
+				Call PrintStatsSummary(totalGames%, Z!(), Z1!())
 
-    'Print
-    If UCase$(I$) = "P" Then
-        Call PrintStatsSchedule(totalGames%, teamRatings%())
-        LPrint
-        LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
-        LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
-        LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
-        LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
-        LPrint Chr$(12)
-        I$ = GetKeyPress$
-        Call PrintStatsSummary(totalGames%, Z!(), Z1!())
-        GoTo 230
-    End If
+			'Enter
+			Case Chr$(13) Then
+				Call SortStats(CP%)
+				GoTo 142
 
-    'Enter
-    If I$ = Chr$(13) Then
-        Call SortStats(CP%)
-        GoTo 142
-    End If
+			'Esc
+			Case Chr$(27) Then 
+				teamChoice = 1
 
-    'Esc
-    If I$ = Chr$(27) Then teamChoice = 1: Exit Sub
+		End Select
 
-    GoTo 230
+	Loop Until I$ = Chr$(0) + "Q" Or I$ = Chr$(27)
+	
+	If I$ <> Chr$(27) Then
 
+		'-----
+		'Second Sub Here
+		'-----
+		235 Cls
+		Call TITLE_HEADER
+		Color , 1
+		Locate 24, 1: Print Tab(80);: Locate , 1
+		Locate 24, 1: Color 14, 1
+		Color 15: Print "MORE STATS ";
+		Color 14: Print "[Pg UP]  ";
+		Color 15: Print "SELECT NEW TEAM ";
+		Color 14: Print "[ESC]  ";
+		Color 15: Print "SORT ";
+		Color 14: Print "<-,-> and [ENTER]  ";
+		Color 15: Print "PRINT ";
+		Color 14: Print "[P]";
+		Locate 25, 1
+		Color 15: Print "DELETE STATS ";: Color 14: Print "[D]                     ";
+		Color 12, 0
+		Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
 
+		'Player Stats
+		Locate 3, 1: Color 2, 0
+		Color 14: Print B$;: Locate , 15
+		Print "               OFF  DEF  TOT": Print "NAME"; Tab(15);
+		Print " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
+		
+		For I = 0 To 14
+			If lookyA$(I) = "XXX" Then 266
+			Color 7
+			If I / 2 = Int(I / 2) Then Color 15
 
-    '-----
-    235 Cls
-    Call TITLE_HEADER
-    Color , 1
-    Locate 24, 1: Print Tab(80);: Locate , 1
-    Locate 24, 1: Color 14, 1
-    Color 15: Print "MORE STATS ";
-    Color 14: Print "[Pg UP]  ";
-    Color 15: Print "SELECT NEW TEAM ";
-    Color 14: Print "[ESC]  ";
-    Color 15: Print "SORT ";
-    Color 14: Print "<-,-> and [ENTER]  ";
-    Color 15: Print "PRINT ";
-    Color 14: Print "[P]";
-    Locate 25, 1
-    Color 15: Print "DELETE STATS ";: Color 14: Print "[D]                     ";
-    Color 12, 0: Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
+			'Name
+			Print Left$(lookyA$(I), 13);: Locate , 15
+			'Points
+			Print Using "####"; values(I, 2) * 2 + values(I, 4) + W0(I);
+			'Average
+			If values(I, 0) > 0 Then Locate , 21: Print Using "##.#"; (values(I, 2) * 2 + values(I, 4) + W0(I)) / values(I, 0);
+			'Highest Points, Rebounds
+			Locate , 26: Print Using "## #### #### ####"; values(I, 13); values(I, 12); values(I, 5) - values(I, 12); values(I, 5);
+			'Average
+			If values(I, 0) > 0 Then Locate , 45: Print Using "##.#"; values(I, 5) / values(I, 0);
+			'PF AST   BLK  STL  TO
+			Locate , 51: Print Using "### ####  ###  ###  ###"; values(I, 6); values(I, 8); values(I, 9); values(I, 7); values(I, 11)
 
-    'Player Stats
-    Locate 3, 1: Color 2, 0
-    Color 14: Print B$;: Locate , 15
-    Print "               OFF  DEF  TOT": Print "NAME"; Tab(15);
-    Print " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
-    For I = 0 To 14
-        If lookyA$(I) = "XXX" Then 266
-        Color 7
-        If I / 2 = Int(I / 2) Then Color 15
+		Next I
 
-        'Name
-        Print Left$(lookyA$(I), 13);: Locate , 15
-        'Points
-        Print Using "####"; values(I, 2) * 2 + values(I, 4) + W0(I);
-        'Average
-        If values(I, 0) > 0 Then Locate , 21: Print Using "##.#"; (values(I, 2) * 2 + values(I, 4) + W0(I)) / values(I, 0);
-        'Highest Points, Rebounds
-        Locate , 26: Print Using "## #### #### ####"; values(I, 13); values(I, 12); values(I, 5) - values(I, 12); values(I, 5);
-        'Average
-        If values(I, 0) > 0 Then Locate , 45: Print Using "##.#"; values(I, 5) / values(I, 0);
-        'PF AST   BLK  STL  TO
-        Locate , 51: Print Using "### ####  ###  ###  ###"; values(I, 6); values(I, 8); values(I, 9); values(I, 7); values(I, 11)
-
-    266 Next I
-
-    Print "TEAM";: Locate , 39: Print Using "####"; Z!(15)
-    Color 12: Print "TOTALS";
-    'Points
-    Locate , 14: Print Using "##### ###.#"; Z!(10); Z!(10) / totalGames%;
-    'Rebounds
-    Locate , 29: Print Using "#### #### ####  ##.#"; Z!(12); Z!(5) - Z!(12) - Z!(15); Z!(5); Z!(5) / totalGames%;
-    'PF  AST  BLK  STL  TO
-    Print Using " #### #### #### #### ####"; Z!(6); Z!(8); Z!(9); Z!(7); Z!(11)
-    'Points
-    Locate , 14: Print Using "##### ###.#"; Z1!(10); Z1!(10) / totalGames%;
-    'Rebounds
-    Locate , 29: Print Using "#### #### ####  ##.#"; Z1!(12); Z1!(5) - Z1!(12) - Z1!(15); Z1!(5); Z1!(5) / totalGames%;
-    'PF  AST  BLK  STL  TO
-    Print Using " #### #### #### #### ####"; Z1!(6); Z1!(8); Z1!(9); Z1!(7); Z1!(11): Color 3
+		Print "TEAM";: Locate , 39: Print Using "####"; Z!(15)
+		Color 12: Print "TOTALS";
+		'Points
+		Locate , 14: Print Using "##### ###.#"; Z!(10); Z!(10) / totalGames%;
+		'Rebounds
+		Locate , 29: Print Using "#### #### ####  ##.#"; Z!(12); Z!(5) - Z!(12) - Z!(15); Z!(5); Z!(5) / totalGames%;
+		'PF  AST  BLK  STL  TO
+		Print Using " #### #### #### #### ####"; Z!(6); Z!(8); Z!(9); Z!(7); Z!(11)
+		'Points
+		Locate , 14: Print Using "##### ###.#"; Z1!(10); Z1!(10) / totalGames%;
+		'Rebounds
+		Locate , 29: Print Using "#### #### ####  ##.#"; Z1!(12); Z1!(5) - Z1!(12) - Z1!(15); Z1!(5); Z1!(5) / totalGames%;
+		'PF  AST  BLK  STL  TO
+		Print Using " #### #### #### #### ####"; Z1!(6); Z1!(8); Z1!(9); Z1!(7); Z1!(11): Color 3
 
 
-    Do
-        370 I$ = GetKeyPress$
+		Do
+			I$ = GetKeyPress$
 
-        'Pg Up
-        If I$ = Chr$(0) + "I" Then
-            Cls
-            CP% = 1
-            GoTo 142
-        End If
+			Select Case  I$
 
-        'Right Arrow
-        If I$ = Chr$(0) + "M" Then
-            655 CP% = CP% + 1: If CP% > 25 Then CP% = 14
-            Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
-            GoTo 370
-        End If
+				'Pg Up
+				Case Chr$(0) + "I":
+					Cls
+					CP% = 1
+					GoTo 142
+					'First Sub
 
-        'Left Arrow
-        If I$ = Chr$(0) + "K" Then
-            665 CP% = CP% - 1: If CP% < 14 Then CP% = 25
-            Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
-            GoTo 370
-        End If
+				'Right Arrow
+				Case Chr$(0) + "M":
+					655 CP% = CP% + 1: If CP% > 25 Then CP% = 14
+					Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
 
-        If I$ = Chr$(13) Then
-            Call SortStats(CP%)
-            GoTo 235
-        End If
+				'Left Arrow
+				Case Chr$(0) + "K":
+					CP% = CP% - 1
+					If CP% < 14 Then CP% = 25
+					Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
 
-        If UCase$(I$) = "P" Then
-            Call PrintStatsSchedule(totalGames%, teamRatings%())
-            LPrint
-            LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
-            LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
-            LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
-            LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
-            LPrint Chr$(12)
-            I$ = GetKeyPress$
-            Call PrintStatsSummary(totalGames%, Z!(), Z1!())
-            GoTo 370
-        End If
+				Case Chr$(13):
+					Call SortStats(CP%)
+					GoTo 235
+					'Second Sub
+				End If
 
-        If UCase$(I$) = "D" Then
-            Kill diskPaths$(1) + Z$
-            Kill diskPaths$(1) + Z$ + "S"
-            GoTo 370
-        End If
+				Case "P":
+					Call PrintStatsSchedule(totalGames%, teamRatings%())
+					LPrint
+					LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
+					LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
+					LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
+					LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
+					LPrint Chr$(12)
+					I$ = GetKeyPress$
+					Call PrintStatsSummary(totalGames%, Z!(), Z1!())
 
-    Loop Until I$ = Chr$(27)
+				Case "D":
+					Kill diskPaths$(1) + Z$
+					Kill diskPaths$(1) + Z$ + "S"
+
+			End Select
+			
+		Loop Until I$ = Chr$(27)
+
+	End If 'Done checking for ESC
 
     '--- I don't think we ever get here
     '    Cls
@@ -687,7 +718,7 @@ Sub SortStats (CP%)
     Shared values(), W0(), W1()
     Shared lookyA$()
 
-    600 'SORT BASED ON CATEGORY
+    'SORT BASED ON CATEGORY
     If CP% = 1 Then SG% = 0
     If CP% = 2 Then SG% = 10
     If CP% = 3 Then SG% = 14
@@ -720,7 +751,7 @@ Sub SortStats (CP%)
             Swap W1(Z), W1(Z1)
             Swap lookyA$(Z), lookyA$(Z1)
 
-    605 Next Z1: Next Z
+    Next Z1: Next Z
 
 End Sub
 
@@ -731,7 +762,7 @@ End Sub
 '------------------------------
 Sub SelectTeam_LOOKY (yearNumber$, numberTeams, teamInfo%())
 
-    SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -748,11 +779,12 @@ Sub SelectTeam_LOOKY (yearNumber$, numberTeams, teamInfo%())
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    If EXITCODE% <> 27 Then
-		T1 = teamIndex%(SELECTION%)
+    If ExitCode% <> 27 Then
+
+		T1 = teamIndex%(Selection%)
 
 		Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
 		Field #1, 15 As Q$(0), 15 As Q$(1)
@@ -776,6 +808,9 @@ Sub SelectTeam_LOOKY (yearNumber$, numberTeams, teamInfo%())
 			teamInfo%(I) = CVI(Q$(I + 10))
 		Next
 		Close 1
+
+	Else
+		BO% = 1
 	End If
 
 End Sub
@@ -791,23 +826,32 @@ Sub PrintStatsSchedule (totalGames%, teamRatings%())
 
     LPrint "SCHEDULE RESULTS FOR "; B$
     LPrint
+	
     For I = 1 To 28
         LPrint Using "###"; O%(I);
         LPrint Tab(5); Left$(O$(I), 14);
         LPrint Tab(20); Using "###"; teamRatings%(I);
         LPrint Tab(24); H$(I); Tab(27);
-        If I + 28 > totalGames% Then LPrint: GoTo 880
-        LPrint Using "###"; O%(I + 28);
-        LPrint Tab(31); Left$(O$(I + 28), 14);
-        LPrint Tab(46); Using "###"; teamRatings%(I + 28);
-        LPrint Tab(50); H$(I + 28); Tab(53);
-        If I + 56 > totalGames% Then LPrint: GoTo 880
-        LPrint Using "###"; O%(I + 56);
-        LPrint Tab(57); Left$(O$(I + 56), 14);
-        LPrint Tab(72); Using "###"; teamRatings%(I + 56);
-        LPrint Tab(76); H$(I + 56)
-
-    880 Next I
+        
+		If I + 28 > totalGames% Then 
+			LPrint
+		Else
+			LPrint Using "###"; O%(I + 28);
+			LPrint Tab(31); Left$(O$(I + 28), 14);
+			LPrint Tab(46); Using "###"; teamRatings%(I + 28);
+			LPrint Tab(50); H$(I + 28); Tab(53);
+			
+			If I + 56 > totalGames% Then 
+				LPrint
+			Else
+				LPrint Using "###"; O%(I + 56);
+				LPrint Tab(57); Left$(O$(I + 56), 14);
+				LPrint Tab(72); Using "###"; teamRatings%(I + 56);
+				LPrint Tab(76); H$(I + 56)
+			End If
+		End If
+		
+    Next I
 
 End Sub
 
@@ -821,7 +865,7 @@ Sub PrintStatsSummary (totalGames%, Z!(), Z1!())
     Shared values(), W0(), W1()
     Shared lookyA$()
 
-    530 LPrint "STATISTICS SUMMARY FOR "; B$
+    LPrint "STATISTICS SUMMARY FOR "; B$
     LPrint "NAME"; Tab(15);
     LPrint " G  MIN AVG   FGM  FGA  PCT  3FGM 3FGA  PCT   FTM  FTA  PCT"
 
@@ -836,29 +880,59 @@ Sub PrintStatsSummary (totalGames%, Z!(), Z1!())
         'FGM, FGA, FG PCT
         LPrint Tab(28); Using "#### ####"; values(I, 2); values(I, 1);
         LPrint Tab(38);
-        If values(I, 1) = 0 Then LPrint ".---";: GoTo 531
-        If values(I, 2) = values(I, 1) Then LPrint "1.00";: GoTo 531
-        If values(I, 2) = 0 Then LPrint ".000";: GoTo 531
-        fgPCT! = values(I, 2) / values(I, 1)
-        LPrint Using ".###"; fgPCT!;
+    
+		If values(I, 1) = 0 Then 
+			LPrint ".---";
+		Else
+			If values(I, 2) = values(I, 1) Then 
+				LPrint "1.00";
+			Else
+				If values(I, 2) = 0 Then 
+					LPrint ".000";
+				Else
+					fgPCT! = values(I, 2) / values(I, 1)
+					LPrint Using ".###"; fgPCT!;
+				End If
+			End If
+		End If
 
         '3FGM, 3FGA, 3FG PCT
-        531 LPrint Tab(44); Using "#### ####"; W0(I); W1(I);: LPrint Tab(54);
-        If W1(I) = 0 Then LPrint ".---";: GoTo 532
-        If W1(I) = W0(I) Then LPrint "1.00";: GoTo 532
-        If W0(I) = 0 Then LPrint ".000";: GoTo 532
-        threeFGPCT! = W0(I) / W1(I)
-        LPrint Using ".###"; threeFGPCT!;
+        LPrint Tab(44); Using "#### ####"; W0(I); W1(I);: LPrint Tab(54);
+        
+		If W1(I) = 0 Then 
+			LPrint ".---";
+		Else
+			If W1(I) = W0(I) Then 
+				LPrint "1.00";
+			Else				
+				If W0(I) = 0 Then 
+					LPrint ".000";
+				Else
+					threeFGPCT! = W0(I) / W1(I)
+					LPrint Using ".###"; threeFGPCT!;
+				End If
+			End If
+		End If
 
         'FTM, FTA, FT PCT
-        532 LPrint Tab(60); Using "#### ####"; values(I, 4); values(I, 3);: LPrint Tab(70);
-        If values(I, 3) = 0 Then LPrint ".---": GoTo 533
-        If values(I, 3) = values(I, 4) Then LPrint "1.00": GoTo 533
-        If values(I, 4) = 0 Then LPrint ".000": GoTo 533
-        ftPCT! = values(I, 4) / values(I, 3)
-        LPrint Using ".###"; ftPCT!
+        LPrint Tab(60); Using "#### ####"; values(I, 4); values(I, 3);: LPrint Tab(70);
+        
+		If values(I, 3) = 0 Then 
+			LPrint ".---"
+		Else
+			If values(I, 3) = values(I, 4) Then 
+				LPrint "1.00"
+			Else
+				If values(I, 4) = 0 Then 
+					LPrint ".000"
+				Else
+					ftPCT! = values(I, 4) / values(I, 3)
+					LPrint Using ".###"; ftPCT!
+				End If
+			End If
+		End If
 
-    533 Next
+    Next
 
     LPrint: LPrint "TOTALS"; Tab(15);
     'Games

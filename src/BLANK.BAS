@@ -29,7 +29,6 @@ Sub BLANK ()
 			Call ReadFile(leagueFiles$())
 			'CALL SortStr(VARPTR(leagueFiles$(1)), Count%, 0)
 
-			1310 '
 			Do
 
 				Cls
@@ -38,7 +37,7 @@ Sub BLANK ()
 				Locate , 28
 				Color 14
 				Print "SELECT LEAGUE TO ERASE": Color 15
-				SELECTION% = 1
+				Selection% = 1
 				Start% = 1
 				FileFGColr% = 15: FileBGColr% = 1
 				HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -56,23 +55,22 @@ Sub BLANK ()
 				Color 15
 
 				_MouseShow "DEFAULT"
-				MAMenu leagueFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+				MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 				_MouseHide
 
 				If ExitCode% = 27 Then Exit Sub 'Run "HELLO.EXE"
-				targetFile$ = leagueFiles$(SELECTION%)
+				targetFile$ = RTrim$(leagueFiles$(Selection%))
 				Locate 2, 33: Print targetFile$
 				Locate , 33: Print "ANY CHANGE (YN)";
 				Color 15, 0
 				
 				Do
-				3910 I$ = GetKeyPress$
+					I$ = GetKeyPress$
 				Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
 
 				If UCase$(I$) = "Y" Then
 				'proceed with erasing all files
-					3911 targetFile$ = RTrim$(targetFile$)
 					WE$ = Left$(targetFile$, Len(targetFile$) - 4)
 					LH$ = Left$(WE$, 8)
 

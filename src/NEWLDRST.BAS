@@ -26,10 +26,10 @@ Sub NEWLDRST ()
         'Erase menuChoices$
         menuChoices$(1) = "VIEW EXPANDED LEAGUE STANDINGS"
         menuChoices$(2) = "RETURN TO LEAGUE LEADER MENU  "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 2
         Start% = 1
-        EXITCODE% = 2
+        ExitCode% = 2
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -38,10 +38,10 @@ Sub NEWLDRST ()
 
         Call box0(7, 24, 10, 55, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
-        If EXITCODE% <> 27 Then
+        If ExitCode% <> 27 Then
 
             Color , 0
 
@@ -63,7 +63,6 @@ Sub NEWLDRST ()
                 Next
                 leagueFiles$(0) = Spec$
                 Call ReadFile(leagueFiles$())
-                'CALL SortStr(VARPTR(leagueFiles$(1)), Count%, 0)
 
                 Do
                     Cls
@@ -72,7 +71,7 @@ Sub NEWLDRST ()
                     Locate , 28
                     Color 14
                     Print "SELECT LEAGUE": Color 15
-                    SELECTION% = 1
+                    Selection% = 1
                     Start% = 1
                     FileFGColr% = 15: FileBGColr% = 1
                     HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -87,22 +86,21 @@ Sub NEWLDRST ()
                     Print "-SELECTS LEAGUE";
 
                     _MouseShow "DEFAULT"
-                    MAMenu leagueFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+                    MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
                     _MouseHide
 
-                    If EXITCODE% <> 27 Then
-                        targetFile$ = leagueFiles$(SELECTION%)
+                    If ExitCode% <> 27 Then
+                        targetFile$ = RTrim$(leagueFiles$(Selection%))
                         Locate 2, 33: Print targetFile$
                         Locate , 33: Print "ANY CHANGE (YN)";
                         Color 15, 0
                         I$ = GetKeyPress$
                     End If
 
-                Loop Until UCase$(I$) = "N" Or EXITCODE% = 27 Or I$ = Chr$(27)
+                Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
-                If I$ <> Chr$(27) And EXITCODE% <> 27 Then
+                If ExitCode% <> 27 Then
 
-                    targetFile$ = RTrim$(targetFile$)
                     targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
                     LG$ = targetFile$
 
@@ -180,7 +178,9 @@ Sub NEWLDRST ()
                     Next
                     Close #1
 
-                    Locate 10: Color 12: Print "P";: Color 7: Print "RINT OR ";: Color 12: Print "V";: Color 7: Print "IEW"
+                    Locate 10
+					Color 12: Print "P";: Color 7: Print "RINT OR ";
+					Color 12: Print "V";: Color 7: Print "IEW"
                     I$ = GetKeyPress$
 
                     Select Case UCase$(I$)
@@ -207,7 +207,8 @@ Sub NEWLDRST ()
                                 985 Next Y
                             Next X
 
-                            Cls: Locate 1, 35: Color 11: Print LGF$
+                            Cls
+							Locate 1, 35: Color 11: Print LGF$
                             Locate 2: Color 14: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
                             Locate 3: Color 14: Print D1$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
 
@@ -215,22 +216,25 @@ Sub NEWLDRST ()
                                 If TML$(I) <> "*" Then
                                     Color 3: Print TML$(I);: Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
                                     If Not (LL(I) = 0 And LL(I) + WW(I) <> 0) Then
-                                        If WW(I) = 0 Then Print " .000";: GoTo 2015
-                                        If WW(I) + LL(I) <> 0 Then
-                                            Print Using " .###"; WW(I) / (WW(I) + LL(I));
-                                        Else
-                                            If WW(I) + LL(I) = 0 Then Print " .000";
-                                        End If
+                                        If WW(I) <> 0 Then 
+											Print " .000";
+										Else
+											If WW(I) + LL(I) <> 0 Then
+												Print Using " .###"; WW(I) / (WW(I) + LL(I));
+											Else
+												If WW(I) + LL(I) = 0 Then Print " .000";
+											End If
+										End If
                                     Else
                                         Print "1.000";
                                     End If
 
-                                    2015 If ((WW(1) - WW(I)) + (LL(I) - LL(1))) / 2 = 0 Then Print Tab(36); " ---";
+                                    If ((WW(1) - WW(I)) + (LL(I) - LL(1))) / 2 = 0 Then Print Tab(36); " ---";
                                     If ((WW(1) - WW(I)) + (LL(I) - LL(1))) / 2 <> 0 Then Print Tab(36); Using "##.#"; ((WW(1) - WW(I)) + (LL(I) - LL(1))) / 2;
                                     Print Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
                                     Print Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
                                 End If
-                            2014 Next
+                            Next
 
                             MJ = 83 - WW(1) - LL(2)
                             If MJ < 0 Then MJ = 0
@@ -261,25 +265,38 @@ Sub NEWLDRST ()
                             Locate 12: Color 14: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
                             Locate 13: Color 14: Print D2$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
                             For I = 11 To 20
-                                If TML$(I) = "*" Then 2034
-                                Color 3: Print TML$(I);: Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
-                                If LL(I) = 0 And LL(I) + WW(I) <> 0 Then Print "1.000";: GoTo 2035
-                                If WW(I) = 0 Then Print " .000";: GoTo 2035
-                                If WW(I) + LL(I) <> 0 Then Print Using " .###"; WW(I) / (WW(I) + LL(I));: GoTo 2035
-                                If WW(I) + LL(I) = 0 Then Print " .000";
+                                If TML$(I) <> "*" Then
+									Color 3: Print TML$(I);: Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
 
-                                2035 If ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2 = 0 Then Print Tab(36); " ---";
-                                If ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2 <> 0 Then Print Tab(36); Using "##.#"; ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2;
-                                Print Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
-                                Print Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
-
-                            2034 Next
+									If LL(I) = 0 And LL(I) + WW(I) <> 0 Then 
+										Print "1.000";
+									Else
+										If WW(I) = 0 Then 
+											Print " .000";
+										Else
+											If WW(I) + LL(I) <> 0 Then 
+												Print Using " .###"; WW(I) / (WW(I) + LL(I));
+											Else
+												If WW(I) + LL(I) = 0 Then Print " .000";
+											End if
+										End If
+									End If
+									
+									2035 If ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2 = 0 Then Print Tab(36); " ---";
+									If ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2 <> 0 Then Print Tab(36); Using "##.#"; ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2;
+									Print Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
+									Print Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
+								End If
+                            Next
 
                             MJ = 83 - WW(11) - LL(12)
-                            If MJ < 0 Then MJ = 0
-                            Locate 14, 42: Print Using "##"; MJ
-                            AA = 21: ZZ = 30
-                            For X = AA To ZZ - 1
+ 
+                           If MJ < 0 Then MJ = 0
+                           Locate 14, 42: Print Using "##"; MJ
+                           AA = 21
+						   ZZ = 30
+                           
+						   For X = AA To ZZ - 1
                                 For Y = X + 1 To ZZ
                                     DiffX = WW(X) - LL(X)
                                     DiffY = WW(Y) - LL(Y)
@@ -301,14 +318,17 @@ Sub NEWLDRST ()
                             Next X
 
                             Color 14: Locate 24: Print "HIT ANY KEY TO CONTINUE";
-                            2051 I$ = GetKeyPress$
+                            I$ = GetKeyPress$
 
                             Cls
                             Locate 2: Color 14: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
                             Locate 3: Color 14: Print D3$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
+
                             For I = 21 To 30
                                 If TML$(I) <> "*" Then
-                                    Color 3: Print TML$(I);: Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
+                                    Color 3: Print TML$(I);
+									Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
+
                                     If Not (LL(I) = 0 And LL(I) + WW(I) <> 0) Then
                                         If WW(I) <> 0 Then
                                             If WW(I) + LL(I) = 0 Then
@@ -323,19 +343,22 @@ Sub NEWLDRST ()
                                         Print "1.000";
                                     End If
 
-                                    2065 If ((WW(21) - WW(I)) + (LL(I) - LL(21))) / 2 = 0 Then Print Tab(36); " ---";
+                                    If ((WW(21) - WW(I)) + (LL(I) - LL(21))) / 2 = 0 Then Print Tab(36); " ---";
                                     If ((WW(21) - WW(I)) + (LL(I) - LL(21))) / 2 <> 0 Then Print Tab(36); Using "##.#"; ((WW(21) - WW(I)) + (LL(I) - LL(21))) / 2;
                                     Print Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
                                     Print Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
                                 End If
 
-                            2064 Next
+                            Next
 
                             MJ = 83 - WW(21) - LL(22)
-                            If MJ < 0 Then MJ = 0
+                            
+							If MJ < 0 Then MJ = 0
                             Locate 4, 42: Print Using "##"; MJ
-                            AA = 31: ZZ = 40
-                            For X = AA To ZZ - 1
+                            AA = 31
+							ZZ = 40
+                            
+							For X = AA To ZZ - 1
                                 For Y = X + 1 To ZZ
                                     DiffX = WW(X) - LL(X)
                                     DiffY = WW(Y) - LL(Y)
@@ -356,12 +379,16 @@ Sub NEWLDRST ()
                                 3985 Next Y
                             Next X
 
-                            Locate 12: Color 14: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
-                            Locate 13: Color 14: Print D4$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
+                            Locate 12
+							Color 14: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
+                            Locate 13
+							Color 14: Print D4$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
 
                             For I = 31 To 40
                                 If TML$(I) <> "*" Then
-                                    2093 Color 3: Print TML$(I);: Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
+                                    Color 3: Print TML$(I);
+									Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
+
                                     If Not (LL(I) = 0 And LL(I) + WW(I) <> 0) Then
                                         If WW(I) = 0 Then
                                             Print " .000";
@@ -376,24 +403,26 @@ Sub NEWLDRST ()
                                         Print "1.000";
                                     End If
 
-                                    2095 If ((WW(31) - WW(I)) + (LL(I) - LL(31))) / 2 = 0 Then Print Tab(36); " ---";
+                                    If ((WW(31) - WW(I)) + (LL(I) - LL(31))) / 2 = 0 Then Print Tab(36); " ---";
                                     If ((WW(31) - WW(I)) + (LL(I) - LL(31))) / 2 <> 0 Then Print Tab(36); Using "##.#"; ((WW(31) - WW(I)) + (LL(I) - LL(31))) / 2;
                                     Print Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
                                     Print Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
                                 End If
-                            2094 Next
+                            Next
 
                             MJ = 83 - WW(31) - LL(32)
                             If MJ < 0 Then MJ = 0
-                            Locate 14, 42: Print Using "##"; MJ
+                            
+							Locate 14, 42: Print Using "##"; MJ
                             Locate 23: Color 14: Print "HIT ANY KEY TO CONTINUE"
-                            2216 I$ = GetKeyPress$
-                            'GoTo 2300
+                            I$ = GetKeyPress$
 
                         Case "P"
                             LPrint Chr$(15)
-                            '    WIDTH "LPT1:1", 130
-                            AA = 1: ZZ = 10
+                            'WIDTH "LPT1:1", 130
+                            AA = 1
+							ZZ = 10
+
                             For X = AA To ZZ - 1
                                 For Y = X + 1 To ZZ
                                     DiffX = WW(X) - LL(X)
@@ -438,7 +467,7 @@ Sub NEWLDRST ()
                                     End If
                                 End If
 
-                                3015 If ((WW(1) - WW(I)) + (LL(I) - LL(1))) / 2 = 0 Then LPrint Tab(36); " ---";
+                                If ((WW(1) - WW(I)) + (LL(I) - LL(1))) / 2 = 0 Then LPrint Tab(36); " ---";
                                 If ((WW(1) - WW(I)) + (LL(I) - LL(1))) / 2 <> 0 Then LPrint Tab(36); Using "##.#"; ((WW(1) - WW(I)) + (LL(I) - LL(1))) / 2;
                                 LPrint Tab(42);
                                 MJ = 83 - WW(1) - LL(2)
@@ -446,10 +475,12 @@ Sub NEWLDRST ()
                                 If I = 1 Then LPrint Using "##"; MJ;
                                 LPrint Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
                                 LPrint Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
-                            3014 Next
+                            Next
 
-                            AA = 11: ZZ = 20
-                            For X = AA To ZZ - 1
+                            AA = 11
+							ZZ = 20
+                            
+							For X = AA To ZZ - 1
                                 For Y = X + 1 To ZZ
                                     DiffX = WW(X) - LL(X)
                                     DiffY = WW(Y) - LL(Y)
@@ -475,34 +506,45 @@ Sub NEWLDRST ()
                             LPrint D2$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
 
                             For I = 11 To 20
-                                If TML$(I) = "*" Then 3034
-                                LPrint TML$(I);: LPrint Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
-                                If Not (LL(I) = 0 And LL(I) + WW(I) <> 0) Then
-                                    If WW(I) <> 0 Then
-                                        If WW(I) + LL(I) <> 0 Then
-                                            LPrint Using " .###"; WW(I) / (WW(I) + LL(I));
-                                        Else
-                                            If WW(I) + LL(I) = 0 Then LPrint " .000";
-                                        End If
-                                    Else
-                                        LPrint " .000";
-                                    End If
-                                Else
-                                    LPrint "1.000";
-                                End If
 
-                                3035 If ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2 = 0 Then LPrint Tab(36); " ---";
-                                If ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2 <> 0 Then LPrint Tab(36); Using "##.#"; ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2;
-                                LPrint Tab(42);
-                                MJ = 83 - WW(11) - LL(12)
-                                If MJ < 0 Then MJ = 0
-                                If I = 11 Then LPrint Using "##"; MJ;
-                                LPrint Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
-                                LPrint Tab(53); Using "##"; z; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
-                            3034 Next
+                                If TML$(I) <> "*" Then
 
-                            LPrint: LPrint
-                            AA = 21: ZZ = 30
+									LPrint TML$(I);: LPrint Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
+
+									If Not (LL(I) = 0 And LL(I) + WW(I) <> 0) Then
+										If WW(I) <> 0 Then
+											If WW(I) + LL(I) <> 0 Then
+												LPrint Using " .###"; WW(I) / (WW(I) + LL(I));
+											Else
+												If WW(I) + LL(I) = 0 Then LPrint " .000";
+											End If
+										Else
+											LPrint " .000";
+										End If
+									Else
+										LPrint "1.000";
+									End If
+
+									If ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2 = 0 Then LPrint Tab(36); " ---";
+									If ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2 <> 0 Then LPrint Tab(36); Using "##.#"; ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2;
+									
+									LPrint Tab(42);
+									MJ = 83 - WW(11) - LL(12)
+									
+									If MJ < 0 Then MJ = 0
+									If I = 11 Then LPrint Using "##"; MJ;
+									
+									LPrint Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
+									LPrint Tab(53); Using "##"; z; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
+								End If
+								
+                            Next
+
+                            LPrint
+							LPrint
+                            AA = 21
+							ZZ = 30
+
                             For X = AA To ZZ - 1
                                 For Y = X + 1 To ZZ
                                     DiffX = WW(X) - LL(X)
@@ -531,22 +573,37 @@ Sub NEWLDRST ()
                             '-- this is a mess!!!
                             For I = 21 To 30
                                 If TML$(I) <> "*" Then
-                                    LPrint TML$(I);: LPrint Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
-                                    If LL(I) = 0 And LL(I) + WW(I) <> 0 Then LPrint "1.000";: GoTo 3065
-                                    If WW(I) = 0 Then LPrint " .000";: GoTo 3065
-                                    If WW(I) + LL(I) <> 0 Then LPrint Using " .###"; WW(I) / (WW(I) + LL(I));: GoTo 3065
-                                    If WW(I) + LL(I) = 0 Then LPrint " .000";
 
-                                    3065 If ((WW(21) - WW(I)) + (LL(I) - LL(21))) / 2 = 0 Then LPrint Tab(36); " ---";
+                                    LPrint TML$(I);
+									LPrint Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
+
+                                    If LL(I) = 0 And LL(I) + WW(I) <> 0 Then 
+										LPrint "1.000";
+									Else
+										If WW(I) = 0 Then 
+											LPrint " .000";
+										Else
+											If WW(I) + LL(I) <> 0 Then 
+												LPrint Using " .###"; WW(I) / (WW(I) + LL(I));
+											Else
+												If WW(I) + LL(I) = 0 Then LPrint " .000";
+											End If
+									End If
+
+                                    If ((WW(21) - WW(I)) + (LL(I) - LL(21))) / 2 = 0 Then LPrint Tab(36); " ---";
                                     If ((WW(21) - WW(I)) + (LL(I) - LL(21))) / 2 <> 0 Then LPrint Tab(36); Using "##.#"; ((WW(21) - WW(I)) + (LL(I) - LL(21))) / 2;
                                     LPrint Tab(42);: If I = 21 Then LPrint Using "##"; 83 - WW(21) - LL(22);
                                     LPrint Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
                                     LPrint Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
                                 End If
-                            3064 Next
-                            LPrint: LPrint
+                            Next
 
-                            AA = 31: ZZ = 40
+                            LPrint
+							LPrint
+
+                            AA = 31
+							ZZ = 40
+
                             For X = AA To ZZ - 1
                                 For Y = X + 1 To ZZ
                                     DiffX = WW(X) - LL(X)
@@ -573,7 +630,9 @@ Sub NEWLDRST ()
 
                             For I = 31 To 40
                                 If TML$(I) <> "*" Then
-                                    3093 LPrint TML$(I);: LPrint Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
+                                    LPrint TML$(I);
+									LPrint Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
+
                                     If Not (LL(I) = 0 And LL(I) + WW(I) <> 0) Then
                                         If WW(I) = 0 Then
                                             LPrint " .000";
@@ -597,11 +656,10 @@ Sub NEWLDRST ()
                                     LPrint Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
                                     LPrint Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
                                 End If
-                            3094 Next
+                            Next
+
                             LPrint Chr$(12)
                             LPrint Chr$(18)
-                            '    WIDTH "LPT1:1", 80
-                            'GoTo 2300
 
                     End Select
 
@@ -611,6 +669,6 @@ Sub NEWLDRST ()
 
         End If 'Done checking ESC from menu
 
-    Loop Until SELECTION = 2 Or EXITCODE% = 27
+    Loop Until SELECTION = 2 Or ExitCode% = 27
 
 End Sub

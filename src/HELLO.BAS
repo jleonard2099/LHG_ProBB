@@ -248,12 +248,13 @@ Dim HALF$(2), QTR$(4)
 '----------------------------------------
 Dim BS%, NS%
 Dim N$
-Dim scheduleAP%(1), scheduleHS%(MAX_GAMES), scheduleVS%(MAX_GAMES)
+Dim scheduleAP%(1), homeScore%(MAX_GAMES), visitingScore%(MAX_GAMES)
 
 'NG = Number of Games; not sure about the 18
 Dim NG%(MAX_GAMES, 18)
 
-ReDim scheduleH$(20), scheduleYN$(MAX_GAMES, 1)
+ReDim scheduleH$(20), scheduleV$(20)
+Dim scheduleYN$(MAX_GAMES, 1)
 Dim Shared scheduleT(0 To 34)
 
 
@@ -282,11 +283,11 @@ For I = 0 To 1
 Next
 Close 1
 
-SELECTION% = 1
+Selection% = 1
 
 Do
-    Call Main_Menu(SELECTION%)
-Loop Until SELECTION% = 8
+    Call Main_Menu(Selection%)
+Loop Until Selection% = 8
 
 End
 
@@ -315,7 +316,7 @@ Sub Main_Menu (menuSelection%)
         menuChoices$(7) = "CONFIGURE DRIVES FOR TEAMS,STATS"
         menuChoices$(8) = "EXIT TO DOS                     "
 
-        'EXITCODE% = 8
+        'ExitCode% = 8
         menuSelection% = 1
         Count% = 8
         FileFGColr% = 15: FileBGColr% = 1
@@ -327,12 +328,12 @@ Sub Main_Menu (menuSelection%)
         Start% = 1
         Row% = 8
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), menuSelection%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), menuSelection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
-        If Not (EXITCODE% = 27) Then
+        If ExitCode% <> 27 Then
             Select Case menuSelection%
                 Case 1: Run "PROHOOP.EXE"
                 Case 2: Call TEAM_MENU
@@ -345,9 +346,9 @@ Sub Main_Menu (menuSelection%)
             End Select
         End If
 
-    Loop Until menuSelection% = 8 Or EXITCODE% = 27
+    Loop Until menuSelection% = 8 Or ExitCode% = 27
 
-    If EXITCODE% = 27 Then menuSelection% = 8
+    If ExitCode% = 27 Then menuSelection% = 8
 
 End Sub
 
@@ -359,10 +360,10 @@ Sub TEAM_MENU ()
 
     ReDim menuChoices$(1 To 8)
 
-    SELECTION% = 1
+    Selection% = 1
 
     Do
-        700 Call TITLE
+        Call TITLE
         'Erase menuChoices$
         menuChoices$(1) = "INPUT A NEW TEAM              "
         menuChoices$(2) = "EDIT AN EXISTING TEAM         "
@@ -374,7 +375,7 @@ Sub TEAM_MENU ()
         menuChoices$(8) = "RETURN TO MAIN MENU           "
         Count% = 8
         Start% = 1
-        EXITCODE% = 8
+        ExitCode% = 8
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -383,13 +384,13 @@ Sub TEAM_MENU ()
         Call box0(7, 26, 16, 57, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
-        If Not (EXITCODE% = 27) Then
-            Select Case SELECTION%
+        If ExitCode% <> 27 Then
+            Select Case Selection%
                 Case 1: Call BINPUT(1)
                 Case 2: Call BINPUT(2)
                 Case 3: Call BINPUT(3)
@@ -401,7 +402,7 @@ Sub TEAM_MENU ()
             End Select
         End If
 
-    Loop Until SELECTION% = 8 Or EXITCODE% = 27
+    Loop Until Selection% = 8 Or ExitCode% = 27
 
 End Sub
 
@@ -412,10 +413,10 @@ End Sub
 Sub REPLAY_STATS_MENU ()
     ReDim menuChoices$(1 To 5)
 
-    SELECTION% = 1
+    Selection% = 1
 
     Do
-        750 Call TITLE
+        Call TITLE
         _Title "Basketball: The Pro Game - Stats Menu"
         'Erase menuChoices$
         menuChoices$(1) = "VIEW / PRINT COMPILED STATISTICS "
@@ -425,7 +426,7 @@ Sub REPLAY_STATS_MENU ()
         menuChoices$(5) = "RETURN TO MAIN MENU              "
         Count% = 5
         Start% = 1
-        EXITCODE% = 5
+        ExitCode% = 5
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -435,12 +436,12 @@ Sub REPLAY_STATS_MENU ()
         Call box0(7, 24, 13, 58, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
-        If Not (EXITCODE% = 27) Then
-            Select Case SELECTION%
+        If ExitCode% <> 27 Then
+            Select Case Selection%
                 Case 1: Call LOOKY
                 Case 2: Call CAREER
                 Case 3: Call COMPARE
@@ -449,7 +450,7 @@ Sub REPLAY_STATS_MENU ()
             End Select
         End If
     
-    Loop Until SELECTION% = 5 Or EXITCODE% = 27
+    Loop Until Selection% = 5 Or ExitCode% = 27
 
 End Sub
 
@@ -473,10 +474,10 @@ Sub LEADERS_MENU ()
         menuChoices$(6) = "EXPANDED LEADERS/STANDINGS    "
         menuChoices$(7) = "DELETE ALL STATS FOR A LEAGUE "
         menuChoices$(8) = "RETURN TO MAIN MENU           "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 8
         Start% = 1
-        EXITCODE% = 8
+        ExitCode% = 8
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -485,12 +486,12 @@ Sub LEADERS_MENU ()
         Call box0(7, 25, 16, 56, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
-        If Not (EXITCODE% = 27) Then
-            Select Case SELECTION%
+        If ExitCode% <> 27 Then
+            Select Case Selection%
                 Case 1: Call CREATE
                 Case 2: Call LEAGCMPL
                 Case 3: Call SEELEAG
@@ -502,7 +503,7 @@ Sub LEADERS_MENU ()
             End Select
         End If
         
-    Loop Until SELECTION% = 8 Or EXITCODE% = 27
+    Loop Until Selection% = 8 Or ExitCode% = 27
 
 End Sub
 
@@ -512,20 +513,19 @@ End Sub
 '----------------------------------------
 Sub CONFIG_DRIVES ()
 
-    505 Color 15, 1
+    Color 15, 1
     FG = 0
     BG = 7
     For I = 0 To 1
         diskPaths$(I) = Left$(diskPaths$(I), Len(diskPaths$(I)) - 1)
     Next
 
-    Cls: Locate , 16: Print "SPECIFY PATHS FOR YOUR TEAMS AND COMPILED STATS": Print
+    Cls
+	Locate , 16: Print "SPECIFY PATHS FOR YOUR TEAMS AND COMPILED STATS": Print
 
-    510 Locate , 31: Print "PATHNAME EXAMPLES:": Print
-
-    515 Locate , 31: Print "A:"
-
-    520 Locate , 31: Print "C:\PROBB\TEAMS"
+    Locate , 31: Print "PATHNAME EXAMPLES:": Print
+    Locate , 31: Print "A:"
+    Locate , 31: Print "C:\PROBB\TEAMS"
     Locate 7, 1: QPrint "Path for Teams ", 14, 1, -1
     Locate , 16: QPrint PadRight$(diskPaths$(0), 30), FG, BG, -1
     Locate 9, 1: QPrint "Path for Stats ", 14, 1, -1
@@ -557,15 +557,11 @@ Sub CONFIG_DRIVES ()
     If X$ = "N" GoTo GetDiv1
     If X$ <> "Y" GoTo Done 'insist on either Y or N or up-arrow
 
-    580 Open "DEV.BAS" For Output As #1
-
-    585 For R = 0 To 2: diskPaths$(R) = diskPaths$(R) + "\": Next R
-
-    590 Print #1, diskPaths$(0)
-
-    595 Print #1, diskPaths$(1)
-
-    600 Close #1
+    Open "DEV.BAS" For Output As #1
+    For R = 0 To 2: diskPaths$(R) = diskPaths$(R) + "\": Next R
+    Print #1, diskPaths$(0)
+    Print #1, diskPaths$(1)
+    Close #1
 
 End Sub
 

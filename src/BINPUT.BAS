@@ -15,17 +15,17 @@ Sub BINPUT (menuShortcut%)
     End Select
 
     Do
-        100 Call TITLE
+        Call TITLE
         'Erase menuChoices$
         menuChoices$(1) = "ENTER A NEW TEAM               "
         menuChoices$(2) = "CHANGE OR EDIT AN EXISTING TEAM"
         menuChoices$(3) = "PRINT A TEAM ROSTER            "
         menuChoices$(4) = "VIEW A TEAM ROSTER             "
         menuChoices$(5) = "EXIT TO MAIN MENU              "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 5
         Start% = 1
-        EXITCODE% = 5
+        ExitCode% = 5
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -34,12 +34,12 @@ Sub BINPUT (menuShortcut%)
 
         Call box0(7, 24, 13, 56, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
-        If (SELECTION% >= 1) And (SELECTION% <= 4) Then Call DoTheInput (SELECTION%)
+        If (Selection% >= 1) And (Selection% <= 4) Then Call DoTheInput (Selection%)
 
-    Loop Until SELECTION% = 5
+    Loop Until Selection% = 5
 
 End Sub
 
@@ -57,7 +57,7 @@ Sub DoTheInput (action)
     
     ReDim menuChoices$(1 To 5)
 
-    Dim NT As Integer
+    Dim NTMS As Integer
 
     Color , 0
 
@@ -90,11 +90,11 @@ Sub DoTheInput (action)
             Locate 7, 27: Input NY$
             If NY$ = "" Then 
             'Load existing team names from previous choice
-                Call SelectTeam_BINPUT (NY$, NT)
+                Call SelectTeam_BINPUT (NY$, NTMS)
             Else
                 YN$ = NY$
                 Erase teamNames$
-                NT = 0
+                NTMS = 0
 
                 Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
                 Y = LOF(1)
@@ -125,16 +125,16 @@ Sub DoTheInput (action)
                     Get #1, I1
                     CK% = CVI(Q$(9))
                     If CK% = 999 Then
-                        NT = NT + 1
-                        teamNames$(NT) = Q$(0)
-                        teamIndex%(NT) = I1
+                        NTMS = NTMS + 1
+                        teamNames$(NTMS) = Q$(0)
+                        teamIndex%(NTMS) = I1
                     End If
                 Next
                 Close 1
 
-                TS% = Int((NT - 1) / 80)
+                TS% = Int((NTMS - 1) / 80)
 
-                Call SelectTeam_BINPUT (YN$, NT)
+                Call SelectTeam_BINPUT (YN$, NTMS)
 
             End If
             
@@ -212,46 +212,46 @@ Sub DoTheInput (action)
                         If Left$(inputB$(I, 0), 3) <> "XXX" Then
 
                             'Name  / Pos
-                            65 Color 3: Print Left$(inputB$(I, 0), 14);
+                            Color 3: Print Left$(inputB$(I, 0), 14);
                             Color 7: Print Tab(15); inputB$(I, 1);
 
                             'Games
-                            66 Print Tab(20); Using "##"; inputB%(I, 0);
+                            Print Tab(20); Using "##"; inputB%(I, 0);
 
                             'Minutes
-                            67 Print Tab(23); Using "####"; inputB%(I, 1);
+                            Print Tab(23); Using "####"; inputB%(I, 1);
 
                             'FGA
-                            68 Print Tab(28); Using "####"; inputB%(I, 2);
+                            Print Tab(28); Using "####"; inputB%(I, 2);
 
                             'FGM
-                            69 Print Tab(33); Using "####"; inputB%(I, 3);
+                            Print Tab(33); Using "####"; inputB%(I, 3);
 
                             'FG PCT
-                            70 If inputB%(I, 3) = 0 Then Print Tab(38); ".000";
+                            If inputB%(I, 3) = 0 Then Print Tab(38); ".000";
                             If inputB%(I, 3) > 0 Then fgPCT! = inputB%(I, 3) / inputB%(I, 2): Print Tab(38); Using ".###"; fgPCT!;
 
                             'FTA
-                            71 Print Tab(43); Using "####"; inputB%(I, 4);
+                            Print Tab(43); Using "####"; inputB%(I, 4);
 
                             'FTM
-                            72 Print Tab(48); Using "####"; inputB%(I, 5);
+                            Print Tab(48); Using "####"; inputB%(I, 5);
 
                             'FT PCT
-                            73 If inputB%(I, 5) = 0 Then Print Tab(53); ".000";
+                            If inputB%(I, 5) = 0 Then Print Tab(53); ".000";
                             If inputB%(I, 5) > 0 Then ftPCT! = inputB%(I, 5) / inputB%(I, 4): Print Tab(53); Using ".###"; ftPCT!;
 
                             'Off Reb
-                            74 Print Tab(58); Using "####"; inputB%(I, 6);
+                            Print Tab(58); Using "####"; inputB%(I, 6);
 
                             'Def Reb
-                            75 Print Tab(63); Using "####"; inputB%(I, 7);
+                            Print Tab(63); Using "####"; inputB%(I, 7);
 
                             'Assists
-                            76 Print Tab(68); Using "####"; inputB%(I, 8);
+                            Print Tab(68); Using "####"; inputB%(I, 8);
 
                             'Fouls
-                            77 Print Tab(73); Using "####"; inputB%(I, 9)
+                            Print Tab(73); Using "####"; inputB%(I, 9)
                         
                         End If
                         
@@ -260,153 +260,155 @@ Sub DoTheInput (action)
                     Color 14: Print: Print "TOTALS-OFF";
 
                     'Games
-                    102 Print Tab(20); Using "##"; inputL%(0);
+                    Print Tab(20); Using "##"; inputL%(0);
 
                     'FGA
-                    103 Print Tab(28); Using "####"; inputT%(5);
+                    Print Tab(28); Using "####"; inputT%(5);
 
                     'FGM
-                    104 Print Tab(33); Using "####"; inputT%(6);
+                    Print Tab(33); Using "####"; inputT%(6);
 
                     'FG PCT
                     fgPCT! = inputT%(6) / inputT%(5)
-                    105 Print Tab(38); Using ".###"; fgPCT!;
+                    Print Tab(38); Using ".###"; fgPCT!;
 
                     'FTA
-                    106 Print Tab(43); Using "####"; inputT%(7);
+                    Print Tab(43); Using "####"; inputT%(7);
 
                     'FTM
-                    107 Print Tab(48); Using "####"; inputT%(8);
+                    Print Tab(48); Using "####"; inputT%(8);
 
                     'FT PCT
                     ftPCT! = inputT%(8) / inputT%(7)
-                    108 Print Tab(53); Using ".###"; ftPCT!;
+                    Print Tab(53); Using ".###"; ftPCT!;
 
                     'Off Reb
-                    109 Print Tab(58); Using "####"; inputT%(9);
+                    Print Tab(58); Using "####"; inputT%(9);
 
                     'Def Reb
-                    110 Print Tab(63); Using "####"; inputT%(10);
+                    Print Tab(63); Using "####"; inputT%(10);
 
                     'Assists
-                    111 Print Tab(68); Using "####"; inputT%(11);
+                    Print Tab(68); Using "####"; inputT%(11);
 
                     'Fouls
-                    112 Print Tab(73); Using "####"; inputT%(12)
+                    Print Tab(73); Using "####"; inputT%(12)
 
-                    121 Color 11: Print "TOTALS-DEF";
+                    Color 11: Print "TOTALS-DEF";
 
                     'FGA
-                    123 Print Tab(28); Using "####"; inputT%(19);
+                    Print Tab(28); Using "####"; inputT%(19);
 
                     'FGM
-                    124 Print Tab(33); Using "####"; inputT%(20);
+                    Print Tab(33); Using "####"; inputT%(20);
 
                     'FG PCT
                     fgPCT! = inputT%(20) / inputT%(19)
-                    125 Print Tab(38); Using ".###"; fgPCT!;
+                    Print Tab(38); Using ".###"; fgPCT!;
 
                     'FTM
-                    126 Print Tab(43); Using "####"; inputT%(21);
+                    Print Tab(43); Using "####"; inputT%(21);
 
                     'FTA
-                    127 Print Tab(48); Using "####"; inputT%(22);
+                    Print Tab(48); Using "####"; inputT%(22);
 
                     ftPCT! = inputT%(22) / inputT%(21)
-                    128 Print Tab(53); Using ".###"; ftPCT!;
+                    Print Tab(53); Using ".###"; ftPCT!;
 
                     'Off Reb
-                    129 Print Tab(58); Using "####"; inputT%(23);
+                    Print Tab(58); Using "####"; inputT%(23);
 
                     'Def Reb
                     Print Tab(63); Using "####"; inputT%(24);
 
                     'Assists
-                    131 Print Tab(68); Using "####"; inputT%(25);
+                    Print Tab(68); Using "####"; inputT%(25);
 
                     'Fouls
-                    132 Print Tab(73); Using "####"; inputT%(26)
+                    Print Tab(73); Using "####"; inputT%(26)
 
                     Color 15: Locate 23: Print "HIT ANY KEY TO CONTINUE"
-                    141 I$ = GetKeyPress$
+                    I$ = GetKeyPress$
                     Cls: Color inputT%(33), inputT%(34): Print inputT$(0); " "; inputT$(1): Color , 0
 
-                    151 Locate 3: Color 15: Print "NAME           STL  BLK 3FGA 3FGM  PCT   HI-GAME"
+                    Locate 3: Color 15: Print "NAME           STL  BLK 3FGA 3FGM  PCT   HI-GAME"
 
-                    152 Locate 4: For I = 0 To 14
+                    Locate 4: For I = 0 To 14
 
-                        153 If Left$(inputB$(I, 0), 3) = "XXX" Then 200
+                        If Left$(inputB$(I, 0), 3) <> "XXX" Then
 
-                        'Name
-                        154 Color 3: Print Left$(inputB$(I, 0), 14);
+							'Name
+							Color 3: Print Left$(inputB$(I, 0), 14);
 
-                        'Steals
-                        155 Color 7: Print Tab(15); Using "####"; inputB%(I, 11);
+							'Steals
+							Color 7: Print Tab(15); Using "####"; inputB%(I, 11);
 
-                        'Blocks
-                        156 Print Tab(20); Using "####"; inputB%(I, 12);
+							'Blocks
+							Print Tab(20); Using "####"; inputB%(I, 12);
 
-                        '3FGA
-                        157 Print Tab(25); Using "####"; inputB%(I, 13);
+							'3FGA
+							Print Tab(25); Using "####"; inputB%(I, 13);
 
-                        '3FGM
-                        158 Print Tab(30); Using "####"; inputB%(I, 14);
+							'3FGM
+							Print Tab(30); Using "####"; inputB%(I, 14);
 
-                        '3FG PCT
-                        159 If inputB%(I, 14) = 0 Then Print Tab(35); ".000";
-                        If inputB%(I, 14) > 0 Then threeFGPCT! = inputB%(I, 14) / inputB%(I, 13): Print Tab(35); Using ".###"; threeFGPCT!;
+							'3FG PCT
+							If inputB%(I, 14) = 0 Then Print Tab(35); ".000";
+							If inputB%(I, 14) > 0 Then threeFGPCT! = inputB%(I, 14) / inputB%(I, 13): Print Tab(35); Using ".###"; threeFGPCT!;
 
-                        'HI GAME
-                        Print Tab(43); Using "####"; inputB%(I, 15)
-                        '161 PRINT TAB(53); USING "####"; inputB%(I, 16);
-                        '162 PRINT TAB(65); USING "####"; inputB%(I, 17)
+							'HI GAME
+							Print Tab(43); Using "####"; inputB%(I, 15)
+							'PRINT TAB(53); USING "####"; inputB%(I, 16);
+							'PRINT TAB(65); USING "####"; inputB%(I, 17)
+						
+						End If
+						
+                    Next
 
-                    200 Next
-
-                    201 Color 14: Print: Print "TOTALS-OFF";
+                    Color 14: Print: Print "TOTALS-OFF";
 
                     'Steals
-                    202 Print Tab(15); Using "####"; inputT%(14);
+                    Print Tab(15); Using "####"; inputT%(14);
 
                     'Blocks
-                    203 Print Tab(20); Using "####"; inputT%(16);
+                    Print Tab(20); Using "####"; inputT%(16);
 
                     '3FGA
-                    204 Print Tab(25); Using "####"; inputT%(17);
+                    Print Tab(25); Using "####"; inputT%(17);
 
                     '3FGM
                     Print Tab(30); Using "####"; inputT%(18);
 
                     '3FG PCT
-                    208 If inputT%(18) = 0 Then Print Tab(35); ".000"
+                    If inputT%(18) = 0 Then Print Tab(35); ".000"
                     If inputT%(18) > 0 Then 
                         statPCT! = inputT%(18) / inputT%(17)
                         Print Tab(35); Using ".###"; statPCT!
                     End If
 
-                    221 Color 11: Print "TOTALS-DEF";
+                    Color 11: Print "TOTALS-DEF";
 
                     'Steals
-                    223 Print Tab(15); Using "####"; inputT%(28);
+                    Print Tab(15); Using "####"; inputT%(28);
 
                     'Blocks
-                    224 Print Tab(20); Using "####"; inputT%(30);
+                    Print Tab(20); Using "####"; inputT%(30);
 
                     '3FGA
                     Print Tab(25); Using "####"; inputT%(31);
 
                     '3FGM
-                    226 Print Tab(30); Using "####"; inputT%(32);
+                    Print Tab(30); Using "####"; inputT%(32);
 
                     '3FG PCT
-                    228 If inputT%(32) = 0 Then Print Tab(35); ".000"
+                    If inputT%(32) = 0 Then Print Tab(35); ".000"
                     If inputT%(32) > 0 Then 
                         statPCT! = inputT%(32) / inputT%(31)
                         Print Tab(35); Using ".###"; statPCT!
                     End If
                     
                     Color 15: Print: Print "VIEW AGAIN (Y/N)"
-                    251 I$ = GetKeyPress$
+                    I$ = GetKeyPress$
 
                 Loop Until UCase$(I$) = "N"
                 Exit Sub
@@ -468,7 +470,6 @@ Sub DoTheInput (action)
             If UCase$(I$) = "N" Then I = 0  
             If I$ = Chr$(27) Then action = 5: Exit Sub
         
-        'If I = 1 Then 101
         Loop Until I = 0
         
     End If 'Done checking for actions with existing teams
@@ -477,9 +478,7 @@ Sub DoTheInput (action)
     ' editing team
     '--------------------
 
-'---> Start a loop here???
-'(technically 190)
-
+    '-----
     Cls
 
     Color 14: Print "LEAGUE INFORMATION": Color 15
@@ -806,8 +805,7 @@ Sub DoTheInput (action)
             
             End If 'Done checking for "END"
 
-            520 '
-            C1 = 1
+            520 C1 = 1
 
             Locate 23: Print "# TO CHANGE (0 TO CONTINUE)";: Input B9
                       '1    2    3    4    5     6   7    8    9    10   11   12   13   14   15   16   17   18  19   20   21
@@ -906,7 +904,7 @@ Sub SelectTeam_BINPUT (yearNumber$, numberTeams)
     Shared inputB%(), inputL%(), inputT%()
     Shared inputB$(), inputT$()
 
-    SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -923,74 +921,68 @@ Sub SelectTeam_BINPUT (yearNumber$, numberTeams)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    20 MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    20 MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-	If EXITCODE% = 27 Then Exit Sub
+	If ExitCode% <> 27 Then
 
-    T = teamIndex%(SELECTION%)
+		T = teamIndex%(Selection%)
 
-    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
-    Y = LOF(1)
+		Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+		Y = LOF(1)
 
-    Field #1, 15 As Q$(0), 15 As Q$(1)
+		Field #1, 15 As Q$(0), 15 As Q$(1)
 
-    For I = 0 To 6
-        Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-    Next
+		For I = 0 To 6
+			Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+		Next
 
-    Field #1, 44 As X$, 2 As Q$(9)
+		Field #1, 44 As X$, 2 As Q$(9)
 
-    For I = 0 To 34
-        Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-    Next
+		For I = 0 To 34
+			Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+		Next
 
-    For I = 0 To 14
-        Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-        For I1 = 0 To 19
-            Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-        Next
-    Next
+		For I = 0 To 14
+			Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+			For I1 = 0 To 19
+				Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+			Next
+		Next
 
-    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+		Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 
-    Get #1, T
+		Get #1, T
 
-    inputT$(0) = Q$(0)
-    inputT$(1) = Q$(1)
-    For I = 0 To 6
-        inputL%(I) = CVI(Q$(I + 2))
-    Next
+		inputT$(0) = RTrim$(Q$(0))
+		inputT$(1) = RTrim$(Q$(1))
+		
+		For I = 0 To 6
+			inputL%(I) = CVI(Q$(I + 2))
+		Next
 
-    For I = 0 To 34
-        inputT%(I) = CVI(Q$(I + 10))
-    Next
+		For I = 0 To 34
+			inputT%(I) = CVI(Q$(I + 10))
+		Next
 
-    For I = 0 To 14
-        inputB$(I, 0) = Q$(22 * I + 45)
-        inputB$(I, 1) = Q$(22 * I + 46)
-        For I1 = 0 To 19
-            inputB%(I, I1) = CVI(Q$(22 * I + 47 + I1))
-        Next
-    Next
+		For I = 0 To 14
+			inputB$(I, 0) = Q$(22 * I + 45)
+			inputB$(I, 1) = Q$(22 * I + 46)
+			For I1 = 0 To 19
+				inputB%(I, I1) = CVI(Q$(22 * I + 47 + I1))
+			Next
+		Next
 
-    inputT$(2) = Q$(375): inputT$(3) = Q$(376): inputT$(4) = Q$(377)
+		inputT$(2) = RTrim$(Q$(375))
+		inputT$(3) = RTrim$(Q$(376))
+		inputT$(4) = RTrim$(Q$(377))
 
-    Close 1
+		Close 1
 
-    1486 If Right$(inputT$(0), 1) = " " Then inputT$(0) = Left$(inputT$(0), Len(inputT$(0)) - 1): GoTo 1486
-
-    1487 If Right$(inputT$(1), 1) = " " Then inputT$(1) = Left$(inputT$(1), Len(inputT$(1)) - 1): GoTo 1487
-
-    1488 If Right$(inputT$(2), 1) = " " Then inputT$(2) = Left$(inputT$(2), Len(inputT$(2)) - 1): GoTo 1488
-
-    1489 If Right$(inputT$(3), 1) = " " Then inputT$(3) = Left$(inputT$(3), Len(inputT$(3)) - 1): GoTo 1489
-
-    1490 If Right$(inputT$(4), 1) = " " Then inputT$(4) = Left$(inputT$(4), Len(inputT$(4)) - 1): GoTo 1490
-
-    Call SaveTeamFile (yearNumber$)
-
-    'GoTo 600
+		Call SaveTeamFile (yearNumber$)
+	Else
+		BO% = 1
+	End If
 
 End Sub
 

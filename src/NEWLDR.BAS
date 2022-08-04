@@ -7,15 +7,15 @@ Sub NEWLDR ()
     Do
         Cls
 
-        5 Call TITLE
+        Call TITLE
         'Erase menuChoices$
         menuChoices$(1) = "VIEW EXPANDED LEAGUE STATISTICS "
         menuChoices$(2) = "VIEW EXPANDED STANDINGS         "
         menuChoices$(3) = "RETURN TO LEAGUE LEADER MENU    "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 3
         Start% = 1
-        EXITCODE% = 3
+        ExitCode% = 3
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -24,19 +24,19 @@ Sub NEWLDR ()
 
         Call box0(7, 24, 11, 57, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
-        If Not (EXITCODE% = 27) Then
-            Select Case SELECTION%
+        If ExitCode% <> 27 Then
+            Select Case Selection%
                 Case 1: Call ViewLeagueStats
                 Case 2: Call NEWLDRST
                 Case 3: Cls
             End Select
         End If
 
-    Loop Until SELECTION% = 3 Or EXITCODE% = 27
+    Loop Until Selection% = 3 Or ExitCode% = 27
 
 End Sub
 
@@ -82,17 +82,16 @@ Sub ViewLeagueStats ()
     Next
     leagueFiles$(0) = Spec$
     Call ReadFile(leagueFiles$())
-    'CALL SortStr(VARPTR(leagueFiles$1)), Count%, 0)
 
     Do
 
-        1445 Cls
+        Cls
         Color , 1
         Cls
         Locate , 28
         Color 14
         Print "SELECT LEAGUE": Color 15
-        SELECTION% = 1
+        Selection% = 1
         Start% = 1
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -107,19 +106,18 @@ Sub ViewLeagueStats ()
         Print "-SELECTS LEAGUE";
 
         _MouseShow "DEFAULT"
-        MAMenu leagueFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+        MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
         _MouseHide
 
-        If Not (ExitCode% = 27) Then
-            targetFile$ = leagueFiles$(SELECTION%)
+        If ExitCode% <> 27 Then
+            targetFile$ = RTrim$(leagueFiles$(Selection%))
             Locate 2, 33: Print targetFile$
             Locate , 33: Print "ANY CHANGE (YN)";
             Color 15, 0
-            3912 I$ = GetKeyPress$
+            I$ = GetKeyPress$
 
             If UCase$(I$) = "N" Then
 
-                3913 targetFile$ = RTrim$(targetFile$)
                 targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
                 LG$ = targetFile$
 
@@ -142,15 +140,15 @@ Sub ViewLeagueStats ()
                 Do
                     Cls
 
-                    70 Call TITLE
+                    Call TITLE
                     'Erase menuChoices$
                     menuChoices$(1) = "VIEW INDIVIDUAL PLAYER LEADERS  "
                     menuChoices$(2) = "VIEW TEAM TOTALS                "
                     menuChoices$(3) = "RETURN TO LEAGUE LEADER MENU    "
-                    SELECTION% = 1
+                    Selection% = 1
                     Count% = 3
                     Start% = 1
-                    EXITCODE% = 3
+                    ExitCode% = 3
                     FileFGColr% = 15: FileBGColr% = 1
                     HiLiteFGColr% = 0: HiLiteBGColr% = 7
                     Spacing% = 1
@@ -159,19 +157,19 @@ Sub ViewLeagueStats ()
 
                     Call box0(7, 24, 11, 57, 2, 15, 1)
                     _MouseShow "DEFAULT"
-                    MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+                    MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
                     _MouseHide
 
                     Color , 0
-                    If Not (EXITCODE% = 27) Then
-                        Select Case SELECTION%
+                    If ExitCode% <> 27 Then
+                        Select Case Selection%
                             Case 1: Call ViewInidividualLeaders
                             Case 2: Call ViewTotalLeaders
                             Case 3: Cls
                         End Select
                     End If
 
-                Loop Until SELECTION% = 3
+                Loop Until Selection% = 3
                 
             End If ' End of checking if Any Change Y/N
                     
@@ -204,8 +202,7 @@ Sub ViewInidividualLeaders ()
     Shared TMM$(), TP$(), TP1$()
     Shared PV, YY
 
-
-    80 Color , 0
+    Color , 0
     Cls
     Print
     Print
@@ -225,74 +222,91 @@ Sub ViewInidividualLeaders ()
     Print " " + Chr$(211); String$(66, 196); Chr$(189) + " ";
     Locate 10, 15
 
-    200 For I = 0 To 15
-        Color 14
-        Locate I + 3, 8: Print Using "##"; I;: Print " ";
-        Color 0: Print TP$(I);
-        Color 14: Print Tab(40); Using "##"; I + 16;: Print " ";
-        Color 0: Print TP$(I + 16)
-    Next
-    Print: Locate , 23: Input "SELECT NUMBER TO VIEW"; B9
+	Do
 
-    Select Case B9
-        Case 0: X = 1: stpl = 0: PPP = 0
-        Case 1: X = 11: stpl = 0: PPP = 0
-        Case 2: X = 3: stpl = 0: PPP = 0
-        Case 3: X = 2: stpl = 0: PPP = 0
-        Case 4: X = 3: X1 = 2: stpl = 0: PPP = 0
-        Case 5: stpl = 0: PPP = 0
-        Case 6: stpl = 0: PPP = 0
-        Case 7: stpl = 0: PPP = 0
-        Case 8: X = 5: stpl = 0: PPP = 0
-        Case 9: X = 4: stpl = 0: PPP = 0
-        Case 10: 
-            X = 5: X1 = 4: stpl = 0: PPP = 0
-            Call SelectOptions_NEWLDR(PV)
-            Cls: PPP = 0
-            For I = 1 To JB
-                If AL(I, X) < GMA(I) * 1.52 Then 959 Else GoTo 955
+		For I = 0 To 15
+			Color 14
+			Locate I + 3, 8: Print Using "##"; I;: Print " ";
+			Color 0: Print TP$(I);
+			Color 14: Print Tab(40); Using "##"; I + 16;: Print " ";
+			Color 0: Print TP$(I + 16)
+		Next
+		
+		Print
+		Locate , 23: Input "SELECT NUMBER TO VIEW"; B9
 
-                955 PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) / AL(I, X1): GoTo 959
+		Select Case B9
+			Case 0: X = 1: stpl = 0: PPP = 0
+			Case 1: X = 11: stpl = 0: PPP = 0
+			Case 2: X = 3: stpl = 0: PPP = 0
+			Case 3: X = 2: stpl = 0: PPP = 0
+			Case 4: X = 3: X1 = 2: stpl = 0: PPP = 0
+			Case 5: stpl = 0: PPP = 0
+			Case 6: stpl = 0: PPP = 0
+			Case 7: stpl = 0: PPP = 0
+			Case 8: X = 5: stpl = 0: PPP = 0
+			Case 9: X = 4: stpl = 0: PPP = 0
+			Case 10: 
+				X = 5: X1 = 4: stpl = 0: PPP = 0
+				Call SelectOptions_NEWLDR(PV)
+				Cls
+				PPP = 0
+				
+				For I = 1 To JB
+					
+					If AL(I, X) >= GMA(I) * 1.52 Then 
+						PPP = PPP + 1
+						Locate 1, 5: Print "CHANGING PLAYER "; PPP
+						TPP$(PPP) = AL$(I)
+						TMM$(PPP) = TMA$(I)
+						TYP(PPP) = AL(I, X) / AL(I, X1)
+					End If
 
-            959 Next I
-            For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
-                For J = PPP To I Step -1
-                    If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                    If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                Next J
-            Next I
+				Next I
+				
+				For I = 2 To PPP
+					stpl = stpl + 1
+					Locate 5, 5: Print "sorting player "; stpl
+					For J = PPP To I Step -1
+						If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+						If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					Next J
+				Next I
 
-            TVN = 2: QW = PPP
-            Call GetListLength (QW, LG)
-            Call ViewLeadersScreen
+				TVN = 2
+				QW = PPP
+				Call GetListLength (QW, LG)
+				Call ViewLeadersScreen
 
-        Case 11: X = 3: X1 = 5: stpl = 0: PPP = 0
-        Case 12: X = 3: X1 = 5: X2 = 1: stpl = 0: PPP = 0
-        Case 13: X = 14: stpl = 0: PPP = 0
-        Case 14: X = 13: stpl = 0: PPP = 0
-        Case 15: X = 6: X1 = 13: stpl = 0: PPP = 0
-        Case 16: X = 6: stpl = 0: PPP = 0
-        Case 17: X = 6: X1 = 1: stpl = 0: PPP = 0
-        Case 18: X = 7: stpl = 0: PPP = 0
-        Case 19: X = 9: stpl = 0: PPP = 0
-        Case 20: X = 10: stpl = 0: PPP = 0
-        Case 21: X = 8: stpl = 0: PPP = 0
-        Case 22: X = 12: stpl = 0: PPP = 0
-        Case 23: X = 3: X1 = 5: X2 = 11: stpl = 0: PPP = 0
-        Case 24: X = 6: X1 = 11: stpl = 0: PPP = 0
-        Case 25: X = 7: X1 = 11: stpl = 0: PPP = 0
-        Case 26: X = 9: X1 = 11: stpl = 0: PPP = 0
-        Case 27: X = 10: X1 = 11: stpl = 0: PPP = 0
-        Case 28: X = 8: X1 = 11: stpl = 0: PPP = 0
-        Case 29: X = 12: X1 = 11: stpl = 0: PPP = 0
-        Case 30: X = 11: X1 = 1: stpl = 0: PPP = 0
-        Case 31: Exit Sub
-        Case Is > 31: GoTo 200
-    End Select
+			Case 11: X = 3: X1 = 5: stpl = 0: PPP = 0
+			Case 12: X = 3: X1 = 5: X2 = 1: stpl = 0: PPP = 0
+			Case 13: X = 14: stpl = 0: PPP = 0
+			Case 14: X = 13: stpl = 0: PPP = 0
+			Case 15: X = 6: X1 = 13: stpl = 0: PPP = 0
+			Case 16: X = 6: stpl = 0: PPP = 0
+			Case 17: X = 6: X1 = 1: stpl = 0: PPP = 0
+			Case 18: X = 7: stpl = 0: PPP = 0
+			Case 19: X = 9: stpl = 0: PPP = 0
+			Case 20: X = 10: stpl = 0: PPP = 0
+			Case 21: X = 8: stpl = 0: PPP = 0
+			Case 22: X = 12: stpl = 0: PPP = 0
+			Case 23: X = 3: X1 = 5: X2 = 11: stpl = 0: PPP = 0
+			Case 24: X = 6: X1 = 11: stpl = 0: PPP = 0
+			Case 25: X = 7: X1 = 11: stpl = 0: PPP = 0
+			Case 26: X = 9: X1 = 11: stpl = 0: PPP = 0
+			Case 27: X = 10: X1 = 11: stpl = 0: PPP = 0
+			Case 28: X = 8: X1 = 11: stpl = 0: PPP = 0
+			Case 29: X = 12: X1 = 11: stpl = 0: PPP = 0
+			Case 30: X = 11: X1 = 1: stpl = 0: PPP = 0
+			Case 31: Exit Sub
+			Case Is > 31: '
+		End Select
+	
+	Loop Until B9 >= 0 And B9 <= 31
 
     If B9 <> 10 Then Call SelectOptions_NEWLDR(PV)
 
+	'--- need to confirm how this should work
     Select Case B9
         Case 0: GoTo 400
         Case 1: GoTo 420
@@ -314,25 +328,32 @@ Sub ViewInidividualLeaders ()
         Case 30: GoTo 560
     End Select
 
-    400 Cls: PPP = 0
-    For I = 1 To JB
+	'---
+	400 Cls
+	PPP = 0
+    
+	For I = 1 To JB
         If AL(I, X) <> 0 Then
             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
             TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X)
         End If
     Next I
-    For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+    
+	For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
         For J = PPP To I Step -1
             If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
             If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
         Next J
     Next I
 
-    TVN = 1: QW = PPP
+    TVN = 1
+	QW = PPP
     Call GetListLength (QW, LG)
     Call ViewLeadersScreen
         
-    420 Cls: PPP = 0
+	'---
+    420 Cls
+	PPP = 0
     For I = 1 To JB
         If AL(I, X) <> 0 Then
             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
@@ -346,12 +367,14 @@ Sub ViewInidividualLeaders ()
         Next J
     Next I
 
-    TVN = 1: QW = PPP
+    TVN = 1
+	QW = PPP
     Call GetListLength (QW, LG)
     Call ViewLeadersScreen
 
-
-    450 Cls: PPP = 0
+	'---
+    450 Cls
+	PPP = 0
     For I = 1 To JB
         If AL(I, X) >= GMA(I) * 3.65 Then 
             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
@@ -367,8 +390,9 @@ Sub ViewInidividualLeaders ()
 
     Call ViewLeadersScreen
 
-
-    480 Cls: PPP = 0
+	'---
+    480 Cls
+	PPP = 0
     For I = 1 To JB
         If W0L(I) >= GMA(I) * .3 Then
             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
@@ -382,13 +406,14 @@ Sub ViewInidividualLeaders ()
         Next J
     Next I
 
-    TVN = 2: QW = PPP
+    TVN = 2
+	QW = PPP
     Call GetListLength (QW, LG)
     Call ViewLeadersScreen
 
-
-
-    500 Cls: PPP = 0
+	'---
+    500 Cls
+	PPP = 0
     For I = 1 To JB
         If (AL(I, X) * 2) + AL(I, X1) + W0L(I) <> 0 Then
             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
@@ -403,11 +428,12 @@ Sub ViewInidividualLeaders ()
         Next J
     Next I
 
-    TVN = 1: QW = PPP
+    TVN = 1
+	QW = PPP
     Call GetListLength (QW, LG)
     Call ViewLeadersScreen
 
-
+	'---
     520 Cls: PPP = 0
     For I = 1 To JB
         If Not ((AL(I, X) * 2) + AL(I, X1) + W0L(I) = 0 Or AL(I, X2) = 0) Then
@@ -426,8 +452,9 @@ Sub ViewInidividualLeaders ()
     Call GetListLength (QW, LG)
     Call ViewLeadersScreen
 
-
-    540 Cls: PPP = 0
+	'---
+    540 Cls
+	PPP = 0
     For I = 1 To JB
         If Not(AL(I, X) = 0 Or AL(I, X1) = 0) Then
             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
@@ -441,11 +468,12 @@ Sub ViewInidividualLeaders ()
         Next J
     Next I
 
-    TVN = 3: QW = PPP
+    TVN = 3
+	QW = PPP
     Call GetListLength (QW, LG)
     Call ViewLeadersScreen
 
-
+	'---
     560 Cls: PPP = 0
     For I = 1 To JB
         If Not (AL(I, X) = 0 Or AL(I, X1) = 0) Then
@@ -453,6 +481,7 @@ Sub ViewInidividualLeaders ()
             TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = ((AL(I, X) + 30) / 60) / AL(I, X1)
         End If
     Next I
+
     For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
         For J = PPP To I Step -1
             If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
@@ -460,69 +489,82 @@ Sub ViewInidividualLeaders ()
         Next J
     Next I
 
-    TVN = 3: QW = PPP
+    TVN = 3
+	QW = PPP
     Call GetListLength (QW, LG)
     Call ViewLeadersScreen
 
-
-    580 Cls: PPP = 0
-    For I = 1 To JB
+	'---
+    580 Cls
+	PPP = 0
+    
+	For I = 1 To JB
         If Not ((AL(I, X) * 2) + AL(I, X1) + W0L(I) = 0 Or AL(I, X2) = 0) Then
             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
             TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = ((AL(I, X) * 2) + AL(I, X1) + W0L(I)) / AL(I, X2)
         End If
     Next I
-    For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+    
+	For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
         For J = PPP To I Step -1
             If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
             If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
         Next J
     Next I
 
-    TVN = 3: QW = PPP
+    TVN = 3
+	QW = PPP
     Call GetListLength (QW, LG)
     Call ViewLeadersScreen
 
-
-    620 Cls: PPP = 0
+	'---
+    620 Cls
+	PPP = 0
     For I = 1 To JB
         If AL(I, X) - AL(I, X1) <> 0 Then
             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
             TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) - AL(I, X1)
         End If
     Next I
-    For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+    
+	For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
         For J = PPP To I Step -1
             If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
             If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
         Next J
     Next I
 
-    TVN = 1: QW = PPP
+    TVN = 1
+	QW = PPP
     Call GetListLength (QW, LG)
     Call ViewLeadersScreen
 
-
-    640 Cls: PPP = 0
-    For I = 1 To JB
+	'---
+    640 Cls
+	PPP = 0
+    
+	For I = 1 To JB
         If AL(I, X) <> 0 Then
             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
             TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) / AL(I, X1)
         End If
     Next I
-    For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+    
+	For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
         For J = PPP To I Step -1
             If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
             If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
         Next J
     Next I
 
-    TVN = 3: QW = PPP
+    TVN = 3
+	QW = PPP
     Call GetListLength (QW, LG)
     Call ViewLeadersScreen
 
-
-    660 Cls: PPP = 0
+	'---
+    660 Cls
+	PPP = 0
     For I = 1 To JB
         If W0L(I) <> 0 Then
             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
@@ -536,26 +578,31 @@ Sub ViewInidividualLeaders ()
         Next J
     Next I
 
-    TVN = 1: QW = PPP
+    TVN = 1
+	QW = PPP
     Call GetListLength (QW, LG)
     Call ViewLeadersScreen
 
-
-    680 Cls: PPP = 0
-    For I = 1 To JB
+	'---
+    680 Cls
+	PPP = 0
+    
+	For I = 1 To JB
         If W1L(I) <> 0 Then
             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
             TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = W1L(I)
         End If
     Next I
-    For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+    
+	For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
         For J = PPP To I Step -1
             If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
             If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
         Next J
     Next I
 
-    TVN = 1: QW = PPP
+    TVN = 1
+	QW = PPP
     Call GetListLength (QW, LG)
     Call ViewLeadersScreen
 
@@ -571,13 +618,15 @@ Sub ViewLeadersScreen ()
     Shared TMM$(), TPP$(), TP$(), TYP()
 
     Do
-        700 Color 14, 0: Cls: Print "     PLAYER                  TEAM                     "; TP$(B9)
-        For W = 1 To QW
+        Color 14, 0
+		Cls: Print "     PLAYER                  TEAM                     "; TP$(B9)
+        
+		For W = 1 To QW
 
             If W = 20 Or W = 40 Or W = 60 Or W = 80 Or W = 100 Or W = 120 Or W = 140 Or W = 160 Or W = 180 Or W = 200 Then 
                 Locate 22: Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
                 I$ = GetKeyPress$
-                If Not (I$ = Chr$(27)) Then
+                If I$ <> Chr$(27) Then
                     Cls
                     Color 14: Print "     PLAYER                  TEAM                     "; TP$(B9)
                 Else
@@ -588,7 +637,7 @@ Sub ViewLeadersScreen ()
             If W = 220 Or W = 240 Or W = 260 Or W = 280 Or W = 300 Or W = 320 Or W = 340 Or W = 360 Or W = 380 Or W = 400 Then 
                 Locate 22: Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
                 I$ = GetKeyPress$
-                If Not (I$ = Chr$(27)) Then
+                If I$ <> Chr$(27) Then
                     Cls
                     Color 14: Print "     PLAYER                  TEAM                     "; TP$(B9)
                 Else
@@ -599,7 +648,7 @@ Sub ViewLeadersScreen ()
             If W = 420 Or W = 440 Or W = 460 Or W = 480 Or W = 500 Or W = 520 Or W = 540 Or W = 560 Or W = 580 Or W = 600 Then 
                 Locate 22: Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
                 I$ = GetKeyPress$
-                If Not (I$ = Chr$(27)) Then
+                If I$ <> Chr$(27) Then
                     Cls
                     Color 14: Print "     PLAYER                  TEAM                     "; TP$(B9)
                 Else
@@ -610,7 +659,7 @@ Sub ViewLeadersScreen ()
             If W = 620 Or W = 640 Or W = 660 Then 
                 Locate 22: Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
                 I$ = GetKeyPress$
-                If Not (I$ = Chr$(27)) Then
+                If I$ <> Chr$(27) Then
                     Cls
                     Color 14: Print "     PLAYER                  TEAM                     "; TP$(B9)
                 Else
@@ -628,15 +677,14 @@ Sub ViewLeadersScreen ()
 
         Locate 22: Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
         I$ = GetKeyPress$
-        If Not (I$ = Chr$(27)) Then 
+        
+		If I$ <> Chr$(27) Then 
             Locate 22: Print "                                                                "
             Locate 22: Color 14: Print "VIEW AGAIN (Y/N)"
             I$ = GetKeyPress$
         End If
     
     Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
-    '719 GoTo 80
-
 
 End Sub
 
@@ -649,26 +697,33 @@ Sub PrintLeaders ()
     Shared TMM$(), TP$(), TYP()
     Shared LG
 
-    850 LPrint Chr$(15)
+    LPrint Chr$(15)
     '    WIDTH "LPT1:1", 130
-    Color 14, 0: Cls: LPrint "     PLAYER                  TEAM                     "; TP$(B9)
-    For W = 1 To LG
+    
+	Color 14, 0: Cls: LPrint "     PLAYER                  TEAM                     "; TP$(B9)
+    
+	For W = 1 To LG
+
         If W = 50 Or W = 100 Or W = 150 Or W = 200 Then 
             LPrint Chr$(12)
             LPrint "     PLAYER                  TEAM                     "; TP$(XX)
         End If
+
         If W = 250 Or W = 300 Or W = 350 Or W = 400 Then 
             LPrint Chr$(12)
             LPrint "     PLAYER                  TEAM                     "; TP$(XX)
         End If
+
         If W = 450 Or W = 500 Or W = 550 Or W = 600 Then
             LPrint Chr$(12)
             LPrint "     PLAYER                  TEAM                     "; TP$(XX)
         End If
+
         If W = 650 Or W = 700 Or W = 750 Or W = 800 Then
             LPrint Chr$(12)
             LPrint "     PLAYER                  TEAM                     "; TP$(XX)
         End If
+
         If W = 850 Or W = 900 Then
             LPrint Chr$(12)
             LPrint "     PLAYER                  TEAM                     "; TP$(XX)
@@ -681,10 +736,10 @@ Sub PrintLeaders ()
             Case 2: LPrint Tab(58); Using ".###"; TYP(W)
             Case 3: LPrint Tab(58); Using "###.#"; TYP(W)
         End Select
+
     Next W
-    LPrint Chr$(18)
-    '    WIDTH "LPT1:1", 80
-    'GoTo 70
+    
+	LPrint Chr$(18)
 
 End Sub
 
@@ -697,16 +752,29 @@ Sub ViewTotalLeaders ()
     Shared TYP()
     Shared TMM$()
 
-    2880 Color , 0: Cls: Print: Print: Print: Print: J = 21: ZZ = 3
-    '
-    Locate 1, 4: Color 15, 6: Print " " + Chr$(214); String$(66, 196); "· ";
-    For II = 1 To J: Locate 1 + II, 4: Print " " + Chr$(186); String$(66, 32); Chr$(186) + " ";: Next
-    Locate 2 + J, 4: Print " " + Chr$(211); String$(66, 196); Chr$(189) + " ";: Locate 10, 15
-    For I = 0 To 19: Locate I + 2, 8: Color 11: Print Using "##"; I;: Print " ";: Color 0: Print TP1$(I): Next
+    Color , 0
+	Cls
+	Print
+	Print
+	Print
+	Print
+	J = 21
+	ZZ = 3
+
+    Locate 1, 4
+	Color 15, 6: Print " " + Chr$(214); String$(66, 196); "· ";
+    
+	For II = 1 To J: Locate 1 + II, 4: Print " " + Chr$(186); String$(66, 32); Chr$(186) + " ";: Next
+    
+	Locate 2 + J, 4: Print " " + Chr$(211); String$(66, 196); Chr$(189) + " ";: Locate 10, 15
+    
+	For I = 0 To 19: Locate I + 2, 8: Color 11: Print Using "##"; I;: Print " ";: Color 0: Print TP1$(I): Next
     For I = 20 To 38: Locate I - 18, 38: Color 11: Print Using "##"; I;: Print " ";: Color 0: Print TP1$(I): Next
 
-    3050 Color 14: Locate 22, 23: Input "SELECT NUMBER TO VIEW"; B9
-    Select Case B9
+    Color 14
+	Locate 22, 23: Input "SELECT NUMBER TO VIEW"; B9
+    
+	Select Case B9
         Case 0: X = 1: stpl = 0
         Case 1: X = 2: stpl = 0
         Case 2: X = 2: X1 = 1: stpl = 0
@@ -778,28 +846,12 @@ Sub ViewTotalLeaders ()
         Case IS > 38: GoTo 3050
     End Select
 
+	'---
+    3500 Cls
 
-    3500 Cls: For I = 1 To TS
-    TMM$(I) = TT$(I, X): TYP(I) = TT!(I, X): Next
-
-    For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
-        For J = TS To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    TVN = 1: QW = TS
-    Call PrintTeamView_NEWLDR (PV, QW, TVN)
-
-    3510 Cls: For I = 1 To TS
-        If TT!(I, X1) = 0 Then 3513 Else GoTo 3512
-
-        3512 TMM$(I) = TT$(I, X): TYP(I) = TT!(I, X) / TT!(I, X1): GoTo 3514
-
-        3513 TMM$(I) = TT$(I, X): TYP(I) = 0
-
-    3514 Next
+	For I = 1 To TS
+		TMM$(I) = TT$(I, X): TYP(I) = TT!(I, X)
+	Next
 
     For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
         For J = TS To I Step -1
@@ -808,11 +860,22 @@ Sub ViewTotalLeaders ()
         Next J
     Next I
 
-    TVN = 2: QW = TS
+    TVN = 1
+	QW = TS
     Call PrintTeamView_NEWLDR (PV, QW, TVN)
 
-    3520 Cls: For I = 1 To TS
-    TMM$(I) = TT$(I, X): TYP(I) = TT!(I, X) - TT!(I, X1): Next
+ 	'---
+	3510 Cls
+	For I = 1 To TS
+        If TT!(I, X1) = 0 Then 
+			TMM$(I) = TT$(I, X)
+			TYP(I) = 0
+		Else 
+			TMM$(I) = TT$(I, X)
+			TYP(I) = TT!(I, X) / TT!(I, X1)
+		End If
+
+    Next
 
     For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
         For J = TS To I Step -1
@@ -821,10 +884,55 @@ Sub ViewTotalLeaders ()
         Next J
     Next I
 
-    TVN = 1: QW = TS
+    TVN = 2
+	QW = TS
     Call PrintTeamView_NEWLDR (PV, QW, TVN)
-    3530 Cls: For I = 1 To TS
-    TMM$(I) = TT$(I, X): TYP(I) = TT!(I, X) / GM(I): Next
+
+ 	'---
+    3520 Cls
+	For I = 1 To TS
+		TMM$(I) = TT$(I, X): TYP(I) = TT!(I, X) - TT!(I, X1)
+	Next
+
+    For I = 2 To TS
+		stpl = stpl + 1
+		Locate 5, 5: Print "sorting team "; stpl
+        For J = TS To I Step -1
+            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+        Next J
+    Next I
+
+    TVN = 1
+	QW = TS
+    Call PrintTeamView_NEWLDR (PV, QW, TVN)
+
+ 	'---
+    3530 Cls
+	For I = 1 To TS
+		TMM$(I) = TT$(I, X)
+		TYP(I) = TT!(I, X) / GM(I)
+	Next
+
+    For I = 2 To TS
+		stpl = stpl + 1
+		Locate 5, 5: Print "sorting team "; stpl
+        For J = TS To I Step -1
+            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+        Next J
+    Next I
+
+    TVN = 3
+	QW = TS
+    Call PrintTeamView_NEWLDR (PV, QW, TVN)
+
+ 	'---
+    3540 Cls
+	For I = 1 To TS
+		TMM$(I) = TT$(I, X)
+		TYP(I) = ((TT!(I, X) * 2) + TT!(I, X1) + TT!(I, X2)) / GM(I)
+	Next
 
     For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
         For J = TS To I Step -1
@@ -833,41 +941,83 @@ Sub ViewTotalLeaders ()
         Next J
     Next I
 
-    TVN = 3: QW = TS
+    TVN = 3
+	QW = TS
     Call PrintTeamView_NEWLDR (PV, QW, TVN)
-    3540 Cls: For I = 1 To TS
-    TMM$(I) = TT$(I, X): TYP(I) = ((TT!(I, X) * 2) + TT!(I, X1) + TT!(I, X2)) / GM(I): Next
 
-    For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
-        For J = TS To I Step -1
+ 	'---
+    3600 Cls
+	For I = 1 To TTS
+		TMM$(I) = TT1$(I, X)
+		TYP(I) = TT1!(I, X)
+	Next
+
+    For I = 2 To TTS: 
+		stpl = stpl + 1
+		Locate 5, 5: Print "sorting team "; stpl
+        
+		For J = TTS To I Step -1
             If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
             If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
         Next J
     Next I
 
-    TVN = 3: QW = TS
+    TVN = 1
+	QW = TTS
     Call PrintTeamView_NEWLDR (PV, QW, TVN)
-    3600 Cls: For I = 1 To TTS
-    TMM$(I) = TT1$(I, X): TYP(I) = TT1!(I, X): Next
 
-    For I = 2 To TTS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
-        For J = TTS To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    TVN = 1: QW = TTS
-    Call PrintTeamView_NEWLDR (PV, QW, TVN)
+ 	'---
     3610 Cls
     For I = 1 To TTS
         If TT1!(I, X1) = 0 Then 
-            TMM$(I) = TT1$(I, X): TYP(I) = 0 
+            TMM$(I) = TT1$(I, X)
+			TYP(I) = 0 
         Else 
-            TMM$(I) = TT1$(I, X): TYP(I) = TT1!(I, X) / TT1!(I, X1)
+            TMM$(I) = TT1$(I, X)
+			TYP(I) = TT1!(I, X) / TT1!(I, X1)
         End If
     Next
 
+    For I = 2 To TTS
+		stpl = stpl + 1
+		Locate 5, 5: Print "sorting team "; stpl
+        For J = TTS To I Step -1
+            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+        Next J
+    Next I
+
+    TVN = 2
+	QW = TTS
+    Call PrintTeamView_NEWLDR (PV, QW, TVN)
+
+ 	'---
+    3620 Cls
+	For I = 1 To TTS
+		TMM$(I) = TT1$(I, X)
+		TYP(I) = TT1!(I, X) - TT1!(I, X1)
+	Next
+
+    For I = 2 To TTS: 
+		stpl = stpl + 1
+		Locate 5, 5: Print "sorting team "; stpl
+        For J = TTS To I Step -1
+            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+        Next J
+    Next I
+
+    TVN = 1
+	QW = TTS
+    Call PrintTeamView_NEWLDR (PV, QW, TVN)
+
+ 	'---
+    3630 Cls
+	For I = 1 To TTS
+		TMM$(I) = TT1$(I, X)
+		TYP(I) = TT1!(I, X) / GM1(I)
+	Next
+
     For I = 2 To TTS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
         For J = TTS To I Step -1
             If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
@@ -875,11 +1025,16 @@ Sub ViewTotalLeaders ()
         Next J
     Next I
 
-    TVN = 2: QW = TTS
+    TVN = 3
+	QW = TTS
     Call PrintTeamView_NEWLDR (PV, QW, TVN)
 
-    3620 Cls: For I = 1 To TTS
-    TMM$(I) = TT1$(I, X): TYP(I) = TT1!(I, X) - TT1!(I, X1): Next
+ 	'---
+    3640 Cls
+	For I = 1 To TTS
+		TMM$(I) = TT1$(I, X)
+		TYP(I) = ((TT1!(I, X) * 2) + TT1!(I, X1) + TT1!(I, X2)) / GM1(I)
+	Next
 
     For I = 2 To TTS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
         For J = TTS To I Step -1
@@ -888,34 +1043,9 @@ Sub ViewTotalLeaders ()
         Next J
     Next I
 
-    TVN = 1: QW = TTS
+    TVN = 3
+	QW = TTS
     Call PrintTeamView_NEWLDR (PV, QW, TVN)
-    3630 Cls: For I = 1 To TTS
-    TMM$(I) = TT1$(I, X): TYP(I) = TT1!(I, X) / GM1(I): Next
-
-    For I = 2 To TTS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
-        For J = TTS To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    TVN = 3: QW = TTS
-    Call PrintTeamView_NEWLDR (PV, QW, TVN)
-    3640 Cls: For I = 1 To TTS
-    TMM$(I) = TT1$(I, X): TYP(I) = ((TT1!(I, X) * 2) + TT1!(I, X1) + TT1!(I, X2)) / GM1(I): Next
-
-    For I = 2 To TTS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
-        For J = TTS To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    TVN = 3: QW = TTS
-    Call PrintTeamView_NEWLDR (PV, QW, TVN)
-    '3719 GoTo 2880
-    'Return
 
 End Sub
 
@@ -956,20 +1086,19 @@ Sub PrintTeamView_NEWLDR (printType, QW, TVN)
                 Locate 22: Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
                 I$ = GetKeyPress$
 
-                If Not (I$ = Chr$(27)) Then
+                If I$ <> Chr$(27) Then
                     Locate 22: Print "                                                                "
                     Locate 22: Color 14: Print "VIEW AGAIN (Y/N)"
                     I$ = GetKeyPress$
                 End If
 
             Loop Until I$ = "N"
-
-            'GoTo 2880
                 
         Case 2:
             LPrint Chr$(15)
-            '    WIDTH "LPT1:1", 130
+            'WIDTH "LPT1:1", 130
             LPrint "     TEAM                     "; TP1$(B9)
+
             For W = 1 To QW
                 Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);
                 Select Case TVN
@@ -978,10 +1107,10 @@ Sub PrintTeamView_NEWLDR (printType, QW, TVN)
                     Case 3: Color 15: Print Tab(33); Using "###.#"; TYP(W)
                 End Select
             Next W
+
             LPrint Chr$(12)
             LPrint Chr$(18)
-            '    WIDTH "LPT1:1", 80
-            'GoTo 70
+            ' WIDTH "LPT1:1", 80
 
     End Select
 
@@ -994,17 +1123,20 @@ End Sub
 '... explain here ...
 Sub SelectOptions_NEWLDR (printType)
 
-    5000 J = 6
+    J = 6
     Locate 8, 8: Color 15, 1: Print " " + Chr$(214); String$(57, 196); "· ";
-    For II = 1 To J: Locate 8 + II, 8: Print " " + Chr$(186); String$(57, 32); Chr$(186) + " ";: Next
-    Locate 9 + J, 8: Print " " + Chr$(211); String$(57, 196); Chr$(189) + " ";: Locate 10, 15
-    Color 3: Locate , 30: Print "SELECT OPTION:"
+    
+	For II = 1 To J: Locate 8 + II, 8: Print " " + Chr$(186); String$(57, 32); Chr$(186) + " ";: Next
+    
+	Locate 9 + J, 8: Print " " + Chr$(211); String$(57, 196); Chr$(189) + " ";: Locate 10, 15
+    
+	Color 3: Locate , 30: Print "SELECT OPTION:"
     Locate , 30: Color 15: Print "H";: Color 7: Print "IGHEST TO LOWEST"
     Locate , 30: Color 15: Print "L";: Color 7: Print "OWEST TO HIGHEST"
     Locate , 30: Color 15: Print "R";: Color 7: Print "E-SELECT CATEGORY"
     
     Do
-        5002 I$ = GetKeyPress$
+        I$ = GetKeyPress$
         Select Case I$
             Case "H":
                 Call PrintViewReselect(I2$)
@@ -1044,12 +1176,19 @@ End Sub
 '... explain here ...
 Sub PrintViewReselect (I$)
 
-    Print: Print: Print: Print: Print
+    Print
+	Print
+	Print
+	Print
+	Print
+
     J = 4
     Locate 9, 15: Color 15, 0: Print " " + Chr$(214); String$(40, 196); "· ";
+
     For II = 1 To J
         Locate 9 + II, 15: Print " " + Chr$(186); String$(40, 32); Chr$(186) + " ";
     Next
+
     Locate 10 + J, 15: Print " " + Chr$(211); String$(40, 196); "½ ": Locate 10, 10
 
     Color 12: Locate , 30: Print "SELECT OPTION:"
@@ -1076,15 +1215,21 @@ Sub GetListLength (maxQW, listLength)
         Color , 0
         Cls
         If PV <> 1 Then
-            Print: Print: Print: Print: Print: J = 2
+            Print
+			Print
+			Print
+			Print
+			Print
+			J = 2
 
-            8007 '
             Locate 10, 20
-            Color 4, 15: Print " " + Chr$(214); String$(30, 196); "· ";
-            For II = 1 To J
+            Color 4, 15: Print " " + Chr$(214); String$(30, 196); Chr$(183) + " ";
+            
+			For II = 1 To J
                 Locate 10 + II, 20: Print " " + Chr$(186); String$(30, 32); Chr$(186) + " ";
             Next
-            Locate 11 + J, 20: Print " " + Chr$(211); String$(30, 196); "½ ": Locate 11
+            
+			Locate 11 + J, 20: Print " " + Chr$(211); String$(30, 196); Chr$(189) + " ": Locate 11
 
             Locate , 25: Color 1: Print "MAXIMUM = "; maxQW
             Locate , 25: Input "ENTER LENGTH OF LIST"; listLength
@@ -1118,7 +1263,7 @@ Sub BUILDSTATS (statFile$)
 	Shared A()
 	Shared YY
 
-    11 For KK = 1 To 40: YY = YY + 1
+    For KK = 1 To 40: YY = YY + 1
         If Z1$(KK) <> "*" Then
 
 			Print "CONVERTING STAT FILE OF "; Z1$(KK)
@@ -1174,10 +1319,47 @@ Sub BUILDSTATS (statFile$)
 	Print "SAVING LEADER FILES . . . . PLEASE WAIT"
 
     Open D$(1) + statFile$ + ".LDS" For Output As #1
-    Write #1, JB, TS, TTS
-    For I = 1 To 600: Write #1, AL$(I), TMA$(I), GMA(I): Color 14: Locate 18, 45: TMR = TMR - 1: Print Using "#####"; TMR
-    For I1 = 1 To 14: Write #1, AL(I, I1): Next I1: Write #1, W0L(I): Write #1, W1L(I): Color 14: Locate 18, 45: TMR = TMR - 1: Print Using "#####"; TMR: Next I
-    For I = 1 To 40: For I1 = 0 To 14: Write #1, TT!(I, I1), TT$(I, I1): Next: Color 14: Locate 18, 45: TMR = TMR - 1: Print Using "#####"; TMR: Write #1, GM(I): Next
-    For I = 1 To 40: For I1 = 0 To 14: Write #1, TT1!(I, I1), TT1$(I, I1): Next: Color 14: Locate 18, 45: TMR = TMR - 1: Print Using "#####"; TMR: Write #1, GM1(I): Next
-    Close #1
+    
+	Write #1, JB, TS, TTS
+    
+	For I = 1 To 600: 
+		Write #1, AL$(I), TMA$(I), GMA(I)
+		Color 14: Locate 18, 45
+		TMR = TMR - 1
+		Print Using "#####"; TMR
+		For I1 = 1 To 14:
+			Write #1, AL(I, I1)
+		Next I1
+		
+		Write #1, W0L(I)
+		Write #1, W1L(I)
+		Color 14: Locate 18, 45
+		TMR = TMR - 1
+		Print Using "#####"; TMR: 
+	Next I
+	
+    For I = 1 To 40: 
+		For I1 = 0 To 14: 
+			Write #1, TT!(I, I1), TT$(I, I1)
+		Next
+		
+		Color 14: Locate 18, 45
+		TMR = TMR - 1
+		Print Using "#####"; TMR
+		Write #1, GM(I)
+	Next
+    
+	For I = 1 To 40: 
+		For I1 = 0 To 14: 
+			Write #1, TT1!(I, I1), TT1$(I, I1)
+		Next
+		
+		Color 14: Locate 18, 45
+		TMR = TMR - 1
+		Print Using "#####"; TMR
+		Write #1, GM1(I)
+	Next
+    
+	Close #1
+	
 End Sub

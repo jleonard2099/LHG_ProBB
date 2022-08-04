@@ -8,15 +8,15 @@ Sub MERGE ()
 
     Do
         Cls
-        1 Call TITLE
+        Call TITLE
         'Erase menuChoices$
         menuChoices$(1) = "MERGE STATISTICAL FILES           "
         menuChoices$(2) = "ALIGN STATISTICAL FILES           "
         menuChoices$(3) = "EXIT TO MAIN MENU                 "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 3
         Start% = 1
-        EXITCODE% = 3
+        ExitCode% = 3
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -25,22 +25,18 @@ Sub MERGE ()
 
         Call box0(7, 24, 11, 59, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
-        If Not (EXITCODE% = 27) Then
-            Select Case SELECTION%
+        If ExitCode% <> 27 Then
+            Select Case Selection%
                 Case 1: Call MergeStats
                 Case 2: Call ALIGN
             End Select
         End If
 
-    Loop Until EXITCODE% = 27 Or SELECTION% = 3
-    '-- this should be a "case else" type scenario
-    '-- then the code ends
-    '5 Run "HELLO.EXE 4"
-    '5 Call REPLAY_STATS_MENU
+    Loop Until ExitCode% = 27 Or Selection% = 3
 
 End Sub
 
@@ -100,16 +96,12 @@ Sub MergeStats ()
         If I$ = Chr$(27) Then Z$ = "END": Cls: 'Exit Sub
         If I$ = Chr$(13) Then 
             Call SelectTeam_MERGE (YN$, NTMS)
-			A$ = Q$(0)
+			A$ = RTRim$(Q$(0))
 
             For I = 0 To 34
                 mergeT%(I) = CVI(Q$(I + 10))
             Next
             Close 1
-
-            While Right$(A$, 1) = " "
-                A$ = Left$(A$, Len(A$) - 1)
-            Wend
 
             B$ = A$
 
@@ -127,15 +119,12 @@ Sub MergeStats ()
                 Next
                 Close 1
 
-                While Right$(A$, 1) = " "
-                    A$ = Left$(A$, Len(A$) - 1)
-                Wend
-
+				A$ = RTrim$(A$)
                 B$ = A$
             Else
                 YN$ = NY$
                 'Erase teamNames$
-                1101 NTMS = 0
+                NTMS = 0
                 Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
                 Y = LOF(1)
                 Field #1, 15 As Q$(0), 15 As Q$(1)
@@ -164,17 +153,17 @@ Sub MergeStats ()
                 Close 1
 
                 Call SelectTeam_MERGE (YN$, NTMS)
-				A$ = Q$(0)
+
+				A$ = RTRim$(Q$(0))
+
                 For I = 0 To 34
                     mergeT%(I) = CVI(Q$(I + 10))
                 Next
+
                 Close 1
 
-                While Right$(A$, 1) = " "
-                    A$ = Left$(A$, Len(A$) - 1)
-                Wend
-
                 B$ = A$
+				
             End If
         End If
 
@@ -371,7 +360,7 @@ End Sub
 '... explain here ...
 Sub SelectTeam_MERGE (yearNumber$, numberTeams)
 
-    SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -388,29 +377,32 @@ Sub SelectTeam_MERGE (yearNumber$, numberTeams)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-	If EXITCODE% = 27 Then BO% = 1: Exit Sub		
+	If ExitCode% <> 27 Then
 
-    T1 = teamIndex%(SELECTION%)
+		T1 = teamIndex%(Selection%)
 
-    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
-    Field #1, 15 As Q$(0), 15 As Q$(1)
-    For I = 0 To 6
-        Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-    Next
-    Field #1, 44 As X$, 2 As Q$(9)
-    For I = 0 To 34
-        Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-    Next
-    For I = 0 To 14
-        Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-        For I1 = 0 To 19
-            Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-        Next
-    Next
-    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-    Get #1, T1
+		Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+		Field #1, 15 As Q$(0), 15 As Q$(1)
+		For I = 0 To 6
+			Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+		Next
+		Field #1, 44 As X$, 2 As Q$(9)
+		For I = 0 To 34
+			Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+		Next
+		For I = 0 To 14
+			Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+			For I1 = 0 To 19
+				Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+			Next
+		Next
+		Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+		Get #1, T1
+	Else
+		BO% = 1
+	End If
 
 End Sub

@@ -426,55 +426,55 @@ End Sub
 ' ...explanation...
 Sub GETATEAM (I1, YN$)
     Open P$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+
     Field #1, 15 As Q$(0), 15 As Q$(1)
+
     For J = 0 To 6
         Field #1, 30 + J * 2 As X$, 2 As Q$(J + 2)
     Next
+
     Field #1, 44 As X$, 2 As Q$(9)
+
     For J = 0 To 34
         Field #1, 46 + J * 2 As X$, 2 As Q$(J + 10)
     Next
+
     For J = 0 To 14
         Field #1, 116 + J * 57 As X$, 15 As Q$(J * 22 + 45), 2 As Q$(J * 22 + 46)
         For J1 = 0 To 19
             Field #1, 133 + J * 57 + J1 * 2 As X$, 2 As Q$(J * 22 + 47 + J1)
         Next
     Next
+
     Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+
     Get #1, I1
-    B$(P9, 0) = Q$(0)
+
+    B$(P9, 0) = RTrim$(Q$(0))
     B$(P9, 1) = Q$(1)
+
     For I = 0 To 6
         L%(P9, I) = CVI(Q$(I + 2))
     Next
+
     For I = 0 To 34
         T(P9, I) = CVI(Q$(I + 10))
     Next
+
     For I = 0 To 14
-        AA$(P9, I, 0) = Q$(22 * I + 45)
-        AA$(P9, I, 1) = Q$(22 * I + 46)
+        AA$(P9, I, 0) = RTrim$(Q$(22 * I + 45))
+        AA$(P9, I, 1) = RTrim$(Q$(22 * I + 46))
         For I1 = 0 To 19
             B%(P9, I, I1) = CVI(Q$(22 * I + 47 + I1))
         Next
     Next
-    B$(P9, 2) = Q$(375)
-    B$(P9, 3) = Q$(376)
-    B$(P9, 4) = Q$(377)
+
+    B$(P9, 2) = RTrim$(Q$(375))
+    B$(P9, 3) = RTrim$(Q$(376))
+    B$(P9, 4) = RTrim$(Q$(377))
+
     Close 1
-    For I = 0 To 14
 
-        9004 If Right$(AA$(P9, I, 0), 1) = " " Then AA$(P9, I, 0) = Left$(AA$(P9, I, 0), Len(AA$(P9, I, 0)) - 1): GoTo 9004
-
-        9005 If Right$(AA$(P9, I, 1), 1) = " " Then AA$(P9, I, 1) = Left$(AA$(P9, I, 1), Len(AA$(P9, I, 1)) - 1): GoTo 9005
-    Next
-
-    9002 If Right$(B$(P9, 0), 1) = " " Then B$(P9, 0) = Left$(B$(P9, 0), Len(B$(P9, 0)) - 1): GoTo 9002
-
-    9006 If Right$(B$(P9, 2), 1) = " " Then B$(P9, 2) = Left$(B$(P9, 2), Len(B$(P9, 2)) - 1): GoTo 9006
-
-    9007 If Right$(B$(P9, 3), 1) = " " Then B$(P9, 3) = Left$(B$(P9, 3), Len(B$(P9, 3)) - 1): GoTo 9007
-
-    9008 If Right$(B$(P9, 4), 1) = " " Then B$(P9, 4) = Left$(B$(P9, 4), Len(B$(P9, 4)) - 1): GoTo 9008
     For I = 0 To 14
         If B%(P9, I, 16) >= 0 Or B%(P9, I, 17) >= 0 Then 9009
         GP = B%(P9, I, 16) / B%(P9, I, 0)
@@ -1485,7 +1485,7 @@ End Sub
 '      EVENTS Subroutine
 '------------------------------
 ' ...explanation...
-Sub EVENTS (COUNT, SPECIAL)
+Sub EVENTS (Count, SPECIAL)
     If Not _FileExists("EVENTS.BOX") Then 8450
     Open "EVENTS.BOX" For Input As #1
     For X = 1 To 13
@@ -1510,8 +1510,8 @@ Sub EVENTS (COUNT, SPECIAL)
     GoTo 8450
 
     7100 SPEC$ = P$(1) + "*.SPC"
-    COUNT = FCount%(SPEC$)
-    COUNT = COUNT + 1
+    Count = FCount%(SPEC$)
+    Count = Count + 1
     SPECIAL = 1
     Return
 
@@ -1894,7 +1894,7 @@ Sub MAKEPBP ()
     If RN <= 20 Then U$ = U$ + "HITS THE TREY!!!": GoTo 1495
     If RN <= 30 Then U$ = "IT'S GOOOODD!!": GoTo 1495
     If RN <= 40 Then U$ = U$ + "GETS IT!!!": GoTo 1495
-    If RN <= 50 Then U$ = "COUNT IT!!": GoTo 1495
+    If RN <= 50 Then U$ = "Count IT!!": GoTo 1495
     If RN <= 60 Then U$ = U$ + "RINGS IT UP!!!": GoTo 1495
     If RN <= 80 Then U$ = U$ + "DRAINS IT!!!": GoTo 1495
     If RN <= 90 Then U$ = "HE BURIES IT!!!": GoTo 1495
@@ -2277,7 +2277,7 @@ End Sub
 Sub TEAMMENU (BO%, YN$)
     Dim Y2 As Long
     If BO% = 2 Then BO% = 0: GoTo 1102
-    NT = 0
+    NTMS = 0
     Open P$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
     Y2 = LOF(1)
 
@@ -2288,14 +2288,14 @@ Sub TEAMMENU (BO%, YN$)
         Get #1, I1
         CK% = CVI(Q$(9))
         If CK% <> 999 Then 1103
-        NT = NT + 1
-        teamNames$(NT) = Q$(0): teamIndex%(NT) = I1
+        NTMS = NTMS + 1
+        teamNames$(NTMS) = Q$(0): teamIndex%(NTMS) = I1
 
     1103 Next
     Close 1
 
     1102 SELECTION% = 1
-    COUNT% = NT
+    Count% = NTMS
     START% = 1
     FileFGColr% = 15: FileBGColr% = 4
     HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -2311,10 +2311,10 @@ Sub TEAMMENU (BO%, YN$)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    MAMenu teamNames$(), SELECTION%, START%, COUNT%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, ROWS%, COLUMNS%, SPACING%, ROW%, COLUMN%
+    MAMenu teamNames$(), SELECTION%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, ROWS%, COLUMNS%, SPACING%, ROW%, COLUMN%
     _MouseHide
 
-	If EXITCODE% = 27 Then 
+	If ExitCode% = 27 Then 
 		BO% = 1
 	Else
 		I1 = teamIndex%(SELECTION%)

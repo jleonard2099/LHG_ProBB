@@ -8,7 +8,7 @@ Sub DRAFT ()
     _Title "Basketball: The Pro Game - Team Draft"
     
     Do
-        8000 SELECTION% = 1
+        Selection% = 1
         Count% = 52
         Start% = 1
         FileFGColr% = 15: FileBGColr% = 4
@@ -26,30 +26,31 @@ Sub DRAFT ()
 
         Do
             _MouseShow "DEFAULT"
-            MAMenu draftYears$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            MAMenu draftYears$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
-        Loop Until EXITCODE% = 27 Or EXITCODE% = 13
+        Loop Until ExitCode% = 27 Or ExitCode% = 13
         
-        If EXITCODE% = 27 Then 
+        If ExitCode% = 27 Then 
             BO% = 1
         Else        
             Do
                 Locate 3, 33
                 Color 15, 0 'white on black
-				Print draftYears$(SELECTION%)
+				Print draftYears$(Selection%)
                 Color 15, 4 'white on red
                 Locate , 30: Print "ANY CHANGE (YN)";: I$ = GetKeyPress$
             Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
             
-            YR% = SELECTION%
+            YR% = Selection%
         End If
         
-		If EXITCODE% = 27 Then Exit Sub
+		If ExitCode% = 27 Then Exit Sub
 		
     Loop Until UCase$(I$) = "N" 'Or Exitcode% = 27
 
 
     For I = 0 To 1: draftAA$(0, I) = "XXX": Next
+
     For I = 0 To 6: draftL%(0, I) = 0: Next
     
     For I = 0 To 34
@@ -71,18 +72,16 @@ Sub DRAFT ()
         Next
     Next
 
-
     Do
-
         Call TITLE
         'Erase menuChoices$
         menuChoices$(1) = "DRAFT A NEW TEAM         "
         menuChoices$(2) = "DRAFT TO AN EXISTING TEAM"
         menuChoices$(3) = "EXIT TO MAIN MENU        "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 3
         Start% = 1
-        EXITCODE% = 3
+        ExitCode% = 3
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -91,20 +90,20 @@ Sub DRAFT ()
 
         Call box0(7, 24, 11, 50, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
-        If Not (EXITCODE% = 27) Then
-            If SELECTION% = 1 Then DNT% = 0: Call DraftNewTeam (TTL%())
-            If SELECTION% = 2 Then DNT% = 1: Call DraftExistingTeam (TTL%())
+        If ExitCode% <> 27 Then
+            If Selection% = 1 Then DNT% = 0: Call DraftNewTeam (TTL%())
+            If Selection% = 2 Then DNT% = 1: Call DraftExistingTeam (TTL%())
         Else
-            SELECTION% = 3
+            Selection% = 3
         End If
 
         'WE SHOULD NEVER GET HERE
         '1 Run "HELLO.EXE 2"
-    Loop Until SELECTION% = 3
+    Loop Until Selection% = 3
 
 End Sub
 
@@ -118,10 +117,12 @@ Sub DraftNewTeam (TTL%())
     Shared draftAA$(), draftYN$()
     Shared draftL%(), draftLG%(), draftT%()
     
-    100 Cls
+    Cls
 
-    112 Color 14: Print "LEAGUE INFORMATION": Color 15
-    draftL%(0, 0) = 80
+    Color 14: Print "LEAGUE INFORMATION"
+	Color 15
+    
+	draftL%(0, 0) = 80
     draftL%(0, 1) = draftLG%(YR%, 1)
     draftL%(0, 2) = draftLG%(YR%, 2)
     draftL%(0, 3) = draftLG%(YR%, 3)
@@ -153,8 +154,6 @@ Sub DraftNewTeam (TTL%())
     258 C1 = 0
 
     Call DoTheDraft (TTL%())
-
-    1008 'GoTo 10
 
 End Sub
 
@@ -194,12 +193,12 @@ Sub DraftExistingTeam (TTL%())
         Locate 7, 27: Input NY$
         
 		If NY$ = "" Then 
-            Call SelectTeam_Draft(NT)
+            Call SelectTeam_Draft(NTMS)
         Else
             draftYN$(0) = NY$
             Erase teamNames$
 
-            NT = 0
+            NTMS = 0
             Open diskPaths$(0) + "PROBBTMS." + draftYN$(0) For Random As #1 Len = 1031
 
             Y = LOF(1)
@@ -229,17 +228,17 @@ Sub DraftExistingTeam (TTL%())
                 Get #1, I1
                 CK% = CVI(Q$(9))
                 If CK% = 999 Then 
-                    NT = NT + 1
-                    teamNames$(NT) = Q$(0)
-                    teamIndex%(NT) = I1
+                    NTMS = NTMS + 1
+                    teamNames$(NTMS) = Q$(0)
+                    teamIndex%(NTMS) = I1
                 End If
             Next
             Close 1
 
-            TS% = Int((NT - 1) / 80)
+            'TS% = Int((NTMS - 1) / 80)
 
-            SELECTION% = 1
-            Count% = NT
+            Selection% = 1
+            Count% = NTMS
             Start% = 1
             FileFGColr% = 15: FileBGColr% = 4
             HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -258,12 +257,12 @@ Sub DraftExistingTeam (TTL%())
             Print "-SELECTS TEAM";
 
             _MouseShow "DEFAULT"
-            MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
 
-            If EXITCODE% <> 27 Then
+            If ExitCode% <> 27 Then
 
-				T = teamIndex%(SELECTION%)
+				T = teamIndex%(Selection%)
 
 				Open diskPaths$(0) + "PROBBTMS." + draftYN$(0) For Random As #1 Len = 1031
 
@@ -290,40 +289,31 @@ Sub DraftExistingTeam (TTL%())
 				
 				Get #1, T
 
-				draftAA$(0, 0) = Q$(0)
+				draftAA$(0, 0) = RTrim$(Q$(0))
 				draftAA$(0, 1) = Q$(1)
 
-				For I = 0 To 6: draftL%(0, I) = CVI(Q$(I + 2)): Next
+				For I = 0 To 6: 
+					draftL%(0, I) = CVI(Q$(I + 2))
+				Next
 
-				9102 If Right$(draftAA$(0, 0), 1) = " " Then draftAA$(0, 0) = Left$(draftAA$(0, 0), Len(draftAA$(0, 0)) - 1): GoTo 9102
-				
 				For I = 0 To 34
 					draftT%(0, I) = CVI(Q$(I + 10))
 				Next
 
 				For I = 0 To 14
-					draftB$(0, I, 0) = Q$(22 * I + 45)
-
-					9104 If Right$(draftB$(0, I, 0), 1) = " " Then draftB$(0, I, 0) = Left$(draftB$(0, I, 0), Len(draftB$(0, I, 0)) - 1): GoTo 9104
-
-					draftB$(0, I, 1) = Q$(22 * I + 46)
-
-					9105 If Right$(draftB$(0, I, 1), 1) = " " Then draftB$(0, I, 1) = Left$(draftB$(0, I, 1), Len(draftB$(0, I, 1)) - 1): GoTo 9105
+					draftB$(0, I, 0) = RTrim$(Q$(22 * I + 45))
+					draftB$(0, I, 1) = RTrim$(Q$(22 * I + 46))
 
 					For I1 = 0 To 19
 						draftB%(0, I, I1) = CVI(Q$(22 * I + 47 + I1))
 					Next
 				Next
 
-				draftAA$(0, 2) = Q$(375): draftAA$(0, 3) = Q$(376): draftAA$(0, 4) = Q$(377)
+				draftAA$(0, 2) = RTrim$(Q$(375))
+				draftAA$(0, 3) = RTrim$(Q$(376))
+				draftAA$(0, 4) = RTrim$(Q$(377))
 
 				Close 1
-
-				9106 If Right$(draftAA$(0, 2), 1) = " " Then draftAA$(0, 2) = Left$(draftAA$(0, 2), Len(draftAA$(0, 2)) - 1): GoTo 9106
-
-				9107 If Right$(draftAA$(0, 3), 1) = " " Then draftAA$(0, 3) = Left$(draftAA$(0, 3), Len(draftAA$(0, 3)) - 1): GoTo 9107
-
-				9108 If Right$(draftAA$(0, 4), 1) = " " Then draftAA$(0, 4) = Left$(draftAA$(0, 4), Len(draftAA$(0, 4)) - 1): GoTo 9108
 
 				For I1 = 0 To 14
 					For I = 0 To 34
@@ -393,7 +383,7 @@ Sub Draft_Unknown
     335 C1 = 1: Locate 17: Input "# TO CHANGE (0 TO CONTINUE) "; B9: On B9 GOTO 265, 270, 275, 280, 285, 290, 295, 300, 305, 310, 315, 320, 325, 330
 
 
-
+	'---
     336 C1 = 0
 
     340 Cls: Color 14: Print "TEAM DEFENSIVE INFORMATION": Color 15
@@ -431,7 +421,7 @@ Sub Draft_Unknown
     415 C1 = 1: Locate 17: Input "# TO CHANGE (0 TO CONTINUE) "; B9: On B9 GOTO 345, 350, 355, 360, 365, 370, 375, 380, 385, 390, 395, 400, 405, 410
 
 
-
+	'---
     416 C1 = 0
 
     417 If draftT%(0, 28) = 0 And ST = 0 Then draftT%(0, 28) = draftT%(0, 5) * .1
@@ -461,15 +451,15 @@ Sub DoTheDraft (TTL%())
 
     Do
 
-        450 Color 0, 0
+        Color 0, 0
         Cls
         Color draftT%(0, 33), draftT%(0, 34): Print draftAA$(0, 0);
         Color 14, 0: Print "     (DRAFTING)"
 
-        451 Print
+        Print
         Print "PLAYERS"
 
-        452 For I = 0 To 14
+        For I = 0 To 14
             Color 2: Print Using "## "; I;
             Color 15: Print draftB$(0, I, 0); " "; draftB$(0, I, 1)
         Next
@@ -506,7 +496,7 @@ Sub DoTheDraft (TTL%())
                         draftYN$(1) = NY$
                         Erase teamNames$
 
-                        NT = 0
+                        NTMS = 0
 
                         Open diskPaths$(0) + "PROBBTMS." + draftYN$(1) For Random As #1 Len = 1031
                         Y = LOF(1)
@@ -537,15 +527,15 @@ Sub DoTheDraft (TTL%())
                             Get #1, I1
                             CK% = CVI(Q$(9))
                             If CK% = 999 Then
-                                NT = NT + 1
-                                teamNames$(NT) = Q$(0)
-                                teamIndex%(NT) = I1
+                                NTMS = NTMS + 1
+                                teamNames$(NTMS) = Q$(0)
+                                teamIndex%(NTMS) = I1
                             End If
                         Next
 
                         Close 1
 
-                        Call SelectTeam_Draft (NT)
+                        Call SelectTeam_Draft (NTMS)
                     End If
                     
                     If BO% = 1 Then 
@@ -559,25 +549,28 @@ Sub DoTheDraft (TTL%())
                 Loop Until UCase$(I$) = "N"
 
 
-                550 Color , 0: Cls: Color draftT%(1, 33), draftT%(1, 34): Print draftAA$(1, 0): Color 14, 0
+                Color , 0: Cls
+				Color draftT%(1, 33), draftT%(1, 34): Print draftAA$(1, 0)
+				Color 14, 0
 
-                551 Print: Print "PLAYERS"
+                Print
+				Print "PLAYERS"
 
-                552 For I = 0 To 14
-                    Color 2: Print Using "## "; I;: Color 15: Print draftB$(1, I, 0); " "; draftB$(1, I, 1)
+                For I = 0 To 14
+                    Color 2: Print Using "## "; I;
+					Color 15: Print draftB$(1, I, 0); " "; draftB$(1, I, 1)
                 Next
 
                 Do
-                    560 Color 14: Locate 21, 1: Print "SELECT PLAYER # TO DRAFT ";
+                    Color 14
+					Locate 21, 1: Print "SELECT PLAYER # TO DRAFT ";
 
-                    561 Input B1
+                    Input B1
 
                 Loop Until B1 >= 0 And B1 <= 14
 
-                571 For I = 0 To 1: draftB$(0, B, I) = draftB$(1, B1, I): Next
-
-                572 For I = 0 To 19: draftB%(0, B, I) = draftB%(1, B1, I): Next
-
+                For I = 0 To 1: draftB$(0, B, I) = draftB$(1, B1, I): Next
+                For I = 0 To 19: draftB%(0, B, I) = draftB%(1, B1, I): Next
                 For I = 0 To 34: draftLT%(B, I) = draftT%(1, I): Next
 
                 draftB%(0, B, 2) = draftB%(0, B, 2) * (draftLG%(YR%, 1) / draftL%(1, 1))
@@ -585,6 +578,7 @@ Sub DoTheDraft (TTL%())
                 draftB%(0, B, 7) = draftB%(0, B, 7) * (draftLG%(YR%, 2) / draftL%(1, 2))
                 FG = Int(draftB%(1, B1, 3) / draftB%(1, B1, 2) * 100 + .5)
                 FG = FG * (draftLG%(YR%, 3) / draftL%(1, 3))
+
                 draftB%(0, B, 3) = FG / 100 * draftB%(0, B, 2)
                 draftLT%(B, 5) = (draftLG%(YR%, 1) / draftL%(1, 1)) * draftLT%(B, 5)
                 draftLT%(B, 19) = draftLT%(B, 19) * (draftLG%(YR%, 1) / draftL%(1, 1))
@@ -594,9 +588,11 @@ Sub DoTheDraft (TTL%())
                 draftLT%(B, 24) = draftLT%(B, 24) * (draftLG%(YR%, 2) / draftL%(1, 2))
                 FG = Int(draftT%(1, 6) / draftT%(1, 5) * 100 + .5)
                 FG = FG * (draftLG%(YR%, 3) / draftL%(1, 3))
+
                 draftT%(0, 6) = FG / 100 * draftT%(0, 5)
                 FG = Int(draftT%(1, 20) / draftT%(1, 19) * 100 + .5)
                 FG = FG * (draftLG%(YR%, 3) / draftL%(1, 3))
+
                 draftT%(0, 20) = FG / 100 * draftT%(0, 19)
 
             Case "2": 
@@ -682,7 +678,7 @@ Sub SelectTeam_Draft (numberTeams)
     Shared draftAA$(), draftB$(), draftYears$(), draftYN$()
     Shared draftB%(), draftL%(), draftT%()
 
-    SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -699,12 +695,12 @@ Sub SelectTeam_Draft (numberTeams)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    If EXITCODE% <> 27 Then
+    If ExitCode% <> 27 Then
 
-		D = teamIndex%(SELECTION%)
+		D = teamIndex%(Selection%)
 
 		Open diskPaths$(0) + "PROBBTMS." + draftYN$(1) For Random As #1 Len = 1031
 
@@ -729,40 +725,33 @@ Sub SelectTeam_Draft (numberTeams)
 
 		Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 		Get #1, D
-		draftAA$(1, 0) = Q$(0): draftAA$(1, 1) = Q$(1)
+		
+		draftAA$(1, 0) = RTrim$(Q$(0))
+		draftAA$(1, 1) = Q$(1)
 
 		For I = 0 To 6: draftL%(1, I) = CVI(Q$(I + 2)): Next
 
-		9002 If Right$(draftAA$(1, 0), 1) = " " Then draftAA$(1, 0) = Left$(draftAA$(1, 0), Len(draftAA$(1, 0)) - 1): GoTo 9002
-		
 		For I = 0 To 34
 			draftT%(1, I) = CVI(Q$(I + 10))
 		Next
 		
 		For I = 0 To 14
-			draftB$(1, I, 0) = Q$(22 * I + 45)
-
-			9004 If Right$(draftB$(1, I, 0), 1) = " " Then draftB$(1, I, 0) = Left$(draftB$(1, I, 0), Len(draftB$(1, I, 0)) - 1): GoTo 9004
-		
-			draftB$(1, I, 1) = Q$(22 * I + 46)
-
-			9005 If Right$(draftB$(1, I, 1), 1) = " " Then draftB$(1, I, 1) = Left$(draftB$(1, I, 1), Len(draftB$(1, I, 1)) - 1): GoTo 9005
+			draftB$(1, I, 0) = RTrim$(Q$(22 * I + 45))
+			draftB$(1, I, 1) = RTrim$(Q$(22 * I + 46))
 			
 			For I1 = 0 To 19
 				draftB%(1, I, I1) = CVI(Q$(22 * I + 47 + I1))
 			Next
 		Next
 
-		draftAA$(1, 2) = Q$(375): draftAA$(1, 3) = Q$(376): draftAA$(1, 4) = Q$(377)
+		draftAA$(1, 2) = RTrim$(Q$(375))
+		draftAA$(1, 3) = RTrim$(Q$(376))
+		draftAA$(1, 4) = RTrim$(Q$(377))
 
 		Close 1
 
-		9006 If Right$(draftAA$(1, 2), 1) = " " Then draftAA$(1, 2) = Left$(draftAA$(1, 2), Len(draftAA$(1, 2)) - 1): GoTo 9006
-
-		9007 If Right$(draftAA$(1, 3), 1) = " " Then draftAA$(1, 3) = Left$(draftAA$(1, 3), Len(draftAA$(1, 3)) - 1): GoTo 9007
-
-		9008 If Right$(draftAA$(1, 4), 1) = " " Then draftAA$(1, 4) = Left$(draftAA$(1, 4), Len(draftAA$(1, 4)) - 1): GoTo 9008
-
+	Else
+		BO% = 1
 	End If
 
 End Sub

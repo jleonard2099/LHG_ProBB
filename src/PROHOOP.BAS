@@ -2,12 +2,10 @@
 '$INCLUDE: 'QPProEqu.BI'
 '$INCLUDE: 'GameRoutines.BI'
 
-
 _Title "Basketball: The Pro Game - HOOPS!"
 $ExeIcon:'./lhg_probb.ico'
 _Icon
 _AllowFullScreen
-
 
 Color 7, 0
 Cls
@@ -78,32 +76,48 @@ Next
 Close 2
 TMT = 1
 
-2 If Not _FileExists("GAME82") Then 6
-Open "GAME82" For Input As #2
-Input #2, FF$
-For I = 0 To 2: Input #2, AP%(I): Next
-Close 2
-Open P$(0) + FF$ For Random As #1 Len = 48
-For X = 0 To 18
-    Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
-Next
-Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
-Get #1, AP%(0) + AP%(2)
-For X = 0 To 18: NG%(X) = CVI(Q$(X + 1)): Next
-For X = 0 To 1: YN$(X) = Q$(20 + X): Next
-VS% = CVI(Q$(22)): HS% = CVI(Q$(23))
-Close 1
+If _FileExists("GAME82") Then
 
-AP = 1
+	Open "GAME82" For Input As #2
+	Input #2, FF$
+	For I = 0 To 2: Input #2, AP%(I): Next
+	Close 2
+	Open P$(0) + FF$ For Random As #1 Len = 48
+	For X = 0 To 18
+		Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
+	Next
+	Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+	Get #1, AP%(0) + AP%(2)
+	For X = 0 To 18: NG%(X) = CVI(Q$(X + 1)): Next
+	For X = 0 To 1: YN$(X) = Q$(20 + X): Next
+	VS% = CVI(Q$(22)): HS% = CVI(Q$(23))
+	Close 1
 
-6 P7$(1) = "YES": P7$(0) = " NO"
+	AP = 1
+End If
+
+P7$(1) = "YES"
+P7$(0) = " NO"
+
 T = 720
 H = 1
-T1(1) = 7: T1(0) = 7
-PS$(0) = "G": PS$(1) = "G": PS$(2) = "F": PS$(3) = "F": PS$(4) = "C"
 
-OY%(1) = 2: OY%(2) = -2: OX%(1) = 10: OX%(2) = -10
-D2(0) = 1: D2(1) = 1
+T1(1) = 7
+T1(0) = 7
+
+PS$(0) = "G"
+PS$(1) = "G"
+PS$(2) = "F"
+PS$(3) = "F"
+PS$(4) = "C"
+
+
+OY%(1) = 2
+OY%(2) = -2
+OX%(1) = 10
+OX%(2) = -10
+D2(0) = 1
+D2(1) = 1
 
 For I = 1 To 5
     Read defenseStyles$(I)
@@ -145,7 +159,11 @@ U5$(3) = "COMPUTER VS COMPUTER     "
 LC$(0) = "@ TEAM 1            "
 LC$(1) = "HOME COURT ADVANTAGE"
 LC$(2) = "NEUTRAL SITE        "
-X$(0) = "A ": X$(1) = "B ": X$(2) = "C ": X$(3) = "D ": X$(4) = "E "
+X$(0) = "A "
+X$(1) = "B "
+X$(2) = "C "
+X$(3) = "D "
+X$(4) = "E "
 PO$(0) = "REGULAR SEASON"
 PO$(1) = "PLAYOFF       "
 CM$(0) = "COACH AND SELECT SHOTS           "
@@ -1000,12 +1018,12 @@ RN = Int(Rnd(1) * 100) + 1
 If RN <= 50 Then 561
 RN = Int(Rnd(1) * 22) + 1
 If RN = 1 Then U$ = "NOTHING BUT THE BOTTOM OF THE NET!"
-If RN = 2 Then U$ = "COUNT IT!"
+If RN = 2 Then U$ = "Count IT!"
 If RN = 3 Then U$ = AA$(P, B1(P, B), 0) + " TICKLES THE TWINE!"
 If RN = 4 Then U$ = "NO RIM, NO BOARD, JUST CORD!"
 If RN = 5 Then U$ = "GOOD!"
 If RN = 6 Then U$ = "YES!"
-If RN = 7 Then U$ = "COUNT IT!"
+If RN = 7 Then U$ = "Count IT!"
 If RN = 8 Then U$ = "IT'S GOOD!"
 If RN = 9 Then U$ = "BINGO!"
 If RN = 10 Then U$ = "IT FALLS!"
@@ -1778,9 +1796,9 @@ QQ = 8: For XX = 11 To 4 Step -1: If Mid$(B$(Q, 0), XX, 1) = "_" Then QQ = XX - 
 
 8400 'CHECK SPECIAL EVENTS
 Call RECORDSCHECK
-Call EVENTS(COUNT, SPECIAL)
+Call EVENTS(Count, SPECIAL)
 If SPECIAL = 1 Then
-    NM$ = "BOX" + Mid$(Str$(COUNT), 2, Len(Str$(COUNT))) + ".SPC"
+    NM$ = "BOX" + Mid$(Str$(Count), 2, Len(Str$(Count))) + ".SPC"
     Call BOX2SPC(NM$)
 End If
 

@@ -1,23 +1,24 @@
 Sub SINPUT ()
 
-    15 Dim W0(15), W1(14), Z2(14, 14)
+    Dim W0(15), W1(14), Z2(14, 14)
 	Dim Z!(15), Z1!(15)
     Dim inputA$(14)
     
     _Title "Basketball: The Pro Game - Stats Input"
 
-    5 PX = 0
+    PX = 0
 
     Color 7, 0
     KEY Off
-    'On Error GoTo 0
 
-    55 Cls
+    Cls
     Call TITLE_EDITSTATS
 
-    65 Color 15: Print "C";: Color 3: Print "HANGE/INPUT COMPILED TEAM STATS"
+    Color 15: Print "C";
+	Color 3: Print "HANGE/INPUT COMPILED TEAM STATS"
     Print
-    Color 15: Print "R";: Color 3: Print "ETURN TO MAIN MENU"
+    Color 15: Print "R";
+	Color 3: Print "ETURN TO MAIN MENU"
 
     Do
         I$ = GetKeyPress$
@@ -29,8 +30,8 @@ Sub SINPUT ()
     
     Loop Until UCase$(I$) = "C" Or UCase$(I$) = "R"
 
-    105 If Q = 1 Then 
-        2015 Cls
+    If Q = 1 Then 
+        Cls
         X$ = "OFFENSIVE TEAM STATS"
         Call TITLE_STAT_HEADER (X$)
         
@@ -78,18 +79,14 @@ Sub SINPUT ()
         Print "15. TM TURNOVERS "; Z!(11)
         Print "16. TM POINTS  "; Z!(10)
 
-        1575 GoTo 210
-        
     Else
     'Q = 2
         Cls
         Call TITLE_EDITSTATS
         
-        '145 Call UTIL: End
+        Print
 
-        155 Print
-
-        165 Cls
+        Cls
         X$ = "OFFENSIVE TEAM STATS"
         Call TITLE_STAT_HEADER(X$)
 
@@ -140,13 +137,13 @@ Sub SINPUT ()
     213 On B9 GOTO 175, 177, 179, 181, 183, 185, 187, 189, 191, 193, 195, 197, 199, 201, 203, 205
 
 
-
     215 C1 = 0
 
-    365 Cls
+    Cls
     X$ = "DEFENSIVE TEAM STATS"
     Call TITLE_STAT_HEADER(X$)
-    217 If X% > 0 Then 
+    
+	If X% > 0 Then 
         X% = 2
         Locate 3, 1
         Print "1. OPP FGA "; Z1!(1)
@@ -163,7 +160,6 @@ Sub SINPUT ()
         Print "12. OPP BLOCKS "; Z1!(9)
         Print "13. OPP TURNOVERS "; Z1!(11)
         Print "14. OPP POINTS  "; Z1!(10)
-        'GoTo 410
     Else
 
         379 Locate 3, 1: Input "1. OPP FGA "; Z1!(1): If C1 = 1 Then 410
@@ -208,10 +204,9 @@ Sub SINPUT ()
 
     645 C1 = 0
 
+     If X% <= 0 Then
 
-    655 If X% <= 0 Then
-
-        665 For I = 0 To 14
+        For I = 0 To 14
             Cls
             X$ = "PLAYER -" + Str$(I + 1)
             Call TITLE_STAT_HEADER(X$)
@@ -268,33 +263,33 @@ Sub SINPUT ()
     End If
 
 
-    1605 Cls
+    Cls
     Call TITLE_EDITSTATS
     Locate 3, 1
     Color 14: Print "CHANGE PLAYERS "
 
-    1615 Print
+    Print
 
-    1625 X% = 2
+    X% = 2
 
-    1635 For I = 0 To 14
+    For I = 0 To 14
         Color 7
         If I / 2 = Int(I / 2) Then Color 15
+        Print (I + 1);
+		Print " "; inputA$(I)
+	Next I
 
-        1645 Print (I + 1);
+	Print
 
-    1655 Print " "; inputA$(I): Next I
+	Print "# TO CHANGE (0 TO CONTINUE) ";
 
-    1665 Print
+	Input I
+	I = I - 1
 
-    1675 Print "# TO CHANGE (0 TO CONTINUE) ";
-
-    1685 Input I: I = I - 1
-
-    1695 If I > 14 Or I < 0 Then 
+	If I > 14 Or I < 0 Then 
         X% = 0
     Else
-        1705 Cls
+        Cls
         X$ = "PLAYER -" + Str$(I + 1)
         Call TITLE_STAT_HEADER(X$)
         Locate 3, 1
@@ -321,7 +316,11 @@ Sub SINPUT ()
 End Sub
 
 
-
+'----------------------------------------
+'     		NoWhere Subroutine
+'----------------------------------------
+'So called because I don't believe 
+'	it gets used whatsoever
 
 Sub NoWhere ()
 
@@ -343,15 +342,10 @@ Sub NoWhere ()
     End If
     
     Open diskPaths$(1) + Z$ For Output As #1
-
     Print #1, A$
-
     For I = 0 To 14: Print #1, inputA$(I)
-
     For J = 0 To 13: Print #1, Z2(I, J): Next J: Print #1, W0(I): Print #1, W1(I): Next I
-
     For L = 0 To 15: Print #1, Z!(L): Next L
-
     For L = 0 To 15: Print #1, Z1!(L): Next L
 
     Close 1

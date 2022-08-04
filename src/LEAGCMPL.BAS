@@ -26,7 +26,7 @@ Sub LEAGCMPL ()
 
     Cls
 
-    4001 TRC!(14) = 19999: TRC!(18) = 19999
+    TRC!(14) = 19999: TRC!(18) = 19999
     For I = 1 To 13: TRC1!(I) = 19999: Next
     For I = 15 To 17: TRC1!(I) = 19999: Next
     For I = 19 To 20: TRC1!(I) = 19999: Next
@@ -50,7 +50,7 @@ Sub LEAGCMPL ()
         Close 1
     End if
     
-    4003 Spec$ = diskPaths$(1) + "*.LIB"
+    Spec$ = diskPaths$(1) + "*.LIB"
     Count% = FCount%(Spec$)
 
     If Count% = 0 Then
@@ -67,7 +67,6 @@ Sub LEAGCMPL ()
     Next
     leagueFiles$(0) = Spec$
     Call ReadFile(leagueFiles$())
-    'CALL SortStr(VARPTR(leagueFiles$(1)), Count%, 0)
 
     Do
         1310 Cls
@@ -76,7 +75,7 @@ Sub LEAGCMPL ()
         Locate , 28
         Color 14
         Print "SELECT LEAGUE TO UPDATE": Color 15
-        SELECTION% = 1
+        Selection% = 1
         START% = 1
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -91,25 +90,31 @@ Sub LEAGCMPL ()
         Print "-SELECTS LEAGUE";
 
         _MouseShow "DEFAULT"
-        MAMenu leagueFiles$(), SELECTION%, START%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+        MAMenu leagueFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
         _MouseHide
 
-        If EXITCODE% = 27 Then BO% = 1: Exit Sub
+        If ExitCode% <> 27 Then
+			targetFile$ = RTrim$(leagueFiles$(Selection%))
+			Locate 2, 33: Print targetFile$
+			Locate , 33: Print "ANY CHANGE (YN)";
+			Color 15, 0
+			I$ = GetKeyPress$
+		Else
+			BO% = 1
+		End If
+		
+    Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
-        targetFile$ = leagueFiles$(SELECTION%)
-        Locate 2, 33: Print targetFile$
-        Locate , 33: Print "ANY CHANGE (YN)";
-        Color 15, 0
-        3910 I$ = GetKeyPress$
-        'If UCase$(I$) = "Y" Then 1310
-    Loop Until UCase$(I$) = "N"
+	If ExitCode% = 27 Then Exit Sub
 
-    3911 targetFile$ = RTrim$(targetFile$)
     WE$ = Left$(targetFile$, Len(targetFile$) - 4)
     LH$ = WE$
-    Cls: Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
+	
+	' --- this part here should be it's own sub
+    Cls
+	Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
     Color 15, 0
-    3912 I$ = GetKeyPress$
+    I$ = GetKeyPress$
     If UCase$(I$) = "Y" Then finalUpdate$ = "Y"
 
     Open diskPaths$(1) + WE$ + ".TMS" For Input As #2
@@ -141,12 +146,17 @@ Sub LEAGCMPL ()
                 Close 2
                 WN = 0: LS = 0: CW = 0: CL = 0
                 For I = 1 To year%
-                    5600 For P = 4 To 11: If Mid$(O$(I), P, 1) = " " Or Mid$(O$(I), P, 1) = "." Then Mid$(O$(I), P, 1) = "_"
+                    For P = 4 To 11
+						If Mid$(O$(I), P, 1) = " " Or Mid$(O$(I), P, 1) = "." Then Mid$(O$(I), P, 1) = "_"
                     Next P
-                    For P = 12 To 14: If Mid$(O$(I), P, 2) = "ST" Then Mid$(O$(I), 9, 1) = "_": Mid$(O$(I), 10, 2) = "ST"
+                    
+					For P = 12 To 14
+						If Mid$(O$(I), P, 2) = "ST" Then Mid$(O$(I), 9, 1) = "_": Mid$(O$(I), 10, 2) = "ST"
                     Next P
-                    QQ = 8
-                    For P = 11 To 4 Step -1
+                    
+					QQ = 8
+                    
+					For P = 11 To 4 Step -1
                         If Mid$(O$(I), P, 1) = "_" Then 
                             QQ = P - 4
                         Else
@@ -154,7 +164,7 @@ Sub LEAGCMPL ()
                         End If
                     Next P
 
-                    5608 targetFile$ = Mid$(O$(I), 4, QQ): R$ = targetFile$ + "." + Left$(O$(I), 2)
+                    targetFile$ = Mid$(O$(I), 4, QQ): R$ = targetFile$ + "." + Left$(O$(I), 2)
                     O$(I) = R$
 
                     For EC = 1 To TEAMS_PER_CONFERENCE
@@ -166,7 +176,6 @@ Sub LEAGCMPL ()
                     
                     If O%(I) > leagueT%(I) Then WN = WN + 1
                     If O%(I) < leagueT%(I) Then LS = LS + 1
-                    'GoTo 5520
                     EC = 0
                 Next I
                 Close 3
@@ -181,8 +190,10 @@ Sub LEAGCMPL ()
         End If 'Done checking H1$(XW)
             
         L = Len(H1$(XW)): WT$ = ""
+
         For X = 1 To L: A = Asc(Mid$(H1$(XW), X, 1))
         WT$ = WT$ + Chr$(A): Next X
+
         For X = 1 To TEAMS_PER_CONFERENCE
             If Z1$(X) = WT$ Then
                 If O1(X) = WN And O2(X) = LS Then GoTo 919
@@ -199,12 +210,14 @@ Sub LEAGCMPL ()
         If _FileExists(diskPaths$(1) + H1$(XW)) Then
             Open diskPaths$(1) + H1$(XW) For Input As #2
             Input #2, TN$
+
             For I = 0 To 14
                 Input #2, N$(I)
                 For J = 0 To 13: Input #2, S(I, J): Next
                 Input #2, W0(I)
                 Input #2, W1(I)
             Next I
+
             For L = 1 To 16: Input #2, OT!(L): Next
             For L = 1 To 16: Input #2, DT!(L): Next
             Close 2
@@ -235,7 +248,7 @@ Sub LEAGCMPL ()
                         S(I, 21) = W0(I) / W1(I): ' *** 3FG% ***
                     End If
                     
-                    831 S(I, 22) = S(I, 12) / S(I, 0): ' *** PTS/G ***
+                    S(I, 22) = S(I, 12) / S(I, 0): ' *** PTS/G ***
                     If S(I, 0) > BRC(1) Then BRC(1) = S(I, 0): BRC$(1, 0) = N$(I): BRC$(1, 1) = TN$
                     If S(I, 1) > BRC(2) Then BRC(2) = S(I, 1): BRC$(2, 0) = N$(I): BRC$(2, 1) = TN$
                     If S(I, 2) > BRC(3) Then BRC(3) = S(I, 2): BRC$(3, 0) = N$(I): BRC$(3, 1) = TN$
@@ -318,14 +331,10 @@ Sub LEAGCMPL ()
             If DT!(11) / year% < TRC1!(20) And UCase$(finalUpdate$) = "Y" Then TRC1!(20) = DT!(11) / year%: TRC1$(20) = TN$
             If LS > TRC1!(21) Then TRC1!(21) = LS: TRC1$(21) = TN$
 
-        End If
-        '822
-        
-        'End If 'Done checking for .xxS file
+        End If 'Done checking for stat file
 
         Call CheckLeagueStats
 
-        919 '
         Close 3
     
     Next XW
@@ -342,7 +351,7 @@ Sub LEAGCMPL ()
     AA = 31: ZZ = 40
     Call Complex
     
-    4000 Cls
+    Cls
     Print
     Open diskPaths$(1) + WE$ + ".LDR" For Output As #2
     Print "    POSTING NEW "; WE$; " LEADERS"
@@ -369,13 +378,6 @@ Sub LEAGCMPL ()
     Next
     Close 1
 
-    'GoTo 991
-
-    '990 Close 3
-
-    'Exit Sub
-    'Call LEADERS_MENU
-    'Run "HELLO.EXE 3"
 End Sub
 
 
@@ -439,24 +441,26 @@ Sub CheckLeagueStats ()
             Next Z
         End If
         
-        3320 If S(X, 12) > LD(40, 1) Then
+        If S(X, 12) > LD(40, 1) Then
             LD(40, 1) = S(X, 12): LD(40, 2) = 0
             Z2$(40) = N$(X): Z3$(40) = TN$
+
             For Z = 21 To 39
                 For Z1 = Z + 1 To TEAMS_PER_CONFERENCE
-                If LD(Z, 1) < LD(Z1, 1) Then
-                    Swap Z2$(Z1), Z2$(Z)
-                    Swap Z3$(Z1), Z3$(Z)
-                    For M = 1 To 2
-                        Swap LD(Z1, M), LD(Z, M)
-                    Next
-                End If
-            3337 Next Z1
+					If LD(Z, 1) < LD(Z1, 1) Then
+						Swap Z2$(Z1), Z2$(Z)
+						Swap Z3$(Z1), Z3$(Z)
+						For M = 1 To 2
+							Swap LD(Z1, M), LD(Z, M)
+						Next
+					End If
+				Next Z1
             Next Z
         End If
         
-        3340 If S(X, 19) > LD(60, 1) Then
+        If S(X, 19) > LD(60, 1) Then
             LD(60, 1) = S(X, 19): LD(60, 2) = S(X, 1): Z2$(60) = N$(X): Z3$(60) = TN$
+
             For Z = 41 To 59
                 For Z1 = Z + 1 To 60
                     If LD(Z, 1) < LD(Z1, 1) Then
@@ -466,11 +470,11 @@ Sub CheckLeagueStats ()
                             Swap LD(Z1, M), LD(Z, M)
                         Next
                     End If
-            3357 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3360 If S(X, 20) > LD(80, 1) Then
+        If S(X, 20) > LD(80, 1) Then
             LD(80, 1) = S(X, 20): LD(80, 2) = S(X, 3): Z2$(80) = N$(X): Z3$(80) = TN$
             For Z = 61 To 79
                 For Z1 = Z + 1 To 80
@@ -481,11 +485,11 @@ Sub CheckLeagueStats ()
                             Swap LD(Z1, M), LD(Z, M)
                         Next
                     End If
-            3377 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3380 If S(X, 15) > LD(90, 1) Then
+        If S(X, 15) > LD(90, 1) Then
             LD(90, 1) = S(X, 15): LD(90, 2) = S(X, 7): Z2$(90) = N$(X): Z3$(90) = TN$
             For Z = 81 To 89
                 For Z1 = Z + 1 To 90
@@ -496,11 +500,11 @@ Sub CheckLeagueStats ()
                             Swap LD(Z1, M), LD(Z, M)
                         Next
                     End If
-            3397 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3400 If S(X, 7) > LD(100, 1) Then
+        If S(X, 7) > LD(100, 1) Then
             LD(100, 1) = S(X, 7): LD(100, 2) = 0: Z2$(100) = N$(X): Z3$(100) = TN$
             For Z = 91 To 99
                 For Z1 = Z + 1 To 100
@@ -512,11 +516,11 @@ Sub CheckLeagueStats ()
                         Next
                     End If
 
-            3417 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3420 If S(X, 16) > LD(110, 1) Then
+        If S(X, 16) > LD(110, 1) Then
             LD(110, 1) = S(X, 16): LD(110, 2) = S(X, 8): Z2$(110) = N$(X): Z3$(110) = TN$
             For Z = 101 To 109
                 For Z1 = Z + 1 To 110
@@ -528,11 +532,11 @@ Sub CheckLeagueStats ()
                         Next
                     End If
 
-            3437 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3440 'FOR Z=111 TO 120
+        'FOR Z=111 TO 120
         If S(X, 8) > LD(120, 1) Then
             LD(120, 1) = S(X, 8): LD(120, 2) = S(X, 8): Z2$(120) = N$(X): Z3$(120) = TN$
             For Z = 111 To 119
@@ -545,11 +549,11 @@ Sub CheckLeagueStats ()
                         Next
                     End If
 
-            3457 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3460 'FOR Z=121 TO 130
+        'FOR Z=121 TO 130
         If S(X, 21) > LD(130, 1) Then
             LD(130, 1) = S(X, 21)
             LD(130, 2) = W1(X)
@@ -565,11 +569,11 @@ Sub CheckLeagueStats ()
                         Next
                     End If
 
-            3477 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3480 'FOR Z=131 TO 140
+        'FOR Z=131 TO 140
         If W0(X) > LD(140, 1) Then
             LD(140, 1) = W0(X): LD(140, 2) = 0: Z2$(140) = N$(X): Z3$(140) = TN$
             For Z = 131 To 139
@@ -581,12 +585,11 @@ Sub CheckLeagueStats ()
                             Swap LD(Z1, M), LD(Z, M)
                         Next
                     End If
-
-            3497 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3500 'FOR Z=141 TO 150
+        'FOR Z=141 TO 150
         If S(X, 18) > LD(150, 1) Then
             LD(150, 1) = S(X, 18): LD(150, 2) = 0: Z2$(150) = N$(X): Z3$(150) = TN$
             For Z = 141 To 149
@@ -599,11 +602,11 @@ Sub CheckLeagueStats ()
                         Next
                     End If
 
-            3517 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3520 'FOR Z=151 TO 160
+        'FOR Z=151 TO 160
         If S(X, 10) / 60 > LD(160, 1) Then
             LD(160, 1) = S(X, 10) / 60: LD(160, 2) = 0: Z2$(160) = N$(X): Z3$(160) = TN$
             For Z = 151 To 159
@@ -616,11 +619,11 @@ Sub CheckLeagueStats ()
                         Next
                     End If
 
-            3537 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3540 'FOR Z=161 TO 170
+        'FOR Z=161 TO 170
         If S(X, 13) > LD(170, 1) Then
             LD(170, 1) = S(X, 13): LD(170, 2) = S(X, 5): Z2$(170) = N$(X): Z3$(170) = TN$
             For Z = 161 To 169
@@ -633,11 +636,11 @@ Sub CheckLeagueStats ()
                         Next
                     End If
 
-            3557 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3560 'FOR Z=171 TO 180
+        'FOR Z=171 TO 180
         If S(X, 5) > LD(180, 1) Then
             LD(180, 1) = S(X, 5): LD(18, 2) = 0: Z2$(180) = N$(X): Z3$(180) = TN$
             For Z = 171 To 179
@@ -650,11 +653,11 @@ Sub CheckLeagueStats ()
                         Next
                     End If
 
-            3577 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3580 'FOR Z=181 TO 190
+        'FOR Z=181 TO 190
         If S(X, 17) > LD(190, 1) Then
             LD(190, 1) = S(X, 17): LD(190, 2) = 0: Z2$(190) = N$(X): Z3$(190) = TN$
             For Z = 181 To 189
@@ -667,11 +670,11 @@ Sub CheckLeagueStats ()
                         Next
                     End If
 
-            3597 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3600 'FOR Z=191 TO 200
+        'FOR Z=191 TO 200
         If S(X, 9) > LD(200, 1) Then
             LD(200, 1) = S(X, 9): LD(200, 2) = 0: Z2$(200) = N$(X): Z3$(200) = TN$
             For Z = 191 To 199
@@ -684,11 +687,11 @@ Sub CheckLeagueStats ()
                         Next
                     End If
 
-            3617 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3620 'FOR Z=201 TO 210
+        'FOR Z=201 TO 210
         If S(X, 2) > LD(210, 1) Then
             LD(210, 1) = S(X, 2): LD(210, 2) = 0: Z2$(210) = N$(X): Z3$(210) = TN$
             For Z = 201 To 209
@@ -701,11 +704,11 @@ Sub CheckLeagueStats ()
                         Next
                     End If
 
-            3637 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3640 'FOR Z=211 TO 220
+        'FOR Z=211 TO 220
         If S(X, 4) > LD(220, 1) Then
             LD(220, 1) = S(X, 4): LD(220, 2) = 0: Z2$(220) = N$(X): Z3$(220) = TN$
             For Z = 211 To 219
@@ -718,11 +721,11 @@ Sub CheckLeagueStats ()
                         Next
                     End If
 
-            3657 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3660 'FOR Z=221 TO 230
+        'FOR Z=221 TO 230
         If S(X, 14) > LD(230, 1) Then
             LD(230, 1) = S(X, 14): LD(230, 2) = 0: Z2$(230) = N$(X): Z3$(230) = TN$
             For Z = 221 To 229
@@ -735,11 +738,11 @@ Sub CheckLeagueStats ()
                         Next
                     End If
 
-            3677 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3680 'FOR Z=231 TO 240
+        'FOR Z=231 TO 240
         If S(X, 6) > LD(240, 1) Then
             LD(240, 1) = S(X, 6): LD(240, 2) = 0: Z2$(240) = N$(X): Z3$(240) = TN$
             For Z = 231 To 239
@@ -752,11 +755,11 @@ Sub CheckLeagueStats ()
                         Next
                     End If
 
-            3697 Next Z1
+				Next Z1
             Next Z
         End If
 
-        3690 'FOR Z=241 TO 250
+        'FOR Z=241 TO 250
         If S(X, 24) > LD(250, 1) Then
             LD(250, 1) = S(X, 24): LD(250, 2) = 0: Z2$(250) = N$(X): Z3$(250) = TN$
             For Z = 241 To 249
@@ -769,11 +772,11 @@ Sub CheckLeagueStats ()
                         Next
                     End If
 
-            3698 Next Z1
+				Next Z1
             Next Z
         End If
 
-    3700 Next X
+    Next X
     
     'FOR X=1 TO TEAMS_PER_CONFERENCE
     If OT!(19) > OL!(40, 19) Then
@@ -793,11 +796,11 @@ Sub CheckLeagueStats ()
 						OL!(X, M) = J!
                     Next
                 End If
-        3817 Next X1
+			Next X1
         Next X
     End If
     
-    3820 'FOR X=1 TO 15
+    'FOR X=1 TO 15
     If DT!(19) < DL!(40, 19) Then
         For M = 1 To 20
             DL!(40, M) = DT!(M)
@@ -815,7 +818,7 @@ Sub CheckLeagueStats ()
 						DL!(X, M) = J!
                     Next
                 End If
-        3837 Next X1
+			Next X1
         Next X
     End If
     
@@ -831,7 +834,6 @@ Sub Nothing ()
 
     Shared H1$()
 
-    '9131
     H1$(XW) = Right$(H1$(XW), 2) + " " + Left$(H1$(XW), Len(H1$(XW)) - 3)
 
     For XX = 4 To 11: If Mid$(H1$(XW), XX, 1) = " " Or Mid$(H1$(XW), XX, 1) = "." Then Mid$(H1$(XW), XX, 1) = "_"
