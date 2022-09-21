@@ -126,7 +126,6 @@ SUB ALIGN ()
 						N = N + 1
 
 						If N = 15 Then 
-							KKK = 1
 							Locate 22: Print Space$(53)
 
 							SEQ = 0

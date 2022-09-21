@@ -81,7 +81,7 @@ Sub MergeStats ()
     Do
         Color 15, 0: Cls
         JJ = 6
-        SN = 1: Locate 6, 8: Color 15, 4
+        Locate 6, 8: Color 15, 4
         Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
         Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
         Locate 7 + JJ, 8
@@ -111,7 +111,7 @@ Sub MergeStats ()
             NY$ = I$ + NY$
             Color 15, 0
 
-            If NY$ = "" Then
+            If NY$ = "" And YN$ <> "" Then 
                 Call SelectTeam_MERGE (YN$, NTMS)
 				A$ = Q$(0)
                 For I = 0 To 34

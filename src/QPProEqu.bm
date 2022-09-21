@@ -45,7 +45,7 @@ Function FCount% (fileSpec$)
         Close #ff%
         Kill TmpFile$
 
-        'SHARED variable can return the file count
+        ' Shared variable can return the file count
         FCount% = Index%
     End If
 
@@ -144,7 +144,8 @@ End Function
 ' Modern compilers "emulate" these
 ' features to some degree but that
 ' does not make this any more relevant.
-' So, we're essentially going to return
+' So, we're essentially going to Return
+
 ' 12 for VGA to the functions requesting.
 ' Currently this is only used in some
 ' logic to determine print colors and
@@ -163,7 +164,8 @@ Function Monitor% ()
     '
     'End Select
 
-    'Results to return
+    'Results to Return
+
     '1 = Mono
     '2 = Hercules
     '3 = CGA
@@ -220,7 +222,7 @@ Function READDIR$ (spec$)
             Index% = Index% + 1
             Line Input #ff%, DirList$(Index%)
         Loop
-        DirCount% = Index% 'SHARED variable can return the file count
+        DirCount% = Index% ' Shared variable can return the file count
         Close #ff%
 
         Kill TmpFile$
@@ -353,7 +355,6 @@ Sub CapNum ()
 End Sub
 
 
-
 '-----------------------------------
 ' ClearEOL Copycat Subroutine
 '-----------------------------------
@@ -417,8 +418,10 @@ End Sub
 '-----------------------------------
 ' ClearScrn + MsgBox Subroutine
 '-----------------------------------
-Sub CSMsgBox (Message$, Wdth%, Pass)
-    If Len(Message$) Then
+Sub CSMsgBox (Message$, MsgWidth%, Pass)
+    
+	If Len(Message$) Then
+
         Row = CsrLin 'Get the Row Position
 
         ReDim Temp$(23) 'Make temporary array to hold the parsed up lines
@@ -433,30 +436,34 @@ Sub CSMsgBox (Message$, Wdth%, Pass)
             While Mid$(Message$, Strt, 1) = " " 'Skip over blanks
                 Strt = Strt + 1
             Wend
-            ND = Strt + Wdth 'Guess at the end of line
+
+            ND = Strt + MsgWidth% 'Guess at the end of line
+
             'Loop backwards to find
             While Mid$(Message$, ND, 1) <> " " And ND <= MesLen And ND > Strt
                 ND = ND - 1 '  blank space
             Wend
+
             LN = LN + 1 'Increment the Line number
+
             'Pull out the new line
             Temp$(LN) = Mid$(Message$, Strt, ND - Strt)
-            Strt = ND + 1 'Reset starting posit. for
-            '  next line
+            Strt = ND + 1 'Reset starting pos. for next line
         Loop Until ND >= MesLen 'Get more unless @ end of mes
+
         BotRow = Row + LN + 1 'Find the bottom row #
 
         'Save current screen
         oldmode& = _CopyImage(0) 'the 0 value designates the current destination SCREEN
         'PCopy 0, 1
 
-        BoxWdth = Wdth + 4 'Find the outer box width
-        ColPos = 40 - (BoxWdth \ 2) 'Starting pos. for centered box
+        BoxWidth% = MsgWidth% + 4 'Find the outer box width
+        ColPos = 40 - (BoxWidth% \ 2) 'Starting pos. for centered box
         Locate Row, ColPos 'Print the top of box
 
-        MQPrint "É" + String$(Wdth + 2, "Í") + "»", 0, 7
+        MQPrint Chr$(214) + String$(MsgWidth% + 2, 196) + Chr$(183), 0, 7
 
-        Box$ = "º" + Space$(Wdth + 2) + "º" 'Make the box sides
+        Box$ = Chr$(186) + Space$(MsgWidth% + 2) + Chr$(186) 'Make the box sides
 
         For N = 1 To LN 'Print message lines
             Locate N + Row, ColPos
@@ -466,21 +473,24 @@ Sub CSMsgBox (Message$, Wdth%, Pass)
         Next
 
         Locate N + Row, ColPos 'Print the bottom of box
-        MQPrint "È" + String$(Wdth + 2, "Í") + "¼", 0, 7
+        MQPrint Chr$(211) + String$(MsgWidth% + 2, 196) + Chr$(189), 0, 7
 
-        'MPaintBox Row + 1, ColPos + BoxWdth, N + Row, ColPos + BoxWdth + 1, 8
-        'MPaintBox N + Row + 1, ColPos + 2, N + Row + 1, ColPos + BoxWdth + 1, 8
+        'MPaintBox Row + 1, ColPos + BoxWidth%, N + Row, ColPos + BoxWidth% + 1, 8
+        'MPaintBox N + Row + 1, ColPos + 2, N + Row + 1, ColPos + BoxWidth% + 1, 8
         Locate Row,
 
         Pass = 1 'Set flag say we've been here
+
         Erase Temp$ 'Don't need this anymore
 
-    ElseIf Pass = 1 Then 'If we've been here before...
-        'Restore the original screen
-        'PCopy 1, 0
-        Screen oldmode&
+    Else
+		If Pass = 1 Then 'If we've been here before...
+			'Restore the original screen
+			'PCopy 1, 0
+			Screen oldmode&
 
-        Pass = 0 'Reset flag for next call
+			Pass = 0 'Reset flag for next call
+		End If
     End If
 
 End Sub
@@ -525,7 +535,7 @@ Sub FCopy (srcFile$, dstFile$, Buff$, copyErr%)
     End If
 
 End Sub
-
+ 
 
 '-----------------------------------
 ' InitInt Copycat Subroutine
@@ -687,6 +697,7 @@ Sub MAMenu (menuChoices$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, 
     Return
 
 
+
     '*** Get and process the user input ***
     UserInput:
 
@@ -753,6 +764,7 @@ Sub MAMenu (menuChoices$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, 
     End Select
 
     Return
+
 
 End Sub
 
@@ -835,6 +847,7 @@ Sub MMenuVert (menuChoices$(), Selected%, Start%, ScanCode%, ItemFGColor%, ItemB
     Next Count
     Return
 
+
     MoveUp:
     If Selected% = 1 Then
         Selected% = UBound(menuChoices$)
@@ -843,6 +856,7 @@ Sub MMenuVert (menuChoices$(), Selected%, Start%, ScanCode%, ItemFGColor%, ItemB
     End If
     Return
 
+
     MoveDown:
     If Selected% = UBound(menuChoices$) Then
         Selected% = 1
@@ -850,6 +864,7 @@ Sub MMenuVert (menuChoices$(), Selected%, Start%, ScanCode%, ItemFGColor%, ItemB
         Selected% = Selected% + 1
     End If
     Return
+
 
 End Sub
 
@@ -909,9 +924,9 @@ Sub NumIn (Number#, Max, XCode, FGColor%, BGColor%)
 
     X$ = String$(Max, "#") 'build a formatting string
     If Places Then X$ = X$ + "." + String$(Places, "#")
-       
+
     X$ = FUsing$(Str$(Number#), X$, 1) 'let FUsing do the real work
-       
+
     Zero = InStr(X$, "0") 'did FUsing leave a leading 0?
     If Left$(LTrim$(X$), 1) = "0" Then Mid$(X$, Zero, 1) = " " 'yes, delete it
 
@@ -928,15 +943,18 @@ Sub NumIn (Number#, Max, XCode, FGColor%, BGColor%)
 
 
     NGetKey:
-    Call CapNum 'print Cap/Num if active
-    If Curpo > Len(X$) GoTo NEnter 'field full, handle as Enter
-    If Mid$(X$, Curpo, 1) = "." Then 'cursor is on the point, skip
-        Locate , Pos(0) + 1
-        Curpo = Curpo + 1
-    End If
+    Do
+        Call CapNum 'print Cap/Num if active
 
-    A$ = InKey$
-    If A$ = "" GoTo NGetKey
+        If Curpo > Len(X$) GoTo NEnter 'field full, handle as Enter
+        If Mid$(X$, Curpo, 1) = "." Then 'cursor is on the point, skip
+            Locate , Pos(0) + 1
+            Curpo = Curpo + 1
+        End If
+
+        A$ = InKey$
+    Loop Until A$ <> "" 'GoTo NGetKey
+
     If Len(A$) = 1 GoTo NRegularKey
 
     A$ = Right$(A$, 1) 'extended key, get the code
@@ -1053,7 +1071,7 @@ Sub NumIn (Number#, Max, XCode, FGColor%, BGColor%)
         QPrint Mid$(X$, A, 1), FGColor%, BGColor%, -1 'and reprint them in new place
         Locate , Pos(0) + 1
     Next
-     
+
     Mid$(X$, Curpo, 1) = A$ 'assign the digit
     Call QPrint(A$, FGColor%, BGColor%, -1)
     If Asc(X$) = 32 GoTo NGetKey 'field not full, get another
@@ -1203,20 +1221,24 @@ Sub TextIn (T$, Max%, NumOnly%, CapsOn%, ExitCode%, FGColor%, BGColor%)
     ExitCode% = 1 'User wants to go to previous field
     GoTo TEnter 'Behavior is similar to the Enter key
 
+
     TClear:
     X$ = "" 'Alt-C, erase the current string
     GoSub TInsertOff 'clear insert mode and restore cursor
     Locate , Pos(0) - (CursorPos - 1)
     GoTo TC 'and start all over again
 
+
     THome:
     Locate , Pos(0) - (CursorPos - 1) 'put cursor at beginning of line
     CursorPos = 1 'show cursor as being on 1st character
     GoTo TGetKey
 
+
     TUp:
     ExitCode% = 1 'user wants to go back a field
     GoTo TEnter 'handle as if it were the Enter key
+
 
     TLeft:
     If CursorPos = 1 GoTo TShiftTab 'cursor is on 1st character, handle as Shift-Tab
@@ -1404,6 +1426,7 @@ Sub TextIn (T$, Max%, NumOnly%, CapsOn%, ExitCode%, FGColor%, BGColor%)
     End If
     Return
 
+
 End Sub
 
 
@@ -1455,6 +1478,7 @@ Sub YesNoB (YN$, ExitCode, FGColor%, BGColor%)
         GoTo YD2
     End If
 
+
     If Len(X$) = 2 Then 'extended key
         X$ = Right$(X$, 1)
         If X$ = "P" Or X$ = "M" Then GoTo YD2 'Down arrow, Right arrow
@@ -1465,6 +1489,7 @@ Sub YesNoB (YN$, ExitCode, FGColor%, BGColor%)
     End If
 
     GoTo YGetKey
+
 
     YDone:
     If X$ > "Y" Then X$ = Chr$(Asc(X$) - 32) 'capitalize if necessary

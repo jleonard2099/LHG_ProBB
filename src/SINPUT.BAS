@@ -6,8 +6,6 @@ Sub SINPUT ()
     
     _Title "Basketball: The Pro Game - Stats Input"
 
-    PX = 0
-
     Color 7, 0
     KEY Off
 
@@ -136,7 +134,9 @@ Sub SINPUT ()
 
     213 On B9 GOTO 175, 177, 179, 181, 183, 185, 187, 189, 191, 193, 195, 197, 199, 201, 203, 205
 
-
+	'----------
+	'Defense Stats
+	'----------
     215 C1 = 0
 
     Cls
@@ -163,31 +163,18 @@ Sub SINPUT ()
     Else
 
         379 Locate 3, 1: Input "1. OPP FGA "; Z1!(1): If C1 = 1 Then 410
-
         381 Locate 4, 1: Input "2. OPP FGM "; Z1!(2): If C1 = 1 Then 410
-
         383 Locate 5, 1: Input "3. OPP 3FGA "; Z1!(14): If C1 = 1 Then 410
-
         385 Locate 6, 1: Input "4. OPP 3FGM "; Z1!(13): If C1 = 1 Then 410
-
         387 Locate 7, 1: Input "5. OPP FTA "; Z1!(3): If C1 = 1 Then 410
-
         389 Locate 8, 1: Input "6. OPP FTM "; Z1!(4): If C1 = 1 Then 410
-
         391 Locate 9, 1: Input "7. OPP OFF RB  "; Z1!(12): If C1 = 1 Then 410
-
         393 Locate 10, 1: Input "8. OPP TOT RB "; Z1!(5): If C1 = 1 Then 410
-
         395 Locate 11, 1: Input "9. OPP FOULS "; Z1!(6): If C1 = 1 Then 410
-
         397 Locate 12, 1: Input "10. OPP STEALS "; Z1!(7): If C1 = 1 Then 410
-
         399 Locate 13, 1: Input "11. OPP ASSISTS "; Z1!(8): If C1 = 1 Then 410
-
         401 Locate 14, 1: Input "12. OPP BLOCKS "; Z1!(9): If C1 = 1 Then 410
-
         403 Locate 15, 1: Input "13. OPP TURNOVERS "; Z1!(11): If C1 = 1 Then 410
-
         405 Locate 16, 1: Input "14. OPP POINTS  "; Z1!(10): If C1 = 1 Then 410
 
     End If
@@ -202,65 +189,55 @@ Sub SINPUT ()
 
     413 On B9 GOTO 379, 381, 383, 385, 387, 389, 391, 393, 395, 397, 399, 401, 403, 405
 
-    645 C1 = 0
+
+	'----------
+	'Player Stats
+	'----------
+    C1 = 0
 
      If X% <= 0 Then
 
         For I = 0 To 14
-            Cls
+        
+			Cls
             X$ = "PLAYER -" + Str$(I + 1)
             Call TITLE_STAT_HEADER(X$)
 
             675 Locate 3, 1: Input "1. NAME "; inputA$(I): If C1 = 1 Then 1225
-
             705 Locate 4, 1: Input "2. GAMES "; Z2(I, 0): If C1 = 1 Then 1225
-
             745 Locate 5, 1: Input "3. MINUTES "; Z2(I, 10): Z2(I, 10) = Z2(I, 10) * 60: If C1 = 1 Then 1225
-
             785 Locate 6, 1: Input "4. FGA "; Z2(I, 1): If C1 = 1 Then 1225
-
             825 Locate 7, 1: Input "5. FGM "; Z2(I, 2): If C1 = 1 Then 1225
-
             865 Locate 8, 1: Input "6. FTA "; Z2(I, 3): If C1 = 1 Then 1225
-
             905 Locate 9, 1: Input "7. FTM "; Z2(I, 4): If C1 = 1 Then 1225
-
             906 Locate 10, 1: Input "8. OFF REB "; Z2(I, 12): If C1 = 1 Then 1225
-
             945 Locate 11, 1: Input "9. TOT REB  "; Z2(I, 5): If C1 = 1 Then 1225
-
             985 Locate 12, 1: Input "10. FOULS "; Z2(I, 6): If C1 = 1 Then 1225
-
             1025 Locate 13, 1: Input "11. STEALS "; Z2(I, 7): If C1 = 1 Then 1225
-
             1065 Locate 14, 1: Input "12. ASSISTS "; Z2(I, 8): If C1 = 1 Then 1225
-
             1105 Locate 15, 1: Input "13. BLOCKS "; Z2(I, 9): If C1 = 1 Then 1225
-
             1106 Locate 16, 1: Input "14. TURNOVERS "; Z2(I, 11): If C1 = 1 Then 1225
-
             1145 Locate 17, 1: Input "15. 3FGA "; W1(I): If C1 = 1 Then 1225
-
             1185 Locate 18, 1: Input "16. 3FGM "; W0(I): If C1 = 1 Then 1225
-
             1186 Locate 19, 1: Input "17. HI-GAME (PTS) "; Z2(I, 13): If C1 = 1 Then 1225
+
 
             1225 C1 = 1
 
             Do
                 Locate 21, 1
                 Input "# TO CHANGE (0 TO CONTINUE) "; B9
-
             Loop Until B9 >= 0 And B9 <= 17
 
-            1265 On B9 GOTO 675, 705, 745, 785, 825, 865, 905, 906, 945, 985, 1025, 1065, 1105, 1106, 1145, 1185, 1186
+            On B9 GOTO 675, 705, 745, 785, 825, 865, 905, 906, 945, 985, 1025, 1065, 1105, 1106, 1145, 1185, 1186
 
-            1275 C1 = 0
+            C1 = 0
 
-            1285 If X% < 0 Then Exit For
+            If X% < 0 Then Exit For
 
-        1295 Next I
-    End If
+        Next I
+    
+	End If
 
 
     Cls
@@ -349,7 +326,5 @@ Sub NoWhere ()
     For L = 0 To 15: Print #1, Z1!(L): Next L
 
     Close 1
-
-    '2005 Exit Sub 'GoTo 55
 
 End Sub

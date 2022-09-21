@@ -7,9 +7,6 @@ Sub CAREER ()
     Do
         Cls
 
-        TMR = 945
-        TMR1 = 1875
-
         Call TITLE
         'Erase menuChoices$
         menuChoices$(1) = "CREATE AND MERGE INITIAL STAT FILE"
@@ -34,7 +31,8 @@ Sub CAREER ()
         _MouseHide
 
         Color , 0
-        If ExitCode% <> 27 Then
+        
+		If ExitCode% <> 27 Then
             Select Case Selection%
                 Case 1: Call CreateCareerFile
                 Case 2: Call MergeCareerFiles
@@ -66,6 +64,8 @@ Sub CreateCareerFile ()
     Shared AR$()
     Shared ars!(), W0S!(), W1S!()
 
+	TMR% = 945
+
     NB = -1
 
     Cls
@@ -87,7 +87,7 @@ Sub CreateCareerFile ()
 		
 		Do
 			Cls
-			For J = 15 To 18: Locate J: Print "                                                                    "
+			For J = 15 To 18: Locate J: Print Space$(68)
 			Next
 			Color 11: Locate 15, 5: Input "ENTER NAME OF CAREER STAT FILE (MAX. - 8 CHARACTERS)"; careerFile$
 			'This will open the team and load the data
@@ -122,10 +122,10 @@ Sub CreateCareerFile ()
 				
 				If UCase$(J$) = "N" Then
 
-					vv = 1: Locate , 5: Print "IS THIS THE FINAL UPDATE FOR THE CURRENT SEASON? (Y/N)"
+					Locate , 5: Print "IS THIS THE FINAL UPDATE FOR THE CURRENT SEASON? (Y/N)"
 					K$ = GetKeyPress$
-					If UCase$(K$) = "Y" Then JX = 1
-					If UCase$(K$) = "N" Then JX = 0
+					If UCase$(K$) = "Y" Then finalUpdate% = 1
+					If UCase$(K$) = "N" Then finalUpdate% = 0
 
 					If Not _FileExists(diskPaths$(1) + Z1$) Then
 						Cls
@@ -141,8 +141,8 @@ Sub CreateCareerFile ()
 							For J = 0 To 13: Input #1, initA(I, J): Next
 							Input #1, W0(I)
 							Input #1, W1(I)
-							TMR = TMR - 1
-							Locate 21, 38: Color 5: Print Using "####"; TMR
+							TMR% = TMR% - 1
+							Locate 21, 38: Color 5: Print Using "####"; TMR%
 						Next
 						For L = 0 To 15: Input #1, Z!(L): Next
 						For L = 0 To 15: Input #1, Z1!(L): Next
@@ -166,7 +166,7 @@ Sub CreateCareerFile ()
 						Next I
 
 						For I = 0 To 61: AR$(I) = initA$(I): Next
-						If JX = 1 Then Call ReadCareerLeaders(careerFile$)
+						If finalUpdate% = 1 Then Call ReadCareerLeaders(careerFile$)
 
 						Locate 20, 20: Color 15: Print "MERGING CAREER STATS . . . . PLEASE WAIT"
 
@@ -178,8 +178,8 @@ Sub CreateCareerFile ()
 								For J = 0 To 15: Write #2, ars!(N, I, J): Next J
 								Write #2, W0S!(N, I)
 								Write #2, W1S!(N, I)
-								TMR = TMR - 1
-								Locate 21, 38: Color 5: Print Using "####"; TMR
+								TMR% = TMR% - 1
+								Locate 21, 38: Color 5: Print Using "####"; TMR%
 							Next I
 						Next N
 						Close #2
@@ -271,34 +271,36 @@ Sub MergeCareerFiles ()
             Locate , 33: Print "ANY CHANGE (YN)";
             Color 15, 0
             I$ = GetKeyPress$
-        Else
-            Exit Sub
         End If
 
-    Loop Until UCase$(I$) = "N"
+    Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
-    careerFile$ = Left$(targetFile$, Len(targetFile$) - 4)
+	If ExitCode% <> 27 Then
 
-    'This will open the team and load the data
-    Call GetTeam(ti)
-    B$ = A$
+		careerFile$ = Left$(targetFile$, Len(targetFile$) - 4)
 
-    For XX = 4 To 11: If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
-    Next XX
+		'This will open the team and load the data
+		Call GetTeam(ti)
+		B$ = A$
 
-    For XX = 12 To 14: If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
-    Next XX
-    QQ = 8
+		For XX = 4 To 11: If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
+		Next XX
 
-    For XX = 11 To 4 Step -1
-        If Not (Mid$(B$, XX, 1) = "_") Then
-            Exit For
-        End If
-    Next XX
+		For XX = 12 To 14: If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
+		Next XX
+		QQ = 8
 
-    Z1$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
+		For XX = 11 To 4 Step -1
+			If Not (Mid$(B$, XX, 1) = "_") Then
+				Exit For
+			End If
+		Next XX
 
-    Call AddYear(careerFile$, Z1$)
+		Z1$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
+
+		Call AddYear(careerFile$, Z1$)
+
+	End If
 
 End Sub
 
@@ -319,8 +321,7 @@ Sub AddYear (selectedFile$, statFile$)
     Shared ars!(), W0S!(), W1S!()
 
     'needs to be a constant???
-    TMR = 945
-    TMR1 = 1875
+    TMR1% = 1875
 
     Cls
 	Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
@@ -329,10 +330,10 @@ Sub AddYear (selectedFile$, statFile$)
     
 	If UCase$(I$) = "N" Then
 
-		vv = 0: Locate , 5: Print "IS THIS THE FINAL UPDATE FOR THE CURRENT SEASON? (Y/N)"
+		Locate , 5: Print "IS THIS THE FINAL UPDATE FOR THE CURRENT SEASON? (Y/N)"
 		I$ = GetKeyPress$
 		
-		If UCase$(I$) = "Y" Then JX = 1 Else JX = 0
+		If UCase$(I$) = "Y" Then finalUpdate% = 1 Else finalUpdate% = 0
 
 		Locate 20, 5: Color 15: Print "MERGING CAREER STATS AND UPDATING CAREER LEADER FILE . . . . PLEASE WAIT"
 
@@ -345,8 +346,8 @@ Sub AddYear (selectedFile$, statFile$)
 				For J = 0 To 15: Input #2, ars!(N, I, J): Next J
 				Input #2, W0S!(N, I)
 				Input #2, W1S!(N, I)
-				TMR1 = TMR1 - 1
-				Locate 21, 38: Color 5: Print Using "####"; TMR1
+				TMR1% = TMR1% - 1
+				Locate 21, 38: Color 5: Print Using "####"; TMR1%
 			Next I
 		Next N
 		Close #2
@@ -363,8 +364,8 @@ Sub AddYear (selectedFile$, statFile$)
 				For J = 0 To 13: Input #1, mergeA(I, J): Next
 				Input #1, W0(I)
 				Input #1, W1(I)
-				TMR1 = TMR1 - 1
-				Locate 21, 38: Color 5: Print Using "####"; TMR1
+				TMR1% = TMR1% - 1
+				Locate 21, 38: Color 5: Print Using "####"; TMR1%
 			Next
 
 			For L = 0 To 15: Input #1, Z!(L): Next
@@ -426,7 +427,7 @@ Sub AddYear (selectedFile$, statFile$)
 
 			Next I
 
-			If JX = 1 Then Call ReadCareerLeaders(selectedFile$)
+			If finalUpdate% = 1 Then Call ReadCareerLeaders(selectedFile$)
 
 			Locate 20, 20: Color 15: Print "MERGING CAREER STATS . . . . PLEASE WAIT"
 
@@ -437,8 +438,8 @@ Sub AddYear (selectedFile$, statFile$)
 					For J = 0 To 15: Write #2, ars!(N, I, J): Next J
 					Write #2, W0S!(N, I)
 					Write #2, W1S!(N, I)
-					TMR1 = TMR1 - 1
-					Locate 21, 38: Color 5: Print Using "####"; TMR1
+					TMR1% = TMR1% - 1
+					Locate 21, 38: Color 5: Print Using "####"; TMR1%
 				Next I
 			Next N
 			Close #2
@@ -746,7 +747,7 @@ Sub ViewCareerRecords ()
 
 					End Select
 
-				Loop Until UCase$(I$) = "V" Or UCase$(I$) = "P"
+				Loop Until UCase$(I$) = "V" Or UCase$(I$) = "P" Or I$ = Chr$(27)
 			
 			End If 'Done checking for ESC
 			
@@ -791,7 +792,8 @@ Sub GetTeam (teamIDX)
 			NY$ = I$ + NY$
 			Color 15, 0
 
-			If NY$ = "" Then
+            If NY$ = "" And YN$ <> "" Then 
+				'NY$ = YN$
 				Call LoadTeam_CAREER(YN$, NTMS, teamIDX)
 				If BO% = 1 Then BO% = 0 ': Exit Sub
 			Else

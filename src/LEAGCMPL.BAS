@@ -105,278 +105,291 @@ Sub LEAGCMPL ()
 		
     Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
-	If ExitCode% = 27 Then Exit Sub
+	If ExitCode% <> 27 Then
 
-    WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-    LH$ = WE$
-	
-	' --- this part here should be it's own sub
-    Cls
-	Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
-    Color 15, 0
-    I$ = GetKeyPress$
-    If UCase$(I$) = "Y" Then finalUpdate$ = "Y"
+		WE$ = Left$(targetFile$, Len(targetFile$) - 4)
+		LH$ = WE$
+		
+		' --- this part here should be it's own sub
+		Cls
+		Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
+		Color 15, 0
+		I$ = GetKeyPress$
+		If UCase$(I$) = "Y" Then finalUpdate$ = "Y"
 
-    Open diskPaths$(1) + WE$ + ".TMS" For Input As #2
-    Input #2, LG$, D1$, D2$, D3$, D4$
-    For XW = 1 To TEAMS_PER_CONFERENCE
-        Input #2, H1$(XW)
-    Next
-    Close 2
+		Open diskPaths$(1) + WE$ + ".TMS" For Input As #2
+		Input #2, LG$, D1$, D2$, D3$, D4$
+		For XW = 1 To TEAMS_PER_CONFERENCE
+			Input #2, H1$(XW)
+		Next
+		Close 2
 
-    For X = 1 To TEAMS_PER_CONFERENCE: DL!(X, 19) = 9999: Next
+		For X = 1 To TEAMS_PER_CONFERENCE: DL!(X, 19) = 9999: Next
 
-    Open diskPaths$(1) + LH$ + ".TMS" For Input As #2
-        For N = 1 To 5: Input #2, D2$: Next
-        For X = 1 To TEAMS_PER_CONFERENCE: Input #2, Z1$(X): Next
-    Close 2
+		Open diskPaths$(1) + LH$ + ".TMS" For Input As #2
+			For N = 1 To 5: Input #2, D2$: Next
+			For X = 1 To TEAMS_PER_CONFERENCE: Input #2, Z1$(X): Next
+		Close 2
 
-    For XW = 1 To TEAMS_PER_CONFERENCE
-        WN = 0: LS = 0: CW = 0: CL = 0
-        If H1$(XW) <> Chr$(42) Then
+		For XW = 1 To TEAMS_PER_CONFERENCE
+			WN = 0: LS = 0: CW = 0: CL = 0
+			If H1$(XW) <> Chr$(42) Then
 
-            WN = 0: LS = 0: CW = 0: CL = 0
+				WN = 0: LS = 0: CW = 0: CL = 0
 
-            If _FileExists(diskPaths$(1) + H1$(XW) + "S") Then
-                Open diskPaths$(1) + H1$(XW) + "S" For Input As #3
-                Input #3, year%
-                For I = 1 To 100: Input #3, O%(I): Next I
-                For I = 1 To 100: Input #3, O$(I): Next I
-                For I = 1 To 100: Input #3, leagueT%(I): Next I
-                Close 2
-                WN = 0: LS = 0: CW = 0: CL = 0
-                For I = 1 To year%
-                    For P = 4 To 11
-						If Mid$(O$(I), P, 1) = " " Or Mid$(O$(I), P, 1) = "." Then Mid$(O$(I), P, 1) = "_"
-                    Next P
-                    
-					For P = 12 To 14
-						If Mid$(O$(I), P, 2) = "ST" Then Mid$(O$(I), 9, 1) = "_": Mid$(O$(I), 10, 2) = "ST"
-                    Next P
-                    
-					QQ = 8
-                    
-					For P = 11 To 4 Step -1
-                        If Mid$(O$(I), P, 1) = "_" Then 
-                            QQ = P - 4
-                        Else
-                            Exit For
-                        End If
-                    Next P
+				If _FileExists(diskPaths$(1) + H1$(XW) + "S") Then
+					Open diskPaths$(1) + H1$(XW) + "S" For Input As #3
+					Input #3, year%
+					For I = 1 To 100: Input #3, O%(I): Next I
+					For I = 1 To 100: Input #3, O$(I): Next I
+					For I = 1 To 100: Input #3, leagueT%(I): Next I
+					Close 2
+					WN = 0: LS = 0: CW = 0: CL = 0
+					For I = 1 To year%
+						For P = 4 To 11
+							If Mid$(O$(I), P, 1) = " " Or Mid$(O$(I), P, 1) = "." Then Mid$(O$(I), P, 1) = "_"
+						Next P
+						
+						For P = 12 To 14
+							If Mid$(O$(I), P, 2) = "ST" Then Mid$(O$(I), 9, 1) = "_": Mid$(O$(I), 10, 2) = "ST"
+						Next P
+						
+						QQ = 8
+						
+						For P = 11 To 4 Step -1
+							If Mid$(O$(I), P, 1) = "_" Then 
+								QQ = P - 4
+							Else
+								Exit For
+							End If
+						Next P
 
-                    targetFile$ = Mid$(O$(I), 4, QQ): R$ = targetFile$ + "." + Left$(O$(I), 2)
-                    O$(I) = R$
+						targetFile$ = Mid$(O$(I), 4, QQ): R$ = targetFile$ + "." + Left$(O$(I), 2)
+						O$(I) = R$
 
-                    For EC = 1 To TEAMS_PER_CONFERENCE
-                        If O$(I) = H1$(EC) Then 
-                            If O%(I) > leagueT%(I) Then CW = CW + 1: WN = WN + 1
-                            If O%(I) < leagueT%(I) Then CL = CL + 1: LS = LS + 1
-                        End If
-                    Next EC
-                    
-                    If O%(I) > leagueT%(I) Then WN = WN + 1
-                    If O%(I) < leagueT%(I) Then LS = LS + 1
-                    EC = 0
-                Next I
-                Close 3
+						For EC = 1 To TEAMS_PER_CONFERENCE
+							If O$(I) = H1$(EC) Then 
+								If O%(I) > leagueT%(I) Then CW = CW + 1: WN = WN + 1
+								If O%(I) < leagueT%(I) Then CL = CL + 1: LS = LS + 1
+							End If
+						Next EC
+						
+						If O%(I) > leagueT%(I) Then WN = WN + 1
+						If O%(I) < leagueT%(I) Then LS = LS + 1
+						EC = 0
+					Next I
+					Close 3
 
-                Cls
-                Locate 4, 5
-                Color 14: Print "FINDING ";
-                Color 15: Print H1$(XW);
-                Color 14: Print " STATS            "
-            End If 'Done checking if file exists
-            
-        End If 'Done checking H1$(XW)
-            
-        L = Len(H1$(XW)): WT$ = ""
+					Cls
+					Locate 4, 5
+					Color 14: Print "FINDING ";
+					Color 15: Print H1$(XW);
+					Color 14: Print " STATS            "
+				End If 'Done checking if file exists
+				
+			End If 'Done checking H1$(XW)
+				
+			L = Len(H1$(XW)): WT$ = ""
 
-        For X = 1 To L: A = Asc(Mid$(H1$(XW), X, 1))
-        WT$ = WT$ + Chr$(A): Next X
+			For X = 1 To L
+				A = Asc(Mid$(H1$(XW), X, 1))
+				WT$ = WT$ + Chr$(A)
+			Next X
 
-        For X = 1 To TEAMS_PER_CONFERENCE
-            If Z1$(X) = WT$ Then
-                If O1(X) = WN And O2(X) = LS Then GoTo 919
-                O1(X) = WN: O2(X) = LS
-            End If
-        Next X
+			For X = 1 To TEAMS_PER_CONFERENCE
+				If Z1$(X) = WT$ Then
+					If O1(X) <> WN Or O2(X) <> LS Then
+						O1(X) = WN
+						O2(X) = LS
+					Else
+						 timeToGo = 1
+					End If
+				End If
+			Next X
 
-        For I = 0 To 14
-            For J = 0 To 22
-                S(I, J) = 0
-            Next
-        Next
+			If timeToGo <> 1 Then
+				'811
+				For I = 0 To 14
+					For J = 0 To 22
+						S(I, J) = 0
+					Next
+				Next
 
-        If _FileExists(diskPaths$(1) + H1$(XW)) Then
-            Open diskPaths$(1) + H1$(XW) For Input As #2
-            Input #2, TN$
+				If _FileExists(diskPaths$(1) + H1$(XW)) Then
+					Open diskPaths$(1) + H1$(XW) For Input As #2
+					Input #2, TN$
 
-            For I = 0 To 14
-                Input #2, N$(I)
-                For J = 0 To 13: Input #2, S(I, J): Next
-                Input #2, W0(I)
-                Input #2, W1(I)
-            Next I
+					For I = 0 To 14
+						Input #2, N$(I)
+						For J = 0 To 13: Input #2, S(I, J): Next
+						Input #2, W0(I)
+						Input #2, W1(I)
+					Next I
 
-            For L = 1 To 16: Input #2, OT!(L): Next
-            For L = 1 To 16: Input #2, DT!(L): Next
-            Close 2
+					For L = 1 To 16: Input #2, OT!(L): Next
+					For L = 1 To 16: Input #2, DT!(L): Next
+					Close 2
 
-            For I = 0 To 14
-                S(I, 25) = S(I, 13)
-                S(I, 26) = S(I, 12)
-                S(I, 12) = S(I, 2) * 2 + W0(I) + S(I, 4): ' *** PTS ***
+					For I = 0 To 14
+						S(I, 25) = S(I, 13)
+						S(I, 26) = S(I, 12)
+						S(I, 12) = S(I, 2) * 2 + W0(I) + S(I, 4): ' *** PTS ***
 
-                If S(I, 0) <> 0 Then 
-                    S(I, 13) = S(I, 5) / S(I, 0): ' *** RB/G ***
-                    S(I, 14) = S(I, 6) / S(I, 0): ' *** FOULS/G ***
-                    S(I, 15) = S(I, 7) / S(I, 0): ' *** STEALS/G ***
-                    S(I, 16) = S(I, 8) / S(I, 0): ' *** ASSISTS/G ***
-                    S(I, 17) = S(I, 9) / S(I, 0): ' *** BLOCKS/G ***
-                    S(I, 24) = S(I, 5) + S(I, 12) - S(I, 6) + S(I, 8) + S(I, 9) + S(I, 7) - 2 * S(I, 11)
-                    S(I, 18) = S(I, 10) / 60 / S(I, 0): ' *** MIN/G ***
+						If S(I, 0) <> 0 Then 
+							S(I, 13) = S(I, 5) / S(I, 0): ' *** RB/G ***
+							S(I, 14) = S(I, 6) / S(I, 0): ' *** FOULS/G ***
+							S(I, 15) = S(I, 7) / S(I, 0): ' *** STEALS/G ***
+							S(I, 16) = S(I, 8) / S(I, 0): ' *** ASSISTS/G ***
+							S(I, 17) = S(I, 9) / S(I, 0): ' *** BLOCKS/G ***
+							S(I, 24) = S(I, 5) + S(I, 12) - S(I, 6) + S(I, 8) + S(I, 9) + S(I, 7) - 2 * S(I, 11)
+							S(I, 18) = S(I, 10) / 60 / S(I, 0): ' *** MIN/G ***
 
-                    If Not (S(I, 1) = 0 Or (S(I, 2) / S(I, 0)) < 3.65) Then
-                        S(I, 19) = S(I, 2) / S(I, 1): ' *** FG% ***
-                    End If
-                    
-                    If Not (S(I, 3) = 0 Or (S(I, 4) / S(I, 0)) < 1.52) Then
-                        S(I, 20) = S(I, 4) / S(I, 3): ' *** FT% ***
-                    End If
-                    
-                    If Not (W1(I) = 0 Or W0(I) / S(I, 0) < .3) Then
-                        S(I, 21) = W0(I) / W1(I): ' *** 3FG% ***
-                    End If
-                    
-                    S(I, 22) = S(I, 12) / S(I, 0): ' *** PTS/G ***
-                    If S(I, 0) > BRC(1) Then BRC(1) = S(I, 0): BRC$(1, 0) = N$(I): BRC$(1, 1) = TN$
-                    If S(I, 1) > BRC(2) Then BRC(2) = S(I, 1): BRC$(2, 0) = N$(I): BRC$(2, 1) = TN$
-                    If S(I, 2) > BRC(3) Then BRC(3) = S(I, 2): BRC$(3, 0) = N$(I): BRC$(3, 1) = TN$
-                    If S(I, 19) > BRC(4) And UCase$(finalUpdate$) = "Y" And S(I, 2) / S(I, 0) >= 3.65 Then BRC(4) = S(I, 19): BRC$(4, 0) = N$(I): BRC$(4, 1) = TN$
-                    If W1(I) > BRC(5) Then BRC(5) = W1(I): BRC$(5, 0) = N$(I): BRC$(5, 1) = TN$
-                    If W0(I) > BRC(6) Then BRC(6) = W0(I): BRC$(6, 0) = N$(I): BRC$(6, 1) = TN$
-                    If S(I, 21) > BRC(7) And UCase$(finalUpdate$) = "Y" And W0(I) / S(I, 0) >= .3 Then BRC(7) = S(I, 21): BRC$(7, 0) = N$(I): BRC$(7, 1) = TN$
-                    If S(I, 3) > BRC(8) Then BRC(8) = S(I, 3): BRC$(8, 0) = N$(I): BRC$(8, 1) = TN$
-                    If S(I, 4) > BRC(9) Then BRC(9) = S(I, 4): BRC$(9, 0) = N$(I): BRC$(9, 1) = TN$
-                    If S(I, 20) > BRC(10) And UCase$(finalUpdate$) = "Y" And S(I, 4) / S(I, 0) >= 1.52 Then BRC(10) = S(I, 20): BRC$(10, 0) = N$(I): BRC$(10, 1) = TN$
-                    If S(I, 10) / 60 > BRC(11) Then BRC(11) = S(I, 10) / 60: BRC$(11, 0) = N$(I): BRC$(11, 1) = TN$
-                    If S(I, 12) > BRC(12) Then BRC(12) = S(I, 12): BRC$(12, 0) = N$(I): BRC$(12, 1) = TN$
-                    If S(I, 22) > BRC(13) And UCase$(finalUpdate$) = "Y" Then BRC(13) = S(I, 22): BRC$(13, 0) = N$(I): BRC$(13, 1) = TN$
-                    If S(I, 25) > BRC(14) Then BRC(14) = S(I, 25): BRC$(14, 0) = N$(I): BRC$(14, 1) = TN$
-                    If S(I, 26) > BRC(15) Then BRC(15) = S(I, 26): BRC$(15, 0) = N$(I): BRC$(15, 1) = TN$
-                    If S(I, 5) - S(I, 26) > BRC(16) Then BRC(16) = S(I, 5) - S(I, 26): BRC$(16, 0) = N$(I): BRC$(16, 1) = TN$
-                    If S(I, 5) > BRC(17) Then BRC(17) = S(I, 5): BRC$(17, 0) = N$(I): BRC$(17, 1) = TN$
-                    If S(I, 13) > BRC(18) And UCase$(finalUpdate$) = "Y" Then BRC(18) = S(I, 13): BRC$(18, 0) = N$(I): BRC$(18, 1) = TN$
-                    If S(I, 6) > BRC(19) Then BRC(19) = S(I, 6): BRC$(19, 0) = N$(I): BRC$(19, 1) = TN$
-                    If S(I, 7) > BRC(20) Then BRC(20) = S(I, 7): BRC$(20, 0) = N$(I): BRC$(20, 1) = TN$
-                    If S(I, 8) > BRC(21) Then BRC(21) = S(I, 8): BRC$(21, 0) = N$(I): BRC$(21, 1) = TN$
-                    If S(I, 9) > BRC(22) Then BRC(22) = S(I, 9): BRC$(22, 0) = N$(I): BRC$(22, 1) = TN$
-                    If S(I, 11) > BRC(23) Then BRC(23) = S(I, 11): BRC$(23, 0) = N$(I): BRC$(23, 1) = TN$
-                    If S(I, 18) > BRC(24) And UCase$(finalUpdate$) = "Y" Then BRC(24) = S(I, 18): BRC$(24, 0) = N$(I): BRC$(24, 1) = TN$
-                    If S(I, 24) > BRC(25) Then BRC(25) = S(I, 24): BRC$(25, 0) = N$(I): BRC$(25, 1) = TN$
-                
-                End If 'Done checking S(I, 0)
-                
-            Next
+							If Not (S(I, 1) = 0 Or (S(I, 2) / S(I, 0)) < 3.65) Then
+								S(I, 19) = S(I, 2) / S(I, 1): ' *** FG% ***
+							End If
+							
+							If Not (S(I, 3) = 0 Or (S(I, 4) / S(I, 0)) < 1.52) Then
+								S(I, 20) = S(I, 4) / S(I, 3): ' *** FT% ***
+							End If
+							
+							If Not (W1(I) = 0 Or W0(I) / S(I, 0) < .3) Then
+								S(I, 21) = W0(I) / W1(I): ' *** 3FG% ***
+							End If
+							
+							S(I, 22) = S(I, 12) / S(I, 0): ' *** PTS/G ***
+							If S(I, 0) > BRC(1) Then BRC(1) = S(I, 0): BRC$(1, 0) = N$(I): BRC$(1, 1) = TN$
+							If S(I, 1) > BRC(2) Then BRC(2) = S(I, 1): BRC$(2, 0) = N$(I): BRC$(2, 1) = TN$
+							If S(I, 2) > BRC(3) Then BRC(3) = S(I, 2): BRC$(3, 0) = N$(I): BRC$(3, 1) = TN$
+							If S(I, 19) > BRC(4) And UCase$(finalUpdate$) = "Y" And S(I, 2) / S(I, 0) >= 3.65 Then BRC(4) = S(I, 19): BRC$(4, 0) = N$(I): BRC$(4, 1) = TN$
+							If W1(I) > BRC(5) Then BRC(5) = W1(I): BRC$(5, 0) = N$(I): BRC$(5, 1) = TN$
+							If W0(I) > BRC(6) Then BRC(6) = W0(I): BRC$(6, 0) = N$(I): BRC$(6, 1) = TN$
+							If S(I, 21) > BRC(7) And UCase$(finalUpdate$) = "Y" And W0(I) / S(I, 0) >= .3 Then BRC(7) = S(I, 21): BRC$(7, 0) = N$(I): BRC$(7, 1) = TN$
+							If S(I, 3) > BRC(8) Then BRC(8) = S(I, 3): BRC$(8, 0) = N$(I): BRC$(8, 1) = TN$
+							If S(I, 4) > BRC(9) Then BRC(9) = S(I, 4): BRC$(9, 0) = N$(I): BRC$(9, 1) = TN$
+							If S(I, 20) > BRC(10) And UCase$(finalUpdate$) = "Y" And S(I, 4) / S(I, 0) >= 1.52 Then BRC(10) = S(I, 20): BRC$(10, 0) = N$(I): BRC$(10, 1) = TN$
+							If S(I, 10) / 60 > BRC(11) Then BRC(11) = S(I, 10) / 60: BRC$(11, 0) = N$(I): BRC$(11, 1) = TN$
+							If S(I, 12) > BRC(12) Then BRC(12) = S(I, 12): BRC$(12, 0) = N$(I): BRC$(12, 1) = TN$
+							If S(I, 22) > BRC(13) And UCase$(finalUpdate$) = "Y" Then BRC(13) = S(I, 22): BRC$(13, 0) = N$(I): BRC$(13, 1) = TN$
+							If S(I, 25) > BRC(14) Then BRC(14) = S(I, 25): BRC$(14, 0) = N$(I): BRC$(14, 1) = TN$
+							If S(I, 26) > BRC(15) Then BRC(15) = S(I, 26): BRC$(15, 0) = N$(I): BRC$(15, 1) = TN$
+							If S(I, 5) - S(I, 26) > BRC(16) Then BRC(16) = S(I, 5) - S(I, 26): BRC$(16, 0) = N$(I): BRC$(16, 1) = TN$
+							If S(I, 5) > BRC(17) Then BRC(17) = S(I, 5): BRC$(17, 0) = N$(I): BRC$(17, 1) = TN$
+							If S(I, 13) > BRC(18) And UCase$(finalUpdate$) = "Y" Then BRC(18) = S(I, 13): BRC$(18, 0) = N$(I): BRC$(18, 1) = TN$
+							If S(I, 6) > BRC(19) Then BRC(19) = S(I, 6): BRC$(19, 0) = N$(I): BRC$(19, 1) = TN$
+							If S(I, 7) > BRC(20) Then BRC(20) = S(I, 7): BRC$(20, 0) = N$(I): BRC$(20, 1) = TN$
+							If S(I, 8) > BRC(21) Then BRC(21) = S(I, 8): BRC$(21, 0) = N$(I): BRC$(21, 1) = TN$
+							If S(I, 9) > BRC(22) Then BRC(22) = S(I, 9): BRC$(22, 0) = N$(I): BRC$(22, 1) = TN$
+							If S(I, 11) > BRC(23) Then BRC(23) = S(I, 11): BRC$(23, 0) = N$(I): BRC$(23, 1) = TN$
+							If S(I, 18) > BRC(24) And UCase$(finalUpdate$) = "Y" Then BRC(24) = S(I, 18): BRC$(24, 0) = N$(I): BRC$(24, 1) = TN$
+							If S(I, 24) > BRC(25) Then BRC(25) = S(I, 24): BRC$(25, 0) = N$(I): BRC$(25, 1) = TN$
+						
+						End If 'Done checking S(I, 0)
+						
+					Next
 
-            OT!(16) = year%
-            DT!(16) = year%
+					OT!(16) = year%
+					DT!(16) = year%
 
-            OT!(17) = OT!(3) / OT!(2): DT!(17) = DT!(3) / DT!(2)
-            OT!(18) = OT!(5) / OT!(4): DT!(18) = DT!(5) / DT!(4)
-            OT!(20) = OT!(11): DT!(20) = DT!(11)
-            If OT!(15) <> 0 Then OT!(21) = OT!(14) / OT!(15) Else OT!(21) = 0
-            If DT!(15) <> 0 Then DT!(21) = DT!(14) / DT!(15) Else DT!(21) = 999
-            OT!(19) = OT!(20) / year%: DT!(19) = DT!(20) / year%
-            If OT!(2) > TRC!(1) Then TRC!(1) = OT!(2): TRC$(1) = TN$
-            If OT!(3) > TRC!(2) Then TRC!(2) = OT!(3): TRC$(2) = TN$
-            If OT!(17) > TRC!(3) And UCase$(finalUpdate$) = "Y" Then TRC!(3) = OT!(17): TRC$(3) = TN$
-            If OT!(15) > TRC!(4) Then TRC!(4) = OT!(15): TRC$(4) = TN$
-            If OT!(14) > TRC!(5) Then TRC!(5) = OT!(14): TRC$(5) = TN$
-            If OT!(21) > TRC!(6) And UCase$(finalUpdate$) = "Y" Then TRC!(6) = OT!(21): TRC$(6) = TN$
-            If OT!(4) > TRC!(7) Then TRC!(7) = OT!(4): TRC$(7) = TN$
-            If OT!(5) > TRC!(8) Then TRC!(8) = OT!(5): TRC$(8) = TN$
-            If OT!(18) > TRC!(9) And UCase$(finalUpdate$) = "Y" Then TRC!(9) = OT!(18): TRC$(9) = TN$
-            If OT!(13) > TRC!(10) Then TRC!(10) = OT!(13): TRC$(10) = TN$
-            If OT!(6) - OT!(13) > TRC!(11) Then TRC!(11) = OT!(6) - OT!(13): TRC$(11) = TN$
-            If OT!(6) > TRC!(12) Then TRC!(12) = OT!(6): TRC$(12) = TN$
-            If OT!(6) / year% > TRC!(13) And UCase$(finalUpdate$) = "Y" Then TRC!(13) = OT!(6) / year%: TRC$(13) = TN$
-            If OT!(7) < TRC!(14) And UCase$(finalUpdate$) = "Y" Then TRC!(14) = OT!(7): TRC$(14) = TN$
-            If OT!(8) > TRC!(15) Then TRC!(15) = OT!(8): TRC$(15) = TN$
-            If OT!(9) > TRC!(16) Then TRC!(16) = OT!(9): TRC$(16) = TN$
-            If OT!(10) > TRC!(17) Then TRC!(17) = OT!(10): TRC$(17) = TN$
-            If OT!(12) < TRC!(18) And UCase$(finalUpdate$) = "Y" Then TRC!(18) = OT!(12): TRC$(18) = TN$
-            If OT!(11) > TRC!(19) Then TRC!(19) = OT!(11): TRC$(19) = TN$
-            If OT!(11) / year% > TRC!(20) And UCase$(finalUpdate$) = "Y" Then TRC!(20) = OT!(11) / year%: TRC$(20) = TN$
-            If WN > TRC!(21) Then TRC!(21) = WN: TRC$(21) = TN$
-            If DT!(2) < TRC1!(1) Then TRC1!(1) = DT!(2): TRC1$(1) = TN$
-            If DT!(3) < TRC1!(2) Then TRC1!(2) = DT!(3): TRC1$(2) = TN$
-            If DT!(17) < TRC1!(3) And UCase$(finalUpdate$) = "Y" Then TRC1!(3) = DT!(17): TRC1$(3) = TN$
-            If DT!(15) < TRC1!(4) Then TRC1!(4) = DT!(15): TRC1$(4) = TN$
-            If DT!(14) < TRC1!(5) Then TRC1!(5) = DT!(14): TRC1$(5) = TN$
-            If DT!(21) < TRC1!(6) And DT!(15) <> 0 And UCase$(finalUpdate$) = "Y" Then TRC1!(6) = DT!(21): TRC1$(6) = TN$
-            If DT!(4) < TRC1!(7) Then TRC1!(7) = DT!(4): TRC1$(7) = TN$
-            If DT!(5) < TRC1!(8) Then TRC1!(8) = DT!(5): TRC1$(8) = TN$
-            If DT!(18) < TRC1!(9) And UCase$(finalUpdate$) = "Y" Then TRC1!(9) = DT!(18): TRC1$(9) = TN$
-            If DT!(13) < TRC1!(10) Then TRC1!(10) = DT!(13): TRC1$(10) = TN$
-            If DT!(6) - DT!(13) < TRC1!(11) Then TRC1!(11) = DT!(6) - DT!(13): TRC1$(11) = TN$
-            If DT!(6) < TRC1!(12) Then TRC1!(12) = DT!(6): TRC1$(12) = TN$
-            If DT!(6) / year% < TRC1!(13) And UCase$(finalUpdate$) = "Y" Then TRC1!(13) = DT!(6) / year%: TRC1$(13) = TN$
-            If DT!(7) > TRC1!(14) And UCase$(finalUpdate$) = "Y" Then TRC1!(14) = DT!(7): TRC1$(14) = TN$
-            If DT!(8) < TRC1!(15) Then TRC1!(15) = DT!(8): TRC1$(15) = TN$
-            If DT!(9) < TRC1!(16) Then TRC1!(16) = DT!(9): TRC1$(16) = TN$
-            If DT!(10) < TRC1!(17) Then TRC1!(17) = DT!(10): TRC1$(17) = TN$
-            If DT!(12) > TRC1!(18) And UCase$(finalUpdate$) = "Y" Then TRC1!(18) = DT!(12): TRC1$(18) = TN$
-            If DT!(11) < TRC1!(19) Then TRC1!(19) = DT!(11): TRC1$(19) = TN$
-            If DT!(11) / year% < TRC1!(20) And UCase$(finalUpdate$) = "Y" Then TRC1!(20) = DT!(11) / year%: TRC1$(20) = TN$
-            If LS > TRC1!(21) Then TRC1!(21) = LS: TRC1$(21) = TN$
+					OT!(17) = OT!(3) / OT!(2): DT!(17) = DT!(3) / DT!(2)
+					OT!(18) = OT!(5) / OT!(4): DT!(18) = DT!(5) / DT!(4)
+					OT!(20) = OT!(11): DT!(20) = DT!(11)
+					If OT!(15) <> 0 Then OT!(21) = OT!(14) / OT!(15) Else OT!(21) = 0
+					If DT!(15) <> 0 Then DT!(21) = DT!(14) / DT!(15) Else DT!(21) = 999
+					OT!(19) = OT!(20) / year%: DT!(19) = DT!(20) / year%
+					If OT!(2) > TRC!(1) Then TRC!(1) = OT!(2): TRC$(1) = TN$
+					If OT!(3) > TRC!(2) Then TRC!(2) = OT!(3): TRC$(2) = TN$
+					If OT!(17) > TRC!(3) And UCase$(finalUpdate$) = "Y" Then TRC!(3) = OT!(17): TRC$(3) = TN$
+					If OT!(15) > TRC!(4) Then TRC!(4) = OT!(15): TRC$(4) = TN$
+					If OT!(14) > TRC!(5) Then TRC!(5) = OT!(14): TRC$(5) = TN$
+					If OT!(21) > TRC!(6) And UCase$(finalUpdate$) = "Y" Then TRC!(6) = OT!(21): TRC$(6) = TN$
+					If OT!(4) > TRC!(7) Then TRC!(7) = OT!(4): TRC$(7) = TN$
+					If OT!(5) > TRC!(8) Then TRC!(8) = OT!(5): TRC$(8) = TN$
+					If OT!(18) > TRC!(9) And UCase$(finalUpdate$) = "Y" Then TRC!(9) = OT!(18): TRC$(9) = TN$
+					If OT!(13) > TRC!(10) Then TRC!(10) = OT!(13): TRC$(10) = TN$
+					If OT!(6) - OT!(13) > TRC!(11) Then TRC!(11) = OT!(6) - OT!(13): TRC$(11) = TN$
+					If OT!(6) > TRC!(12) Then TRC!(12) = OT!(6): TRC$(12) = TN$
+					If OT!(6) / year% > TRC!(13) And UCase$(finalUpdate$) = "Y" Then TRC!(13) = OT!(6) / year%: TRC$(13) = TN$
+					If OT!(7) < TRC!(14) And UCase$(finalUpdate$) = "Y" Then TRC!(14) = OT!(7): TRC$(14) = TN$
+					If OT!(8) > TRC!(15) Then TRC!(15) = OT!(8): TRC$(15) = TN$
+					If OT!(9) > TRC!(16) Then TRC!(16) = OT!(9): TRC$(16) = TN$
+					If OT!(10) > TRC!(17) Then TRC!(17) = OT!(10): TRC$(17) = TN$
+					If OT!(12) < TRC!(18) And UCase$(finalUpdate$) = "Y" Then TRC!(18) = OT!(12): TRC$(18) = TN$
+					If OT!(11) > TRC!(19) Then TRC!(19) = OT!(11): TRC$(19) = TN$
+					If OT!(11) / year% > TRC!(20) And UCase$(finalUpdate$) = "Y" Then TRC!(20) = OT!(11) / year%: TRC$(20) = TN$
+					If WN > TRC!(21) Then TRC!(21) = WN: TRC$(21) = TN$
+					If DT!(2) < TRC1!(1) Then TRC1!(1) = DT!(2): TRC1$(1) = TN$
+					If DT!(3) < TRC1!(2) Then TRC1!(2) = DT!(3): TRC1$(2) = TN$
+					If DT!(17) < TRC1!(3) And UCase$(finalUpdate$) = "Y" Then TRC1!(3) = DT!(17): TRC1$(3) = TN$
+					If DT!(15) < TRC1!(4) Then TRC1!(4) = DT!(15): TRC1$(4) = TN$
+					If DT!(14) < TRC1!(5) Then TRC1!(5) = DT!(14): TRC1$(5) = TN$
+					If DT!(21) < TRC1!(6) And DT!(15) <> 0 And UCase$(finalUpdate$) = "Y" Then TRC1!(6) = DT!(21): TRC1$(6) = TN$
+					If DT!(4) < TRC1!(7) Then TRC1!(7) = DT!(4): TRC1$(7) = TN$
+					If DT!(5) < TRC1!(8) Then TRC1!(8) = DT!(5): TRC1$(8) = TN$
+					If DT!(18) < TRC1!(9) And UCase$(finalUpdate$) = "Y" Then TRC1!(9) = DT!(18): TRC1$(9) = TN$
+					If DT!(13) < TRC1!(10) Then TRC1!(10) = DT!(13): TRC1$(10) = TN$
+					If DT!(6) - DT!(13) < TRC1!(11) Then TRC1!(11) = DT!(6) - DT!(13): TRC1$(11) = TN$
+					If DT!(6) < TRC1!(12) Then TRC1!(12) = DT!(6): TRC1$(12) = TN$
+					If DT!(6) / year% < TRC1!(13) And UCase$(finalUpdate$) = "Y" Then TRC1!(13) = DT!(6) / year%: TRC1$(13) = TN$
+					If DT!(7) > TRC1!(14) And UCase$(finalUpdate$) = "Y" Then TRC1!(14) = DT!(7): TRC1$(14) = TN$
+					If DT!(8) < TRC1!(15) Then TRC1!(15) = DT!(8): TRC1$(15) = TN$
+					If DT!(9) < TRC1!(16) Then TRC1!(16) = DT!(9): TRC1$(16) = TN$
+					If DT!(10) < TRC1!(17) Then TRC1!(17) = DT!(10): TRC1$(17) = TN$
+					If DT!(12) > TRC1!(18) And UCase$(finalUpdate$) = "Y" Then TRC1!(18) = DT!(12): TRC1$(18) = TN$
+					If DT!(11) < TRC1!(19) Then TRC1!(19) = DT!(11): TRC1$(19) = TN$
+					If DT!(11) / year% < TRC1!(20) And UCase$(finalUpdate$) = "Y" Then TRC1!(20) = DT!(11) / year%: TRC1$(20) = TN$
+					If LS > TRC1!(21) Then TRC1!(21) = LS: TRC1$(21) = TN$
 
-        End If 'Done checking for stat file
+				End If 'Done checking for stat file
 
-        Call CheckLeagueStats
+				'3100
+				Call CheckLeagueStats
 
-        Close 3
-    
-    Next XW
-    
-    AA = 1: ZZ = 10
-    Call Complex
-    
-    AA = 11: ZZ = 20
-    Call Complex
-    
-    AA = 21: ZZ = 30
-    Call Complex
-    
-    AA = 31: ZZ = 40
-    Call Complex
-    
-    Cls
-    Print
-    Open diskPaths$(1) + WE$ + ".LDR" For Output As #2
-    Print "    POSTING NEW "; WE$; " LEADERS"
-    For X = 1 To TEAMS_PER_CONFERENCE: Write #2, Z1$(X), O1(X), O2(X): Next
-    For X = 1 To 250
-    Write #2, Z2$(X), Z3$(X), LD(X, 1), LD(X, 2): Next X
-    For X = 1 To TEAMS_PER_CONFERENCE: Write #2, OL$(X): For Y = 1 To 20: Write #2, OL!(X, Y): Next: Next
-    For X = 1 To TEAMS_PER_CONFERENCE: Write #2, DL$(X): For Y = 1 To 20: Write #2, DL!(X, Y): Next: Next
-    Close 2
+			End If
 
-    Open diskPaths$(1) + "RECORDS.PBB" For Output As #1
-    For I = 1 To 25
-        Print #1, BRC(I)
-        Print #1, BRC$(I, 0)
-        Print #1, BRC$(I, 1)
-    Next
-    For I = 1 To 21
-        Print #1, TRC!(I)
-        Print #1, TRC$(I)
-    Next
-    For I = 1 To 21
-        Print #1, TRC1!(I)
-        Print #1, TRC1$(I)
-    Next
-    Close 1
+			Close 3
+		
+		Next XW
+		
+		AA = 1: ZZ = 10
+		Call Complex
+		
+		AA = 11: ZZ = 20
+		Call Complex
+		
+		AA = 21: ZZ = 30
+		Call Complex
+		
+		AA = 31: ZZ = 40
+		Call Complex
+		
+		Cls
+		Print
+		Open diskPaths$(1) + WE$ + ".LDR" For Output As #2
+		Print "    POSTING NEW "; WE$; " LEADERS"
+		For X = 1 To TEAMS_PER_CONFERENCE: Write #2, Z1$(X), O1(X), O2(X): Next
+		For X = 1 To 250
+		Write #2, Z2$(X), Z3$(X), LD(X, 1), LD(X, 2): Next X
+		For X = 1 To TEAMS_PER_CONFERENCE: Write #2, OL$(X): For Y = 1 To 20: Write #2, OL!(X, Y): Next: Next
+		For X = 1 To TEAMS_PER_CONFERENCE: Write #2, DL$(X): For Y = 1 To 20: Write #2, DL!(X, Y): Next: Next
+		Close 2
+
+		Open diskPaths$(1) + "RECORDS.PBB" For Output As #1
+		For I = 1 To 25
+			Print #1, BRC(I)
+			Print #1, BRC$(I, 0)
+			Print #1, BRC$(I, 1)
+		Next
+		For I = 1 To 21
+			Print #1, TRC!(I)
+			Print #1, TRC$(I)
+		Next
+		For I = 1 To 21
+			Print #1, TRC1!(I)
+			Print #1, TRC1$(I)
+		Next
+		Close 1
+
+	End If 'Done checking for ESC
 
 End Sub
 

@@ -12,7 +12,7 @@ Sub NEWLDRST ()
     Dim H$(100), O$(100), TML$(TEAMS_PER_CONFERENCE), strZ1$(TEAMS_PER_CONFERENCE)
     ReDim menuChoices$(1 To 2)
 
-    Shared YY
+    Shared YY%
 
     _Title "Basketball: The Pro Game - League Standings"
 
@@ -20,8 +20,8 @@ Sub NEWLDRST ()
         Cls
         Call TITLE
 
-        YY = 0
-        TMR = 40
+        YY% = 0
+        TMR% = 40
 
         'Erase menuChoices$
         menuChoices$(1) = "VIEW EXPANDED LEAGUE STANDINGS"
@@ -115,12 +115,12 @@ Sub NEWLDRST ()
                     Cls
 
                     For KK = 1 To TEAMS_PER_CONFERENCE
-                        'values of YY are ???
-                        YY = YY + 1
-                        Color 14: Locate 7, 20: TMR = TMR - 1: Print Using "##"; TMR
+                        'values of YY% are ???
+                        YY% = YY% + 1
+                        Color 14: Locate 7, 20: TMR% = TMR% - 1: Print Using "##"; TMR%
                         If strZ1$(KK) <> "*" Then
 
-                            10 TML$(YY) = strZ1$(KK)
+                            10 TML$(YY%) = strZ1$(KK)
                             Locate 5: Color 15: Print "COMPUTING RECORDS . . . . . . PLEASE WAIT"
                             If _FileExists(diskPaths$(1) + strZ1$(KK) + "S") Then
                                 Open diskPaths$(1) + strZ1$(KK) + "S" For Input As #1
@@ -130,39 +130,39 @@ Sub NEWLDRST ()
                                 For J = 1 To 100: Input #1, statsT%(J): Next
                                 For J = 1 To 100: Input #1, H$(J): Next
                                 Close 1
-                                LWS(YY) = 0
-                                LLS(YY) = 0
-                                TWS(YY) = 0
-                                TLS(YY) = 0
+                                LWS(YY%) = 0
+                                LLS(YY%) = 0
+                                TWS(YY%) = 0
+                                TLS(YY%) = 0
                                 For I = 1 To XX%
-                                    If O%(I) > statsT%(I) Then WW(YY) = WW(YY) + 1
-                                    If O%(I) > statsT%(I) And H$(I) = "V" Then RWW(YY) = RWW(YY) + 1
-                                    If O%(I) > statsT%(I) And H$(I) = "V1" Then RWW(YY) = RWW(YY) + 1
-                                    If O%(I) > statsT%(I) And H$(I) = "V2" Then RWW(YY) = RWW(YY) + 1
-                                    If O%(I) > statsT%(I) And H$(I) = "H" Then HWW(YY) = HWW(YY) + 1
-                                    If O%(I) > statsT%(I) And H$(I) = "H1" Then HWW(YY) = HWW(YY) + 1
-                                    If O%(I) > statsT%(I) And H$(I) = "H2" Then HWW(YY) = HWW(YY) + 1
-                                    If statsT%(I) > O%(I) Then LL(YY) = LL(YY) + 1
-                                    If statsT%(I) > O%(I) And H$(I) = "V" Then RLL(YY) = RLL(YY) + 1
-                                    If statsT%(I) > O%(I) And H$(I) = "V1" Then RLL(YY) = RLL(YY) + 1
-                                    If statsT%(I) > O%(I) And H$(I) = "V2" Then RLL(YY) = RLL(YY) + 1
-                                    If statsT%(I) > O%(I) And H$(I) = "H" Then HLL(YY) = HLL(YY) + 1
-                                    If statsT%(I) > O%(I) And H$(I) = "H1" Then HLL(YY) = HLL(YY) + 1
-                                    If statsT%(I) > O%(I) And H$(I) = "H2" Then HLL(YY) = HLL(YY) + 1
-                                    If O%(I) > statsT%(I) Then LWS(YY) = LWS(YY) + 1: LLS(YY) = 0
-                                    If LWS(YY) > TWS(YY) Then TWS(YY) = LWS(YY)
-                                    If O%(I) < statsT%(I) Then LLS(YY) = LLS(YY) + 1: LWS(YY) = 0
-                                    If LLS(YY) > TLS(YY) Then TLS(YY) = LLS(YY)
+                                    If O%(I) > statsT%(I) Then WW(YY%) = WW(YY%) + 1
+                                    If O%(I) > statsT%(I) And H$(I) = "V" Then RWW(YY%) = RWW(YY%) + 1
+                                    If O%(I) > statsT%(I) And H$(I) = "V1" Then RWW(YY%) = RWW(YY%) + 1
+                                    If O%(I) > statsT%(I) And H$(I) = "V2" Then RWW(YY%) = RWW(YY%) + 1
+                                    If O%(I) > statsT%(I) And H$(I) = "H" Then HWW(YY%) = HWW(YY%) + 1
+                                    If O%(I) > statsT%(I) And H$(I) = "H1" Then HWW(YY%) = HWW(YY%) + 1
+                                    If O%(I) > statsT%(I) And H$(I) = "H2" Then HWW(YY%) = HWW(YY%) + 1
+                                    If statsT%(I) > O%(I) Then LL(YY%) = LL(YY%) + 1
+                                    If statsT%(I) > O%(I) And H$(I) = "V" Then RLL(YY%) = RLL(YY%) + 1
+                                    If statsT%(I) > O%(I) And H$(I) = "V1" Then RLL(YY%) = RLL(YY%) + 1
+                                    If statsT%(I) > O%(I) And H$(I) = "V2" Then RLL(YY%) = RLL(YY%) + 1
+                                    If statsT%(I) > O%(I) And H$(I) = "H" Then HLL(YY%) = HLL(YY%) + 1
+                                    If statsT%(I) > O%(I) And H$(I) = "H1" Then HLL(YY%) = HLL(YY%) + 1
+                                    If statsT%(I) > O%(I) And H$(I) = "H2" Then HLL(YY%) = HLL(YY%) + 1
+                                    If O%(I) > statsT%(I) Then LWS(YY%) = LWS(YY%) + 1: LLS(YY%) = 0
+                                    If LWS(YY%) > TWS(YY%) Then TWS(YY%) = LWS(YY%)
+                                    If O%(I) < statsT%(I) Then LLS(YY%) = LLS(YY%) + 1: LWS(YY%) = 0
+                                    If LLS(YY%) > TLS(YY%) Then TLS(YY%) = LLS(YY%)
                                 Next I
 
                                 If XX% <= 10 Then
-                                    LTL(YY) = LL(YY): LTW(YY) = WW(YY)
+                                    LTL(YY%) = LL(YY%): LTW(YY%) = WW(YY%)
                                 Else
                                     M = XX% - 9
 
                                     For J = M To XX%
-                                        If O%(J) > statsT%(J) Then LTW(YY) = LTW(YY) + 1
-                                        If statsT%(J) > O%(J) Then LTL(YY) = LTL(YY) + 1
+                                        If O%(J) > statsT%(J) Then LTW(YY%) = LTW(YY%) + 1
+                                        If statsT%(J) > O%(J) Then LTL(YY%) = LTL(YY%) + 1
                                     Next J
                                 End If
                             End If
@@ -194,16 +194,16 @@ Sub NEWLDRST ()
                                     If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 985
                                     If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 985
                                     TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
-                                    J = WW(X): WW(X) = WW(Y): WW(Y) = J
-                                    J = LL(X): LL(X) = LL(Y): LL(Y) = J
-                                    J = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J
-                                    J = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J
-                                    J = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J
-                                    J = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J
-                                    J = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J
-                                    J = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J
-                                    J = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J
-                                    J = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J
+                                    J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
+                                    J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
+                                    J% = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J%
+                                    J% = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J%
+                                    J% = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J%
+                                    J% = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J%
+                                    J% = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J%
+                                    J% = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J%
+                                    J% = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J%
+                                    J% = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J%
                                 985 Next Y
                             Next X
 
@@ -249,16 +249,16 @@ Sub NEWLDRST ()
                                     If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 1985
                                     If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 1985
                                     TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
-                                    J = WW(X): WW(X) = WW(Y): WW(Y) = J
-                                    J = LL(X): LL(X) = LL(Y): LL(Y) = J
-                                    J = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J
-                                    J = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J
-                                    J = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J
-                                    J = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J
-                                    J = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J
-                                    J = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J
-                                    J = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J
-                                    J = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J
+                                    J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
+                                    J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
+                                    J% = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J%
+                                    J% = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J%
+                                    J% = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J%
+                                    J% = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J%
+                                    J% = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J%
+                                    J% = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J%
+                                    J% = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J%
+                                    J% = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J%
                                 1985 Next Y
                             Next X
 
@@ -304,16 +304,16 @@ Sub NEWLDRST ()
                                     If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 2985
                                     If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 2985
                                     TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
-                                    J = WW(X): WW(X) = WW(Y): WW(Y) = J
-                                    J = LL(X): LL(X) = LL(Y): LL(Y) = J
-                                    J = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J
-                                    J = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J
-                                    J = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J
-                                    J = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J
-                                    J = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J
-                                    J = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J
-                                    J = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J
-                                    J = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J
+                                    J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
+                                    J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
+                                    J% = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J%
+                                    J% = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J%
+                                    J% = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J%
+                                    J% = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J%
+                                    J% = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J%
+                                    J% = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J%
+                                    J% = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J%
+                                    J% = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J%
                                 2985 Next Y
                             Next X
 
@@ -366,16 +366,16 @@ Sub NEWLDRST ()
                                     If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 3985
                                     If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 3985
                                     TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
-                                    J = WW(X): WW(X) = WW(Y): WW(Y) = J
-                                    J = LL(X): LL(X) = LL(Y): LL(Y) = J
-                                    J = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J
-                                    J = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J
-                                    J = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J
-                                    J = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J
-                                    J = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J
-                                    J = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J
-                                    J = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J
-                                    J = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J
+                                    J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
+                                    J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
+                                    J% = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J%
+                                    J% = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J%
+                                    J% = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J%
+                                    J% = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J%
+                                    J% = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J%
+                                    J% = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J%
+                                    J% = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J%
+                                    J% = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J%
                                 3985 Next Y
                             Next X
 
@@ -431,16 +431,16 @@ Sub NEWLDRST ()
                                     If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 4985
                                     If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 4985
                                     TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
-                                    J = WW(X): WW(X) = WW(Y): WW(Y) = J
-                                    J = LL(X): LL(X) = LL(Y): LL(Y) = J
-                                    J = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J
-                                    J = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J
-                                    J = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J
-                                    J = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J
-                                    J = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J
-                                    J = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J
-                                    J = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J
-                                    J = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J
+                                    J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
+                                    J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
+                                    J% = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J%
+                                    J% = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J%
+                                    J% = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J%
+                                    J% = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J%
+                                    J% = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J%
+                                    J% = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J%
+                                    J% = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J%
+                                    J% = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J%
                                 4985 Next Y
                             Next X
 
@@ -488,16 +488,16 @@ Sub NEWLDRST ()
                                     If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 5985
                                     If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 5985
                                     TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
-                                    J = WW(X): WW(X) = WW(Y): WW(Y) = J
-                                    J = LL(X): LL(X) = LL(Y): LL(Y) = J
-                                    J = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J
-                                    J = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J
-                                    J = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J
-                                    J = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J
-                                    J = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J
-                                    J = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J
-                                    J = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J
-                                    J = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J
+                                    J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
+                                    J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
+                                    J% = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J%
+                                    J% = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J%
+                                    J% = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J%
+                                    J% = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J%
+                                    J% = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J%
+                                    J% = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J%
+                                    J% = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J%
+                                    J% = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J%
                                 5985 Next Y
                             Next X
 
@@ -553,16 +553,16 @@ Sub NEWLDRST ()
                                     If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 6985
                                     If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 6985
                                     TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
-                                    J = WW(X): WW(X) = WW(Y): WW(Y) = J
-                                    J = LL(X): LL(X) = LL(Y): LL(Y) = J
-                                    J = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J
-                                    J = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J
-                                    J = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J
-                                    J = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J
-                                    J = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J
-                                    J = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J
-                                    J = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J
-                                    J = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J
+                                    J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
+                                    J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
+                                    J% = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J%
+                                    J% = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J%
+                                    J% = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J%
+                                    J% = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J%
+                                    J% = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J%
+                                    J% = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J%
+                                    J% = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J%
+                                    J% = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J%
                                 6985 Next Y
                             Next X
 
@@ -612,16 +612,16 @@ Sub NEWLDRST ()
                                     If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 7985
                                     If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 7985
                                     TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
-                                    J = WW(X): WW(X) = WW(Y): WW(Y) = J
-                                    J = LL(X): LL(X) = LL(Y): LL(Y) = J
-                                    J = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J
-                                    J = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J
-                                    J = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J
-                                    J = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J
-                                    J = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J
-                                    J = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J
-                                    J = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J
-                                    J = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J
+                                    J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
+                                    J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
+                                    J% = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J%
+                                    J% = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J%
+                                    J% = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J%
+                                    J% = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J%
+                                    J% = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J%
+                                    J% = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J%
+                                    J% = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J%
+                                    J% = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J%
                                 7985 Next Y
                             Next X
 

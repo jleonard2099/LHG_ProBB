@@ -47,19 +47,9 @@ End Sub
 '... explain here ...
 Sub ViewLeagueStats ()
 
-    Shared PV
+    Shared printOrView%
 
-    K = 0
-    K1 = 0
-    PK = 0
-    PK1 = 0
-    JB = 0
-    JP = 0
-    TBN = 0
-    TPN = 0
-    TMR = 1280
-    TS = 0
-    PV = 0
+    printOrView% = 0
 
     For X = 1 To TEAMS_PER_CONFERENCE
         Z1$(X) = "XXX"
@@ -187,7 +177,7 @@ End Sub
 '... explain here ...
 Sub ViewInidividualLeaders ()
 
-    Dim JB, TBN, TS
+    Dim JB, TS
 
     Dim AL(600, 14), GM(TEAMS_PER_CONFERENCE), GM1(TEAMS_PER_CONFERENCE)
     Dim TT!(TEAMS_PER_CONFERENCE, 15), TT1!(TEAMS_PER_CONFERENCE, 15), W0L(600), W1L(600)
@@ -200,7 +190,7 @@ Sub ViewInidividualLeaders ()
     ReDim GMA(600)
 
     Shared TMM$(), TP$(), TP1$()
-    Shared PV, YY
+    Shared printOrView%, YY%
 
     Color , 0
     Cls
@@ -248,7 +238,7 @@ Sub ViewInidividualLeaders ()
 			Case 9: X = 4: stpl = 0: PPP = 0
 			Case 10: 
 				X = 5: X1 = 4: stpl = 0: PPP = 0
-				Call SelectOptions_NEWLDR(PV)
+				Call SelectOptions_NEWLDR(printOrView%)
 				Cls
 				PPP = 0
 				
@@ -275,8 +265,13 @@ Sub ViewInidividualLeaders ()
 
 				TVN = 2
 				QW = PPP
-				Call GetListLength (QW, LG)
-				Call ViewLeadersScreen
+				Call GetListLength (QW, length)
+				If printOrView% = 1 Then 
+					Call DisplayLeaders (QW)
+				Else
+					'printOrView% = 2
+					Call PrintLeaders (length)
+				End If
 
 			Case 11: X = 3: X1 = 5: stpl = 0: PPP = 0
 			Case 12: X = 3: X1 = 5: X2 = 1: stpl = 0: PPP = 0
@@ -304,307 +299,324 @@ Sub ViewInidividualLeaders ()
 	
 	Loop Until B9 >= 0 And B9 <= 31
 
-    If B9 <> 10 Then Call SelectOptions_NEWLDR(PV)
+    If B9 <> 10 Then Call SelectOptions_NEWLDR(printOrView%)
+
+	Cls
+	PPP = 0
 
 	'--- need to confirm how this should work
     Select Case B9
-        Case 0: GoTo 400
-        Case 1: GoTo 420
-        Case 2 to 3: GoTo 400
-        Case 4: GoTo 450
-        Case 5: GoTo 660
-        Case 6: GoTo 680
-        Case 7: GoTo 480
-        Case 8 to 9: GoTo 400
-        Case 11: GoTo 500
-        Case 12: GoTo 580
-        Case 13 to 14: GoTo 400
-        Case 15: GoTo 620
-        Case 16: GoTo 400
-        Case 17: GoTo 640
-        Case 18 to 22: GoTo 400
-        Case 23: GoTo 520
-        Case 24 to 29: GoTo 540
-        Case 30: GoTo 560
+        Case 0, 2 to 3, 8 to 9, 13 to 14, 16, 18 to 22:		
+			For I = 1 To JB
+				If AL(I, X) <> 0 Then
+					PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+					TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X)
+				End If
+			Next I
+			
+			For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+				For J = PPP To I Step -1
+					If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+				Next J
+			Next I
+
+			TVN = 1
+			QW = PPP
+			Call GetListLength (QW, length)
+			If printOrView% = 1 Then 
+				Call DisplayLeaders (QW)
+			Else
+				'printOrView% = 2
+				Call PrintLeaders (length)
+			End If
+
+        Case 1: 
+			For I = 1 To JB
+				If AL(I, X) <> 0 Then
+					PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+					TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (AL(I, X) + 30) / 60
+				End If
+			Next I
+			For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+				For J = PPP To I Step -1
+					If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+				Next J
+			Next I
+
+			TVN = 1
+			QW = PPP
+			Call GetListLength (QW, length)
+			If printOrView% = 1 Then 
+				Call DisplayLeaders (QW)
+			Else
+				'printOrView% = 2
+				Call PrintLeaders (length)
+			End If
+
+        Case 4: 
+			For I = 1 To JB
+				If AL(I, X) >= GMA(I) * 3.65 Then 
+					PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+					TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) / AL(I, X1)
+				End If      
+			Next I
+			For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+				For J = PPP To I Step -1
+					If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+				Next J
+			Next I
+
+			Call DisplayLeaders (QW)
+
+        Case 5: 
+			For I = 1 To JB
+				If W0L(I) <> 0 Then
+					PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+					TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = W0L(I)
+				End If
+			Next I
+			For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+				For J = PPP To I Step -1
+					If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+				Next J
+			Next I
+
+			TVN = 1
+			QW = PPP
+			Call GetListLength (QW, length)
+			If printOrView% = 1 Then 
+				Call DisplayLeaders (QW)
+			Else
+				'printOrView% = 2
+				Call PrintLeaders (length)
+			End If
+
+        Case 6: 
+			For I = 1 To JB
+				If W1L(I) <> 0 Then
+					PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+					TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = W1L(I)
+				End If
+			Next I
+			
+			For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+				For J = PPP To I Step -1
+					If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+				Next J
+			Next I
+
+			TVN = 1
+			QW = PPP
+			Call GetListLength (QW, length)
+			If printOrView% = 1 Then 
+				Call DisplayLeaders (QW)
+			Else
+				'printOrView% = 2
+				Call PrintLeaders (length)
+			End If
+
+        Case 7: 
+			For I = 1 To JB
+				If W0L(I) >= GMA(I) * .3 Then
+					PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+					TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = W0L(I) / W1L(I)
+				End If
+			Next I
+			For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+				For J = PPP To I Step -1
+					If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+				Next J
+			Next I
+
+			TVN = 2
+			QW = PPP
+			Call GetListLength (QW, length)
+			If printOrView% = 1 Then 
+				Call DisplayLeaders (QW)
+			Else
+				'printOrView% = 2
+				Call PrintLeaders (length)
+			End If
+
+        Case 11: 
+			For I = 1 To JB
+				If (AL(I, X) * 2) + AL(I, X1) + W0L(I) <> 0 Then
+					PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+					TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (AL(I, X) * 2) + AL(I, X1) + W0L(I)
+					TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = 0
+				End If
+			Next I
+			For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+				For J = PPP To I Step -1
+					If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+				Next J
+			Next I
+
+			TVN = 1
+			QW = PPP
+			Call GetListLength (QW, length)
+			If printOrView% = 1 Then 
+				Call DisplayLeaders (QW)
+			Else
+				'printOrView% = 2
+				Call PrintLeaders (length)
+			End If
+
+        Case 12: 		
+			For I = 1 To JB
+				If Not ((AL(I, X) * 2) + AL(I, X1) + W0L(I) = 0 Or AL(I, X2) = 0) Then
+					PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+					TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = ((AL(I, X) * 2) + AL(I, X1) + W0L(I)) / AL(I, X2)
+				End If
+			Next I
+			
+			For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+				For J = PPP To I Step -1
+					If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+				Next J
+			Next I
+
+			TVN = 3
+			QW = PPP
+			Call GetListLength (QW, length)
+			If printOrView% = 1 Then 
+				Call DisplayLeaders (QW)
+			Else
+				'printOrView% = 2
+				Call PrintLeaders (length)
+			End If
+
+        Case 15: 
+			For I = 1 To JB
+				If AL(I, X) - AL(I, X1) <> 0 Then
+					PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+					TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) - AL(I, X1)
+				End If
+			Next I
+			
+			For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+				For J = PPP To I Step -1
+					If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+				Next J
+			Next I
+
+			TVN = 1
+			QW = PPP
+			Call GetListLength (QW, length)
+			If printOrView% = 1 Then 
+				Call DisplayLeaders (QW)
+			Else
+				'printOrView% = 2
+				Call PrintLeaders (length)
+			End If
+
+        Case 17: 	
+			For I = 1 To JB
+				If AL(I, X) <> 0 Then
+					PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+					TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) / AL(I, X1)
+				End If
+			Next I
+			
+			For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+				For J = PPP To I Step -1
+					If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+				Next J
+			Next I
+
+			TVN = 3
+			QW = PPP
+			Call GetListLength (QW, length)
+			If printOrView% = 1 Then 
+				Call DisplayLeaders (QW)
+			Else
+				'printOrView% = 2
+				Call PrintLeaders (length)
+			End If
+
+        Case 23: 
+			For I = 1 To JB
+				If Not ((AL(I, X) * 2) + AL(I, X1) + W0L(I) = 0 Or AL(I, X2) = 0) Then
+					PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+					TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (((AL(I, X) * 2) + AL(I, X1) + W0L(I))) * 48 / ((AL(I, X2) + 30) / 60)
+				End If
+			Next I
+			For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+				For J = PPP To I Step -1
+					If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+				Next J
+			Next I
+
+			TVN = 3: QW = PPP
+			Call GetListLength (QW, length)
+			If printOrView% = 1 Then 
+				Call DisplayLeaders (QW)
+			Else
+				'printOrView% = 2
+				Call PrintLeaders (length)
+			End If
+
+        Case 24 to 29: 
+			For I = 1 To JB
+				If Not(AL(I, X) = 0 Or AL(I, X1) = 0) Then
+					PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+					TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (AL(I, X)) * 48 / ((AL(I, X1) + 30) / 60)
+				End If
+			Next I
+			For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+				For J = PPP To I Step -1
+					If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+				Next J
+			Next I
+
+			TVN = 3
+			QW = PPP
+			Call GetListLength (QW, length)
+			If printOrView% = 1 Then 
+				Call DisplayLeaders (QW)
+			Else
+				'printOrView% = 2
+				Call PrintLeaders (length)
+			End If
+
+        Case 30: 
+			For I = 1 To JB
+				If Not (AL(I, X) = 0 Or AL(I, X1) = 0) Then
+					PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+					TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = ((AL(I, X) + 30) / 60) / AL(I, X1)
+				End If
+			Next I
+
+			For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+				For J = PPP To I Step -1
+					If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+				Next J
+			Next I
+
+			TVN = 3
+			QW = PPP
+			Call GetListLength (QW, length)
+			If printOrView% = 1 Then 
+				Call DisplayLeaders (QW)
+			Else
+				'printOrView% = 2
+				Call PrintLeaders (length)
+			End If
+
     End Select
-
-	'---
-	400 Cls
-	PPP = 0
-    
-	For I = 1 To JB
-        If AL(I, X) <> 0 Then
-            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-            TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X)
-        End If
-    Next I
-    
-	For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
-        For J = PPP To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    TVN = 1
-	QW = PPP
-    Call GetListLength (QW, LG)
-    Call ViewLeadersScreen
-        
-	'---
-    420 Cls
-	PPP = 0
-    For I = 1 To JB
-        If AL(I, X) <> 0 Then
-            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-            TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (AL(I, X) + 30) / 60
-        End If
-    Next I
-    For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
-        For J = PPP To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    TVN = 1
-	QW = PPP
-    Call GetListLength (QW, LG)
-    Call ViewLeadersScreen
-
-	'---
-    450 Cls
-	PPP = 0
-    For I = 1 To JB
-        If AL(I, X) >= GMA(I) * 3.65 Then 
-            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-            TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) / AL(I, X1)
-        End If      
-    Next I
-    For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
-        For J = PPP To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    Call ViewLeadersScreen
-
-	'---
-    480 Cls
-	PPP = 0
-    For I = 1 To JB
-        If W0L(I) >= GMA(I) * .3 Then
-            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-            TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = W0L(I) / W1L(I)
-        End If
-    Next I
-    For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
-        For J = PPP To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    TVN = 2
-	QW = PPP
-    Call GetListLength (QW, LG)
-    Call ViewLeadersScreen
-
-	'---
-    500 Cls
-	PPP = 0
-    For I = 1 To JB
-        If (AL(I, X) * 2) + AL(I, X1) + W0L(I) <> 0 Then
-            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-            TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (AL(I, X) * 2) + AL(I, X1) + W0L(I)
-            TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = 0
-        End If
-    Next I
-    For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
-        For J = PPP To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    TVN = 1
-	QW = PPP
-    Call GetListLength (QW, LG)
-    Call ViewLeadersScreen
-
-	'---
-    520 Cls: PPP = 0
-    For I = 1 To JB
-        If Not ((AL(I, X) * 2) + AL(I, X1) + W0L(I) = 0 Or AL(I, X2) = 0) Then
-            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-            TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (((AL(I, X) * 2) + AL(I, X1) + W0L(I))) * 48 / ((AL(I, X2) + 30) / 60)
-        End If
-    Next I
-    For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
-        For J = PPP To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    TVN = 3: QW = PPP
-    Call GetListLength (QW, LG)
-    Call ViewLeadersScreen
-
-	'---
-    540 Cls
-	PPP = 0
-    For I = 1 To JB
-        If Not(AL(I, X) = 0 Or AL(I, X1) = 0) Then
-            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-            TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (AL(I, X)) * 48 / ((AL(I, X1) + 30) / 60)
-        End If
-    Next I
-    For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
-        For J = PPP To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    TVN = 3
-	QW = PPP
-    Call GetListLength (QW, LG)
-    Call ViewLeadersScreen
-
-	'---
-    560 Cls: PPP = 0
-    For I = 1 To JB
-        If Not (AL(I, X) = 0 Or AL(I, X1) = 0) Then
-            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-            TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = ((AL(I, X) + 30) / 60) / AL(I, X1)
-        End If
-    Next I
-
-    For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
-        For J = PPP To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    TVN = 3
-	QW = PPP
-    Call GetListLength (QW, LG)
-    Call ViewLeadersScreen
-
-	'---
-    580 Cls
-	PPP = 0
-    
-	For I = 1 To JB
-        If Not ((AL(I, X) * 2) + AL(I, X1) + W0L(I) = 0 Or AL(I, X2) = 0) Then
-            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-            TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = ((AL(I, X) * 2) + AL(I, X1) + W0L(I)) / AL(I, X2)
-        End If
-    Next I
-    
-	For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
-        For J = PPP To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    TVN = 3
-	QW = PPP
-    Call GetListLength (QW, LG)
-    Call ViewLeadersScreen
-
-	'---
-    620 Cls
-	PPP = 0
-    For I = 1 To JB
-        If AL(I, X) - AL(I, X1) <> 0 Then
-            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-            TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) - AL(I, X1)
-        End If
-    Next I
-    
-	For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
-        For J = PPP To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    TVN = 1
-	QW = PPP
-    Call GetListLength (QW, LG)
-    Call ViewLeadersScreen
-
-	'---
-    640 Cls
-	PPP = 0
-    
-	For I = 1 To JB
-        If AL(I, X) <> 0 Then
-            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-            TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) / AL(I, X1)
-        End If
-    Next I
-    
-	For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
-        For J = PPP To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    TVN = 3
-	QW = PPP
-    Call GetListLength (QW, LG)
-    Call ViewLeadersScreen
-
-	'---
-    660 Cls
-	PPP = 0
-    For I = 1 To JB
-        If W0L(I) <> 0 Then
-            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-            TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = W0L(I)
-        End If
-    Next I
-    For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
-        For J = PPP To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    TVN = 1
-	QW = PPP
-    Call GetListLength (QW, LG)
-    Call ViewLeadersScreen
-
-	'---
-    680 Cls
-	PPP = 0
-    
-	For I = 1 To JB
-        If W1L(I) <> 0 Then
-            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-            TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = W1L(I)
-        End If
-    Next I
-    
-	For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
-        For J = PPP To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
-
-    TVN = 1
-	QW = PPP
-    Call GetListLength (QW, LG)
-    Call ViewLeadersScreen
 
 End Sub
 
@@ -613,13 +625,14 @@ End Sub
 '       ViewLeaderScreen Subroutine
 '----------------------------------------
 '... explain here ...
-Sub ViewLeadersScreen ()
+Sub DisplayLeaders (QW)
 
     Shared TMM$(), TPP$(), TP$(), TYP()
 
     Do
         Color 14, 0
-		Cls: Print "     PLAYER                  TEAM                     "; TP$(B9)
+		Cls
+		Print "     PLAYER                  TEAM                     "; TP$(B9)
         
 		For W = 1 To QW
 
@@ -629,9 +642,6 @@ Sub ViewLeadersScreen ()
                 If I$ <> Chr$(27) Then
                     Cls
                     Color 14: Print "     PLAYER                  TEAM                     "; TP$(B9)
-                Else
-                    'GoTo 80
-                End If
             End If
 
             If W = 220 Or W = 240 Or W = 260 Or W = 280 Or W = 300 Or W = 320 Or W = 340 Or W = 360 Or W = 380 Or W = 400 Then 
@@ -640,9 +650,6 @@ Sub ViewLeadersScreen ()
                 If I$ <> Chr$(27) Then
                     Cls
                     Color 14: Print "     PLAYER                  TEAM                     "; TP$(B9)
-                Else
-                    'GoTo 80
-                End If
             End If
 
             If W = 420 Or W = 440 Or W = 460 Or W = 480 Or W = 500 Or W = 520 Or W = 540 Or W = 560 Or W = 580 Or W = 600 Then 
@@ -651,9 +658,6 @@ Sub ViewLeadersScreen ()
                 If I$ <> Chr$(27) Then
                     Cls
                     Color 14: Print "     PLAYER                  TEAM                     "; TP$(B9)
-                Else
-                    'GoTo 80
-                End If
             End If
 
             If W = 620 Or W = 640 Or W = 660 Then 
@@ -662,9 +666,6 @@ Sub ViewLeadersScreen ()
                 If I$ <> Chr$(27) Then
                     Cls
                     Color 14: Print "     PLAYER                  TEAM                     "; TP$(B9)
-                Else
-                    'GoTo 80
-                End If
             End If
 
             Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TPP$(W);: Color 15: Print Tab(25); TMM$(W);
@@ -693,9 +694,8 @@ End Sub
 '         PrintLeaders Subroutine
 '----------------------------------------
 '... explain here ...
-Sub PrintLeaders ()
+Sub PrintLeaders (LG)
     Shared TMM$(), TP$(), TYP()
-    Shared LG
 
     LPrint Chr$(15)
     '    WIDTH "LPT1:1", 130
@@ -752,309 +752,281 @@ Sub ViewTotalLeaders ()
     Shared TYP()
     Shared TMM$()
 
-    Color , 0
-	Cls
-	Print
-	Print
-	Print
-	Print
-	J = 21
-	ZZ = 3
+	Do
+		Color , 0
+		Cls
+		Print
+		Print
+		Print
+		Print
+		J = 21
+		ZZ = 3
 
-    Locate 1, 4
-	Color 15, 6: Print " " + Chr$(214); String$(66, 196); "· ";
-    
-	For II = 1 To J: Locate 1 + II, 4: Print " " + Chr$(186); String$(66, 32); Chr$(186) + " ";: Next
-    
-	Locate 2 + J, 4: Print " " + Chr$(211); String$(66, 196); Chr$(189) + " ";: Locate 10, 15
-    
-	For I = 0 To 19: Locate I + 2, 8: Color 11: Print Using "##"; I;: Print " ";: Color 0: Print TP1$(I): Next
-    For I = 20 To 38: Locate I - 18, 38: Color 11: Print Using "##"; I;: Print " ";: Color 0: Print TP1$(I): Next
+		Locate 1, 4
+		Color 15, 6: Print " " + Chr$(214); String$(66, 196); "· ";
+		
+		For II = 1 To J: Locate 1 + II, 4: Print " " + Chr$(186); String$(66, 32); Chr$(186) + " ";: Next
+		
+		Locate 2 + J, 4: Print " " + Chr$(211); String$(66, 196); Chr$(189) + " ";: Locate 10, 15
+		
+		For I = 0 To 19: Locate I + 2, 8: Color 11: Print Using "##"; I;: Print " ";: Color 0: Print TP1$(I): Next
+		For I = 20 To 38: Locate I - 18, 38: Color 11: Print Using "##"; I;: Print " ";: Color 0: Print TP1$(I): Next
 
-    Color 14
-	Locate 22, 23: Input "SELECT NUMBER TO VIEW"; B9
-    
-	Select Case B9
-        Case 0: X = 1: stpl = 0
-        Case 1: X = 2: stpl = 0
-        Case 2: X = 2: X1 = 1: stpl = 0
-        Case 3: X = 14: stpl = 0
-        Case 4: X = 13: stpl = 0
-        Case 5: X = 13: X1 = 14: stpl = 0
-        Case 6: X = 3: stpl = 0
-        Case 7: X = 4: stpl = 0
-        Case 8: X = 4: X1 = 3: stpl = 0
-        Case 9: X = 12: stpl = 0
-        Case 10: X = 5: X1 = 12: stpl = 0
-        Case 11: X = 5: stpl = 0
-        Case 12: X = 5: stpl = 0
-        Case 13: X = 6: stpl = 0
-        Case 14: X = 8: stpl = 0
-        Case 15: X = 9: stpl = 0
-        Case 16: X = 7: stpl = 0
-        Case 17: X = 11: stpl = 0
-        Case 18: X = 2: X1 = 13: X2 = 4: stpl = 0
-        Case 19: X = 1: stpl = 0
-        Case 20: X = 2: stpl = 0
-        Case 21: X = 2: X1 = 1: stpl = 0
-        Case 22: X = 14: stpl = 0
-        Case 23: X = 13: stpl = 0
-        Case 24: X = 13: X1 = 14: stpl = 0
-        Case 25: X = 3: stpl = 0
-        Case 26: X = 4: stpl = 0
-        Case 27: X = 4: X1 = 3: stpl = 0
-        Case 28: X = 12: stpl = 0
-        Case 29: X = 5: X1 = 12: stpl = 0
-        Case 30: X = 5: stpl = 0
-        Case 31: X = 5: stpl = 0
-        Case 32: X = 6: stpl = 0
-        Case 33: X = 8: stpl = 0
-        Case 34: X = 9: stpl = 0
-        Case 35: X = 7: stpl = 0
-        Case 36: X = 11: stpl = 0
-        Case 37: X = 2: X1 = 13: X2 = 4: stpl = 0
-    End Select
-    
-    Call SelectOptions_NEWLDR (PV)
-    
-    Select Case B9
-        Case 0 to 1: GoTo 3500
-        Case 2: GoTo 3510
-        Case 3 to 4: GoTo 3500
-        Case 5: GoTo 3510
-        Case 6 to 7: GoTo 3500
-        Case 8: GoTo 3510
-        Case 9: GoTo 3500
-        Case 10: GoTo 3520
-        Case 11: GoTo 3500
-        Case 12: GoTo 3530
-        Case 13 to 17: GoTo 3500
-        Case 18: GoTo 3540
-        Case 19 to 20: GoTo 3600
-        Case 21: GoTo 3610
-        Case 22 to 23: GoTo 3600
-        Case 24: GoTo 3610
-        Case 25 to 26: GoTo 3600
-        Case 27: GoTo 3610
-        Case 28: GoTo 3600
-        Case 29: GoTo 3620
-        Case 30: GoTo 3600
-        Case 31: GoTo 3630
-        Case 32 to 36: GoTo 3600
-        Case 37: GoTo 3640
-        Case 38: Exit Sub 'GoTo 70
-        Case IS > 38: GoTo 3050
-    End Select
+		Do
+			Color 14
+			Locate 22, 23: Input "SELECT NUMBER TO VIEW"; B9
+		Loop Until B9 >= 0 and B9 <= 38
+		
+		Select Case B9
+			Case 0: X = 1: stpl = 0
+			Case 1: X = 2: stpl = 0
+			Case 2: X = 2: X1 = 1: stpl = 0
+			Case 3: X = 14: stpl = 0
+			Case 4: X = 13: stpl = 0
+			Case 5: X = 13: X1 = 14: stpl = 0
+			Case 6: X = 3: stpl = 0
+			Case 7: X = 4: stpl = 0
+			Case 8: X = 4: X1 = 3: stpl = 0
+			Case 9: X = 12: stpl = 0
+			Case 10: X = 5: X1 = 12: stpl = 0
+			Case 11: X = 5: stpl = 0
+			Case 12: X = 5: stpl = 0
+			Case 13: X = 6: stpl = 0
+			Case 14: X = 8: stpl = 0
+			Case 15: X = 9: stpl = 0
+			Case 16: X = 7: stpl = 0
+			Case 17: X = 11: stpl = 0
+			Case 18: X = 2: X1 = 13: X2 = 4: stpl = 0
+			Case 19: X = 1: stpl = 0
+			Case 20: X = 2: stpl = 0
+			Case 21: X = 2: X1 = 1: stpl = 0
+			Case 22: X = 14: stpl = 0
+			Case 23: X = 13: stpl = 0
+			Case 24: X = 13: X1 = 14: stpl = 0
+			Case 25: X = 3: stpl = 0
+			Case 26: X = 4: stpl = 0
+			Case 27: X = 4: X1 = 3: stpl = 0
+			Case 28: X = 12: stpl = 0
+			Case 29: X = 5: X1 = 12: stpl = 0
+			Case 30: X = 5: stpl = 0
+			Case 31: X = 5: stpl = 0
+			Case 32: X = 6: stpl = 0
+			Case 33: X = 8: stpl = 0
+			Case 34: X = 9: stpl = 0
+			Case 35: X = 7: stpl = 0
+			Case 36: X = 11: stpl = 0
+			Case 37: X = 2: X1 = 13: X2 = 4: stpl = 0
+		End Select
+		
+		Call SelectOptions_NEWLDR (printOrView%)
+		
+		Cls
+		
+		Select Case B9
+			Case 0 to 1, 3 to 4, 6 to 7, 9, 11, 13 to 17: 
+				For I = 1 To TS
+					TMM$(I) = TT$(I, X): TYP(I) = TT!(I, X)
+				Next
 
-	'---
-    3500 Cls
+				For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
+					For J = TS To I Step -1
+						If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+						If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					Next J
+				Next I
 
-	For I = 1 To TS
-		TMM$(I) = TT$(I, X): TYP(I) = TT!(I, X)
-	Next
+				TVN = 1
+				QW = TS
+				Call DisplayTeamView_NEWLDR (printOrView%, QW, TVN)
 
-    For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
-        For J = TS To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
+			Case 2, 5, 8: 
+				For I = 1 To TS
+					If TT!(I, X1) = 0 Then 
+						TMM$(I) = TT$(I, X)
+						TYP(I) = 0
+					Else 
+						TMM$(I) = TT$(I, X)
+						TYP(I) = TT!(I, X) / TT!(I, X1)
+					End If
 
-    TVN = 1
-	QW = TS
-    Call PrintTeamView_NEWLDR (PV, QW, TVN)
+				Next
 
- 	'---
-	3510 Cls
-	For I = 1 To TS
-        If TT!(I, X1) = 0 Then 
-			TMM$(I) = TT$(I, X)
-			TYP(I) = 0
-		Else 
-			TMM$(I) = TT$(I, X)
-			TYP(I) = TT!(I, X) / TT!(I, X1)
-		End If
+				For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
+					For J = TS To I Step -1
+						If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+						If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					Next J
+				Next I
 
-    Next
+				TVN = 2
+				QW = TS
+				Call DisplayTeamView_NEWLDR (printOrView%, QW, TVN)
 
-    For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
-        For J = TS To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
 
-    TVN = 2
-	QW = TS
-    Call PrintTeamView_NEWLDR (PV, QW, TVN)
+			Case 10: 
+				For I = 1 To TS
+					TMM$(I) = TT$(I, X): TYP(I) = TT!(I, X) - TT!(I, X1)
+				Next
 
- 	'---
-    3520 Cls
-	For I = 1 To TS
-		TMM$(I) = TT$(I, X): TYP(I) = TT!(I, X) - TT!(I, X1)
-	Next
+				For I = 2 To TS
+					stpl = stpl + 1
+					Locate 5, 5: Print "sorting team "; stpl
+					For J = TS To I Step -1
+						If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+						If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					Next J
+				Next I
 
-    For I = 2 To TS
-		stpl = stpl + 1
-		Locate 5, 5: Print "sorting team "; stpl
-        For J = TS To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
+				TVN = 1
+				QW = TS
+				Call DisplayTeamView_NEWLDR (printOrView%, QW, TVN)
 
-    TVN = 1
-	QW = TS
-    Call PrintTeamView_NEWLDR (PV, QW, TVN)
+			Case 12: 
+				For I = 1 To TS
+					TMM$(I) = TT$(I, X)
+					TYP(I) = TT!(I, X) / GM(I)
+				Next
 
- 	'---
-    3530 Cls
-	For I = 1 To TS
-		TMM$(I) = TT$(I, X)
-		TYP(I) = TT!(I, X) / GM(I)
-	Next
+				For I = 2 To TS
+					stpl = stpl + 1
+					Locate 5, 5: Print "sorting team "; stpl
+					For J = TS To I Step -1
+						If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+						If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					Next J
+				Next I
 
-    For I = 2 To TS
-		stpl = stpl + 1
-		Locate 5, 5: Print "sorting team "; stpl
-        For J = TS To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
+				TVN = 3
+				QW = TS
+				Call DisplayTeamView_NEWLDR (printOrView%, QW, TVN)
 
-    TVN = 3
-	QW = TS
-    Call PrintTeamView_NEWLDR (PV, QW, TVN)
+			Case 18:
+				For I = 1 To TS
+					TMM$(I) = TT$(I, X)
+					TYP(I) = ((TT!(I, X) * 2) + TT!(I, X1) + TT!(I, X2)) / GM(I)
+				Next
 
- 	'---
-    3540 Cls
-	For I = 1 To TS
-		TMM$(I) = TT$(I, X)
-		TYP(I) = ((TT!(I, X) * 2) + TT!(I, X1) + TT!(I, X2)) / GM(I)
-	Next
+				For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
+					For J = TS To I Step -1
+						If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+						If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					Next J
+				Next I
 
-    For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
-        For J = TS To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
+				TVN = 3
+				QW = TS
+				Call DisplayTeamView_NEWLDR (printOrView%, QW, TVN)
 
-    TVN = 3
-	QW = TS
-    Call PrintTeamView_NEWLDR (PV, QW, TVN)
+			Case 19 to 20, 22 to 23, 25 to 26, 28, 30, 32 to 36:
+				For I = 1 To TTS
+					TMM$(I) = TT1$(I, X)
+					TYP(I) = TT1!(I, X)
+				Next
 
- 	'---
-    3600 Cls
-	For I = 1 To TTS
-		TMM$(I) = TT1$(I, X)
-		TYP(I) = TT1!(I, X)
-	Next
+				For I = 2 To TTS: 
+					stpl = stpl + 1
+					Locate 5, 5: Print "sorting team "; stpl
+					
+					For J = TTS To I Step -1
+						If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+						If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					Next J
+				Next I
 
-    For I = 2 To TTS: 
-		stpl = stpl + 1
-		Locate 5, 5: Print "sorting team "; stpl
-        
-		For J = TTS To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
+				TVN = 1
+				QW = TTS
+				Call DisplayTeamView_NEWLDR (printOrView%, QW, TVN)
 
-    TVN = 1
-	QW = TTS
-    Call PrintTeamView_NEWLDR (PV, QW, TVN)
+			Case 21, 24, 27:
+				For I = 1 To TTS
+					If TT1!(I, X1) = 0 Then 
+						TMM$(I) = TT1$(I, X)
+						TYP(I) = 0 
+					Else 
+						TMM$(I) = TT1$(I, X)
+						TYP(I) = TT1!(I, X) / TT1!(I, X1)
+					End If
+				Next
 
- 	'---
-    3610 Cls
-    For I = 1 To TTS
-        If TT1!(I, X1) = 0 Then 
-            TMM$(I) = TT1$(I, X)
-			TYP(I) = 0 
-        Else 
-            TMM$(I) = TT1$(I, X)
-			TYP(I) = TT1!(I, X) / TT1!(I, X1)
-        End If
-    Next
+				For I = 2 To TTS
+					stpl = stpl + 1
+					Locate 5, 5: Print "sorting team "; stpl
+					For J = TTS To I Step -1
+						If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+						If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					Next J
+				Next I
 
-    For I = 2 To TTS
-		stpl = stpl + 1
-		Locate 5, 5: Print "sorting team "; stpl
-        For J = TTS To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
+				TVN = 2
+				QW = TTS
+				Call DisplayTeamView_NEWLDR (printOrView%, QW, TVN)
 
-    TVN = 2
-	QW = TTS
-    Call PrintTeamView_NEWLDR (PV, QW, TVN)
+			Case 29: 
+				For I = 1 To TTS
+					TMM$(I) = TT1$(I, X)
+					TYP(I) = TT1!(I, X) - TT1!(I, X1)
+				Next
 
- 	'---
-    3620 Cls
-	For I = 1 To TTS
-		TMM$(I) = TT1$(I, X)
-		TYP(I) = TT1!(I, X) - TT1!(I, X1)
-	Next
+				For I = 2 To TTS: 
+					stpl = stpl + 1
+					Locate 5, 5: Print "sorting team "; stpl
+					For J = TTS To I Step -1
+						If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+						If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					Next J
+				Next I
 
-    For I = 2 To TTS: 
-		stpl = stpl + 1
-		Locate 5, 5: Print "sorting team "; stpl
-        For J = TTS To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
+				TVN = 1
+				QW = TTS
+				Call DisplayTeamView_NEWLDR (printOrView%, QW, TVN)
 
-    TVN = 1
-	QW = TTS
-    Call PrintTeamView_NEWLDR (PV, QW, TVN)
+			Case 31: 
+				For I = 1 To TTS
+					TMM$(I) = TT1$(I, X)
+					TYP(I) = TT1!(I, X) / GM1(I)
+				Next
 
- 	'---
-    3630 Cls
-	For I = 1 To TTS
-		TMM$(I) = TT1$(I, X)
-		TYP(I) = TT1!(I, X) / GM1(I)
-	Next
+				For I = 2 To TTS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
+					For J = TTS To I Step -1
+						If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+						If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					Next J
+				Next I
 
-    For I = 2 To TTS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
-        For J = TTS To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
+				TVN = 3
+				QW = TTS
+				Call DisplayTeamView_NEWLDR (printOrView%, QW, TVN)
 
-    TVN = 3
-	QW = TTS
-    Call PrintTeamView_NEWLDR (PV, QW, TVN)
+			Case 37: 
+				For I = 1 To TTS
+					TMM$(I) = TT1$(I, X)
+					TYP(I) = ((TT1!(I, X) * 2) + TT1!(I, X1) + TT1!(I, X2)) / GM1(I)
+				Next
 
- 	'---
-    3640 Cls
-	For I = 1 To TTS
-		TMM$(I) = TT1$(I, X)
-		TYP(I) = ((TT1!(I, X) * 2) + TT1!(I, X1) + TT1!(I, X2)) / GM1(I)
-	Next
+				For I = 2 To TTS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
+					For J = TTS To I Step -1
+						If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+						If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+					Next J
+				Next I
 
-    For I = 2 To TTS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
-        For J = TTS To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-        Next J
-    Next I
+				TVN = 3
+				QW = TTS
+				Call DisplayTeamView_NEWLDR (printOrView%, QW, TVN)
 
-    TVN = 3
-	QW = TTS
-    Call PrintTeamView_NEWLDR (PV, QW, TVN)
+			Case 38: Cls 
+		End Select
+
+	Loop Until B9 = 38
 
 End Sub
 
 
 '----------------------------------------
-'    PrintTeamView_NEWLDR Subroutine
+'    DisplayTeamView_NEWLDR Subroutine
 '----------------------------------------
 '... explain here ...
-Sub PrintTeamView_NEWLDR (printType, QW, TVN)
+Sub DisplayTeamView_NEWLDR (printType, QW, TVN)
     Shared TYP (), TP1$ ()
     Shared TMM$()
 
@@ -1137,32 +1109,32 @@ Sub SelectOptions_NEWLDR (printType)
     
     Do
         I$ = GetKeyPress$
+
         Select Case I$
+
             Case "H":
                 Call PrintViewReselect(I2$)
                 Select Case I2$
-                    Case "P": printType = 2 ': GoTo 7015
-                    Case "V": printType = 1     ': GoTo 7015
+                    Case "P": printType = 2
+                    Case "V": printType = 1
                     Case "R": 
-                        'GoTo 5017
-                        If ZZ = 1 Then Exit Sub 'GoTo 80
-                        If ZZ = 3 Then Exit Sub 'GoTo 2880
+						If ZZ = 1 Or ZZ = 3 Then Exit Sub                         
                 End Select
                 JX = 1
+
             Case "L": 
                 Call PrintViewReselect(I2$)
                 Select Case I2$
-                Case "P": printType = 2 ': GoTo 7015
-                Case "V": printType = 1  ': GoTo 7015
-                Case "R": 
-                    'GoTo 5017
-                    If ZZ = 1 Then Exit Sub 'GoTo 80
-                    If ZZ = 3 Then Exit Sub 'GoTo 2880
+                Case "P": printType = 2
+                Case "V": printType = 1
+                Case "R":                     
+                    If ZZ = 1 Or ZZ = 3 Then Exit Sub 
                 End Select
                 JX = 2
+
             Case "R": 
-                If ZZ = 1 Then Exit Sub 'GoTo 80
-                If ZZ = 3 Then Exit Sub 'GoTo 2880
+				If ZZ = 1 Or ZZ = 3 Then Exit Sub 
+
         End Select
 
     Loop Until UCase$(I$) = "H" Or UCase$(I$) = "L" Or UCase$(I$) = "R"
@@ -1208,13 +1180,13 @@ End Sub
 '----------------------------------------
 '... explain here ...
 Sub GetListLength (maxQW, listLength)
-'-- where do we get PV from?
-    Shared PV, LG
+
+    Shared printOrView% ', listLength
     
     Do
         Color , 0
         Cls
-        If PV <> 1 Then
+        If printOrView% <> 1 Then
             Print
 			Print
 			Print
@@ -1235,10 +1207,7 @@ Sub GetListLength (maxQW, listLength)
             Locate , 25: Input "ENTER LENGTH OF LIST"; listLength
         End If
         
-    Loop Until LG <= QW Or PV = 1
-
-    'GoTo 8015
-    '8015 Return
+    Loop Until listLength <= maxQW Or printOrView% = 1
     
 End Sub
 
@@ -1249,6 +1218,7 @@ End Sub
 '------------------------------
 ' This creates an .LDS file for your league
 Sub BUILDSTATS (statFile$)
+
     Dim buildA$(0 to 14), AL$(600)
     Dim TMA$(600), TT$(40, 15), TT1$(40, 15)
 
@@ -1260,10 +1230,14 @@ Sub BUILDSTATS (statFile$)
     Dim W0L(600), W1L(600)
     ReDim GMA(600), TYP(600)
 
-	Shared A()
-	Shared YY
+	Dim JB, TBN
 
-    For KK = 1 To 40: YY = YY + 1
+	Shared A()
+	Shared YY%
+
+    TMR% = 1280
+
+    For KK = 1 To 40: YY% = YY% + 1
         If Z1$(KK) <> "*" Then
 
 			Print "CONVERTING STAT FILE OF "; Z1$(KK)
@@ -1325,8 +1299,8 @@ Sub BUILDSTATS (statFile$)
 	For I = 1 To 600: 
 		Write #1, AL$(I), TMA$(I), GMA(I)
 		Color 14: Locate 18, 45
-		TMR = TMR - 1
-		Print Using "#####"; TMR
+		TMR% = TMR% - 1
+		Print Using "#####"; TMR%
 		For I1 = 1 To 14:
 			Write #1, AL(I, I1)
 		Next I1
@@ -1334,8 +1308,8 @@ Sub BUILDSTATS (statFile$)
 		Write #1, W0L(I)
 		Write #1, W1L(I)
 		Color 14: Locate 18, 45
-		TMR = TMR - 1
-		Print Using "#####"; TMR: 
+		TMR% = TMR% - 1
+		Print Using "#####"; TMR%: 
 	Next I
 	
     For I = 1 To 40: 
@@ -1344,8 +1318,8 @@ Sub BUILDSTATS (statFile$)
 		Next
 		
 		Color 14: Locate 18, 45
-		TMR = TMR - 1
-		Print Using "#####"; TMR
+		TMR% = TMR% - 1
+		Print Using "#####"; TMR%
 		Write #1, GM(I)
 	Next
     
@@ -1355,8 +1329,8 @@ Sub BUILDSTATS (statFile$)
 		Next
 		
 		Color 14: Locate 18, 45
-		TMR = TMR - 1
-		Print Using "#####"; TMR
+		TMR% = TMR% - 1
+		Print Using "#####"; TMR%
 		Write #1, GM1(I)
 	Next
     

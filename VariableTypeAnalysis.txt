@@ -1,0 +1,69 @@
+
+Pro BB
+==========
+What is the accuracy of this?
+	most of the game works with INT's
+	didn't seem like Def Int was used in original
+	--> review actual use in game to determine <--
+	CNGRAT, INPUT
+
+
+ars!(
+-->
+ars%(
+
+
+			!
+ReDim AL(600, 14)
+
+				!
+Dim Shared A(15, 14)
+
+			   !			 !
+Dim compareW0(15), compareW1(15)
+
+			!
+Dim hd2hdT(34)
+
+		%			%		%		%		%		%		%		%	
+Dim hd2hdAL(50), AW(50), HL(50), HW(50), R1(50), R2(50), R3(50), R4(50)
+(no Def Int from original but purpose is known from Full Count)
+
+		%		%		%		%
+Dim TAL(40), TAW(40), THL(40), THW(40)
+(no Def Int from original but purpose is known from Full Count)
+
+		%		%		%			%
+Dim TR1(40), TR2(40), TR3(40), TR4(40)
+(no Def Int from original but purpose is known from Full Count)
+
+				!					!			!
+Dim values(0 To 14, 0 To 24), W0(0 To 14), W1(0 To 14)
+
+
+		!	   !
+Dim O1(40), O2(40)
+
+	  !
+Dim P(40)
+
+		!
+Dim TYP(600)
+
+		!
+Dim BRC(25)
+
+	%	%
+Dim PV, LG
+
+				!					  !
+Dim allRecords(50, 2), TotalRecords(125, 2)
+
+						!
+Dim Shared scheduleT(0 To 34)
+
+			!			  !	
+Dim B1(2, 14, 14), tradeT(1)
+
+				!			!
+Dim tradeW0(2, 14), tradeW1(2, 14)

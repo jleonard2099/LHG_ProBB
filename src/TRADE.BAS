@@ -1,479 +1,120 @@
 Sub TRADE ()
 
+    _Title "Full Count Baseball - Trade Players"
+
+    DefInt A-Z
+
+    Dim yearNumbers$(0 To 1)
     ReDim menuChoices$(1 To 2)
 
-    Color 3, 0
+    tradeIdx = 0
 
-    _Title "Basketball: The Pro Game - Trade Players"
+    Call GetTeamA_TRADE(YN$, numberTeams, tradeIdx)
+    yearNumbers$(tradeIdx) = YN$
 
-    Do
-    
-        Call TITLE
-        'Erase menuChoices$
-        menuChoices$(1) = "TRADE PLAYERS           "
-        menuChoices$(2) = "RETURN TO PRO GAME MENU "
-        Selection% = 1
-        Count% = 2
-        Start% = 1
-        ExitCode% = 2
-        FileFGColr% = 15: FileBGColr% = 1
-        HiLiteFGColr% = 0: HiLiteBGColr% = 7
-        Spacing% = 1
-        Row% = 8
-        Column% = 25
+    Call ReadStats_TRADE(yearNumbers$(), tradeIdx)
 
-        Call box0(7, 24, 10, 49, 2, 15, 1)
-
-        _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
-        _MouseHide
-
-        Color , 0
-        If ExitCode% <> 27 Then
-            If Selection% = 1 Then Call TradePlayers
-        End If
-    
-    Loop Until Selection% = 2 Or ExitCode% = 27
+    Color 15, 0
+    Call ContinueTrade(yearNumbers$(), tradeIdx)
 
 End Sub
 
 
-'----------------------------------------
-'         TradePlayers Subroutine
-'----------------------------------------
-'... explain here ...
-Sub TradePlayers ()
-    Dim A1$(1), B1$(2, 14)
-    Dim F$(1), NY$(1), YN$(1)
-    Dim S(1), ZZtrade(2, 15), ZZ1trade(2, 15)
 
-    Shared B1(), tradeW0(), tradeW1()
-    Shared teamSettings%(), tradeB%(), tradeL%()
-    Shared SA$(), tradeAA$(), tradeB$()
+'----------------------------------------
+'       GetTeam_TRADE Subroutine
+'----------------------------------------
+'...explanation...
+Sub GetTeamA_TRADE (yearNumber$, numberTeams, tradeIdx)
 
-    Shared tradeT()
+    Shared A$()
+    Shared tradeL%()
+
+    tradeIdx = 0
 
     Do
-        J = 0
         Color 15, 0: Cls
         JJ = 7
         Locate 6, 8: Color 15, 4
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-		
-		For II = 1 To JJ: Locate 6 + II, 8
-			Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-		Next
-		
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
         Locate 7 + JJ, 8
         Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
-        Locate , 12: Print "ENTER DISK ID FOR TEAM A: ": Print
+        Locate , 12: Print "ENTER DISK ID FOR TEAM 1: ": Print
         Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-        Locate , 12: Print
         Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
-        Locate 7, 38: Input NY$(J)
+        Locate 7, 36: Input NY$
 
-        If NY$(J) = "" Then 
-            Call SelectTeam_TRADE (J, NTMS, YN$())
+        If NY$ = "" And yearNumber$ <> "" Then
+            'yearNumber$ = NY$
+			'NY$ = yearNumber$
+            Call SelectTeam_TRADE(yearNumber$, numberTeams, tradeIdx)
         Else
-            YN$(J) = NY$(J)
+            yearNumber$ = NY$
             Erase teamNames$
 
-            NTMS = 0
+            numberTeams = 0
+            If _FileExists(diskPaths$(0) + "FCTEAMS." + yearNumber$) Then
 
-            Open diskPaths$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
-            Y = LOF(1)
-            Field #1, 15 As Q$(0), 15 As Q$(1)
+                Open diskPaths$(0) + "FCTEAMS." + yearNumber$ For Random As #1 Len = 4342
+                Y = LOF(1)
+                Field #1, 15 As Q$(0)
 
-            For I = 0 To 6
-                Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-            Next
+                For I1 = 1 To Y / 4342
+                    Get #1, I1
 
-            Field #1, 44 As X$, 2 As Q$(9)
+                    For I2 = 1 To 15
+                        If Left$(Q$(0), 2) = "XX" Or Left$(Q$(0), 1) = " " Or Asc(Mid$(Q$(0), I2, 1)) < 32 Or Asc(Mid$(Q$(0), I2, 1)) > 123 Or UCase$(Left$(Q$(0), 3)) = "NOT" Or UCase$(Left$(Q$(0), 3)) = "UN" Then nullTeam = 1: Exit For
+                    Next I2
 
-            For I = 0 To 34
-                Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-            Next
+                    If nullTeam <> 1 Then
+                        numberTeams = numberTeams + 1
+                        teamNames$(numberTeams) = Q$(0)
+                        teamIndex%(numberTeams) = I1
+                    End If
 
-            For I = 0 To 14
-                Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-                For I1 = 0 To 19
-                    Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-                Next
-            Next
+                Next I1
 
-            Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+                Close 1
 
-            For I1 = 1 To Y / 1031
-                Get #1, I1
-                CK% = CVI(Q$(9))
-                If CK% = 999 Then
-                    NTMS = NTMS + 1
-                    teamNames$(NTMS) = Q$(0): teamIndex%(NTMS) = I1
-                End If
-            Next
+                Call SelectTeam_TRADE(yearNumber$, numberTeams, tradeIdx)
+            Else
+                BO% = 1
+                Locate 10, 8
+                Call CSMsgBox("NO TEAMS MATCHING THIS ID WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+                I$ = GetKeyPress$
+                Call CSMsgBox("", 0, Pass)
+            End If 'Done checking for file
 
-            Close 1
+        End If 'Done checking for emtpy value
 
-            'TS% = INT((NTMS - 1) / 80)
-
-            Call SelectTeam_TRADE (J, NTMS, YN$())
-        End If
-        
-        If BO% = 1 Then 
+        If BO% = 1 Then
             BO% = 0
         Else
-            Locate 2, 33
-			Color teamSettings%(J, 33), teamSettings%(J, 34): Print tradeAA$(J, 0)
-			Color 15, 4
+            Locate 2, 33: Color 15, 0: Color tradeL%(tradeIdx, 11), tradeL%(tradeIdx, 12)
+            Print A$(tradeIdx): Color 15, 4
             Locate , 33: Print "ANY CHANGE (YN)";
             I$ = GetKeyPress$
         End If
-    Loop Until UCase$(I$) = "N"
-    
-    Color 15, 0
-    S(0) = 0
-    JJ = 1
 
-    Locate 6, 8: Color teamSettings%(J, 33), teamSettings%(J, 34)
-    Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
+    Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
 
-    For II = 1 To JJ: Locate 6 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-    Next
-
-    Locate 7 + JJ, 8
-    Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7
-    U$ = "DOES THIS TEAM HAVE SAVED STATS (YN)"
-
-    Locate , (80 - Len(U$)) / 2
-    Print U$
-    Color 15, 0
-    I$ = GetKeyPress$
-	
-    If UCase$(I$) = "Y" Then 
-        For XX = 4 To 11
-			If Mid$(SA$(J), XX, 1) = " " Or Mid$(SA$(J), XX, 1) = "/" Or Mid$(SA$(J), XX, 1) = "." Then Mid$(SA$(J), XX, 1) = "_"
-        Next XX
-
-        For XX = 12 To 14
-			If Mid$(SA$(J), XX, 2) = "ST" Then Mid$(SA$(J), 9, 1) = "_": Mid$(SA$(J), 10, 2) = "ST"
-        Next XX
-
-        QQ = 8
-        For XX = 11 To 4 Step -1
-
-            If Not (Mid$(SA$(J), XX, 1) = "_") Then 
-
-                YR$ = Left$(SA$(J), 2)
-                F$(J) = Mid$(SA$(J), 4, QQ) + "." + YR$
-
-                If _FileExists(diskPaths$(1) + F$(J)) Then
-                    Open diskPaths$(1) + F$(J) For Input As #1
-                    Input #1, A1$(J)
-                    For I = 0 To 14: Input #1, B1$(J, I)
-                        For I1 = 0 To 13: Input #1, B1(J, I, I1): Next I1
-                    Input #1, tradeW0(J, I): Input #1, tradeW1(J, I): Next I
-
-                    For L = 0 To 15: Input #1, ZZtrade(J, L): Next L
-                    For L = 0 To 15: Input #1, ZZ1trade(J, L): Next L
-                    Close 1
-                Else
-                    S(J) = 1
-                End If
-
-            Else
-                QQ = XX - 4
-            End If
-
-        Next XX
-    Else
-        S(0) = 1
-    End If
-    
-    Do
-        J = 1
-        Color 15, 0: Cls
-        JJ = 7
-        Locate 6, 8: Color 15, 4
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-		For II = 1 To JJ: Locate 6 + II, 8
-			Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-		Next
-
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
-        Locate , 12: Print "ENTER DISK ID FOR TEAM B: ": Print
-        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-        Locate , 12: Print
-        Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
-        Locate 7, 38: Input NY$(J)
-
-        If NY$(J) = "" Then 
-            Call SelectTeam_TRADE (J, NTMS, YN$())
-        Else
-            YN$(J) = NY$(J)
-            Erase teamNames$
-            NTMS = 0
-            Open diskPaths$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
-            Y = LOF(1)
-            Field #1, 15 As Q$(0), 15 As Q$(1)
-            For I = 0 To 6
-                Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-            Next
-            Field #1, 44 As X$, 2 As Q$(9)
-            For I = 0 To 34
-                Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-            Next
-            For I = 0 To 14
-                Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-                For I1 = 0 To 19
-                    Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-                Next
-            Next
-            Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-            For I1 = 1 To Y / 1031
-                Get #1, I1
-                CK% = CVI(Q$(9))
-                If CK% = 999 Then
-                    NTMS = NTMS + 1
-                    teamNames$(NTMS) = Q$(0): teamIndex%(NTMS) = I1
-                End If
-            Next
-            Close 1
-
-            'TS% = INT((NTMS - 1) / 80)
-
-            Call SelectTeam_TRADE (J, NTMS, YN$())
-        End If
-        
-        If BO% = 1 Then 
-            BO% = 0
-        Else
-            Locate 2, 33
-            Color teamSettings%(J, 33), teamSettings%(J, 34): Print tradeAA$(J, 0): Color 15, 4
-            Locate , 33: Print "ANY CHANGE (YN)";
-            I$ = GetKeyPress$
-        End If
-        
-    Loop Until UCase$(I$) = "N"
-
-    Color 15, 0
-    S(1) = 0
-    JJ = 1
-
-    Locate 6, 8: Color teamSettings%(J, 33), teamSettings%(J, 34)
-    Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
-    For II = 1 To JJ: Locate 6 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-    Next
-    Locate 7 + JJ, 8
-    Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7
-    U$ = "DOES THIS TEAM HAVE SAVED STATS (YN)"
-    Locate , (80 - Len(U$)) / 2
-    Print U$
-    Color 15, 0
-    I$ = GetKeyPress$
-
-    If UCase$(I$) = "N" Then 
-        S(1) = 1
-    Else
-        For XX = 4 To 11
-			If Mid$(SA$(J), XX, 1) = " " Or Mid$(SA$(J), XX, 1) = "/" Or Mid$(SA$(J), XX, 1) = "." Then Mid$(SA$(J), XX, 1) = "_"
-        Next XX
-        For XX = 12 To 14
-			If Mid$(SA$(J), XX, 2) = "ST" Then Mid$(SA$(J), 9, 1) = "_": Mid$(SA$(J), 10, 2) = "ST"
-        Next XX
-
-        QQ = 8
-    
-		For XX = 11 To 4 Step -1
-            If Not (Mid$(SA$(J), XX, 1) = "_") Then 
-
-                YR$ = Left$(SA$(J), 2)
-                F$(J) = Mid$(SA$(J), 4, QQ) + "." + YR$
-
-                If _FileExists(diskPaths$(1) + F$(J)) Then
-                    Open diskPaths$(1) + F$(J) For Input As #1
-                    Input #1, A1$(J)
-                    For I = 0 To 14: Input #1, B1$(J, I)
-                        For I1 = 0 To 13: Input #1, B1(J, I, I1): Next I1
-                    Input #1, tradeW0(J, I): Input #1, tradeW1(J, I): Next I
-
-                    For L = 0 To 15: Input #1, ZZtrade(J, L): Next L
-                    For L = 0 To 15: Input #1, ZZ1trade(J, L): Next L
-                    Close 1
-                Else
-                    S(J) = 1
-                End If
-
-            Else
-                QQ = XX - 4
-            End If
-
-        Next XX
-    End If
-    
-    'Ready to trade
-    Do
-
-        Cls
-        Color 15: Print "T";: Color 3: Print "RADE PLAYERS"
-		Print
-        Color 15: Print "N";: Color 3: Print "O MORE TRADES"
-        I$ = GetKeyPress$
-
-        If UCase$(I$) <> "N" Then
-
-            If S(0) <> 1 Or S(1) <> 1 Then
-                Cls
-                Print
-                Print
-                Color 14: Print "(T)";: Color 15: Print " TRADE PLAYERS' COMPILED STATS"
-                Color 14: Print: Print "(Z)";: Color 15: Print " ZERO PLAYERS' COMPILED STATS"
-                I$ = GetKeyPress$
-                If UCase$(I$) = "T" Or UCase$(I$) = "Z" Then
-                    If UCase$(I$) = "T" Then W1 = 1
-                    If UCase$(I$) = "Z" Then W1 = 0
-                End If
-            End If
-            
-            Cls
-            Locate 3, 1
-            Color teamSettings%(0, 33), teamSettings%(0, 34): Print tradeAA$(0, 0);
-            Locate , 20
-            Color teamSettings%(1, 33), teamSettings%(1, 34): Print tradeAA$(1, 0)
-            Color 3, 0
-
-            For I = 0 To 14
-                Locate I + 4, 1
-                Print I; " "; tradeB$(0, I, 0); " "; tradeB$(0, I, 1);
-                Locate , 20
-                Print I; " "; tradeB$(1, I, 0); " "; tradeB$(1, I, 1)
-            Next I
-
-            Do
-                
-                Do
-                    Locate 19, 1: Print tradeAA$(0, 0); " PLAYER: ";
-                    Input I
-				'is this accurate?
-                Loop Until I >= 0 And I <= 14
-                
-                Color teamSettings%(0, 33), teamSettings%(0, 34): Print tradeB$(0, I, 0): Color 3, 0
-
-                Do
-                    Locate 21, 1: Print tradeAA$(1, 0); " PLAYER: ";
-                    Input I1
-				'is this accurate?
-                Loop Until I1 >= 0 And I1 <= 14
-
-                Color teamSettings%(1, 33), teamSettings%(1, 34): Print tradeB$(1, I1, 0): Color 3, 0
-                Locate 23, 1: Print "ANY CHANGE (YN) ";
-                I$ = GetKeyPress$
-
-            Loop Until UCase$(I$) = "N"
-
-            Call PrintTradeSummary
-            
-            Locate 23, 1: Print "HIT ANY KEY TO TRADE";
-            I$ = GetKeyPress$
-
-            For I2 = 0 To 1: Swap tradeB$(0, I, I2), tradeB$(1, I1, I2): Next
-            For I2 = 0 To 19: Swap tradeB%(0, I, I2), tradeB%(1, I1, I2): Next I2
-            Swap B1$(0, I), B1$(1, I1)
-            
-            If S(0) = 1 Or S(1) = 1 Or W1 = 0 Then 
-                For I2 = 0 To 13: B1(0, I, I2) = 0: B1(1, I1, I2) = 0: Next
-                tradeW0(1, I1) = 0: tradeW1(1, I1) = 0: tradeW0(0, I) = 0: tradeW1(0, I) = 0
-            Else
-                For I2 = 0 To 13: Swap B1(0, I, I2), B1(1, I1, I2): Next I2
-                Swap tradeW0(0, I), tradeW0(1, I1)
-                Swap tradeW1(0, I), tradeW1(1, I1)
-            End If
-            
-            Call PrintTradeSummary
-            
-            Locate 23, 1: Print "HIT ANY KEY TO CONTINUE";
-            I$ = GetKeyPress$       
-            
-        Else
-			'No more trades
-		
-            For J = 0 To 1
-                Open diskPaths$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
-                Field #1, 15 As Q$(0), 15 As Q$(1)
-                For I = 0 To 6
-                    Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-                Next
-                Field #1, 44 As X$, 2 As Q$(9)
-
-                For I = 0 To 34
-                    Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-                Next
-
-                For I = 0 To 14
-                    Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-                    For I1 = 0 To 19
-                        Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-                    Next
-                Next
-
-                Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-                LSet Q$(0) = tradeAA$(J, 0)
-				LSet Q$(1) = tradeAA$(J, 1)
-
-				For I = 0 To 6: 
-					LSet Q$(I + 2) = MKI$(tradeL%(J, I))
-				Next
-
-                LSet Q$(9) = MKI$(999)
-
-                For I = 0 To 34: LSet Q$(I + 10) = MKI$(teamSettings%(J, I)): Next
-
-                For I = 0 To 14
-                    LSet Q$(22 * I + 45) = tradeB$(J, I, 0)
-                    LSet Q$(22 * I + 46) = tradeB$(J, I, 1)
-                    For I1 = 0 To 19
-                        LSet Q$(22 * I + 47 + I1) = MKI$(tradeB%(J, I, I1))
-					Next
-				Next
-
-                LSet Q$(375) = tradeAA$(J, 2)
-				LSet Q$(376) = tradeAA$(J, 3)
-				LSet Q$(377) = tradeAA$(J, 4)
-                Put #1, tradeT(J): Close 1
-            Next J
-
-            For J = 0 To 1
-                If S(J) <> 1 Then
-                    Open diskPaths$(1) + F$(J) For Output As #1
-                    Print #1, A1$(J): For I = 0 To 14: Print #1, B1$(J, I): For I1 = 0 To 13: Print #1, B1(J, I, I1): Next I1: Print #1, tradeW0(J, I): Print #1, tradeW1(J, I): Next I
-                    For L = 0 To 15: Print #1, ZZtrade(J, L): Next L
-                    For L = 0 To 15: Print #1, ZZ1trade(J, L): Next L
-                    Close 1
-                End If
-            Next J
-        
-		'Exit Sub
-        End If
-    
-    Loop Until UCase$(I$) = "N"
-    
 End Sub
 
 
 '----------------------------------------
 '     SelectTeam_TRADE Subroutine
 '----------------------------------------
-'... explain here ...
-Sub SelectTeam_TRADE (J, numberTeams, YN$())
+'...explanation...
+Sub SelectTeam_TRADE (yearNumber$, numberTeams, tradeIdx)
 
-    shared tradeT()
-    Shared SA$(), tradeAA$(), tradeB$()
-	Shared teamSettings%()
-	Shared tradeB%(), tradeL%()
+    Shared A$(), tradeB$(), tradeP$()
+    Shared tradeL%(), tradeB%(), tradeP%()
+    Shared tradeInfo%()
+    Shared M$(), NN$(), S$()
+
+    Shared K9&()
 
     Selection% = 1
     Count% = numberTeams
@@ -485,129 +126,1225 @@ Sub SelectTeam_TRADE (J, numberTeams, YN$())
     Spacing% = 6
     Row% = 4
     Column% = 1
-    Color , 4: Cls: Locate , 33: Color 14
-    Print "TEAM SELECTION": Color 15
-    Locate 25, 1: Color 14: Print "ESC";: Color 15
-    Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
-    Print "ENTER";: Color 15: Print "-SELECTS TEAM";
+
+    Color , 4: Cls: Locate , 33: Color 14: Print "TEAM SELECTION": Color 15
+    Locate 25, 1: Color 14: Print "ESC";: Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14: Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
     MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-	If ExitCode% <> 27 Then 
-		
-		tradeT(J) = teamIndex%(Selection%)
+    If ExitCode% <> 27 Then
 
-		Open diskPaths$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
+        tradeInfo%(tradeIdx) = teamIndex%(Selection%)
+        Locate 2, 33: Color 31: Print "LOADING..."
+        Open diskPaths$(0) + "FCTEAMS." + yearNumber$ For Random As #1 Len = 4342
 
-		Field #1, 15 As Q$(0), 15 As Q$(1)
+        Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 4 As Q$(14), 4297 As X$
 
-		For J0 = 0 To 6
-			Field #1, 30 + J0 * 2 As X$, 2 As Q$(J0 + 2)
-		Next
+        For I = 0 To 22
+            Field #1, 45 + I * 99 As X$, 15 As Q$(I * 43 + 15), 2 As Q$(I * 43 + 16), 2 As Q$(I * 43 + 17), 2 As Q$(I * 43 + 18), 2 As Q$(I * 43 + 19), 2 As Q$(I * 43 + 20), 2 As Q$(I * 43 + 21), 2 As Q$(I * 43 + 22), 2 As Q$(I * 43 + 23), 2 As Q$(I * 43 + 24), 2 As Q$(I * 43 + 25), 2 As Q$(I * 43 + 26), 4297 - 37 - I * 99 As X$
+            Field #1, 82 + I * 99 As X$, 2 As Q$(I * 43 + 27), 2 As Q$(I * 43 + 28), 2 As Q$(I * 43 + 29), 2 As Q$(I * 43 + 30), 2 As Q$(I * 43 + 31), 2 As Q$(I * 43 + 32), 2 As Q$(I * 43 + 33), 2 As Q$(I * 43 + 34), 2 As Q$(I * 43 + 35), 2 As Q$(I * 43 + 36), 2 As Q$(I * 43 + 37), 2 As Q$(I * 43 + 38), 4297 - 61 - I * 99 As X$
+            Field #1, 106 + I * 99 As X$, 2 As Q$(I * 43 + 39), 2 As Q$(I * 43 + 40), 2 As Q$(I * 43 + 41), 2 As Q$(I * 43 + 42), 2 As Q$(I * 43 + 43), 2 As Q$(I * 43 + 44), 2 As Q$(I * 43 + 45), 2 As Q$(I * 43 + 46), 2 As Q$(I * 43 + 47), 2 As Q$(I * 43 + 48), 2 As Q$(I * 43 + 49), 2 As Q$(I * 43 + 50), 4297 - 85 - I * 99 As X$
+            Field #1, 130 + I * 99 As X$, 2 As Q$(I * 43 + 51), 2 As Q$(I * 43 + 52), 2 As Q$(I * 43 + 53), 2 As Q$(I * 43 + 54), 2 As Q$(I * 43 + 55), 2 As Q$(I * 43 + 56), 2 As Q$(I * 43 + 57), 4297 - 99 - I * 99 As X$
+        Next
 
-		Field #1, 44 As X$, 2 As Q$(9)
+        For I = 0 To 21
+            Field #1, 2322 + I * 89 As X$, 15 As Q$(I * 38 + 1004), 2 As Q$(I * 38 + 1005), 2 As Q$(I * 38 + 1006), 2 As Q$(I * 38 + 1007), 2 As Q$(I * 38 + 1008), 2 As Q$(I * 38 + 1009), 2 As Q$(I * 38 + 1010), 2 As Q$(I * 38 + 1011), 2 As Q$(I * 38 + 1012), 2 As Q$(I * 38 + 1013), 2 As Q$(I * 38 + 1014), 2 As Q$(I * 38 + 1015), 2020 - 37 - I * 89 As X$
+            Field #1, 2359 + I * 89 As X$, 2 As Q$(I * 38 + 1016), 2 As Q$(I * 38 + 1017), 2 As Q$(I * 38 + 1018), 2 As Q$(I * 38 + 1019), 2 As Q$(I * 38 + 1020), 2 As Q$(I * 38 + 1021), 2 As Q$(I * 38 + 1022), 2 As Q$(I * 38 + 1023), 2 As Q$(I * 38 + 1024), 2 As Q$(I * 38 + 1025), 2 As Q$(I * 38 + 1026), 2 As Q$(I * 38 + 1027), 2020 - 61 - I * 89 As X$
+            Field #1, 2383 + I * 89 As X$, 2 As Q$(I * 38 + 1028), 2 As Q$(I * 38 + 1029), 2 As Q$(I * 38 + 1030), 2 As Q$(I * 38 + 1031), 2 As Q$(I * 38 + 1032), 2 As Q$(I * 38 + 1033), 2 As Q$(I * 38 + 1034), 2 As Q$(I * 38 + 1035), 2 As Q$(I * 38 + 1036), 2 As Q$(I * 38 + 1037), 2 As Q$(I * 38 + 1038), 2 As Q$(I * 38 + 1039), 2020 - 85 - I * 89 As X$
+            Field #1, 2407 + I * 89 As X$, 2 As Q$(I * 38 + 1040), 2 As Q$(I * 38 + 1041), 2020 - 89 - I * 89 As X$
+        Next
 
-		For J0 = 0 To 34
-			Field #1, 46 + J0 * 2 As X$, 2 As Q$(J0 + 10)
-		Next
+        Field #1, 4280 As X$, 40 As Q$(1840), 15 As Q$(1841), 5 As Q$(1842), 2 As Q$(1843)
 
-		For J0 = 0 To 14
-			Field #1, 116 + J0 * 57 As X$, 15 As Q$(J0 * 22 + 45), 2 As Q$(J0 * 22 + 46)
-			For J1 = 0 To 19
-				Field #1, 133 + J0 * 57 + J1 * 2 As X$, 2 As Q$(J0 * 22 + 47 + J1)
-			Next
-		Next
+        Get #1, tradeInfo%(tradeIdx)
 
-		Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+        A$(tradeIdx) = RTrim$(Q$(0))
 
-		Get #1, tradeT(J)
+        For I1 = 1 To 13: tradeL%(tradeIdx, I1) = CVI(Q$(I1)): Next
 
-		tradeAA$(J, 0) = RTrim$(Q$(0))
-		tradeAA$(J, 1) = Q$(1)
+        K9&(tradeIdx) = CVS(Q$(14))
 
-		For I = 0 To 6
-			tradeL%(J, I) = CVI(Q$(I + 2))
-		Next
+        For I1 = 0 To 22:
+            tradeB$(tradeIdx, I1) = RTrim$(Q$(I1 * 43 + 15))
+            For I2 = 0 To 41
+                tradeB%(tradeIdx, I1, I2) = CVI(Q$(I1 * 43 + I2 + 16))
+            Next
+        Next
 
-		For I = 0 To 34
-			teamSettings%(J, I) = CVI(Q$(I + 10))
-		Next
+        For I1 = 0 To 21:
+            tradeP$(tradeIdx, I1) = RTrim$(Q$(I1 * 38 + 1004))
+            For I2 = 0 To 36
+                tradeP%(tradeIdx, I1, I2) = CVI(Q$(I1 * 38 + I2 + 1005))
+            Next
+        Next
 
-		For I = 0 To 14
-			tradeB$(J, I, 0) = RTrim$(Q$(22 * I + 45))
-			tradeB$(J, I, 1) = RTrim$(Q$(22 * I + 46))
+        S$(tradeIdx) = RTrim$(Q$(1840))
+        M$(tradeIdx) = RTrim$(Q$(1841))
+        NN$(tradeIdx) = RTrim$(Q$(1842))
+        CK = CVI(Q$(1843))
 
-			For I1 = 0 To 19
-				tradeB%(J, I, I1) = CVI(Q$(22 * I + 47 + I1))
-			Next
-		Next
+        Close 1
 
-		tradeAA$(J, 2) = RTrim$(Q$(375))
-		tradeAA$(J, 3) = RTrim$(Q$(376))
-		tradeAA$(J, 4) = RTrim$(Q$(377))
+    Else
 
-		Close 1
+        BO% = 1
 
-		SA$(J) = tradeAA$(J, 0)
+    End If
 
-	Else
-		BO% = 1
-	End If
-	
 End Sub
 
 
 '----------------------------------------
-'         PrintTradeSummary Subroutine
+'     ReadStats_TRADE Subroutine
 '----------------------------------------
-'Prints a summary of stats and players
-'that will be swapped as a result of
-'the trade that is being proposed
-Sub PrintTradeSummary ()
+'...explanation...
+Sub ReadStats_TRADE (yearNumbers$(), tradeIdx)
 
-    Shared B1(), tradeW0(), tradeW1()
-    Shared teamSettings%(), tradeB%()
-    Shared tradeAA$(), tradeB$()
+    Shared tradeB%(), tradeL%(), tradeP%()
+    Shared tradeSA%(), tradeTS%()
+
+    If _FileExists(diskPaths$(0) + "LR." + yearNumbers$(tradeIdx)) Then
+
+        Open diskPaths$(0) + "LR." + yearNumbers$(tradeIdx) For Random As #1 Len = 4108
+
+        For X = 0 To 11
+            Field #1, X * 2 As X$, 2 As Q$(X + 1), 4108 - 2 - 2 * X As X$
+        Next
+
+        For X = 0 To 22
+            For X1 = 1 To 14
+                Field #1, 24 + (X1 - 1) * 2 + X * 14 * 2 As X$, 2 As Q$(12 + X1 + X * 14), 4108 - 2 - (24 + (X1 - 1) * 2 + X * 14 * 2) As X$
+            Next
+        Next
+
+        For X = 0 To 21
+            For X1 = 1 To 14
+                Field #1, 668 + (X1 - 1) * 2 + X * 14 * 2 As X$, 2 As Q$(334 + X1 + X * 14), 4108 - 2 - (668 + (X1 - 1) * 2 + X * 14 * 2) As X$
+            Next
+        Next
+
+        For X = 0 To 21
+            For X1 = 1 To 14
+                Field #1, 1284 + (X1 - 1) * 2 + X * 14 * 2 As X$, 2 As Q$(642 + X1 + X * 14), 4108 - 2 - (1284 + (X1 - 1) * 2 + X * 14 * 2) As X$
+            Next
+        Next
+
+        For X = 1 To 24
+            Field #1, 1900 + (X - 1) * 2 As X$, 2 As Q$(950 + X), 4108 - 2 - (X - 1) * 2 - 1900 As X$
+        Next
+
+        For X = 0 To 22
+            For X1 = 1 To 24
+                Field #1, 1948 + (X1 - 1) * 2 + X * 24 * 2 As X$, 2 As Q$(975 + X1 + X * 24), 4108 - 2 - (1948 + (X1 - 1) * 2 + X * 24 * 2) As X$
+            Next
+        Next
+
+        For X = 0 To 21
+            For X1 = 1 To 24
+                Field #1, 3052 + (X1 - 1) * 2 + X * 24 * 2 As X$, 2 As Q$(1528 + X1 + X * 24), 4108 - 2 - (3052 + (X1 - 1) * 2 + X * 24 * 2) As X$
+            Next
+        Next
+
+        Get #1, tradeInfo%(tradeIdx)
+
+        For X = 0 To 11
+            tradeTS%(tradeIdx, X) = CVI(Q$(X + 1))
+        Next
+
+        For X = 0 To 22
+            For X1 = 1 To 14
+                tradeB%(tradeIdx, X, X1 + 41) = CVI(Q$(12 + X1 + X * 14))
+            Next
+        Next
+
+        For X = 0 To 21
+            For X1 = 1 To 14
+                tradeP%(tradeIdx, X, X1 + 36) = CVI(Q$(334 + X1 + X * 14))
+            Next
+        Next
+
+        For X = 0 To 21
+            For X1 = 1 To 14
+                tradeP%(tradeIdx, X, X1 + 50) = CVI(Q$(642 + X1 + X * 14))
+            Next
+        Next
+
+        For X = 1 To 24
+            tradeSA%(tradeIdx, X) = CVI(Q$(X + 950))
+        Next
+
+        For X = 0 To 22
+            For X1 = 1 To 24
+                tradeB%(tradeIdx, X, X1 + 55) = CVI(Q$(975 + X1 + X * 24))
+            Next
+        Next
+
+        For X = 0 To 21
+            For X1 = 1 To 24
+                tradeP%(tradeIdx, X, X1 + 64) = CVI(Q$(1528 + X1 + X * 24))
+            Next
+        Next
+
+        Close 1
+
+        If tradeTS%(tradeIdx, 0) <> 999 Then
+
+            For X = 0 To 22
+                For X1 = 42 To 79
+                    tradeB%(tradeIdx, X, X1) = 0
+                Next
+            Next
+
+            For X = 0 To 21
+                For X1 = 37 To 88
+                    tradeP%(tradeIdx, X, X1) = 0
+                Next
+            Next
+
+            For X = 1 To 24
+                tradeSA%(tradeIdx, X) = 0
+            Next
+
+            For X = 0 To 11
+                tradeTS%(tradeIdx, X) = 0
+            Next
+
+        End If
+
+    End If
+    '1110 Return
+
+End Sub
+
+
+'----------------------------------------
+'       GetTeamB_TRADE Subroutine
+'----------------------------------------
+'...explanation...
+Sub GetTeamB_TRADE (yearNumber$, numberTeams, tradeIdx)
+
+    Shared A$()
+    Shared tradeL%()
+
+    Do
+        Color 15, 0: Cls
+        JJ = 7
+        Locate 6, 8: Color 15, 4
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+        Locate 7 + JJ, 8
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+        Locate , 12: Print "ENTER DISK ID FOR TEAM 2: ": Print
+        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+        Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
+        Locate 7, 36: Input NY$
+
+        If NY$ = "" And yearNumber$ <> "" Then
+            'yearNumber$ = NY$
+            Call SelectTeam_TRADE(yearNumber$, numberTeams, tradeIdx)
+        Else
+            yearNumber$ = NY$
+            Erase teamNames$
+
+            numberTeams = 0
+            If _FileExists(diskPaths$(0) + "FCTEAMS." + yearNumber$) Then
+
+                Open diskPaths$(0) + "FCTEAMS." + yearNumber$ For Random As #1 Len = 4342
+                Y = LOF(1)
+                Field #1, 15 As Q$(0)
+
+                For I1 = 1 To Y / 4342
+                    Get #1, I1
+
+                    For I2 = 1 To 15
+                        If Left$(Q$(0), 2) = "XX" Or Left$(Q$(0), 1) = " " Or Asc(Mid$(Q$(0), I2, 1)) < 32 Or Asc(Mid$(Q$(0), I2, 1)) > 123 Or UCase$(Left$(Q$(0), 3)) = "NOT" Or UCase$(Left$(Q$(0), 3)) = "UN" Then nullTeam = 1: Exit For
+                    Next I2
+
+                    If nullTeam <> 1 Then
+                        numberTeams = numberTeams + 1
+                        teamNames$(numberTeams) = Q$(0)
+                        teamIndex%(numberTeams) = I1
+                    End If
+
+                Next I1
+
+                Close 1
+
+                Call SelectTeam_TRADE(yearNumber$, numberTeams, tradeIdx)
+            Else
+                BO% = 1
+                Locate 10, 8
+                Call CSMsgBox("NO TEAMS MATCHING THIS ID WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+                I$ = GetKeyPress$
+                Call CSMsgBox("", 0, Pass)
+            End If
+        End If
+
+        If BO% = 1 Then
+            BO% = 0
+        Else
+            Locate 2, 33: Color 15, 0: Color tradeL%(tradeIdx, 11), tradeL%(tradeIdx, 12)
+            Print A$(tradeIdx): Color 15, 4
+            Locate , 33: Print "ANY CHANGE (YN)";
+            I$ = GetKeyPress$
+        End If
+
+    Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
+
+End Sub
+
+
+'----------------------------------------
+'       ContinueTrade Subroutine
+'----------------------------------------
+'...explanation...
+Sub ContinueTrade (yearNumbers$(), tradeIdx)
+
+    Shared A$(), A1$(), SA$()
+    Shared tradeB1$(), tradeP1$()
+
+    Shared D0%(), D1%(), tradeL%(), L2%()
+    Shared TEAM%(), tradeT1%(), tradeP0%(), tradeP3%()
+    Shared tradeB0%(), tradeB3%(), tradeSS%(), W2%()
+
+    Shared S%()
+
+    Do
+        Cls
+        Print "DOES ";: Color tradeL%(tradeIdx, 11), tradeL%(tradeIdx, 12)
+        Print A$(0);: Color 15, 0
+        Print " HAVE COMPILED STATS (YN)"
+        S%(0) = 0
+        I$ = GetKeyPress$
+    Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
+
+    If UCase$(I$) = "N" Then
+        S%(0) = 1
+        yearNumbers$(1) = yearNumbers$(0)
+    Else
+        Cls
+
+        SA$(tradeIdx) = A$(tradeIdx)
+        For XX = 4 To 11
+            If Mid$(SA$(tradeIdx), XX, 1) = " " Or Mid$(SA$(tradeIdx), XX, 1) = "." Then Mid$(SA$(tradeIdx), XX, 1) = "_"
+        Next
+        QQ = 8
+        For XX = 11 To 4 Step -1
+            If Mid$(SA$(tradeIdx), XX, 1) = "_" Then
+                QQ = XX - 4:
+            Else
+                Exit For
+            End If
+        Next XX
+
+        F$ = Mid$(SA$(tradeIdx), 4, QQ)
+        R$ = F$ + "." + Left$(SA$(tradeIdx), 2)
+
+        If _FileExists(diskPaths$(1) + R$) Then
+
+            Open diskPaths$(1) + R$ For Input As #1
+            Input #1, A1$(tradeIdx)
+            Input #1, W2%(tradeIdx)
+            Input #1, L2%(tradeIdx)
+
+            For I1 = 0 To 22:
+                Input #1, tradeB1$(tradeIdx, I1)
+                Input #1, tradeB3%(tradeIdx, I1)
+            Next I1
+
+            For I1 = 0 To 21: Input #1, tradeP1$(tradeIdx, I1): Input #1, tradeP3%(tradeIdx, I1): Next I1
+            For I1 = 0 To 22: For I2 = 0 To 21: Input #1, tradeB0%(tradeIdx, I1, I2): Next I2: Next I1
+            For I1 = 0 To 21: For I2 = 0 To 41: Input #1, tradeP0%(tradeIdx, I1, I2): Next I2: Next I1
+
+            Input #1, D0%(tradeIdx)
+            Input #1, D1%(tradeIdx)
+
+            For I = 0 To 21: Input #1, TEAM%(tradeIdx, I): Next I
+            For I = 0 To 22: Input #1, tradeT1%(tradeIdx, I): Next I
+
+            Close #1
+
+            If NF = 1 Then NF = 0: S%(0) = 1
+            yearNumbers$(1) = yearNumbers$(0)
+
+            If _FileExists(diskPaths$(1) + R$ + "R") Then
+                Open diskPaths$(1) + R$ + "R" For Input As #1
+                For I1 = 0 To 22
+                    For I2 = 0 To 6
+                        Input #1, tradeSS%(tradeIdx, I1, I2)
+                Next I2: Next I1
+                Close #1
+            End If
+        Else
+
+            Locate 10, 8
+            Call CSMsgBox("NO COMPILED STATS FOR TEAM WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+            I$ = GetKeyPress$
+            Call CSMsgBox("", 0, Pass)
+
+            NF = 1
+        End If
+
+    End If
+
+    tradeIdx = 1
+    Call GetTeamB_TRADE(yearNumbers$(tradeIdx), numberTeams, tradeIdx)
+
+    Do
+        Color 15, 0
+
+        Cls
+
+        Print "DOES ";: Color tradeL%(tradeIdx, 11), tradeL%(tradeIdx, 12)
+        Print A$(1);: Color 15, 0
+        Print " HAVE COMPILED STATS (YN)"
+        S%(1) = 0
+        I$ = GetKeyPress$
+    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+    If UCase$(I$) = "N" Then
+        S%(1) = 1
+    Else
+        Cls
+        SA$(tradeIdx) = A$(tradeIdx)
+        For XX = 4 To 11
+            If Mid$(SA$(tradeIdx), XX, 1) = " " Or Mid$(SA$(tradeIdx), XX, 1) = "." Then Mid$(SA$(tradeIdx), XX, 1) = "_"
+        Next
+        QQ = 8
+        For XX = 11 To 4 Step -1
+            If Mid$(SA$(tradeIdx), XX, 1) = "_" Then
+                QQ = XX - 4:
+            Else
+                Exit For
+            End If
+        Next XX
+
+        If NF = 1 Then NF = 0: S%(1) = 1
+    End If
+
+    Do
+        Cls
+        Color 12: Print Tab(35); "TRADE MENU"
+        Print
+        Color 14: Print "(1) ";: Color 15: Print "TRADE BATTERS"
+        Print
+        Color 14: Print "(2) ";: Color 15: Print "TRADE PITCHERS"
+        Print
+        Color 14: Print "(3) ";: Color 15: Print "END TRADING AND SAVE TRADES"
+        Print
+        Color 14: Print "(4) ";: Color 15: Print "END TRADING WITHOUT SAVING TRADES"
+
+        Do
+            I$ = GetKeyPress$
+        Loop Until Val(I$) >= 0 And Val(I$) <= 4
+
+        Select Case I$
+            Case "1":
+                If S%(0) <> 1 And S%(1) <> 1 Then
+                    Cls
+                    Print
+                    Print
+                    Color 14: Print "(T) ";: Color 15: Print "TRADE PLAYERS' COMPILED STATS"
+                    Print
+                    Color 14: Print "(Z) ";: Color 15: Print "ZERO PLAYERS' COMPILED STATS"
+                    Do
+                        I$ = GetKeyPress$
+                    Loop Until UCase$(I$) = "T" Or UCase$(I$) = "Z"
+
+                    If UCase$(I$) = "T" Then
+                        W1 = 1
+                    Else
+                        'UCase$(I$) = "Z"
+                        W1 = 0
+                    End If
+                End If
+
+                Call TradeBatters
+
+            Case "2":
+                If S%(0) <> 1 And S%(1) <> 1 Then
+                    Cls
+                    Print
+                    Print
+                    Color 14: Print "(T) ";: Color 15: Print "TRADE PLAYERS' COMPILED STATS"
+                    Print
+                    Color 14: Print "(Z) ";: Color 15: Print "ZERO PLAYERS' COMPILED STATS"
+                    Do
+                        I$ = GetKeyPress$
+                    Loop Until UCase$(I$) = "T" Or UCase$(I$) = "Z"
+
+                    If UCase$(I$) = "T" Then
+                        W1 = 1
+                    Else
+                        'UCase$(I$) = "Z"
+                        W1 = 0
+                    End If
+                End If
+
+                Call TradePitchers
+
+            Case "3":
+                saveYear$ = yearNumbers$(tradeIdx)
+                Call SaveTrades(yearNumbers$())
+
+            Case "4":
+                Cls '
+
+        End Select
+
+    Loop Until I$ = "3" Or I$ = "4"
+
+End Sub
+
+
+
+'----------------------------------------
+'       TradeBatters Subroutine
+'----------------------------------------
+'...explanation...
+Sub TradeBatters
+
+    Shared A$(), tradeB1$(), tradeB$()
+
+    Shared tradeB%(), tradeB0%(), tradeB3%(), tradeL%()
+    Shared tradeSA%(), tradeSS%(), tradeTS%()
+
+    Shared S%()
 
     Cls
-    Locate 3, 1: Color teamSettings%(0, 33), teamSettings%(0, 34)
-    Locate , 10: Print tradeAA$(0, 0);
-    Locate , 50: Color teamSettings%(1, 33), teamSettings%(1, 34): Print tradeAA$(1, 0)
-    Color 3, 0: Print
-    Locate , 10: Print tradeB$(0, I, 0); " "; tradeB$(0, I, 1); Tab(50); tradeB$(1, I1, 0); " "; tradeB$(1, I1, 1)
-    Locate , 5: Print Using "  ##   GAMES     ##"; tradeB%(0, I, 0); B1(0, I, 0)
-    Locate , 5: Print Using "####  MINUTES  ####"; tradeB%(0, I, 1); B1(0, I, 10) / 60
-    Locate , 5: Print Using "####    FGA    ####"; tradeB%(0, I, 2); B1(0, I, 1)
-    Locate , 5: Print Using "####    FGM    ####"; tradeB%(0, I, 3); B1(0, I, 2)
-    Locate , 5: Print Using "####    FTA    ####"; tradeB%(0, I, 4); B1(0, I, 3)
-    Locate , 5: Print Using "####    FTM    ####"; tradeB%(0, I, 5); B1(0, I, 4)
-    Locate , 5: Print Using "####  OFF REB  ####"; tradeB%(0, I, 6); B1(0, I, 12)
-    Locate , 5: Print Using "####  TOT REB  ####"; tradeB%(0, I, 6) + tradeB%(0, I, 7); B1(0, I, 5)
-    Locate , 5: Print Using "####   FOULS   ####"; tradeB%(0, I, 9); B1(0, I, 6)
-    Locate , 5: Print Using "####  STEALS   ####"; tradeB%(0, I, 11); B1(0, I, 7)
-    Locate , 5: Print Using "####  ASSISTS  ####"; tradeB%(0, I, 8); B1(0, I, 8)
-    Locate , 5: Print Using "####  BLOCKS   ####"; tradeB%(0, I, 12); B1(0, I, 9)
-    Locate , 5: Print Using "     TURNOVERS ####"; B1(0, I, 11)
-    Locate , 5: Print Using "####   3FGA    ####"; tradeB%(0, I, 13); tradeW1(0, I)
-    Locate , 5: Print Using "####   3FGM    ####"; tradeB%(0, I, 14); tradeW0(0, I)
-    Locate , 5: Print Using "  ##  HI GAME    ##"; tradeB%(0, I, 15); B1(0, I, 13)
-    Locate 6, 45: Print Using "  ##   GAMES     ##"; tradeB%(1, I1, 0); B1(1, I1, 0)
-    Locate , 45: Print Using "####  MINUTES  ####"; tradeB%(1, I1, 1); B1(1, I1, 10) / 60
-    Locate , 45: Print Using "####    FGA    ####"; tradeB%(1, I1, 2); B1(1, I1, 1)
-    Locate , 45: Print Using "####    FGM    ####"; tradeB%(1, I1, 3); B1(1, I1, 2)
-    Locate , 45: Print Using "####    FTA    ####"; tradeB%(1, I1, 4); B1(1, I1, 3)
-    Locate , 45: Print Using "####    FTM    ####"; tradeB%(1, I1, 5); B1(1, I1, 4)
-    Locate , 45: Print Using "####  OFF REB  ####"; tradeB%(1, I1, 6); B1(1, I1, 12)
-    Locate , 45: Print Using "####  TOT REB  ####"; tradeB%(1, I1, 6) + tradeB%(1, I1, 7); B1(1, I1, 5)
-    Locate , 45: Print Using "####   FOULS   ####"; tradeB%(1, I1, 9); B1(1, I1, 6)
-    Locate , 45: Print Using "####  STEALS   ####"; tradeB%(1, I1, 11); B1(1, I1, 7)
-    Locate , 45: Print Using "####  ASSISTS  ####"; tradeB%(1, I1, 8); B1(1, I1, 8)
-    Locate , 45: Print Using "####  BLOCKS   ####"; tradeB%(1, I1, 12); B1(1, I1, 9)
-    Locate , 45: Print Using "     TURNOVERS ####"; B1(1, I1, 11)
-    Locate , 45: Print Using "####   3FGA    ####"; tradeB%(1, I1, 13); tradeW1(1, I1)
-    Locate , 45: Print Using "####   3FGM    ####"; tradeB%(1, I1, 14); tradeW0(1, I1)
-    Locate , 45: Print Using "  ##  HI GAME    ##"; tradeB%(1, I1, 15); B1(1, I1, 13)
+
+    For I = 0 To 16: Locate I + 2, 4: Color , tradeL%(0, 12): Print Space$(15): Next
+    For I = 0 To 5: Locate I + 2, 24: Color , tradeL%(0, 12): Print Space$(15): Next
+    For I = 0 To 16: Locate I + 2, 44: Color , tradeL%(1, 12): Print Space$(15): Next
+    For I = 0 To 5: Locate I + 2, 64: Color , tradeL%(1, 12): Print Space$(15): Next
+
+    Color 15, 0: Locate 1: Print A$(0);
+    Locate , 40: Print A$(1)
+
+    For I = 0 To 16
+        Color 15, 0: Print Using "##"; I;: Print " ";
+        Color tradeL%(0, 11), tradeL%(0, 12): Print tradeB$(0, I);: Color 15, 0: Locate , 40
+        Print Using "##"; I;: Print " ";: Color tradeL%(1, 11), tradeL%(1, 12): Print tradeB$(1, I)
+    Next I
+
+    For I = 17 To 22
+        Color 15, 0: Locate I - 15, 20: Print Using "##"; I;: Print " ";
+        Color tradeL%(0, 11), tradeL%(0, 12): Print tradeB$(0, I);: Color 15, 0: Locate , 60
+        Print Using "##"; I;: Print " ";: Color tradeL%(1, 11), tradeL%(1, 12): Print tradeB$(1, I)
+    Next I
+
+    Do
+        Color 15, 0: Locate 20, 1
+
+        Print Space$(40);
+        Print Space$(40);
+        Print Space$(40);
+
+        Locate 20, 1: Print A$(0); " BATTER: ";
+
+        Do
+            Input I
+            'I = Val(I$)
+        Loop Until I >= 0 And I <= 22
+
+        Print tradeB$(0, I)
+        Locate 21, 1: Print A$(1); " BATTER: ";
+
+        Do
+            Input I1
+            'I = Val(I$)
+        Loop Until I1 >= 0 And I1 <= 22
+
+        Print tradeB$(1, I1)
+
+        Do
+            Locate 22, 1: Print "ANY CHANGE (YN) ";
+            I$ = GetKeyPress$
+        Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+    Loop Until UCase$(I$) = "N"
+
+    Call TradeSummary_Batters(I, I1)
+
+    Locate 24, 1: Print "HIT ANY KEY TO TRADE";
+    I$ = GetKeyPress$
+
+    If Not (tradeTS%(0, 0) = 999 And tradeTS%(1, 0) = 999) And Not (tradeTS%(0, 0) <> 999 And tradeTS%(1, 0) <> 999) Then
+        If tradeTS%(0, 0) = 999 And tradeTS%(1, 0) <> 999 Then
+            For I2 = 0 To 11: tradeTS%(1, I2) = tradeTS%(0, I2): Next
+            For I2 = 1 To 24: tradeSA%(1, I2) = tradeSA%(0, I2): Next
+        Else
+            If tradeTS%(1, 0) = 999 And tradeTS%(0, 0) <> 999 Then
+                For I2 = 0 To 11: tradeTS%(0, I2) = tradeTS%(1, I2): Next
+                For I2 = 1 To 24: tradeSA%(0, I2) = tradeSA%(1, I2): Next
+            End If
+        End If
+    End If
+
+    386 '
+    Swap tradeB$(0, I), tradeB$(1, I1)
+
+    For I2 = 0 To 79
+        Swap tradeB%(0, I, I2), tradeB%(1, I1, I2)
+    Next I2
+
+    For I2 = 0 To 6
+        Swap tradeSS%(0, I, I2), tradeSS%(1, I1, I2)
+    Next I2
+
+    tradeB1$(0, I) = tradeB$(0, I)
+    tradeB1$(1, I1) = tradeB$(1, I1)
+    Swap tradeB3%(0, I), tradeB3%(1, I1)
+
+    If S%(0) = 1 Or S%(1) = 1 Or W1 = 0 Then
+        For I2 = 0 To 21: Swap tradeB0%(0, I, I2), tradeB0%(1, I1, I2): Next I2
+    Else
+        For I2 = 0 To 21: tradeB0%(0, I, I2) = 0: tradeB0%(1, I1, I2) = 0: Next I2
+    End If
+
+    Call TradeSummary_Batters(I, I1)
+
+    Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
+    I$ = GetKeyPress$
+    'GoTo 260
+
+End Sub
+
+
+'----------------------------------------
+'       TradePitchers Subroutine
+'----------------------------------------
+'...explanation...
+Sub TradePitchers
+
+    Shared A$(), tradeB$(), tradeP1$()
+    Shared tradeL%(), tradeP0%(), tradeP%(), tradeP3%()
+    Shared tradeSA%(), tradeTS%()
+    Shared S%()
+
+    Cls
+
+    For I = 0 To 11: Locate I + 2, 4: Color , tradeL%(0, 12): Print Space$(15): Next
+    For I = 0 To 10: Locate I + 2, 24: Color , tradeL%(0, 12): Print Space$(15): Next
+    For I = 0 To 11: Locate I + 2, 44: Color , tradeL%(1, 12): Print Space$(15): Next
+    For I = 0 To 10: Locate I + 2, 64: Color , tradeL%(1, 12): Print Space$(15): Next
+
+    Color 15, 0: Locate 1: Print A$(0);: Locate , 40: Print A$(1)
+
+    For I = 0 To 11
+        Color 15, 0: Print Using "##"; I;: Print " ";
+        Color tradeL%(0, 11), tradeL%(0, 12): Print tradeB$(0, I);: Color 15, 0
+        Locate , 40: Print Using "##"; I;: Print " ";: Color tradeL%(1, 11), tradeL%(1, 12)
+        Print tradeB$(1, I)
+    Next I
+
+    For I = 12 To 21
+        Color 15, 0: Locate I - 10, 20: Print Using "##"; I;: Print "  ";
+        Color tradeL%(0, 11), tradeL%(0, 12): Print tradeB$(0, I);: Locate I - 10, 40: Color 15, 0
+        Locate , 60: Print Using "##"; I;: Print "  ";: Color tradeL%(1, 11), tradeL%(1, 12)
+        Print tradeB$(1, I)
+    Next I
+
+    Do
+        Color 15, 0: Locate 20, 1
+        Print Space$(40);
+        Print Space$(40);
+        Print Space$(40);
+
+        Locate 20, 1: Print A$(0); " PITCHER: ";
+
+        Do
+            Input I
+            'I = Val(I$)
+        Loop Until I >= 0 And I <= 21
+
+        Print tradeB$(0, I)
+        Locate 21, 1: Print A$(1); " PITCHER: ";
+
+        Do
+            Input I1
+            'I = Val(I$)
+        Loop Until I1 >= 0 And I1 <= 21
+
+        Print tradeB$(1, I1)
+        Locate 22, 1: Print "ANY CHANGE (YN) ";
+
+        I$ = GetKeyPress
+
+    Loop Until UCase$(I$) = "N"
+
+    Call TradeSummary_Pitchers(I, I1)
+
+    Locate 24, 1: Print "HIT ANY KEY TO TRADE";
+    I$ = GetKeyPress$
+
+    If tradeTS%(0, 0) = 999 And tradeTS%(1, 0) = 999 Then 505
+    If tradeTS%(0, 0) <> 999 And tradeTS%(1, 0) <> 999 Then 505
+    If tradeTS%(0, 0) = 999 And tradeTS%(1, 0) <> 999 Then For I2 = 0 To 11: tradeTS%(1, I2) = tradeTS%(0, I2): Next: For I2 = 1 To 24: tradeSA%(1, I2) = tradeSA%(0, I2): Next: GoTo 505
+    If tradeTS%(1, 0) = 999 And tradeTS%(0, 0) <> 999 Then For I2 = 0 To 11: tradeTS%(0, I2) = tradeTS%(1, I2): Next: For I2 = 1 To 24: tradeSA%(0, I2) = tradeSA%(1, I2): Next
+
+    505 Swap tradeB$(0, I), tradeB$(1, I1)
+
+    For I2 = 0 To 88: Swap tradeP%(0, I, I2), tradeP%(1, I1, I2): Next I2
+
+    tradeP1$(0, I) = tradeB$(0, I)
+    tradeP1$(1, I1) = tradeB$(1, I1)
+
+    If S%(0) = 1 Or S%(1) = 1 Or W1 = 0 Then
+        For I2 = 0 To 41: tradeP0%(0, I, I2) = 0: tradeP0%(1, I1, I2) = 0: Next I2
+    Else
+        Swap tradeP3%(0, I), tradeP3%(1, I1)
+        For I2 = 0 To 41: Swap tradeP0%(0, I, I2), tradeP0%(1, I1, I2): Next I2
+    End If
+
+    Call TradeSummary_Pitchers(I, I1)
+    Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
+    I$ = GetKeyPress$
+
+End Sub
+
+
+'----------------------------------------
+'       SaveTrades Subroutine
+'----------------------------------------
+'...explanation...
+Sub SaveTrades (yearNumbers$())
+
+    Shared A$(), A1$(), SA$()
+    Shared tradeB$(), tradeP$()
+    Shared tradeB1$(), tradeP1$()
+
+    Shared D0%(), D1%(), tradeL%(), L2%()
+    Shared S%(), TEAM%()
+    Shared tradeB%(), tradeB0%(), tradeB3%()
+    Shared tradeP%(), tradeP0%(), tradeP3%()
+    Shared tradeSA%(), tradeSS%(), tradeT1%(), tradeTS%()
+    Shared tradeInfo%(), W2%()
+
+    Shared M$(), NN$(), S$()
+
+    Shared K9&()
+
+    For idx = 0 To 1
+
+        Cls
+        Color 15, 0
+
+        Open diskPaths$(0) + "FCTEAMS." + yearNumbers$(idx) For Random As #1 Len = 4342
+        Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 4 As Q$(14), 4297 As X$
+
+        For J = 0 To 22
+            Field #1, 45 + J * 99 As X$, 15 As Q$(J * 43 + 15), 2 As Q$(J * 43 + 16), 2 As Q$(J * 43 + 17), 2 As Q$(J * 43 + 18), 2 As Q$(J * 43 + 19), 2 As Q$(J * 43 + 20), 2 As Q$(J * 43 + 21), 2 As Q$(J * 43 + 22), 2 As Q$(J * 43 + 23), 2 As Q$(J * 43 + 24), 2 As Q$(J * 43 + 25), 2 As Q$(J * 43 + 26), 4297 - 37 - J * 99 As X$
+            Field #1, 82 + J * 99 As X$, 2 As Q$(J * 43 + 27), 2 As Q$(J * 43 + 28), 2 As Q$(J * 43 + 29), 2 As Q$(J * 43 + 30), 2 As Q$(J * 43 + 31), 2 As Q$(J * 43 + 32), 2 As Q$(J * 43 + 33), 2 As Q$(J * 43 + 34), 2 As Q$(J * 43 + 35), 2 As Q$(J * 43 + 36), 2 As Q$(J * 43 + 37), 2 As Q$(J * 43 + 38), 4297 - 61 - J * 99 As X$
+            Field #1, 106 + J * 99 As X$, 2 As Q$(J * 43 + 39), 2 As Q$(J * 43 + 40), 2 As Q$(J * 43 + 41), 2 As Q$(J * 43 + 42), 2 As Q$(J * 43 + 43), 2 As Q$(J * 43 + 44), 2 As Q$(J * 43 + 45), 2 As Q$(J * 43 + 46), 2 As Q$(J * 43 + 47), 2 As Q$(J * 43 + 48), 2 As Q$(J * 43 + 49), 2 As Q$(J * 43 + 50), 4297 - 85 - J * 99 As X$
+            Field #1, 130 + J * 99 As X$, 2 As Q$(J * 43 + 51), 2 As Q$(J * 43 + 52), 2 As Q$(J * 43 + 53), 2 As Q$(J * 43 + 54), 2 As Q$(J * 43 + 55), 2 As Q$(J * 43 + 56), 2 As Q$(J * 43 + 57), 4297 - 99 - J * 99 As X$
+        Next
+
+        For J = 0 To 21
+            Field #1, 2322 + J * 89 As X$, 15 As Q$(J * 38 + 1004), 2 As Q$(J * 38 + 1005), 2 As Q$(J * 38 + 1006), 2 As Q$(J * 38 + 1007), 2 As Q$(J * 38 + 1008), 2 As Q$(J * 38 + 1009), 2 As Q$(J * 38 + 1010), 2 As Q$(J * 38 + 1011), 2 As Q$(J * 38 + 1012), 2 As Q$(J * 38 + 1013), 2 As Q$(J * 38 + 1014), 2 As Q$(J * 38 + 1015), 2020 - 37 - J * 89 As X$
+            Field #1, 2359 + J * 89 As X$, 2 As Q$(J * 38 + 1016), 2 As Q$(J * 38 + 1017), 2 As Q$(J * 38 + 1018), 2 As Q$(J * 38 + 1019), 2 As Q$(J * 38 + 1020), 2 As Q$(J * 38 + 1021), 2 As Q$(J * 38 + 1022), 2 As Q$(J * 38 + 1023), 2 As Q$(J * 38 + 1024), 2 As Q$(J * 38 + 1025), 2 As Q$(J * 38 + 1026), 2 As Q$(J * 38 + 1027), 2020 - 61 - J * 89 As X$
+            Field #1, 2383 + J * 89 As X$, 2 As Q$(J * 38 + 1028), 2 As Q$(J * 38 + 1029), 2 As Q$(J * 38 + 1030), 2 As Q$(J * 38 + 1031), 2 As Q$(J * 38 + 1032), 2 As Q$(J * 38 + 1033), 2 As Q$(J * 38 + 1034), 2 As Q$(J * 38 + 1035), 2 As Q$(J * 38 + 1036), 2 As Q$(J * 38 + 1037), 2 As Q$(J * 38 + 1038), 2 As Q$(J * 38 + 1039), 2020 - 85 - J * 89 As X$
+            Field #1, 2407 + J * 89 As X$, 2 As Q$(J * 38 + 1040), 2 As Q$(J * 38 + 1041), 2020 - 89 - J * 89 As X$
+        Next
+
+        Field #1, 4280 As X$, 40 As Q$(1840), 15 As Q$(1841), 5 As Q$(1842), 2 As Q$(1843)
+
+        LSet Q$(0) = A$(idx)
+
+        For J = 1 To 13:
+            test% = tradeL%(idx, J)
+            LSet Q$(J) = MKI$(tradeL%(idx, J))
+        Next
+
+        test& = K9&(idx)
+        LSet Q$(14) = MKS$(K9&(idx))
+
+        For J = 0 To 22
+            test$ = tradeB$(idx, J)
+            LSet Q$(J * 43 + 15) = tradeB$(idx, J)
+            For I1 = 0 To 41:
+                test% = tradeB%(idx, J, I1)
+                LSet Q$(J * 43 + I1 + 16) = MKI$(tradeB%(idx, J, I1))
+            Next
+        Next
+
+        For J = 0 To 21
+            test$ = tradeP$(idx, J)
+            LSet Q$(J * 38 + 1004) = tradeP$(idx, J)
+            For I1 = 0 To 36:
+                test% = tradeP%(idx, J, I1)
+                LSet Q$(J * 38 + I1 + 1005) = MKI$(tradeP%(idx, J, I1))
+            Next
+        Next
+
+        LSet Q$(1840) = S$(idx)
+        LSet Q$(1841) = M$(idx)
+        LSet Q$(1842) = NN$(idx)
+        LSet Q$(1843) = MKI$(999)
+
+        Put #1, tradeInfo%(idx)
+
+        Close 1
+
+        SCK = 0
+
+        For X = 1 To 24
+            SCK = SCK + tradeSA%(idx, X)
+        Next
+
+        If SCK > 0 Then
+
+            tradeTS%(idx, 0) = 999
+
+            For X = 1 To 11
+                tradeTS%(idx, X) = -1
+            Next
+
+            Open diskPaths$(0) + "LR." + yearNumbers$(idx) For Random As #1 Len = 4108
+
+            For X = 0 To 11
+                Field #1, X * 2 As X$, 2 As Q$(X + 1), 4108 - 2 - 2 * X As X$
+            Next
+
+            For X = 0 To 22
+                For X1 = 1 To 14
+                    Field #1, 24 + (X1 - 1) * 2 + X * 14 * 2 As X$, 2 As Q$(12 + X1 + X * 14), 4108 - 2 - (24 + (X1 - 1) * 2 + X * 14 * 2) As X$
+                Next
+            Next
+
+            For X = 0 To 21
+                For X1 = 1 To 14
+                    Field #1, 668 + (X1 - 1) * 2 + X * 14 * 2 As X$, 2 As Q$(334 + X1 + X * 14), 4108 - 2 - (668 + (X1 - 1) * 2 + X * 14 * 2) As X$
+                Next
+            Next
+
+            For X = 0 To 21
+                For X1 = 1 To 14
+                    Field #1, 1284 + (X1 - 1) * 2 + X * 14 * 2 As X$, 2 As Q$(642 + X1 + X * 14), 4108 - 2 - (1284 + (X1 - 1) * 2 + X * 14 * 2) As X$
+                Next
+            Next
+
+            For X = 1 To 24
+                Field #1, 1900 + (X - 1) * 2 As X$, 2 As Q$(950 + X), 4108 - 2 - (X - 1) * 2 - 1900 As X$
+            Next
+
+            For X = 0 To 22
+                For X1 = 1 To 24
+                    Field #1, 1948 + (X1 - 1) * 2 + X * 24 * 2 As X$, 2 As Q$(975 + X1 + X * 24), 4108 - 2 - (1948 + (X1 - 1) * 2 + X * 24 * 2) As X$
+                Next
+            Next
+
+            For X = 0 To 21
+                For X1 = 1 To 24
+                    Field #1, 3052 + (X1 - 1) * 2 + X * 24 * 2 As X$, 2 As Q$(1528 + X1 + X * 24), 4108 - 2 - (3052 + (X1 - 1) * 2 + X * 24 * 2) As X$
+                Next
+            Next
+
+            For X = 0 To 11: LSet Q$(X + 1) = MKI$(tradeTS%(idx, X)): Next
+
+            For X = 0 To 22
+                For X1 = 1 To 14
+                    LSet Q$(12 + X1 + X * 14) = MKI$(tradeB%(idx, X, X1 + 41))
+                Next
+            Next
+
+            For X = 0 To 21
+                For X1 = 1 To 14
+                    LSet Q$(334 + X1 + X * 14) = MKI$(tradeP%(idx, X, X1 + 36))
+                Next
+            Next
+
+            For X = 0 To 21
+                For X1 = 1 To 14
+                    LSet Q$(642 + X1 + X * 14) = MKI$(tradeP%(idx, X, X1 + 50))
+                Next
+            Next
+
+            For X = 1 To 24
+                LSet Q$(X + 950) = MKI$(tradeSA%(idx, X))
+            Next
+
+            For X = 0 To 22
+                For X1 = 1 To 24
+                    LSet Q$(975 + X1 + X * 24) = MKI$(tradeB%(idx, X, X1 + 55))
+                Next
+            Next
+
+            For X = 0 To 21
+                For X1 = 1 To 24
+                    LSet Q$(1528 + X1 + X * 24) = MKI$(tradeP%(idx, X, X1 + 64))
+                Next
+            Next
+
+            Put #1, tradeInfo%(idx)
+            Close 1
+
+        End If
+
+    Next idx
+
+    For I = 0 To 1
+        If S%(I) <> 1 Then
+            Cls
+
+            For XX = 4 To 11
+                If Mid$(SA$(I), XX, 1) = " " Or Mid$(SA$(I), XX, 1) = "." Then Mid$(SA$(I), XX, 1) = "_"
+            Next
+            QQ = 8
+            For XX = 11 To 4 Step -1
+                If Mid$(SA$(I), XX, 1) = "_" Then
+                    QQ = XX - 4
+                Else
+                    Exit For
+                End If
+            Next XX
+
+            F$ = Mid$(SA$(I), 4, QQ)
+            R$ = F$ + "." + Left$(SA$(I), 2)
+
+            Open diskPaths$(1) + R$ For Output As #1
+            Print #1, A1$(I): Print #1, W2%(I): Print #1, L2%(I)
+
+            For I1 = 0 To 22: Print #1, tradeB1$(I, I1): Print #1, tradeB3%(I, I1): Next I1
+
+            For I1 = 0 To 21: Print #1, tradeP1$(I, I1): Print #1, tradeP3%(I, I1): Next I1
+
+            For I1 = 0 To 22: For I2 = 0 To 21: Print #1, tradeB0%(I, I1, I2): Next I2: Next I1
+
+            For I1 = 0 To 21: For I2 = 0 To 41: Print #1, tradeP0%(I, I1, I2): Next I2: Next I1
+
+            Print #1, D0%(I): Print #1, D1%(I)
+
+            For I1 = 0 To 21: Print #1, TEAM%(I, I1): Next I1
+
+            For I1 = 0 To 22: Print #1, tradeT1%(I, I1): Next I1
+
+            Close #1
+
+            Open diskPaths$(1) + R$ + "R" For Output As #1
+
+            For I1 = 0 To 22: For I2 = 0 To 6
+                Print #1, tradeSS%(I, I1, I2)
+            Next I2: Next I1
+
+            Close #1
+
+        End If
+    Next I
+    'GoTo 50
+
+End Sub
+
+
+'----------------------------------------
+'    TradeSummary_Batters Subroutine
+'----------------------------------------
+'...explanation...
+Sub TradeSummary_Batters (I, I1)
+
+    Shared A$(), tradeB$()
+    Shared tradeL%(), tradeB%(), tradeB0%()
+
+    Dim C$(9), X$(4)
+
+    X$(0) = "LP"
+    X$(1) = "L"
+    X$(2) = "S"
+    X$(3) = "R"
+    X$(4) = "RP"
+
+    C$(0) = "DH"
+    C$(1) = "P"
+    C$(2) = "C"
+    C$(3) = "1B"
+    C$(4) = "2B"
+    C$(5) = "3B"
+    C$(6) = "SS"
+    C$(7) = "LF"
+    C$(8) = "CF"
+    C$(9) = "RF"
+
+    Cls
+    Color tradeL%(0, 11), tradeL%(0, 12): Print A$(0);
+    Locate , 41
+    Color tradeL%(1, 11), tradeL%(1, 12): Print A$(1)
+    Color 15, 0
+
+    Print tradeB$(0, I); " "; X$(tradeB%(0, I, 0) + 2); " "; C$(tradeB%(0, I, 22));
+    If tradeB%(0, I, 23) >= 0 Then Print ","; C$(tradeB%(0, I, 23));
+    If tradeB%(0, I, 24) >= 0 Then Print ","; C$(tradeB%(0, I, 24));
+    If tradeB%(0, I, 25) >= 0 Then Print ","; C$(tradeB%(0, I, 25));
+
+    Locate , 41:
+
+    Print tradeB$(1, I1); " "; X$(tradeB%(1, I1, 0) + 2); " "; C$(tradeB%(1, I1, 22));
+    If tradeB%(1, I1, 23) >= 0 Then Print ","; C$(tradeB%(1, I1, 23));
+    If tradeB%(1, I1, 24) >= 0 Then Print ","; C$(tradeB%(1, I1, 24));
+    If tradeB%(1, I1, 25) >= 0 Then Print ","; C$(tradeB%(1, I1, 25));
+
+    Locate , 1: Print
+    Print "REAL";: Locate , 15
+    Print "COMP";: Locate , 41
+    Print "REAL";: Locate , 55
+    Print "COMP": Locate , 1
+    Locate , 1
+    Print tradeB%(0, I, 3);: Locate , 10
+
+    Print "G";: Locate , 15
+    Print tradeB0%(0, I, 14);: Locate , 41
+    Print tradeB%(1, I1, 3);: Locate , 50
+    Print "G";: Locate , 55
+    Print tradeB0%(1, I1, 14)
+    Locate , 1
+    Print tradeB%(0, I, 4);: Locate , 10
+
+    Print "AB";: Locate , 15
+    Print tradeB0%(0, I, 0);: Locate , 41
+    Print tradeB%(1, I1, 4);: Locate , 50
+    Print "AB";: Locate , 55
+    Print tradeB0%(1, I1, 0)
+    Locate , 1
+    Print tradeB%(0, I, 5);: Locate , 10
+
+    Print "R";: Locate , 15
+    Print tradeB0%(0, I, 2);: Locate , 41
+    Print tradeB%(1, I1, 5);: Locate , 50
+    Print "R";: Locate , 55
+    Print tradeB0%(1, I1, 2)
+    Locate , 1
+    Print tradeB%(0, I, 6);: Locate , 10
+
+    Print "H";: Locate , 15
+    Print tradeB0%(0, I, 1);: Locate , 41
+    Print tradeB%(1, I1, 6);: Locate , 50
+    Print "H";: Locate , 55
+    Print tradeB0%(1, I1, 1)
+    Locate , 1: Print tradeB%(0, I, 10);: Locate , 9
+
+    Print "RBI";: Locate , 15
+    Print tradeB0%(0, I, 3);: Locate , 41
+    Print tradeB%(1, I1, 10);: Locate , 49
+    Print "RBI";: Locate , 55
+    Print tradeB0%(1, I1, 3)
+    Locate , 1
+    Print tradeB%(0, I, 7);: Locate , 10
+
+    Print "DB";: Locate , 15
+    Print tradeB0%(0, I, 4);: Locate , 41
+    Print tradeB%(1, I1, 7);: Locate , 50
+    Print "DB";: Locate , 55
+    Print tradeB0%(1, I1, 4)
+    Locate , 1
+    Print tradeB%(0, I, 8);: Locate , 10
+
+    Print "TR";: Locate , 15
+    Print tradeB0%(0, I, 5);: Locate , 41
+    Print tradeB%(1, I1, 8);: Locate , 50
+    Print "TR";: Locate , 55
+    Print tradeB0%(1, I1, 5)
+    Locate , 1
+    Print tradeB%(0, I, 9);: Locate , 10
+
+    Print "HR";: Locate , 15
+    Print tradeB0%(0, I, 6);: Locate , 41
+    Print tradeB%(1, I1, 9);: Locate , 50
+    Print "HR";: Locate , 55
+    Print tradeB0%(1, I1, 6)
+    Locate , 1
+    Print tradeB%(0, I, 11);: Locate , 10
+
+    Print "BB";: Locate , 15
+    Print tradeB0%(0, I, 7);: Locate , 41
+    Print tradeB%(1, I1, 11);: Locate , 50
+    Print "BB";: Locate , 55
+    Print tradeB0%(1, I1, 7)
+    Locate , 1
+    Print tradeB%(0, I, 12);: Locate , 10
+
+    Print "SO";: Locate , 15
+    Print tradeB0%(0, I, 8);: Locate , 41
+    Print tradeB%(1, I1, 12);: Locate , 50
+    Print "S0";: Locate , 55
+    Print tradeB0%(1, I1, 8)
+
+    Locate , 1
+    If tradeB%(0, I, 4) = 0 Then
+        Print "-.---";
+    Else
+        If tradeB%(0, I, 6) = tradeB%(0, I, 4) Then
+            Print "1.000";
+        Else
+            Print Using " .###"; (tradeB%(0, I, 6) / tradeB%(0, I, 4));
+        End If
+    End If
+
+    Locate , 9
+    Print "BAVG";: Locate , 15
+    If tradeB0%(0, I, 0) = 0 Then
+        Print "-.---";
+    Else
+        If tradeB0%(0, I, 0) = tradeB0%(0, I, 1) Then
+            Print "1.000";
+        Else
+            Print Using " .###"; (tradeB0%(0, I, 1) / tradeB0%(0, I, 0));
+        End If
+    End If
+
+    Locate , 41
+    If tradeB%(1, I1, 4) = 0 Then
+        Print "-.---";
+    Else
+        If tradeB%(1, I1, 6) = tradeB%(1, I1, 4) Then
+            Print "1.000";
+        Else
+            Print Using " .###"; (tradeB%(1, I1, 6) / tradeB%(1, I1, 4));
+        End If
+    End If
+
+    Locate , 49
+    Print "BAVG";: Locate , 55
+    If tradeB0%(1, I1, 0) = 0 Then
+        Print "-.---"
+    Else
+        If tradeB0%(1, I1, 0) = tradeB0%(1, I1, 1) Then
+            Print "1.000"
+        Else
+            Print Using " .###"; (tradeB0%(1, I1, 1) / tradeB0%(1, I1, 0))
+        End If
+    End If
+
+    Locate , 1
+    Print tradeB%(0, I, 13);: Locate , 10
+
+    Print "SB";: Locate , 15
+    Print tradeB0%(0, I, 9);: Locate , 41
+    Print tradeB%(1, I1, 13);: Locate , 50
+    Print "SB";: Locate , 55
+    Print tradeB0%(1, I1, 9)
+    Locate , 1
+    Print tradeB%(0, I, 14);: Locate , 10
+
+    Print "CS";: Locate , 15
+    Print tradeB0%(0, I, 10);: Locate , 41
+    Print tradeB%(1, I1, 14);: Locate , 50
+    Print "CS";: Locate , 55
+    Print tradeB0%(1, I1, 10)
+
+End Sub
+
+
+
+'----------------------------------------
+'     PrintTradeSummary Subroutine
+'----------------------------------------
+'...explanation...
+Sub TradeSummary_Pitchers (I, I1)
+
+    Shared A$(), tradeB$()
+    Shared tradeL%(), tradeP%(), tradeP0%()
+    Dim X$(4)
+
+
+    X$(0) = "LP"
+    X$(1) = "L"
+    X$(2) = "S"
+    X$(3) = "R"
+    X$(4) = "RP"
+
+    '905
+    Cls
+    Color tradeL%(0, 11), tradeL%(0, 12): Print A$(0);
+    Locate , 41
+    Color tradeL%(1, 11), tradeL%(1, 12): Print A$(1)
+    Color 15, 0
+
+    Locate , 1: Print tradeB$(0, I); " "; X$(tradeP%(0, I, 0) + 2);
+    Locate , 41: Print tradeB$(1, I1); " "; X$(tradeP%(1, I1, 0) + 2)
+    Locate , 1: Print: Print "REAL";
+    Locate , 15: Print "COMP";
+    Locate , 41: Print "REAL";
+    Locate , 55: Print "COMP"
+    Locate , 1: Print tradeP%(0, I, 1); "-"; tradeP%(0, I, 2);
+    Locate , 9: Print "W-L";
+    Locate , 15: Print tradeP0%(0, I, 6); "-"; tradeP0%(0, I, 7);
+    Locate , 41: Print tradeP%(1, I1, 1); "-"; tradeP%(1, I1, 2);
+    Locate , 49: Print "W-L";
+    Locate , 55: Print tradeP0%(1, I1, 6); "-"; tradeP0%(1, I1, 7)
+    Locate , 1: Print tradeP%(0, I, 4);: Locate , 10: Print "G";
+    Locate , 15: Print tradeP0%(0, I, 8);
+    Locate , 41: Print tradeP%(1, I1, 4);
+    Locate , 50: Print "G";
+    Locate , 55: Print tradeP0%(1, I1, 8)
+    Locate , 1: Print tradeP%(0, I, 5);
+    Locate , 10: Print "GS";
+    Locate , 15: Print tradeP0%(0, I, 9);
+    Locate , 41: Print tradeP%(1, I1, 5);
+    Locate , 50: Print "GS";
+    Locate , 55: Print tradeP0%(1, I1, 9)
+    Locate , 1: Print tradeP%(0, I, 3);
+    Locate , 10: Print "SV";
+    Locate , 15: Print tradeP0%(0, I, 12);
+    Locate , 41: Print tradeP%(1, I1, 3);
+    Locate , 50: Print "SV";
+    Locate , 55: Print tradeP0%(1, I1, 12)
+    Locate , 1: Print tradeP%(0, I, 6);
+    Locate , 10: Print "IP";
+    Locate , 15: Print Int((tradeP0%(0, I, 0) / 3) + .5);
+    Locate , 41: Print tradeP%(1, I1, 6);
+    Locate , 50: Print "IP";
+    Locate , 55: Print Int((tradeP0%(1, I1, 0) / 3) + .5)
+    Locate , 1: Print tradeP%(0, I, 7);
+    Locate , 10: Print "H";
+    Locate , 15: Print tradeP0%(0, I, 1);
+    Locate , 41: Print tradeP%(1, I1, 7);
+    Locate , 50: Print "H";
+    Locate , 55: Print tradeP0%(1, I1, 1)
+    Locate , 1: Print tradeP%(0, I, 8);
+    Locate , 10: Print "BB";
+    Locate , 15: Print tradeP0%(0, I, 4);
+    Locate , 41: Print tradeP%(1, I1, 8);
+    Locate , 50: Print "BB";
+    Locate , 55: Print tradeP0%(1, I1, 4)
+    Locate , 1: Print tradeP%(0, I, 9);
+    Locate , 10: Print "SO";
+    Locate , 15: Print tradeP0%(0, I, 5);
+    Locate , 41: Print tradeP%(1, I1, 9);
+    Locate , 50: Print "SO";
+    Locate , 55: Print tradeP0%(1, I1, 5)
+    Locate , 1: Print tradeP%(0, I, 13);
+    Locate , 10: Print "HR";
+    Locate , 15: Print tradeP0%(0, I, 14);
+    Locate , 41: Print tradeP%(1, I1, 13);
+    Locate , 50: Print "HR";
+    Locate , 55: Print tradeP0%(1, I1, 14)
+    Locate , 1: Print Using "##.##"; tradeP%(0, I, 10) / 100;
+    Locate , 9: Print "ERA";
+
+    Locate , 15:
+
+    If tradeP0%(0, I, 0) = 0 Then
+        Print " -.--";
+    Else
+        Print Using "##.##"; tradeP0%(0, I, 3) * 27 / tradeP0%(0, I, 0);
+    End If
+
+    Locate , 41
+
+    Print Using "##.##"; tradeP%(1, I1, 10) / 100;
+    Locate , 49: Print "ERA";
+
+    Locate , 55: If tradeP0%(1, I1, 0) = 0 Then
+        Print " -.--"
+    Else
+        Print Using "##.##"; tradeP0%(1, I1, 3) * 27 / tradeP0%(1, I1, 0)
+
+        If tradeP0%(0, I, 0) > 0 Then G1% = Int((((tradeP0%(0, I, 3) * 9) / (tradeP0%(0, I, 0) / 3)) + .0005) * 100)
+
+        E1% = Int(G1% / 100)
+        F1% = G1% - (E1% * 100)
+    End If
 
 End Sub

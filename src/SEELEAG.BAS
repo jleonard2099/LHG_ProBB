@@ -58,142 +58,150 @@ Sub SEELEAG ()
             MAMenu leagueLeaderFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
 
-			If ExitCode% = 27 Then Exit Sub
-		
+			If ExitCode% <> 27 Then		
 
-            targetFile$ = RTrim$(leagueLeaderFiles$(Selection%))
-            Locate 2, 33: Print targetFile$
-            Locate , 33: Print "ANY CHANGE (YN)";
-            Color 15, 0
-            I$ = GetKeyPress$
+				targetFile$ = RTrim$(leagueLeaderFiles$(Selection%))
+				Locate 2, 33: Print targetFile$
+				Locate , 33: Print "ANY CHANGE (YN)";
+				Color 15, 0
+				I$ = GetKeyPress$
 
-            If UCase$(I$) = "N" Then
+				If UCase$(I$) = "N" Then
 
-                WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-                WE$ = Left$(WE$, 8)
+					WE$ = Left$(targetFile$, Len(targetFile$) - 4)
+					WE$ = Left$(WE$, 8)
 
-                Open diskPaths$(1) + WE$ + ".TMS" For Input As #2
-                Input #2, FF$, D1$, D2$, D3$, D4$
-                Close 2
+					Open diskPaths$(1) + WE$ + ".TMS" For Input As #2
+					Input #2, FF$, D1$, D2$, D3$, D4$
+					Close 2
 
-                200 L = 8: If Len(D1$) < L Then D1$ = D1$ + " ": GoTo 200
+					L = 8
+					While Len(D1$) < L 
+						D1$ = D1$ + " "
+					Wend
 
-                201 L = 8: If Len(D2$) < L Then D2$ = D2$ + " ": GoTo 201
+					While Len(D2$) < L 
+						D2$ = D2$ + " "
+					Wend
 
-                202 L = 8: If Len(D3$) < L Then D3$ = D3$ + " ": GoTo 202
+					While Len(D3$) < L 
+						D3$ = D3$ + " "
+					Wend
 
-                203 L = 8: If Len(D4$) < L Then D4$ = D4$ + " ": GoTo 203
+					While Len(D4$) < L 
+						D4$ = D4$ + " "
+					Wend
 
-                Cls
-                Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
+					Cls
+					Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
 
-                Open diskPaths$(1) + WE$ + ".LDR" For Input As #2
-				
-                For X = 1 To TEAMS_PER_CONFERENCE
-                    Input #2, leagT$(X), O1(X), O2(X)
-                Next
-
-                For X = 1 To 250
-                    Input #2, Z2$(X), Z3$(X), Z!(X), Z1!(X)
-                Next
-
-                For X = 1 To TEAMS_PER_CONFERENCE
-                    Input #2, OL$(X)
-                    For M = 1 To 20
-                        Input #2, OL!(X, M)
-                    Next
-                Next
-
-                For X = 1 To TEAMS_PER_CONFERENCE
-					Input #2, DL$(X)
-					For M = 1 To 20
-						Input #2, DL!(X, M)
+					Open diskPaths$(1) + WE$ + ".LDR" For Input As #2
+					
+					For X = 1 To TEAMS_PER_CONFERENCE
+						Input #2, leagT$(X), O1(X), O2(X)
 					Next
-				Next
-                Close #2
 
-                Do
-                    Cls
-                    Call TITLE_STATS
-                    
-					J = 5
-                    Locate 8, 8
-					Color 15, 1: Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-                    
-					For II = 1 To J
-                        Locate 8 + II, 8
-                        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-                    Next
-                    
-					Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 10, 15
-                    
-					Color 7
-                    Locate , 30: Print "STATS TO ";
-					Color 15: Print "S";: Color 7: Print "CREEN"
-                    Locate , 30: Print "STATS TO ";
-					Color 15: Print "P";: Color 7: Print "RINTER"
-                    Locate , 30: Print "STATS TO ";
-					Color 15: Print "F";: Color 7: Print "ILE"
-                    I$ = GetKeyPress$
-                    Color 14, 0
+					For X = 1 To 250
+						Input #2, Z2$(X), Z3$(X), Z!(X), Z1!(X)
+					Next
 
-                    Select Case UCase$(I$)
-                        Case "P": Call SavePrintLeagueStats(SF$, 0)
-                        Case "F":
-                            Do
-                                Color 15, 0: Cls
-                                JJ = 7
-                                Locate 6, 8
-								Color 15, 1
-                                Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-                                Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
-                                Locate 7 + JJ, 8
-                                Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
-                                Locate , 12: Print "ENTER NAME FOR FILE: ": Print
-                                Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
-                                Locate , 12: Print "SPACES. DO NOT ADD A FILE EXTENSION, THE PROGRAM"
-                                Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
-                                Locate 7, 37: Input SF$
-                                If SF$ <> "" Then
-                                    Locate 13, 12: Print "ANY CHANGE (YN) "
-                                    I$ = GetKeyPress$
-                                End If
+					For X = 1 To TEAMS_PER_CONFERENCE
+						Input #2, OL$(X)
+						For M = 1 To 20
+							Input #2, OL!(X, M)
+						Next
+					Next
 
-                            Loop Until UCase$(I$) = "N"
+					For X = 1 To TEAMS_PER_CONFERENCE
+						Input #2, DL$(X)
+						For M = 1 To 20
+							Input #2, DL!(X, M)
+						Next
+					Next
+					Close #2
 
-                            Color 15, 0
-                            Call SavePrintLeagueStats(SF$, 1)
+					Do
+						Cls
+						Call TITLE_STATS
+						
+						J = 5
+						Locate 8, 8
+						Color 15, 1: Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+						
+						For II = 1 To J
+							Locate 8 + II, 8
+							Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+						Next
+						
+						Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 10, 15
+						
+						Color 7
+						Locate , 30: Print "STATS TO ";
+						Color 15: Print "S";: Color 7: Print "CREEN"
+						Locate , 30: Print "STATS TO ";
+						Color 15: Print "P";: Color 7: Print "RINTER"
+						Locate , 30: Print "STATS TO ";
+						Color 15: Print "F";: Color 7: Print "ILE"
+						I$ = GetKeyPress$
+						Color 14, 0
 
-                        Case "S":
-                            Call LeagueStatsToScreen
+						Select Case UCase$(I$)
+							Case "P": Call SavePrintLeagueStats(SF$, 0)
+							Case "F":
+								Do
+									Color 15, 0: Cls
+									JJ = 7
+									Locate 6, 8
+									Color 15, 1
+									Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+									Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+									Locate 7 + JJ, 8
+									Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+									Locate , 12: Print "ENTER NAME FOR FILE: ": Print
+									Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
+									Locate , 12: Print "SPACES. DO NOT ADD A FILE EXTENSION, THE PROGRAM"
+									Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
+									Locate 7, 37: Input SF$
+									If SF$ <> "" Then
+										Locate 13, 12: Print "ANY CHANGE (YN) "
+										I$ = GetKeyPress$
+									End If
 
-                            Do
-                                JJ = 4
-                                Locate 6, 8
-								Color 15, 1
-                                Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
-                                For II = 1 To JJ: Locate 6 + II, 8
-                                    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-                                Next
-                                Locate 7 + JJ, 8
-                                Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7
+								Loop Until UCase$(I$) = "N"
 
-                                U$ = "VIEW LEAGUE STATS AGAIN (YN)"
-                                Locate , (80 - Len(U$)) / 2
-                                Print U$
-                                Color 15, 0
-                                A$ = GetKeyPress$
-                            Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
+								Color 15, 0
+								Call SavePrintLeagueStats(SF$, 1)
 
-                    End Select
+							Case "S":
+								Call LeagueStatsToScreen
 
-                Loop Until UCase$(A$) = "N" Or A$ = Chr$(27)
+								Do
+									JJ = 4
+									Locate 6, 8
+									Color 15, 1
+									Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
+									For II = 1 To JJ: Locate 6 + II, 8
+										Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+									Next
+									Locate 7 + JJ, 8
+									Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7
 
-            End If 'End checking if we are viewing stats again
+									U$ = "VIEW LEAGUE STATS AGAIN (YN)"
+									Locate , (80 - Len(U$)) / 2
+									Print U$
+									Color 15, 0
+									A$ = GetKeyPress$
+								Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
 
-        Loop Until UCase$(I$) = "N"
+						End Select
+	
+					Loop Until UCase$(A$) = "N" Or A$ = Chr$(27)
 
-        'GoTo 1310
+				End If 'End checking if we are viewing stats again
+
+			End If 'Done checking for ESC
+
+        Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
     End If 'End checking for files
 

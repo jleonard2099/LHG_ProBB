@@ -38,12 +38,12 @@ Sub HD2HD ()
         _MouseHide
 
         Color , 0
+
         If ExitCode% <> 27 Then
             Select Case Selection%
                 Case 1:
 
                     RDD = 0
-                    ER = 0
 
                     Call GetTeam_HD2HD
 
@@ -102,8 +102,13 @@ Sub HD2HD ()
                             Loop Until UCase$(I$) = "S" Or UCase$(I$) = "P"
 
                             Color 14, 0
-                            If UCase$(I$) = "P" Then X1 = 1
-                            If UCase$(I$) = "S" Then VPP = 1
+							'I don't think X1 is even used!
+                            If UCase$(I$) = "P" 
+								Then X1 = 1
+							Else
+								'UCase$(I$) = "S"
+								VPP = 1
+							End If
 
                             W$ = LG$ + ".LIB"
                             Open diskPaths$(1) + W$ For Input As #1
@@ -401,7 +406,7 @@ Sub HD2HD ()
 
             End Select
 
-        End If
+        End If 'Done checking for ESC
 
     Loop Until Selection% = 2 Or ExitCode% = 27 Or LG$ = ""
 
@@ -641,7 +646,7 @@ Sub GetTeam_HD2HD ()
     Do
         Color 15, 0: Cls
         JJ = 6
-        SN = 1: Locate 6, 8: Color 15, 4
+        Locate 6, 8: Color 15, 4
         Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
         Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
         Locate 7 + JJ, 8
@@ -662,8 +667,9 @@ Sub GetTeam_HD2HD ()
                 NY$ = I$ + NY$
                 Color 15, 0
 
-                If NY$ = "" Then
-                    Call SelectTeam_HD2HD(NY$, numberTeams)
+				If NY$ = "" And yearNumber$ <> "" Then 
+					'NY$ = yearNumber$
+                    Call SelectTeam_HD2HD(yearNumber$, numberTeams)
                 Else
                     yearNumber$ = NY$
                     Erase teamNames$

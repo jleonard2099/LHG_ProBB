@@ -121,7 +121,9 @@ Sub SCHEDULE ()
 					
                 Case 6: Call BoxscoreMaintenance
                 Case 7: Cls
+
             End Select
+
         End If
 
     Loop Until Selection% = 7 OR ExitCode% = 27
@@ -198,14 +200,14 @@ Sub NewSchedule (scheduleFile$)
                 YN$ = scheduleYN$(X + NS% * 20, 0)
                 Call CheckTeam_Schedule(T1, YN$)
 
-                N$ = RTrim$(Q$(0))
+				N$ = RTrim$(Q$(0))
                 scheduleV$(X) = N$
 
                 T1 = NG%(X + NS% * 20, 1)
                 YN$ = scheduleYN$(X + NS% * 20, 1)
                 Call CheckTeam_Schedule(T1, YN$)
 
-                N$ = RTrim$(Q$(0))
+				N$ = RTrim$(Q$(0))
                 scheduleH$(X) = N$
 
                 'Game
@@ -453,7 +455,7 @@ Sub NewGame (visitor$, home$, gameIndex%)
     Dim CM$(0 To 1), FR$(0 To 1), FT$(0 To 1)
     Dim LC$(0 To 2), PO$(0 To 1), SC$(0 To 1)
     Dim TE$(0 To 2), TS$(0 To 1), U5$(0 To 4)
-    Dim displayPause As Single
+    Dim displayPause!
 
     Shared N$
     Shared scheduleH$(), scheduleV$(), scheduleYN$()
@@ -491,44 +493,35 @@ Sub NewGame (visitor$, home$, gameIndex%)
         149 Cls: Color 2: Print Tab(29); "SELECT GAME OPTIONS": Print
 
         151 Locate 2, 2: Color 14: Print "(1) ";: Color 15: Print U5$(NG%(gameIndex%, 8))
-
         152 Locate 3, 2: Color 14: Print "(2) ";: Color 15: Print "VISITING TEAM: "; visitor$
-
         153 Locate 4, 2: Color 14: Print "(3) ";: Color 15: Print "HOME TEAM: "; home$
-
         154 Locate 5, 2: Color 14: Print "(4) ";: Color 15: Print "3-POINT SHOT: "; TS$(NG%(gameIndex%, 3))
-
         155 Locate 6, 2: Color 14: Print "(5) ";: Color 15: Print "SHOT CLOCK "; SC$(NG%(gameIndex%, 7))
-
         156 Locate 7, 2: Color 14: Print "(6) ";: Color 15: Print "HOME COURT ADVANTAGE: "; LC$(NG%(gameIndex%, 2))
 
         pause! = NG%(gameIndex%, 4) / 10
         157 Locate 8, 2: Color 14: Print "(7) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; pause!
-
         158 Locate 9, 2: Color 14: Print "(8) ";: Color 15: Print PO$(NG%(gameIndex%, 5))
-
         159 Locate 10, 2: Color 14: Print "(9) ";: Color 15: Print "HUMAN COACHES WILL: "; CM$(NG%(gameIndex%, 9))
-
         160 Locate 11, 2: Color 14: Print "(A) ";: Color 15: Print "GAME DATE (XX-XX-XX) "; DT$; "   "
-
         161 Locate 12, 2: Color 14: Print "(B) ";: Color 15: Print "GAME TIME (XX:XXP) "; TM$; "   "
-
-        162 Locate 13, 2: Color 14: Print "(C) ";: Color 15: Print "PLAY IN ERA OF TEAM (IF DIFFERENTMS) "; TE$(NG%(gameIndex%, 6))
+        
+		162 Locate 13, 2: Color 14: Print "(C) ";: Color 15: Print "PLAY IN ERA OF TEAM (IF DIFFERENTMS) "; TE$(NG%(gameIndex%, 6))
         Locate 14, 2: Color 14: Print "(D) ";: Color 15: Print "BONUS AFTER FOUL # "; NG%(gameIndex%, 14)
         Locate 15, 2: Color 14: Print "(E) ";: Color 15: Print "NUMBER OF FREE THROWS "; FT$(NG%(gameIndex%, 10))
         Locate 16, 2: Color 14: Print "(F) ";: Color 15: Print "FREE THROW RULES "; FR$(NG%(gameIndex%, 11))
-
-        163 Locate 17, 2: Color 14: Print "(0) ";: Color 15: Print "ACCEPT SETTINGS"
+        
+		163 Locate 17, 2: Color 14: Print "(0) ";: Color 15: Print "ACCEPT SETTINGS"
 
         Do
-            175 I$ = GetKeyPress$
+            I$ = GetKeyPress$
             If UCase$(I$) = "A" Then I$ = "11"
             If UCase$(I$) = "B" Then I$ = "12"
             If UCase$(I$) = "C" Then I$ = "13"
             If UCase$(I$) = "D" Then I$ = "14"
             If UCase$(I$) = "E" Then I$ = "15"
             If UCase$(I$) = "F" Then I$ = "16"
-            I% = Val(I$) ': If I% < 0 Or I% > 16 Then 175
+            I% = Val(I$) 
         Loop Until (I% >= 0 And I% <= 16)
 
         Select Case I%
@@ -562,7 +555,8 @@ Sub NewGame (visitor$, home$, gameIndex%)
                     Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
                     Locate 7, 27: Input NY$
                     If NY$ = "" Then 
-                        Call GetTeam_Schedule(NTMS, YN$, T1)
+						NY$ = YN$
+                        Call GetTeam_Schedule(NTMS, NY$, T1)
                     Else
                         YN$ = NY$
                         Erase teamNames$
@@ -598,31 +592,51 @@ Sub NewGame (visitor$, home$, gameIndex%)
                 Loop Until UCase$(I$) = "N"
                 
             Case 4
-                NG%(gameIndex%, 3) = 1 - NG%(gameIndex%, 3): GoTo 154
+                NG%(gameIndex%, 3) = 1 - NG%(gameIndex%, 3)
+				GoTo 154
+				
             Case 5
-                NG%(gameIndex%, 7) = 1 - NG%(gameIndex%, 7): GoTo 155
+                NG%(gameIndex%, 7) = 1 - NG%(gameIndex%, 7)
+				GoTo 155
+
             Case 6
-                N = 1 - (NG%(gameIndex%, 2) - 1): NG%(gameIndex%, 2) = N + 1: GoTo 156
+                N = 1 - (NG%(gameIndex%, 2) - 1): NG%(gameIndex%, 2) = N + 1
+				GoTo 156
+
             Case 7
-                Locate 8, 32: Input displayPause: NG%(gameIndex%, 4) = displayPause * 10: GoTo 157
+                Locate 8, 32: Input displayPause!: NG%(gameIndex%, 4) = displayPause! * 10
+				GoTo 157
+
             Case 8
-                NG%(gameIndex%, 5) = 1 - NG%(gameIndex%, 5): GoTo 158
+                NG%(gameIndex%, 5) = 1 - NG%(gameIndex%, 5)
+				GoTo 158
+
             Case 9
-                NG%(gameIndex%, 9) = 1 - NG%(gameIndex%, 9): GoTo 159
+                NG%(gameIndex%, 9) = 1 - NG%(gameIndex%, 9)
+				GoTo 159
+
             Case 11
-                Locate 11, 27: Input DT$: GoTo 160
+                Locate 11, 27: Input DT$
+				GoTo 160
+
             Case 12
-                Locate 12, 25: Input TM$: GoTo 161
+                Locate 12, 25: Input TM$
+				GoTo 161
+
             Case 13
-                NG%(gameIndex%, 6) = NG%(gameIndex%, 6) + 1: If NG%(gameIndex%, 6) > 2 Then NG%(gameIndex%, 6) = 0: GoTo 162
+                NG%(gameIndex%, 6) = NG%(gameIndex%, 6) + 1: If NG%(gameIndex%, 6) > 2 Then NG%(gameIndex%, 6) = 0
+				GoTo 162
+
             Case 14
                 NG%(gameIndex%, 14) = NG%(gameIndex%, 14) + 1
                 If NG%(gameIndex%, 14) > 6 Then NG%(gameIndex%, 14) = 4
-                'GoTo 149 'Call NewGame(visitor$,home$): Exit Sub
+
             Case 15
                 NG%(gameIndex%, 10) = 1 - NG%(gameIndex%, 10)
+
             Case 16
                 NG%(gameIndex%, 11) = 1 - NG%(gameIndex%, 11)
+
         End Select
 
         If visitor$ <> "" And home$ <> "" And TM$ <> "" And DT$ <> "" Then
@@ -651,7 +665,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
     'scheduleAction% = 3: EXTRACT ONE TEAM'S SCHEDULE FROM LEAGUE SCHEDULE
     'scheduleAction% = 4: CHANGE THE MODE OF PLAY FOR A TEAM IN A SCHEDULE
     'scheduleAction% = 5: MAKE GLOBAL CHANGES TO A SCHEDULE
-    Dim displayPause As Single
+    Dim displayPause!
 
     Shared N$
     Shared scheduleAP%(), homeScore%(), visitingScore%()
@@ -735,7 +749,8 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
 			Locate , 12: Print
 			Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
 			Locate 7, 27: Input NY$
-			If NY$ = "" Then 
+            If NY$ = "" And YN$ <> "" Then 
+				'NY$ = YN$
 				Call GetTeam_Schedule(NTMS, YN$, T1)
 			Else
 				YN$ = NY$
@@ -770,22 +785,25 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
 							I1 = Val(I$)
 						Loop Until I1 = 0 Or I1 = 1
 						
-						Input "ENTER DISPLAY VARIABLE FOR THESE GAMES "; displayPause
-						displayPause = displayPause * 10
+						Input "ENTER DISPLAY VARIABLE FOR THESE GAMES "; displayPause!
 					End If
 
 					For I = 1 To scheduleAP%(0)
 
-						735 If Right$(scheduleYN$(I, 0), 1) = " " Then scheduleYN$(I, 0) = Left$(scheduleYN$(I, 0), Len(scheduleYN$(I, 0)) - 1): GoTo 735
+						While Right$(scheduleYN$(I, 0), 1) = " " 
+							scheduleYN$(I, 0) = Left$(scheduleYN$(I, 0), Len(scheduleYN$(I, 0)) - 1)
+						Wend
 
-						736 If Right$(scheduleYN$(I, 1), 1) = " " Then scheduleYN$(I, 1) = Left$(scheduleYN$(I, 1), Len(scheduleYN$(I, 1)) - 1): GoTo 736
+						While Right$(scheduleYN$(I, 1), 1) = " " 
+							scheduleYN$(I, 1) = Left$(scheduleYN$(I, 1), Len(scheduleYN$(I, 1)) - 1)
+						Wend
 
 						If T1 = NG%(I, 0) And YN$ = scheduleYN$(I, 0) Or T1 = NG%(I, 1) And YN$ = scheduleYN$(I, 1) Then
 							' CHANGE SETTINGS FOR A TEAM
 							If T1 = NG%(I, 0) And YN$ = scheduleYN$(I, 0) Then NG%(I, 8) = 2
 							If T1 = NG%(I, 1) And YN$ = scheduleYN$(I, 1) Then NG%(I, 8) = 1
 							If (T1 = NG%(I, 0) And YN$ = scheduleYN$(I, 0) Or T1 = NG%(I, 1) And YN$ = scheduleYN$(I, 1)) And I1 = 1 And scheduleAction% = 4 Then NG%(I, 8) = 3
-							NG%(I, 4) = displayPause
+							NG%(I, 4) = displayPause! * 10
 
 							'Extract only
 							If Not (scheduleAction% = 4) Then
@@ -804,7 +822,6 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
 								Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
 
 								For X = 0 To 18: LSet Q$(X + 1) = MKI$(NG%(I, X)): Next
-
 								For X = 0 To 1: LSet Q$(20 + X) = scheduleYN$(I, X): Next
 
 								LSet Q$(22) = MKI$(visitingScore%(I)): LSet Q$(23) = MKI$(homeScore%(I))
@@ -823,7 +840,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
 				
 			End If 'Done checking BO%
 
-		Loop Until UCase$(I$) = "N"
+		Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
 
 	End If 'Action 3 / 4
 
@@ -1067,8 +1084,8 @@ End Sub 'SaveScheduleFile
 '...explanation...
 Sub SortSchedule ()
 
-    ReDim DY(MAX_GAMES) As Long
-    Dim D As Long, M As Long, Y As Long
+    Dim DY&(MAX_GAMES)
+    Dim D&, M&, Y&
 
     Shared scheduleAP%(), homeScore%(), visitingScore%()
     Shared NG%()
@@ -1079,11 +1096,11 @@ Sub SortSchedule ()
         MIN% = NG%(I, 15) - HR% * 100
         TM% = HR% * 60 + MIN%
         NG%(I, 12) = Int(TM% / 30 - 18)
-        D = (NG%(I, 18) - 1): D = D * 372
-        M = (NG%(I, 17) - 1)
-        M = M * 31
-        Y = NG%(I, 16)
-        DY(I) = (D + M + Y) * 24 * 60 + TM%
+        D& = (NG%(I, 18) - 1): D& = D& * 372
+        M& = (NG%(I, 17) - 1)
+        M& = M& * 31
+        Y& = NG%(I, 16)
+        DY&(I) = (D& + M& + Y&) * 24 * 60 + TM%
     Next
 
     For Z = 1 To scheduleAP%(0) - 1: For Z1 = Z + 1 To scheduleAP%(0)
@@ -1091,7 +1108,7 @@ Sub SortSchedule ()
         If NG%(Z, 12) <= NG%(Z1, 12) Then 8505
             For I = 0 To 18: Swap NG%(Z, I), NG%(Z1, I): Next
             For I = 0 To 1: Swap scheduleYN$(Z, I), scheduleYN$(Z1, I): Next
-            Swap DY(Z), DY(Z1)
+            Swap DY&(Z), DY&(Z1)
             Swap visitingScore%(Z), visitingScore%(Z1)
             Swap homeScore%(Z), homeScore%(Z1)
 
@@ -1099,10 +1116,10 @@ Sub SortSchedule ()
     Next Z
 
     For Z = 1 To scheduleAP%(0) - 1: For Z1 = Z + 1 To scheduleAP%(0)
-        If DY(Z) <= DY(Z1) Then 8510
+        If DY&(Z) <= DY&(Z1) Then 8510
             For I = 0 To 18: Swap NG%(Z, I), NG%(Z1, I): Next
             For I = 0 To 1: Swap scheduleYN$(Z, I), scheduleYN$(Z1, I): Next
-            Swap DY(Z), DY(Z1)
+            Swap DY&(Z), DY&(Z1)
             Swap visitingScore%(Z), visitingScore%(Z1)
             Swap homeScore%(Z), homeScore%(Z1)
 
@@ -1121,7 +1138,7 @@ Sub ChangeGlobalSettings ()
     Dim CM$(0 To 1), FR$(0 To 1), FT$(0 To 1)
     Dim LC$(0 To 2), PO$(0 To 1), SC$(0 To 1)
     Dim TE$(0 To 2), TS$(0 To 1), U5$(0 To 4)
-    Dim displayPause As Single
+    Dim displayPause!
 
     Shared scheduleAP%(), NG%()
     
@@ -1151,7 +1168,7 @@ Sub ChangeGlobalSettings ()
         Cls
         
         Locate 3, 2: Color 14: Print "(1) ";: Color 15: Print "TYPE OF GAME: "; U5$(U5%)
-        Locate 4, 2: Color 14: Print "(2) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; displayPause / 10
+        Locate 4, 2: Color 14: Print "(2) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; displayPause!
         Locate 5, 2: Color 14: Print "(3) ";: Color 15: Print "HOME COURT ADVANTAGE: "; LC$(LO%)
         Locate 6, 2: Color 14: Print "(4) ";: Color 15: Print "SHOT CLOCK: "; SC$(SC%)
         Locate 7, 2: Color 14: Print "(5) ";: Color 15: Print "HUMAN PLAYERS: "; CM$(CM%)
@@ -1174,7 +1191,7 @@ Sub ChangeGlobalSettings ()
                 U5% = U5% + 1
                 If U5% > 3 Then U5% = 0
             Case 2
-                Input "DISPLAY VARIABLE "; displayPause: displayPause = displayPause * 10
+                Input "DISPLAY VARIABLE "; displayPause! ': displayPause! = displayPause! * 10
             Case 3
                 LO% = 1 + LO%
                 If LO% > 2 Then LO% = 1
@@ -1193,7 +1210,7 @@ Sub ChangeGlobalSettings ()
 
     For I = 1 To scheduleAP%(0)
         NG%(I, 8) = U5%
-        NG%(I, 4) = displayPause
+        NG%(I, 4) = displayPause! * 10
         NG%(I, 2) = LO%
         NG%(I, 7) = SC%
         NG%(I, 9) = CM%
@@ -1287,7 +1304,9 @@ Sub LoadSchedule (newFile$)
         
     Loop Until Count% = 0 Or ExitCode% = 27 Or newFile$ <> ""
 
-	If ExitCode% <> 27 Then			
+	If I$ = Chr$(27) Then targetFile$ = ""
+
+	If I$ <> Chr$(27) And ExitCode% <> 27 Then
 
 		Open diskPaths$(0) + newFile$ + ".SCD" For Random As #1 Len = 48
 		Y = LOF(1)

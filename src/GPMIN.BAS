@@ -60,7 +60,7 @@ Sub AdjustGames (selectedIndex)
 	Do
 		Color 15, 0: Cls
 		JJ = 6
-		SN = 1: Locate 6, 8: Color 15, 4
+		Locate 6, 8: Color 15, 4
 		Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
 		Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
 		Locate 7 + JJ, 8
@@ -81,7 +81,8 @@ Sub AdjustGames (selectedIndex)
 				Locate 7, 28: Line Input NY$
 				NY$ = I$ + NY$
 				Color 15, 0
-				If NY$ = "" Then 
+				If NY$ = "" And YN$ <> "" Then 
+					'NY$ = YN$
 					Call SelectTeam_GPMIN(YN$, NTMS, selectedIndex)
 				Else
 					YN$ = NY$
@@ -155,7 +156,7 @@ Sub AdjustGames (selectedIndex)
 			Print "   PLAYERS                 ACTUAL           ADJUSTED"
 			Print "                          GP   MPG          GP    MPG"
 
-			GP = 0
+			gamesPlayed = 0
 			MIN = 0
 
 			For I = 0 To 14
@@ -164,7 +165,7 @@ Sub AdjustGames (selectedIndex)
 					adjustB%(I, 17) = adjustB%(I, 1) * -1
 				End If
 
-				GP = GP + adjustB%(I, 0)
+				gamesPlayed = gamesPlayed + adjustB%(I, 0)
 				MIN = MIN + adjustB%(I, 17) * -1
 
 				If Left$(adjustB$(I, 0), 3) <> "XXX" Then
@@ -192,11 +193,11 @@ Sub AdjustGames (selectedIndex)
 			
 				If B1 < 15 Then 
 					Locate 23, 1: Print Space$(38);: Locate 23, 1
-					Print adjustB$(B1, 0); " ";: Input "GAMES PLAYED "; GP
+					Print adjustB$(B1, 0); " ";: Input "GAMES PLAYED "; gamesPlayed
 					Locate 23, 1: Print Space$(38);: Locate 23, 1
-					Print adjustB$(B1, 0); " ";: Input "MINUTES PER GAME "; MPG
-					adjustB%(B1, 16) = GP * -1
-					adjustB%(B1, 17) = MPG * GP * -1
+					Print adjustB$(B1, 0); " ";: Input "MINUTES PER GAME "; minutesPerGame
+					adjustB%(B1, 16) = gamesPlayed * -1
+					adjustB%(B1, 17) = minutesPerGame * gamesPlayed * -1
 				Else
 					Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
 

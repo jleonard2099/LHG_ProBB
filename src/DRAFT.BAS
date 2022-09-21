@@ -46,64 +46,68 @@ Sub DRAFT ()
         
 		If ExitCode% = 27 Then Exit Sub
 		
-    Loop Until UCase$(I$) = "N" 'Or Exitcode% = 27
+    Loop Until UCase$(I$) = "N" Or Exitcode% = 27
 
+	If ExitCode% <> 27 Then 
 
-    For I = 0 To 1: draftAA$(0, I) = "XXX": Next
+		For I = 0 To 1: draftAA$(0, I) = "XXX": Next
 
-    For I = 0 To 6: draftL%(0, I) = 0: Next
-    
-    For I = 0 To 34
-        draftT%(0, I) = 0
-        TTL%(I) = 0
-    Next
-    
-    For I = 0 To 14
-        For I1 = 0 To 34
-            draftLT%(I, I1) = 0
-        Next
-    Next
-    
-    For I = 0 To 14
-        draftB$(0, I, 0) = "XXX"
-        draftB$(0, I, 1) = "X"
-        For I1 = 0 To 19
-            draftB%(0, I, I1) = 0
-        Next
-    Next
+		For I = 0 To 6: draftL%(0, I) = 0: Next
+		
+		For I = 0 To 34
+			draftT%(0, I) = 0
+			TTL%(I) = 0
+		Next
+		
+		For I = 0 To 14
+			For I1 = 0 To 34
+				draftLT%(I, I1) = 0
+			Next
+		Next
+		
+		For I = 0 To 14
+			draftB$(0, I, 0) = "XXX"
+			draftB$(0, I, 1) = "X"
+			For I1 = 0 To 19
+				draftB%(0, I, I1) = 0
+			Next
+		Next
 
-    Do
-        Call TITLE
-        'Erase menuChoices$
-        menuChoices$(1) = "DRAFT A NEW TEAM         "
-        menuChoices$(2) = "DRAFT TO AN EXISTING TEAM"
-        menuChoices$(3) = "EXIT TO MAIN MENU        "
-        Selection% = 1
-        Count% = 3
-        Start% = 1
-        ExitCode% = 3
-        FileFGColr% = 15: FileBGColr% = 1
-        HiLiteFGColr% = 0: HiLiteBGColr% = 7
-        Spacing% = 1
-        Row% = 8
-        Column% = 25
+		Do
+			Call TITLE
+			'Erase menuChoices$
+			menuChoices$(1) = "DRAFT A NEW TEAM         "
+			menuChoices$(2) = "DRAFT TO AN EXISTING TEAM"
+			menuChoices$(3) = "EXIT TO MAIN MENU        "
+			Selection% = 1
+			Count% = 3
+			Start% = 1
+			ExitCode% = 3
+			FileFGColr% = 15: FileBGColr% = 1
+			HiLiteFGColr% = 0: HiLiteBGColr% = 7
+			Spacing% = 1
+			Row% = 8
+			Column% = 25
 
-        Call box0(7, 24, 11, 50, 2, 15, 1)
-        _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
-        _MouseHide
+			Call box0(7, 24, 11, 50, 2, 15, 1)
+			_MouseShow "DEFAULT"
+			MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+			_MouseHide
 
-        Color , 0
-        If ExitCode% <> 27 Then
-            If Selection% = 1 Then DNT% = 0: Call DraftNewTeam (TTL%())
-            If Selection% = 2 Then DNT% = 1: Call DraftExistingTeam (TTL%())
-        Else
-            Selection% = 3
-        End If
+			Color , 0
 
-        'WE SHOULD NEVER GET HERE
-        '1 Run "HELLO.EXE 2"
-    Loop Until Selection% = 3
+			If ExitCode% <> 27 Then
+				If Selection% = 1 Then DNT% = 0: Call DraftNewTeam (TTL%())
+				If Selection% = 2 Then DNT% = 1: Call DraftExistingTeam (TTL%())
+			Else
+				Selection% = 3
+			End If
+
+			'WE SHOULD NEVER GET HERE
+			'1 Run "HELLO.EXE 2"
+		Loop Until Selection% = 3
+
+	End If 'Done checking for ESC
 
 End Sub
 
@@ -192,7 +196,8 @@ Sub DraftExistingTeam (TTL%())
         Locate , 12: Print "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
         Locate 7, 27: Input NY$
         
-		If NY$ = "" Then 
+		If NY$ = "" And draftYN$(0) <> "" Then 
+			'NY$ = draftYN$(0)
             Call SelectTeam_Draft(NTMS)
         Else
             draftYN$(0) = NY$
@@ -475,7 +480,6 @@ Sub DoTheDraft (TTL%())
                 'Drafting
                 Do
                     Locate 21, 20: Print "SLOT # (0-14) ";
-                    N = 1
                     Input B
                 Loop Until B >= 1 And B <= 14
 
@@ -492,7 +496,10 @@ Sub DoTheDraft (TTL%())
                     Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
                     Locate , 12: Print "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
                     Locate 7, 27: Input NY$
-                    If NY$ <> "" Then 
+					If NY$ = "" And draftYN$(1) <> "" Then 
+						'NY$ = draftYN$(1)
+                        Call SelectTeam_Draft (NTMS)
+					Else
                         draftYN$(1) = NY$
                         Erase teamNames$
 
@@ -576,6 +583,7 @@ Sub DoTheDraft (TTL%())
                 draftB%(0, B, 2) = draftB%(0, B, 2) * (draftLG%(YR%, 1) / draftL%(1, 1))
                 draftB%(0, B, 6) = draftB%(0, B, 6) * (draftLG%(YR%, 2) / draftL%(1, 2))
                 draftB%(0, B, 7) = draftB%(0, B, 7) * (draftLG%(YR%, 2) / draftL%(1, 2))
+
                 FG = Int(draftB%(1, B1, 3) / draftB%(1, B1, 2) * 100 + .5)
                 FG = FG * (draftLG%(YR%, 3) / draftL%(1, 3))
 
@@ -619,7 +627,8 @@ Sub DoTheDraft (TTL%())
                 Open diskPaths$(0) + "PROBBTMS." + draftYN$(0) For Random As #1 Len = 1031
 
                 Y = LOF(1)
-                If DNT% = 0 Then T = Y / 1031 + 1
+
+                If DNT% = 0 Then teamIdx = Y / 1031 + 1
                 Field #1, 15 As Q$(0), 15 As Q$(1)
 
                 For I = 0 To 6
@@ -655,7 +664,7 @@ Sub DoTheDraft (TTL%())
                 Next
 
                 LSet Q$(375) = draftAA$(0, 2): LSet Q$(376) = draftAA$(0, 3): LSet Q$(377) = draftAA$(0, 4)
-                Put #1, T
+                Put #1, teamIdx
                 Close 1
 
         End Select
@@ -700,7 +709,7 @@ Sub SelectTeam_Draft (numberTeams)
 
     If ExitCode% <> 27 Then
 
-		D = teamIndex%(Selection%)
+		teamIdx = teamIndex%(Selection%)
 
 		Open diskPaths$(0) + "PROBBTMS." + draftYN$(1) For Random As #1 Len = 1031
 
@@ -724,7 +733,7 @@ Sub SelectTeam_Draft (numberTeams)
 		Next
 
 		Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-		Get #1, D
+		Get #1, teamIdx
 		
 		draftAA$(1, 0) = RTrim$(Q$(0))
 		draftAA$(1, 1) = Q$(1)

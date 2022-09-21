@@ -6,8 +6,6 @@ Sub BLANK ()
 
     Cls
 
-    APP = 0
-
     Do
         'Display list of files...
 
@@ -58,51 +56,53 @@ Sub BLANK ()
 				MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 				_MouseHide
 
-				If ExitCode% = 27 Then Exit Sub 'Run "HELLO.EXE"
-				targetFile$ = RTrim$(leagueFiles$(Selection%))
-				Locate 2, 33: Print targetFile$
-				Locate , 33: Print "ANY CHANGE (YN)";
-				Color 15, 0
-				
-				Do
-					I$ = GetKeyPress$
-				Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
+				If ExitCode% <> 27 Then 
 
-
-				If UCase$(I$) = "Y" Then
-				'proceed with erasing all files
-					WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-					LH$ = Left$(WE$, 8)
-
-					Cls
-					Locate 10, 8
-					Call CSMsgBox("WARNING!!!::: THIS WILL ERASE ALL COMPILED STATS AND LEAGUE FILES FOR THIS LEAGUE. IF YOU STILL WISH TO ERASE ALL LEAGUE FILES AND STATS, HIT 'Y' FOR YES", 26, Pass)
-					A$ = GetKeyPress$
-					Call CSMsgBox("", 0, Pass)
-
-					If A$ = "Y" Then 
-
-						Open diskPaths$(1) + LH$ + ".TMS" For Input As #2
-						Input #2, LG$, D1$, D2$, D3$, D4$
-						For XW = 1 To TEAMS_PER_CONFERENCE
-							Input #2, H1$(XW)
-						Next
-						Close 2
-
-						For XW = 1 To TEAMS_PER_CONFERENCE
-							If H1$(XW) <> Chr$(42) Then                     
-								Print "DELETING "; H1$(XW); " STATS"
-								Kill (diskPaths$(1) + H1$(XW))
-								Kill (diskPaths$(1) + H1$(XW) + "R")
-								Kill (diskPaths$(1) + H1$(XW) + "S")
-								Kill (diskPaths$(1) + H1$(XW) + "D")
-							End If
-						Next
-						Cls
-					End If
+					targetFile$ = RTrim$(leagueFiles$(Selection%))
+					Locate 2, 33: Print targetFile$
+					Locate , 33: Print "ANY CHANGE (YN)";
+					Color 15, 0
 					
-				End If
-			
+					Do
+						I$ = GetKeyPress$
+					Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
+
+					If UCase$(I$) = "Y" Then
+					'proceed with erasing all files
+						WE$ = Left$(targetFile$, Len(targetFile$) - 4)
+						LH$ = Left$(WE$, 8)
+
+						Cls
+						Locate 10, 8
+						Call CSMsgBox("WARNING!!!::: THIS WILL ERASE ALL COMPILED STATS AND LEAGUE FILES FOR THIS LEAGUE. IF YOU STILL WISH TO ERASE ALL LEAGUE FILES AND STATS, HIT 'Y' FOR YES", 26, Pass)
+						A$ = GetKeyPress$
+						Call CSMsgBox("", 0, Pass)
+
+						If A$ = "Y" Then 
+
+							Open diskPaths$(1) + LH$ + ".TMS" For Input As #2
+							Input #2, LG$, D1$, D2$, D3$, D4$
+							For XW = 1 To TEAMS_PER_CONFERENCE
+								Input #2, H1$(XW)
+							Next
+							Close 2
+
+							For XW = 1 To TEAMS_PER_CONFERENCE
+								If H1$(XW) <> Chr$(42) Then                     
+									Print "DELETING "; H1$(XW); " STATS"
+									Kill (diskPaths$(1) + H1$(XW))
+									Kill (diskPaths$(1) + H1$(XW) + "R")
+									Kill (diskPaths$(1) + H1$(XW) + "S")
+									Kill (diskPaths$(1) + H1$(XW) + "D")
+								End If
+							Next
+							Cls
+						End If
+						
+					End If 'Done checking for Any Change
+
+				End If 'Done checking for ESC
+
 			'Done looping through league selection / confirmation
 			Loop Until ExitCode% = 27
 

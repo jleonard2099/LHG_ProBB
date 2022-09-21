@@ -70,10 +70,9 @@ Sub REC ()
 		Loop Until Selection% = 7 OR ExitCode% = 27
 		
 	Else
-		Call TITLE
-		Locate 9, 30: Print "ERROR::: UNABLE TO LOCATE RECORDS"
+		CALL CSMsgBox("UNABLE TO LOCATE RECORDS PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
 		I$ = GetKeyPress$
-		Cls
+		CALL CSMsgBox("", 0, Pass)
 		'Run "HELLO.EXE 3"
 	End If
 
