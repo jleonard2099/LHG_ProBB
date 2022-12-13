@@ -27,9 +27,9 @@ Data 1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996
 
 For I = 1 To 52
     Read draftYears$(I)
-    While Len(draftYears$(I)) <> 6 Then 
-		draftYears$(I) = draftYears$(I) + " "
-	Wend
+    While Len(draftYears$(I)) <> 6
+        draftYears$(I) = draftYears$(I) + " "
+    Wend
 Next
 
 ' Stats / Year
@@ -122,7 +122,6 @@ Data FREE THROWS ATTEMPTED,FREE THROWS MADE,FREE THROW %,OFFENSIVE REBOUNDS,DEFE
 Data PERSONAL FOULS,STEALS,ASSISTS,BLOCKS,TURNOVERS,POINTS,POINTS PER GAME
 For I = 1 To 20: Read teamRecords$(I): Next
 
-
 '----------------------------------------
 '               MAIN CODE
 '----------------------------------------
@@ -147,7 +146,6 @@ End
 
 System
 
-
 '----------------------------------------
 '       Main_Menu Subroutine
 '----------------------------------------
@@ -158,9 +156,9 @@ Sub Main_Menu (menuSelection%)
     Do
 
         Cls
-        
+
         Call TITLE
-        
+
         menuChoices$(1) = "PLAY SINGLE GAME                "
         menuChoices$(2) = "TEAM MANAGEMENT / ORGANIZATION  "
         menuChoices$(3) = "REPLAY STATISTICS AND REPORTS   "
@@ -203,7 +201,6 @@ Sub Main_Menu (menuSelection%)
     Loop Until menuSelection% = 8 Or ExitCode% = 27
 
 End Sub
-
 
 '----------------------------------------
 '       Team_Menu Subroutine
@@ -258,7 +255,6 @@ Sub TEAM_MENU ()
 
 End Sub
 
-
 '----------------------------------------
 '       Replay_Stats Subroutine
 '----------------------------------------
@@ -301,11 +297,10 @@ Sub REPLAY_STATS_MENU ()
                 Case 5: Cls
             End Select
         End If
-    
+
     Loop Until Selection% = 5 Or ExitCode% = 27
 
 End Sub
-
 
 '----------------------------------------
 '       Leaders_Menu Subroutine
@@ -354,11 +349,10 @@ Sub LEADERS_MENU ()
                 Case 8: Cls
             End Select
         End If
-        
+
     Loop Until Selection% = 8 Or ExitCode% = 27
 
 End Sub
-
 
 '----------------------------------------
 '       Config_Drives Subroutine
@@ -373,7 +367,7 @@ Sub CONFIG_DRIVES ()
     Next
 
     Cls
-	Locate , 16: Print "SPECIFY PATHS FOR YOUR TEAMS AND COMPILED STATS": Print
+    Locate , 16: Print "SPECIFY PATHS FOR YOUR TEAMS AND COMPILED STATS": Print
 
     Locate , 31: Print "PATHNAME EXAMPLES:": Print
     Locate , 31: Print "A:"
@@ -416,7 +410,6 @@ Sub CONFIG_DRIVES ()
     Close #1
 
 End Sub
-
 
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'

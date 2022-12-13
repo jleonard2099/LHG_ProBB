@@ -20,12 +20,14 @@ Sub BLANK ()
 			Call CSMsgBox("", 0, Pass) 
 		Else
 			ReDim leagueFiles$(0 To Count%)
+
 			For X = 1 To Count%
 				leagueFiles$(X) = Space$(12)
 			Next
+
 			leagueFiles$(0) = Spec$
+
 			Call ReadFile(leagueFiles$())
-			'CALL SortStr(VARPTR(leagueFiles$(1)), Count%, 0)
 
 			Do
 
@@ -56,13 +58,13 @@ Sub BLANK ()
 				MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 				_MouseHide
 
-				If ExitCode% <> 27 Then 
+				If ExitCode% <> 27 Then
 
 					targetFile$ = RTrim$(leagueFiles$(Selection%))
 					Locate 2, 33: Print targetFile$
 					Locate , 33: Print "ANY CHANGE (YN)";
 					Color 15, 0
-					
+
 					Do
 						I$ = GetKeyPress$
 					Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
@@ -74,11 +76,11 @@ Sub BLANK ()
 
 						Cls
 						Locate 10, 8
-						Call CSMsgBox("WARNING!!!::: THIS WILL ERASE ALL COMPILED STATS AND LEAGUE FILES FOR THIS LEAGUE. IF YOU STILL WISH TO ERASE ALL LEAGUE FILES AND STATS, HIT 'Y' FOR YES", 26, Pass)
+						Call CSMsgBox("WARNING!!!::: THIS WILL ERASE ALL COMPILED STATS FOR THIS LEAGUE. IF YOU STILL WISH TO ERASE ALL STATS, HIT 'Y' FOR YES", 26, Pass)
 						A$ = GetKeyPress$
 						Call CSMsgBox("", 0, Pass)
 
-						If A$ = "Y" Then 
+						If A$ = "Y" Then
 
 							Open diskPaths$(1) + LH$ + ".TMS" For Input As #2
 							Input #2, LG$, D1$, D2$, D3$, D4$
@@ -88,7 +90,8 @@ Sub BLANK ()
 							Close 2
 
 							For XW = 1 To TEAMS_PER_CONFERENCE
-								If H1$(XW) <> Chr$(42) Then                     
+								If H1$(XW) <> Chr$(42) Then
+
 									Print "DELETING "; H1$(XW); " STATS"
 									Kill (diskPaths$(1) + H1$(XW))
 									Kill (diskPaths$(1) + H1$(XW) + "R")
@@ -98,7 +101,7 @@ Sub BLANK ()
 							Next
 							Cls
 						End If
-						
+
 					End If 'Done checking for Any Change
 
 				End If 'Done checking for ESC

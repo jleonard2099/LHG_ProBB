@@ -43,8 +43,6 @@ Sub BINPUT (menuShortcut%)
 
 End Sub
 
-
-
 '----------------------------------------
 '         DoTheInput Subroutine
 '----------------------------------------
@@ -54,7 +52,7 @@ Sub DoTheInput (action%)
     Shared inputB$(), inputT$()
 
     Dim P$(2)
-    
+
     ReDim menuChoices$(1 To 5)
 
     Dim NTMS As Integer
@@ -72,10 +70,13 @@ Sub DoTheInput (action%)
     '4 = VIEW A TEAM ROSTER
 
     If action% > 1 Then 
-        'For all actions, get a disk ID first       
+        'For all actions, get a disk ID first
+
         Do
             Color 15, 0
+
             Cls
+
             JJ = 7
             Locate 6, 8: Color 15, 4
             Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
@@ -89,8 +90,8 @@ Sub DoTheInput (action%)
             Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
             Locate 7, 27: Input NY$
             If NY$ = "" And YN$ <> "" Then 
-				'Load existing team names from previous choice
-				'NY$ = YN$
+                'Load existing team names from previous choice
+                'NY$ = YN$
                 Call SelectTeam_BINPUT (YN$, NTMS)
             Else
                 YN$ = NY$
@@ -138,7 +139,7 @@ Sub DoTheInput (action%)
                 Call SelectTeam_BINPUT (YN$, NTMS)
 
             End If
-            
+
             If BO% = 1 Then
                 BO% = 0
             Else
@@ -148,7 +149,7 @@ Sub DoTheInput (action%)
                 Color 15, 4: Print "ANY CHANGE (YN)";
                 I$ = GetKeyPress$
             End If
-            
+
         Loop Until UCase$(I$) = "N"
 
         Color , 0
@@ -186,17 +187,17 @@ Sub DoTheInput (action%)
                         'Rebounds / AST / PF / STL / BLK / PTS / AVG HI
                         LPrint Using "### ### #### #### ### ### ### #### "; inputB%(I, 6); inputB%(I, 7); inputB%(I, 6) + inputB%(I, 7); inputB%(I, 8); inputB%(I, 9); inputB%(I, 11); inputB%(I, 12); inputB%(I, 3) * 2 + inputB%(I, 5) + inputB%(I, 14);
                         LPrint Using "###.# ##"; (inputB%(I, 3) * 2 + inputB%(I, 5) + inputB%(I, 14)) / inputB%(I, 0); inputB%(I, 15)
-                    
+
                     End If
-                    
+
                 Next
 
                 LPrint Chr$(18): LPrint Chr$(12)
                 Exit Sub
-            
+
                 'Done with action Q=2
 
-            Case 4: 
+            Case 4:
 
                 Do
 
@@ -253,9 +254,9 @@ Sub DoTheInput (action%)
 
                             'Fouls
                             Print Tab(73); Using "####"; inputB%(I, 9)
-                        
+
                         End If
-                        
+
                     Next
 
                     Color 14: Print: Print "TOTALS-OFF";
@@ -338,32 +339,32 @@ Sub DoTheInput (action%)
 
                         If Left$(inputB$(I, 0), 3) <> "XXX" Then
 
-							'Name
-							Color 3: Print Left$(inputB$(I, 0), 14);
+                            'Name
+                            Color 3: Print Left$(inputB$(I, 0), 14);
 
-							'Steals
-							Color 7: Print Tab(15); Using "####"; inputB%(I, 11);
+                            'Steals
+                            Color 7: Print Tab(15); Using "####"; inputB%(I, 11);
 
-							'Blocks
-							Print Tab(20); Using "####"; inputB%(I, 12);
+                            'Blocks
+                            Print Tab(20); Using "####"; inputB%(I, 12);
 
-							'3FGA
-							Print Tab(25); Using "####"; inputB%(I, 13);
+                            '3FGA
+                            Print Tab(25); Using "####"; inputB%(I, 13);
 
-							'3FGM
-							Print Tab(30); Using "####"; inputB%(I, 14);
+                            '3FGM
+                            Print Tab(30); Using "####"; inputB%(I, 14);
 
-							'3FG PCT
-							If inputB%(I, 14) = 0 Then Print Tab(35); ".000";
-							If inputB%(I, 14) > 0 Then threeFGPCT! = inputB%(I, 14) / inputB%(I, 13): Print Tab(35); Using ".###"; threeFGPCT!;
+                            '3FG PCT
+                            If inputB%(I, 14) = 0 Then Print Tab(35); ".000";
+                            If inputB%(I, 14) > 0 Then threeFGPCT! = inputB%(I, 14) / inputB%(I, 13): Print Tab(35); Using ".###"; threeFGPCT!;
 
-							'HI GAME
-							Print Tab(43); Using "####"; inputB%(I, 15)
-							'PRINT TAB(53); USING "####"; inputB%(I, 16);
-							'PRINT TAB(65); USING "####"; inputB%(I, 17)
-						
-						End If
-						
+                            'HI GAME
+                            Print Tab(43); Using "####"; inputB%(I, 15)
+                            'PRINT TAB(53); USING "####"; inputB%(I, 16);
+                            'PRINT TAB(65); USING "####"; inputB%(I, 17)
+
+                        End If
+
                     Next
 
                     Color 14: Print: Print "TOTALS-OFF";
@@ -407,13 +408,13 @@ Sub DoTheInput (action%)
                         statPCT! = inputT%(32) / inputT%(31)
                         Print Tab(35); Using ".###"; statPCT!
                     End If
-                    
+
                     Color 15: Print: Print "VIEW AGAIN (Y/N)"
                     I$ = GetKeyPress$
 
                 Loop Until UCase$(I$) = "N"
                 Exit Sub
-                 
+
             End Select
     Else
         'action = 1; new team
@@ -426,39 +427,42 @@ Sub DoTheInput (action%)
                 I$ = GetKeyPress$
             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = Chr$(27)
             If UCase$(I$) = "Y" Then I = 1
-            If UCase$(I$) = "N" Then I = 0  
+            If UCase$(I$) = "N" Then I = 0
+
             If I$ = Chr$(27) Then action% = 5: Exit Sub
-            
+
             Print I$: ST = I
             Print: Color 14: Print "(2) ";: Color 15: Print "TEAM/INDIVID BLOCKS ";
             Do
                 I$ = GetKeyPress$
             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = Chr$(27)
             If UCase$(I$) = "Y" Then I = 1
-            If UCase$(I$) = "N" Then I = 0  
+            If UCase$(I$) = "N" Then I = 0
+
             If I$ = Chr$(27) Then action% = 5: Exit Sub
-            
+
             Print I$: BK = I
             Print: Color 14: Print "(3) ";: Color 15: Print "TEAM/INDIVID OFF/DEF REB ";
             Do
                 I$ = GetKeyPress$
             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = Chr$(27)
             If UCase$(I$) = "Y" Then I = 1
-            If UCase$(I$) = "N" Then I = 0  
+            If UCase$(I$) = "N" Then I = 0
+
             If I$ = Chr$(27) Then action% = 5: Exit Sub
-            
+
             Print I$: RB = I
             Print: Color 14: Print "(4) ";: Color 15: Print "TEAM TURNOVERS ";
             Do
                 I$ = GetKeyPress$
             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = Chr$(27)
             If UCase$(I$) = "Y" Then I = 1
-            If UCase$(I$) = "N" Then I = 0  
+            If UCase$(I$) = "N" Then I = 0
 
             If I$ = Chr$(27) Then action% = 5: Exit Sub
-            
+
             Print I$
-            
+
             T0 = I
             Print
             Print "ANY CHANGE (YN)";
@@ -468,11 +472,12 @@ Sub DoTheInput (action%)
             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = Chr$(27)
 
             If UCase$(I$) = "Y" Then I = 1
-            If UCase$(I$) = "N" Then I = 0  
+            If UCase$(I$) = "N" Then I = 0
+
             If I$ = Chr$(27) Then action% = 5: Exit Sub
-        
+
         Loop Until I = 0
-        
+
     End If 'Done checking for actions with existing teams
 
     '--------------------
@@ -492,17 +497,15 @@ Sub DoTheInput (action%)
     172 Locate 10: Input "8. DISK ID "; YN$: If C1 = 1 Then 190
     173 Locate 11: Input "9. TEAM NUMBER "; T: If C1 = 1 Then 190
 
-
-	'Do
+    'Do
 
     190 C1 = 1
 
     Locate 13: Input "# TO CHANGE (0 TO CONTINUE) "; B9 
     On B9 GOTO 120, 130, 140, 150, 160, 170, 171, 172, 173
 
-
     '----------
-	' Team Info
+    ' Team Info
     '----------
     C1 = 0
 
@@ -543,16 +546,16 @@ Sub DoTheInput (action%)
         247 Locate 12: Input "11. COACH'S NAME "; inputT$(3): If C1 = 1 Then 250
         248 Locate 13: Input "12. ARENA NAME "; inputT$(4): If C1 = 1 Then 250
         250 Locate 15: Color inputT%(33), inputT%(34): Print "SAMPLE TEXT": Color 15, 0
-        
+
     End If
-    
+
     C1 = 1
 
     Locate 17: Input "# TO CHANGE (0 TO CONTINUE) "; B9
     On B9 GOTO 205, 210, 215, 220, 225, 230, 235, 240, 245, 246, 247, 248
 
     '----------
-	' Team Offense
+    ' Team Offense
     '----------
 
     C1 = 0
@@ -575,7 +578,7 @@ Sub DoTheInput (action%)
         Print "14. 3-FGA "; inputT%(17)
         GoTo 335
     End If
-    
+
     Cls
 
     Color 14: Print "TEAM OFFENSIVE INFORMATION": Color 15
@@ -605,7 +608,7 @@ Sub DoTheInput (action%)
     On B9 GOTO 265, 270, 275, 280, 285, 290, 295, 300, 305, 310, 315, 320, 325, 330
 
     '----------
-	' Team Defense
+    ' Team Defense
     '----------
 
     C1 = 0
@@ -630,16 +633,16 @@ Sub DoTheInput (action%)
     Else
         Cls
         Color 14: Print "TEAM DEFENSIVE INFORMATION": Color 15
-		
+
         345 Locate 2: Input " 1. FGM "; inputT%(20): If C1 = 1 Then 415
         350 Locate 3: Input " 2. FGA "; inputT%(19): If C1 = 1 Then 415
         355 Locate 4: Input " 3. FTM "; inputT%(22): If C1 = 1 Then 415
         360 Locate 5: Input " 4. FTA "; inputT%(21): If C1 = 1 Then 415
         365 Locate 6: Input " 5. OFF REB "; inputT%(23): If C1 = 1 Then 415
         370 Locate 7: Input " 6. DEF REB "; inputT%(24): If C1 = 1 Then 415
-		
+
         If inputT%(23) = 0 And RB = 0 Then inputT%(23) = .35 * inputT%(24): inputT%(24) = inputT%(24) - inputT%(23): Locate 6: Print " 5. OFF REB "; inputT%(23): Locate 7: Print " 6. DEF REB "; inputT%(24)
-		
+
         375 Locate 8: Input " 7. ASSISTS "; inputT%(25): If C1 = 1 Then 415
         380 Locate 9: Input " 8. FOULS "; inputT%(26): If C1 = 1 Then 415
         385 Locate 10: Input " 9. DISQ "; inputT%(27): If C1 = 1 Then 415
@@ -649,14 +652,14 @@ Sub DoTheInput (action%)
         405 Locate 14: Input "13. 3-FGM "; inputT%(32): If C1 = 1 Then 415
         410 Locate 15: Input "14. 3-FGA "; inputT%(31): If C1 = 1 Then 415
     End If
-    
+
     415 C1 = 1
 
     Locate 17: Input "# TO CHANGE (0 TO CONTINUE) "; B9
     On B9 GOTO 345, 350, 355, 360, 365, 370, 375, 380, 385, 390, 395, 400, 405, 410
 
     '----------
-	' Player Stats
+    ' Player Stats
     '----------
 
     C1 = 0
@@ -667,13 +670,13 @@ Sub DoTheInput (action%)
         For I = 0 To 14: Print Using "##"; I + 1;: Print "  "; inputB$(I, 0)
         Next: Print: Print "# TO CHANGE (1-15) (0 TO CONTINUE) ";: Input I
         Locate 1, 1
-        
+
         'Continue
         If I = 0 Then 
             X% = 0
             Call SaveTeamFile (yearNumber$, action%)
         End If
-        
+
         I = I - 1
         Locate 1, 1
         Cls
@@ -704,22 +707,22 @@ Sub DoTheInput (action%)
 
     End If
 
-	'-- How can 520 be in the goto but also inside a for loop?
-	'-- only if it's a subroutine!!!!
+    '-- How can 520 be in the goto but also inside a for loop?
+    '-- only if it's a subroutine!!!!
 
     If inputT%(28) = 0 And ST = 0 Then inputT%(28) = inputT%(5) * .1
     If inputT%(14) = 0 And ST = 0 Then inputT%(14) = inputT%(19) * .1
     If inputT%(16) = 0 And BK = 0 Then inputT%(16) = inputT%(19) * .06
     If inputT%(30) = 0 And BK = 0 Then inputT%(30) = inputT%(5) * .06
-    
+
     For I = 0 To 14: 
         Cls
         Color 14: Print Tab(25); "PLAYER INFORMATION FOR PLAYER "; I + 1: Color 15
 
         424 Locate 2: Input " 1. NAME (END TO QUIT) "; inputB$(I, 0)
-        
-        If C1 <> 1 Then 
-        
+
+        If C1 <> 1 Then
+
             If inputB$(I, 0) <> "END" Then
 
                 426 Locate 3: Input " 2. POSITION "; inputB$(I, 1): If C1 = 1 Then 520
@@ -737,38 +740,40 @@ Sub DoTheInput (action%)
                 470 Locate 12: Input "11. ASSISTS "; inputB%(I, 8): If C1 = 1 Then 520
                 475 Locate 13: Input "12. FOULS "; inputB%(I, 9): If C1 = 1 Then 520
 
-				position$ = Left$(inputB$(I, 1), 1)
-				
-				480 '
+                position$ = Left$(inputB$(I, 1), 1)
+
+                480 '
                 Locate 14: Input "13. DISQ "; inputB%(I, 10): If C1 = 1 Then 520
 
-				485 '
+                485 '
                 If ST = 1 Then
-					Locate 15: Input "14. STEALS   "; inputB%(I, 11): If C1 = 1 Then 520
-				Else
-					Select Case position$
-						Case "C": inputB%(I, 11) = inputB%(I, 1) / 48 * 1.2: Locate 15: Print "14. STEALS "; inputB%(I, 11)
-						Case "F": inputB%(I, 11) = inputB%(I, 1) / 48 * 1.55: Locate 15: Print "14. STEALS "; inputB%(I, 11)
-						Case "G": inputB%(I, 11) = inputB%(I, 1) / 48 * 2.3: Locate 15: Print "14. STEALS "; inputB%(I, 11)
-					End Select
-				End If
+                    Locate 15: Input "14. STEALS   "; inputB%(I, 11): If C1 = 1 Then 520
+                Else
+                    Select Case position$
+                        Case "C": inputB%(I, 11) = inputB%(I, 1) / 48 * 1.2: Locate 15: Print "14. STEALS "; inputB%(I, 11)
+                        Case "F": inputB%(I, 11) = inputB%(I, 1) / 48 * 1.55: Locate 15: Print "14. STEALS "; inputB%(I, 11)
+                        Case "G": inputB%(I, 11) = inputB%(I, 1) / 48 * 2.3: Locate 15: Print "14. STEALS "; inputB%(I, 11)
+                    End Select
+                End If
 
-				490 '
+                490 '
                 If BK = 1 Then
-					Locate 16: Input "15. BLOCKS "; inputB%(I, 12): If C1 = 1 Then 520
-				Else
-					Case "C": inputB%(I, 12) = inputB%(I, 1) / 48 * 2.5: Locate 16: Print "15. BLOCKS "; inputB%(I, 12)
-					Case "F": inputB%(I, 12) = inputB%(I, 1) / 48 * 1.2: Locate 16: Print "15. BLOCKS "; inputB%(I, 12)
-					Case "G": inputB%(I, 12) = inputB%(I, 1) / 48 * .4: Locate 16: Print "15. BLOCKS "; inputB%(I, 12)
-				End If
-				
+                    Locate 16: Input "15. BLOCKS "; inputB%(I, 12): If C1 = 1 Then 520
+                Else
+                    Select Case position$
+                        Case "C": inputB%(I, 12) = inputB%(I, 1) / 48 * 2.5: Locate 16: Print "15. BLOCKS "; inputB%(I, 12)
+                        Case "F": inputB%(I, 12) = inputB%(I, 1) / 48 * 1.2: Locate 16: Print "15. BLOCKS "; inputB%(I, 12)
+                        Case "G": inputB%(I, 12) = inputB%(I, 1) / 48 * .4: Locate 16: Print "15. BLOCKS "; inputB%(I, 12)
+                    End Select
+                End If
+
                 495 Locate 17: Input "16. 3-FGM "; inputB%(I, 14): If C1 = 1 Then 520
                 500 Locate 18: Input "17. 3-FGA "; inputB%(I, 13): If C1 = 1 Then 520
                 505 Locate 19: Input "18. HI-GAME "; inputB%(I, 15): If C1 = 1 Then 520
                 'LOCATE 20:INPUT "19. PENETRATION (1-9) ";inputB%(I,16):IF C1=1 THEN 520
                 'LOCATE 21:INPUT "20. DEF ADJ (-5 TO 5) ";inputB%(I,17):IF C1=1 THEN 520
                 516 Locate 22: Input "21. ACTIVE FLAG (0-YES 1-NO) "; inputB%(I, 18): If C1 = 1 Then 520
-            
+
             End If 'Done checking for "END"
 
             520 C1 = 1
@@ -778,7 +783,7 @@ Sub DoTheInput (action%)
             On B9 GOTO 424, 426, 430, 435, 440, 445, 450, 455, 460, 465, 470, 475, 480, 485, 490, 495, 500, 505, 520, 520, 516
 
             C1 = 0
-            
+
             If X% > 0 Then
 
                 '920
@@ -831,9 +836,9 @@ Sub DoTheInput (action%)
             End If 'Done checking X%
 
         End If 'Done checking C1
-    
+
     Next I
-                        
+
     For J = I To 14
         inputB$(J, 0) = "XXX"
         inputB$(J, 1) = "X"
@@ -859,7 +864,6 @@ Sub DoTheInput (action%)
 '--- End of loop
 
 End Sub
-
 
 '----------------------------------------
 '     SelectTeam_BINPUT Subroutine
@@ -890,68 +894,67 @@ Sub SelectTeam_BINPUT (yearNumber$, numberTeams)
     20 MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-	If ExitCode% <> 27 Then
+    If ExitCode% <> 27 Then
 
-		teamIdx = teamIndex%(Selection%)
+        teamIdx = teamIndex%(Selection%)
 
-		Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
-		Y = LOF(1)
+        Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+        Y = LOF(1)
 
-		Field #1, 15 As Q$(0), 15 As Q$(1)
+        Field #1, 15 As Q$(0), 15 As Q$(1)
 
-		For I = 0 To 6
-			Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-		Next
+        For I = 0 To 6
+            Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+        Next
 
-		Field #1, 44 As X$, 2 As Q$(9)
+        Field #1, 44 As X$, 2 As Q$(9)
 
-		For I = 0 To 34
-			Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-		Next
+        For I = 0 To 34
+            Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+        Next
 
-		For I = 0 To 14
-			Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-			For I1 = 0 To 19
-				Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-			Next
-		Next
+        For I = 0 To 14
+            Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+            For I1 = 0 To 19
+                Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+            Next
+        Next
 
-		Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+        Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 
-		Get #1, teamIdx
+        Get #1, teamIdx
 
-		inputT$(0) = RTrim$(Q$(0))
-		inputT$(1) = RTrim$(Q$(1))
-		
-		For I = 0 To 6
-			inputL%(I) = CVI(Q$(I + 2))
-		Next
+        inputT$(0) = RTrim$(Q$(0))
+        inputT$(1) = RTrim$(Q$(1))
 
-		For I = 0 To 34
-			inputT%(I) = CVI(Q$(I + 10))
-		Next
+        For I = 0 To 6
+            inputL%(I) = CVI(Q$(I + 2))
+        Next
 
-		For I = 0 To 14
-			inputB$(I, 0) = Q$(22 * I + 45)
-			inputB$(I, 1) = Q$(22 * I + 46)
-			For I1 = 0 To 19
-				inputB%(I, I1) = CVI(Q$(22 * I + 47 + I1))
-			Next
-		Next
+        For I = 0 To 34
+            inputT%(I) = CVI(Q$(I + 10))
+        Next
 
-		inputT$(2) = RTrim$(Q$(375))
-		inputT$(3) = RTrim$(Q$(376))
-		inputT$(4) = RTrim$(Q$(377))
+        For I = 0 To 14
+            inputB$(I, 0) = Q$(22 * I + 45)
+            inputB$(I, 1) = Q$(22 * I + 46)
+            For I1 = 0 To 19
+                inputB%(I, I1) = CVI(Q$(22 * I + 47 + I1))
+            Next
+        Next
 
-		Close 1
+        inputT$(2) = RTrim$(Q$(375))
+        inputT$(3) = RTrim$(Q$(376))
+        inputT$(4) = RTrim$(Q$(377))
 
-		Call SaveTeamFile (yearNumber$, action%)
-	Else
-		BO% = 1
-	End If
+        Close 1
+
+        Call SaveTeamFile (yearNumber$, action%)
+    Else
+        BO% = 1
+    End If
 
 End Sub
-
 
 '----------------------------------------
 '     SaveTeamFile Subroutine
@@ -963,9 +966,9 @@ Sub SaveTeamFile (yearNumber$, action%)
     Shared inputB$(), inputT$()
 
     'Cls
-    
+
     Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
-    
+
     Y = LOF(1)
 
     If action% = 0 Then teamIdx = Y / 1031 + 1
@@ -1014,7 +1017,7 @@ Sub SaveTeamFile (yearNumber$, action%)
     LSet Q$(377) = inputT$(4)
 
     Put #1, teamIdx
-    
+
     Close 1
 
 End Sub

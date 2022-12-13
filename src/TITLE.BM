@@ -17,7 +17,6 @@ Sub TITLE_EDITSTATS ()
     Color 15, 0
 End Sub
 
-
 '------------------------------
 '   TITLE_HEADER Subroutine
 '------------------------------
@@ -35,7 +34,6 @@ Sub TITLE_HEADER ()
     Locate 3, 1
     Color 2, 0
 End Sub
-
 
 '------------------------------
 '  TITLE_SCHEDULER Subroutine
@@ -59,7 +57,6 @@ Sub TITLE_SCHEDULER ()
     Color , 0
 End Sub
 
-
 '------------------------------
 '    TITLE_STATS Subroutine
 '------------------------------
@@ -79,7 +76,6 @@ Sub TITLE_STATS ()
     Color 2, 0
 End Sub
 
-
 '----------------------------------------
 '       TITLE_STAT_HEADER Subroutine
 '----------------------------------------
@@ -98,6 +94,22 @@ Sub TITLE_STAT_HEADER (header$)
 
 End Sub
 
+'------------------------------
+'  TITLE_UTILITIES Subroutine
+'------------------------------
+' Displays window title / game copyright
+SUB TITLE_UTILITIES ()
+	Color , 2
+	Locate 1, 1: Print Tab(80);
+	Locate , 26
+	Color 0
+	Print "3 IN 1 FOOTBALL UTILITIES"
+	Locate 24, 1: Print Tab(80);
+	Locate , 1
+	Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+	Locate 4, 1
+	Color 2, 0
+End Sub
 
 '------------------------------
 '      TITLE Subroutine

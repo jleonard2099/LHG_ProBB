@@ -31,7 +31,7 @@ Sub CAREER ()
         _MouseHide
 
         Color , 0
-        
+
 		If ExitCode% <> 27 Then
             Select Case Selection%
                 Case 1: Call CreateCareerFile
@@ -49,7 +49,6 @@ Sub CAREER ()
 
 End Sub
 
-
 '----------------------------------------
 '     CreateCareerFile Subroutine
 '----------------------------------------
@@ -58,7 +57,7 @@ Sub CreateCareerFile ()
 
     Dim initA(62, 15)
     Dim initA$(62)
-    Dim W0(62), W1(62)
+    Dim W0!(62), W1!(62)
     Dim Z!(15), Z1!(15)
 
     Shared AR$()
@@ -84,7 +83,7 @@ Sub CreateCareerFile ()
     I$ = GetKeyPress$
 
     If UCase$(I$) = "Y" Then
-		
+
 		Do
 			Cls
 			For J = 15 To 18: Locate J: Print Space$(68)
@@ -119,7 +118,7 @@ Sub CreateCareerFile ()
 				Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; Y
 				Locate 9, 25: Print "ANY CHANGE (YN)"
 				J$ = GetKeyPress$
-				
+
 				If UCase$(J$) = "N" Then
 
 					Locate , 5: Print "IS THIS THE FINAL UPDATE FOR THE CURRENT SEASON? (Y/N)"
@@ -139,8 +138,8 @@ Sub CreateCareerFile ()
 						Input #1, B$
 						For I = 0 To 14: Input #1, initA$(I)
 							For J = 0 To 13: Input #1, initA(I, J): Next
-							Input #1, W0(I)
-							Input #1, W1(I)
+							Input #1, W0!(I)
+							Input #1, W1!(I)
 							TMR% = TMR% - 1
 							Locate 21, 38: Color 5: Print Using "####"; TMR%
 						Next
@@ -161,8 +160,8 @@ Sub CreateCareerFile ()
 							Next J
 							ars!(N, I, 14) = 1
 							ars!(N, I, 15) = Y
-							W0S!(N, I) = W0(I)
-							W1S!(N, I) = W1(I)
+							W0S!(N, I) = W0!(I)
+							W1S!(N, I) = W1!(I)
 						Next I
 
 						For I = 0 To 61: AR$(I) = initA$(I): Next
@@ -197,7 +196,6 @@ Sub CreateCareerFile ()
     'Call CAREER
 
 End Sub
-
 
 '----------------------------------------
 '     MergeCareerFiles Subroutine
@@ -259,7 +257,7 @@ Sub MergeCareerFiles ()
         Locate 25, 1
         Color 14
         Print "ENTER";: Color 15
-        Print "-SELECTS TEAM LIBRARY";
+        Print "-SELECTS FILE";
 
         _MouseShow "DEFAULT"
         MAMenu careerFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
@@ -304,7 +302,6 @@ Sub MergeCareerFiles ()
 
 End Sub
 
-
 '----------------------------------------
 '           AddYear Subroutine
 '----------------------------------------
@@ -314,7 +311,7 @@ Sub AddYear (selectedFile$, statFile$)
     Dim initA$(62)
     ReDim AL(600, 14)
     Dim mergeA(15, 62)
-    Dim W0(62), W1(62)
+    Dim W0!(62), W1!(62)
     Dim Z!(15), Z1!(15)
 
     Shared AR$()
@@ -327,12 +324,12 @@ Sub AddYear (selectedFile$, statFile$)
 	Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
     Locate 9, 25: Print "ANY CHANGE (YN)"
     I$ = GetKeyPress$
-    
+
 	If UCase$(I$) = "N" Then
 
 		Locate , 5: Print "IS THIS THE FINAL UPDATE FOR THE CURRENT SEASON? (Y/N)"
 		I$ = GetKeyPress$
-		
+
 		If UCase$(I$) = "Y" Then finalUpdate% = 1 Else finalUpdate% = 0
 
 		Locate 20, 5: Color 15: Print "MERGING CAREER STATS AND UPDATING CAREER LEADER FILE . . . . PLEASE WAIT"
@@ -362,8 +359,8 @@ Sub AddYear (selectedFile$, statFile$)
 			For I = 0 To 14
 				Input #1, initA$(I)
 				For J = 0 To 13: Input #1, mergeA(I, J): Next
-				Input #1, W0(I)
-				Input #1, W1(I)
+				Input #1, W0!(I)
+				Input #1, W1!(I)
 				TMR1% = TMR1% - 1
 				Locate 21, 38: Color 5: Print Using "####"; TMR1%
 			Next
@@ -401,8 +398,8 @@ Sub AddYear (selectedFile$, statFile$)
 						Next K
 						ars!(N, J, 14) = 1
 						ars!(N, J, 15) = statYear
-						W0S!(N, J) = W0(J)
-						W1S!(N, J) = W1(J)
+						W0S!(N, J) = W0!(J)
+						W1S!(N, J) = W1!(J)
 					Else
 						RR = RR + 1
 						If RR = 62 Then
@@ -416,8 +413,8 @@ Sub AddYear (selectedFile$, statFile$)
 
 								ars!(N, NB, 14) = 1
 								ars!(N, NB, 15) = statYear
-								W0S!(N, NB) = W0(NB)
-								W1S!(N, NB) = W1(NB)
+								W0S!(N, NB) = W0!(NB)
+								W1S!(N, NB) = W1!(NB)
 							End If
 						End If
 
@@ -449,13 +446,12 @@ Sub AddYear (selectedFile$, statFile$)
 			Color 7: Print "UNABLE TO LOCATE STAT FILE . . . PLEASE RE-ENTER"
 			Print
 			Line Input "HIT ENTER TO CONTINUE"; DUMMY$
-		
-		End If 'Done checking file exists
-	
-	End If 'Done checking for user continue
-	
-End Sub
 
+		End If 'Done checking file exists
+
+	End If 'Done checking for user continue
+
+End Sub
 
 '----------------------------------------
 '     ReadCareerFile Subroutine
@@ -494,31 +490,31 @@ Sub ReadCareerLeaders (careerFile$)
                     If ars!(J, I, 2) > BL!(1) Then
 						BL!(1) = ars!(J, I, 2): BL$(1) = AR$(I): BLYR!(1) = ars!(J, I, 15)
 					End If
-					
+
                     If ars!(J, I, 1) <> 0 And ars!(J, I, 1) / ars!(J, I, 0) >= 3.65 Then
 						If ars!(J, I, 2) / ars!(J, I, 1) > BL!(2) Then
 							BL!(2) = ars!(J, I, 2) / ars!(J, I, 1): BL$(2) = AR$(I): BLYR!(2) = ars!(J, I, 15)
 						End If
 					End If
-					
+
                     If ars!(J, I, 4) > BL!(3) Then
 						BL!(3) = ars!(J, I, 4): BL$(3) = AR$(I): BLYR!(3) = ars!(J, I, 15)
 					End If
-					
+
                     If ars!(J, I, 3) > BL!(4) Then 
 						BL!(4) = ars!(J, I, 3): BL$(4) = AR$(I): BLYR!(4) = ars!(J, I, 15)
 					End If
-					
+
                     If ars!(J, I, 3) <> 0 And ars!(J, I, 3) / ars!(J, I, 0) >= 1.5 Then
 						If ars!(J, I, 4) / ars!(J, I, 3) > BL!(5) Then
 							BL!(5) = ars!(J, I, 4) / ars!(J, I, 3): BL$(5) = AR$(I): BLYR!(5) = ars!(J, I, 15)
 						End If
 					End If
-					
+
                     If W0S!(J, I) > BL!(6) Then
 						BL!(6) = W0S!(J, I): BL$(6) = AR$(I): BLYR!(6) = ars!(J, I, 15)
 					End If
-					
+
                     If W1S!(J, I) > BL!(7) Then
 						BL!(7) = W1S!(J, I): BL$(7) = AR$(I): BLYR!(7) = ars!(J, I, 15)
 					End If
@@ -528,7 +524,7 @@ Sub ReadCareerLeaders (careerFile$)
 							BL!(8) = W0S!(J, I) / W1S!(J, I): BL$(8) = AR$(I): BLYR!(8) = ars!(J, I, 15)
 						End If
 					End If
-					
+
                     If ars!(J, I, 2) * 2 + ars!(J, I, 4) + W0S!(J, I) > BL!(9) Then
 						BL!(9) = ars!(J, I, 2) * 2 + ars!(J, I, 4) + W0S!(J, I): BL$(9) = AR$(I): BLYR!(9) = ars!(J, I, 15)
 					End If
@@ -580,7 +576,7 @@ Sub ReadCareerLeaders (careerFile$)
                     If ars!(J, I, 13) > BL!(20) Then
                         BL!(20) = ars!(J, I, 13): BL$(20) = AR$(I): BLYR!(20) = ars!(J, I, 15)
                     End If
-					
+
                 End If
 
             Next J
@@ -596,7 +592,6 @@ Sub ReadCareerLeaders (careerFile$)
     Close #1
 
 End Sub
-
 
 '----------------------------------------
 '     ViewCareerRecords Subroutine
@@ -622,13 +617,12 @@ Sub ViewCareerRecords ()
 
         Else
 
-            ReDim conferenceLeaderFiles$(0 To Count%)
+            ReDim careerLeaderFiles$(0 To Count%)
             For X = 1 To Count%
-                conferenceLeaderFiles$(X) = Space$(12)
+                careerLeaderFiles$(X) = Space$(12)
             Next
-            conferenceLeaderFiles$(0) = Spec$
-            Call ReadFile(conferenceLeaderFiles$())
-            'CALL SortStr(VARPTR(conferenceLeaderFiles$(1)), Count%, 0)
+            careerLeaderFiles$(0) = Spec$
+            Call ReadFile(careerLeaderFiles$())
 
             Do
                 Cls
@@ -652,11 +646,11 @@ Sub ViewCareerRecords ()
                 Print "-SELECTS FILE";
 
                 _MouseShow "DEFAULT"
-                MAMenu conferenceLeaderFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+                MAMenu careerLeaderFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
                 _MouseHide
 
                 If ExitCode% <> 27 Then
-					targetFile$ = conferenceLeaderFiles$(Selection%)
+					targetFile$ = careerLeaderFiles$(Selection%)
 					Locate 2, 33: Print targetFile$
 					Locate , 33: Print "ANY CHANGE (YN)";
 					Color 15, 0
@@ -748,16 +742,15 @@ Sub ViewCareerRecords ()
 					End Select
 
 				Loop Until UCase$(I$) = "V" Or UCase$(I$) = "P" Or I$ = Chr$(27)
-			
+
 			End If 'Done checking for ESC
-			
+
         End If 'Done checking for CLD files
 
         '...Until we press ESC
     Loop Until ExitCode% = 27 Or Count% = 0
 
 End Sub
-
 
 '----------------------------------------
 '           GetTeam Subroutine
@@ -841,15 +834,14 @@ Sub GetTeam (teamIDX)
 			End If 'End checking if NY$ = ""
 
 		End If 'End processing Disk ID
-	
+
 	End If 'Done checking for ESC
-	
+
     ' Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
     Color 15, 0
 
 End Sub
-
 
 '----------------------------------------
 '       LoadTeam_CAREER Subroutine

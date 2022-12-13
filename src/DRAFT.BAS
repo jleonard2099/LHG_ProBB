@@ -6,7 +6,7 @@ Sub DRAFT ()
     Dim TTL%(34)
 
     _Title "Basketball: The Pro Game - Team Draft"
-    
+
     Do
         Selection% = 1
         Count% = 52
@@ -29,10 +29,11 @@ Sub DRAFT ()
             MAMenu draftYears$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
         Loop Until ExitCode% = 27 Or ExitCode% = 13
-        
+
         If ExitCode% = 27 Then 
             BO% = 1
-        Else        
+        Else
+
             Do
                 Locate 3, 33
                 Color 15, 0 'white on black
@@ -40,31 +41,31 @@ Sub DRAFT ()
                 Color 15, 4 'white on red
                 Locate , 30: Print "ANY CHANGE (YN)";: I$ = GetKeyPress$
             Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
-            
+
             YR% = Selection%
         End If
-        
+
 		If ExitCode% = 27 Then Exit Sub
-		
+
     Loop Until UCase$(I$) = "N" Or Exitcode% = 27
 
-	If ExitCode% <> 27 Then 
+	If ExitCode% <> 27 Then
 
 		For I = 0 To 1: draftAA$(0, I) = "XXX": Next
 
 		For I = 0 To 6: draftL%(0, I) = 0: Next
-		
+
 		For I = 0 To 34
 			draftT%(0, I) = 0
 			TTL%(I) = 0
 		Next
-		
+
 		For I = 0 To 14
 			For I1 = 0 To 34
 				draftLT%(I, I1) = 0
 			Next
 		Next
-		
+
 		For I = 0 To 14
 			draftB$(0, I, 0) = "XXX"
 			draftB$(0, I, 1) = "X"
@@ -111,7 +112,6 @@ Sub DRAFT ()
 
 End Sub
 
-
 '----------------------------------------
 '       DraftNewTeam SubRoutine
 '----------------------------------------
@@ -120,12 +120,12 @@ Sub DraftNewTeam (TTL%())
 
     Shared draftAA$(), draftYN$()
     Shared draftL%(), draftLG%(), draftT%()
-    
+
     Cls
 
     Color 14: Print "LEAGUE INFORMATION"
 	Color 15
-    
+
 	draftL%(0, 0) = 80
     draftL%(0, 1) = draftLG%(YR%, 1)
     draftL%(0, 2) = draftLG%(YR%, 2)
@@ -161,13 +161,12 @@ Sub DraftNewTeam (TTL%())
 
 End Sub
 
-
 '----------------------------------------
 '      DraftExistingTeam SubRoutine
 '----------------------------------------
 '...explanation...
 Sub DraftExistingTeam (TTL%())
-    
+
     Shared draftAA$(), draftB$(), draftYears$(), draftYN$()
     Shared draftB%(), draftL%(), draftLT%(), draftT%()
 
@@ -195,7 +194,7 @@ Sub DraftExistingTeam (TTL%())
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
         Locate , 12: Print "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
         Locate 7, 27: Input NY$
-        
+
 		If NY$ = "" And draftYN$(0) <> "" Then 
 			'NY$ = draftYN$(0)
             Call SelectTeam_Draft(NTMS)
@@ -289,9 +288,9 @@ Sub DraftExistingTeam (TTL%())
 						Field #1, 133 + J% * 57 + J1 * 2 As X$, 2 As Q$(J% * 22 + 47 + J1)
 					Next
 				Next
-				
+
 				Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-				
+
 				Get #1, T
 
 				draftAA$(0, 0) = RTrim$(Q$(0))
@@ -327,9 +326,9 @@ Sub DraftExistingTeam (TTL%())
 				Next
 
 			End If 'Done checking for ESC
-		
+
 		End If 'Done checking empty input
-		
+
         If BO% = 1 Then 
             BO% = 0
         Else
@@ -346,12 +345,11 @@ Sub DraftExistingTeam (TTL%())
 
 End Sub
 
-
 '----------------------------------------
-'   Draft_Unknown SubRoutine
+'   	Draft_Unknown SubRoutine
 '----------------------------------------
-'...explanation...
-Sub Draft_Unknown
+' I can't tell that this code was ever used
+Sub Draft_Unknown ()
 
     260 Cls: Color 14: Print "TEAM OFFENSIVE INFORMATION": Color 15
 
@@ -386,7 +384,6 @@ Sub Draft_Unknown
     330 Locate 15: Input "14. 3-FGA "; draftT%(0, 17): If C1 = 1 Then 335
 
     335 C1 = 1: Locate 17: Input "# TO CHANGE (0 TO CONTINUE) "; B9: On B9 GOTO 265, 270, 275, 280, 285, 290, 295, 300, 305, 310, 315, 320, 325, 330
-
 
 	'---
     336 C1 = 0
@@ -425,7 +422,6 @@ Sub Draft_Unknown
 
     415 C1 = 1: Locate 17: Input "# TO CHANGE (0 TO CONTINUE) "; B9: On B9 GOTO 345, 350, 355, 360, 365, 370, 375, 380, 385, 390, 395, 400, 405, 410
 
-
 	'---
     416 C1 = 0
 
@@ -439,9 +435,7 @@ Sub Draft_Unknown
 
     421 If draftT%(0, 29) = 0 And T0 = 0 Then draftT%(0, 29) = 18 * draftL%(0, 0): draftT%(0, 15) = draftT%(0, 29)
 
-
 End Sub
-
 
 '----------------------------------------
 '       DoTheDraft SubRoutine
@@ -468,7 +462,6 @@ Sub DoTheDraft (TTL%())
             Color 2: Print Using "## "; I;
             Color 15: Print draftB$(0, I, 0); " "; draftB$(0, I, 1)
         Next
-
 
         Locate 21, 1
         Color 14: Print "(1) ";: Color 15: Print "DRAFT PLAYER"
@@ -544,7 +537,7 @@ Sub DoTheDraft (TTL%())
 
                         Call SelectTeam_Draft (NTMS)
                     End If
-                    
+
                     If BO% = 1 Then 
                         BO% = 0
                     Else
@@ -554,7 +547,6 @@ Sub DoTheDraft (TTL%())
                     End If
 
                 Loop Until UCase$(I$) = "N"
-
 
                 Color , 0: Cls
 				Color draftT%(1, 33), draftT%(1, 34): Print draftAA$(1, 0)
@@ -671,12 +663,7 @@ Sub DoTheDraft (TTL%())
 
     Loop Until I$ = "2" 'Or I$ = "1"
 
-
-
-
-
 End Sub
-
 
 '----------------------------------------
 '   SelectTeam_Draft SubRoutine
@@ -734,7 +721,7 @@ Sub SelectTeam_Draft (numberTeams)
 
 		Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 		Get #1, teamIdx
-		
+
 		draftAA$(1, 0) = RTrim$(Q$(0))
 		draftAA$(1, 1) = Q$(1)
 
@@ -743,11 +730,11 @@ Sub SelectTeam_Draft (numberTeams)
 		For I = 0 To 34
 			draftT%(1, I) = CVI(Q$(I + 10))
 		Next
-		
+
 		For I = 0 To 14
 			draftB$(1, I, 0) = RTrim$(Q$(22 * I + 45))
 			draftB$(1, I, 1) = RTrim$(Q$(22 * I + 46))
-			
+
 			For I1 = 0 To 19
 				draftB%(1, I, I1) = CVI(Q$(22 * I + 47 + I1))
 			Next

@@ -1,5 +1,5 @@
 Sub CREATE ()
- 
+
     ReDim menuChoices$(1 To 3)
     Dim memberTeams$(1 To TEAMS_PER_CONFERENCE), memberYears$(1 To TEAMS_PER_CONFERENCE)
     Dim Z2$(TEAMS_PER_CONFERENCE)
@@ -70,14 +70,15 @@ Sub CREATE ()
 							I$ = GetKeyPress$
 						End If
 					Loop Until UCase$(I$) = "N"
-					
+
 					newLeague = 1
 					Call CreateEditLeague (memberYears$(), memberTeams$(), newLeague)
-					
+
 				Case 2: 
 					Spec$ = diskPaths$(1) + "*.LIB"
 					null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 					Count% = DirCount%
+
 					If Count% = 0 Then 
 						Locate 10, 8
 						Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
@@ -86,10 +87,13 @@ Sub CREATE ()
 					Else
 
 						ReDim leagueFiles$(0 To Count%)
+
 						For X = 1 To Count%
 							leagueFiles$(X) = Space$(12)
 						Next
+
 						leagueFiles$(0) = Spec$
+
 						Call ReadFile(leagueFiles$())
 
 						Do
@@ -99,7 +103,7 @@ Sub CREATE ()
 							Cls
 							Locate , 28
 							Color 14
-							Print "SELECT LEAGUE TO EDIT  ESC-TO EXIT": Color 15
+							Print "SELECT LEAGUE TO EDIT": Color 15
 							Selection% = 1
 							Start% = 1
 							FileFGColr% = 15: FileBGColr% = 1
@@ -129,7 +133,7 @@ Sub CREATE ()
 						Loop Until UCase$(I$) = "N"
 
 						If ExitCode% <> 27 Then
-						
+
 							LG$ = Left$(targetFile$, Len(targetFile$) - 4)
 
 							Open diskPaths$(1) + LG$ + ".LIB" For Input As #2
@@ -152,7 +156,7 @@ Sub CREATE ()
 						End If
 
 					End If 'Done checking file count
-					
+
 			End Select
 
 		End If 'Done checking for ESC
@@ -163,13 +167,12 @@ Sub CREATE ()
 
 End Sub
 
-
 '----------------------------------------
 '       CreateEditLeague Subroutine
 '----------------------------------------
 '...explanation...
 Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
-    
+
     Dim T1$(1)
     Shared intZ1%()
 
@@ -177,11 +180,11 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
     BG = 7
 
     If (newLeague = 1) Then
-        
+
         Cls
-        
+
         Color 15, 1
-        
+
         Locate 5, 1: QPrint "Name for Division 1 ", 14, 1, -1
         Locate , 21: QPrint PadRight$(D1$, 10), FG, BG, -1
         Locate 7, 1: QPrint "Name for Division 2 ", 14, 1, -1
@@ -230,9 +233,9 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
         If X$ <> "Y" GoTo Done 'insist on either Y or N or up-arrow
     End If
 
-
     'Edit / Review Members
-    Do    
+    Do
+
         Color 14, 0
         Cls
         Print
@@ -260,9 +263,10 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
         End If
 
         Select Case UCase$(I$)
-            Case "1": 
-            
-                Do                  
+            Case "1":
+
+                Do
+
                     Color 15, 0: Cls
                     JJ = 7
                     Locate 6, 8: Color 15, 4
@@ -282,7 +286,7 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
                     Else
                         YN$ = NY$
                         ERASE teamNames$
-                    
+
                         NTMS = 0
                         Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
                         Y = LOF(1)
@@ -311,7 +315,7 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
                             End If
                         Next
                         Close 1
-                    
+
                         Call SelectTeam_CREATE (YN$, NTMS, D)
                     End If
 
@@ -364,7 +368,7 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
                     Mid$(memberTeams$(X), D, 1) = "_"
                 End If
             Next D
-            
+
             QQ = 8
 
             For D = 11 To 4 Step -1
@@ -398,7 +402,6 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
     Close 2
 
 End Sub
-
 
 Sub SelectTeam_CREATE (yearNumber$, numberTeams, selectedIndex)
 

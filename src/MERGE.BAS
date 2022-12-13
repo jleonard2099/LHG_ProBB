@@ -1,7 +1,7 @@
 Sub MERGE ()
-	
+
 	'No Def Int so variables should calculate fine
-	
+
     ReDim menuChoices$(1 To 3)
 
     _Title "Basketball: The Pro Game - Align Stats"
@@ -40,7 +40,6 @@ Sub MERGE ()
 
 End Sub
 
-
 '----------------------------------------
 '         MergeStats Subroutine
 '----------------------------------------
@@ -52,7 +51,7 @@ Sub MergeStats ()
 
     Dim O%(0 To 100), ORD%(0 To 100), mergeT%(0 To 100), TRD%(0 To 100)
 
-    Dim ARD(0 To 15, 0 To 14), W0(0 To 15), W1(0 To 15), W0RD(0 To 15), W1RD(0 To 15)
+    Dim ARD(0 To 15, 0 To 14), W0!(0 To 15), W1!(0 To 15), W0RD(0 To 15), W1RD(0 To 15)
     Dim Z!(0 To 15), Z1!(0 To 15), ZRD!(0 To 16), ZRD1!(0 To 16)
 
     Color 12, 0
@@ -77,15 +76,17 @@ Sub MergeStats ()
 
     Loop Until UCase$(I$) = "N"
 
-
     Do
-        Color 15, 0: Cls
+        Color 15, 0
+		Cls
         JJ = 6
         Locate 6, 8: Color 15, 4
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+		For II = 1 To JJ: Locate 6 + II, 8
         Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
         Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+		Locate 7, 32
         Locate , 12: Print "ENTER DISK ID: ": Print
         Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -94,6 +95,7 @@ Sub MergeStats ()
         I$ = GetKeyPress$
 
         If I$ = Chr$(27) Then Z$ = "END": Cls: 'Exit Sub
+
         If I$ = Chr$(13) Then 
             Call SelectTeam_MERGE (YN$, NTMS)
 			A$ = RTRim$(Q$(0))
@@ -163,7 +165,7 @@ Sub MergeStats ()
                 Close 1
 
                 B$ = A$
-				
+
             End If
         End If
 
@@ -174,7 +176,7 @@ Sub MergeStats ()
             Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
             I$ = GetKeyPress$
         End If
-		
+
     Loop Until UCase$(I$) = "N"
 
     Color 15, 0
@@ -202,8 +204,9 @@ Sub MergeStats ()
         Locate , 15: Print "MASTER STATS ARE ON DRIVE "; PC$
         Locate , 15: Print "TEAM TO MERGE STATS FOR IS "; A$
         Locate 14, 15: Print "ANY CHANGE (YN)"
+
         I$ = GetKeyPress$
-		
+
         If UCase$(I$) = "N" Then
 
             If Not _FileExists(PR$ + "\" + Z$) Then 
@@ -233,7 +236,6 @@ Sub MergeStats ()
 
                 Close #1
 
-
                 Open PR$ + "\" + Z$ + "S" For Input As #1
                 Input #1, YR%
                 For I = 1 To 100: Input #1, ORD%(I): Next I
@@ -257,7 +259,7 @@ Sub MergeStats ()
                     Open PC$ + "\" + Z$ For Input As #1
                     Input #1, B$
                     For I = 0 To 14: Input #1, A$(I)
-                    For J = 0 To 13: Input #1, A(I, J): Next: Input #1, W0(I): Input #1, W1(I): Next
+                    For J = 0 To 13: Input #1, A(I, J): Next: Input #1, W0!(I): Input #1, W1!(I): Next
                     For L = 0 To 15: Input #1, Z!(L): Next
                     For L = 0 To 15: Input #1, Z1!(L): Next
                     Close #1
@@ -276,7 +278,7 @@ Sub MergeStats ()
                         If ARD$(K) <> A$(K) Then SEQ = SEQ + 1
                     Next
 
-                    If SEQ = 0 Then 
+                    If SEQ = 0 Then
 
                         For K = 1 To YR%
                             Y% = Y% + 1
@@ -292,8 +294,8 @@ Sub MergeStats ()
 							For J = 0 To 12
 								A(I, J) = A(I, J) + ARD(I, J)
 							Next J
-							W0(I) = W0(I) + W0RD(I)
-							W1(I) = W1(I) + W1RD(I)
+							W0!(I) = W0!(I) + W0RD(I)
+							W1!(I) = W1!(I) + W1RD(I)
 							If A(I, 13) < ARD(I, 13) Then A(I, 13) = ARD(I, 13) Else A(I, 13) = A(I, 13)
 						Next I
 
@@ -301,11 +303,11 @@ Sub MergeStats ()
                             Z!(L) = Z!(L) + ZRD!(L)
 							Z1!(L) = Z1!(L) + ZRD1!(L)
                         Next
-                        
+
                         Open PC$ + "\" + Z$ For Output As #1
                         Write #1, B$
                         For I = 0 To 14: Write #1, A$(I)
-                        For J = 0 To 13: Write #1, A(I, J): Next: Write #1, W0(I): Write #1, W1(I): Next
+                        For J = 0 To 13: Write #1, A(I, J): Next: Write #1, W0!(I): Write #1, W1!(I): Next
                         For L = 0 To 15: Write #1, Z!(L): Next
                         For L = 0 To 15: Write #1, Z1!(L): Next
                         Close #1
@@ -319,7 +321,7 @@ Sub MergeStats ()
                         Close #1
 
                         Y = 0
-                        
+
 						Locate 20, 20: Color 12: Print "RESULTS SUCCESSFULLY MERGED!!"
 
                         For J = 13 To 23
@@ -340,19 +342,18 @@ Sub MergeStats ()
 						Locate 11, 24: Print "YOU MUST REALIGN ROAD STAT FILE OR"
                         Locate , 31: Print "ENTER STATS MANUALLY."
                         Color 13: Locate 15, 29: Line Input "HIT ENTER TO GO TO MENU"; DUMMY$
-                    
+
                     End if 'Done checking sequence
 
                 End If 'Done second check if file exists
-                
+
             End If 'Done first check if file exists
 
-        End If 'Done checking if we are continued 
-    
-    Loop Until UCase$(I$) = "N" Or SEQ = 0
-    
-End Sub
+        End If 'Done checking if we are continued
 
+    Loop Until UCase$(I$) = "N" Or SEQ = 0
+
+End Sub
 
 '----------------------------------------
 '     SelectTeam_MERGE Subroutine

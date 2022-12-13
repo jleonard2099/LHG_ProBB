@@ -11,7 +11,7 @@ Sub CARVIEW ()
 
     Spec$ = diskPaths$(1) + "*.CAR"
     Count% = FCount%(Spec$)
-	
+
     If Count% = 0 Then
         Call CSMsgBox("NO CAREER FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
         I$ = GetKeyPress$
@@ -25,7 +25,6 @@ Sub CARVIEW ()
 		careerFiles$(0) = Spec$
 
 		Call ReadFile(careerFiles$())
-		'CALL SortStr(VARPTR(careerFiles$(1)), Count%, 0)
 
 		Do
 			1310 Cls
@@ -33,7 +32,7 @@ Sub CARVIEW ()
 			Cls
 			Locate , 28
 			Color 14
-			Print "SELECT CAREER FILE TO VIEW": Color 15
+			Print "SELECT FILE TO VIEW": Color 15
 			Selection% = 1
 			START% = 1
 			FileFGColr% = 15: FileBGColr% = 1
@@ -103,7 +102,7 @@ Sub CARVIEW ()
 							'Process player
 							TT1 = 0: TT2 = 0: TT3 = 0: TT4 = 0: TT5 = 0: TT6 = 0: TT7 = 0: TT8 = 0: TT9 = 0: TT10 = 0: TT11 = 0: TT12 = 0: TT13 = 0: TT14 = 0: TT15 = 0: TT16 = 0: TT17 = 0
 							VV = ars!(1, I, 14) + ars!(2, I, 14) + ars!(3, I, 14) + ars!(4, I, 14) + ars!(5, I, 14) + ars!(6, I, 14) + ars!(7, I, 14) + ars!(8, I, 14) + ars!(9, I, 14) + ars!(10, I, 14) + ars!(11, I, 14) + ars!(12, I, 14) + ars!(13, I, 14) + ars!(14, I, 14) + ars!(15, I, 14)
-							
+
 							If 55 - PTN < VV Then 
 								3000 LPrint Chr$(12)
 								LPrint Tab(59); Z$: LPrint
@@ -201,7 +200,7 @@ Sub CARVIEW ()
 							End If 'Done comparing PTN to VV
 
 						End If ' Done checking for legitimate player
-						
+
 					Next I
 
 				Case "V":
@@ -220,14 +219,12 @@ Sub CARVIEW ()
 					Loop Until UCase$(I$) = "E" Or I$ = Chr$(27)
 
 			End Select
-			
+
 		End If 'Done checking for ESC
 
 	End If 'Done checking for files
 
 End Sub
-
-
 
 '----------------------------------------
 '       ViewRoster Subroutine
@@ -242,7 +239,7 @@ Sub ViewRoster (A$())
 
 		For I = 0 To 61
 			'Check for valid player
-			If A$(I) <> "" And A$(I) <> "XXX" Then 
+			If A$(I) <> "" And A$(I) <> "XXX" Then
 
 				TT1 = 0: TT2 = 0: TT3 = 0: TT4 = 0: TT5 = 0: TT6 = 0: TT7 = 0: TT8 = 0: TT9 = 0: TT10 = 0: TT11 = 0: TT12 = 0: TT13 = 0: TT14 = 0: TT15 = 0: TT16 = 0: TT17 = 0
 				Color 11: Locate 1: Print Z$
@@ -254,34 +251,34 @@ Sub ViewRoster (A$())
 
 				For V = 1 To VV
 					Color 7: Print Tab(15); ars!(V, I, 15);
-					
+
 					Print Tab(21); Using "##"; ars!(V, I, 0);
 					Print Tab(24); Using "###"; ars!(V, I, 2);
 					Print Tab(28); Using "####"; ars!(V, I, 1);
-					
+
 					If ars!(V, I, 2) = 0 Then Print Tab(33); " --.-";
 					If ars!(V, I, 2) > 0 Then Print Tab(33); Using "###.#"; (ars!(V, I, 2) / ars!(V, I, 1)) * 100;
-					
+
 					Print Tab(39); Using "###"; ars!(V, I, 4);
 					Print Tab(43); Using "###"; ars!(V, I, 3);
-					
+
 					If ars!(V, I, 4) = 0 Then Print Tab(47); " --.-";
 					If ars!(V, I, 4) > 0 Then Print Tab(47); Using "###.#"; (ars!(V, I, 4) / ars!(V, I, 3)) * 100;
-					
+
 					Print Tab(53); Using "###"; W0S!(V, I);
 					Print Tab(57); Using "###"; W1S!(V, I);
-					
+
 					If W0S!(V, I) = 0 Then Print Tab(61); " --.-";
 					If W0S!(V, I) > 0 Then Print Tab(61); Using "###.#"; (W0S!(V, I) / W1S!(V, I)) * 100;
-					
+
 					Print Tab(67); Using "####"; ars!(V, I, 2) * 2 + ars!(V, I, 4) + W0S!(V, I);
-					
+
 					If ars!(V, I, 2) * 2 + ars!(V, I, 4) + W0S!(V, I) = 0 Then Print Tab(72); " 0.0";
 					If ars!(V, I, 2) * 2 + ars!(V, I, 4) + W0S!(V, I) > 0 Then Print Tab(72); Using "##.#"; (ars!(V, I, 2) * 2 + ars!(V, I, 4) + W0S!(V, I)) / ars!(V, I, 0);
 				Next V
 
 				VV = ars!(1, I, 14) + ars!(2, I, 14) + ars!(3, I, 14) + ars!(4, I, 14) + ars!(5, I, 14) + ars!(6, I, 14) + ars!(7, I, 14) + ars!(8, I, 14) + ars!(9, I, 14) + ars!(10, I, 14) + ars!(11, I, 14) + ars!(12, I, 14) + ars!(13, I, 14) + ars!(14, I, 14) + ars!(15, I, 14)
-				
+
 				For V = 1 To VV
 					TT1 = TT1 + ars!(V, I, 0)
 					TT2 = TT2 + ars!(V, I, 2)
@@ -298,32 +295,32 @@ Sub ViewRoster (A$())
 				Print
 				Print Tab(18); Using "##"; VV;
 				Print Tab(22); Using "#####"; TT2;
-				
+
 				If TT2 = 0 Then Print Tab(33); " --.-";
 				If TT2 > 0 Then Print Tab(33); Using "###.#"; (TT2 / TT3) * 100;
-				
+
 				Print Tab(41); Using "#####"; TT5;
 				Print Tab(52); Using "####"; TT7;
-				
+
 				If TT7 = 0 Then Print Tab(61); " --.-";
 				If TT7 > 0 Then Print Tab(61); Using "###.#"; (TT7 / TT8) * 100;
 				If TT6 = 0 Then Print Tab(72); " 0.0"
 				If TT6 > 0 Then Print Tab(72); Using "##.#"; TT6 / TT1
-				
+
 				Print "TOTALS";
 				Print Tab(19); Using "####"; TT1;
 				Print Tab(27); Using "#####"; TT3;
 				Print Tab(37); Using "#####"; TT4;
-				
+
 				If TT4 = 0 Then Print Tab(47); " --.-";
 				If TT4 > 0 Then Print Tab(47); Using "###.#"; (TT4 / TT5) * 100;
-				
+
 				Print Tab(56); Using "####"; TT8;
 				Print Tab(67); Using "####"; TT6
 				Print
 				Print
 				Print
-				
+
 				Color 14: Line Input "HIT ENTER TO CONTINUE"; DUMMY$
 				Cls
 				Color 11: Locate 1: Print Z$
@@ -353,7 +350,7 @@ Sub ViewRoster (A$())
 					If ars!(V, I, 10) = 0 Then Print Tab(73); " 0";
 					If ars!(V, I, 10) > 0 Then Print Tab(73); Using "##"; Int(((ars!(V, I, 10) / 60) / ars!(V, I, 0)) + .5);
 				Next V
-				
+
 				VV = ars!(1, I, 14) + ars!(2, I, 14) + ars!(3, I, 14) + ars!(4, I, 14) + ars!(5, I, 14) + ars!(6, I, 14) + ars!(7, I, 14) + ars!(8, I, 14) + ars!(9, I, 14) + ars!(10, I, 14) + ars!(11, I, 14) + ars!(12, I, 14) + ars!(13, I, 14) + ars!(14, I, 14) + ars!(15, I, 14)
 				For V = 1 To VV
 					TT9 = TT9 + ars!(V, I, 5)
@@ -372,28 +369,44 @@ Sub ViewRoster (A$())
 				Print
 				Print Tab(18); Using "##"; VV;
 				Print Tab(26); Using "####"; TT9 - TT17;
-				
+
 				If TT9 = 0 Then Print Tab(36); " 0.0";
 				If TT9 > 0 Then Print Tab(36); Using "##.#"; TT9 / TT1;
-				
+
 				Print Tab(45); Using "####"; TT11;
 				Print Tab(54); Using "###"; TT13;
 				Print Tab(62); Using "##"; TT15;
-				
+
 				If TT14 = 0 Then Print Tab(73); " 0"
 				If TT14 > 0 Then Print Tab(73); Using "##"; Int((TT14 / 60) / TT1) + .5
-				
+
 				Print "TOTALS";
 				Print Tab(21); Using "####"; TT17;
 				Print Tab(30); Using "#####"; TT9;
 				Print Tab(40); Using "####"; TT10;
 				Print Tab(49); Using "####"; TT12;
 				Print Tab(58); Using "###"; TT16;
-				
+
 				If TT14 = 0 Then Print Tab(65); "    0"
 				If TT14 > 0 Then Print Tab(65); Using "#####"; Int((TT14 + 30) / 60)
 
-				TT1 = 0: TT2 = 0: TT3 = 0: TT4 = 0: TT5 = 0: TT6 = 0: TT7 = 0: TT8 = 0: TT9 = 0: TT10 = 0: TT11 = 0: TT12 = 0: TT13 = 0: TT14 = 0: TT15 = 0: TT16 = 0: TT17 = 0
+				TT1 = 0
+				TT2 = 0
+				TT3 = 0
+				TT4 = 0
+				TT5 = 0
+				TT6 = 0
+				TT7 = 0
+				TT8 = 0
+				TT9 = 0
+				TT10 = 0
+				TT11 = 0
+				TT12 = 0
+				TT13 = 0
+				TT14 = 0
+				TT15 = 0
+				TT16 = 0
+				TT17 = 0
 				Print
 				Print
 				Print
@@ -401,20 +414,19 @@ Sub ViewRoster (A$())
 				Print "HIT ENTER TO CONTINUE OR ESC TO GO TO MAIN MENU"
 				I$ = GetKeyPress$
 				If I$ = Chr$(27) Then Exit Sub
-				
+
 			End If 'Done checking for valid player
-			
+
 		Next I
 
 		Cls
 		Locate 5, 20
 		Color 14: Print "VIEW AGAIN (Y/N)"
 		I$ = GetKeyPress$
-		
+
 	Loop Until UCase$(I$) = "N"
 
 End Sub
-
 
 '----------------------------------------
 '       ViewPlayer Subroutine
@@ -426,12 +438,12 @@ Sub ViewPlayer (A$())
 
 	Cls
 	Color 12: Print Z$
-	
+
 	For I = 0 To 15: Locate I + 2: Color 3: Print Using "##"; I;: Print " ";: Color 7: Print A$(I): Next
 	For I = 16 To 31: Locate I - 14, 20: Color 3: Print Using "##"; I;: Print " ";: Color 7: Print A$(I): Next
 	For I = 32 To 46: Locate I - 30, 40: Color 3: Print Using "##"; I;: Print " ";: Color 7: Print A$(I): Next
 	For I = 47 To 61: Locate I - 45, 60: Color 3: Print Using "##"; I;: Print " ";: Color 7: Print A$(I): Next
-	
+
 	Print
 	Color 15
 	Locate 22, 48: Input "ENTER # OF PLAYER TO VIEW"; B9
@@ -448,7 +460,7 @@ Sub ViewPlayer (A$())
 	Locate 3: Print Left$(A$(B9), 13);
 
 	VV = ars!(1, B9, 14) + ars!(2, B9, 14) + ars!(3, B9, 14) + ars!(4, B9, 14) + ars!(5, B9, 14) + ars!(6, B9, 14) + ars!(7, B9, 14) + ars!(8, B9, 14) + ars!(9, B9, 14) + ars!(10, B9, 14) + ars!(11, B9, 14) + ars!(12, B9, 14) + ars!(13, B9, 14) + ars!(14, B9, 14) + ars!(15, B9, 14)
-	
+
 	For V = 1 To VV
 		Color 7: Print Tab(15); ars!(V, B9, 15);
 		Print Tab(21); Using "##"; ars!(V, B9, 0);
@@ -475,7 +487,7 @@ Sub ViewPlayer (A$())
 		If ars!(V, B9, 2) * 2 + ars!(V, B9, 4) + W0S!(V, B9) = 0 Then Print Tab(74); " 0.0";
 		If ars!(V, B9, 2) * 2 + ars!(V, B9, 4) + W0S!(V, B9) > 0 Then Print Tab(74); Using "##.#"; (ars!(V, B9, 2) * 2 + ars!(V, B9, 4) + W0S!(V, B9)) / ars!(V, B9, 0);
 	Next V
-	
+
 	For V = 1 To VV
 		TT1 = TT1 + ars!(V, B9, 0)
 		TT2 = TT2 + ars!(V, B9, 2)
@@ -486,7 +498,7 @@ Sub ViewPlayer (A$())
 		TT7 = TT7 + W0S!(V, B9)
 		TT8 = TT8 + W1S!(V, B9)
 	Next V
-	
+
 	Print
 	Color 3
 	Print
@@ -525,7 +537,7 @@ Sub ViewPlayer (A$())
 	Color 12: Print "PLAYER         YEAR OREB DREB  TRB  AVG  PF  AST BLK  ST  TO HI   MIN  AVG."
 	Color 15
 	Locate 3: Print Left$(A$(B9), 13);
-	
+
 	For V = 1 To VV
 		Color 7: Print Tab(15); ars!(V, B9, 15);
 		Print Tab(21); Using "####"; ars!(V, B9, 12);
@@ -559,7 +571,7 @@ Sub ViewPlayer (A$())
 		TT17 = TT17 + ars!(V, B9, 12)
 		If ars!(V, B9, 13) > TT15 Then TT15 = ars!(V, B9, 13)
 	Next V
-	
+
 	Print
 	Color 3
 	Print

@@ -46,7 +46,6 @@
 
 End Sub
 
-
 '----------------------------------------
 '		 AdjustGames subroutine
 '----------------------------------------
@@ -73,7 +72,7 @@ Sub AdjustGames (selectedIndex)
 		I$ = GetKeyPress$
 
 		If I$ <> Chr$(27) Then
-	
+
 			If I$ = Chr$(13) Then 
 				Call SelectTeam_GPMIN(YN$, NTMS, selectedIndex)
 			Else
@@ -131,7 +130,7 @@ Sub AdjustGames (selectedIndex)
 				End If
 
 			End If
-			
+
 			If BO% = 1 Then 
 				BO% = 0
 			Else
@@ -141,14 +140,14 @@ Sub AdjustGames (selectedIndex)
 			End If
 
 		End If 'Done checking for ESC
-		
+
 	Loop Until UCase$(A$) = "N" Or I$ = Chr$(27)
 
 	If I$ <> Chr$(27) Then
-		Color 15, 0	
+		Color 15, 0
 
 		Do
-		
+
 			Color , 0
 			Cls
 			Color adjustT%(33), adjustT%(34): Print adjustT$(0)
@@ -190,7 +189,7 @@ Sub AdjustGames (selectedIndex)
 			Do
 				Locate 23, 1
 				Input "ENTER SELECTION "; B1
-			
+
 				If B1 < 15 Then 
 					Locate 23, 1: Print Space$(38);: Locate 23, 1
 					Print adjustB$(B1, 0); " ";: Input "GAMES PLAYED "; gamesPlayed
@@ -229,17 +228,16 @@ Sub AdjustGames (selectedIndex)
 					Put #1, selectedIndex
 
 					Close 1
-				
+
 				End If
 
 			Loop Until B1 >= 1 And B1 <= 15
-			
+
 		Loop Until B1 = 15
 
 	End If 'Done checking for ESC
 
 End Sub
-
 
 '----------------------------------------
 '		 AdjustGames subroutine
@@ -249,7 +247,7 @@ Sub SelectTeam_GPMIN (yearNumber$, numberTeams, selectedIndex)
 
 	Shared adjustB$(), adjustT$()
 	Shared adjustB%(), adjustL%(), adjustT%()
-	
+
     Selection% = 1
     Count% = numberTeams
     Start% = 1
@@ -271,7 +269,7 @@ Sub SelectTeam_GPMIN (yearNumber$, numberTeams, selectedIndex)
     _MouseHide
 
 	If ExitCode% <> 27 Then
-		
+
 		selectedIndex = teamIndex%(Selection%)
 
 		Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
@@ -290,12 +288,12 @@ Sub SelectTeam_GPMIN (yearNumber$, numberTeams, selectedIndex)
 			Next
 		Next
 		Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-		
+
 		Get #1, selectedIndex
-		
+
 		adjustT$(0) = RTrim$(Q$(0))
 		adjustT$(1) = RTrim$(Q$(1))
-		
+
 		For I = 0 To 6: adjustL%(I) = CVI(Q$(I + 2)): Next
 		For I = 0 To 34: adjustT%(I) = CVI(Q$(I + 10)): Next
 		For I = 0 To 14
@@ -305,15 +303,15 @@ Sub SelectTeam_GPMIN (yearNumber$, numberTeams, selectedIndex)
 				adjustB%(I, I1) = CVI(Q$(22 * I + 47 + I1))
 			Next
 		Next
-		
+
 		adjustT$(2) = RTrim$(Q$(375))
 		adjustT$(3) = RTrim$(Q$(376))
 		adjustT$(4) = RTrim$(Q$(377))
-		
+
 		Close
 
 	Else
 		BO% = 1
 	End If
-		
+
 End Sub

@@ -1,9 +1,9 @@
 Sub SINPUT ()
 
-    Dim W0(15), W1(14), Z2(14, 14)
+    Dim W0!(15), W1!(14), Z2(14, 14)
 	Dim Z!(15), Z1!(15)
     Dim inputA$(14)
-    
+
     _Title "Basketball: The Pro Game - Stats Input"
 
     Color 7, 0
@@ -25,14 +25,14 @@ Sub SINPUT ()
         Else
             Q = 2
         End if
-    
+
     Loop Until UCase$(I$) = "C" Or UCase$(I$) = "R"
 
     If Q = 1 Then 
         Cls
         X$ = "OFFENSIVE TEAM STATS"
         Call TITLE_STAT_HEADER (X$)
-        
+
         Locate 3, 1
 
         2025 Input "1. STAT FILE NAME "; Z$
@@ -43,7 +43,7 @@ Sub SINPUT ()
 
         2055 For I = 0 To 14: Input #1, inputA$(I)
 
-        2065 For J = 0 To 13: Input #1, Z2(I, J): Next J: Input #1, W0(I): Input #1, W1(I): Next I
+        2065 For J = 0 To 13: Input #1, Z2(I, J): Next J: Input #1, W0!(I): Input #1, W1!(I): Next I
 
         2075 For L = 0 To 15: Input #1, Z!(L): Next L
 
@@ -52,7 +52,7 @@ Sub SINPUT ()
         2095 Close 1
 
         2105 X% = 2
-        
+
         1305 Cls
         X$ = "OFFENSIVE TEAM STATS"
         Call TITLE_STAT_HEADER(X$)
@@ -81,7 +81,7 @@ Sub SINPUT ()
     'Q = 2
         Cls
         Call TITLE_EDITSTATS
-        
+
         Print
 
         Cls
@@ -124,7 +124,7 @@ Sub SINPUT ()
             'I don't think this is setup right!
             'Return to menu is still somehow
             '   going to run code?
-    
+
     210 C1 = 1
 
     Do
@@ -142,7 +142,7 @@ Sub SINPUT ()
     Cls
     X$ = "DEFENSIVE TEAM STATS"
     Call TITLE_STAT_HEADER(X$)
-    
+
 	If X% > 0 Then 
         X% = 2
         Locate 3, 1
@@ -178,7 +178,6 @@ Sub SINPUT ()
         405 Locate 16, 1: Input "14. OPP POINTS  "; Z1!(10): If C1 = 1 Then 410
 
     End If
-    
 
     410 C1 = 1
 
@@ -189,7 +188,6 @@ Sub SINPUT ()
 
     413 On B9 GOTO 379, 381, 383, 385, 387, 389, 391, 393, 395, 397, 399, 401, 403, 405
 
-
 	'----------
 	'Player Stats
 	'----------
@@ -198,7 +196,7 @@ Sub SINPUT ()
      If X% <= 0 Then
 
         For I = 0 To 14
-        
+
 			Cls
             X$ = "PLAYER -" + Str$(I + 1)
             Call TITLE_STAT_HEADER(X$)
@@ -217,10 +215,9 @@ Sub SINPUT ()
             1065 Locate 14, 1: Input "12. ASSISTS "; Z2(I, 8): If C1 = 1 Then 1225
             1105 Locate 15, 1: Input "13. BLOCKS "; Z2(I, 9): If C1 = 1 Then 1225
             1106 Locate 16, 1: Input "14. TURNOVERS "; Z2(I, 11): If C1 = 1 Then 1225
-            1145 Locate 17, 1: Input "15. 3FGA "; W1(I): If C1 = 1 Then 1225
-            1185 Locate 18, 1: Input "16. 3FGM "; W0(I): If C1 = 1 Then 1225
+            1145 Locate 17, 1: Input "15. 3FGA "; W1!(I): If C1 = 1 Then 1225
+            1185 Locate 18, 1: Input "16. 3FGM "; W0!(I): If C1 = 1 Then 1225
             1186 Locate 19, 1: Input "17. HI-GAME (PTS) "; Z2(I, 13): If C1 = 1 Then 1225
-
 
             1225 C1 = 1
 
@@ -236,9 +233,8 @@ Sub SINPUT ()
             If X% < 0 Then Exit For
 
         Next I
-    
-	End If
 
+	End If
 
     Cls
     Call TITLE_EDITSTATS
@@ -284,14 +280,13 @@ Sub SINPUT ()
         Print "12. ASSISTS "; Z2(I, 8)
         Print "13. BLOCKS "; Z2(I, 9)
         Print "14. TURNOVERS "; Z2(I, 11)
-        Print "15. 3FGA "; W1(I)
-        Print "16. 3FGM "; W0(I)
+        Print "15. 3FGA "; W1!(I)
+        Print "16. 3FGM "; W0!(I)
         Print "17. HI-GAME (PTS) "; Z2(I, 13)
         GoTo 1225
     End If
 
 End Sub
-
 
 '----------------------------------------
 '     		NoWhere Subroutine
@@ -317,11 +312,11 @@ Sub NoWhere ()
         Cls
         Call TITLE_EDITSTATS
     End If
-    
+
     Open diskPaths$(1) + Z$ For Output As #1
     Print #1, A$
     For I = 0 To 14: Print #1, inputA$(I)
-    For J = 0 To 13: Print #1, Z2(I, J): Next J: Print #1, W0(I): Print #1, W1(I): Next I
+    For J = 0 To 13: Print #1, Z2(I, J): Next J: Print #1, W0!(I): Print #1, W1!(I): Next I
     For L = 0 To 15: Print #1, Z!(L): Next L
     For L = 0 To 15: Print #1, Z1!(L): Next L
 

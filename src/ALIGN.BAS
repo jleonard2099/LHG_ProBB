@@ -1,4 +1,3 @@
-
 SUB ALIGN ()
 
 	Dim alignA$(15), AN$(15), AR$(15)
@@ -6,7 +5,7 @@ SUB ALIGN ()
 	' Stats are working b/c these are all singles
 	' We are not using Def Int
 	Dim AN(15, 14), AR(15, 14)
-	Dim W0(15), W1(15), W0R(15), WR1(15), W0N(15), WN1(15)
+	Dim W0!(15), W1!(15), W0R(15), WR1(15), W0N(15), WN1(15)
 	Dim Z(15), Z1(15), ZR(15), ZR1(15)
 
 	_Title "Basketball: The Pro Game - Align Stats"
@@ -36,7 +35,6 @@ SUB ALIGN ()
 		I$ = GetKeyPress$
 	Loop Until UCase$(I$) = "N"
 
-
 	Do
 		Locate 15, 5: Print Space$(55)
 		Locate 16, 5: Print Space$(55)
@@ -47,7 +45,7 @@ SUB ALIGN ()
 		I$ = GetKeyPress$
 
 		If UCase$(I$) = "N" Then
-		
+
 			If Not _FileExists(PR$ + "\" + Z$) Then 
 				Cls
 				Locate 2, 10: Color 7: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
@@ -70,7 +68,6 @@ SUB ALIGN ()
 
 				Close #1
 
-
 				If Not _FileExists(PC$ + "\" + Z$) Then 
 					Cls
 					Locate 2, 10: Color 7: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
@@ -83,8 +80,8 @@ SUB ALIGN ()
 
 					For I = 0 To 14: Input #1, alignA$(I)
 						For J = 0 To 13: Input #1, A(I, J): Next
-						Input #1, W0(I)
-						Input #1, W1(I)
+						Input #1, W0!(I)
+						Input #1, W1!(I)
 					Next
 					For L = 0 To 15: Input #1, Z(L): Next
 					For L = 0 To 15: Input #1, Z1(L): Next
@@ -111,7 +108,7 @@ SUB ALIGN ()
 
 					N = 0
 
-					Do 
+					Do
 
 						For J = 0 To 14
 							If alignA$(N) <> AR$(J) Then
@@ -133,7 +130,8 @@ SUB ALIGN ()
 							For K = 0 To 14
 								If AN$(K) <> alignA$(K) Then 
 									SEQ = SEQ + 1
-								End If						
+								End If
+
 							Next
 
 							If SEQ = 0 Then 
@@ -159,7 +157,7 @@ SUB ALIGN ()
 								For L = 0 To 15: Write #1, ZR1(L): Next
 								Close #1
 
-								Locate 19, 20: Print "                                                  "
+								Locate 19, 20: Print Space$(50)
 
 								Color 15
 								Cls
@@ -176,7 +174,7 @@ SUB ALIGN ()
 								Color 13: Line Input "HIT ENTER TO CONTINUE"; DUMMY$
 
 							End If 'Done checking if players are in sequence
-									
+
 						End If 'Done checking N = 15
 
 					Loop Until N = 15
@@ -184,9 +182,9 @@ SUB ALIGN ()
 				End If 'Done checking if home file exists
 
 			End If 'Done checking if road file exists
-		
+
 		End If 'Done checking if ANY CHANGE = Y/N
-		
+
 	Loop Until UCase$(I$) = "N"
-	
+
 END SUB
