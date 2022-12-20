@@ -14,16 +14,18 @@ Or did I fix?
 4	- Center
 
 ### Text Code ###
+
 College BB???
+
 G, F, C, GF, FG, FC, CF
 
-"F" = "FORWARD"
-"C" = "CENTER"
-"G" = "GUARD"
-"FC" = "FORWARD/GUARD"
-"FG" = "FORWARD/CENTER"
-"GF" = "GUARD/FORWARD"
-"CF" = "CENTER/FORWARD"
+- "F" = "FORWARD"
+- "C" = "CENTER"
+- "G" = "GUARD"
+- "FC" = "FORWARD/GUARD"
+- "FG" = "FORWARD/CENTER"
+- "GF" = "GUARD/FORWARD"
+- "CF" = "CENTER/FORWARD"
 
 ## Variables ##
 
