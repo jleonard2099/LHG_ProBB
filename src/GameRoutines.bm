@@ -48,10 +48,16 @@ Sub TeamSelect_PROHOOP (teamIndicator)
             BO% = 0
             '56
         Else
-            Locate 2, 33: Color T(P9, 33), T(P9, 34): Print B$(P9)
-            Color 15, 4: Locate , 33
-            Print "ANY CHANGE (YN)";
-            I$ = GetKeyPress$
+            Locate 2, 33
+			Color T(P9, 33), T(P9, 34): Print B$(P9)
+            
+			Color 15, 4
+
+			Do
+				Locate , 33
+				Print "ANY CHANGE (YN)";
+				I$ = GetKeyPress$
+			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
         End If
 
     Loop Until UCase$(I$) = "N"

@@ -711,30 +711,29 @@ Do
     8532 X = 0
     Cls
 
-    JJ = 1
-    Locate 8, 8
-    Color T(1, 33), T(1, 34)
-
-    'Print box top
-    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-    'Print box sides
-    For II = 1 To JJ
-        Locate 8 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-    Next
-
-    'Print box bottom
-    Locate 9 + JJ, 8
-    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-    Locate 9, 26
-    Print "DISPLAY STATS AGAIN (YN)";
-    Color 15, 0
-
     If AP <> 1 Or U5 <> 2 Then
 
+		JJ = 1
+		Locate 8, 8
+		Color T(1, 33), T(1, 34)
+
+		'Print box top
+		Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+		'Print box sides
+		For II = 1 To JJ
+			Locate 8 + II, 8
+			Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+		Next
+
+		'Print box bottom
+		Locate 9 + JJ, 8
+		Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
         Do
+			Locate 9, 26
+			Print "DISPLAY STATS AGAIN (YN)";
+			Color 15, 0
             I$ = GetKeyPress$
         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -764,18 +763,18 @@ Next
 Locate 9 + JJ, 8
 Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
-Locate 9, 30
-
-' Prompt to play another game
-U$ = "PLAY ANOTHER GAME (YN)"
-Locate , (80 - Len(U$)) / 2
-Print U$
-
-Color 15, 0
 
 If AP <> 1 Then
 
     Do
+		Locate 9, 30
+
+		' Prompt to play another game
+		U$ = "PLAY ANOTHER GAME (YN)"
+		Locate , (80 - Len(U$)) / 2
+		Print U$
+
+		Color 15, 0
         I$ = GetKeyPress$
     Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -1541,6 +1540,7 @@ If U5 <> 0 Or CM% = 1 Then
         U$ = Str$(A!(P, B1!(P, B), 1)) + " FT%  INTENTIONAL FOUL (YN)"
 
         Do
+			'-- shouldn't we be calling PBP here?
             I$ = GetKeyPress$
         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = "3"
 

@@ -58,17 +58,24 @@ Sub CREATE ()
 						Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
 						Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
 						Locate 7 + JJ, 8
-						Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+						Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+						
+						Locate 7, 32
 						Locate , 12: Print "ENTER NAME FOR LEAGUE: ": Print
 						Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
 						Locate , 12: Print "SPACES."
 						Locate , 12: Print "SAMPLE NAMES ARE WHA IHL NHL94-95"
 						Locate 7, 37: Input LG$
+
 						If LG$ <> "" Then
 							LG$ = Left$(LG$, 8)
-							Locate 13, 12: Print "ANY CHANGE (YN) "
-							I$ = GetKeyPress$
+							
+							Do
+								Locate 13, 12: Print "ANY CHANGE (YN) "
+								I$ = GetKeyPress$
+							Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 						End If
+
 					Loop Until UCase$(I$) = "N"
 
 					newLeague = 1
@@ -123,11 +130,18 @@ Sub CREATE ()
 							_MouseHide
 
 							If ExitCode% <> 27 Then
+
+								Color 15, 1
 								targetFile$ = RTrim$(leagueFiles$(Selection%))
 								Locate 2, 33: Print F$
-								Locate , 33: Print "ANY CHANGE (YN)";
+
+								Do
+									Locate , 33: Print "ANY CHANGE (YN)";
+									I$ = GetKeyPress$
+								Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
 								Color 15, 0
-								I$ = GetKeyPress$
+
 							End If
 
 						Loop Until UCase$(I$) = "N"
@@ -273,7 +287,9 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
                     Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
                     Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
                     Locate 7 + JJ, 8
-                    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+                    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+					
+					Locate 7, 32
                     Locate , 12: Print "ENTER DISK ID: ": Print
                     Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
                     Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -329,11 +345,16 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
                     If BO% = 1 Then
                         BO% = 0
                     Else
-                        Locate 2, 33 ': Color 15, 0
+                        Locate 2, 33
                         Color createT%(33), createT%(34): Print T1$
+
                         Color 15, 4
-                        Locate , 33: Print "ANY CHANGE (YN)";
-                        A$ = GetKeyPress$
+
+                        Do
+							Locate , 33: Print "ANY CHANGE (YN)";
+							A$ = GetKeyPress$
+						Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
                     End If
 
                 Loop Until UCase$(A$) = "N"

@@ -656,7 +656,9 @@ Sub GetTeam_HD2HD ()
         Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
         Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
         Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+		
+		Locate 7, 32
         Locate , 12: Print "ENTER DISK ID: ": Print
         Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -688,9 +690,16 @@ Sub GetTeam_HD2HD ()
             If BO% = 1 Then
                 BO% = 0
             Else
-                Locate 2, 33: Color hd2hdT!(33), hd2hdT!(34): Print QQ$(1)
-                Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
-                A$ = GetKeyPress$
+                Locate 2, 33
+				Color hd2hdT!(33), hd2hdT!(34): Print QQ$(1)
+				
+				Color 15, 4
+
+				Do
+					Locate , 33: Print "ANY CHANGE (YN)";
+					A$ = GetKeyPress$
+				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
             End If
 
         End If
@@ -749,12 +758,18 @@ Sub SelectLeague_HD2HD (targetFile$)
                 _MouseHide
 
                 If ExitCode% <> 27 Then
+					Color 15, 1
                     targetFile$ = RTrim$(leagueFiles$(Selection%))
                     Locate 2, 33: Print targetFile$
-                    Locate , 33: Print "ANY CHANGE (YN)";
-                    Color 15, 0
-                    I$ = GetKeyPress$
-                End If
+					
+					Do
+						Locate , 33: Print "ANY CHANGE (YN)";
+						I$ = GetKeyPress$
+					Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+					Color 15, 0
+                
+				End If
 
             Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 

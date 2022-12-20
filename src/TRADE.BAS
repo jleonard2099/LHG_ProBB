@@ -64,7 +64,9 @@ Sub TradePlayers ()
 		Next
 
         Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+		
+		Locate 7, 32
         Locate , 12: Print "ENTER DISK ID FOR TEAM A: ": Print
         Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -124,10 +126,16 @@ Sub TradePlayers ()
         Else
             Locate 2, 33
 			Color teamSettings%(tradeTeam, 33), teamSettings%(tradeTeam, 34): Print tradeAA$(tradeTeam, 0)
+			
 			Color 15, 4
-            Locate , 33: Print "ANY CHANGE (YN)";
-            I$ = GetKeyPress$
+
+			Do
+				Locate , 33: Print "ANY CHANGE (YN)";
+				I$ = GetKeyPress$
+			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
         End If
+
     Loop Until UCase$(I$) = "N"
 
     Color 15, 0
@@ -144,15 +152,16 @@ Sub TradePlayers ()
 
     Locate 7 + JJ, 8
     Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
-	Locate 7
 
-    U$ = "DOES THIS TEAM HAVE SAVED STATS (YN)"
-
-    Locate , (80 - Len(U$)) / 2
-    Print U$
-    Color 15, 0
-    I$ = GetKeyPress$
-
+	Do
+		Locate 7
+		U$ = "DOES THIS TEAM HAVE SAVED STATS (YN)"
+		Locate , (80 - Len(U$)) / 2
+		Print U$
+		Color 15, 0
+		I$ = GetKeyPress$
+	Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+		
     If UCase$(I$) = "Y" Then 
         For XX = 4 To 11
 			If Mid$(SA$(tradeTeam), XX, 1) = " " Or Mid$(SA$(tradeTeam), XX, 1) = "/" Or Mid$(SA$(tradeTeam), XX, 1) = "." Then Mid$(SA$(tradeTeam), XX, 1) = "_"
@@ -204,7 +213,9 @@ Sub TradePlayers ()
 		Next
 
         Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+		
+		Locate 7, 32
         Locate , 12: Print "ENTER DISK ID FOR TEAM B: ": Print
         Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -254,9 +265,15 @@ Sub TradePlayers ()
             BO% = 0
         Else
             Locate 2, 33
-            Color teamSettings%(tradeTeam, 33), teamSettings%(tradeTeam, 34): Print tradeAA$(tradeTeam, 0): Color 15, 4
-            Locate , 33: Print "ANY CHANGE (YN)";
-            I$ = GetKeyPress$
+            Color teamSettings%(tradeTeam, 33), teamSettings%(tradeTeam, 34): Print tradeAA$(tradeTeam, 0)
+			
+			Color 15, 4
+
+			Do
+				Locate , 33: Print "ANY CHANGE (YN)";
+				I$ = GetKeyPress$
+			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
         End If
 
     Loop Until UCase$(I$) = "N"
@@ -272,15 +289,16 @@ Sub TradePlayers ()
     Next
     Locate 7 + JJ, 8
     Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
-	Locate 7
-    
-	U$ = "DOES THIS TEAM HAVE SAVED STATS (YN)"
-    Locate , (80 - Len(U$)) / 2
-    Print U$
-    Color 15, 0
-    
-	I$ = GetKeyPress$
 
+	Do
+		Locate 7
+		U$ = "DOES THIS TEAM HAVE SAVED STATS (YN)"
+		Locate , (80 - Len(U$)) / 2
+		Print U$
+		Color 15, 0 
+		I$ = GetKeyPress$
+	Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+		
     If UCase$(I$) = "N" Then 
         S!(1) = 1
     Else
@@ -374,9 +392,13 @@ Sub TradePlayers ()
 				'is this accurate?
                 Loop Until I1 >= 0 And I1 <= 14
 
-                Color teamSettings%(1, 33), teamSettings%(1, 34): Print tradeB$(1, I1, 0): Color 3, 0
-                Locate 23, 1: Print "ANY CHANGE (YN) ";
-                I$ = GetKeyPress$
+                Color teamSettings%(1, 33), teamSettings%(1, 34): Print tradeB$(1, I1, 0)
+				Color 3, 0
+
+                Do
+					Locate 23, 1: Print "ANY CHANGE (YN) ";
+					I$ = GetKeyPress$
+				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
             Loop Until UCase$(I$) = "N"
 

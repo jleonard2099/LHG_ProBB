@@ -59,15 +59,17 @@ Sub BLANK ()
 				_MouseHide
 
 				If ExitCode% <> 27 Then
+					Color 15, 1
 
 					targetFile$ = RTrim$(leagueFiles$(Selection%))
 					Locate 2, 33: Print targetFile$
-					Locate , 33: Print "ANY CHANGE (YN)";
-					Color 15, 0
-
+					
 					Do
+						Locate , 33: Print "ANY CHANGE (YN)";
 						I$ = GetKeyPress$
-					Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
+					Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+					Color 15, 0
 
 					If UCase$(I$) = "Y" Then
 					'proceed with erasing all files

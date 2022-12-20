@@ -57,7 +57,9 @@ Sub ViewComparisons ()
         Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
         Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
         Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+		
+		Locate 7, 32
         Locate , 12: Print "ENTER DISK ID: ": Print
         Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -151,11 +153,15 @@ Sub ViewComparisons ()
 
         If ExitCode% <> 27 Then 
             BO% = 0
-            Locate 2, 33: Color 15, 0
+            Locate 2, 33
             Color compareT%(33), compareT%(34): Print compareB$(0)
-            Color 15, 4
-            Locate , 33: Print "ANY CHANGE (YN)";
-            I$ = GetKeyPress$
+            
+			Color 15, 4
+
+            Do
+				Locate , 33: Print "ANY CHANGE (YN)";
+				I$ = GetKeyPress$
+			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
         Else
             BO% = 1 
         End if
@@ -164,7 +170,9 @@ Sub ViewComparisons ()
 
     If I$ <> Chr$(27) Then
 
-        Color 15, 0: Cls
+        Color 15, 0
+		Cls
+
         JJ = 4
         Locate 8, 8: Color 14, 1
         Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";

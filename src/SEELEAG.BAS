@@ -59,11 +59,16 @@ Sub SEELEAG ()
 
             If ExitCode% <> 27 Then
 
+                Color 15, 1
                 targetFile$ = RTrim$(leagueLeaderFiles$(Selection%))
                 Locate 2, 33: Print targetFile$
-                Locate , 33: Print "ANY CHANGE (YN)";
-                Color 15, 0
-                I$ = GetKeyPress$
+
+				Do
+					Locate , 33: Print "ANY CHANGE (YN)";
+					I$ = GetKeyPress$
+				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+				Color 15, 0
 
                 If UCase$(I$) = "N" Then
 
@@ -155,18 +160,21 @@ Sub SEELEAG ()
                                     Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
                                     Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
                                     Locate 7 + JJ, 8
-                                    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+                                    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+									
+									Locate 7, 32
                                     Locate , 12: Print "ENTER NAME FOR FILE: ": Print
                                     Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
                                     Locate , 12: Print "SPACES. DO NOT ADD A FILE EXTENSION, THE PROGRAM"
                                     Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
                                     Locate 7, 37: Input SF$
+									
                                     If SF$ <> "" Then
                                         Locate 13, 12: Print "ANY CHANGE (YN) "
                                         I$ = GetKeyPress$
                                     End If
 
-                                Loop Until UCase$(I$) = "N"
+                                Loop Until UCase$(I$) = "N" And SF$ <> ""
 
                                 Color 15, 0
                                 Call SavePrintLeagueStats(SF$, 1)
@@ -174,18 +182,18 @@ Sub SEELEAG ()
                             Case "S":
                                 Call LeagueStatsToScreen
 
-                                Do
-                                    JJ = 4
-                                    Locate 6, 8
-                                    Color 15, 1
-                                    Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
-                                    For II = 1 To JJ: Locate 6 + II, 8
-                                        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-                                    Next
-                                    Locate 7 + JJ, 8
-                                    Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
-                                    Locate 7
+								JJ = 4
+								Locate 6, 8
+								Color 15, 1
+								Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
+								For II = 1 To JJ: Locate 6 + II, 8
+									Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+								Next
+								Locate 7 + JJ, 8
+								Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
 
+                                Do
+                                    Locate 7
                                     U$ = "VIEW LEAGUE STATS AGAIN (YN)"
                                     Locate , (80 - Len(U$)) / 2
                                     Print U$

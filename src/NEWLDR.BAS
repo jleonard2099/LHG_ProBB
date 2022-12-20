@@ -98,11 +98,16 @@ Sub ViewLeagueStats ()
 			_MouseHide
 
 			If ExitCode% <> 27 Then
+				Color 15, 1
 				targetFile$ = RTrim$(leagueFiles$(Selection%))
 				Locate 2, 33: Print targetFile$
-				Locate , 33: Print "ANY CHANGE (YN)";
+
+				Do
+					Locate , 33: Print "ANY CHANGE (YN)";
+					I$ = GetKeyPress$
+				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
 				Color 15, 0
-				I$ = GetKeyPress$
 
 				If UCase$(I$) = "N" Then
 
@@ -618,9 +623,15 @@ Sub DisplayLeaders (QW)
         I$ = GetKeyPress$
 
         If I$ <> Chr$(27) Then 
-            Locate 22: Print Space$(64)
-            Locate 22: Color 14: Print "VIEW AGAIN (Y/N)"
-            I$ = GetKeyPress$
+			Locate 22: Print Space$(64)
+			Color 14
+
+			Do
+				Locate 22
+				Print "VIEW AGAIN (Y/N)"
+				I$ = GetKeyPress$
+			Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
+
         End If
 
     Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
@@ -941,9 +952,11 @@ Sub DisplayTeamView_NEWLDR (printType, QW, TVN)
                 Locate 22: Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
                 I$ = GetKeyPress$
 
+				Locate 22: Print Space$(64)
+				Color 14
+
                 If I$ <> Chr$(27) Then
-                    Locate 22: Print Space$(64)
-                    Locate 22: Color 14: Print "VIEW AGAIN (Y/N)"
+                    Locate 22: Print "VIEW AGAIN (Y/N)"
                     I$ = GetKeyPress$
                 End If
 

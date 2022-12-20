@@ -93,11 +93,17 @@ Sub LEAGCMPL ()
 			_MouseHide
 
 			If ExitCode% <> 27 Then
+				Color 15, 1
 				targetFile$ = RTrim$(leagueFiles$(Selection%))
 				Locate 2, 33: Print targetFile$
-				Locate , 33: Print "ANY CHANGE (YN)";
+				
+				Do
+					Locate , 33: Print "ANY CHANGE (YN)";
+					I$ = GetKeyPress$
+				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
 				Color 15, 0
-				I$ = GetKeyPress$
+
 			Else
 				BO% = 1
 			End If
@@ -113,8 +119,11 @@ Sub LEAGCMPL ()
 			Cls
 			Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
 			Color 15, 0
-			I$ = GetKeyPress$
-			If UCase$(I$) = "Y" Then finalUpdate$ = "Y"
+
+			Do
+				I$ = GetKeyPress$
+				finalUpdate$ = UCase$(I$)
+			Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
 
 			Open diskPaths$(1) + WE$ + ".TMS" For Input As #2
 			Input #2, LG$, D1$, D2$, D3$, D4$

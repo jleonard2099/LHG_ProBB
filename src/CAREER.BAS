@@ -116,8 +116,11 @@ Sub CreateCareerFile ()
 
 				Cls
 				Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; Y
-				Locate 9, 25: Print "ANY CHANGE (YN)"
-				J$ = GetKeyPress$
+				
+				Do
+					Locate 9, 25: Print "ANY CHANGE (YN)"
+					J$ = GetKeyPress$
+				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
 				If UCase$(J$) = "N" Then
 
@@ -185,7 +188,7 @@ Sub CreateCareerFile ()
 
 					End If 'Done checking for stat file
 
-				End If 'Done checking ANY CHANGE Y/N
+				End If 'Done checking for changes
 
 			End If 'Done checking if team was chosen
 
@@ -264,11 +267,17 @@ Sub MergeCareerFiles ()
         _MouseHide
 
         If ExitCode% <> 27 Then
+            Color 15, 1
             targetFile$ = RTrim$(careerFiles$(Selection%))
             Locate 2, 33: Print targetFile$
-            Locate , 33: Print "ANY CHANGE (YN)";
-            Color 15, 0
-            I$ = GetKeyPress$
+
+			Do
+				Locate , 33: Print "ANY CHANGE (YN)";
+				I$ = GetKeyPress$
+			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+			Color 15, 0
+
         End If
 
     Loop Until UCase$(I$) = "N" Or ExitCode% = 27
@@ -321,9 +330,12 @@ Sub AddYear (selectedFile$, statFile$)
     TMR1% = 1875
 
     Cls
-	Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
-    Locate 9, 25: Print "ANY CHANGE (YN)"
-    I$ = GetKeyPress$
+
+	Do
+		Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
+		Locate 9, 25: Print "ANY CHANGE (YN)"
+		I$ = GetKeyPress$
+	Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
 	If UCase$(I$) = "N" Then
 
@@ -650,11 +662,17 @@ Sub ViewCareerRecords ()
                 _MouseHide
 
                 If ExitCode% <> 27 Then
+					Color 15, 1
 					targetFile$ = careerLeaderFiles$(Selection%)
 					Locate 2, 33: Print targetFile$
-					Locate , 33: Print "ANY CHANGE (YN)";
+					
+					Do
+						Locate , 33: Print "ANY CHANGE (YN)";
+						I$ = GetKeyPress$
+					Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
 					Color 15, 0
-					I$ = GetKeyPress$
+
 				End If
 
             Loop Until UCase$(I$) = "N" Or ExitCode% = 27
@@ -672,7 +690,8 @@ Sub ViewCareerRecords ()
 
 				Do
 					Locate 15, 10
-					Color 12: Print "V";: Color 7: Print "iew or ";: Color 12: Print "P";: Color 7: Print "rint"
+					Color 12: Print "V";: Color 7: Print "iew or ";
+					Color 12: Print "P";: Color 7: Print "rint"
 					I$ = GetKeyPress$
 
 					Select Case UCase$(I$)
@@ -709,8 +728,14 @@ Sub ViewCareerRecords ()
 								Color 3: Print "STEALS";: Color 7: Print Tab(32); Using "#####"; BL!(18);: Print Tab(47); BL$(18);: Print Tab(66); BLYR!(18)
 								Color 3: Print "TURNOVERS";: Color 7: Print Tab(32); Using "#####"; BL!(19);: Print Tab(47); BL$(19);: Print Tab(66); BLYR!(19)
 								Color 3: Print "HI-GAME (POINTS)";: Color 7: Print Tab(33); Using "####"; BL!(20);: Print Tab(47); BL$(20);: Print Tab(66); BLYR!(20)
-								Color 15: Locate 22: Print "VIEW AGAIN (Y/N)"
-								A$ = GetKeyPress$
+
+								Color 15
+
+								Do
+									Locate 22: Print "VIEW AGAIN (Y/N)"
+									A$ = GetKeyPress$
+								Loop Until UCase$(A$) = "N" Or UCase$(A$) = "Y"
+
 							Loop Until UCase$(A$) = "N"
 
 						Case "P":
@@ -766,7 +791,9 @@ Sub GetTeam (teamIDX)
     Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
     Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
     Locate 7 + JJ, 8
-    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+	
+	Locate 7, 32
     Locate , 12: Print "ENTER DISK ID: ": Print
     Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
     Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -878,20 +905,26 @@ Sub LoadTeam_CAREER (yearNumber$, numberTeams, teamNumber)
 
         Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
         Field #1, 15 As Q$(0), 15 As Q$(1)
+
         For I = 0 To 6
             Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
         Next
+
         Field #1, 44 As X$, 2 As Q$(9)
+
         For I = 0 To 34
             Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
         Next
+
         For I = 0 To 14
             Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
             For I1 = 0 To 19
                 Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
             Next
         Next
+
         Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+
         Get #1, teamNumber
 
         For I = 0 To 34: careerT%(I) = CVI(Q$(I + 10)): Next
@@ -902,8 +935,13 @@ Sub LoadTeam_CAREER (yearNumber$, numberTeams, teamNumber)
 
         Locate 2, 33
 		Color careerT%(33), careerT%(34): Print A$
-        Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
-        I$ = GetKeyPress$
+
+		Color 15, 4
+
+		Do
+			Locate , 33: Print "ANY CHANGE (YN)";
+			I$ = GetKeyPress$
+		Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
     Loop Until UCase$(I$) = "N"
 

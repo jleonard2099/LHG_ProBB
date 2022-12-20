@@ -53,20 +53,28 @@ Sub CARVIEW ()
 
 			If ExitCode% <> 27 Then
 
+				Color 15, 1
 				targetFile$ = careerFiles$(Selection%)
 				Locate 2, 33: Print F$
-				Locate , 33: Print "ANY CHANGE (YN)";
+
+				Do
+					Locate , 33: Print "ANY CHANGE (YN)";
+					I$ = GetKeyPress$
+				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
 				Color 15, 0
-				I$ = GetKeyPress$
+
 			End If
-			'If UCase$(I$) = "Y" Then 1310
+
 		Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
 		If ExitCode% <> 27 Then 
+
 			F$ = RTrim$(targetFile$)
 			Z$ = Left$(F$, Len(F$) - 4)
 
-			Color 15
+			Color 15, 0
+			Cls
 			Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 
 			Open diskPaths$(1) + Z$ + ".CAR" For Input As #2
@@ -85,9 +93,11 @@ Sub CARVIEW ()
 			Next N
 			Close #2
 
-			Locate 18, 10: Color 12: Print "P";: Color 7: Print "RINT OR ";: Color 12: Print "V";: Color 7: Print "IEW"
 			Do
-			81 I$ = GetKeyPress$
+				Locate 18, 10
+				Color 12: Print "V";: Color 7: Print "iew or ";
+				Color 12: Print "P";: Color 7: Print "rint"
+				I$ = GetKeyPress$
 			Loop Until UCase$(I$) = "P" Or UCase$(I$) = "V"
 
 			Select Case UCase$(I$)
@@ -420,9 +430,13 @@ Sub ViewRoster (A$())
 		Next I
 
 		Cls
-		Locate 5, 20
-		Color 14: Print "VIEW AGAIN (Y/N)"
-		I$ = GetKeyPress$
+		Color 14
+
+		Do
+			Locate 5, 20
+			Print "VIEW AGAIN (Y/N)"
+			I$ = GetKeyPress$
+		Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
 	Loop Until UCase$(I$) = "N"
 

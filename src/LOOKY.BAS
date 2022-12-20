@@ -26,7 +26,9 @@ Sub LOOKY ()
         Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
         Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
         Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+		
+		Locate 7, 32
         Locate , 12: Print "ENTER DISK ID: ": Print
         Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -87,10 +89,16 @@ Sub LOOKY ()
             A$ = RTrim$(Q$(0))
             B$ = A$
 
-            Locate 2, 33: Color teamRatings%(33), teamRatings%(34): Print A$
+            Locate 2, 33
+			Color teamRatings%(33), teamRatings%(34): Print A$
+
             Color 15, 4
-            Locate , 33: Print "ANY CHANGE (YN)";
-            I$ = GetKeyPress$
+
+			Do
+				Locate , 33: Print "ANY CHANGE (YN)";
+				I$ = GetKeyPress$
+			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+			
             If UCase$(I$) = "N" Then
 
                 Color 15, 0
@@ -690,21 +698,26 @@ Sub ViewStatSummary
 
     End If 'Done checking for ESC
 
-    '--- I don't think we ever get here
+	'-- Football / Baseball still perform the below
+	'-- (prompting for a reset of stats
+	'-- We should get rid of it altogether as
+	'-- it makes it too easy to wipe your hard-earned
+	'-- work and time. This code was in the
+	'-- original but no logic branches reached it
+
     '    Cls
     '    Call TITLE_HEADER
     '    Print "RESET STATS TO 0 ? (YN)";:
-    '    455 I$ = GetKeyPress$
-    '    If UCase$(I$) <> "Y" Then 45
+    '    I$ = GetKeyPress$
+    '    If UCase$(I$) <> "Y" Then ...
 
     '    Print
     '    Print "ARE YOU SURE ? (YN) ";
-    '    470 I$ = GetKeyPress$
+    '    I$ = GetKeyPress$
     '    If UCase$(I$) = "N" Then Exit Sub
 
     '   Cls
-    'Exit Sub
-    '--- I don't think we ever get here
+
 
 End Sub 'LOOKY
 
