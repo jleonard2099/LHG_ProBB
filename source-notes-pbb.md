@@ -1,17 +1,30 @@
+## Variables ##
+
+#### Naming ####
+
+???
+
+#### Useage ####
+CT = computer team
+(NOT Coin Toss)
+
+PR$ = Path_RoadStats
+
+PC$ = Path_CompiledStats
+
 ## Misc / Menus ##
 
 #### Boxes during end of game  ####
-still WEIRD sizes?
-Or did I fix?
+still WEIRD sizes? Or did I fix?
 
 ## Positions in Game ##
 
 #### Number ####
-0	- Guard
-1	- Guard
-2	- Forward
-3 - Forward
-4	- Center
+- 0	- Guard
+- 1	- Guard
+- 2	- Forward
+- 3 - Forward
+- 4	- Center
 
 ### Text Code ###
 
@@ -26,11 +39,3 @@ G, F, C, GF, FG, FC, CF
 - "FG" = "FORWARD/CENTER"
 - "GF" = "GUARD/FORWARD"
 - "CF" = "CENTER/FORWARD"
-
-## Variables ##
-
-CT = computer team
-(NOT Coin Toss)
-
-PR$ = Path_RoadStats
-PC$ = Path_CompiledStats
