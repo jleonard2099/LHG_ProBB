@@ -139,6 +139,7 @@ Sub TradePlayers ()
     Loop Until UCase$(I$) = "N"
 
     Color 15, 0
+	Cls
     S!(0) = 0
     JJ = 1
 
@@ -279,6 +280,7 @@ Sub TradePlayers ()
     Loop Until UCase$(I$) = "N"
 
     Color 15, 0
+	Cls
     S!(1) = 0
     JJ = 1
 
@@ -345,9 +347,11 @@ Sub TradePlayers ()
         Color 15: Print "T";: Color 3: Print "RADE PLAYERS"
 		Print
         Color 15: Print "N";: Color 3: Print "O MORE TRADES"
-        I$ = GetKeyPress$
+		Do
+			I$ = GetKeyPress$
+		Loop Until UCase$(I$) = "N" Or UCase$(I$) = "T" Or I$ = Chr$(27)
 
-        If UCase$(I$) <> "N" Then
+        If UCase$(I$) = "T" Then
 
             If S!(0) <> 1 Or S!(1) <> 1 Then
                 Cls
@@ -486,7 +490,7 @@ Sub TradePlayers ()
 		'Exit Sub
         End If
 
-    Loop Until UCase$(I$) = "N"
+    Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
 
 End Sub
 

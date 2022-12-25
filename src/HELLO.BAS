@@ -1,5 +1,5 @@
-$Debug
-Const GAME_VERSION$ = "4.30"
+
+Const GAME_VERSION$ = "4.32"
 Const MAX_TEAMS = 500
 Const MAX_GAMES = 1500
 Const MAX_FILES = 1024 '1048576
@@ -197,6 +197,8 @@ Sub Main_Menu (menuSelection%)
                 Case 7: Call CONFIG_DRIVES
                 Case 8: Cls
             End Select
+        Else
+            menuSelection% = 8
         End If
 
     Loop Until menuSelection% = 8 Or ExitCode% = 27
@@ -437,3 +439,4 @@ End Sub
 '$INCLUDE: 'SEELEAG.BAS'
 '$INCLUDE: 'SINPUT.BAS'
 '$INCLUDE: 'TRADE.BAS'
+

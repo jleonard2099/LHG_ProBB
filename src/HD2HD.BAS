@@ -698,7 +698,7 @@ Sub GetTeam_HD2HD ()
 				Do
 					Locate , 33: Print "ANY CHANGE (YN)";
 					A$ = GetKeyPress$
-				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+				Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
 
             End If
 

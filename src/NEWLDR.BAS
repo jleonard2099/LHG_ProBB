@@ -957,7 +957,9 @@ Sub DisplayTeamView_NEWLDR (printType, QW, TVN)
 
                 If I$ <> Chr$(27) Then
                     Locate 22: Print "VIEW AGAIN (Y/N)"
-                    I$ = GetKeyPress$
+					Do
+						I$ = GetKeyPress$
+					Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
                 End If
 
             Loop Until I$ = "N"

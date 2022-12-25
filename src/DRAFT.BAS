@@ -109,7 +109,7 @@ Sub DRAFT ()
 
 			'WE SHOULD NEVER GET HERE
 			'1 Run "HELLO.EXE 2"
-		Loop Until Selection% = 3
+		Loop Until Selection% = 3 Or ExitCode% = 27
 
 	End If 'Done checking for ESC
 

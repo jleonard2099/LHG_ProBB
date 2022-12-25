@@ -1021,7 +1021,7 @@ Sub BoxscoreMaintenance ()
                 Case 2
                     Spec$ = diskPaths$(1) + "*.SPC"
                     null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-                    FileCount% = DirCount%
+                    Count% = DirCount%
 
                     If FileCount% = 0 Then
                         Locate 10, 8
@@ -1058,7 +1058,7 @@ Sub BoxscoreMaintenance ()
                             Print "-SELECTS BOXSCORE";
 
                             _MouseShow "DEFAULT"
-                            MAMenu boxFiles$(), Selection%, Start%, FileCount%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+                            MAMenu boxFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
                             _MouseHide
 
                             If ExitCode% <> 27 Then
@@ -1096,6 +1096,7 @@ Sub BoxscoreMaintenance ()
                 Case 5
                     Spec$ = diskPaths$(1) + "*.SPC"
                     Call DeleteSchedules(Selection%, Spec$)
+
                     Spec$ = diskPaths$(1) + "BOX*."
                     Call DeleteSchedules(Selection%, Spec$)
                     '-- we should give the user a confirmation message
@@ -1349,11 +1350,11 @@ Sub LoadSchedule (newFile$)
 
             Call ReadFile(scheduleFiles$())
 
-            Call SelectScheduleFile(newFile$, scheduleFiles$(), FileCount%)
+            Call SelectScheduleFile(newFile$, scheduleFiles$(), FileCount%, menuExit%)
 
         End If
 
-    Loop Until FileCount% = 0 Or newFile$ <> ""
+    Loop Until FileCount% = 0 Or newFile$ <> "" Or menuExit% = 27
 
 End Sub 'LoadSchedule
 
@@ -1480,17 +1481,17 @@ Sub DeleteSchedules (fileChoice%, fileSpec$)
 
         ReDim boxFiles$(0 To FileCount%)
 
-        For X = 1 To FileCount%
-            boxFiles$(X) = Space$(12)
-        Next
+		For X = 1 To FileCount%
+			boxFiles$(X) = Space$(12)
+		Next
 
-        boxFiles$(0) = fileSpec$
-        Call ReadFile(boxFiles$())
+		boxFiles$(0) = fileSpec$
+		Call ReadFile(boxFiles$())
 
-        For X = 1 To FileCount%
-            Kill (diskPaths$(1) + boxFiles$(X))
-            Locate 12, 34: Print "DELETING "; boxFiles$(X)
-        Next
+		For X = 1 To FileCount%
+			Kill (diskPaths$(1) + boxFiles$(X))
+			Locate 12, 34: Print "DELETING "; boxFiles$(X)
+		Next
 
     End If
 
@@ -1575,7 +1576,7 @@ End Sub
 '     SelectScheduleFile SubRoutine
 '----------------------------------------
 '...explanation...
-Sub SelectScheduleFile (targetFile$, scheduleFiles$(), FileCount%)
+Sub SelectScheduleFile (targetFile$, scheduleFiles$(), FileCount%, ExitCode%)
 
     Shared scheduleAP%(), homeScore%(), visitingScore%()
     Shared NG%()

@@ -27,8 +27,8 @@ Sub LOOKY ()
         Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
         Locate 7 + JJ, 8
         Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-		
-		Locate 7, 32
+
+        Locate 7, 32
         Locate , 12: Print "ENTER DISK ID: ": Print
         Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -36,10 +36,11 @@ Sub LOOKY ()
         Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
         Locate 7, 27: Input NY$
 
-        If NY$ = "" And YN$ <> "" Then 
-        'Load existing team names from previous choice
+        If NY$ = "" And YN$ <> "" Then
+            'Load existing team names from previous choice
             'NY$ = YN$
-            Call SelectTeam_BINPUT (YN$, NTMS)
+            'Call SelectTeam_BINPUT(YN$, NTMS, teamIdx%)
+            Call SelectTeam_LOOKY(YN$, NTMS, teamRatings%())
         Else
             YN$ = NY$
             Erase teamNames$
@@ -90,24 +91,24 @@ Sub LOOKY ()
             B$ = A$
 
             Locate 2, 33
-			Color teamRatings%(33), teamRatings%(34): Print A$
+            Color teamRatings%(33), teamRatings%(34): Print A$
 
             Color 15, 4
 
-			Do
-				Locate , 33: Print "ANY CHANGE (YN)";
-				I$ = GetKeyPress$
-			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-			
+            Do
+                Locate , 33: Print "ANY CHANGE (YN)";
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
             If UCase$(I$) = "N" Then
 
                 Color 15, 0
                 'Look for special char's in team name
-                For XX = 4 To 11: 
+                For XX = 4 To 11:
                     If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
                 Next XX
 
-                For XX = 12 To 14: 
+                For XX = 12 To 14:
                     If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
                 Next XX
 
@@ -150,9 +151,9 @@ Sub ReadStats (Z$, teamRatings%(), teamChoice)
     ' *** READ IN TEAM STATS ***
     '-- update to be IF (FileExists) Do Stuff ELSE Print Error and Call (at end of SUB)
     If Not _FileExists(diskPaths$(1) + Z$) Then
-        CALL CSMsgBox("UNABLE TO LOCATE COMPILED STATS FILE PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+        Call CSMsgBox("UNABLE TO LOCATE COMPILED STATS FILE PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
         I$ = GetKeyPress$
-        CALL CSMsgBox("", 0, Pass)
+        Call CSMsgBox("", 0, Pass)
     Else
 
         CP% = 1
@@ -250,14 +251,14 @@ Sub ViewStatSummary
 
         If I > 54 Then Exit For
 
-        If I > 36 Then 
+        If I > 36 Then
             Locate I - 35, 53: Print Using "###"; O%(I);
             Print Tab(57); Left$(O$(I), 14);
             Print Tab(72); Using "###"; teamRatings%(I);
             Print Tab(76); H$(I)
 
         Else
-            If I > 18 Then 
+            If I > 18 Then
                 Locate I - 17, 27: Print Using "###"; O%(I);
                 Print Tab(31); Left$(O$(I), 14);
                 Print Tab(46); Using "###"; teamRatings%(I);
@@ -299,7 +300,7 @@ Sub ViewStatSummary
             Case Chr$(0) + "Q":
                 Color , 0
                 Cls
-            'Print
+                'Print
             Case "P":
                 Call PrintStatsSchedule(totalGames%, teamRatings%())
 
@@ -316,7 +317,7 @@ Sub ViewStatSummary
             Case "D":
                 Kill diskPaths$(1) + Z$
                 Kill diskPaths$(1) + Z$ + "S"
-            'Esc
+                'Esc
             Case Chr$(27):
                 teamChoice = 1
         End Select
@@ -375,13 +376,13 @@ Sub ViewStatSummary
                 Color , 0
                 Cls
 
-            'Pg Up
+                'Pg Up
             Case Chr$(0) + "I":
                 Color , 0
                 Cls
                 GoTo 815
 
-            'Print
+                'Print
             Case "P":
                 Call PrintStatsSchedule(totalGames%, teamRatings%())
                 LPrint
@@ -393,12 +394,12 @@ Sub ViewStatSummary
                 I$ = GetKeyPress$
                 Call PrintStatsSummary(totalGames%, Z!(), Z1!())
 
-            'Delete
+                'Delete
             Case "D":
                 Kill diskPaths$(1) + Z$
                 Kill diskPaths$(1) + Z$ + "S"
 
-            'Esc
+                'Esc
             Case Chr$(27): teamChoice = 1: Exit Sub
 
         End Select
@@ -409,7 +410,7 @@ Sub ViewStatSummary
     ' First Sub Here
     '-----
 
-    142' 
+    142 '
     ' *** DISPLAYING STATS ***
     Call TITLE_HEADER
     Color , 1
@@ -446,13 +447,13 @@ Sub ViewStatSummary
             'FGM, FGA, FG PCT
             Locate , 28: Print Using "#### ####"; values!(I, 2); values!(I, 1);: Locate , 38
 
-            If values!(I, 1) = 0 Then 
+            If values!(I, 1) = 0 Then
                 Print ".---";
             Else
-                If values!(I, 2) = values!(I, 1) Then 
+                If values!(I, 2) = values!(I, 1) Then
                     Print "1.00";
                 Else
-                    If values!(I, 2) = 0 Then 
+                    If values!(I, 2) = 0 Then
                         Print ".000";
                     Else
                         fgPCT! = values!(I, 2) / values!(I, 1)
@@ -463,13 +464,13 @@ Sub ViewStatSummary
 
             '3FGM, 3FGA, 3FG PCT
             Locate , 44: Print Using "#### ####"; W0!(I); W1!(I);: Locate , 54
-            If W1!(I) = 0 Then 
+            If W1!(I) = 0 Then
                 Print ".---";
             Else
-                If W1!(I) = W0!(I) Then 
+                If W1!(I) = W0!(I) Then
                     Print "1.00";
                 Else
-                    If W0!(I) = 0 Then 
+                    If W0!(I) = 0 Then
                         Print ".000";
                     Else
                         threeFGPCT! = W0!(I) / W1!(I)
@@ -480,13 +481,13 @@ Sub ViewStatSummary
 
             'FTM, FTA, FT PCT
             Locate , 60: Print Using "#### ####"; values!(I, 4); values!(I, 3);: Locate , 70
-            If values!(I, 3) = 0 Then 
+            If values!(I, 3) = 0 Then
                 Print ".---"
             Else
-                If values!(I, 3) = values!(I, 4) Then 
+                If values!(I, 3) = values!(I, 4) Then
                     Print "1.00"
                 Else
-                    If values!(I, 4) = 0 Then 
+                    If values!(I, 4) = 0 Then
                         Print ".000"
                     Else
                         ftPCT! = values!(I, 4) / values!(I, 3)
@@ -538,30 +539,30 @@ Sub ViewStatSummary
             Case Chr$(0) + "Q"
                 CP% = 14
 
-            'Pg Up
+                'Pg Up
             Case Chr$(0) + "I"
                 Cls
                 GoTo 915
 
-            'Right Arrow
+                'Right Arrow
             Case Chr$(0) + "M"
                 CP% = CP% + 1
                 If CP% > 12 Then CP% = 1
                 Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
 
-            'Left Arrow
+                'Left Arrow
             Case Chr$(0) + "K"
                 CP% = CP% - 1
                 If CP% < 1 Then CP% = 12
                 Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
 
-            'Delete
-            Case "d","D"
+                'Delete
+            Case "d", "D"
                 Kill diskPaths$(1) + Z$
                 Kill diskPaths$(1) + Z$ + "S"
 
-            'Print
-            Case "p","P"
+                'Print
+            Case "p", "P"
                 Call PrintStatsSchedule(totalGames%, teamRatings%())
                 LPrint
                 LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
@@ -572,12 +573,12 @@ Sub ViewStatSummary
                 I$ = GetKeyPress$
                 Call PrintStatsSummary(totalGames%, Z!(), Z1!())
 
-            'Enter
+                'Enter
             Case Chr$(13)
                 Call SortStats(CP%)
                 GoTo 142
 
-            'Esc
+                'Esc
             Case Chr$(27)
                 teamChoice = 1
 
@@ -636,23 +637,35 @@ Sub ViewStatSummary
 
         Print "TEAM";: Locate , 39: Print Using "####"; Z!(15)
         Color 12: Print "TOTALS";
+
         'Points
-        Locate , 14: Print Using "##### ###.#"; Z!(10); Z!(10) / totalGames%;
+        If totalGames% > 0 Then ptsCalc! = Z!(10) / totalGames% Else ptsCalc! = 0
+        Locate , 14: Print Using "##### ###.#"; Z!(10); ptsCalc!;
+
         'Rebounds
-        Locate , 29: Print Using "#### #### ####  ##.#"; Z!(12); Z!(5) - Z!(12) - Z!(15); Z!(5); Z!(5) / totalGames%;
+        If totalGames% > 0 Then rebCalc! = Z!(5) / totalGames% Else rebCalc! = 0
+        Locate , 29: Print Using "#### #### ####  ##.#"; Z!(12); Z!(5) - Z!(12) - Z!(15); Z!(5); rebCalc!;
+
         'PF  AST  BLK  STL  TO
         Print Using " #### #### #### #### ####"; Z!(6); Z!(8); Z!(9); Z!(7); Z!(11)
+
         'Points
-        Locate , 14: Print Using "##### ###.#"; Z1!(10); Z1!(10) / totalGames%;
+        If totalGames% > 0 Then ptsCalc! = Z1!(10) / totalGames% Else ptsCalc! = 0
+        Locate , 14: Print Using "##### ###.#"; Z1!(10); ptsCalc!;
+
         'Rebounds
-        Locate , 29: Print Using "#### #### ####  ##.#"; Z1!(12); Z1!(5) - Z1!(12) - Z1!(15); Z1!(5); Z1!(5) / totalGames%;
+        If totalGames% > 0 Then rebCalc! = Z1!(5) / totalGames% Else rebCalc! = 0
+        Locate , 29: Print Using "#### #### ####  ##.#"; Z1!(12); Z1!(5) - Z1!(12) - Z1!(15); Z1!(5); rebCalc!;
+
         'PF  AST  BLK  STL  TO
-        Print Using " #### #### #### #### ####"; Z1!(6); Z1!(8); Z1!(9); Z1!(7); Z1!(11): Color 3
+        Print Using " #### #### #### #### ####"; Z1!(6); Z1!(8); Z1!(9); Z1!(7); Z1!(11)
+
+        Color 3
 
         Do
             I$ = GetKeyPress$
 
-            Select Case  I$
+            Select Case I$
 
                 'Pg Up
                 Case Chr$(0) + "I":
@@ -661,12 +674,12 @@ Sub ViewStatSummary
                     GoTo 142
                     'First Sub
 
-                'Right Arrow
+                    'Right Arrow
                 Case Chr$(0) + "M":
                     CP% = CP% + 1: If CP% > 25 Then CP% = 14
                     Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
 
-                'Left Arrow
+                    'Left Arrow
                 Case Chr$(0) + "K":
                     CP% = CP% - 1
                     If CP% < 14 Then CP% = 25
@@ -698,12 +711,12 @@ Sub ViewStatSummary
 
     End If 'Done checking for ESC
 
-	'-- Football / Baseball still perform the below
-	'-- (prompting for a reset of stats
-	'-- We should get rid of it altogether as
-	'-- it makes it too easy to wipe your hard-earned
-	'-- work and time. This code was in the
-	'-- original but no logic branches reached it
+    '-- Football / Baseball still perform the below
+    '-- (prompting for a reset of stats
+    '-- We should get rid of it altogether as
+    '-- it makes it too easy to wipe your hard-earned
+    '-- work and time. This code was in the
+    '-- original but no logic branches reached it
 
     '    Cls
     '    Call TITLE_HEADER
@@ -841,7 +854,7 @@ Sub PrintStatsSchedule (totalGames%, teamRatings%())
         LPrint Tab(20); Using "###"; teamRatings%(I);
         LPrint Tab(24); H$(I); Tab(27);
 
-        If I + 28 > totalGames% Then 
+        If I + 28 > totalGames% Then
             LPrint
         Else
             LPrint Using "###"; O%(I + 28);
@@ -849,7 +862,7 @@ Sub PrintStatsSchedule (totalGames%, teamRatings%())
             LPrint Tab(46); Using "###"; teamRatings%(I + 28);
             LPrint Tab(50); H$(I + 28); Tab(53);
 
-            If I + 56 > totalGames% Then 
+            If I + 56 > totalGames% Then
                 LPrint
             Else
                 LPrint Using "###"; O%(I + 56);
@@ -888,13 +901,13 @@ Sub PrintStatsSummary (totalGames%, Z!(), Z1!())
         LPrint Tab(28); Using "#### ####"; values!(I, 2); values!(I, 1);
         LPrint Tab(38);
 
-        If values!(I, 1) = 0 Then 
+        If values!(I, 1) = 0 Then
             LPrint ".---";
         Else
-            If values!(I, 2) = values!(I, 1) Then 
+            If values!(I, 2) = values!(I, 1) Then
                 LPrint "1.00";
             Else
-                If values!(I, 2) = 0 Then 
+                If values!(I, 2) = 0 Then
                     LPrint ".000";
                 Else
                     fgPCT! = values!(I, 2) / values!(I, 1)
@@ -906,14 +919,14 @@ Sub PrintStatsSummary (totalGames%, Z!(), Z1!())
         '3FGM, 3FGA, 3FG PCT
         LPrint Tab(44); Using "#### ####"; W0!(I); W1!(I);: LPrint Tab(54);
 
-        If W1!(I) = 0 Then 
+        If W1!(I) = 0 Then
             LPrint ".---";
         Else
-            If W1!(I) = W0!(I) Then 
+            If W1!(I) = W0!(I) Then
                 LPrint "1.00";
             Else
 
-                If W0!(I) = 0 Then 
+                If W0!(I) = 0 Then
                     LPrint ".000";
                 Else
                     threeFGPCT! = W0!(I) / W1!(I)
@@ -923,15 +936,16 @@ Sub PrintStatsSummary (totalGames%, Z!(), Z1!())
         End If
 
         'FTM, FTA, FT PCT
-        LPrint Tab(60); Using "#### ####"; values!(I, 4); values!(I, 3);: LPrint Tab(70);
+        LPrint Tab(60); Using "#### ####"; values!(I, 4); values!(I, 3);
+        LPrint Tab(70);
 
-        If values!(I, 3) = 0 Then 
+        If values!(I, 3) = 0 Then
             LPrint ".---"
         Else
-            If values!(I, 3) = values!(I, 4) Then 
+            If values!(I, 3) = values!(I, 4) Then
                 LPrint "1.00"
             Else
-                If values!(I, 4) = 0 Then 
+                If values!(I, 4) = 0 Then
                     LPrint ".000"
                 Else
                     ftPCT! = values!(I, 4) / values!(I, 3)
@@ -1002,17 +1016,26 @@ Sub PrintStatsSummary (totalGames%, Z!(), Z1!())
     LPrint "TEAM";: LPrint Tab(39); Using "####"; Z!(15)
 
     LPrint: LPrint "TOTALS";
+
     'Points
-    LPrint Tab(14); Using "##### ###.#"; Z!(10); Z!(10) / totalGames%;
+    If totalGames% > 0 Then ptsCalc! = Z!(5) / totalGames% Else ptsCalc! = 0
+    LPrint Tab(14); Using "##### ###.#"; Z!(10); ptsCalc;
+
     'Rebounds
-    LPrint Tab(29); Using "#### #### ####  ##.#"; Z!(12); Z!(5) - Z!(12) - Z!(15); Z!(5); Z!(5) / totalGames%;
+    If totalGames% > 0 Then rebCalc! = Z!(5) / totalGames% Else rebCalc! = 0
+    LPrint Tab(29); Using "#### #### ####  ##.#"; Z!(12); Z!(5) - Z!(12) - Z!(15); Z!(5); rebCalc!;
+
     'PF  AST  BLK  STL  TO
     LPrint Using " #### #### #### #### ####"; Z!(6); Z!(8); Z!(9); Z!(7); Z!(11)
 
     'Points
-    LPrint Tab(14); Using "##### ###.#"; Z1!(10); Z1!(10) / totalGames%;
+    If totalGames% > 0 Then rebCalc! = Z1!(10) / totalGames% Else ptsCalc! = 0
+    LPrint Tab(14); Using "##### ###.#"; Z1!(10); ptsCalc!;
+
     'Rebounds
-    LPrint Tab(29); Using "#### #### ####  ##.#"; Z1!(12); Z1!(5) - Z1!(12) - Z1!(15); Z1!(5); Z1!(5) / totalGames%;
+    If totalGames% > 0 Then rebCalc! = Z1!(5) / totalGames% Else rebCalc! = 0
+    LPrint Tab(29); Using "#### #### ####  ##.#"; Z1!(12); Z1!(5) - Z1!(12) - Z1!(15); Z1!(5); rebCalc!;
+
     'PF  AST  BLK  STL  TO
     LPrint Using " #### #### #### #### ####"; Z1!(6); Z1!(8); Z1!(9); Z1!(7); Z1!(11)
 

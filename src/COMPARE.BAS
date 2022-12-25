@@ -4,31 +4,34 @@ Sub COMPARE ()
 
     _Title "Basketball: The Pro Game - Compare Stats"
 
-    Call TITLE
-    'Erase menuChoices$
-    menuChoices$(1) = "VIEW/PRINT STATISTICAL COMPARISONS"
-    menuChoices$(2) = "RETURN TO BASKETBALL PRO GAME MENU"
-    Selection% = 1
-    Count% = 2
-    Start% = 1
-    ExitCode% = 2
-    FileFGColr% = 15: FileBGColr% = 1
-    HiLiteFGColr% = 0: HiLiteBGColr% = 7
-    Spacing% = 1
-    Row% = 9
-    Column% = 24
+	Do
+		Call TITLE
+		'Erase menuChoices$
+		menuChoices$(1) = "VIEW/PRINT STATISTICAL COMPARISONS"
+		menuChoices$(2) = "RETURN TO BASKETBALL PRO GAME MENU"
+		Selection% = 1
+		Count% = 2
+		Start% = 1
+		ExitCode% = 2
+		FileFGColr% = 15: FileBGColr% = 1
+		HiLiteFGColr% = 0: HiLiteBGColr% = 7
+		Spacing% = 1
+		Row% = 9
+		Column% = 24
 
-    Call box0(8, 23, 11, 58, 2, 15, 1)
-    _MouseShow "DEFAULT"
-    MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
-    _MouseHide
+		Call box0(8, 23, 11, 58, 2, 15, 1)
+		_MouseShow "DEFAULT"
+		MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+		_MouseHide
 
-    Color , 0
-    If ExitCode% <> 27 Then
-        If Selection% = 1 Then
-            Call ViewComparisons
-        End If
-    End If
+		Color , 0
+		If ExitCode% <> 27 Then
+			If Selection% = 1 Then
+				Call ViewComparisons
+			End If
+		End If
+
+	Loop Until Selection% = 2 Or ExitCode% = 27
 
 End Sub
 
@@ -94,10 +97,10 @@ Sub ViewComparisons ()
             Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
             If Not _FileExists(diskPaths$(1) + Z$) Then
-                Locate , 30
-                Call CSMsgBox("NO COMPILED STATS WERE FOUND... PRESS ANY KEY TO RETURN TO CONTINUE", 26, Pass)
-                I$ = GetKeyPress$
-                Call CSMsgBox("", 0, Pass)
+				Locate 10, 8
+				Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+				I$ = GetKeyPress$
+				Call CSMsgBox("", 0, Pass)
                 BO% = 1
             Else
 
@@ -197,8 +200,9 @@ Sub ViewComparisons ()
                 Case "S":
                     Call StatsToScreen (AL, AW, HL, HW)
                 Case "P":
-
-                    ' Where did this go to??
+                    '-- Where did this go to??
+					' Not in original code
+					' Need to write it based on behavior in other games
             End Select
 
         End If

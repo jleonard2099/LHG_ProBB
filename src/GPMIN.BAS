@@ -144,7 +144,7 @@ Sub AdjustGames (selectedIndex)
 				Do
 					Locate , 33: Print "ANY CHANGE (YN)";					
 					A$ = GetKeyPress$
-				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+				Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
 
 			End If
 
@@ -240,7 +240,7 @@ Sub AdjustGames (selectedIndex)
 
 				End If
 
-			Loop Until B1 >= 1 And B1 <= 15
+			Loop Until B1 >= 0 And B1 <= 15
 
 		Loop Until B1 = 15
 
