@@ -15,7 +15,7 @@ LH Games were some of the premier simulators of the 80's. They were a staple of 
 
 ### Visuals ###
 ![pro baseball box art](pbb-box.jpg)
-![pro baseball in action](pbb-action.jpg)
+![pro baseball in action](pbb-screen1.png)
 
 # The Game #
 ### Installation ###

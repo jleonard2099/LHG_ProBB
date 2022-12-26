@@ -2350,17 +2350,21 @@ Sub SETUPRATINGS ()
         If AP = 1 Then
             I = NG%(6)
         Else
+			Color 15, 0
             Cls
             Print "THESE TWO TEAMS MAY HAVE PLAYED DURING DIFFERENT ERAS AND"
             Print "PLAYED DIFFERENT STYLES OF BASKETBALL"
             Print
             Print "PLAY STYLE OF:"
             Print
-            Color 14: Print "(0) - ";: Color T(0, 33), T(0, 34): Print B$(0): Color , 0
+            Color 14: Print "(0) - ";: Color T(0, 33), T(0, 34): Print B$(0)
+			Color , 0
             Print
-            Color 14: Print "(1) - ";: Color T(1, 33), T(1, 34): Print B$(1): Color , 0
+            Color 14: Print "(1) - ";: Color T(1, 33), T(1, 34): Print B$(1)
+			Color , 0
             Print
-            Color 14: Print "(2) - ";: Color 3: Print "MAKE NO ADJUSTMENT": Color 15, 0
+            Color 14: Print "(2) - ";: Color 3: Print "MAKE NO ADJUSTMENT"
+			Color 15, 0
             Do
                 I$ = GetKeyPress$
                 I = Val(I$)
@@ -2948,8 +2952,8 @@ End Sub
 Sub DELAY ()
 
     'Original code that was modified:
-    '    If pbpDelay = 0 Or PB% = 1 Then
-    If pbpDelay > 0 Or PB% = 0 Then
+    '    If pbpDelay! = 0 Or PB% = 1 Then
+    If pbpDelay! > 0 Or PB% = 0 Then
 
         U$ = PadRight$(U$, 38)
         'While Len(U$) < 38
@@ -2997,7 +3001,7 @@ Sub DELAY ()
         Color VG(8), VH(8): Print H1$
         Color 15, 0
 
-        _Delay pbpDelay
+        _Delay pbpDelay!
 
     End If
 
@@ -3115,7 +3119,7 @@ Sub MADEFT ()
 
     A!(P, B1!(P, B), 10) = A!(P, B1!(P, B), 10) + 1
 
-    If pbpDelay <> 0 Then
+    If pbpDelay! <> 0 Then
         Locate F3 + 9, 1
         Call MOREDELAY
         Print F3; " GOOD"
@@ -3136,7 +3140,7 @@ End Sub
 Sub MAKEPBP ()
 
     'PLAY BY PLAY
-    If pbpDelay <> 0 Then
+    If pbpDelay! <> 0 Then
 
         RN = Int(Rnd(1) * 100) + 1
 
@@ -3912,7 +3916,7 @@ End Sub
 ' ...explanation...
 Sub MISSFT ()
 
-    If pbpDelay <> 0 Then
+    If pbpDelay! <> 0 Then
         Call MOREDELAY
         Locate F3 + 9, 1
         Print F3; " MISSED"
@@ -3930,9 +3934,9 @@ Sub MOREDELAY ()
     'Do we really need the IF statement?
     'I understand why it's there but
     'does it save any time?
-    'If pbpDelay > 0 Then
+    'If pbpDelay! > 0 Then
 
-    _Delay pbpDelay
+    _Delay pbpDelay!
 
     'End If
 
@@ -4004,7 +4008,7 @@ End Sub
 Sub SELECTPBP ()
 
     If PB% = 0 Then Call DELAY
-    If PB% = 1 And pbpDelay <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
+    If PB% = 1 And pbpDelay! <> 0 Then Call WINDEX: Print U$: Call MOREDELAY
 
     Call MOREDELAY
 
@@ -6749,7 +6753,7 @@ Sub UPDATESCREEN ()
 
     If T < 25 And X8 >= T Or H > 4 And T = 300 Then Locate 6, 37: Print " :  "
 
-    If pbpDelay <> 0 Then
+    If pbpDelay! <> 0 Then
         Locate 8, 58
         Color T(D, 33), T(D, 34): Print "DEF - "; defenseStyles$(D2(D))
         Locate , 58
