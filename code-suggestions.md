@@ -1,3 +1,4 @@
+#### SIDENOTE: Do any of these fall into the "Issues" realm? If so, create GitHub issue items ####
 
 [ ] Paths / folders 
 - add "Boxes" subfolder to structure and adapt code
@@ -12,6 +13,7 @@
 
 [ ] Integrate team file selection, stat file name functions
 - College BB already has "STATCONVERT" subroutine
+- Team file functions already built, just not tested
 
 [ ] Review all file selection routines
 - Are they overly wordy?
@@ -32,3 +34,7 @@
 	- Give the flag a user-friendly name like silentPBP
 
 [ ] Update RECORDS file(s) using real-world data
+
+[ ] How to handle teams before 3-pointer was implemented?
+- Currently they won't attempt 3-pointers
+- Should we develop a way for them to adapt?
