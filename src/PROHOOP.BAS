@@ -266,7 +266,8 @@ Else
 
     ' USER SELECTION OF OPTIONS
     Do
-        Cls
+        Color 15, 0
+		Cls
         Color 2
 
         Print Tab(29); "SELECT OPENING OPTIONS"
@@ -802,6 +803,7 @@ If AP <> 1 Then
     If UCase$(I$) = "N" Then 
         End
         System
+
     End If
 
 End If
@@ -2691,6 +2693,7 @@ Sub ShotTest ()
     '    End If
 
 End Sub
+
 
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'
