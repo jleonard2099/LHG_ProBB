@@ -1,5 +1,5 @@
 
-Const GAME_VERSION$ = "4.28"
+Const GAME_VERSION$ = "4.29"
 Const MAX_TEAMS = 500
 Const MAX_GAMES = 1500
 Const MAX_FILES = 1024 '1048576
@@ -20,6 +20,9 @@ DECLARE SUB CONFIG_DRIVES ()
 
 DefInt A-Z
 
+'----------------------------------------
+'          READ IN ALL DATA
+'----------------------------------------
 Data 1954,1955,1956,1957,1958,1959,1960,1961,1962,1963
 Data 1964,1965,1966,1967,1968,"1968 A",1969,"1969 A",1970,"1970 A"
 Data 1971,"1971 A",1972,"1972 A",1973,"1973 A",1974,"1974 A",1975,"1975 A"
@@ -133,16 +136,16 @@ _AllowFullScreen
 
 
 If Not _FileExists("DEV.BAS") Then
-	Open "DEV.BAS" For Output As #1
-	For I = 0 To 1
-		Print #1, _CWD$ + "\"
-	Next
-	Close 1
+    Open "DEV.BAS" For Output As #1
+    For I = 0 To 1
+        Print #1, _CWD$ + "\"
+    Next
+    Close 1
 End If
 
 Open "DEV.BAS" For Input As #1
 For I = 0 To 1
-	Input #1, diskPaths$(I)
+    Input #1, diskPaths$(I)
 Next
 Close 1
 
@@ -382,9 +385,9 @@ Sub CONFIG_DRIVES ()
 
     Cls
     Locate , 16: Print "SPECIFY PATHS FOR YOUR TEAMS AND COMPILED STATS"
-	Print
+    Print
     Locate , 31: Print "PATHNAME EXAMPLES:"
-	Print
+    Print
     Locate , 31: Print "A:"
     Locate , 31: Print "C:\PROBB\TEAMS"
 
@@ -420,10 +423,10 @@ Sub CONFIG_DRIVES ()
     If X$ <> "Y" GoTo Done 'insist on either Y or N or up-arrow
 
     Open "DEV.BAS" For Output As #1
-    For R = 0 To 2: 
-		diskPaths$(R) = diskPaths$(R) + "\"
-		Print #1, diskPaths$(R)
-	Next R
+    For R = 0 To 1:
+        diskPaths$(R) = diskPaths$(R) + "\"
+        Print #1, diskPaths$(R)
+    Next R
     Close #1
 
 End Sub

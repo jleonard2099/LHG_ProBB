@@ -214,10 +214,13 @@ Sub NewSchedule (scheduleFile$)
                 N$ = RTrim$(Q$(0))
                 scheduleH$(X) = N$
 
-                'Game
+                'Game number
                 Print Using "####  "; X + NS% * 20;
+
                 'Date
                 Print Using "##/##/##"; NG%(X + NS% * 20, 17); NG%(X + NS% * 20, 16); NG%(X + NS% * 20, 18);
+
+                'Time
                 Locate , 17
                 I$ = "A"
                 HR% = NG%(X + NS% * 20, 15) / 100
@@ -235,19 +238,23 @@ Sub NewSchedule (scheduleFile$)
                 TM$ = TM$ + I$
                 Print TM$;
 
-                Locate , 25: Print scheduleV$(X); " ";
                 'Visiting Team
+                Locate , 25: Print scheduleV$(X); " ";
                 If NG%(X + NS% * 20, 13) = 1 Then Print Using "###"; visitingScore%(X + NS% * 20);
+
                 'Home Team
                 Locate , 46: Print scheduleH$(X); " ";
                 If NG%(X + NS% * 20, 13) = 1 Then Print Using "###"; homeScore%(X + NS% * 20);
 
-                'MA
+                'Mode of Play
                 Locate , 67: Print MO$(NG%(X + NS% * 20, 8));
-                'HC
+
+                'Home Court
                 Locate , 72: If NG%(X + NS% * 20, 2) = 1 Then Print "Y";: Else Print "N";
+
                 '3 Pt
                 Locate , 75: Print TS$(NG%(X + NS% * 20, 3));
+
                 'Shot Clock
                 Locate , 78: Print SC$(NG%(X + NS% * 20, 7))
 

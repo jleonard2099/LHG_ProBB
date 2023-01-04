@@ -77,6 +77,9 @@ Sub PlayStyle ()
     '70
     Call ROSTER
 
+    Locate 19, 1
+    Color 14, 0: Print "STARTING LINEUP"
+
     Color 14: Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
     Locate 21, 32: Color 15: Print "O";: Color 3: Print "FFENSE STYLE-";: Color 7: Print offenseStyles$(O0%(P9))
     Locate 22, 32: Color 3: Print "DE";: Color 15: Print "F";: Color 3: Print "ENSE STYLE-";: Color 7: Print defenseStyles$(D2(P9))
@@ -3995,9 +3998,6 @@ Sub ROSTER ()
     Color 9, 0: Print String$(27, 205); Chr$(203); String$(51, 205)
 
     For R1 = 1 To 7: Locate R1 + 18, 28: Print Chr$(186);: Next
-
-    Locate 19, 1
-    Color 14, 0: Print "STARTING LINEUP"
 
 End Sub
 
