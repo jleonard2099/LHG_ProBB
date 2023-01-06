@@ -133,7 +133,7 @@ Sub CREATE ()
 
 								Color 15, 1
 								targetFile$ = RTrim$(leagueFiles$(Selection%))
-								Locate 2, 33: Print F$
+								Locate 2, 33: Print targetFile$
 
 								Do
 									Locate , 33: Print "ANY CHANGE (YN)";

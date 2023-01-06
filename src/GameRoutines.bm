@@ -49,15 +49,15 @@ Sub TeamSelect_PROHOOP (teamIndicator)
             '56
         Else
             Locate 2, 33
-			Color T(P9, 33), T(P9, 34): Print B$(P9)
-            
-			Color 15, 4
+            Color T(P9, 33), T(P9, 34): Print B$(P9)
 
-			Do
-				Locate , 33
-				Print "ANY CHANGE (YN)";
-				I$ = GetKeyPress$
-			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+            Color 15, 4
+
+            Do
+                Locate , 33
+                Print "ANY CHANGE (YN)";
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
         End If
 
     Loop Until UCase$(I$) = "N"
@@ -78,9 +78,11 @@ Sub PlayStyle ()
     Call ROSTER
 
     Locate 19, 1
-    Color 14, 0: Print "STARTING LINEUP"
+    Color 14, 0
+    Print "STARTING LINEUP"
 
-    Color 14: Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
+    Color 14
+    Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
     Locate 21, 32: Color 15: Print "O";: Color 3: Print "FFENSE STYLE-";: Color 7: Print offenseStyles$(O0%(P9))
     Locate 22, 32: Color 3: Print "DE";: Color 15: Print "F";: Color 3: Print "ENSE STYLE-";: Color 7: Print defenseStyles$(D2(P9))
     Locate 23, 32: Color 3: Print "FULL COURT ";: Color 15: Print "P";: Color 3: Print "RESS-";: Color 7: Print P7$(P7(P9))
@@ -113,34 +115,43 @@ Sub PlayStyle ()
                 Color 15: Print "ENTER "; PS$(I); " # ";
 
                 I$ = GetKeyPress$
+                J = Val(I$)
+                Select Case UCase$(I$)
+                    Case "A": J = 10
+                    Case "B": J = 11
+                    Case "C": J = 12
+                    Case "D": J = 13
+                    Case "E": J = 14
+                    Case "F", "O", "P": J = 15
+                End Select
 
-                If UCase$(I$) = "O" Or UCase$(I$) = "F" Or UCase$(I$) = "P" Then
+                If J = 15 Then
                     '100
                     If UCase$(I$) = "P" Then P7(P9) = 1 - P7(P9)
                     If UCase$(I$) = "F" Then D2(P9) = D2(P9) + 1: If D2(P9) > 5 Then D2(P9) = 1
                     If UCase$(I$) = "O" Then O0%(P9) = O0%(P9) + 1: If O0%(P9) > 2 Then O0%(P9) = 0
 
                     '105
-                    Color 14: Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
-                    Locate 21, 32: Color 15: Print "O";: Color 3: Print "FFENSE STYLE-";
+                    Color 14
+                    Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
+                    Locate 21, 32
+                    Color 15: Print "O";
+                    Color 3: Print "FFENSE STYLE-";
                     Color 7: Print offenseStyles$(O0%(P9))
-                    Locate 22, 32: Color 3: Print "DE";: Color 15: Print "F";: Color 3: Print "ENSE STYLE-";
+                    Locate 22, 32
+                    Color 3: Print "DE";
+                    Color 15: Print "F";
+                    Color 3: Print "ENSE STYLE-";
                     Color 7: Print defenseStyles$(D2(P9))
-                    Locate 23, 32: Color 3: Print "FULL COURT ";: Color 15: Print "P";: Color 3: Print "RESS-";
+                    Locate 23, 32
+                    Color 3: Print "FULL COURT ";
+                    Color 15: Print "P";
+                    Color 3: Print "RESS-";
                     Color 7: Print P7$(P7(P9))
 
                 Else
 
-                    J = Val(I$)
-                    If UCase$(I$) = "A" Then J = 10
-                    If UCase$(I$) = "B" Then J = 11
-                    If UCase$(I$) = "C" Then J = 12
-                    If UCase$(I$) = "D" Then J = 13
-                    If UCase$(I$) = "E" Then J = 14
-
-                    If J < 0 Or J > 14 Or A!(P9, J, 12) >= 6 Or AA$(P9, J, 0) = "XXX" Or B%(P9, J, 18) <> 0 Then
-                        'I didn't want to work out the reverse of the above, or just NOT it
-                    Else
+                    If J >= 0 And J <= 14 And A!(P9, J, 12) < 6 And AA$(P9, J, 0) <> "XXX" And B%(P9, J, 18) = 0 Then
                         For I2 = 0 To 4
                             If B1!(P9, I2) = J Then Exit For
                         Next I2
@@ -148,9 +159,7 @@ Sub PlayStyle ()
 
                 End If
 
-                'This terminating condition may not be accurate
-                'Need to test during gameplay if 14 is the last choice
-            Loop Until J = 14
+            Loop Until J >= 0 And J <= 14
 
             B1!(P9, I) = J
             Z = J
@@ -163,7 +172,7 @@ Sub PlayStyle ()
 
             Print AA$(P9, J, 0);
             Locate J + 3 - CV%, 3
-			Color T(P9, 33), T(P9, 34): Print Left$(AA$(P9, J, 0), 12)
+            Color T(P9, 33), T(P9, 34): Print Left$(AA$(P9, J, 0), 12)
             Color 15, 0
 
         Next
@@ -179,16 +188,40 @@ Sub PlayStyle ()
 
             I$ = GetKeyPress$
             I1 = Val(I$)
+            Select Case UCase$(I$)
+                Case "O": I1 = 5
+                Case "F": I1 = 5
+                Case "P": I1 = 5
+            End Select
 
-            If UCase$(I$) = "O" Or UCase$(I$) = "F" Or UCase$(I$) = "P" Then
-                If UCase$(I$) = "P" Then P7(P9) = 1 - P7(P9) ': GoSub 105
-                If UCase$(I$) = "F" Then D2(P9) = D2(P9) + 1: If D2(P9) > 5 Then D2(P9) = 1
-                If UCase$(I$) = "O" Then O0%(P9) = O0%(P9) + 1: If O0%(P9) > 2 Then O0%(P9) = 0
-            End If
+        Loop Until I1 >= 0 And I1 <= 6
 
-        Loop Until I1 <= 0 And I1 <= 4
+        If I1 = 5 Then
+            If UCase$(I$) = "P" Then P7(P9) = 1 - P7(P9) ': GoSub 105
+            If UCase$(I$) = "F" Then D2(P9) = D2(P9) + 1: If D2(P9) > 5 Then D2(P9) = 1
+            If UCase$(I$) = "O" Then O0%(P9) = O0%(P9) + 1: If O0%(P9) > 2 Then O0%(P9) = 0
 
-        If I1 <> 6 Then
+            '105
+            Color 14
+            Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
+            Locate 21, 32
+            Color 15: Print "O";
+            Color 3: Print "FFENSE STYLE-";
+            Color 7: Print offenseStyles$(O0%(P9))
+            Locate 22, 32
+            Color 3: Print "DE";
+            Color 15: Print "F";
+            Color 3: Print "ENSE STYLE-";
+            Color 7: Print defenseStyles$(D2(P9))
+            Locate 23, 32
+            Color 3: Print "FULL COURT ";
+            Color 15: Print "P";
+            Color 3: Print "RESS-";
+            Color 7: Print P7$(P7(P9))
+
+        End If
+
+        If I1 <= 4 Then
 
             If X = 50 And I1 = B And P9 = P Then
                 Locate 20, 29: Color 14, 0: Print AA$(P9, B1!(P9, I1), 0); " IS AT THE FT LINE"
@@ -205,6 +238,7 @@ Sub PlayStyle ()
                 Locate J + 3 - CV%, 3
                 Color 15, 0: Print Left$(AA$(P9, J, 0), 12)
 
+                '77
                 Do
                     Locate I1 + 20, 1: Print Space$(26);
                     B1!(P9, I1) = -1
@@ -213,20 +247,24 @@ Sub PlayStyle ()
                     Color 15: Print "ENTER "; PS$(I1); " # ";
 
                     I$ = GetKeyPress$
+                    J = Val(I$)
 
-                    If UCase$(I$) = "O" Or UCase$(I$) = "F" Or UCase$(I$) = "P" Then
+                    Select Case UCase$(I$)
+                        Case "A": J = 10
+                        Case "B": J = 11
+                        Case "C": J = 12
+                        Case "D": J = 13
+                        Case "E": J = 14
+                        Case "F", "O", "P": J = 15
+                    End Select
+
+                    If J = 15 Then
                         If UCase$(I$) = "P" Then P7(P9) = 1 - P7(P9) ': GoSub 105
                         If UCase$(I$) = "F" Then D2(P9) = D2(P9) + 1: If D2(P9) > 5 Then D2(P9) = 1
                         If UCase$(I$) = "O" Then O0%(P9) = O0%(P9) + 1: If O0%(P9) > 2 Then O0%(P9) = 0
                     Else
-                        J = Val(I$)
-                        If UCase$(I$) = "A" Then J = 10
-                        If UCase$(I$) = "B" Then J = 11
-                        If UCase$(I$) = "C" Then J = 12
-                        If UCase$(I$) = "D" Then J = 13
-                        If UCase$(I$) = "E" Then J = 14
 
-                        If Not (J < 0 Or J > 14 Or A!(P9, J, 12) >= 6 Or B%(P9, J, 18) <> 0 Or AA$(P9, J, 0) = "XXX") Then
+                        If J >= 0 And J <= 14 And A!(P9, J, 12) < 6 And AA$(P9, J, 0) <> "XXX" And B%(P9, J, 18) = 0 Then
                             For I2 = 0 To 4:
                                 If B1!(P9, I2) = J Then Exit For
                             Next I2
@@ -234,9 +272,7 @@ Sub PlayStyle ()
 
                     End If
 
-                    'This terminating condition may not be accurate
-                    'Need to test during gameplay if 14 is the last choice
-                Loop Until J = 14
+                Loop Until J >= 0 And J <= 14
 
                 B1!(P9, I1) = J
                 Z = J
@@ -255,7 +291,7 @@ Sub PlayStyle ()
 
     Loop Until I1 = 6
 
-    Cls
+    'Cls
 
 End Sub
 
@@ -264,7 +300,7 @@ End Sub
 '----------------------------------------
 '...explanation...
 Sub PlayItSafe ()
-    1200 '
+
     Cls
     A = 0
     S2 = 1
@@ -313,7 +349,9 @@ Sub PlayItSafe ()
     Loop Until P6 <> P5(6)
 
     1214 '
-    A = 0: S2 = 1
+    A = 0
+    S2 = 1
+
     For ZZ = 0 To 4
         If H <= 2 And A!(P9, B1!(P9, ZZ), 12) >= 3 And A!(P9, B1!(P9, ZZ), 22) = 0 Or A!(P9, B1!(P9, ZZ), 12) = 5 And A!(P9, B1!(P9, ZZ), 22) = 0 Then
             A = A + 1
@@ -368,7 +406,7 @@ Sub PlayItSafe ()
     End If
 
     1230 '
-    Cls
+    'Cls
     MJ = 0
     FO = 99
 
@@ -495,17 +533,17 @@ Sub ReboundRoutine1 ()
 
         RB(I) = 0
 
-		'ReboundRoutine2 is practically identical
-		'in everyway except the reference below
-		'to array index 21 is 2, and it's clearly
-		'operating for the other team as P is
-		'replaced by 1-P (switching 1 to 0, 
-		'and vice versa)
+        'ReboundRoutine2 is practically identical
+        'in everyway except the reference below
+        'to array index 21 is 2, and it's clearly
+        'operating for the other team as P is
+        'replaced by 1-P (switching 1 to 0,
+        'and vice versa)
         XZ = A!(P, B1!(P, I), 21)
 
         If Not (H > 2 Or H = 2 And T <= 120) Then
-			'This line, referencing P, is the other one changed
-			'between the 2 routines
+            'This line, referencing P, is the other one changed
+            'between the 2 routines
             If A!(P, B1!(P, I), 3) - A!(P, B1!(P, I), 7) - A!(P, B1!(P, I), 11) - A!(P, B1!(P, I), 12) <= 0 Then XZ = XZ * .5
         End If
 
@@ -586,6 +624,7 @@ Sub Choices ()
     H1$ = ""
 
     If U5 <> 0 Then
+
         If U5 = 2 Then
             P9 = 0
             Call SomeCalcs
@@ -597,6 +636,7 @@ Sub Choices ()
             P9 = CT
             Call SomeCalcs
         End If
+
     End If
 
     If U5 = 2 Or U5 = 1 And P = CT Then
@@ -616,7 +656,7 @@ Sub Choices ()
         Locate 10
         Color 15, 0
         Print "<ENTER>-CONTINUE"
-        Print "1-TIMEOUT "; B$(P); "-"; T1(P)
+        Print "1-TIMEOUT "; B$(P); " -"; T1(P)
 
         Do
 
@@ -628,14 +668,14 @@ Sub Choices ()
                 P9 = P
                 C1 = 2
                 If T <= 0 Then TE = T: Call PlayingTime
-                Exit Do
+            Else
+                If Not (T1(P) <= 0 Or P3 = 1 And P = CT And U5 = 1) Then T1(P) = T1(P) - 1: Color 15, 0: Call Substitutions
+                'Exit Do
             End If
 
         Loop Until Not (P3 = 1 And T1(P) <= 0 Or P3 = 1 And P = CT And U5 = 1)
 
         'If P3 = 1 And T1(P) <= 0 Or P3 = 1 And P = CT And U5 = 1 Then 813
-
-        If P3 = 1 Then T1(P) = T1(P) - 1: Color 15, 0: Call Substitutions
 
         818 '
         If pbpDelay! <> 0 Then
@@ -696,8 +736,8 @@ Sub Substitutions ()
         If U5 = 2 Then
 
             S2 = 0
-			P9 = P
-			C1 = 2
+            P9 = P
+            C1 = 2
 
             If T <= 0 Then TE = T: Call PlayingTime
 
@@ -705,7 +745,9 @@ Sub Substitutions ()
 
         Else
 
-            Locate 10, 1: Color 15, 0
+            Call NEWSCREEN
+            Locate 10, 1
+            Color 15, 0
             Print "<ENTER>-CONTINUE"
             Print "1-SUB "; B$(P)
             Print "2-SUB "; B$(D)
@@ -713,7 +755,7 @@ Sub Substitutions ()
             Do
                 I$ = GetKeyPress$
                 P3 = Val(I$)
-            Loop Until P3 >= 1 And P3 <= 2 Or P3 = 13
+            Loop Until P3 >= 1 And P3 <= 2 Or I$ = Chr$(13)
 
             If P3 < 1 Or P3 > 2 Or U5 = 1 And P3 = 1 And P = CT Or U5 = 1 And P3 = 2 And D = CT Then
 
@@ -731,15 +773,14 @@ Sub Substitutions ()
                     Call CheckZeroTime
                     Call NEWSCREEN
 
-                End If
+                    If pbpDelay! <> 0 Then
 
-                If pbpDelay! <> 0 Then
+                        For I = 8 To 15
+                            Locate I, 1
+                            Print Space$(38)
+                        Next I
 
-                    For I = 8 To 15
-                        Locate I, 1
-                        Print Space$(38)
-                    Next I
-
+                    End If
                 End If
 
             Else
@@ -880,7 +921,7 @@ Sub LastShot ()
 
     X8 = X8 - M5
 
-	Call ZeroCheck
+    Call ZeroCheck
 
 End Sub
 
@@ -1591,7 +1632,7 @@ Sub DRAWBOX (I)
     Locate 7 + JJ, 8
 
     Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
-	Locate 7
+    Locate 7
 
 End Sub
 
@@ -1601,8 +1642,8 @@ End Sub
 ' ...explanation...
 Sub GETATEAM (I1, YN$)
 
-	'Games Played, Minutes Per Game
-	Dim GP!, MPG!
+    'Games Played, Minutes Per Game
+    Dim GP!, MPG!
 
     Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
 
@@ -1789,17 +1830,26 @@ Sub NEWSCREEN ()
         Color 15
     Next I1
 
-    Locate 17, 40: Color T(1, 33), T(1, 34): Print B$(1);: Print Using " [##"; Z5(1);: Print "-";: Print Using "##]"; Z6(1)
-    Color 14, 0: Locate , 40: Print "# NAME          FG FT RB CX PA DF PT  F"
+    Locate 17, 40
+    Color T(1, 33), T(1, 34): Print B$(1);: Print Using " [##"; Z5(1);: Print "-";: Print Using "##]"; Z6(1)
+    Color 14, 0
+    Locate , 40: Print "# NAME          FG FT RB CX PA DF PT  F"
 
     For I1 = 0 To 4: Locate , 40: Color 2: Print Using "# "; I1;
-        Color 15: Print Left$(AA$(1, B1!(1, I1), 0), 12);: Locate , 56
+        Color 15
+        Print Left$(AA$(1, B1!(1, I1), 0), 12);
+        Locate , 56
+
         J = (A!(1, B1!(1, I1), 3)) - A!(1, B1!(1, I1), 7) - A!(1, B1!(1, I1), 11) - A!(1, B1!(1, I1), 12)
+
         If J <= 0 Then J = 0
+
         Print Using "##"; A!(1, B1!(1, I1), 0);
         Print Using "### "; A!(1, B1!(1, I1), 1);
+
         If P = 1 Then Print Using "##"; A!(1, B1!(1, I1), 21) * 2 / 10; Else Print Using "##"; A!(1, B1!(1, I1), 2) * 2 / 10;
         If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And T > 120) Then Color 12
+
         Print Using "### "; J;
         Color 15
         Print Using "## ##"; A!(1, B1!(1, I1), 4) / 10; A!(1, B1!(1, I1), 5) / 10;
@@ -1809,10 +1859,15 @@ Sub NEWSCREEN ()
         Color 15
     Next I1
 
-    Color 9, 0: For I = 1 To 9: Locate 14 + I, 39: Print Chr$(186): Next
     Color 9, 0
+    For I = 1 To 9: Locate 14 + I, 39: Print Chr$(186): Next
+    Color 9, 0
+
     Locate 16, 1: Print String$(79, 205)
-    Locate 16, 39: Print Chr$(206): Color 7, 0
+    Locate 16, 39: Print Chr$(206)
+
+    Color 7, 0
+
 End Sub
 
 '------------------------------
@@ -1965,7 +2020,7 @@ End Sub
 ' ...explanation...
 Sub SAVESTATFILES ()
 
-	Dim TG!
+    Dim TG!
 
     'SAVE STATS
     If _FileExists("GAME82") Then
@@ -2171,13 +2226,13 @@ Sub SAVESTATFILES ()
                     Select Case TG!
                         Case Is < 14500
                             H$(Y%) = "N"
-                        Case 14501 TO 16000
+                        Case 14501 To 16000
                             H$(Y%) = "N1"
-                        Case 16001 TO 17500
+                        Case 16001 To 17500
                             H$(Y%) = "N2"
-                        Case 17501 TO 19000
+                        Case 17501 To 19000
                             H$(Y%) = "N3"
-                        Case 19001 TO 20500
+                        Case 19001 To 20500
                             H$(Y%) = "N4"
                     End Select
 
@@ -2185,13 +2240,13 @@ Sub SAVESTATFILES ()
                     Select Case TG!
                         Case Is < 14500
                             H$(Y%) = "H"
-                        Case 14501 TO 16000
+                        Case 14501 To 16000
                             H$(Y%) = "H1"
-                        Case 16001 TO 17500
+                        Case 16001 To 17500
                             H$(Y%) = "H2"
-                        Case 17501 TO 19000
+                        Case 17501 To 19000
                             H$(Y%) = "H3"
-                        Case 19001 TO 20500
+                        Case 19001 To 20500
                             H$(Y%) = "H4"
                     End Select
 
@@ -2199,13 +2254,13 @@ Sub SAVESTATFILES ()
                     Select Case TG!
                         Case Is < 14500
                             H$(Y%) = "V"
-                        Case 14501 TO 16000
+                        Case 14501 To 16000
                             H$(Y%) = "V1"
-                        Case 16001 TO 17500
+                        Case 16001 To 17500
                             H$(Y%) = "V2"
-                        Case 17501 TO 19000
+                        Case 17501 To 19000
                             H$(Y%) = "V3"
-                        Case 19001 TO 20500
+                        Case 19001 To 20500
                             H$(Y%) = "V4"
                     End Select
 
@@ -2353,7 +2408,7 @@ Sub SETUPRATINGS ()
         If AP = 1 Then
             I = NG%(6)
         Else
-			Color 15, 0
+            Color 15, 0
             Cls
             Print "THESE TWO TEAMS MAY HAVE PLAYED DURING DIFFERENT ERAS AND"
             Print "PLAYED DIFFERENT STYLES OF BASKETBALL"
@@ -2361,13 +2416,13 @@ Sub SETUPRATINGS ()
             Print "PLAY STYLE OF:"
             Print
             Color 14: Print "(0) - ";: Color T(0, 33), T(0, 34): Print B$(0)
-			Color , 0
+            Color , 0
             Print
             Color 14: Print "(1) - ";: Color T(1, 33), T(1, 34): Print B$(1)
-			Color , 0
+            Color , 0
             Print
             Color 14: Print "(2) - ";: Color 3: Print "MAKE NO ADJUSTMENT"
-			Color 15, 0
+            Color 15, 0
             Do
                 I$ = GetKeyPress$
                 I = Val(I$)
@@ -2598,7 +2653,6 @@ Sub SETUPRATINGS ()
 
     Loop Until I = 2
 
-    9499 '
     X3! = 0
 
 End Sub
@@ -2954,16 +3008,10 @@ End Sub
 ' ...explanation...
 Sub DELAY ()
 
-    'Original code that was modified:
-    '    If pbpDelay! = 0 Or PB% = 1 Then
-    If pbpDelay! > 0 Or PB% = 0 Then
+    'Positive delay or Verbose
+    If pbpDelay! > 0 And PB% = 0 Then
 
         U$ = PadRight$(U$, 38)
-        'While Len(U$) < 38
-        '    U$ = U$ + " "
-        'Wend
-
-        'U$ = Left$(U$, 38)
 
         Locate 8, 1
 
@@ -3226,124 +3274,127 @@ Sub MAKEPBP ()
                         1431 'BAD
 
                         Select Case RN
-                            Case 1 TO 40: U$ = U$ + " TAKES A TOUGH SHOT"
-                            Case 41 TO 45: U$ = U$ + " SHOOTS OFF BALANCE"
-                            Case 46 TO 50: U$ = U$ + " FORCES ONE UP"
-                            Case 51 TO 60: U$ = U$ + " SHOOTS UNDER PRESSURE"
-                            Case 61 TO 65: U$ = U$ + " WITH A BAD SHOT"
-                            Case 66 TO 70: U$ = U$ + " SHOOTS IN HEAVY TRAFFIC"
-                            Case 71 TO 75: U$ = U$ + " THROWS UP A PRAYER"
-                            Case 76 TO 80: U$ = U$ + " TAKES A BAD SHOT"
-                            Case 81 TO 85: U$ = U$ + " FORCES THE INSIDE SHOT"
-                            Case 86 TO 100: U$ = U$ + " TURNS AND SHOOTS"
+                            Case 1 To 40: U$ = U$ + " TAKES A TOUGH SHOT"
+                            Case 41 To 45: U$ = U$ + " SHOOTS OFF BALANCE"
+                            Case 46 To 50: U$ = U$ + " FORCES ONE UP"
+                            Case 51 To 60: U$ = U$ + " SHOOTS UNDER PRESSURE"
+                            Case 61 To 65: U$ = U$ + " WITH A BAD SHOT"
+                            Case 66 To 70: U$ = U$ + " SHOOTS IN HEAVY TRAFFIC"
+                            Case 71 To 75: U$ = U$ + " THROWS UP A PRAYER"
+                            Case 76 To 80: U$ = U$ + " TAKES A BAD SHOT"
+                            Case 81 To 85: U$ = U$ + " FORCES THE INSIDE SHOT"
+                            Case 86 To 100: U$ = U$ + " TURNS AND SHOOTS"
                         End Select
 
                     Case 2
                         1432 'INSIDE W/ASSIST
-                    Case 1 TO 10
-                        U$ = "HE CUTS TO THE BASKET"
-                        Call DELAY
-                        U$ = "TAKES IT UP"
-                        If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
-                        If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
-                        If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
 
-                    Case 11 TO 20
-                        U$ = "HE TAKES IT TO THE HOLE"
-                        If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
-                        If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
-                        If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                        Select Case RN
+                            Case 1 To 10
+                                U$ = "HE CUTS TO THE BASKET"
+                                Call DELAY
+                                U$ = "TAKES IT UP"
+                                If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
+                                If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
+                                If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
 
-                    Case 21 TO 30
-                        U$ = "HE TAKES IT TO THE HOOP"
-                        If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
-                        If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
-                        If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                            Case 11 To 20
+                                U$ = "HE TAKES IT TO THE HOLE"
+                                If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
+                                If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
+                                If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
 
-                    Case 31 TO 40
-                        U$ = "HE LEANS IN AND SHOOTS"
+                            Case 21 To 30
+                                U$ = "HE TAKES IT TO THE HOOP"
+                                If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
+                                If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
+                                If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
 
-                    Case 41 TO 50
-                        U$ = "HE PUTS IT UP"
+                            Case 31 To 40
+                                U$ = "HE LEANS IN AND SHOOTS"
 
-                    Case 51 TO 60
-                        U$ = "HE TAKES IT TO THE BOARD"
-                        If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
-                        If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
-                        If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                            Case 41 To 50
+                                U$ = "HE PUTS IT UP"
 
-                    Case 61 TO 70
-                        U$ = "HE PUTS IT OFF THE GLASS"
+                            Case 51 To 60
+                                U$ = "HE TAKES IT TO THE BOARD"
+                                If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
+                                If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
+                                If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
 
-                    Case 71 TO 80
-                        If B = 4 Then
-                            U$ = "HE SHOOTS THE HOOK"
-                        Else
-                            U$ = "HE GOES IN FOR THE LAYUP"
-                        End If
+                            Case 61 To 70
+                                U$ = "HE PUTS IT OFF THE GLASS"
 
-                    Case 81 TO 90
-                        U$ = "HE TAKES IT UP STRONG"
-                        If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
-                        If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
-                        If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                            Case 71 To 80
+                                If B = 4 Then
+                                    U$ = "HE SHOOTS THE HOOK"
+                                Else
+                                    U$ = "HE GOES IN FOR THE LAYUP"
+                                End If
 
-                    Case 91 TO 95
-                        U$ = "HE POWERS IT UP"
-                        If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
-                        If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
-                        If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                            Case 81 To 90
+                                U$ = "HE TAKES IT UP STRONG"
+                                If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
+                                If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
+                                If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
 
-                    Case 96 TO 100
-                        U$ = "HE LAYS IT UP"
+                            Case 91 To 95
+                                U$ = "HE POWERS IT UP"
+                                If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
+                                If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
+                                If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+
+                            Case 96 To 100
+                                U$ = "HE LAYS IT UP"
+                        End Select
 
                     Case 3
                         1433 'PENETRATE
                         If Z3$ = "C" Then
                             Select Case RN
-                                Case 1 TO 15: U$ = "HE PUTS IT OFF THE GLASS"
-                                Case 16 TO 25: U$ = "HE PIVOTS TO THE BASKET"
-                                Case 26 TO 40: U$ = "HE POWERS IT UP"
-                                Case 41 TO 58: U$ = "HE TAKES IT TO THE HOOP": If Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
-                                Case 59 TO 70: U$ = "HE TAKES THE SHOT"
-                                Case 71 TO 72: U$ = "HE CURLS OFF A PICK IN THE PAINT": Call DELAY: U$ = "TAKES IT UP": If Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
-                                Case 73 TO 74: U$ = "HE MAKES A NICE SPIN MOVE": Call DELAY: U$ = "AND SOARS TO THE HOOP": If Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
-                                Case 75 TO 100:
+                                Case 1 To 15: U$ = "HE PUTS IT OFF THE GLASS"
+                                Case 16 To 25: U$ = "HE PIVOTS TO THE BASKET"
+                                Case 26 To 40: U$ = "HE POWERS IT UP"
+                                Case 41 To 58: U$ = "HE TAKES IT TO THE HOOP": If Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
+                                Case 59 To 70: U$ = "HE TAKES THE SHOT"
+                                Case 71 To 72: U$ = "HE CURLS OFF A PICK IN THE PAINT": Call DELAY: U$ = "TAKES IT UP": If Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
+                                Case 73 To 74: U$ = "HE MAKES A NICE SPIN MOVE": Call DELAY: U$ = "AND SOARS TO THE HOOP": If Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
+                                Case 75 To 100:
                                     U$ = "HE TAKES IT UP STRONG": If Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
                             End Select
                         End If
 
                         If Z3$ = "F" Then
                             Select Case RN
-                                Case 1 TO 16: U$ = "HE TAKES IT UP": If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
-                                Case 17 TO 32: U$ = "HE SPINS FREE": Call DELAY: U$ = "SHOOTS": If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
-                                Case 33 TO 48: U$ = "HE GETS LOOSE IN THE PAINT": Call DELAY: U$ = "TAKES IT UP": If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
-                                Case 49 TO 64: U$ = "HE PUTS IT UP"
-                                Case 65 TO 67: U$ = "HE CURLS OFF A PICK IN THE PAINT": Call DELAY: U$ = "TAKES IT UP": If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
-                                Case 68 TO 69: U$ = "HE MAKES A NICE SPIN MOVE": Call DELAY: U$ = "AND SOARS TO THE HOOP": If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
-                                Case 70 TO 71: U$ = "HE DRIVES THE BASELINE": Call DELAY: U$ = "SPINS RIGHT AND GOES UP": If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                Case 1 To 16: U$ = "HE TAKES IT UP": If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                Case 17 To 32: U$ = "HE SPINS FREE": Call DELAY: U$ = "SHOOTS": If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                Case 33 To 48: U$ = "HE GETS LOOSE IN THE PAINT": Call DELAY: U$ = "TAKES IT UP": If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                Case 49 To 64: U$ = "HE PUTS IT UP"
+                                Case 65 To 67: U$ = "HE CURLS OFF A PICK IN THE PAINT": Call DELAY: U$ = "TAKES IT UP": If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                Case 68 To 69: U$ = "HE MAKES A NICE SPIN MOVE": Call DELAY: U$ = "AND SOARS TO THE HOOP": If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                Case 70 To 71: U$ = "HE DRIVES THE BASELINE": Call DELAY: U$ = "SPINS RIGHT AND GOES UP": If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
                                 Case 72: U$ = "HE SLICES IN THE HOLE": Call DELAY: U$ = "UNDERHAND SCOOP SHOT"
                                 Case 73: U$ = "STRONG CUT ALONG THE BASELINE": Call DELAY: U$ = "DOUBLE PUMP REVERSE LAYUP"
                                 Case 74: U$ = "HE PENETRATES": Call DELAY: U$ = "GORGEOUS FINGER ROLL!"
-                                Case 75 TO 80: U$ = "HE SHOOTS"
-                                Case 81 TO 100:
+                                Case 75 To 80: U$ = "HE SHOOTS"
+                                Case 81 To 100:
                                     U$ = "HE TAKES THE SHOT"
                             End Select
                         Else
 
                             Select Case RN
-                                Case 1 TO 25: U$ = "HE SPINS FREE": Call DELAY: U$ = "SHOOTS"
-                                Case 26 TO 50: U$ = "HE TAKES IT UP UNDER THE BASKET": If Int(Rnd(1) * 100) + 1 <= 2 Then DK% = 1
-                                Case 51 TO 52: U$ = "HE MAKES A NICE SPIN MOVE": Call DELAY: U$ = "AND SOARS TO THE HOOP": If Int(Rnd(1) * 100) + 1 <= 2 Then DK% = 1
-                                Case 53 TO 54: U$ = "HE BLOWS PAST TWO DEFENDERS"
-                                Case 55 TO 56: U$ = "HE DRIVES THE BASELINE": Call DELAY: U$ = "SPINS RIGHT AND GOES UP": If Int(Rnd(1) * 100) + 1 <= 2 Then DK% = 1
+                                Case 1 To 25: U$ = "HE SPINS FREE": Call DELAY: U$ = "SHOOTS"
+                                Case 26 To 50: U$ = "HE TAKES IT UP UNDER THE BASKET": If Int(Rnd(1) * 100) + 1 <= 2 Then DK% = 1
+                                Case 51 To 52: U$ = "HE MAKES A NICE SPIN MOVE": Call DELAY: U$ = "AND SOARS TO THE HOOP": If Int(Rnd(1) * 100) + 1 <= 2 Then DK% = 1
+                                Case 53 To 54: U$ = "HE BLOWS PAST TWO DEFENDERS"
+                                Case 55 To 56: U$ = "HE DRIVES THE BASELINE": Call DELAY: U$ = "SPINS RIGHT AND GOES UP": If Int(Rnd(1) * 100) + 1 <= 2 Then DK% = 1
                                 Case 57: U$ = "HE SLICES IN THE HOLE": Call DELAY: U$ = "UNDERHAND SCOOP SHOT"
                                 Case 58: U$ = "STRONG CUT ALONG THE BASELINE": Call DELAY: U$ = "DOUBLE PUMP REVERSE LAYUP"
                                 Case 59: U$ = "HE PENETRATES": Call DELAY: U$ = "GORGEOUS FINGER ROLL!"
-                                Case 60 TO 75: U$ = "HE TAKES THE JUMPER"
-                                Case 76 TO 90: U$ = "HE STOPS": Call DELAY: U$ = "SHOOTS"
+                                Case 60 To 75: U$ = "HE TAKES THE JUMPER"
+                                Case 76 To 90: U$ = "HE STOPS": Call DELAY: U$ = "SHOOTS"
                                 Case 91: U$ = "HE LOOKS TO PASS": Call DELAY: U$ = "NO ONE IS OPEN": Call DELAY: U$ = "HE PUTS IT UP"
-                                Case 92 TO 100:
+                                Case 92 To 100:
                                     U$ = "HE TAKES THE SHOT"
                             End Select
                         End If
@@ -3360,18 +3411,19 @@ Sub MAKEPBP ()
                             FT% = 0
                         Else
                             Select Case RN
-                                Case 1 TO 10: U$ = U$ + " TRIES FOR THREE!"
-                                Case 11 TO 20: U$ = U$ + " SHOOTS FROM 3-POINT RANGE!"
-                                Case 21 TO 30: U$ = U$ + " HOISTS A THREE!"
-                                Case 31 TO 40: U$ = U$ + " BOMBS A THREE FROM THE CORNER!"
-                                Case 41 TO 50: U$ = U$ + " FIRES FROM THE 3-POINT LINE!"
-                                Case 51 TO 60: U$ = U$ + " SHOOTS FOR THREE!"
-                                Case 61 TO 70: U$ = U$ + " SHOOTS THE 3-POINTER!"
-                                Case 71 TO 80: U$ = U$ + " FOR 3...!"
-                                Case 81 TO 90: U$ = U$ + " PUTS UP THE TREY!"
-                                Case 91 TO 100: U$ = U$ + " TAKES THE 3-POINTER!"
+                                Case 1 To 10: U$ = U$ + " TRIES FOR THREE!"
+                                Case 11 To 20: U$ = U$ + " SHOOTS FROM 3-POINT RANGE!"
+                                Case 21 To 30: U$ = U$ + " HOISTS A THREE!"
+                                Case 31 To 40: U$ = U$ + " BOMBS A THREE FROM THE CORNER!"
+                                Case 41 To 50: U$ = U$ + " FIRES FROM THE 3-POINT LINE!"
+                                Case 51 To 60: U$ = U$ + " SHOOTS FOR THREE!"
+                                Case 61 To 70: U$ = U$ + " SHOOTS THE 3-POINTER!"
+                                Case 71 To 80: U$ = U$ + " FOR 3...!"
+                                Case 81 To 90: U$ = U$ + " PUTS UP THE TREY!"
+                                Case 91 To 100: U$ = U$ + " TAKES THE 3-POINTER!"
                             End Select
                         End If
+
                     Case 5
                         1435 'SHORT JUMP
                         RN = Int(Rnd(1) * 59) + 1
@@ -3534,18 +3586,18 @@ Sub MAKEPBP ()
                         1438 '
 
                         Select Case RN
-                            Case 1 TO 20: U$ = "HE SAILS TO THE HOOP"
-                            Case 21 TO 23: U$ = "HE TAKES IT TO THE BUCKET"
-                            Case 24 TO 26: U$ = "HE TAKES IT TO THE HOLE"
-                            Case 27 TO 29: U$ = "HE SLASHES TO THE HOLE"
-                            Case 30 TO 32: U$ = "HE SLASHES TO THE BUCKET"
-                            Case 33 TO 35: U$ = "HE SOARS TO THE BUCKET"
-                            Case 36 TO 38: U$ = "HE SOARS TO THE HOLE"
-                            Case 39 TO 40: U$ = "HE GLIDES TO THE HOLE"
-                            Case 41 TO 60: U$ = "HE GOES IN STRONG"
-                            Case 61 TO 80: U$ = "HE TAKES IT IN"
-                            Case 81 TO 90: U$ = "HE TAKES A DEFENDER WITH HIM"
-                            Case 81 TO 100: U$ = "HE GOES UP WITH IT"
+                            Case 1 To 20: U$ = "HE SAILS TO THE HOOP"
+                            Case 21 To 23: U$ = "HE TAKES IT TO THE BUCKET"
+                            Case 24 To 26: U$ = "HE TAKES IT TO THE HOLE"
+                            Case 27 To 29: U$ = "HE SLASHES TO THE HOLE"
+                            Case 30 To 32: U$ = "HE SLASHES TO THE BUCKET"
+                            Case 33 To 35: U$ = "HE SOARS TO THE BUCKET"
+                            Case 36 To 38: U$ = "HE SOARS TO THE HOLE"
+                            Case 39 To 40: U$ = "HE GLIDES TO THE HOLE"
+                            Case 41 To 60: U$ = "HE GOES IN STRONG"
+                            Case 61 To 80: U$ = "HE TAKES IT IN"
+                            Case 81 To 90: U$ = "HE TAKES A DEFENDER WITH HIM"
+                            Case 81 To 100: U$ = "HE GOES UP WITH IT"
                         End Select
 
                     Case 8
@@ -3577,15 +3629,15 @@ Sub MAKEPBP ()
                 U$ = "HE "
 
                 Select Case RN
-                    Case 1 TO 10: U$ = U$ + "FILLS UP THE BASKET!!!"
-                    Case 11 TO 20: U$ = U$ + "HITS THE TREY!!!"
-                    Case 21 TO 30: U$ = "IT'S GOOOODD!!"
-                    Case 31 TO 40: U$ = U$ + "GETS IT!!!"
-                    Case 41 TO 50: U$ = "COUNT IT!!"
-                    Case 51 TO 60: U$ = U$ + "RINGS IT UP!!!"
-                    Case 61 TO 80: U$ = U$ + "DRAINS IT!!!"
-                    Case 81 TO 90: U$ = "HE BURIES IT!!!"
-                    Case 91 TO 100: U$ = "IT'S ALL NET!!!"
+                    Case 1 To 10: U$ = U$ + "FILLS UP THE BASKET!!!"
+                    Case 11 To 20: U$ = U$ + "HITS THE TREY!!!"
+                    Case 21 To 30: U$ = "IT'S GOOOODD!!"
+                    Case 31 To 40: U$ = U$ + "GETS IT!!!"
+                    Case 41 To 50: U$ = "COUNT IT!!"
+                    Case 51 To 60: U$ = U$ + "RINGS IT UP!!!"
+                    Case 61 To 80: U$ = U$ + "DRAINS IT!!!"
+                    Case 81 To 90: U$ = "HE BURIES IT!!!"
+                    Case 91 To 100: U$ = "IT'S ALL NET!!!"
                 End Select
 
             Case 5
@@ -3593,13 +3645,13 @@ Sub MAKEPBP ()
                 U$ = "HE "
 
                 Select Case RN
-                    Case 1 TO 20: U$ = U$ + "GETS NONE"
-                    Case 21 TO 25: U$ = "IT NEVER HAD A CHANCE"
-                    Case 26 TO 35: U$ = "AIRRRR BALLLL!!"
-                    Case 36 TO 40: U$ = U$ + "MISFIRES"
-                    Case 41 TO 60: U$ = "IT'S OFF THE RIM...NO GOOD!"
-                    Case 61 TO 80: U$ = "IT'S SHORT"
-                    Case 81 TO 100: U$ = U$ + "MISSES"
+                    Case 1 To 20: U$ = U$ + "GETS NONE"
+                    Case 21 To 25: U$ = "IT NEVER HAD A CHANCE"
+                    Case 26 To 35: U$ = "AIRRRR BALLLL!!"
+                    Case 36 To 40: U$ = U$ + "MISFIRES"
+                    Case 41 To 60: U$ = "IT'S OFF THE RIM...NO GOOD!"
+                    Case 61 To 80: U$ = "IT'S SHORT"
+                    Case 81 To 100: U$ = U$ + "MISSES"
                 End Select
 
             Case 6
@@ -3703,11 +3755,11 @@ Sub MAKEPBP ()
                     U$ = "HE "
 
                     Select Case RN
-                        Case 1 TO 20: U$ = U$ + "MISSES THE EASY BASKET!"
-                        Case 21 TO 40: U$ = U$ + "JAMS IT TOO HARD!!"
-                        Case 41 TO 60: U$ = U$ + "SLAMS IT OFF THE IRON...NO GOOD!"
-                        Case 61 TO 80: U$ = U$ + "CAN'T GET IT DOWN!"
-                        Case 81 TO 100: U$ = U$ + "BLOWS THE EASY BASKET!!"
+                        Case 1 To 20: U$ = U$ + "MISSES THE EASY BASKET!"
+                        Case 21 To 40: U$ = U$ + "JAMS IT TOO HARD!!"
+                        Case 41 To 60: U$ = U$ + "SLAMS IT OFF THE IRON...NO GOOD!"
+                        Case 61 To 80: U$ = U$ + "CAN'T GET IT DOWN!"
+                        Case 81 To 100: U$ = U$ + "BLOWS THE EASY BASKET!!"
                     End Select
 
                 Else
@@ -4022,7 +4074,7 @@ Sub TEAMMENU (BO%, YN$)
 
     Dim fileLength&
 
-    If BO% = 2 Then 
+    If BO% = 2 Then
         BO% = 0
     Else
         NTMS = 0
@@ -4149,9 +4201,9 @@ Sub TICKER ()
                     Locate , 27: Print "CHEVROLET FINAL SCOREBOARD"
                 Else
                     Select Case RN
-                        Case 1 TO 33: Locate , 27: Print "USA TODAY FINAL SCOREBOARD"
-                        Case 34 TO 67: Locate , 24: Print "FEDERAL EXPRESS FINAL SCOREBOARD"
-                        Case 67 TO 100: Locate , 23: Print "ESPN SPORTSCENTER FINAL SCOREBOARD"
+                        Case 1 To 33: Locate , 27: Print "USA TODAY FINAL SCOREBOARD"
+                        Case 34 To 67: Locate , 24: Print "FEDERAL EXPRESS FINAL SCOREBOARD"
+                        Case 67 To 100: Locate , 23: Print "ESPN SPORTSCENTER FINAL SCOREBOARD"
                     End Select
                 End If
             Else
@@ -6729,7 +6781,7 @@ Sub UPDATESCREEN ()
 
     Locate 1, 37: Color 15, 0: Print Using "##"; Int(T / 60);: Print ":";
 
-    If T - Int(T / 60) * 60 < 10 Then 
+    If T - Int(T / 60) * 60 < 10 Then
         Print "0";: Print Using "#"; T - Int(T / 60) * 60;
     Else
         Print Using "##"; T - Int(T / 60) * 60;

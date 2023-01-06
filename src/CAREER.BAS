@@ -58,7 +58,7 @@ End Sub
 '... explain here ...
 Sub CreateCareerFile ()
 
-    Dim initA(62, 15)
+    Dim initA!(62, 15)
     Dim initA$(62)
     Dim W0!(62), W1!(62)
     Dim Z!(15), Z1!(15)
@@ -83,7 +83,9 @@ Sub CreateCareerFile ()
     Print
     Color 12
     Locate , 25: Print "DO YOU WISH TO CONTINUE? (Y/N)"
-    I$ = GetKeyPress$
+    Do
+        I$ = GetKeyPress$
+    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or I$ = Chr$(27)
 
     If UCase$(I$) = "Y" Then
 
@@ -138,12 +140,13 @@ Sub CreateCareerFile ()
                         Print
                         Line Input "HIT ENTER TO CONTINUE"; DUMMY$
                     Else
-
-                        'Read in the stat file Z1$ to arrays)
+                        test$ = Z1$
+                        'Read in the stat file Z1$ to arrays
                         Open diskPaths$(1) + Z1$ For Input As #1
                         Input #1, B$
-                        For I = 0 To 14: Input #1, initA$(I)
-                            For J = 0 To 13: Input #1, initA(I, J): Next
+                        For I = 0 To 14:
+                            Input #1, initA$(I)
+                            For J = 0 To 13: Input #1, initA!(I, J): Next
                             Input #1, W0!(I)
                             Input #1, W1!(I)
                             TMR% = TMR% - 1
@@ -162,7 +165,7 @@ Sub CreateCareerFile ()
                             End If
 
                             408 For J = 0 To 13
-                                ars!(N, I, J) = initA(I, J)
+                                ars!(N, I, J) = initA!(I, J)
                             Next J
                             ars!(N, I, 14) = 1
                             ars!(N, I, 15) = Y
@@ -337,12 +340,14 @@ End Sub
 Sub AddYear (selectedFile$, statFile$)
 
     Dim initA$(62)
-    ReDim AL(600, 14)
-    Dim mergeA(15, 62)
+
+    Dim mergeA!(15, 62)
     Dim W0!(62), W1!(62)
     Dim Z!(15), Z1!(15)
 
     Shared AR$()
+
+    Shared AL!()
     Shared ars!(), W0S!(), W1S!()
 
     'needs to be a constant???
@@ -389,7 +394,7 @@ Sub AddYear (selectedFile$, statFile$)
 
             For I = 0 To 14
                 Input #1, initA$(I)
-                For J = 0 To 13: Input #1, mergeA(I, J): Next
+                For J = 0 To 13: Input #1, mergeA!(I, J): Next
                 Input #1, W0!(I)
                 Input #1, W1!(I)
                 TMR1% = TMR1% - 1
@@ -425,7 +430,7 @@ Sub AddYear (selectedFile$, statFile$)
                         End If
 
                         For K = 0 To 13
-                            ars!(N, J, K) = mergeA(I, K)
+                            ars!(N, J, K) = mergeA!(I, K)
                         Next K
                         ars!(N, J, 14) = 1
                         ars!(N, J, 15) = statYear
@@ -440,7 +445,7 @@ Sub AddYear (selectedFile$, statFile$)
                                 AR$(NB) = initA$(I)
                                 N = 1
 
-                                For K = 0 To 13: ars!(N, NB, K) = mergeA(I, K): Next K
+                                For K = 0 To 13: ars!(N, NB, K) = mergeA!(I, K): Next K
 
                                 ars!(N, NB, 14) = 1
                                 ars!(N, NB, 15) = statYear

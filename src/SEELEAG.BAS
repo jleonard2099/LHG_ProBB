@@ -8,6 +8,8 @@ Sub SEELEAG ()
     Shared DL$(), OL$()
     Shared leagT$(), Z2$(), Z3$()
 
+	Shared LG$, D1$, D2$, D3$, D4$
+
     _Title "Basketball: The Pro Game - View League"
 
     H$ = " 1/2"
@@ -150,7 +152,9 @@ Sub SEELEAG ()
                         Color 14, 0
 
                         Select Case UCase$(I$)
-                            Case "P": Call SavePrintLeagueStats(SF$, 0)
+                            Case "P": 
+								Call SavePrintLeagueStats(SF$, 0)
+
                             Case "F":
                                 Do
                                     Color 15, 0: Cls
@@ -177,6 +181,7 @@ Sub SEELEAG ()
                                 Loop Until UCase$(I$) = "N" And SF$ <> ""
 
                                 Color 15, 0
+								
                                 Call SavePrintLeagueStats(SF$, 1)
 
                             Case "S":
@@ -193,6 +198,7 @@ Sub SEELEAG ()
 								Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
 
                                 Do
+									Color 15, 1
                                     Locate 7
                                     U$ = "VIEW LEAGUE STATS AGAIN (YN)"
                                     Locate , (80 - Len(U$)) / 2
@@ -229,9 +235,14 @@ Sub LeagueStatsToScreen ()
     Shared DL$(), OL$(), OL!()
     Shared leagT$(), Z2$(), Z3$()
 
+	Shared LG$, D1$, D2$, D3$, D4$
+
     Cls
-    Color 12: Print "                        "; LG$; " LEAGUE STANDINGS": Print
-    Color 14: Print "    "; D1$; " DIVISION": Print: Color 2: Print "                   W    L     PCT   GB"
+    Color 12: Print "                        "; LG$; " LEAGUE STANDINGS"
+	Print
+    Color 14: Print "    "; D1$; " DIVISION"
+	Print
+	Color 2: Print "                   W    L     PCT   GB"
     Color 15
 
     For P = 1 To 10
@@ -245,7 +256,13 @@ Sub LeagueStatsToScreen ()
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            Print "    "; leagT$(P); Tab(16);: Print Using "   ##   ##   #.###"; O1!(P); O2!(P); O1!(P) / (O1!(P) + O2!(P));: Print BK$
+            Print "    "; leagT$(P); Tab(16);
+
+            'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
+			PCT! = O1!(P) / (O1!(P) + O2!(P))
+
+			Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+			Print BK$
         End If
     Next P
 
@@ -276,9 +293,9 @@ Sub LeagueStatsToScreen ()
             Print "    "; leagT$(P); Tab(16);
 
             'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
-            PCT = O1!(P) / (O1!(P) + O2!(P))
+            PCT! = O1!(P) / (O1!(P) + O2!(P))
 
-            Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT;
+            Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
             Print BK$
         End If
     Next P
@@ -291,23 +308,29 @@ Sub LeagueStatsToScreen ()
     Cls
     Color 12: Print "                        "; LG$; " LEAGUE STANDINGS"
     Print
-    Color 14: Print "    "; D3$; " DIVISION": Print: Color 2: Print "                   W    L     PCT   GB"
+    Color 14: Print "    "; D3$; " DIVISION"
+	Print
+	Color 2: Print "                   W    L     PCT   GB"
     Color 15
 
     For P = 21 To 30
         If leagT$(P) <> "" And leagT$(P) <> "*" Then
             D1 = O1!(21) - O2!(21)
-            D = O1!(P) - O2!(P): D = D1 - D
+            D = O1!(P) - O2!(P)
+			D = D1 - D
             BK$ = "     " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
             If D = 1 Then BK$ = "     "
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            PCT = O1!(P) / (O1!(P) + O2!(P))
+
+            'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
+            PCT! = O1!(P) / (O1!(P) + O2!(P))
 
             Print "    "; leagT$(P); Tab(16);
-            Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT;: Print BK$
+            Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+			Print BK$
         End If
     Next P
 
@@ -317,8 +340,11 @@ Sub LeagueStatsToScreen ()
     QK$ = GetKeyPress$
 
     Cls
-    Color 12: Print "                        "; LG$; " LEAGUE STANDINGS": Print
-    Color 14: Print "    "; D4$; " DIVISION": Print: Color 2: Print "                   W    L     PCT   GB"
+    Color 12: Print "                        "; LG$; " LEAGUE STANDINGS"
+	Print
+    Color 14: Print "    "; D4$; " DIVISION"
+	Print
+	Color 2: Print "                   W    L     PCT   GB"
     Color 15
 
     For P = 31 To 40
@@ -331,8 +357,13 @@ Sub LeagueStatsToScreen ()
             If D = 1 Then BK$ = "     "
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
-            PCT = O1!(P) / (O1!(P) + O2!(P))
-            Print "    "; leagT$(P); Tab(16);: Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT;: Print BK$
+
+            'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
+            PCT! = O1!(P) / (O1!(P) + O2!(P))
+
+            Print "    "; leagT$(P); Tab(16);
+			Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+			Print BK$
         End If
     Next P
 
@@ -348,7 +379,7 @@ Sub LeagueStatsToScreen ()
     Print "                            PCT   FGA"; Tab(41); "                            PCT   FTA"
 
     For P = 41 To 60
-        If Z2$(P) <> "*" Then
+        If Z2$(P) <> "*" And Z2$(P) <> "" Then
             Print Left$(Z2$(P), 10) + ", " + Z3$(P);: Locate , 28
             Print Using "##.#  ####"; Z!(P) * 100; Z1!(P)
         End If
@@ -357,7 +388,7 @@ Sub LeagueStatsToScreen ()
     Locate 4
 
     For P = 61 To 80
-        If Z2$(P) <> "*" Then
+        If Z2$(P) <> "*" And Z2$(P) <> "" Then
             Locate , 41: Print Left$(Z2$(P), 10) + ", " + Z3$(P);: Locate , 68
             Print Using "##.#  ####"; Z!(P) * 100; Z1!(P)
         End If
@@ -380,7 +411,8 @@ Sub LeagueStatsToScreen ()
         End If
     Next
 
-    Locate 1, 41: Color 14: Print "TOTAL POINTS"
+    Color 14
+	Locate 1, 41: Print "TOTAL POINTS"
     Locate , 41: Print "                                  PTS"
     Color 15
 
@@ -723,11 +755,12 @@ End Sub
 Sub SavePrintLeagueStats (statFile$, destination)
 
     Shared O1!(), O2!()
-
     Shared DL!(), OL!()
     Shared Z!(), Z1!()
 
     Shared Z2$(), Z3$()
+
+	Shared LG$, D1$, D2$, D3$, D4$
 
     'Save Report File
     Cls
@@ -737,8 +770,10 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Open statFile$ + ".RPT" For Output As #2
     End If
 
-    Print #2, "                        "; LG$; " LEAGUE STANDINGS": Print #2,
-    Print #2, "    "; D1$; " DIVISION": Print #2,:
+    Print #2, "                        "; LG$; " LEAGUE STANDINGS"
+	Print #2,
+    Print #2, "    "; D1$; " DIVISION"
+	Print #2,
     Print #2, "                   W    L     PCT   GB"
     For P = 1 To 10
         If leagT$(P) <> "" And leagT$(P) <> "*" Then
@@ -750,14 +785,18 @@ Sub SavePrintLeagueStats (statFile$, destination)
             If D = 1 Then BK$ = "     "
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
-            Print #2, "    "; leagT$(P); Tab(16);: Print #2, Using "   ##   ##   #.###"; O1!(P); O2!(P); O1!(P) / (O1!(P) + O2!(P));: Print #2, BK$
+			PCT! = O1!(P) / (O1!(P) + O2!(P))
+            Print #2, "    "; leagT$(P); Tab(16);: Print #2, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+			Print #2, BK$
         End If
     Next P
 
     Print #2,
-    Print #2, "    "; D2$; " DIVISION": Print #2,
+    Print #2, "    "; D2$; " DIVISION"
+	Print #2,
     Print #2, "                   W    L     PCT   GB"
-    For P = 11 To 20
+    
+	For P = 11 To 20
         If leagT$(P) <> "" And leagT$(P) <> "*" Then
             D1 = O1!(11) - O2!(11)
             D = O1!(P) - O2!(P)
@@ -767,12 +806,16 @@ Sub SavePrintLeagueStats (statFile$, destination)
             If D = 1 Then BK$ = "     "
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
-            Print #2, "    "; leagT$(P); Tab(16);: Print #2, Using "   ##   ##   #.###"; O1!(P); O2!(P); O1!(P) / (O1!(P) + O2!(P));: Print #2, BK$
+            Print #2, "    "; leagT$(P); Tab(16);
+			PCT! = O1!(P) / (O1!(P) + O2!(P))
+			Print #2, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+			Print #2, BK$
         End If
     Next P
 
     Print #2,
-    Print #2, "    "; D3$; " DIVISION": Print #2,
+    Print #2, "    "; D3$; " DIVISION"
+	Print #2,
     Print #2, "                   W    L     PCT   GB"
     For P = 21 To 30
         If leagT$(P) <> "" And leagT$(P) <> "*" Then
@@ -784,14 +827,18 @@ Sub SavePrintLeagueStats (statFile$, destination)
             If D = 1 Then BK$ = "     "
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
-            Print #2, "    "; leagT$(P); Tab(16);: Print #2, Using "   ##   ##   #.###"; O1!(P); O2!(P); O1!(P) / (O1!(P) + O2!(P));: Print #2, BK$
+			PCT! = O1!(P) / (O1!(P) + O2!(P))
+            Print #2, "    "; leagT$(P); Tab(16);: Print #2, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+			Print #2, BK$
         End If
     Next P
 
     Print #2,
-    Print #2, "    "; D4$; " DIVISION": Print #2,
+    Print #2, "    "; D4$; " DIVISION"
+	Print #2,
     Print #2, "                   W    L     PCT   GB"
-    For P = 31 To 40
+ 
+ For P = 31 To 40
         If leagT$(P) <> "" And leagT$(P) <> "*" Then
             D1 = O1!(31) - O2!(31)
             D = O1!(P) - O2!(P)
@@ -801,15 +848,19 @@ Sub SavePrintLeagueStats (statFile$, destination)
             If D = 1 Then BK$ = "     "
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
-            Print #2, "    "; leagT$(P); Tab(16);: Print #2, Using "   ##   ##   #.###"; O1!(P); O2!(P); O1!(P) / (O1!(P) + O2!(P));: Print #2, BK$
+            Print #2, "    "; leagT$(P); Tab(16);
+			PCT! = O1!(P) / (O1!(P) + O2!(P))
+			Print #2, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+			Print #2, BK$
         End If
-    3204 Next P
+    Next P
 
     Print #2, Chr$(12)
     Print #2, "FIELD GOAL % (MIN 5 FGA/G)"; Tab(41); "FREE THROW % (MIN 2 FTA/G)"
     Print #2,
     Print #2, "                            PCT   FGA"; Tab(41); "                            PCT   FTA"
-    For P = 41 To 60
+    
+	For P = 41 To 60
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -826,11 +877,12 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Using "##.#  ####"; Z!(P + 20) * 100; Z1!(P)
         End If
 
-    3320 Next
+    Next
 
     Print #2,
     Print #2, "SCORING"; Tab(41); "TOTAL POINTS"
-    For P = 1 To 20
+    
+	For P = 1 To 20
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -850,7 +902,8 @@ Sub SavePrintLeagueStats (statFile$, destination)
 
     Print #2, Chr$(12)
     Print #2, "STEALS PER GAME"; Tab(41); "STEALS"
-    For P = 81 To 90
+    
+	For P = 81 To 90
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -870,7 +923,8 @@ Sub SavePrintLeagueStats (statFile$, destination)
 
     Print #2,
     Print #2, "ASSISTS PER GAME"; Tab(41); "ASSISTS"
-    For P = 101 To 110
+    
+	For P = 101 To 110
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -890,7 +944,8 @@ Sub SavePrintLeagueStats (statFile$, destination)
 
     Print #2,
     Print #2, "THREE FIELD GOAL %"; Tab(41); "MINUTES PER GAME"
-    For P = 121 To 130
+    
+	For P = 121 To 130
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -910,7 +965,8 @@ Sub SavePrintLeagueStats (statFile$, destination)
 
     Print #2,
     Print #2, "THREE POINT FIELD GOALS MADE"; Tab(41); "MINUTES"
-    For P = 131 To 140
+    
+	For P = 131 To 140
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -951,7 +1007,8 @@ Sub SavePrintLeagueStats (statFile$, destination)
 
     Print #2,
     Print #2, "BLOCKS PER GAME"; Tab(41); "BLOCKS"
-    For P = 181 To 190
+    
+	For P = 181 To 190
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -971,7 +1028,8 @@ Sub SavePrintLeagueStats (statFile$, destination)
 
     Print #2,
     Print #2, "FIELD GOALS MADE"; Tab(41); "FREE THROWS MADE"
-    For P = 201 To 210
+    
+	For P = 201 To 210
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -991,7 +1049,8 @@ Sub SavePrintLeagueStats (statFile$, destination)
 
     Print #2,
     Print #2, "FOULS PER GAME"; Tab(41); "FOULS"
-    For P = 221 To 230
+    
+	For P = 221 To 230
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -1011,7 +1070,8 @@ Sub SavePrintLeagueStats (statFile$, destination)
 
     Print #2,
     Print #2, "MOST VALUABLE PLAYER"
-    For P = 241 To 250
+    
+	For P = 241 To 250
         If Z2$(P) <> "" Then
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);

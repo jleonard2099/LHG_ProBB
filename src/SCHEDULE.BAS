@@ -198,6 +198,7 @@ Sub NewSchedule (scheduleFile$)
 
         'Show 20 schedule entries on the screen at once
         For X = 1 To 20
+
             Locate X + 2, 1
 
             If X + NS% * 20 <= scheduleAP%(0) Then
@@ -275,8 +276,8 @@ Sub NewSchedule (scheduleFile$)
                 scheduleAP%(0) = scheduleAP%(0) + 1
                 targetGame% = scheduleAP%(0)
 
-                'BS% = number of pages to display (20 games / page)
-                BS% = Int((targetGame% - 1) / 20): If NS% < BS% Then NS% = BS%
+                BS% = Int((targetGame% - 1) / 20)
+                If NS% < BS% Then NS% = BS%
 
                 For X = 0 To 18
                     If X <> 13 Then
@@ -426,15 +427,18 @@ Sub NewSchedule (scheduleFile$)
 
             Case Chr$(0) + "Q"
                 ' *** PAGE DOWN ***
-                If NS% < BS% Then
-                    NS% = NS% + 1
-                Else
+                If NS% >= BS% Then
                     NS% = BS%
+                Else
+                    NS% = NS% + 1
                 End If
 
             Case Chr$(0) + "I"
                 ' *** PAGE UP ***
-                If Not (NS% = 0) Then NS% = NS% - 1
+                If NS% <> 0 Then
+                    NS% = NS% - 1
+                End If
+
         End Select
 
     Loop Until UCase$(I$) = "Q" Or UCase$(I$) = "X"
@@ -1488,17 +1492,17 @@ Sub DeleteSchedules (fileChoice%, fileSpec$)
 
         ReDim boxFiles$(0 To FileCount%)
 
-		For X = 1 To FileCount%
-			boxFiles$(X) = Space$(12)
-		Next
+        For X = 1 To FileCount%
+            boxFiles$(X) = Space$(12)
+        Next
 
-		boxFiles$(0) = fileSpec$
-		Call ReadFile(boxFiles$())
+        boxFiles$(0) = fileSpec$
+        Call ReadFile(boxFiles$())
 
-		For X = 1 To FileCount%
-			Kill (diskPaths$(1) + boxFiles$(X))
-			Locate 12, 34: Print "DELETING "; boxFiles$(X)
-		Next
+        For X = 1 To FileCount%
+            Kill (diskPaths$(1) + boxFiles$(X))
+            Locate 12, 34: Print "DELETING "; boxFiles$(X)
+        Next
 
     End If
 
@@ -1585,6 +1589,8 @@ End Sub
 '...explanation...
 Sub SelectScheduleFile (targetFile$, scheduleFiles$(), FileCount%, ExitCode%)
 
+    Shared BS%, NS%
+
     Shared scheduleAP%(), homeScore%(), visitingScore%()
     Shared NG%()
     Shared scheduleYN$()
@@ -1640,10 +1646,8 @@ Sub SelectScheduleFile (targetFile$, scheduleFiles$(), FileCount%, ExitCode%)
         Open diskPaths$(0) + targetFile$ + ".SCD" For Random As #1 Len = 48
         Y = LOF(1)
 
-        'scheduleAP%(0) = number of games in schedule
         scheduleAP%(0) = Y / 48
 
-        'BS% = number of pages to display (20 / page)
         BS% = Int((scheduleAP%(0) - 1) / 20)
 
         For X = 0 To 18

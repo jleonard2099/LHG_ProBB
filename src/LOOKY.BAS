@@ -123,8 +123,8 @@ Sub LOOKY ()
                 'Determine stats file name
                 Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
-                Call ReadStats(Z$, teamRatings%(), newTeam)
-                Call ViewStatSummary
+                Call ReadStats(Z$, totalGames%, teamRatings%(), newTeam)
+                Call ViewStatSummary(Z$, totalGames%, teamRatings%())
 
             End If 'Done checking if user wants to continue
 
@@ -138,19 +138,21 @@ End Sub
 '       ReadStats Subroutine
 '----------------------------------------
 '...explanation...
-Sub ReadStats (Z$, teamRatings%(), teamChoice)
+Sub ReadStats (statFile$, totalGames%, teamRatings%(), teamChoice)
+
+    Shared HW%, VW%, NW%, L%, HL%, VL%, NL%
 
     Dim P%(0 To 100)
     Shared O%(), H$(), O$()
 
-    Dim Z!(0 To 15), Z1!(0 To 15)
+    Shared compareZ!(), compareZ1!()
 
     Shared categories$(), lookyA$()
     Shared values!(), W0!(), W1!()
 
     ' *** READ IN TEAM STATS ***
     '-- update to be IF (FileExists) Do Stuff ELSE Print Error and Call (at end of SUB)
-    If Not _FileExists(diskPaths$(1) + Z$) Then
+    If Not _FileExists(diskPaths$(1) + statFile$) Then
         Call CSMsgBox("UNABLE TO LOCATE COMPILED STATS FILE PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
         I$ = GetKeyPress$
         Call CSMsgBox("", 0, Pass)
@@ -169,7 +171,7 @@ Sub ReadStats (Z$, teamRatings%(), teamChoice)
         VL% = 0
         NL% = 0
 
-        Open diskPaths$(1) + Z$ + "S" For Input As #2
+        Open diskPaths$(1) + statFile$ + "S" For Input As #2
         Input #2, totalGames%
         For I = 1 To 100: Input #2, O%(I): Next I
         For I = 1 To 100: Input #2, O$(I): Next I
@@ -187,10 +189,11 @@ Sub ReadStats (Z$, teamRatings%(), teamChoice)
             If O%(I) < teamRatings%(I) And Left$(H$(I), 1) = "V" Then VL% = VL% + 1
             If O%(I) < teamRatings%(I) And Left$(H$(I), 1) = "N" Then NL% = NL% + 1
             If O%(I) = teamRatings%(I) Then X% = X% + 1
-            P%(0) = P%(0) + O%(I): P%(1) = P%(1) + teamRatings%(I)
+            P%(0) = P%(0) + O%(I)
+            P%(1) = P%(1) + teamRatings%(I)
         Next
 
-        Open diskPaths$(1) + Z$ For Input As #1
+        Open diskPaths$(1) + statFile$ For Input As #1
         Input #1, B$
         For I = 0 To 14
             Input #1, lookyA$(I)
@@ -200,8 +203,8 @@ Sub ReadStats (Z$, teamRatings%(), teamChoice)
             Input #1, W0!(I)
             Input #1, W1!(I)
         Next
-        For K = 0 To 15: Input #1, Z!(K): Next
-        For K = 0 To 15: Input #1, Z1!(K): Next
+        For K = 0 To 15: Input #1, compareZ!(K): Next
+        For K = 0 To 15: Input #1, compareZ1!(K): Next
         Close #1
 
         For I = 0 To 14
@@ -222,12 +225,14 @@ End Sub
 '       ViewStatSummary Subroutine
 '----------------------------------------
 '...explanation...
-Sub ViewStatSummary
+Sub ViewStatSummary (statFile$, totalGames%, teamRatings%())
+
+    Shared HW%, VW%, NW%, L%, HL%, VL%, NL%
 
     Dim P%(0 To 100)
     Shared O%(), H$(), O$()
 
-    Dim Z!(0 To 15), Z1!(0 To 15)
+    Shared compareZ!(), compareZ1!()
 
     Shared categories$(), lookyA$()
     Shared values!(), W0!(), W1!()
@@ -239,14 +244,21 @@ Sub ViewStatSummary
     Call TITLE_HEADER
 
     Color , 1
-    Locate 1, 1: Print Tab(80);: Locate , 31: Color 14
-    Ycoord = Len(B$): Ycoord = Int((80 - Ycoord) / 2): Locate , Ycoord: Print B$
-    Locate 25, 1: Print Tab(80);: Locate , 1
+    Locate 1, 1: Print Tab(80);
+    Locate , 31: Color 14
+    Ycoord = Len(B$)
+    Ycoord = Int((80 - Ycoord) / 2)
+    Locate , Ycoord: Print B$
+
+    Locate 25, 1: Print Tab(80);
+    Locate , 1
     Locate 2, 1
     Color , 0
 
     For I = 1 To totalGames%
+
         Color 7
+
         If I / 2 = Int(I / 2) Then Color 15
 
         If I > 54 Then Exit For
@@ -301,6 +313,7 @@ Sub ViewStatSummary
                 Color , 0
                 Cls
                 'Print
+
             Case "P":
                 Call PrintStatsSchedule(totalGames%, teamRatings%())
 
@@ -312,14 +325,16 @@ Sub ViewStatSummary
                 LPrint Chr$(12)
                 I$ = GetKeyPress$
 
-                Call PrintStatsSummary(totalGames%, Z!(), Z1!())
+                Call PrintStatsSummary(totalGames%, compareZ!(), compareZ1!())
 
             Case "D":
-                Kill diskPaths$(1) + Z$
-                Kill diskPaths$(1) + Z$ + "S"
+                Kill diskPaths$(1) + statFile$
+                Kill diskPaths$(1) + statFile$ + "S"
                 'Esc
+
             Case Chr$(27):
                 teamChoice = 1
+
         End Select
 
     Loop Until I$ = Chr$(0) + "Q" Or I$ = Chr$(27)
@@ -327,9 +342,16 @@ Sub ViewStatSummary
     If I$ = Chr$(27) Then Exit Sub
 
     915 '
-    Color , 1: Locate 1, 1: Print Tab(80);: Locate , 31: Color 14
-    Ycoord = Len(B$): Ycoord = Int((80 - Ycoord) / 2): Locate , Ycoord: Print B$
-    Locate 25, 1: Print Tab(80);: Locate , 1
+    Color , 1
+    Locate 1, 1: Print Tab(80);
+    Locate , 31
+    Color 14
+    Ycoord = Len(B$)
+    Ycoord = Int((80 - Ycoord) / 2)
+    Locate , Ycoord: Print B$
+
+    Locate 25, 1: Print Tab(80);
+    Locate , 1
     Locate 2, 1
     Color , 0
 
@@ -342,13 +364,15 @@ Sub ViewStatSummary
                 Print Tab(5); Left$(O$(I), 14);
                 Print Tab(20); Using "###"; teamRatings%(I);
                 Print Tab(24); H$(I)
+            Else
+                Locate I - 71, 27
+                Print Using "###"; O%(I);
+                Print Tab(31); Left$(O$(I), 14);
+                Print Tab(46); Using "###"; teamRatings%(I);
+                Print Tab(50); H$(I)
             End If
-        Else
-            Locate I - 71, 27: Print Using "###"; O%(I);
-            Print Tab(31); Left$(O$(I), 14);
-            Print Tab(46); Using "###"; teamRatings%(I);
-            Print Tab(50); H$(I)
         End If
+
     Next I
 
     Print
@@ -392,12 +416,12 @@ Sub ViewStatSummary
                 LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
                 LPrint Chr$(12)
                 I$ = GetKeyPress$
-                Call PrintStatsSummary(totalGames%, Z!(), Z1!())
+                Call PrintStatsSummary(totalGames%, compareZ!(), compareZ1!())
 
                 'Delete
             Case "D":
-                Kill diskPaths$(1) + Z$
-                Kill diskPaths$(1) + Z$ + "S"
+                Kill diskPaths$(1) + statFile$
+                Kill diskPaths$(1) + statFile$ + "S"
 
                 'Esc
             Case Chr$(27): teamChoice = 1: Exit Sub
@@ -505,31 +529,31 @@ Sub ViewStatSummary
     Print Using "##"; totalGames%;
 
     'FGM / FGA
-    Locate , 28: Print Using "#### ####"; Z!(2); Z!(1);
-    If Z!(1) <> 0 Then fgPCT! = Z!(2) / Z!(1): Locate , 38: Print Using ".###"; fgPCT!;
+    Locate , 28: Print Using "#### ####"; compareZ!(2); compareZ!(1);
+    If compareZ!(1) <> 0 Then fgPCT! = compareZ!(2) / compareZ!(1): Locate , 38: Print Using ".###"; fgPCT!;
 
     '3FGM / 3FGA
-    Locate , 44: Print Using "#### ####"; Z!(13); Z!(14);
-    If Z!(14) <> 0 Then threeFGPCT! = Z!(13) / Z!(14): Locate , 54: Print Using ".###"; threeFGPCT!;
+    Locate , 44: Print Using "#### ####"; compareZ!(13); compareZ!(14);
+    If compareZ!(14) <> 0 Then threeFGPCT! = compareZ!(13) / compareZ!(14): Locate , 54: Print Using ".###"; threeFGPCT!;
 
     'FTM / FTA
-    Locate , 60: Print Using "#### ####"; Z!(4); Z!(3);
-    If Z!(3) <> 0 Then ftPCT! = Z!(4) / Z!(3): Locate , 70: Print Using ".###"; ftPCT!;
+    Locate , 60: Print Using "#### ####"; compareZ!(4); compareZ!(3);
+    If compareZ!(3) <> 0 Then ftPCT! = compareZ!(4) / compareZ!(3): Locate , 70: Print Using ".###"; ftPCT!;
 
     'Games
     Color 12: Locate , 15: Print Using "##"; totalGames%;
 
     'FGM / FGA
-    Locate , 28: Print Using "#### ####"; Z1!(2); Z1!(1);
-    If Z1!(1) <> 0 Then fgPCT! = Z1!(2) / Z1!(1): Locate , 38: Print Using ".###"; fgPCT!;
+    Locate , 28: Print Using "#### ####"; compareZ1!(2); compareZ1!(1);
+    If compareZ1!(1) <> 0 Then fgPCT! = compareZ1!(2) / compareZ1!(1): Locate , 38: Print Using ".###"; fgPCT!;
 
     '3FGM / 3FGA
-    Locate , 44: Print Using "#### ####"; Z1!(13); Z1!(14);
-    If Z1!(14) <> 0 Then threeFGPCT! = Z1!(13) / Z1!(14): Locate , 54: Print Using ".###"; threeFGPCT!;
+    Locate , 44: Print Using "#### ####"; compareZ1!(13); compareZ1!(14);
+    If compareZ1!(14) <> 0 Then threeFGPCT! = compareZ1!(13) / compareZ1!(14): Locate , 54: Print Using ".###"; threeFGPCT!;
 
     'FTM / FTA
-    Locate , 60: Print Using "#### ####"; Z1!(4); Z1!(3);
-    If Z1!(3) <> 0 Then ftPCT! = Z1!(4) / Z1!(3): Locate , 70: Print Using ".###"; ftPCT!
+    Locate , 60: Print Using "#### ####"; compareZ1!(4); compareZ1!(3);
+    If compareZ1!(3) <> 0 Then ftPCT! = compareZ1!(4) / compareZ1!(3): Locate , 70: Print Using ".###"; ftPCT!
 
     Do
         I$ = GetKeyPress$
@@ -558,8 +582,8 @@ Sub ViewStatSummary
 
                 'Delete
             Case "d", "D"
-                Kill diskPaths$(1) + Z$
-                Kill diskPaths$(1) + Z$ + "S"
+                Kill diskPaths$(1) + statFile$
+                Kill diskPaths$(1) + statFile$ + "S"
 
                 'Print
             Case "p", "P"
@@ -571,7 +595,7 @@ Sub ViewStatSummary
                 LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
                 LPrint Chr$(12)
                 I$ = GetKeyPress$
-                Call PrintStatsSummary(totalGames%, Z!(), Z1!())
+                Call PrintStatsSummary(totalGames%, compareZ!(), compareZ1!())
 
                 'Enter
             Case Chr$(13)
@@ -635,30 +659,30 @@ Sub ViewStatSummary
             End If
         Next I
 
-        Print "TEAM";: Locate , 39: Print Using "####"; Z!(15)
+        Print "TEAM";: Locate , 39: Print Using "####"; compareZ!(15)
         Color 12: Print "TOTALS";
 
         'Points
-        If totalGames% > 0 Then ptsCalc! = Z!(10) / totalGames% Else ptsCalc! = 0
-        Locate , 14: Print Using "##### ###.#"; Z!(10); ptsCalc!;
+        If totalGames% > 0 Then ptsCalc! = compareZ!(10) / totalGames% Else ptsCalc! = 0
+        Locate , 14: Print Using "##### ###.#"; compareZ!(10); ptsCalc!;
 
         'Rebounds
-        If totalGames% > 0 Then rebCalc! = Z!(5) / totalGames% Else rebCalc! = 0
-        Locate , 29: Print Using "#### #### ####  ##.#"; Z!(12); Z!(5) - Z!(12) - Z!(15); Z!(5); rebCalc!;
+        If totalGames% > 0 Then rebCalc! = compareZ!(5) / totalGames% Else rebCalc! = 0
+        Locate , 29: Print Using "#### #### ####  ##.#"; compareZ!(12); compareZ!(5) - compareZ!(12) - compareZ!(15); compareZ!(5); rebCalc!;
 
         'PF  AST  BLK  STL  TO
-        Print Using " #### #### #### #### ####"; Z!(6); Z!(8); Z!(9); Z!(7); Z!(11)
+        Print Using " #### #### #### #### ####"; compareZ!(6); compareZ!(8); compareZ!(9); compareZ!(7); compareZ!(11)
 
         'Points
-        If totalGames% > 0 Then ptsCalc! = Z1!(10) / totalGames% Else ptsCalc! = 0
-        Locate , 14: Print Using "##### ###.#"; Z1!(10); ptsCalc!;
+        If totalGames% > 0 Then ptsCalc! = compareZ1!(10) / totalGames% Else ptsCalc! = 0
+        Locate , 14: Print Using "##### ###.#"; compareZ1!(10); ptsCalc!;
 
         'Rebounds
-        If totalGames% > 0 Then rebCalc! = Z1!(5) / totalGames% Else rebCalc! = 0
-        Locate , 29: Print Using "#### #### ####  ##.#"; Z1!(12); Z1!(5) - Z1!(12) - Z1!(15); Z1!(5); rebCalc!;
+        If totalGames% > 0 Then rebCalc! = compareZ1!(5) / totalGames% Else rebCalc! = 0
+        Locate , 29: Print Using "#### #### ####  ##.#"; compareZ1!(12); compareZ1!(5) - compareZ1!(12) - compareZ1!(15); compareZ1!(5); rebCalc!;
 
         'PF  AST  BLK  STL  TO
-        Print Using " #### #### #### #### ####"; Z1!(6); Z1!(8); Z1!(9); Z1!(7); Z1!(11)
+        Print Using " #### #### #### #### ####"; compareZ1!(6); compareZ1!(8); compareZ1!(9); compareZ1!(7); compareZ1!(11)
 
         Color 3
 
@@ -699,11 +723,11 @@ Sub ViewStatSummary
                     LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
                     LPrint Chr$(12)
                     I$ = GetKeyPress$
-                    Call PrintStatsSummary(totalGames%, Z!(), Z1!())
+                    Call PrintStatsSummary(totalGames%, compareZ!(), compareZ1!())
 
                 Case "D":
-                    Kill diskPaths$(1) + Z$
-                    Kill diskPaths$(1) + Z$ + "S"
+                    Kill diskPaths$(1) + statFile$
+                    Kill diskPaths$(1) + statFile$ + "S"
 
             End Select
 
@@ -781,7 +805,10 @@ Sub SortStats (CP%)
 
 End Sub
 
-'------------------------------
+'----------------------------------------
+'       SelectTeam_LOOKY Subroutine
+'----------------------------------------
+'...explanation...
 Sub SelectTeam_LOOKY (yearNumber$, numberTeams, teamInfo%())
 
     Selection% = 1
@@ -880,7 +907,7 @@ End Sub
 '      PrintStatsSummary Subroutine
 '----------------------------------------
 '...explanation...
-Sub PrintStatsSummary (totalGames%, Z!(), Z1!())
+Sub PrintStatsSummary (totalGames%, compareZ!(), compareZ1!())
 
     Shared values!(), W0!(), W1!()
     Shared lookyA$()
@@ -961,31 +988,31 @@ Sub PrintStatsSummary (totalGames%, Z!(), Z1!())
     LPrint Using "##"; totalGames%;
 
     'FGM / FGA / FGPCT
-    LPrint Tab(28); Using "#### ####"; Z!(2); Z!(1);
-    If Z!(1) <> 0 Then LPrint Tab(38); Using ".###"; Z!(2) / Z!(1);
+    LPrint Tab(28); Using "#### ####"; compareZ!(2); compareZ!(1);
+    If compareZ!(1) <> 0 Then LPrint Tab(38); Using ".###"; compareZ!(2) / compareZ!(1);
 
     '3FGM / 3FGA / 3FGPCT
-    LPrint Tab(44); Using "#### ####"; Z!(13); Z!(14);
-    If Z!(14) <> 0 Then LPrint Tab(54); Using ".###"; Z!(13) / Z!(14);
+    LPrint Tab(44); Using "#### ####"; compareZ!(13); compareZ!(14);
+    If compareZ!(14) <> 0 Then LPrint Tab(54); Using ".###"; compareZ!(13) / compareZ!(14);
 
     'FTM / FTA / FTPCT
-    LPrint Tab(60); Using "#### ####"; Z!(4); Z!(3);
-    If Z!(3) <> 0 Then LPrint Tab(70); Using ".###"; Z!(4) / Z!(3)
+    LPrint Tab(60); Using "#### ####"; compareZ!(4); compareZ!(3);
+    If compareZ!(3) <> 0 Then LPrint Tab(70); Using ".###"; compareZ!(4) / compareZ!(3)
 
     'Games
     LPrint Tab(15); Using "##"; totalGames%;
 
     'FGM / FGA / FGPCT
-    LPrint Tab(28); Using "#### ####"; Z1!(2); Z1!(1);
-    If Z1!(1) <> 0 Then LPrint Tab(38); Using ".###"; Z1!(2) / Z1!(1);
+    LPrint Tab(28); Using "#### ####"; compareZ1!(2); compareZ1!(1);
+    If compareZ1!(1) <> 0 Then LPrint Tab(38); Using ".###"; compareZ1!(2) / compareZ1!(1);
 
     '3FGM / 3FGA / 3FGPCT
-    LPrint Tab(44); Using "#### ####"; Z1!(13); Z1!(14);
-    If Z1!(14) <> 0 Then LPrint Tab(54); Using ".###"; Z1!(13) / Z1!(14);
+    LPrint Tab(44); Using "#### ####"; compareZ1!(13); compareZ1!(14);
+    If compareZ1!(14) <> 0 Then LPrint Tab(54); Using ".###"; compareZ1!(13) / compareZ1!(14);
 
     'FTM / FTA / FTPCT
-    LPrint Tab(60); Using "#### ####"; Z1!(4); Z1!(3);
-    If Z1!(3) <> 0 Then LPrint Tab(70); Using ".###"; Z1!(4) / Z1!(3)
+    LPrint Tab(60); Using "#### ####"; compareZ1!(4); compareZ1!(3);
+    If compareZ1!(3) <> 0 Then LPrint Tab(70); Using ".###"; compareZ1!(4) / compareZ1!(3)
 
     'Player Stats
     LPrint
@@ -1013,31 +1040,31 @@ Sub PrintStatsSummary (totalGames%, Z!(), Z1!())
         LPrint Tab(51); Using "### ####  ###  ###  ###"; values!(I, 6); values!(I, 8); values!(I, 9); values!(I, 7); values!(I, 11)
     Next I
 
-    LPrint "TEAM";: LPrint Tab(39); Using "####"; Z!(15)
+    LPrint "TEAM";: LPrint Tab(39); Using "####"; compareZ!(15)
 
     LPrint: LPrint "TOTALS";
 
     'Points
-    If totalGames% > 0 Then ptsCalc! = Z!(5) / totalGames% Else ptsCalc! = 0
-    LPrint Tab(14); Using "##### ###.#"; Z!(10); ptsCalc;
+    If totalGames% > 0 Then ptsCalc! = compareZ!(5) / totalGames% Else ptsCalc! = 0
+    LPrint Tab(14); Using "##### ###.#"; compareZ!(10); ptsCalc;
 
     'Rebounds
-    If totalGames% > 0 Then rebCalc! = Z!(5) / totalGames% Else rebCalc! = 0
-    LPrint Tab(29); Using "#### #### ####  ##.#"; Z!(12); Z!(5) - Z!(12) - Z!(15); Z!(5); rebCalc!;
+    If totalGames% > 0 Then rebCalc! = compareZ!(5) / totalGames% Else rebCalc! = 0
+    LPrint Tab(29); Using "#### #### ####  ##.#"; compareZ!(12); compareZ!(5) - compareZ!(12) - compareZ!(15); compareZ!(5); rebCalc!;
 
     'PF  AST  BLK  STL  TO
-    LPrint Using " #### #### #### #### ####"; Z!(6); Z!(8); Z!(9); Z!(7); Z!(11)
+    LPrint Using " #### #### #### #### ####"; compareZ!(6); compareZ!(8); compareZ!(9); compareZ!(7); compareZ!(11)
 
     'Points
-    If totalGames% > 0 Then rebCalc! = Z1!(10) / totalGames% Else ptsCalc! = 0
-    LPrint Tab(14); Using "##### ###.#"; Z1!(10); ptsCalc!;
+    If totalGames% > 0 Then rebCalc! = compareZ1!(10) / totalGames% Else ptsCalc! = 0
+    LPrint Tab(14); Using "##### ###.#"; compareZ1!(10); ptsCalc!;
 
     'Rebounds
-    If totalGames% > 0 Then rebCalc! = Z1!(5) / totalGames% Else rebCalc! = 0
-    LPrint Tab(29); Using "#### #### ####  ##.#"; Z1!(12); Z1!(5) - Z1!(12) - Z1!(15); Z1!(5); rebCalc!;
+    If totalGames% > 0 Then rebCalc! = compareZ1!(5) / totalGames% Else rebCalc! = 0
+    LPrint Tab(29); Using "#### #### ####  ##.#"; compareZ1!(12); compareZ1!(5) - compareZ1!(12) - compareZ1!(15); compareZ1!(5); rebCalc!;
 
     'PF  AST  BLK  STL  TO
-    LPrint Using " #### #### #### #### ####"; Z1!(6); Z1!(8); Z1!(9); Z1!(7); Z1!(11)
+    LPrint Using " #### #### #### #### ####"; compareZ1!(6); compareZ1!(8); compareZ1!(9); compareZ1!(7); compareZ1!(11)
 
     LPrint Chr$(12)
 

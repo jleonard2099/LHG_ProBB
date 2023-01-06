@@ -4,7 +4,6 @@
 
 Dim menuChoices$(1 To 8)
 Dim YY%
-ReDim AL(600, 14)
 
 '----------------------------------------
 ' Used across more than one source file
@@ -99,11 +98,25 @@ Dim H1$(40), OL$(40), leagT$(40)
 
 Dim DT!(21), OT!(21)
 
+Dim LG$, D1$, D2$, D3$, D4$
+Dim HW%, VW%, NW%, L%, HL%, VL%, NL%
+
 '----------------------------------------
 ' Used across NEWLDR.BAS routines
 '----------------------------------------
-Dim TP$(0 To 31), TP1$(0 To 38), TYP!(600)
-Dim TPP$(32), TMM$(32)
+Dim AL$(600)
+
+Dim TMA$(600), TT$(40, 15), TT1$(40, 15)
+Dim TP$(0 To 31), TP1$(0 To 38)
+Dim TPP$(600), TMM$(600)
+
+Dim AL!(600, 14)
+Dim GM!(40), GM1!(40)
+Dim GMA!(600), TYP!(600)
+Dim TT!(40, 15), TT1!(40, 15)
+Dim W0L!(600), W1L!(600)
+
+
 Dim printOrView%
 
 '----------------------------------------
@@ -130,7 +143,7 @@ Dim scheduleAP%(1), homeScore%(MAX_GAMES), visitingScore%(MAX_GAMES)
 'NG = Number of Games; not sure about the 18
 Dim NG%(MAX_GAMES, 18)
 
-ReDim scheduleH$(0 to 20), scheduleV$(0 to 20)
+ReDim scheduleH$(0 To 20), scheduleV$(0 To 20)
 Dim scheduleYN$(MAX_GAMES, 1)
 
 '----------------------------------------
