@@ -30,88 +30,99 @@ Sub DRAFT ()
             _MouseHide
         Loop Until ExitCode% = 27 Or ExitCode% = 13
 
-        If ExitCode% = 27 Then 
+        If ExitCode% = 27 Then
             BO% = 1
         Else
 
             Do
                 Locate 3, 33
                 Color 15, 0
-				Print draftYears$(Selection%)
+                Print draftYears$(Selection%)
 
                 Color 15, 4
 
                 Locate , 30: Print "ANY CHANGE (YN)";: I$ = GetKeyPress$
-			
+
             Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
             YR% = Selection%
         End If
 
-		If ExitCode% = 27 Then Exit Sub
+        If ExitCode% = 27 Then Exit Sub
 
-    Loop Until UCase$(I$) = "N" Or Exitcode% = 27
+    Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
-	If ExitCode% <> 27 Then
+    If ExitCode% <> 27 Then
 
-		For I = 0 To 1: draftAA$(0, I) = "XXX": Next
+        Do
+            Call TITLE
+            'Erase menuChoices$
+            menuChoices$(1) = "DRAFT A NEW TEAM         "
+            menuChoices$(2) = "DRAFT TO AN EXISTING TEAM"
+            menuChoices$(3) = "EXIT TO MAIN MENU        "
+            Selection% = 1
+            Count% = 3
+            Start% = 1
+            ExitCode% = 3
+            FileFGColr% = 15: FileBGColr% = 1
+            HiLiteFGColr% = 0: HiLiteBGColr% = 7
+            Spacing% = 1
+            Row% = 8
+            Column% = 25
 
-		For I = 0 To 6: draftL%(0, I) = 0: Next
+            Call box0(7, 24, 11, 50, 2, 15, 1)
+            _MouseShow "DEFAULT"
+            MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+            _MouseHide
 
-		For I = 0 To 34
-			draftT%(0, I) = 0
-			TTL%(I) = 0
-		Next
+            Color , 0
 
-		For I = 0 To 14
-			For I1 = 0 To 34
-				draftLT%(I, I1) = 0
-			Next
-		Next
+            If ExitCode% <> 27 Then
 
-		For I = 0 To 14
-			draftB$(0, I, 0) = "XXX"
-			draftB$(0, I, 1) = "X"
-			For I1 = 0 To 19
-				draftB%(0, I, I1) = 0
-			Next
-		Next
+                Select Case Selection%
 
-		Do
-			Call TITLE
-			'Erase menuChoices$
-			menuChoices$(1) = "DRAFT A NEW TEAM         "
-			menuChoices$(2) = "DRAFT TO AN EXISTING TEAM"
-			menuChoices$(3) = "EXIT TO MAIN MENU        "
-			Selection% = 1
-			Count% = 3
-			Start% = 1
-			ExitCode% = 3
-			FileFGColr% = 15: FileBGColr% = 1
-			HiLiteFGColr% = 0: HiLiteBGColr% = 7
-			Spacing% = 1
-			Row% = 8
-			Column% = 25
+                    Case 1
+                        DNT% = 0
+                        For I = 0 To 1: draftAA$(0, I) = "XXX": Next
 
-			Call box0(7, 24, 11, 50, 2, 15, 1)
-			_MouseShow "DEFAULT"
-			MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
-			_MouseHide
+                        For I = 0 To 6: draftL%(0, I) = 0: Next
 
-			Color , 0
+                        For I = 0 To 34
+                            draftT%(0, I) = 0
+                            TTL%(I) = 0
+                        Next
 
-			If ExitCode% <> 27 Then
-				If Selection% = 1 Then DNT% = 0: Call DraftNewTeam (TTL%())
-				If Selection% = 2 Then DNT% = 1: Call DraftExistingTeam (TTL%())
-			Else
-				Selection% = 3
-			End If
+                        For I = 0 To 14
+                            For I1 = 0 To 34
+                                draftLT%(I, I1) = 0
+                            Next
+                        Next
 
-			'WE SHOULD NEVER GET HERE
-			'1 Run "HELLO.EXE 2"
-		Loop Until Selection% = 3 Or ExitCode% = 27
+                        For I = 0 To 14
+                            draftB$(0, I, 0) = "XXX"
+                            draftB$(0, I, 1) = "X"
+                            For I1 = 0 To 19
+                                draftB%(0, I, I1) = 0
+                            Next
+                        Next
 
-	End If 'Done checking for ESC
+
+                        Call DraftNewTeam(TTL%())
+
+                    Case 2
+                        DNT% = 1
+                        Call DraftExistingTeam(TTL%())
+                End Select
+
+            Else
+                Selection% = 3
+            End If
+
+            'WE SHOULD NEVER GET HERE
+            '1 Run "HELLO.EXE 2"
+        Loop Until Selection% = 3 Or ExitCode% = 27
+
+    End If 'Done checking for ESC
 
 End Sub
 
@@ -127,9 +138,9 @@ Sub DraftNewTeam (TTL%())
     Cls
 
     Color 14: Print "LEAGUE INFORMATION"
-	Color 15
+    Color 15
 
-	draftL%(0, 0) = 80
+    draftL%(0, 0) = 80
     draftL%(0, 1) = draftLG%(YR%, 1)
     draftL%(0, 2) = draftLG%(YR%, 2)
     draftL%(0, 3) = draftLG%(YR%, 3)
@@ -160,7 +171,7 @@ Sub DraftNewTeam (TTL%())
 
     258 C1 = 0
 
-    Call DoTheDraft (TTL%())
+    Call DoTheDraft(TTL%())
 
 End Sub
 
@@ -198,8 +209,8 @@ Sub DraftExistingTeam (TTL%())
         Locate , 12: Print "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
         Locate 7, 27: Input NY$
 
-		If NY$ = "" And draftYN$(0) <> "" Then 
-			'NY$ = draftYN$(0)
+        If NY$ = "" And draftYN$(0) <> "" Then
+            'NY$ = draftYN$(0)
             Call SelectTeam_Draft(NTMS)
         Else
             draftYN$(0) = NY$
@@ -234,7 +245,7 @@ Sub DraftExistingTeam (TTL%())
             For I1 = 1 To Y / 1031
                 Get #1, I1
                 CK% = CVI(Q$(9))
-                If CK% = 999 Then 
+                If CK% = 999 Then
                     NTMS = NTMS + 1
                     teamNames$(NTMS) = Q$(0)
                     teamIndex%(NTMS) = I1
@@ -269,90 +280,90 @@ Sub DraftExistingTeam (TTL%())
 
             If ExitCode% <> 27 Then
 
-				T = teamIndex%(Selection%)
+                T = teamIndex%(Selection%)
 
-				Open diskPaths$(0) + "PROBBTMS." + draftYN$(0) For Random As #1 Len = 1031
+                Open diskPaths$(0) + "PROBBTMS." + draftYN$(0) For Random As #1 Len = 1031
 
-				Field #1, 15 As Q$(0), 15 As Q$(1)
+                Field #1, 15 As Q$(0), 15 As Q$(1)
 
-				For J% = 0 To 6
-					Field #1, 30 + J% * 2 As X$, 2 As Q$(J% + 2)
-				Next
+                For J% = 0 To 6
+                    Field #1, 30 + J% * 2 As X$, 2 As Q$(J% + 2)
+                Next
 
-				Field #1, 44 As X$, 2 As Q$(9)
+                Field #1, 44 As X$, 2 As Q$(9)
 
-				For J% = 0 To 34
-					Field #1, 46 + J% * 2 As X$, 2 As Q$(J% + 10)
-				Next
+                For J% = 0 To 34
+                    Field #1, 46 + J% * 2 As X$, 2 As Q$(J% + 10)
+                Next
 
-				For J% = 0 To 14
-					Field #1, 116 + J% * 57 As X$, 15 As Q$(J% * 22 + 45), 2 As Q$(J% * 22 + 46)
-					For J1 = 0 To 19
-						Field #1, 133 + J% * 57 + J1 * 2 As X$, 2 As Q$(J% * 22 + 47 + J1)
-					Next
-				Next
+                For J% = 0 To 14
+                    Field #1, 116 + J% * 57 As X$, 15 As Q$(J% * 22 + 45), 2 As Q$(J% * 22 + 46)
+                    For J1 = 0 To 19
+                        Field #1, 133 + J% * 57 + J1 * 2 As X$, 2 As Q$(J% * 22 + 47 + J1)
+                    Next
+                Next
 
-				Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+                Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 
-				Get #1, T
+                Get #1, T
 
-				draftAA$(0, 0) = RTrim$(Q$(0))
-				draftAA$(0, 1) = Q$(1)
+                draftAA$(0, 0) = RTrim$(Q$(0))
+                draftAA$(0, 1) = Q$(1)
 
-				For I = 0 To 6: 
-					draftL%(0, I) = CVI(Q$(I + 2))
-				Next
+                For I = 0 To 6:
+                    draftL%(0, I) = CVI(Q$(I + 2))
+                Next
 
-				For I = 0 To 34
-					draftT%(0, I) = CVI(Q$(I + 10))
-				Next
+                For I = 0 To 34
+                    draftT%(0, I) = CVI(Q$(I + 10))
+                Next
 
-				For I = 0 To 14
-					draftB$(0, I, 0) = RTrim$(Q$(22 * I + 45))
-					draftB$(0, I, 1) = RTrim$(Q$(22 * I + 46))
+                For I = 0 To 14
+                    draftB$(0, I, 0) = RTrim$(Q$(22 * I + 45))
+                    draftB$(0, I, 1) = RTrim$(Q$(22 * I + 46))
 
-					For I1 = 0 To 19
-						draftB%(0, I, I1) = CVI(Q$(22 * I + 47 + I1))
-					Next
-				Next
+                    For I1 = 0 To 19
+                        draftB%(0, I, I1) = CVI(Q$(22 * I + 47 + I1))
+                    Next
+                Next
 
-				draftAA$(0, 2) = RTrim$(Q$(375))
-				draftAA$(0, 3) = RTrim$(Q$(376))
-				draftAA$(0, 4) = RTrim$(Q$(377))
+                draftAA$(0, 2) = RTrim$(Q$(375))
+                draftAA$(0, 3) = RTrim$(Q$(376))
+                draftAA$(0, 4) = RTrim$(Q$(377))
 
-				Close 1
+                Close 1
 
-				For I1 = 0 To 14
-					For I = 0 To 34
-						draftLT%(I1, I) = draftT%(0, I)
-					Next
-				Next
+                For I1 = 0 To 14
+                    For I = 0 To 34
+                        draftLT%(I1, I) = draftT%(0, I)
+                    Next
+                Next
 
-			End If 'Done checking for ESC
+            End If 'Done checking for ESC
 
-		End If 'Done checking empty input
+        End If 'Done checking empty input
 
-        If BO% = 1 Then 
+        If BO% = 1 Then
             BO% = 0
         Else
             Locate 2, 33
-			Color draftT%(0, 33), draftT%(0, 34): Print draftAA$(0, 0)
+            Color draftT%(0, 33), draftT%(0, 34): Print draftAA$(0, 0)
 
-			Do
-				Locate , 33
-				Color 15, 4: Print "ANY CHANGE (YN)"
-				I$ = GetKeyPress$
-			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+            Do
+                Locate , 33
+                Color 15, 4: Print "ANY CHANGE (YN)"
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
         End If
 
     Loop Until UCase$(I$) = "N"
 
-    Call DoTheDraft (TTL%())
+    Call DoTheDraft(TTL%())
 
 End Sub
 
 '----------------------------------------
-'   	Draft_Unknown SubRoutine
+'       Draft_Unknown SubRoutine
 '----------------------------------------
 ' I can't tell that this code was ever used
 Sub Draft_Unknown ()
@@ -391,7 +402,7 @@ Sub Draft_Unknown ()
 
     335 C1 = 1: Locate 17: Input "# TO CHANGE (0 TO CONTINUE) "; B9: On B9 GOTO 265, 270, 275, 280, 285, 290, 295, 300, 305, 310, 315, 320, 325, 330
 
-	'---
+    '---
     336 C1 = 0
 
     340 Cls: Color 14: Print "TEAM DEFENSIVE INFORMATION": Color 15
@@ -428,7 +439,7 @@ Sub Draft_Unknown ()
 
     415 C1 = 1: Locate 17: Input "# TO CHANGE (0 TO CONTINUE) "; B9: On B9 GOTO 345, 350, 355, 360, 365, 370, 375, 380, 385, 390, 395, 400, 405, 410
 
-	'---
+    '---
     416 C1 = 0
 
     417 If draftT%(0, 28) = 0 And ST = 0 Then draftT%(0, 28) = draftT%(0, 5) * .1
@@ -475,7 +486,7 @@ Sub DoTheDraft (TTL%())
         I$ = GetKeyPress$
 
         Select Case (I$)
-            Case "1": 
+            Case "1":
                 'Drafting
                 Do
                     Locate 21, 20: Print "SLOT # (0-14) ";
@@ -490,17 +501,17 @@ Sub DoTheDraft (TTL%())
                     Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
                     Locate 7 + JJ, 8
                     Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-					
-					Locate 7, 32
+
+                    Locate 7, 32
                     Locate , 12: Print "ENTER DISK ID: ": Print
                     Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
                     Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
                     Locate , 12: Print "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
                     Locate 7, 27: Input NY$
-					If NY$ = "" And draftYN$(1) <> "" Then 
-						'NY$ = draftYN$(1)
-                        Call SelectTeam_Draft (NTMS)
-					Else
+                    If NY$ = "" And draftYN$(1) <> "" Then
+                        'NY$ = draftYN$(1)
+                        Call SelectTeam_Draft(NTMS)
+                    Else
                         draftYN$(1) = NY$
                         Erase teamNames$
 
@@ -543,40 +554,40 @@ Sub DoTheDraft (TTL%())
 
                         Close 1
 
-                        Call SelectTeam_Draft (NTMS)
+                        Call SelectTeam_Draft(NTMS)
                     End If
 
-                    If BO% = 1 Then 
+                    If BO% = 1 Then
                         BO% = 0
                     Else
                         Locate 2, 33
-						Color draftT%(1, 33), draftT%(1, 34): Print draftAA$(1, 0)
-						
-						Color 15, 4
+                        Color draftT%(1, 33), draftT%(1, 34): Print draftAA$(1, 0)
 
-						Do
-							Locate , 33: Print "ANY CHANGE (YN)";
-							I$ = GetKeyPress$
-						Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                        Color 15, 4
+
+                        Do
+                            Locate , 33: Print "ANY CHANGE (YN)";
+                            I$ = GetKeyPress$
+                        Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
                     End If
 
                 Loop Until UCase$(I$) = "N"
 
                 Color , 0: Cls
-				Color draftT%(1, 33), draftT%(1, 34): Print draftAA$(1, 0)
-				Color 14, 0
+                Color draftT%(1, 33), draftT%(1, 34): Print draftAA$(1, 0)
+                Color 14, 0
 
                 Print
-				Print "PLAYERS"
+                Print "PLAYERS"
 
                 For I = 0 To 14
                     Color 2: Print Using "## "; I;
-					Color 15: Print draftB$(1, I, 0); " "; draftB$(1, I, 1)
+                    Color 15: Print draftB$(1, I, 0); " "; draftB$(1, I, 1)
                 Next
 
                 Do
                     Color 14
-					Locate 21, 1: Print "SELECT PLAYER # TO DRAFT ";
+                    Locate 21, 1: Print "SELECT PLAYER # TO DRAFT ";
 
                     Input B1
 
@@ -609,7 +620,7 @@ Sub DoTheDraft (TTL%())
 
                 draftT%(0, 20) = FG / 100 * draftT%(0, 19)
 
-            Case "2": 
+            Case "2":
                 ' Save Team
                 Cls
 
@@ -710,58 +721,58 @@ Sub SelectTeam_Draft (numberTeams)
 
     If ExitCode% <> 27 Then
 
-		teamIdx = teamIndex%(Selection%)
+        teamIdx = teamIndex%(Selection%)
 
-		Open diskPaths$(0) + "PROBBTMS." + draftYN$(1) For Random As #1 Len = 1031
+        Open diskPaths$(0) + "PROBBTMS." + draftYN$(1) For Random As #1 Len = 1031
 
-		Field #1, 15 As Q$(0), 15 As Q$(1)
+        Field #1, 15 As Q$(0), 15 As Q$(1)
 
-		For J% = 0 To 6
-			Field #1, 30 + J% * 2 As X$, 2 As Q$(J% + 2)
-		Next
+        For J% = 0 To 6
+            Field #1, 30 + J% * 2 As X$, 2 As Q$(J% + 2)
+        Next
 
-		Field #1, 44 As X$, 2 As Q$(9)
+        Field #1, 44 As X$, 2 As Q$(9)
 
-		For J% = 0 To 34
-			Field #1, 46 + J% * 2 As X$, 2 As Q$(J% + 10)
-		Next
+        For J% = 0 To 34
+            Field #1, 46 + J% * 2 As X$, 2 As Q$(J% + 10)
+        Next
 
-		For J% = 0 To 14
-			Field #1, 116 + J% * 57 As X$, 15 As Q$(J% * 22 + 45), 2 As Q$(J% * 22 + 46)
-			For J1 = 0 To 19
-				Field #1, 133 + J% * 57 + J1 * 2 As X$, 2 As Q$(J% * 22 + 47 + J1)
-			Next
-		Next
+        For J% = 0 To 14
+            Field #1, 116 + J% * 57 As X$, 15 As Q$(J% * 22 + 45), 2 As Q$(J% * 22 + 46)
+            For J1 = 0 To 19
+                Field #1, 133 + J% * 57 + J1 * 2 As X$, 2 As Q$(J% * 22 + 47 + J1)
+            Next
+        Next
 
-		Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-		Get #1, teamIdx
+        Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+        Get #1, teamIdx
 
-		draftAA$(1, 0) = RTrim$(Q$(0))
-		draftAA$(1, 1) = Q$(1)
+        draftAA$(1, 0) = RTrim$(Q$(0))
+        draftAA$(1, 1) = Q$(1)
 
-		For I = 0 To 6: draftL%(1, I) = CVI(Q$(I + 2)): Next
+        For I = 0 To 6: draftL%(1, I) = CVI(Q$(I + 2)): Next
 
-		For I = 0 To 34
-			draftT%(1, I) = CVI(Q$(I + 10))
-		Next
+        For I = 0 To 34
+            draftT%(1, I) = CVI(Q$(I + 10))
+        Next
 
-		For I = 0 To 14
-			draftB$(1, I, 0) = RTrim$(Q$(22 * I + 45))
-			draftB$(1, I, 1) = RTrim$(Q$(22 * I + 46))
+        For I = 0 To 14
+            draftB$(1, I, 0) = RTrim$(Q$(22 * I + 45))
+            draftB$(1, I, 1) = RTrim$(Q$(22 * I + 46))
 
-			For I1 = 0 To 19
-				draftB%(1, I, I1) = CVI(Q$(22 * I + 47 + I1))
-			Next
-		Next
+            For I1 = 0 To 19
+                draftB%(1, I, I1) = CVI(Q$(22 * I + 47 + I1))
+            Next
+        Next
 
-		draftAA$(1, 2) = RTrim$(Q$(375))
-		draftAA$(1, 3) = RTrim$(Q$(376))
-		draftAA$(1, 4) = RTrim$(Q$(377))
+        draftAA$(1, 2) = RTrim$(Q$(375))
+        draftAA$(1, 3) = RTrim$(Q$(376))
+        draftAA$(1, 4) = RTrim$(Q$(377))
 
-		Close 1
+        Close 1
 
-	Else
-		BO% = 1
-	End If
+    Else
+        BO% = 1
+    End If
 
 End Sub
