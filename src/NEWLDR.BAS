@@ -161,7 +161,7 @@ Sub ViewLeagueStats ()
                                 '-- I suspect this wasn't done because it would
                                 '-- be bad practice; instead the game
                                 '-- creates the file new each time the menu is accessed
-                                Case 1: Call ViewInidividualLeaders(JB, TS)
+                                Case 1: Call ViewIndividualLeaders(JB, TS)
                                 Case 2: Call ViewTotalLeaders(JB, TS)
                                 Case 3: Cls
                             End Select
@@ -180,10 +180,10 @@ Sub ViewLeagueStats ()
 End Sub
 
 '----------------------------------------
-'    ViewInidividualLeaders Subroutine
+'    ViewIndividualLeaders Subroutine
 '----------------------------------------
 '... explain here ...
-Sub ViewInidividualLeaders (JB, TS)
+Sub ViewIndividualLeaders (JB, TS)
 
     Shared AL!()
     Shared GM!(), GM1!()
@@ -274,7 +274,7 @@ Sub ViewInidividualLeaders (JB, TS)
                 Call GetListLength(QW, length)
 
                 If printOrView% = 1 Then
-                    Call DisplayLeaders(TVN, QW)
+                    Call DisplayLeaders(TVN, QW, B9)
                 Else
                     'printOrView% = 2
                     Call PrintLeaders(length)
@@ -331,7 +331,7 @@ Sub ViewInidividualLeaders (JB, TS)
             Call GetListLength(QW, length)
 
             If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW)
+                Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
                 Call PrintLeaders(length)
@@ -354,7 +354,7 @@ Sub ViewInidividualLeaders (JB, TS)
             Call GetListLength(QW, length)
 
             If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW)
+                Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
                 Call PrintLeaders(length)
@@ -373,7 +373,7 @@ Sub ViewInidividualLeaders (JB, TS)
 
             Call SortPlayer(PPP, stpl, sortType%)
 
-            Call DisplayLeaders(TVN, QW)
+            Call DisplayLeaders(TVN, QW, B9)
 
         Case 5:
             For I = 1 To JB
@@ -392,7 +392,7 @@ Sub ViewInidividualLeaders (JB, TS)
             Call GetListLength(QW, length)
 
             If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW)
+                Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
                 Call PrintLeaders(length)
@@ -413,7 +413,7 @@ Sub ViewInidividualLeaders (JB, TS)
             Call GetListLength(QW, length)
 
             If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW)
+                Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
                 Call PrintLeaders(length)
@@ -436,7 +436,7 @@ Sub ViewInidividualLeaders (JB, TS)
             Call GetListLength(QW, length)
 
             If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW)
+                Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
                 Call PrintLeaders(length)
@@ -461,7 +461,7 @@ Sub ViewInidividualLeaders (JB, TS)
             Call GetListLength(QW, length)
 
             If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW)
+                Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
                 Call PrintLeaders(length)
@@ -485,7 +485,7 @@ Sub ViewInidividualLeaders (JB, TS)
             Call GetListLength(QW, length)
 
             If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW)
+                Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
                 Call PrintLeaders(length)
@@ -508,7 +508,7 @@ Sub ViewInidividualLeaders (JB, TS)
             Call GetListLength(QW, length)
 
             If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW)
+                Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
                 Call PrintLeaders(length)
@@ -532,7 +532,7 @@ Sub ViewInidividualLeaders (JB, TS)
             Call GetListLength(QW, length)
 
             If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW)
+                Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
                 Call PrintLeaders(length)
@@ -555,7 +555,7 @@ Sub ViewInidividualLeaders (JB, TS)
             Call GetListLength(QW, length)
 
             If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW)
+                Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
                 Call PrintLeaders(length)
@@ -578,7 +578,7 @@ Sub ViewInidividualLeaders (JB, TS)
             Call GetListLength(QW, length)
 
             If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW)
+                Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
                 Call PrintLeaders(length)
@@ -601,7 +601,7 @@ Sub ViewInidividualLeaders (JB, TS)
             Call GetListLength(QW, length)
 
             If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW)
+                Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
                 Call PrintLeaders(length)
@@ -615,7 +615,7 @@ End Sub
 '       ViewLeaderScreen Subroutine
 '----------------------------------------
 '... explain here ...
-Sub DisplayLeaders (TVN, QW)
+Sub DisplayLeaders (TVN, QW, B9)
 
     Shared TMM$(), TPP$(), TP$(), TYP!()
 

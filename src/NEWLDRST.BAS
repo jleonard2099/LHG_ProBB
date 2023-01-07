@@ -197,14 +197,20 @@ Sub NEWLDRST ()
 
                     Select Case UCase$(I$)
                         Case "V":
-                            AA = 1: ZZ = 10
+                            AA = 1
+							ZZ = 10
+
                             For X = AA To ZZ - 1
+
                                 For Y = X + 1 To ZZ
+
                                     DiffX = WW(X) - LL(X)
                                     DiffY = WW(Y) - LL(Y)
+
                                     If DiffX > DiffY Then 985
                                     If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 985
                                     If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 985
+
                                     TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
                                     J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
                                     J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
@@ -216,7 +222,9 @@ Sub NEWLDRST ()
                                     J% = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J%
                                     J% = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J%
                                     J% = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J%
+
                                 985 Next Y
+
                             Next X
 
                             Cls
@@ -315,6 +323,7 @@ Sub NEWLDRST ()
 
                            If MJ < 0 Then MJ = 0
                            Locate 14, 42: Print Using "##"; MJ
+
                            AA = 21
                            ZZ = 30
 
@@ -380,6 +389,7 @@ Sub NEWLDRST ()
 
                             If MJ < 0 Then MJ = 0
                             Locate 4, 42: Print Using "##"; MJ
+
                             AA = 31
                             ZZ = 40
 
@@ -576,6 +586,7 @@ Sub NEWLDRST ()
 
                             LPrint
                             LPrint
+
                             AA = 21
                             ZZ = 30
 

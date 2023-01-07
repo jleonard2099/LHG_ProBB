@@ -90,7 +90,7 @@ Dim O%(0 To 100)
 '   SEELEAG.BAS routines
 '----------------------------------------
 Dim DL!(40, 20), LD!(250, 2), S!(14, 26)
-Dim O1!(40), O2!(40), OL!(40, 20)
+'Dim O1!(40), O2!(40), OL!(40, 20)
 Dim P!(40), Z!(260), Z1!(260)
 
 Dim DL$(40), N$(14), Z2$(260), Z3$(260)
@@ -99,7 +99,7 @@ Dim H1$(40), OL$(40), leagT$(40)
 Dim DT!(21), OT!(21)
 
 Dim LG$, D1$, D2$, D3$, D4$
-Dim HW%, VW%, NW%, L%, HL%, VL%, NL%
+Dim HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, X%
 
 '----------------------------------------
 ' Used across NEWLDR.BAS routines

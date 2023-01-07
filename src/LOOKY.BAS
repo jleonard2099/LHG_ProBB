@@ -140,7 +140,7 @@ End Sub
 '...explanation...
 Sub ReadStats (statFile$, totalGames%, teamRatings%(), teamChoice)
 
-    Shared HW%, VW%, NW%, L%, HL%, VL%, NL%
+    Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, X%
 
     Dim P%(0 To 100)
     Shared O%(), H$(), O$()
@@ -227,7 +227,7 @@ End Sub
 '...explanation...
 Sub ViewStatSummary (statFile$, totalGames%, teamRatings%())
 
-    Shared HW%, VW%, NW%, L%, HL%, VL%, NL%
+    Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, X%
 
     Dim P%(0 To 100)
     Shared O%(), H$(), O$()
@@ -836,26 +836,34 @@ Sub SelectTeam_LOOKY (yearNumber$, numberTeams, teamInfo%())
         T1 = teamIndex%(Selection%)
 
         Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+
         Field #1, 15 As Q$(0), 15 As Q$(1)
+
         For I = 0 To 6
             Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
         Next
+
         Field #1, 44 As X$, 2 As Q$(9)
+
         For I = 0 To 34
             Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
         Next
+
         For I = 0 To 14
             Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
             For I1 = 0 To 19
                 Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
             Next
         Next
+
         Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+
         Get #1, T1
 
         For I = 0 To 34:
             teamInfo%(I) = CVI(Q$(I + 10))
         Next
+
         Close 1
 
     Else
