@@ -123,8 +123,14 @@ Sub LOOKY ()
                 'Determine stats file name
                 Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
-                Call ReadStats(Z$, totalGames%, teamRatings%(), newTeam)
-                Call ViewStatSummary(Z$, totalGames%, teamRatings%())
+				If Not _FileExists(diskPaths$(1) + statFile$) Then
+					Call CSMsgBox("UNABLE TO LOCATE COMPILED STATS FILE PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+					I$ = GetKeyPress$
+					Call CSMsgBox("", 0, Pass)
+				Else
+					Call ReadStats(Z$, totalGames%, teamRatings%(), newTeam)
+					Call ViewStatSummary(Z$, totalGames%, teamRatings%())
+				End If
 
             End If 'Done checking if user wants to continue
 
@@ -151,73 +157,65 @@ Sub ReadStats (statFile$, totalGames%, teamRatings%(), teamChoice)
     Shared values!(), W0!(), W1!()
 
     ' *** READ IN TEAM STATS ***
-    '-- update to be IF (FileExists) Do Stuff ELSE Print Error and Call (at end of SUB)
-    If Not _FileExists(diskPaths$(1) + statFile$) Then
-        Call CSMsgBox("UNABLE TO LOCATE COMPILED STATS FILE PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
-    Else
 
-        CP% = 1
-        P%(0) = 0
-        P%(1) = 0
-        L% = 0
-        W% = 0
-        X% = 0
-        HW% = 0
-        VW% = 0
-        NW% = 0
-        HL% = 0
-        VL% = 0
-        NL% = 0
+	CP% = 1
+	P%(0) = 0
+	P%(1) = 0
+	L% = 0
+	W% = 0
+	X% = 0
+	HW% = 0
+	VW% = 0
+	NW% = 0
+	HL% = 0
+	VL% = 0
+	NL% = 0
 
-        Open diskPaths$(1) + statFile$ + "S" For Input As #2
-        Input #2, totalGames%
-        For I = 1 To 100: Input #2, O%(I): Next I
-        For I = 1 To 100: Input #2, O$(I): Next I
-        For I = 1 To 100: Input #2, teamRatings%(I): Next I
-        For I = 1 To 100: Input #2, H$(I): Next I
-        Close #2
+	Open diskPaths$(1) + statFile$ + "S" For Input As #2
+	Input #2, totalGames%
+	For I = 1 To 100: Input #2, O%(I): Next I
+	For I = 1 To 100: Input #2, O$(I): Next I
+	For I = 1 To 100: Input #2, teamRatings%(I): Next I
+	For I = 1 To 100: Input #2, H$(I): Next I
+	Close #2
 
-        For I = 1 To totalGames%
-            If O%(I) > teamRatings%(I) Then W% = W% + 1
-            If O%(I) > teamRatings%(I) And Left$(H$(I), 1) = "H" Then HW% = HW% + 1
-            If O%(I) > teamRatings%(I) And Left$(H$(I), 1) = "V" Then VW% = VW% + 1
-            If O%(I) > teamRatings%(I) And Left$(H$(I), 1) = "N" Then NW% = NW% + 1
-            If O%(I) < teamRatings%(I) Then L% = L% + 1
-            If O%(I) < teamRatings%(I) And Left$(H$(I), 1) = "H" Then HL% = HL% + 1
-            If O%(I) < teamRatings%(I) And Left$(H$(I), 1) = "V" Then VL% = VL% + 1
-            If O%(I) < teamRatings%(I) And Left$(H$(I), 1) = "N" Then NL% = NL% + 1
-            If O%(I) = teamRatings%(I) Then X% = X% + 1
-            P%(0) = P%(0) + O%(I)
-            P%(1) = P%(1) + teamRatings%(I)
-        Next
+	For I = 1 To totalGames%
+		If O%(I) > teamRatings%(I) Then W% = W% + 1
+		If O%(I) > teamRatings%(I) And Left$(H$(I), 1) = "H" Then HW% = HW% + 1
+		If O%(I) > teamRatings%(I) And Left$(H$(I), 1) = "V" Then VW% = VW% + 1
+		If O%(I) > teamRatings%(I) And Left$(H$(I), 1) = "N" Then NW% = NW% + 1
+		If O%(I) < teamRatings%(I) Then L% = L% + 1
+		If O%(I) < teamRatings%(I) And Left$(H$(I), 1) = "H" Then HL% = HL% + 1
+		If O%(I) < teamRatings%(I) And Left$(H$(I), 1) = "V" Then VL% = VL% + 1
+		If O%(I) < teamRatings%(I) And Left$(H$(I), 1) = "N" Then NL% = NL% + 1
+		If O%(I) = teamRatings%(I) Then X% = X% + 1
+		P%(0) = P%(0) + O%(I)
+		P%(1) = P%(1) + teamRatings%(I)
+	Next
 
-        Open diskPaths$(1) + statFile$ For Input As #1
-        Input #1, B$
-        For I = 0 To 14
-            Input #1, lookyA$(I)
-            For J = 0 To 13
-                Input #1, values!(I, J)
-            Next
-            Input #1, W0!(I)
-            Input #1, W1!(I)
-        Next
-        For K = 0 To 15: Input #1, compareZ!(K): Next
-        For K = 0 To 15: Input #1, compareZ1!(K): Next
-        Close #1
+	Open diskPaths$(1) + statFile$ For Input As #1
+	Input #1, B$
+	For I = 0 To 14
+		Input #1, lookyA$(I)
+		For J = 0 To 13
+			Input #1, values!(I, J)
+		Next
+		Input #1, W0!(I)
+		Input #1, W1!(I)
+	Next
+	For K = 0 To 15: Input #1, compareZ!(K): Next
+	For K = 0 To 15: Input #1, compareZ1!(K): Next
+	Close #1
 
-        For I = 0 To 14
-            If values!(I, 0) <> 0 Then values!(I, 14) = values!(I, 10) / values!(I, 0): values!(I, 20) = (values!(I, 2) * 2 + values!(I, 4) + W0!(I)) / values!(I, 0): values!(I, 21) = values!(I, 5) / values!(I, 0)
-            values!(I, 22) = values!(I, 2) * 2 + values!(I, 4) + W0!(I)
-            values!(I, 23) = values!(I, 5) - values!(I, 12)
-            If values!(I, 1) <> 0 Then values!(I, 15) = values!(I, 2) / values!(I, 1)
-            values!(I, 18) = W0!(I): values!(I, 19) = W1!(I)
-            If values!(I, 19) <> 0 Then values!(I, 16) = values!(I, 18) / values!(I, 19)
-            If values!(I, 3) <> 0 Then values!(I, 17) = values!(I, 4) / values!(I, 3)
-        Next
-
-    End If 'Done checking for stats file
+	For I = 0 To 14
+		If values!(I, 0) <> 0 Then values!(I, 14) = values!(I, 10) / values!(I, 0): values!(I, 20) = (values!(I, 2) * 2 + values!(I, 4) + W0!(I)) / values!(I, 0): values!(I, 21) = values!(I, 5) / values!(I, 0)
+		values!(I, 22) = values!(I, 2) * 2 + values!(I, 4) + W0!(I)
+		values!(I, 23) = values!(I, 5) - values!(I, 12)
+		If values!(I, 1) <> 0 Then values!(I, 15) = values!(I, 2) / values!(I, 1)
+		values!(I, 18) = W0!(I): values!(I, 19) = W1!(I)
+		If values!(I, 19) <> 0 Then values!(I, 16) = values!(I, 18) / values!(I, 19)
+		If values!(I, 3) <> 0 Then values!(I, 17) = values!(I, 4) / values!(I, 3)
+	Next
 
 End Sub
 
@@ -504,7 +502,9 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%())
             End If
 
             'FTM, FTA, FT PCT
-            Locate , 60: Print Using "#### ####"; values!(I, 4); values!(I, 3);: Locate , 70
+            Locate , 60: Print Using "#### ####"; values!(I, 4); values!(I, 3);
+			
+			Locate , 70
             If values!(I, 3) = 0 Then
                 Print ".---"
             Else

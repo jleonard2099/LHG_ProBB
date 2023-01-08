@@ -2071,6 +2071,7 @@ Sub SAVESTATFILES ()
     End If
 
     Cls
+
     HH% = N
 
     For PX = 0 To 1
