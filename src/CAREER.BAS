@@ -713,7 +713,10 @@ Sub ViewCareerRecords ()
                 Close #1
 
                 Do
+					Cls
+
                     Locate 15, 10
+
                     Color 12: Print "V";: Color 7: Print "iew or ";
                     Color 12: Print "P";: Color 7: Print "rint"
                     I$ = GetKeyPress$
@@ -763,6 +766,7 @@ Sub ViewCareerRecords ()
                             Loop Until UCase$(A$) = "N"
 
                         Case "P":
+
                             LPrint "CATEGORY                     RECORD           PLAYER              YEAR"
                             LPrint
                             LPrint "FIELD GOALS MADE";: LPrint Tab(33); Using "####"; BL!(0);: LPrint Tab(47); BL$(0);: LPrint Tab(66); BLYR!(0)

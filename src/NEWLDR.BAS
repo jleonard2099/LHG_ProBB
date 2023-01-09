@@ -277,7 +277,7 @@ Sub ViewIndividualLeaders (JB, TS)
                     Call DisplayLeaders(TVN, QW, B9)
                 Else
                     'printOrView% = 2
-                    Call PrintLeaders(length)
+                    Call PrintLeaders(TVN, length, B9)
                 End If
 
             Case 11: X = 3: X1 = 5: stpl = 0
@@ -334,7 +334,7 @@ Sub ViewIndividualLeaders (JB, TS)
                 Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
-                Call PrintLeaders(length)
+                Call PrintLeaders(TVN, length, B9)
             End If
 
         Case 1:
@@ -357,7 +357,7 @@ Sub ViewIndividualLeaders (JB, TS)
                 Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
-                Call PrintLeaders(length)
+                Call PrintLeaders(TVN, length, B9)
             End If
 
         Case 4:
@@ -395,7 +395,7 @@ Sub ViewIndividualLeaders (JB, TS)
                 Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
-                Call PrintLeaders(length)
+                Call PrintLeaders(TVN, length, B9)
             End If
 
         Case 6:
@@ -416,7 +416,7 @@ Sub ViewIndividualLeaders (JB, TS)
                 Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
-                Call PrintLeaders(length)
+                Call PrintLeaders(TVN, length, B9)
             End If
 
         Case 7:
@@ -439,7 +439,7 @@ Sub ViewIndividualLeaders (JB, TS)
                 Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
-                Call PrintLeaders(length)
+                Call PrintLeaders(TVN, length, B9)
             End If
 
         Case 11:
@@ -464,7 +464,7 @@ Sub ViewIndividualLeaders (JB, TS)
                 Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
-                Call PrintLeaders(length)
+                Call PrintLeaders(TVN, length, B9)
             End If
 
         Case 12:
@@ -488,7 +488,7 @@ Sub ViewIndividualLeaders (JB, TS)
                 Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
-                Call PrintLeaders(length)
+                Call PrintLeaders(TVN, length, B9)
             End If
 
         Case 15:
@@ -511,7 +511,7 @@ Sub ViewIndividualLeaders (JB, TS)
                 Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
-                Call PrintLeaders(length)
+                Call PrintLeaders(TVN, length, B9)
             End If
 
         Case 17:
@@ -535,7 +535,7 @@ Sub ViewIndividualLeaders (JB, TS)
                 Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
-                Call PrintLeaders(length)
+                Call PrintLeaders(TVN, length, B9)
             End If
 
         Case 23:
@@ -558,7 +558,7 @@ Sub ViewIndividualLeaders (JB, TS)
                 Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
-                Call PrintLeaders(length)
+                Call PrintLeaders(TVN, length, B9)
             End If
 
         Case 24 To 29:
@@ -581,7 +581,7 @@ Sub ViewIndividualLeaders (JB, TS)
                 Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
-                Call PrintLeaders(length)
+                Call PrintLeaders(TVN, length, B9)
             End If
 
         Case 30:
@@ -604,7 +604,7 @@ Sub ViewIndividualLeaders (JB, TS)
                 Call DisplayLeaders(TVN, QW, B9)
             Else
                 'printOrView% = 2
-                Call PrintLeaders(length)
+                Call PrintLeaders(TVN, length, B9)
             End If
 
     End Select
@@ -686,20 +686,22 @@ End Sub
 '         PrintLeaders Subroutine
 '----------------------------------------
 '... explain here ...
-Sub PrintLeaders (LG)
+Sub PrintLeaders (TVN, LG, B9)
 
-    Shared TMM$(), TP$(), TPP$(), TYP!()
+    Shared TMM$(), TP$(), TPP$()
+    Shared TYP!()
 
-    LPrint Chr$(15)
-    '    WIDTH "LPT1:1", 130
+    Cls
 
-    Color 14, 0: Cls: LPrint "     PLAYER                  TEAM                     "; TP$(B9)
+    Color 0, 15
+
+    LPrint "     PLAYER                  TEAM                     "; TP$(B9)
 
     For W = 1 To LG
 
         If (W <> 0 And W Mod 50 = 0) Then
             LPrint Chr$(12)
-            LPrint "     PLAYER                  TEAM                     "; TP$(XX)
+            LPrint "     PLAYER                  TEAM                     "; TP$(B9)
         End If
 
         LPrint Using "###"; W;
@@ -715,7 +717,7 @@ Sub PrintLeaders (LG)
 
     Next W
 
-    LPrint Chr$(18)
+    LPrint Chr$(12)
 
 End Sub
 
@@ -1038,8 +1040,7 @@ Sub DisplayTeamView_NEWLDR (TVN, QW, B9)
             Loop Until UCase$(I$) = "N" Or I$ = Chr$(27) Or UCase$(A$) = "N"
 
         Case 2:
-            LPrint Chr$(15)
-            'WIDTH "LPT1:1", 130
+
             LPrint "     TEAM                     "; TP1$(B9)
 
             For W = 1 To QW
@@ -1052,8 +1053,6 @@ Sub DisplayTeamView_NEWLDR (TVN, QW, B9)
             Next W
 
             LPrint Chr$(12)
-            LPrint Chr$(18)
-            ' WIDTH "LPT1:1", 80
 
     End Select
 

@@ -167,7 +167,6 @@ Sub DoTheInput (action%)
         Select Case action%
 
             Case 3:
-                LPrint Chr$(15) ': WIDTH "LPT1:", 137
                 LPrint
 				LPrint "DISK ID:"; YN$
                 LPrint "TEAM NAME: "; inputT$(0); " "; inputT$(1)
@@ -208,7 +207,7 @@ Sub DoTheInput (action%)
 
                 Next
 
-                LPrint Chr$(18): LPrint Chr$(12)
+                LPrint Chr$(12)
 
                 'Done with action Q=2
 

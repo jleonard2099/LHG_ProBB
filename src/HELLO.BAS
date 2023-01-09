@@ -225,9 +225,10 @@ Sub TEAM_MENU ()
 
     ReDim menuChoices$(1 To 8)
 
-    Selection% = 1
-
     Do
+
+        Selection% = 1
+        
         Call TITLE
         'Erase menuChoices$
         menuChoices$(1) = "INPUT A NEW TEAM              "
@@ -456,4 +457,5 @@ End Sub
 '$INCLUDE: 'SEELEAG.BAS'
 '$INCLUDE: 'SINPUT.BAS'
 '$INCLUDE: 'TRADE.BAS'
+
 

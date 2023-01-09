@@ -1,4 +1,4 @@
-$Debug
+
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 '$INCLUDE: 'PadRight.BI'
@@ -3133,4 +3133,3 @@ End Sub
 '$INCLUDE: 'QPProEqu.BM'
 '$INCLUDE: 'PadRight.BM'
 '$INCLUDE: 'GameRoutines.BM'
-

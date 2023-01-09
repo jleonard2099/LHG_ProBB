@@ -228,14 +228,22 @@ Sub NEWLDRST ()
                             Next X
 
                             Cls
-                            Locate 1, 35: Color 11: Print LGF$
-                            Locate 2: Color 14: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
-                            Locate 3: Color 14: Print D1$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
+
+                            Color 11
+							Locate 1, 35: Print LGF$
+                            Color 14
+							Locate 2: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
+                            Locate 3: Print D1$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
 
                             For I = 1 To 10
-                                If TML$(I) <> "*" Then
-                                    Color 3: Print TML$(I);: Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
 
+                                If TML$(I) <> "*" Then
+                                    Color 3
+
+									'G / W / L
+									Print TML$(I);: Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
+
+									' MAJ PCT
                                     If LL(I) = 0 And LL(I) + WW(I) <> 0 Then
                                         Print "1.000";
                                     Else
@@ -250,13 +258,18 @@ Sub NEWLDRST ()
                                         End If
                                     End If
 
+									' GB
+									'-- why is this done with a decimal?
                                     If ((WW(1) - WW(I)) + (LL(I) - LL(1))) / 2 = 0 Then 
 										Print Tab(36); " ---";
 									Else                                    
 										Print Tab(36); Using "##.#"; ((WW(1) - WW(I)) + (LL(I) - LL(1))) / 2;
 									End If
-
+									
+									' #
                                     Print Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
+									
+									' Records: Home / Road / Last 10
                                     Print Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
                                 End If
                             Next
@@ -293,8 +306,12 @@ Sub NEWLDRST ()
                             For I = 11 To 20
 
                                 If TML$(I) <> "*" Then
-                                    Color 3: Print TML$(I);: Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
+									'G / W / L
+                                    Color 3
+									Print TML$(I);
+									Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
 
+									' MAJ PCT
                                     If LL(I) = 0 And LL(I) + WW(I) <> 0 Then 
                                         Print "1.000";
                                     Else
@@ -309,12 +326,18 @@ Sub NEWLDRST ()
                                         End If
                                     End If
 
+									' GB
+									'-- why is this done with a decimal?
                                     If ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2 = 0 Then 
 										Print Tab(36); " ---";
 									Else
 										Print Tab(36); Using "##.#"; ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2;
 									End If
+
+									' #
                                     Print Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
+
+									' Records: Home / Road / Last 10
                                     Print Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
                                 End If
                             Next
@@ -348,14 +371,18 @@ Sub NEWLDRST ()
                                 2985 Next Y
                             Next X
 
-                            Color 14: Locate 24: Print "HIT ANY KEY TO CONTINUE";
+                            Color 14
+							Locate 24: Print "HIT ANY KEY TO CONTINUE";
                             I$ = GetKeyPress$
 
                             Cls
-                            Locate 2: Color 14: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
-                            Locate 3: Color 14: Print D3$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
+
+                            Color 14
+							Locate 2: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
+                            Locate 3: Print D3$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
 
                             For I = 21 To 30
+
                                 If TML$(I) <> "*" Then
                                     Color 3: Print TML$(I);
                                     Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
@@ -414,12 +441,14 @@ Sub NEWLDRST ()
                                 3985 Next Y
                             Next X
 
-                            Locate 12
-                            Color 14: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
+                            Color 14
+							Locate 12
+                            Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
                             Locate 13
-                            Color 14: Print D4$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
+                            Print D4$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
 
                             For I = 31 To 40
+
                                 If TML$(I) <> "*" Then
                                     Color 3: Print TML$(I);
                                     Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
@@ -456,8 +485,7 @@ Sub NEWLDRST ()
                             I$ = GetKeyPress$
 
                         Case "P"
-                            LPrint Chr$(15)
-                            'WIDTH "LPT1:1", 130
+
                             AA = 1
                             ZZ = 10
 
@@ -513,10 +541,13 @@ Sub NEWLDRST ()
 
                                 LPrint Tab(42);
                                 MJ = 83 - WW(1) - LL(2)
+
                                 If MJ < 0 Then MJ = 0
                                 If I = 1 Then LPrint Using "##"; MJ;
+
                                 LPrint Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
                                 LPrint Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
+
                             Next
 
                             AA = 11
@@ -543,7 +574,9 @@ Sub NEWLDRST ()
                                 5985 Next Y
                             Next X
 
-                            LPrint: LPrint: LPrint Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
+                            LPrint
+							LPrint
+							LPrint Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
                             LPrint D2$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
 
                             For I = 11 To 20
@@ -640,10 +673,13 @@ Sub NEWLDRST ()
 									Else
 										LPrint Tab(36); Using "##.#"; ((WW(21) - WW(I)) + (LL(I) - LL(21))) / 2;
 									End If
+
                                     LPrint Tab(42);: If I = 21 Then LPrint Using "##"; 83 - WW(21) - LL(22);
                                     LPrint Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
                                     LPrint Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
+
                                 End If
+
                             Next
 
                             LPrint
@@ -677,7 +713,9 @@ Sub NEWLDRST ()
                             LPrint D4$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
 
                             For I = 31 To 40
+
                                 If TML$(I) <> "*" Then
+
                                     LPrint TML$(I);
                                     LPrint Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
 
@@ -700,17 +738,21 @@ Sub NEWLDRST ()
 									Else
 										LPrint Tab(36); Using "##.#"; ((WW(31) - WW(I)) + (LL(I) - LL(31))) / 2;
 									End If
+
                                     LPrint Tab(42);
                                     MJ = 83 - WW(31) - LL(32)
+
                                     If MJ < 0 Then MJ = 0
                                     If I = 31 Then LPrint Using "##"; MJ;
+
                                     LPrint Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
                                     LPrint Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
+
                                 End If
+
                             Next
 
                             LPrint Chr$(12)
-                            LPrint Chr$(18)
 
                     End Select
 
