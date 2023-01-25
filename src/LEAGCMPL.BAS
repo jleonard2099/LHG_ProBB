@@ -1,3 +1,6 @@
+' Rename file + routine to COMPLEAG
+' This would be more consistent with other games
+
 '------------------------------
 '     LEAGCMPL Subroutine
 '------------------------------
@@ -138,25 +141,19 @@ Sub LEAGCMPL ()
             For X = 1 To TEAMS_PER_CONFERENCE: DL!(X, 19) = 9999: Next
 
             Open diskPaths$(1) + LH$ + ".TMS" For Input As #2
-
             For N = 1 To 5: Input #2, D2$: Next
             For X = 1 To TEAMS_PER_CONFERENCE: Input #2, Z1$(X): Next
             Close 2
 
             For XW = 1 To TEAMS_PER_CONFERENCE
 
-                WN = 0
-                LS = 0
-                CW = 0
-                CL = 0
-
                 'Look for * as terminating char
                 If H1$(XW) <> Chr$(42) Then
 
-                    WN = 0
-                    LS = 0
-                    CW = 0
-                    CL = 0
+                    replayWins = 0
+                    replayLosses = 0
+                    confWins = 0
+                    confLosses = 0
 
                     If _FileExists(diskPaths$(1) + H1$(XW) + "S") Then
 
@@ -167,10 +164,10 @@ Sub LEAGCMPL ()
                         For I = 1 To 100: Input #3, leagueT%(I): Next I
                         Close 2
 
-                        WN = 0
-                        LS = 0
-                        CW = 0
-                        CL = 0
+                        fullWins = 0
+                        fullLosses = 0
+                        confWins = 0
+                        confLosses = 0
 
                         For I = 1 To numGames%
 
@@ -196,20 +193,23 @@ Sub LEAGCMPL ()
                             R$ = targetFile$ + "." + Left$(O$(I), 2)
                             O$(I) = R$
 
-                            skipIt% = 0
+                            skipCheck = 0
 
                             For EC = 1 To TEAMS_PER_CONFERENCE
+
                                 If O$(I) = H1$(EC) Then
-                                    skipIt% = 1
+                                    skipCheck = 1
+									Exit For
                                 End If
+
                             Next EC
 
-                            If skipIt% = 0 Then
-                                If O%(I) > leagueT%(I) Then WN = WN + 1
-                                If O%(I) < leagueT%(I) Then LS = LS + 1
+                            If skipCheck <> 1 Then
+                                If O%(I) > leagueT%(I) Then fullWins = fullWins + 1
+                                If O%(I) < leagueT%(I) Then fullLosses = fullLosses + 1
                             Else
-                                If O%(I) > leagueT%(I) Then CW = CW + 1: WN = WN + 1
-                                If O%(I) < leagueT%(I) Then CL = CL + 1: LS = LS + 1
+                                If O%(I) > leagueT%(I) Then confWins = confWins + 1: fullWins = fullWins + 1
+                                If O%(I) < leagueT%(I) Then confLosses = confLosses + 1: fullLosses = fullLosses + 1
                             End If
 
                             EC = 0
@@ -239,14 +239,15 @@ Sub LEAGCMPL ()
                 timeToGo = 0
 
                 For X = 1 To TEAMS_PER_CONFERENCE
+
                     If Z1$(X) = WT$ Then
 
-                        If O1!(X) = WN And O2!(X) = LS Then
+                        If O1!(X) = fullWins And O2!(X) = fullLosses Then
                             timeToGo = 1
                             Exit For
                         Else
-                            O1!(X) = WN
-                            O2!(X) = LS
+                            O1!(X) = fullWins
+                            O2!(X) = fullLosses
                         End If
 
                     End If
@@ -379,7 +380,7 @@ Sub LEAGCMPL ()
                         If OT!(11) > TRC!(19) Then TRC!(19) = OT!(11): TRC$(19) = TN$
                         If OT!(11) / numGames% > TRC!(20) And UCase$(finalUpdate$) = "Y" Then TRC!(20) = OT!(11) / numGames%: TRC$(20) = TN$
 
-                        If WN > TRC!(21) Then TRC!(21) = WN: TRC$(21) = TN$
+                        If fullWins > TRC!(21) Then TRC!(21) = fullWins: TRC$(21) = TN$
                         If DT!(2) < TRC1!(1) Then TRC1!(1) = DT!(2): TRC1$(1) = TN$
                         If DT!(3) < TRC1!(2) Then TRC1!(2) = DT!(3): TRC1$(2) = TN$
                         If DT!(17) < TRC1!(3) And UCase$(finalUpdate$) = "Y" Then TRC1!(3) = DT!(17): TRC1$(3) = TN$
@@ -407,7 +408,7 @@ Sub LEAGCMPL ()
                         If DT!(11) < TRC1!(19) Then TRC1!(19) = DT!(11): TRC1$(19) = TN$
                         If DT!(11) / numGames% < TRC1!(20) And UCase$(finalUpdate$) = "Y" Then TRC1!(20) = DT!(11) / numGames%: TRC1$(20) = TN$
 
-                        If LS > TRC1!(21) Then TRC1!(21) = LS: TRC1$(21) = TN$
+                        If fullLosses > TRC1!(21) Then TRC1!(21) = fullLosses: TRC1$(21) = TN$
 
                     End If 'Done checking for stat file
 

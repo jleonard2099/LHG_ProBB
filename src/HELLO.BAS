@@ -6,6 +6,8 @@ Const MAX_FILES = 1024 '1048576
 Const TEAMS_PER_CONFERENCE = 40
 Const DIVS_PER_CONFERENCE = 4
 
+DefInt A-Z
+
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 '$INCLUDE: 'PadRight.BI'
@@ -16,9 +18,7 @@ Const DIVS_PER_CONFERENCE = 4
 DECLARE SUB TEAM_MENU ()
 DECLARE SUB REPLAY_STATS_MENU ()
 DECLARE SUB LEADERS_MENU ()
-DECLARE SUB CONFIG_DRIVES ()
-
-DefInt A-Z
+DECLARE SUB ConfigureDrives ()
 
 '----------------------------------------
 '          READ IN ALL DATA
@@ -207,7 +207,7 @@ Sub Main_Menu (menuSelection%)
                 Case 4: Call LEADERS_MENU
                 Case 5: Call SCHEDULE
                     'Case 6: Run "INSTALL.EXE"
-                Case 7: Call CONFIG_DRIVES
+                Case 7: Call ConfigureDrives
                 Case 8: Cls
             End Select
         Else
@@ -372,9 +372,9 @@ Sub LEADERS_MENU ()
 End Sub
 
 '----------------------------------------
-'       Config_Drives Subroutine
+'       ConfigureDrives Subroutine
 '----------------------------------------
-Sub CONFIG_DRIVES ()
+Sub ConfigureDrives ()
 
     Color 15, 1
     FG = 0
@@ -393,20 +393,25 @@ Sub CONFIG_DRIVES ()
     Locate , 31: Print "C:\PROBB\TEAMS"
 
     Locate 7, 1: QPrint "Path for Teams ", 14, 1, -1
-    Locate , 16: QPrint PadRight$(diskPaths$(0), 30), FG, BG, -1
+    Locate , 16: QPrint PadRight$(diskPaths$(0), 48), FG, BG, -1
     Locate 9, 1: QPrint "Path for Stats ", 14, 1, -1
-    Locate , 16: QPrint PadRight$(diskPaths$(1), 30), FG, BG, -1
+    Locate , 16: QPrint PadRight$(diskPaths$(1), 48), FG, BG, -1
 
     GetDiv1:
     Locate 7, 16 'location of beginning of field
-    CapsOn = 0: NumOnly = 0: Max = 30 'specify field parameters
+    CapsOn = 0
+    NumOnly = 0
+    Max = 48 'specify field parameters
     Call TextIn(diskPaths$(0), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
     diskPaths$(0) = _Trim$(diskPaths$(0))
+
     GetDiv2:
     Locate 9, 16 'location of beginning of field
-    CapsOn = 0: NumOnly = 0: Max = 30 'specify field parameters
+    CapsOn = 0
+    NumOnly = 0
+    Max = 48 'specify field parameters
     Call TextIn(diskPaths$(1), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
@@ -457,5 +462,4 @@ End Sub
 '$INCLUDE: 'SEELEAG.BAS'
 '$INCLUDE: 'SINPUT.BAS'
 '$INCLUDE: 'TRADE.BAS'
-
 

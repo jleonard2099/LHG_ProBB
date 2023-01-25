@@ -183,13 +183,17 @@ Sub ViewComparisons ()
             Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
         Next
         Locate 9 + JJ, 8
-        Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 10
-        Color 7
-        Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
-        Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
+        Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
+		
 
         Do
+			Locate 10
+			Color 7, 1
+
+			Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
+			Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
             I$ = GetKeyPress$
+
         Loop Until UCase$(I$) = "P" Or UCase$(I$) = "S" Or I$ = Chr$(27)
 
         If I$ <> Chr$(27) Then

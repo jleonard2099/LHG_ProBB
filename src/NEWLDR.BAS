@@ -271,12 +271,12 @@ Sub ViewIndividualLeaders (JB, TS)
 
                 TVN = 2
                 QW = PPP
-                Call GetListLength(QW, length)
 
                 If printOrView% = 1 Then
                     Call DisplayLeaders(TVN, QW, B9)
                 Else
                     'printOrView% = 2
+					Call GetListLength(QW, length)
                     Call PrintLeaders(TVN, length, B9)
                 End If
 
@@ -328,14 +328,6 @@ Sub ViewIndividualLeaders (JB, TS)
 
             TVN = 1
             QW = PPP
-            Call GetListLength(QW, length)
-
-            If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW, B9)
-            Else
-                'printOrView% = 2
-                Call PrintLeaders(TVN, length, B9)
-            End If
 
         Case 1:
             For I = 1 To JB
@@ -351,14 +343,6 @@ Sub ViewIndividualLeaders (JB, TS)
 
             TVN = 1
             QW = PPP
-            Call GetListLength(QW, length)
-
-            If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW, B9)
-            Else
-                'printOrView% = 2
-                Call PrintLeaders(TVN, length, B9)
-            End If
 
         Case 4:
             For I = 1 To JB
@@ -389,14 +373,6 @@ Sub ViewIndividualLeaders (JB, TS)
 
             TVN = 1
             QW = PPP
-            Call GetListLength(QW, length)
-
-            If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW, B9)
-            Else
-                'printOrView% = 2
-                Call PrintLeaders(TVN, length, B9)
-            End If
 
         Case 6:
             For I = 1 To JB
@@ -410,14 +386,6 @@ Sub ViewIndividualLeaders (JB, TS)
 
             TVN = 1
             QW = PPP
-            Call GetListLength(QW, length)
-
-            If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW, B9)
-            Else
-                'printOrView% = 2
-                Call PrintLeaders(TVN, length, B9)
-            End If
 
         Case 7:
             For I = 1 To JB
@@ -433,14 +401,6 @@ Sub ViewIndividualLeaders (JB, TS)
 
             TVN = 2
             QW = PPP
-            Call GetListLength(QW, length)
-
-            If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW, B9)
-            Else
-                'printOrView% = 2
-                Call PrintLeaders(TVN, length, B9)
-            End If
 
         Case 11:
             For I = 1 To JB
@@ -458,14 +418,6 @@ Sub ViewIndividualLeaders (JB, TS)
 
             TVN = 1
             QW = PPP
-            Call GetListLength(QW, length)
-
-            If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW, B9)
-            Else
-                'printOrView% = 2
-                Call PrintLeaders(TVN, length, B9)
-            End If
 
         Case 12:
 
@@ -482,14 +434,6 @@ Sub ViewIndividualLeaders (JB, TS)
 
             TVN = 3
             QW = PPP
-            Call GetListLength(QW, length)
-
-            If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW, B9)
-            Else
-                'printOrView% = 2
-                Call PrintLeaders(TVN, length, B9)
-            End If
 
         Case 15:
             For I = 1 To JB
@@ -505,14 +449,6 @@ Sub ViewIndividualLeaders (JB, TS)
 
             TVN = 1
             QW = PPP
-            Call GetListLength(QW, length)
-
-            If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW, B9)
-            Else
-                'printOrView% = 2
-                Call PrintLeaders(TVN, length, B9)
-            End If
 
         Case 17:
 
@@ -529,14 +465,6 @@ Sub ViewIndividualLeaders (JB, TS)
 
             TVN = 3
             QW = PPP
-            Call GetListLength(QW, length)
-
-            If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW, B9)
-            Else
-                'printOrView% = 2
-                Call PrintLeaders(TVN, length, B9)
-            End If
 
         Case 23:
             For I = 1 To JB
@@ -552,14 +480,6 @@ Sub ViewIndividualLeaders (JB, TS)
 
             TVN = 3
             QW = PPP
-            Call GetListLength(QW, length)
-
-            If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW, B9)
-            Else
-                'printOrView% = 2
-                Call PrintLeaders(TVN, length, B9)
-            End If
 
         Case 24 To 29:
             For I = 1 To JB
@@ -575,14 +495,6 @@ Sub ViewIndividualLeaders (JB, TS)
 
             TVN = 3
             QW = PPP
-            Call GetListLength(QW, length)
-
-            If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW, B9)
-            Else
-                'printOrView% = 2
-                Call PrintLeaders(TVN, length, B9)
-            End If
 
         Case 30:
             For I = 1 To JB
@@ -598,16 +510,20 @@ Sub ViewIndividualLeaders (JB, TS)
 
             TVN = 3
             QW = PPP
-            Call GetListLength(QW, length)
-
-            If printOrView% = 1 Then
-                Call DisplayLeaders(TVN, QW, B9)
-            Else
-                'printOrView% = 2
-                Call PrintLeaders(TVN, length, B9)
-            End If
 
     End Select
+
+	If B9 <> 4 And B9 <> 10 Then
+
+		If printOrView% = 1 Then
+			Call DisplayLeaders(TVN, QW, B9)
+		Else
+			'printOrView% = 2
+			Call GetListLength(QW, length)
+			Call PrintLeaders(TVN, length, B9)
+		End If
+	
+	End If
 
 End Sub
 
@@ -628,7 +544,7 @@ Sub DisplayLeaders (TVN, QW, B9)
 
         For W = 1 To QW
 
-            If (W <> 0 And W Mod 20 = 0) Then
+            If W <> 0 And (W Mod 20 = 0) Then
                 Locate 22
                 Color 15
                 Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
@@ -1154,6 +1070,7 @@ Sub GetListLength (maxQW, listLength)
     Shared printOrView%
 
     If printOrView% <> 1 Then
+		'If printing...
 
         Do
             Color , 0
@@ -1179,6 +1096,7 @@ Sub GetListLength (maxQW, listLength)
             Locate , 25: Input "ENTER LENGTH OF LIST"; listLength
 
         Loop Until listLength <= maxQW
+
     End If
 
 End Sub

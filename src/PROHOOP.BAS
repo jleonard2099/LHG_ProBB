@@ -3080,31 +3080,8 @@ Else
     FB% = 1
 
     GoTo 300
+
 End If
-
-'================================================================================
-
-'---------- THIS CODE IS NOT USED ? ----------
-
-If U5 = 1 And P = CT And H <= 3 And T < 30 And J < 3 Then GoSub 1080
-If U5 = 2 And H <= 3 And T < 30 And J < 3 Then GoSub 1080
-If U5 = 1 And P = CT And H >= 4 And T <= 120 And J >= 3 And J <= 9 Then GoSub 1080
-If U5 = 2 And H >= 4 And T <= 120 And J >= 3 And J <= 9 Then GoSub 1080
-
-Return
-
-1080 '
-For J = 0 To 3
-    J1 = Int(Rnd(1) * 5)
-    If A!(P, B1!(P, J1), 20) > 0 Then
-        B = J1
-        Exit For
-    End If
-Next J
-
-1084 Return
-
-'---------- THIS CODE IS NOT USED ? ----------
 
 '================================================================================
 

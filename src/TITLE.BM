@@ -1,10 +1,37 @@
 '------------------------------
-'  TITLE_EDITSTATS Subroutine
+'   TITLE_CAREER Subroutine
 '------------------------------
+' Displays window title / game copyright
+Sub TITLE_CAREER ()
+
+	Color 12, 1
+
+	Locate 1, 1
+	Print Tab(80);
+	Locate , 22
+
+	Color 14
+	Print "BASKETBALL THE PRO GAME: CAREER STATS"
+
+	Locate 24, 1
+	Print Tab(80);
+	Locate , 1
+
+	Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+
+	Locate 4, 1
+
+	Color 1, 0
+
+End Sub
+
+'----------------------------------------
+'       TITLE_EDITSTATS Subroutine
+'----------------------------------------
 ' Displays window title / game copyright
 Sub TITLE_EDITSTATS ()
 
-    Color , 1
+    Color 12, 1
 
     Locate 1, 1
     Print Tab(80);
@@ -30,12 +57,10 @@ End Sub
 ' Displays window title / game copyright
 Sub TITLE_HEADER ()
 
-    Color , 0
-
     KEY Off
     Cls
 
-    Color , 1
+    Color 12, 1
 
     Locate 1, 1
     Print Tab(80);
@@ -51,18 +76,68 @@ Sub TITLE_HEADER ()
 End Sub
 
 '------------------------------
+'   TITLE_LEADERS Subroutine
+'------------------------------
+' Displays window title / game copyright
+Sub TITLE_LEADERS
+
+    Color 12, 1
+
+    Locate 1, 1
+    Print Tab(80);
+    Locate , 26
+
+    Color 14
+    Print "BASKETBALL THE PRO GAME LEADERS"
+
+    Locate 24, 1
+    Print Tab(80);
+    Locate , 1
+
+    Print "(C) ROD DAHLBERG/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+    Locate 4, 1
+
+    Color 2, 0
+
+End Sub
+
+'------------------------------
+'   TITLE_MERGE Subroutine
+'------------------------------
+' Displays window title / game copyright
+Sub TITLE_MERGE ()
+
+	Color 12, 1
+
+	Locate 1, 1
+	Print Tab(80);
+	Locate , 26
+
+	Color 14
+	Print "BASKETBALL THE PRO GAME: MERGE"
+
+	Locate 24, 1
+	Print Tab(80);
+	Locate , 1
+
+	Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+
+	Locate 4, 1
+
+	Color 1, 0
+
+End Sub
+
+'------------------------------
 '  TITLE_SCHEDULER Subroutine
 '------------------------------
 ' Displays window title / game copyright
 Sub TITLE_SCHEDULER ()
 
-    Color , 0
-
     KEY Off
-
     Cls
 
-    Color , 1
+    Color 12, 1
 
     Locate 1, 1
     Print Tab(80);
@@ -76,6 +151,7 @@ Sub TITLE_SCHEDULER ()
     Locate , 1
 
     Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1997";
+	
     Locate 5, 1
 
     Color , 0
@@ -88,13 +164,13 @@ End Sub
 ' Displays window title / game copyright
 Sub TITLE_STATS ()
 
-    Color , 2
+    Color 12, 1
 
     Locate 1, 1
     Print Tab(80);
     Locate , 26
 
-    Color 0
+    Color 14
     Print "BASKETBALL: THE PRO GAME STATISTICS"
 
     Locate 24, 1
@@ -102,6 +178,7 @@ Sub TITLE_STATS ()
     Locate , 1
 
     Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+
     Locate 4, 1
 
     Color 2, 0
@@ -114,7 +191,7 @@ End Sub
 '... explain here ...
 Sub TITLE_STAT_HEADER (header$)
 
-    Color , 1
+    Color 12, 1
     
 	Locate 1, 1
 	Print Tab(80);
@@ -136,29 +213,63 @@ Sub TITLE_STAT_HEADER (header$)
 End Sub
 
 '------------------------------
-'  TITLE_UTILITIES Subroutine
+'    TITLE_TOURN Subroutine
 '------------------------------
 ' Displays window title / game copyright
-SUB TITLE_UTILITIES ()
+Sub TITLE_TOURN ()
+    	
+	KEY Off
+	Cls
+    
+	Color 12, 1
+	
+	Locate 1, 1
+	Print Tab(80);
+	Locate , 16
+	
+	Color 12
+    Print "BASKETBALL THE PRO GAME TOURNAMENT SCHEDULER"
+    
+	Locate 24, 1
+	Print Tab(80);
+	Locate , 1
+    
+	Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994";
+    
+	Locate 3, 1
+	Color 2, 0
 
-	Color , 2
+    Color 15
+	Print "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
+    Print "              FOR TECHNICAL SUPPORT, CALL (615) 366-8088"
+
+    Color 10
+
+End Sub
+
+'------------------------------
+'    TITLE_UTILS  Subroutine
+'------------------------------
+' Displays window title / game copyright
+SUB TITLE_UTILS ()
+
+	Color 12, 1
 	
 	Locate 1, 1
 	Print Tab(80);
 	Locate , 26
 	
-	Color 0
-	Print "3 IN 1 FOOTBALL UTILITIES"
+	Color 14
+	Print "BASKETBALL THE PRO GAME UTILITIES"
 	
-	Locate 24, 1: Print Tab(80);
+	Locate 24, 1
+	Print Tab(80);
 	Locate , 1
 	
 	Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
 	
 	Locate 4, 1
 	
-	Color 2, 0
-
 End Sub
 
 '------------------------------
@@ -167,16 +278,15 @@ End Sub
 ' Displays window title / game copyright
 Sub TITLE ()
 
-    Color , 0
-    KEY Off
+    KEY Off	
     Cls
     
-	Color , 1
+	Color 12, 1
 
     'Header
     Locate 1, 1
 	Print Tab(80);
-	Locate , 27
+	Locate , 25
 	
 	Color 12
     Print "BASKETBALL: THE PRO GAME V" + GAME_VERSION$
@@ -186,14 +296,22 @@ Sub TITLE ()
 	Print Tab(80);
 	Locate , 1
 
-    Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994"; Tab(70); Left$(Time$, 5);
-
+	Color 12, 1
+	Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1997"; Tab(75); Left$(Time$, 5);
+	
     'Contact
     Locate 3, 1
-
     Color 15, 0
-	Print "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
-    Print "     FOR TECHNICAL SUPPORT, CALL (615) 366-8088 OR SportGames@AOL.COM"
+	Print "           PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
+    Print "         FOR TECHNICAL SUPPORT, CALL (800) 477-7032 OR LANCE@LHGAMES.COM"
+    Print "          LANCE HAFFNER GAMES ON THE INTERNET AT HTTP://WWW.LHGAMES.COM"
+
+    Locate 12, 1
+
+    Print "LANCE HAFFNER GAMES"
+    Print "P.O. BOX 100594"
+    Print "NASHVILLE, TN 37224"
+    'Print "LANCE@LHGAMES.COM"
 
     Color 10
 

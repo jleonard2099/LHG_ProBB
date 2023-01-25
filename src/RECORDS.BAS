@@ -2109,7 +2109,6 @@ Sub WriteRecords ()
     Print #2, TotalRecords!(125, 0); "- "; recordsTRC$(125, 0);
     Print #2, Using " (###) "; TotalRecords!(125, 1);: Print #2, recordsTRC$(125, 1) + " ";
     Print #2, recordsTRC$(125, 2);: Print #2, Using " (###)"; TotalRecords!(125, 2);: Print #2, ", " + recordsTRC$(125, 3)
-    Print #2, Chr$(12)
     Close 2
 
     Open "RECORDS" For Input As #2
@@ -2117,6 +2116,9 @@ Sub WriteRecords ()
         Line Input #2, X$
         LPrint X$
     Loop
-    Close 2
+
+    LPrint Chr$(12)
+    	
+	Close 2
 
 End Sub

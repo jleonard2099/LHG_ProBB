@@ -1,6 +1,3 @@
-' Long INT vs. Single
-' 4 bytes either way
-' https://wiki.qb64.dev/qb64wiki/index.php/Variable_Types
 
 Dim menuChoices$(1 To 8)
 Dim YY%
@@ -8,7 +5,7 @@ Dim YY%
 '----------------------------------------
 ' Used across more than one source file
 '----------------------------------------
-Dim Shared A(15, 14)
+Dim Shared A!(15, 14)
 
 Dim Shared diskPaths$(3), Q$(0 To 377)
 Dim Shared teamNames$(MAX_TEAMS), Z1$(40)
@@ -72,10 +69,10 @@ Dim adjustB%(0 To 14, 19), adjustL%(0 To 6), adjustT%(0 To 34)
 '----------------------------------------
 Dim Shared QQ$(1)
 '--> could be converted to Dim / Shared split
-Dim hd2hdT(34)
-Dim hd2hdAL(50), AW(50), HL(50), HW(50), R1(50), R2(50), R3(50), R4(50)
-Dim TAL(40), TAW(40), THL(40), THW(40)
-Dim TR1(40), TR2(40), TR3(40), TR4(40)
+Dim hd2hdT!(34)
+Dim hd2hdAL!(50), AW!(50), HL!(50), HW!(50), R1!(50), R2!(50), R3!(50), R4!(50)
+Dim TAL!(40), TAW!(40), THL!(40), THW!(40)
+Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
 
 '----------------------------------------
 ' Used across LOOKY.BAS,

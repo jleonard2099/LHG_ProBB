@@ -661,9 +661,9 @@ Sub ViewCareerRecords ()
             Call ReadFile(careerLeaderFiles$())
 
             Do
-                Cls
                 Color , 1
                 Cls
+
                 Locate , 28
                 Color 14
                 Print "SELECT FILE TO VIEW": Color 15
@@ -713,18 +713,23 @@ Sub ViewCareerRecords ()
                 Close #1
 
                 Do
+
+					Color 15, 0
 					Cls
 
-                    Locate 15, 10
-
-                    Color 12: Print "V";: Color 7: Print "iew or ";
-                    Color 12: Print "P";: Color 7: Print "rint"
-                    I$ = GetKeyPress$
+					Do
+						Locate 15, 10
+						Color 12: Print "V";: Color 7: Print "iew or ";
+						Color 12: Print "P";: Color 7: Print "rint"
+						I$ = GetKeyPress$
+					Loop Until UCase$(I$) = "P" Or UCase$(I$) = "V"
 
                     Select Case UCase$(I$)
                         Case "V":
                             Do
                                 Cls
+								Color 0, 15
+
                                 Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
                                 Print
                                 'BL!() = Record Val ; BL$() = Record Holder; BLYR!() = RecordYear

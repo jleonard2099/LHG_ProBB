@@ -4,10 +4,6 @@ Sub LOOKY ()
 
     Shared categories$(), lookyA$()
 
-    'I believe this is redundant with the new way we're structured
-    'Including this in HELLO applies to all subs
-    DefInt A-Z
-
     _Title "Basketball: The Pro Game - View Stats"
 
     Color 15, 0
@@ -48,6 +44,7 @@ Sub LOOKY ()
 
             Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
             Y = LOF(1)
+
             Field #1, 15 As Q$(0), 15 As Q$(1)
 
             For I = 0 To 6
@@ -324,7 +321,7 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
                 LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
                 LPrint Chr$(12)
                 
-				I$ = GetKeyPress$
+                I$ = GetKeyPress$
 
                 Call PrintStatsSummary(totalGames%, compareZ!(), compareZ1!(), B$)
 
@@ -442,8 +439,11 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
     142 '
     ' *** DISPLAYING STATS ***
     Call TITLE_HEADER
+    
     Color , 1
-    Locate 24, 1: Print Tab(80);: Locate , 1
+    
+    Locate 24, 1
+
     Color 15, 1: Print "SCHEDULE ";
     Color 14: Print "[Pg UP]  ";
     Color 15: Print "MORE STATS ";
@@ -451,20 +451,22 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
     Color 15: Print "NEW TEAM ";
     Color 14: Print "[ESC]  ";
     Color 15: Print "SORT ";
-    Color 14: Print "<-,-> and [ENTER] ";
-    Locate 25, 1
+    Color 14: Print "<-,-> and [ENTER]    ";
     Color 15: Print "PRINT ";
-	Color 14: Print "[P]  ";
+    Color 14: Print "[P]  ";
     Color 15: Print "DELETE STATS ";
-	Color 14: Print "[D]"; Space$(53)
+    Color 14: Print "[D]";
+        
     Color 12, 0
-	Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
-    Locate 3, 1: Color 2, 0
-    Color 14: Print B$
+    Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
+    
+    Locate 3, 1
+    Color 14, 0: Print B$
     Print "NAME"; Tab(15);
     Print " G  MIN AVG   FGM  FGA  PCT  3FGM 3FGA  PCT   FTM  FTA  PCT"
 
     For I = 0 To 14
+
         If lookyA$(I) <> "XXX" Then
             Color 7
             If I / 2 = Int(I / 2) Then Color 15
@@ -496,6 +498,7 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
 
             '3FGM, 3FGA, 3FG PCT
             Locate , 44: Print Using "#### ####"; W0!(I); W1!(I);: Locate , 54
+
             If W1!(I) = 0 Then
                 Print ".---";
             Else
@@ -515,22 +518,27 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
             Locate , 60: Print Using "#### ####"; values!(I, 4); values!(I, 3);
             
             Locate , 70
+
             If values!(I, 3) = 0 Then
                 Print ".---"
             Else
+
                 If values!(I, 3) = values!(I, 4) Then
                     Print "1.00"
                 Else
+
                     If values!(I, 4) = 0 Then
                         Print ".000"
                     Else
                         ftPCT! = values!(I, 4) / values!(I, 3)
                         Print Using ".###"; ftPCT!
                     End If
+
                 End If
+
             End If
 
-        End If
+        End If 'done checking player name
 
     Next
 
@@ -539,9 +547,9 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
     'Games
     Print Using "##"; totalGames%;
 
-	'-- Should be MIN / AVG points but is excluded; perhaps because AVG cannot be a TOTAL
-	'-- and presumably total MIN is not meaningful
-	'-- However it could be updated to still do, and use an average of the "AVG" values
+    '-- Should be MIN / AVG points but is excluded; perhaps because AVG cannot be a TOTAL
+    '-- and presumably total MIN is not meaningful
+    '-- However it could be updated to still do, and use an average of the "AVG" values
 
     'FGM / FGA
     Locate , 28: Print Using "#### ####"; compareZ!(2); compareZ!(1);
@@ -555,9 +563,9 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
     Locate , 60: Print Using "#### ####"; compareZ!(4); compareZ!(3);
     If compareZ!(3) <> 0 Then ftPCT! = compareZ!(4) / compareZ!(3): Locate , 70: Print Using ".###"; ftPCT!
 
-	'-- this is the "second" row of totals
-	'-- is this supposed to be opponents???
-
+    '2nd Row
+    'Opponents???
+    
     'Games
     Color 12: Locate , 15: Print Using "##"; totalGames%;
 
@@ -634,169 +642,152 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
 
     If I$ <> Chr$(27) Then
 
-        '-----
-        'Second Sub Here
-        '-----
-        235 Cls
-        Call TITLE_HEADER
-        Color , 1
-        Locate 24, 1: Print Tab(80);: Locate , 1
-        Locate 24, 1: Color 14, 1
-        Color 15: Print "MORE STATS ";
-        Color 14: Print "[Pg UP]  ";
-        Color 15: Print "SELECT NEW TEAM ";
-        Color 14: Print "[ESC]  ";
-        Color 15: Print "SORT ";
-        Color 14: Print "<-,-> and [ENTER]  ";
-        Color 15: Print "PRINT ";
-        Color 14: Print "[P]";
-        Locate 25, 1
-        Color 15: Print "DELETE STATS ";
-		Color 14: Print "[D] "; Space$(67)
-        Color 12, 0
-        Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
-
-        'Player Stats
-        Locate 3, 1: Color 2, 0
-        Color 14: Print B$;: Locate , 15
-        Print "               OFF  DEF  TOT": Print "NAME"; Tab(15);
-        Print " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
-
-        For I = 0 To 14
-            If lookyA$(I) <> "XXX" Then
-                Color 7
-                If I / 2 = Int(I / 2) Then Color 15
-
-                'Name
-                Print Left$(lookyA$(I), 13);: Locate , 15
-
-                'Points
-                Print Using "####"; values!(I, 2) * 2 + values!(I, 4) + W0!(I);
-
-                'Average
-                If values!(I, 0) > 0 Then Locate , 21: Print Using "##.#"; (values!(I, 2) * 2 + values!(I, 4) + W0!(I)) / values!(I, 0);
-
-                'Highest Points, Rebounds
-                Locate , 26: Print Using "## #### #### ####"; values!(I, 13); values!(I, 12); values!(I, 5) - values!(I, 12); values!(I, 5);
-
-                'Average
-                If values!(I, 0) > 0 Then Locate , 45: Print Using "##.#"; values!(I, 5) / values!(I, 0);
-
-                'PF AST   BLK  STL  TO
-                Locate , 51: Print Using "### ####  ###  ###  ###"; values!(I, 6); values!(I, 8); values!(I, 9); values!(I, 7); values!(I, 11)
-            End If
-
-        Next I
-
-		'Why is this only put anything under rebounds ?!?!?
-        Print "TEAM";: Locate , 39: Print Using "####"; compareZ!(15)
-
-		'-- FIRST ROW OF TOTALS --
-
-        Color 12: Print "TOTALS";
-
-        'Points
-        If totalGames% > 0 Then ptsCalc! = compareZ!(10) / totalGames% Else ptsCalc! = 0
-        Locate , 14: Print Using "##### ###.#"; compareZ!(10); ptsCalc!;
-
-        'Rebounds
-        If totalGames% > 0 Then rebCalc! = compareZ!(5) / totalGames% Else rebCalc! = 0
-        Locate , 29: Print Using "#### #### ####  ##.#"; compareZ!(12); compareZ!(5) - compareZ!(12) - compareZ!(15); compareZ!(5); rebCalc!;
-
-        'PF  AST  BLK  STL  TO
-        Print Using " #### #### #### #### ####"; compareZ!(6); compareZ!(8); compareZ!(9); compareZ!(7); compareZ!(11)
-
-		'-- this is the "second" row of totals
-		'-- is this supposed to be opponents???
-
-        'Points
-        If totalGames% > 0 Then ptsCalc! = compareZ1!(10) / totalGames% Else ptsCalc! = 0
-        Locate , 14: Print Using "##### ###.#"; compareZ1!(10); ptsCalc!;
-
-        'Rebounds
-        If totalGames% > 0 Then rebCalc! = compareZ1!(5) / totalGames% Else rebCalc! = 0
-        Locate , 29: Print Using "#### #### ####  ##.#"; compareZ1!(12); compareZ1!(5) - compareZ1!(12) - compareZ1!(15); compareZ1!(5); rebCalc!;
-
-        'PF  AST  BLK  STL  TO
-        Print Using " #### #### #### #### ####"; compareZ1!(6); compareZ1!(8); compareZ1!(9); compareZ1!(7); compareZ1!(11)
-
-        Color 3
-
         Do
-            I$ = GetKeyPress$
+            '-----
+            'Second Sub Here
+            '-----
+            Cls
 
-            Select Case I$
+            Call TITLE_HEADER
 
-                'Pg Up
-                Case Chr$(0) + "I":
-                    Cls
-                    CP% = 1
-                    GoTo 142
-                    'First Sub
+            Color , 1
 
-                    'Right Arrow
-                Case Chr$(0) + "M":
-                    CP% = CP% + 1: If CP% > 25 Then CP% = 14
-                    Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
+            Locate 24, 1
 
-                    'Left Arrow
-                Case Chr$(0) + "K":
-                    CP% = CP% - 1
-                    If CP% < 14 Then CP% = 25
-                    Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
+            Color 15: Print "MORE STATS ";
+            Color 14: Print "[Pg UP]  ";
+            Color 15: Print "SELECT NEW TEAM ";
+            Color 14: Print "[ESC]  ";
+            Color 15: Print "SORT ";
+            Color 14: Print "<-,-> and [ENTER]  ";
+            Color 15: Print "PRINT ";
+            Color 14: Print "[P]    ";
+            Color 15: Print "DELETE STATS ";
+            Color 14: Print "[D]";
 
-                Case Chr$(13):
-                    Call SortStats(CP%)
-                    GoTo 235
-                    'Second Sub
+            Color 12, 0
+            Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
 
-                Case "P":
+            'Player Stats
+            Locate 3, 1: Color 2, 0
+            Color 14: Print B$;: Locate , 15
+            Print "               OFF  DEF  TOT": Print "NAME"; Tab(15);
+            Print " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
 
-                    Call PrintStatsSchedule(totalGames%, teamRatings%(), B$)
+            For I = 0 To 14
+                If lookyA$(I) <> "XXX" Then
+                    Color 7
+                    If I / 2 = Int(I / 2) Then Color 15
 
-                    LPrint
-                    LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
-                    LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
-                    LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
-                    LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
-                    LPrint Chr$(12)
+                    'Name
+                    Print Left$(lookyA$(I), 13);: Locate , 15
 
-                    I$ = GetKeyPress$
+                    'Points
+                    Print Using "####"; values!(I, 2) * 2 + values!(I, 4) + W0!(I);
 
-                    Call PrintStatsSummary(totalGames%, compareZ!(), compareZ1!(), B$)
+                    'Average
+                    If values!(I, 0) > 0 Then Locate , 21: Print Using "##.#"; (values!(I, 2) * 2 + values!(I, 4) + W0!(I)) / values!(I, 0);
 
-                Case "D":
-                    Kill diskPaths$(1) + statFile$
-                    Kill diskPaths$(1) + statFile$ + "S"
+                    'Highest Points, Rebounds
+                    Locate , 26: Print Using "## #### #### ####"; values!(I, 13); values!(I, 12); values!(I, 5) - values!(I, 12); values!(I, 5);
 
-            End Select
+                    'Average
+                    If values!(I, 0) > 0 Then Locate , 45: Print Using "##.#"; values!(I, 5) / values!(I, 0);
 
-        Loop Until I$ = Chr$(27)
+                    'PF AST   BLK  STL  TO
+                    Locate , 51: Print Using "### ####  ###  ###  ###"; values!(I, 6); values!(I, 8); values!(I, 9); values!(I, 7); values!(I, 11)
+                End If
+
+            Next I
+
+            'Why is this only put anything under rebounds ?!?!?
+            Print "TEAM";: Locate , 39: Print Using "####"; compareZ!(15)
+
+            '1st Row
+            Color 12: Print "TOTALS";
+
+            'Points
+            If totalGames% > 0 Then ptsCalc! = compareZ!(10) / totalGames% Else ptsCalc! = 0
+            Locate , 14: Print Using "##### ###.#"; compareZ!(10); ptsCalc!;
+
+            'Rebounds
+            If totalGames% > 0 Then rebCalc! = compareZ!(5) / totalGames% Else rebCalc! = 0
+            Locate , 29: Print Using "#### #### ####  ##.#"; compareZ!(12); compareZ!(5) - compareZ!(12) - compareZ!(15); compareZ!(5); rebCalc!;
+
+            'PF  AST  BLK  STL  TO
+            Print Using " #### #### #### #### ####"; compareZ!(6); compareZ!(8); compareZ!(9); compareZ!(7); compareZ!(11)
+
+            '2nd Row
+            'Opponents???
+
+            'Points
+            If totalGames% > 0 Then ptsCalc! = compareZ1!(10) / totalGames% Else ptsCalc! = 0
+            Locate , 14: Print Using "##### ###.#"; compareZ1!(10); ptsCalc!;
+
+            'Rebounds
+            If totalGames% > 0 Then rebCalc! = compareZ1!(5) / totalGames% Else rebCalc! = 0
+            Locate , 29: Print Using "#### #### ####  ##.#"; compareZ1!(12); compareZ1!(5) - compareZ1!(12) - compareZ1!(15); compareZ1!(5); rebCalc!;
+
+            'PF  AST  BLK  STL  TO
+            Print Using " #### #### #### #### ####"; compareZ1!(6); compareZ1!(8); compareZ1!(9); compareZ1!(7); compareZ1!(11)
+
+            Color 3
+
+            Do
+                J$ = GetKeyPress$
+
+                Select Case J$
+
+                    'Pg Up
+                    Case Chr$(0) + "I":
+                        Cls
+                        CP% = 1
+                        GoTo 142
+                        'First Sub
+
+                        'Right Arrow
+                    Case Chr$(0) + "M":
+                        CP% = CP% + 1: If CP% > 25 Then CP% = 14
+                        Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
+
+                        'Left Arrow
+                    Case Chr$(0) + "K":
+                        CP% = CP% - 1
+                        If CP% < 14 Then CP% = 25
+                        Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
+
+                    Case Chr$(13):
+                        Call SortStats(CP%)
+
+                    Case "P":
+                        Call PrintStatsSchedule(totalGames%, teamRatings%(), B$)
+
+                        LPrint
+                        LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
+                        LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
+                        LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
+                        LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
+                        LPrint Chr$(12)
+
+                        K$ = GetKeyPress$
+
+                        Call PrintStatsSummary(totalGames%, compareZ!(), compareZ1!(), B$)
+
+                    Case "D":
+                        Kill diskPaths$(1) + statFile$
+                        Kill diskPaths$(1) + statFile$ + "S"
+
+                End Select
+
+            Loop Until J$ = Chr$(27) Or J$ = Chr$(13)
+
+        Loop Until I$ = Chr$(27) Or I$ = Chr$(0) + "Q"
 
     End If 'Done checking for ESC
 
-    '-- Football / Baseball still perform the below
-    '-- (prompting for a reset of stats
-    '-- We should get rid of it altogether as
-    '-- it makes it too easy to wipe your hard-earned
-    '-- work and time. This code was in the
-    '-- original but no logic branches reached it
+	'Call ResetStatsPrompt (statFile$)
 
-    '    Cls
-    '    Call TITLE_HEADER
-    '    Print "RESET STATS TO 0 ? (YN)";:
-    '    I$ = GetKeyPress$
-    '    If UCase$(I$) <> "Y" Then ...
-
-    '    Print
-    '    Print "ARE YOU SURE ? (YN) ";
-    '    I$ = GetKeyPress$
-    '    If UCase$(I$) = "N" Then Exit Sub
-
-    '   Cls
-
-
-End Sub 'LOOKY
+End Sub
 
 '----------------------------------------
 '       SortStats Subroutine
@@ -949,7 +940,7 @@ Sub PrintStatsSchedule (totalGames%, teamRatings%(), B$)
 
     Next I
 
-	LPrint Chr$(12)
+    LPrint Chr$(12)
 
 End Sub
 
@@ -1035,15 +1026,15 @@ Sub PrintStatsSummary (totalGames%, compareZ!(), compareZ1!(), B$)
     Next
 
     LPrint
-	LPrint "TOTALS"; Tab(15);
+    LPrint "TOTALS"; Tab(15);
 
     'Games
     LPrint Using "##"; totalGames%;
 
-	'-- Should be MIN / AVG points but is excluded; perhaps because AVG cannot be a TOTAL
-	'-- and presumably total MIN is not meaningful
-	'-- However it could be updated to still do, and use an average of the "AVG" values
-	'If compareZ!(0) > 0 Then LPrint Tab(18); Using "####"; Int((compareZ!(10) + 30) / 60);: LPrint Tab(24); Using "##"; Int(((compareZ!(10) / 60) / compareZ!(0)) + .5);
+    '-- Should be MIN / AVG points but is excluded; perhaps because AVG cannot be a TOTAL
+    '-- and presumably total MIN is not meaningful
+    '-- However it could be updated to still do, and use an average of the "AVG" values
+    'If compareZ!(0) > 0 Then LPrint Tab(18); Using "####"; Int((compareZ!(10) + 30) / 60);: LPrint Tab(24); Using "##"; Int(((compareZ!(10) / 60) / compareZ!(0)) + .5);
 
     'FGM / FGA / FGPCT
     LPrint Tab(28); Using "#### ####"; compareZ!(2); compareZ!(1);
@@ -1101,7 +1092,7 @@ Sub PrintStatsSummary (totalGames%, compareZ!(), compareZ1!(), B$)
     LPrint "TEAM";: LPrint Tab(39); Using "####"; compareZ!(15)
 
     LPrint
-	LPrint "TOTALS";
+    LPrint "TOTALS";
 
     'Points
     If totalGames% > 0 Then ptsCalc! = compareZ!(5) / totalGames% Else ptsCalc! = 0
@@ -1118,10 +1109,10 @@ Sub PrintStatsSummary (totalGames%, compareZ!(), compareZ1!(), B$)
     If totalGames% > 0 Then rebCalc! = compareZ1!(10) / totalGames% Else ptsCalc! = 0
     LPrint Tab(14); Using "##### ###.#"; compareZ1!(10); ptsCalc!;
 
-	'-- Should be HI points but is excluded; perhaps because it is not a TOTAL
-	'-- however it could be updated to do a MAX of the "HI" values
-	'LPrint Tab(18); Using "## "; compareZ1!(13)
-	
+    '-- Should be HI points but is excluded; perhaps because it is not a TOTAL
+    '-- however it could be updated to do a MAX of the "HI" values
+    'LPrint Tab(18); Using "## "; compareZ1!(13)
+    
     'Rebounds
     If totalGames% > 0 Then rebCalc! = compareZ1!(5) / totalGames% Else rebCalc! = 0
     LPrint Tab(29); Using "#### #### ####  ##.#"; compareZ1!(12); compareZ1!(5) - compareZ1!(12) - compareZ1!(15); compareZ1!(5); rebCalc!;
@@ -1130,5 +1121,85 @@ Sub PrintStatsSummary (totalGames%, compareZ!(), compareZ1!(), B$)
     LPrint Using " #### #### #### #### ####"; compareZ1!(6); compareZ1!(8); compareZ1!(9); compareZ1!(7); compareZ1!(11)
 
     LPrint Chr$(12)
+
+End Sub
+
+
+'----------------------------------------
+'       ResetStatPrompt Subroutine
+'----------------------------------------
+' Prompts user with choice to reset stats
+' If they chose so, and confirm, then
+' it will proceed to delete the files.
+Sub ResetStatPrompt (statFile$)
+	
+	Cls
+
+	JJ = 1
+	Locate 6, 8
+
+	'Print box top
+	Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+	'Print box sides
+	For II = 1 To JJ
+		Locate 6 + II, 8
+		Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+	Next
+
+	'Print box bottom
+	Locate 7 + JJ, 8
+	Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+	Locate 7
+
+	Do
+		U$ = "RESET COMPILED STATS TO 0 (YN)"
+		Locate , (80 - Len(U$)) / 2
+		Print U$
+		I$ = GetKeyPress$
+	Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+	Color 15, 0
+
+	If UCase$(I$) = "Y" Then
+
+		'Do
+		JJ = 1
+		Locate 6, 8
+
+		'Print box top
+		Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+		'Print box sides
+		For II = 1 To JJ
+			Locate 6 + II, 8
+			Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+		Next
+
+		'Print box bottom
+		Locate 7 + JJ, 8
+		Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+		Locate 7
+
+		Do
+			U$ = "ARE YOU SURE (YN)"
+			Locate , (80 - Len(U$)) / 2
+			Print U$
+			I$ = GetKeyPress$
+		Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+		Color 15, 0
+
+		If UCase$(I$) = "Y" Then
+			Kill diskPaths$(1) + statFile$
+			Kill diskPaths$(1) + statFile$ + "S"
+			If _FileExists(diskPaths$(1) + statFile$ + "R") Then Kill diskPaths$(1) + statFile$ + "R"
+		End If
+
+		'Loop Until UCase$(I$) = "N"
+
+	End If 'Done checking if reset stats
 
 End Sub

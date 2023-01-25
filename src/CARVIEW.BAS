@@ -27,9 +27,9 @@ Sub CARVIEW ()
 		Call ReadFile(careerFiles$())
 
 		Do
-			Cls
 			Color , 1
 			Cls
+
 			Locate , 28
 			Color 14
 			Print "SELECT FILE TO VIEW": Color 15
@@ -75,6 +75,7 @@ Sub CARVIEW ()
 
 			Color 15, 0
 			Cls
+
 			Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 
 			Open diskPaths$(1) + Z$ + ".CAR" For Input As #2
@@ -94,7 +95,7 @@ Sub CARVIEW ()
 			Close #2
 
 			Do
-				Locate 18, 10
+				Locate 15, 10
 				Color 12: Print "V";: Color 7: Print "iew or ";
 				Color 12: Print "P";: Color 7: Print "rint"
 				I$ = GetKeyPress$

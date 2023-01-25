@@ -91,3 +91,5 @@ Dim Shared HT%(100), L%(1, 6), NG%(18)
 Dim Shared N0%(2, 2, 4), OX%(2), OY%(2), O%(100), O0%(1)
 Dim Shared PF%(1), PFA%(33), ST%(32), SX%(32, 1, 14)
 Dim Shared TOA%(33), TOF%(1), teamIndex%(500), W%(1, 14, 1)
+
+Dim Shared fileLength&, actualAttendance&

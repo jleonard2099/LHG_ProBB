@@ -6,8 +6,6 @@ Sub SCHEDULE ()
     Shared NS%
     Shared scheduleAP%(), NG%()
 
-    'scheduleAP%(0) = number of games in schedule
-
     _Title "Basketball: The Pro Game - Scheduler"
 
     NG%(0, 2) = 1
@@ -37,10 +35,10 @@ Sub SCHEDULE ()
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
-        Row% = 6
+        Row% = 7
         Column% = 16
 
-        Call box0(5, 15, 13, 65, 2, 15, 1)
+        Call box0(6, 15, 14, 65, 2, 15, 1)
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
@@ -1010,7 +1008,7 @@ Sub BoxscoreMaintenance ()
     FileFGColr% = 15: FileBGColr% = 1
     HiLiteFGColr% = 0: HiLiteBGColr% = 7
     Spacing% = 1
-    Row% = 6
+	Row% = 7
     Column% = 16
 
     Do
@@ -1018,7 +1016,7 @@ Sub BoxscoreMaintenance ()
 
         Color , 0
 
-        Call box0(5, 15, 12, 65, 2, 15, 1)
+        Call box0(6, 15, 13, 65, 2, 15, 1)
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide

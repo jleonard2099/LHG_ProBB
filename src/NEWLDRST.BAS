@@ -1,6 +1,6 @@
 Sub NEWLDRST ()
 
-    'These all end up being singles b/c we don't use Def Int
+    'These all end up being singles b/c we don't use Def Int ???
     Dim HLL(TEAMS_PER_CONFERENCE), HWW(TEAMS_PER_CONFERENCE)
     Dim LL(TEAMS_PER_CONFERENCE), LLS(TEAMS_PER_CONFERENCE), LWS(TEAMS_PER_CONFERENCE)
     Dim LTL(TEAMS_PER_CONFERENCE), LTW(TEAMS_PER_CONFERENCE)
@@ -65,9 +65,9 @@ Sub NEWLDRST ()
                 Call ReadFile(leagueFiles$())
 
                 Do
-                    Cls
                     Color , 1
                     Cls
+
                     Locate , 28
                     Color 14
                     Print "SELECT LEAGUE": Color 15
@@ -127,12 +127,17 @@ Sub NEWLDRST ()
                     For KK = 1 To TEAMS_PER_CONFERENCE
                         'values of YY% are ???
                         YY% = YY% + 1
-                        Color 14: Locate 7, 20: TMR% = TMR% - 1: Print Using "##"; TMR%
+                        Color 14
+						Locate 7, 20: TMR% = TMR% - 1: Print Using "##"; TMR%
 
                         If strZ1$(KK) <> "*" Then
 
                             TML$(YY%) = strZ1$(KK)
-                            Locate 5: Color 15: Print "COMPUTING RECORDS . . . . . . PLEASE WAIT"
+
+							Color 15, 0
+							Cls
+
+							Locate 5: Print "COMPUTING RECORDS . . . . . . PLEASE WAIT"
                             
 							If _FileExists(diskPaths$(1) + strZ1$(KK) + "S") Then
                                 Open diskPaths$(1) + strZ1$(KK) + "S" For Input As #1
@@ -190,10 +195,12 @@ Sub NEWLDRST ()
                     Next
                     Close #1
 
-                    Locate 10
-					Color 12: Print "V";: Color 7: Print "iew or ";
-					Color 12: Print "P";: Color 7: Print "rint"
-                    I$ = GetKeyPress$
+					Do
+						Locate 15, 10
+						Color 12: Print "V";: Color 7: Print "iew or ";
+						Color 12: Print "P";: Color 7: Print "rint"
+						I$ = GetKeyPress$
+					Loop Until UCase$(I$) = "P" Or UCase$(I$) = "V"
 
                     Select Case UCase$(I$)
                         Case "V":

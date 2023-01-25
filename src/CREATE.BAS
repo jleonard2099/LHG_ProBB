@@ -1,9 +1,11 @@
 Sub CREATE ()
 
+    Shared D1$, D2$, D3$, D4$
+
     ReDim menuChoices$(1 To 3)
     Dim memberTeams$(1 To TEAMS_PER_CONFERENCE), memberYears$(1 To TEAMS_PER_CONFERENCE)
     Dim Z2$(TEAMS_PER_CONFERENCE)
-    Dim createT%(34)
+    Dim compareT%(34)
 
     Shared intZ1%()
 
@@ -11,173 +13,173 @@ Sub CREATE ()
 
     _Title "Basketball: The Pro Game - Manage Leagues"
 
-    'determine if the monitor is mono or color
-
     Do
 
         Cls
 
-        For X = 1 To TEAMS_PER_CONFERENCE
-            memberTeams$(X) = "XXX"
-            memberYears$(X) = "XXX"
-            intZ1%(X) = -1
-        Next
+        Call TITLE
 
-		Call TITLE
-		'Erase menuChoices$
-		menuChoices$(1) = "CREATE / DEFINE NEW LEAGUES     "
-		menuChoices$(2) = "ADD / REVIEW LEAGUE MEMBERS     "
-		menuChoices$(3) = "RETURN TO STANDINGS/LEADERS MENU"
-		Selection% = 1
-		Count% = 3
-		Start% = 1
-		ExitCode% = 3
-		FileFGColr% = 15: FileBGColr% = 1
-		HiLiteFGColr% = 0: HiLiteBGColr% = 7
-		Spacing% = 1
-		Row% = 8
-		Column% = 25
+        'Erase menuChoices$
+        menuChoices$(1) = "CREATE / DEFINE NEW LEAGUES     "
+        menuChoices$(2) = "ADD / REVIEW LEAGUE MEMBERS     "
+        menuChoices$(3) = "RETURN TO STANDINGS/LEADERS MENU"
+        Selection% = 1
+        Count% = 3
+        Start% = 1
+        ExitCode% = 3
+        FileFGColr% = 15: FileBGColr% = 1
+        HiLiteFGColr% = 0: HiLiteBGColr% = 7
+        Spacing% = 1
+        Row% = 8
+        Column% = 25
 
-		CALL box0(7, 24, 11, 57, 2,  15, 1)
-		_MouseShow "DEFAULT"
-		MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
-		_MouseHide
+        Call box0(7, 24, 11, 57, 2, 15, 1)
+        _MouseShow "DEFAULT"
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        _MouseHide
 
-		Color , 0
-		newLeague = 0
+        Color , 0
+        newLeague = 0
 
-		If ExitCode% <> 27 Then
-			I1 = Selection%
-			Select Case I1
-				Case 1: 
-					'I = 1
-					Do
-						Color 15, 0: Cls
-						JJ = 7
-						Locate 6, 8: Color 15, 1
-						Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-						Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
-						Locate 7 + JJ, 8
-						Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-						
-						Locate 7, 32
-						Locate , 12: Print "ENTER NAME FOR LEAGUE: ": Print
-						Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
-						Locate , 12: Print "SPACES."
-						Locate , 12: Print "SAMPLE NAMES ARE WHA IHL NHL94-95"
-						Locate 7, 37: Input LG$
+        If ExitCode% <> 27 Then
 
-						If LG$ <> "" Then
-							LG$ = Left$(LG$, 8)
-							
-							Do
-								Locate 13, 12: Print "ANY CHANGE (YN) "
-								I$ = GetKeyPress$
-							Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-						End If
+            For X = 1 To TEAMS_PER_CONFERENCE
+                memberTeams$(X) = "XXX"
+                memberYears$(X) = "XXX"
+                intZ1%(X) = -1
+            Next
 
-					Loop Until UCase$(I$) = "N"
+            Select Case Selection%
 
-					newLeague = 1
-					Call CreateEditLeague (memberYears$(), memberTeams$(), newLeague)
+                Case 1:
+                    'I = 1
+                    Do
+                        Color 15, 0: Cls
+                        JJ = 7
+                        Locate 6, 8: Color 15, 1
+                        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+                        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+                        Locate 7 + JJ, 8
+                        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
-				Case 2: 
-					Spec$ = diskPaths$(1) + "*.LIB"
-					null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-					Count% = DirCount%
+                        Locate 7, 32
+                        Locate , 12: Print "ENTER NAME FOR LEAGUE: ": Print
+                        Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
+                        Locate , 12: Print "SPACES."
+                        Locate , 12: Print "SAMPLE NAMES ARE WHA IHL NHL94-95"
+                        Locate 7, 37: Input LG$
 
-					If Count% = 0 Then 
-						Locate 10, 8
-						Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-						I$ = GetKeyPress$
-						Call CSMsgBox("", 0, Pass)
-					Else
+                        If LG$ <> "" Then
+                            LG$ = Left$(LG$, 8)
 
-						ReDim leagueFiles$(0 To Count%)
+                            Do
+                                Locate 13, 12: Print "ANY CHANGE (YN) "
+                                I$ = GetKeyPress$
+                            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                        End If
 
-						For X = 1 To Count%
-							leagueFiles$(X) = Space$(12)
-						Next
+                    Loop Until UCase$(I$) = "N"
 
-						leagueFiles$(0) = Spec$
+                    newLeague = 1
+                    Call CreateEditLeague(memberYears$(), memberTeams$(), newLeague, LG$)
 
-						Call ReadFile(leagueFiles$())
+                Case 2:
+                    Spec$ = diskPaths$(1) + "*.LIB"
+                    null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
+                    Count% = DirCount%
 
-						Do
+                    If Count% = 0 Then
+                        Locate 10, 8
+                        Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+                        I$ = GetKeyPress$
+                        Call CSMsgBox("", 0, Pass)
+                    Else
 
-							Cls
-							Color , 1
-							Cls
-							Locate , 28
-							Color 14
-							Print "SELECT LEAGUE TO EDIT": Color 15
-							Selection% = 1
-							Start% = 1
-							FileFGColr% = 15: FileBGColr% = 1
-							HiLiteFGColr% = 0: HiLiteBGColr% = 7
-							Rows% = 20
-							Columns% = 4
-							Spacing% = 6
-							Row% = 4
-							Column% = 1
-							Locate 25, 1
-							Color 14
-							Print "ENTER";: Color 15
-							Print "-SELECTS LEAGUE";
+                        ReDim leagueFiles$(0 To Count%)
 
-							_MouseShow "DEFAULT"
-							MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-							_MouseHide
+                        For X = 1 To Count%
+                            leagueFiles$(X) = Space$(12)
+                        Next
 
-							If ExitCode% <> 27 Then
+                        leagueFiles$(0) = Spec$
 
-								Color 15, 1
-								targetFile$ = RTrim$(leagueFiles$(Selection%))
-								Locate 2, 33: Print targetFile$
+                        Call ReadFile(leagueFiles$())
 
-								Do
-									Locate , 33: Print "ANY CHANGE (YN)";
-									I$ = GetKeyPress$
-								Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                        Do
 
-								Color 15, 0
+                            Cls
+                            Color , 1
+                            Cls
+                            Locate , 28
+                            Color 14
+                            Print "SELECT LEAGUE TO EDIT": Color 15
+                            Selection% = 1
+                            Start% = 1
+                            FileFGColr% = 15: FileBGColr% = 1
+                            HiLiteFGColr% = 0: HiLiteBGColr% = 7
+                            Rows% = 20
+                            Columns% = 4
+                            Spacing% = 6
+                            Row% = 4
+                            Column% = 1
+                            Locate 25, 1
+                            Color 14
+                            Print "ENTER";: Color 15
+                            Print "-SELECTS LEAGUE";
 
-							End If
+                            _MouseShow "DEFAULT"
+                            MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+                            _MouseHide
 
-						Loop Until UCase$(I$) = "N" Or ExitCode% = 27
+                            If ExitCode% <> 27 Then
 
-						If ExitCode% <> 27 Then
+                                Color 15, 1
+                                targetFile$ = RTrim$(leagueFiles$(Selection%))
+                                Locate 2, 33: Print targetFile$
 
-							LG$ = Left$(targetFile$, Len(targetFile$) - 4)
+                                Do
+                                    Locate , 33: Print "ANY CHANGE (YN)";
+                                    I$ = GetKeyPress$
+                                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-							Open diskPaths$(1) + LG$ + ".LIB" For Input As #2
-							Input #2, LG$
-							Input #2, D1$
-							Input #2, D2$
-							Input #2, D3$
-							Input #2, D4$
-							For X = 1 To TEAMS_PER_CONFERENCE
-								Input #2, memberTeams$(X)
-								Input #2, intZ1%(X)
-								Input #2, memberYears$(X)
-							Next
-							Close 2
+                                Color 15, 0
 
-							Color 15, 1
+                            End If
 
-							Call CreateEditLeague (memberYears$(), memberTeams$(), newLeague)
+                        Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
-						End If
+                        If ExitCode% <> 27 Then
 
-					End If 'Done checking file count
+                            LG$ = Left$(targetFile$, Len(targetFile$) - 4)
 
-			End Select
+                            Open diskPaths$(1) + LG$ + ".LIB" For Input As #2
+                            Input #2, LG$
+                            Input #2, D1$
+                            Input #2, D2$
+                            Input #2, D3$
+                            Input #2, D4$
+                            For X = 1 To TEAMS_PER_CONFERENCE
+                                Input #2, memberTeams$(X)
+                                Input #2, intZ1%(X)
+                                Input #2, memberYears$(X)
+                            Next
+                            Close 2
 
-		End If 'Done checking for ESC
+                            Color 15, 1
 
-	Loop Until Selection% = 3 Or ExitCode% = 27
+                            Call CreateEditLeague(memberYears$(), memberTeams$(), newLeague, LG$)
 
-	Cls
+                        End If
+
+                    End If 'Done checking file count
+
+            End Select
+
+        End If 'Done checking for ESC
+
+    Loop Until Selection% = 3 Or ExitCode% = 27
+
+    Cls
 
 End Sub
 
@@ -185,10 +187,12 @@ End Sub
 '       CreateEditLeague Subroutine
 '----------------------------------------
 '...explanation...
-Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
+Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague, league$)
 
-    Dim T1$(1)
+    Dim T1$
     Shared intZ1%()
+    Shared compareT%()
+    Shared D1$, D2$, D3$, D4$
 
     FG = 0
     BG = 7
@@ -253,7 +257,7 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
         Color 14, 0
         Cls
         Print
-        Print "  "; LG$; " LEAGUE ": Print: Color 12
+        Print "  "; league$; " LEAGUE ": Print: Color 12
         Locate , 4: Print D1$; Tab(24); D2$; Tab(44); D3$; Tab(64); D4$
 
         For I = 1 To 10
@@ -270,13 +274,17 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
         I$ = GetKeyPress$
 
         If I$ <> "3" Then
+
             Do
                 Locate 20, 30: Print "SLOT # (1-" + Str$(TEAMS_PER_CONFERENCE) + ") ";
-                N = 1: Input B
+                N = 1
+                Input B
             Loop Until B >= 1 And B <= TEAMS_PER_CONFERENCE
+
         End If
 
         Select Case UCase$(I$)
+
             Case "1":
 
                 Do
@@ -288,56 +296,65 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
                     Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
                     Locate 7 + JJ, 8
                     Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-					
-					Locate 7, 32
+
+                    Locate 7, 32
                     Locate , 12: Print "ENTER DISK ID: ": Print
                     Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
                     Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
                     Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
                     Locate 7, 27: Input NY$
 
-					If NY$ = "" And YN$ <> "" Then 
-						'YN$ = NY$
-                        Call SelectTeam_CREATE (YN$, NTMS, D)
+                    If NY$ = "" And YN$ <> "" Then
+                        'YN$ = NY$
+                        Call SelectTeam_CREATE(YN$, NTMS, D)
                     Else
                         YN$ = NY$
-                        ERASE teamNames$
+                        Erase teamNames$
 
                         NTMS = 0
+
                         Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
                         Y = LOF(1)
                         Field #1, 15 As Q$(0), 15 As Q$(1)
+
                         For I = 0 To 6
                             Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
                         Next
+
                         Field #1, 44 As X$, 2 As Q$(9)
+
                         For I = 0 To 34
                             Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
                         Next
+
                         For I = 0 To 14
                             Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
                             For I1 = 0 To 19
                                 Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
                             Next
                         Next
+
                         Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+
                         For I1 = 1 To Y / 1031
                             Get #1, I1
                             CK% = CVI(Q$(9))
                             If CK% = 999 Then
                                 NTMS = NTMS + 1
                                 teamNames$(NTMS) = Q$(0)
-								teamIndex%(NTMS) = I1
+                                teamIndex%(NTMS) = I1
                             End If
                         Next
+
                         Close 1
 
-                        Call SelectTeam_CREATE (YN$, NTMS, D)
+                        Call SelectTeam_CREATE(YN$, NTMS, D)
+
                     End If
 
-                    T1$(0) = RTrim$(Q$(0))
+                    T1$ = RTrim$(Q$(0))
 
-                    For I = 0 To 34: createT%(I) = CVI(Q$(I + 10)): Next
+                    For I = 0 To 34: compareT%(I) = CVI(Q$(I + 10)): Next
                     Close 1
 
                     Locate 2, 33: Color 31: Print "LOADING..."
@@ -346,14 +363,14 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
                         BO% = 0
                     Else
                         Locate 2, 33
-                        Color createT%(33), createT%(34): Print T1$
+                        Color compareT%(33), compareT%(34): Print T1$
 
                         Color 15, 4
 
                         Do
-							Locate , 33: Print "ANY CHANGE (YN)";
-							A$ = GetKeyPress$
-						Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                            Locate , 33: Print "ANY CHANGE (YN)";
+                            A$ = GetKeyPress$
+                        Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
 
                     End If
 
@@ -371,8 +388,8 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
 
     Cls
 
-    Open diskPaths$(1) + LG$ + ".LIB" For Output As #2
-    Print #2, LG$: Print #2, D1$: Print #2, D2$: Print #2, D3$: Print #2, D4$
+    Open diskPaths$(1) + league$ + ".LIB" For Output As #2
+    Print #2, league$: Print #2, D1$: Print #2, D2$: Print #2, D3$: Print #2, D4$
     For X = 1 To TEAMS_PER_CONFERENCE
         Print #2, memberTeams$(X)
         Print #2, intZ1%(X)
@@ -385,7 +402,7 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
         If memberTeams$(X) <> "XXX" Then
 
             For D = 4 To 11
-                If Mid$(memberTeams$(X), D, 1) = Chr$(32) Or Mid$(memberTeams$(X), D, 1) = "." Then 
+                If Mid$(memberTeams$(X), D, 1) = Chr$(32) Or Mid$(memberTeams$(X), D, 1) = "." Then
                     Mid$(memberTeams$(X), D, 1) = "_"
                 End If
             Next D
@@ -393,7 +410,7 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
             QQ = 8
 
             For D = 11 To 4 Step -1
-                If Mid$(memberTeams$(X), D, 1) = "_" Then 
+                If Mid$(memberTeams$(X), D, 1) = "_" Then
                     QQ = D - 4
                 Else
                     Exit For
@@ -410,11 +427,11 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
     Next X
     '-- quick edits here
 
-    Q$ = LG$ + ".TMS"
+    Q$ = league$ + ".TMS"
 
     Open diskPaths$(1) + Q$ For Output As #2
 
-    Write #2, LG$: Write #2, D1$: Write #2, D2$: Write #2, D3$: Write #2, D4$
+    Write #2, league$: Write #2, D1$: Write #2, D2$: Write #2, D3$: Write #2, D4$
 
     For X = 1 To TEAMS_PER_CONFERENCE
         Write #2, memberTeams$(X)
@@ -424,6 +441,10 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague)
 
 End Sub
 
+'----------------------------------------
+'      SelectTeam_CREATE Subroutine
+'----------------------------------------
+'...explanation...
 Sub SelectTeam_CREATE (yearNumber$, numberTeams, selectedIndex)
 
     Selection% = 1
@@ -448,28 +469,28 @@ Sub SelectTeam_CREATE (yearNumber$, numberTeams, selectedIndex)
 
     If ExitCode% <> 27 Then
 
-		selectedIndex = teamIndex%(Selection%)
+        selectedIndex = teamIndex%(Selection%)
 
-		Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
-		Field #1, 15 As Q$(0), 15 As Q$(1)
-		For I = 0 To 6
-			Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-		Next
-		Field #1, 44 As X$, 2 As Q$(9)
-		For I = 0 To 34
-			Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-		Next
-		For I = 0 To 14
-			Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-			For I1 = 0 To 19
-				Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-			Next
-		Next
-		Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+        Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+        Field #1, 15 As Q$(0), 15 As Q$(1)
+        For I = 0 To 6
+            Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+        Next
+        Field #1, 44 As X$, 2 As Q$(9)
+        For I = 0 To 34
+            Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+        Next
+        For I = 0 To 14
+            Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+            For I1 = 0 To 19
+                Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+            Next
+        Next
+        Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 
-		Get #1, D
-	Else
-		BO% = 1
-	End If
+        Get #1, selectedIndex
+    Else
+        BO% = 1
+    End If
 
 End Sub

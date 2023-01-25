@@ -120,23 +120,32 @@ Sub SEELEAG ()
 
 						Do
 							J = 5
+
 							Locate 8, 8
-							Color 15, 1: Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+							Color 15, 1
+							
+							Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
 							For II = 1 To J
 								Locate 8 + II, 8
 								Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
 							Next
 
-							Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 10, 15
-
-							Color 7
+							Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+							
+							Locate 10, 15
+							Color 7, 1
+							
 							Locate , 30: Print "STATS TO ";
 							Color 15: Print "S";: Color 7: Print "CREEN"
+
 							Locate , 30: Print "STATS TO ";
 							Color 15: Print "P";: Color 7: Print "RINTER"
+
 							Locate , 30: Print "STATS TO ";
 							Color 15: Print "F";: Color 7: Print "ILE"
+
 							I$ = GetKeyPress$
 							Color 14, 0
 
@@ -150,12 +159,22 @@ Sub SEELEAG ()
 
 								Case "F":
 									Do
-										Color 15, 0: Cls
+										Color 15, 0
+										Cls
+
 										JJ = 7
+
 										Locate 6, 8
+
 										Color 15, 1
-										Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-										Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+
+										Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+										
+										For II = 1 To JJ: 
+											Locate 6 + II, 8
+											Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+										Next
+
 										Locate 7 + JJ, 8
 										Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
@@ -174,25 +193,34 @@ Sub SEELEAG ()
 									Loop Until UCase$(I$) = "N" And SF$ <> ""
 
 									Color 15, 0
-
 									Call SavePrintLeagueStats(SF$, 1)
 
 								Case "S":
 									Call LeagueStatsToScreen
 
+									Color 15, 0
+									Cls
+
 									JJ = 4
+
 									Locate 6, 8
+
 									Color 15, 1
+
 									Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
-									For II = 1 To JJ: Locate 6 + II, 8
+
+									For II = 1 To JJ: 
+										Locate 6 + II, 8
 										Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
 									Next
+
 									Locate 7 + JJ, 8
+
 									Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
 
 									Do
 										Color 15, 1
-										Locate 7
+										Locate 8
 										U$ = "VIEW LEAGUE STATS AGAIN (YN)"
 										Locate , (80 - Len(U$)) / 2
 										Print U$
@@ -738,8 +766,6 @@ Sub LeagueStatsToScreen ()
     Locate VT, HZ: Print Space$(26);
     QK$ = GetKeyPress$
 
-    Cls
-
 End Sub
 
 '----------------------------------------
@@ -1126,18 +1152,22 @@ Sub SavePrintLeagueStats (statFile$, destination)
         End If
     Next
 
-    Print #2, Chr$(12)
-
     Close 2
 
     'Print the file we created
     If destination <> 1 Then
+
         Open "REPORT" For Input As #2
+
         Do While Not EOF(2)
             Line Input #2, X$
             LPrint X$
         Loop
+
         Close 2
+
+		LPrint Chr$(12)
+
     End If
 
 End Sub
