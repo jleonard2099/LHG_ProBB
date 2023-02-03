@@ -22,8 +22,6 @@ Sub SEELEAG ()
         Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
         I$ = GetKeyPress$
         Call CSMsgBox("", 0, Pass)
-        Exit Sub
-        'Call LEADERS_MENU 'Run "HELLO.EXE 3"
     Else
         ReDim leagueLeaderFiles$(0 To Count%)
         For X = 1 To Count%
@@ -196,6 +194,7 @@ Sub SEELEAG ()
 									Call SavePrintLeagueStats(SF$, 1)
 
 								Case "S":
+
 									Call LeagueStatsToScreen
 
 									Color 15, 0
@@ -261,14 +260,19 @@ Sub LeagueStatsToScreen ()
     Shared LG$, D1$, D2$, D3$, D4$
 
     Cls
-    Color 12: Print "                        "; LG$; " LEAGUE STANDINGS"
+    
+	Color 12
+	Print "                        "; LG$; " LEAGUE STANDINGS"
     Print
-    Color 14: Print "    "; D1$; " DIVISION"
+    Color 14
+	Print "    "; D1$; " DIVISION"
     Print
-    Color 2: Print "                   W    L     PCT   GB"
+    Color 2
+	Print "                   W    L     PCT   GB"
     Color 15
 
     For P = 1 To 10
+
         If leagT$(P) <> "" And leagT$(P) <> "*" Then
             D1 = O1!(1) - O2!(1)
             D = O1!(P) - O2!(P)
@@ -287,6 +291,7 @@ Sub LeagueStatsToScreen ()
             Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
             Print BK$
         End If
+
     Next P
 
     HZ = 1
@@ -295,11 +300,15 @@ Sub LeagueStatsToScreen ()
     QK$ = GetKeyPress$
 
     Cls
-    Color 12: Print "                        "; LG$; " LEAGUE STANDINGS"
+
+    Color 12
+	Print "                        "; LG$; " LEAGUE STANDINGS"
     Print
-    Color 14: Print "    "; D2$; " DIVISION"
+    Color 14
+	Print "    "; D2$; " DIVISION"
     Print
-    Color 2: Print "                   W    L     PCT   GB"
+    Color 2
+	Print "                   W    L     PCT   GB"
     Color 15
 
     For P = 11 To 20
@@ -329,11 +338,15 @@ Sub LeagueStatsToScreen ()
     QK$ = GetKeyPress$
 
     Cls
-    Color 12: Print "                        "; LG$; " LEAGUE STANDINGS"
+
+    Color 12
+	Print "                        "; LG$; " LEAGUE STANDINGS"
     Print
-    Color 14: Print "    "; D3$; " DIVISION"
+    Color 14
+	Print "    "; D3$; " DIVISION"
     Print
-    Color 2: Print "                   W    L     PCT   GB"
+    Color 2
+	Print "                   W    L     PCT   GB"
     Color 15
 
     For P = 21 To 30
@@ -363,11 +376,14 @@ Sub LeagueStatsToScreen ()
     QK$ = GetKeyPress$
 
     Cls
-    Color 12: Print "                        "; LG$; " LEAGUE STANDINGS"
+    Color 12
+	Print "                        "; LG$; " LEAGUE STANDINGS"
     Print
-    Color 14: Print "    "; D4$; " DIVISION"
+    Color 14
+	Print "    "; D4$; " DIVISION"
     Print
-    Color 2: Print "                   W    L     PCT   GB"
+    Color 2
+	Print "                   W    L     PCT   GB"
     Color 15
 
     For P = 31 To 40
@@ -396,24 +412,32 @@ Sub LeagueStatsToScreen ()
     QK$ = GetKeyPress$
 
     Cls
-    Color 14
-    Print "FIELD GOAL % (MIN 5 FGA/G)"; Tab(41); "FREE THROW % (MIN 2 FTA/G)"
-	'Print
-    Print "                            PCT   FGA"; Tab(41); "                            PCT   FTA"
+    
+	Color 14
+    Print "FIELD GOAL % (MIN 5 FGA/G)"
+    Print "                            PCT   FGA"
     Color 15
 
     For P = 41 To 60
         If Z2$(P) <> "*" And Z2$(P) <> "" Then
-            Print Left$(Z2$(P), 10) + ", " + Z3$(P);: Locate , 28
+            Print Left$(Z2$(P), 10) + ", " + Z3$(P);
+			Locate , 28
             Print Using "##.#  ####"; Z!(P) * 100; Z1!(P)
         End If
     Next
 
-    Locate 4
+	Color 14
+    Locate 1, 41
+	Print "FREE THROW % (MIN 2 FTA/G)"
+	Locate , 41
+	Print "                            PCT   FTA"
+    Color 15
 
     For P = 61 To 80
         If Z2$(P) <> "*" And Z2$(P) <> "" Then
-            Locate , 41: Print Left$(Z2$(P), 10) + ", " + Z3$(P);: Locate , 68
+            Locate , 41
+			Print Left$(Z2$(P), 10) + ", " + Z3$(P);
+			Locate , 68
             Print Using "##.#  ####"; Z!(P) * 100; Z1!(P)
         End If
     Next
@@ -424,6 +448,7 @@ Sub LeagueStatsToScreen ()
     QK$ = GetKeyPress$
 
     Cls
+
     Color 14: Print "SCORING"
     Color 14: Print "                                PTS/G"
     Color 15
@@ -436,8 +461,10 @@ Sub LeagueStatsToScreen ()
     Next
 
     Color 14
-    Locate 1, 41: Print "TOTAL POINTS"
-    Locate , 41: Print "                                  PTS"
+    Locate 1, 41
+	Print "TOTAL POINTS"
+    Locate , 41
+	Print "                                  PTS"
     Color 15
 
     For P = 21 To 40
@@ -453,7 +480,9 @@ Sub LeagueStatsToScreen ()
     QK$ = GetKeyPress$
 
     Cls
-    Color 14: Print "STEALS PER GAME"
+
+    Color 14
+	Print "STEALS PER GAME"
     Color 15
 
     For P = 81 To 90
@@ -463,7 +492,9 @@ Sub LeagueStatsToScreen ()
         End If
     Next
 
-    Locate 1, 41: Color 14: Print "STEALS"
+    Locate 1, 41
+	Color 14
+	Print "STEALS"
     Color 15
 
     For P = 91 To 100
@@ -473,7 +504,9 @@ Sub LeagueStatsToScreen ()
         End If
     Next
 
-    Locate 13: Color 14: Print "ASSISTS PER GAME"
+    Locate 13
+	Color 14
+	Print "ASSISTS PER GAME"
     Color 15
 
     For P = 101 To 110
@@ -483,7 +516,9 @@ Sub LeagueStatsToScreen ()
         End If
     Next
 
-    Locate 13, 41: Color 14: Print "ASSISTS"
+    Locate 13, 41
+	Color 14
+	Print "ASSISTS"
     Color 15
 
     For P = 111 To 120
@@ -500,7 +535,8 @@ Sub LeagueStatsToScreen ()
 
     Cls
 
-    Color 14: Print "THREE FIELD GOAL%"
+    Color 14
+	Print "THREE FIELD GOAL%"
     Color 15
     For P = 121 To 130
         If Z2$(P) <> "" Then
@@ -510,7 +546,8 @@ Sub LeagueStatsToScreen ()
     Next P
 
     Locate 1, 41
-    Color 14: Print "MINUTES PER GAME"
+    Color 14
+	Print "MINUTES PER GAME"
     Color 15
 
     For P = 141 To 150
@@ -521,7 +558,8 @@ Sub LeagueStatsToScreen ()
     Next P
 
     Locate 13
-    Color 14: Print "THREE POINT FIELD GOALS MADE"
+    Color 14
+	Print "THREE POINT FIELD GOALS MADE"
     Color 15
 
     For P = 131 To 140
@@ -532,7 +570,8 @@ Sub LeagueStatsToScreen ()
     Next
 
     Locate 13, 41
-    Color 14: Print "TOTAL MINUTES"
+    Color 14
+	Print "TOTAL MINUTES"
     Color 15
 
     For P = 151 To 160
@@ -548,7 +587,9 @@ Sub LeagueStatsToScreen ()
     QK$ = GetKeyPress$
 
     Cls
-    Color 14: Print "REBOUNDS PER GAME   "
+
+    Color 14
+	Print "REBOUNDS PER GAME   "
     Color 15
 
     For P = 161 To 170
@@ -558,7 +599,9 @@ Sub LeagueStatsToScreen ()
         End If
     Next
 
-    Locate 1, 41: Color 14: Print "REBOUNDS"
+    Locate 1, 41
+	Color 14
+	Print "REBOUNDS"
     Color 15
 
     For P = 171 To 180
@@ -568,7 +611,9 @@ Sub LeagueStatsToScreen ()
         End If
     Next
 
-    Locate 13: Color 14: Print "BLOCKS PER GAME"
+    Locate 13
+	Color 14
+	Print "BLOCKS PER GAME"
     Color 15
 
     For P = 181 To 190
@@ -578,7 +623,9 @@ Sub LeagueStatsToScreen ()
         End If
     Next
 
-    Locate 13, 41: Color 14: Print "BLOCKS"
+    Locate 13, 41
+	Color 14
+	Print "BLOCKS"
     Color 15
 
     For P = 191 To 200
@@ -594,7 +641,8 @@ Sub LeagueStatsToScreen ()
     QK$ = GetKeyPress$
 
     Cls
-    Color 14: Print "FIELD GOALS MADE "
+    Color 14
+	Print "FIELD GOALS MADE "
     Color 15
 
     For P = 201 To 210
@@ -605,7 +653,8 @@ Sub LeagueStatsToScreen ()
     Next
 
     Locate 1, 41
-    Color 14: Print "FREE THROWS MADE"
+    Color 14
+	Print "FREE THROWS MADE"
     Color 15
 
     For P = 211 To 220
@@ -616,7 +665,8 @@ Sub LeagueStatsToScreen ()
     Next
 
     Locate 13
-    Color 14: Print "FOULS PER GAME"
+    Color 14
+	Print "FOULS PER GAME"
     Color 15
 
     For P = 221 To 230
@@ -626,7 +676,9 @@ Sub LeagueStatsToScreen ()
         End If
     Next
 
-    Locate 13, 41: Color 14: Print "FOULS"
+    Locate 13, 41
+	Color 14
+	Print "FOULS"
     Color 15
 
     For P = 231 To 240
@@ -642,7 +694,9 @@ Sub LeagueStatsToScreen ()
     QK$ = GetKeyPress$
 
     Cls
-    Color 14: Print "MOST VALUABLE PLAYER POINTS"
+
+    Color 14
+	Print "MOST VALUABLE PLAYER POINTS"
     Color 15
 
     For P = 241 To 250
@@ -658,26 +712,45 @@ Sub LeagueStatsToScreen ()
     QK$ = GetKeyPress$
 
     Cls
-    Color 12: Print "                         OFFENSIVE TOTALS"
-    Color 14: Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+
+    Color 12
+	Print "                         OFFENSIVE TOTALS"
+    Color 14
+	Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 1 To 20
 
         If Not (OL$(X) = "" Or OL$(X) = "*" Or OL$(X) = " ") Then
-
+			'Team
             Print Left$(OL$(X), 11); Tab(13);
+			'G
             Print Using "##"; OL!(X, 16);: Print Tab(16);
+			'FGA
             Print Using "####"; OL!(X, 2);: Print Tab(21);
+			'FGM
             Print Using "####"; OL!(X, 3);: Print Tab(26);
+			'FG PCT
             Print Using ".###"; OL!(X, 17);: Print Tab(31);
+			'FTA / FTM / FT PCT
+
+			'FTA / FTM are currently swapped, making FT PCT inaccurate
+			'B/c calculations are on the fly, did we read into the wrong spots?
             Print Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);: Print Tab(46);
+
+			'REB
             Print Using "####"; OL!(X, 6);: Print Tab(51);
+			'AST
             Print Using "####"; OL!(X, 9);: Print Tab(56);
+			'PF
             Print Using "####"; OL!(X, 7);: Print Tab(61);
+			'STL
             Print Using "###"; OL!(X, 8);: Print Tab(65);
+			'BLK
             Print Using "###"; OL!(X, 10);: Print Tab(69);
+			'PTS
             Print Using "#####"; OL!(X, 20);: Print Tab(75);
+			'AVG
             Print Using "###.#"; OL!(X, 19)
 
         End If
@@ -690,8 +763,11 @@ Sub LeagueStatsToScreen ()
     QK$ = GetKeyPress$
 
     Cls
-    Color 12: Print "                      OFFENSIVE TOTALS (cont)"
-    Color 14: Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+
+    Color 12
+	Print "                      OFFENSIVE TOTALS (cont)"
+    Color 14
+	Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 21 To 40
@@ -702,6 +778,7 @@ Sub LeagueStatsToScreen ()
             Print Using "####"; OL!(X, 3);: Print Tab(26);
             Print Using ".###"; OL!(X, 17);: Print Tab(31);
             Print Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);: Print Tab(46);
+            Print Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);: Print Tab(46);
             Print Using "####"; OL!(X, 6);: Print Tab(51);
             Print Using "####"; OL!(X, 9);: Print Tab(56);
             Print Using "####"; OL!(X, 7);: Print Tab(61);
@@ -718,25 +795,41 @@ Sub LeagueStatsToScreen ()
     QK$ = GetKeyPress$
 
     Cls
-    Color 12: Print "                         DEFENSIVE TOTALS"
-    Color 14: Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+
+    Color 12
+	Print "                         DEFENSIVE TOTALS"
+    Color 14
+	Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 1 To 20
 
         If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
+			'Team
             Print Left$(DL$(X), 11); Tab(13);
+			'Games
             Print Using "##"; DL!(X, 16);: Print Tab(16);
+			'FGA
             Print Using "####"; DL!(X, 2);: Print Tab(21);
+			'FGM
             Print Using "####"; DL!(X, 3);: Print Tab(26);
+			'FG PCT
             Print Using ".###"; DL!(X, 17);: Print Tab(31);
+			'FTA / FTM / FT PCT
             Print Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);: Print Tab(46);
+			'REB / AST
             Print Using "#### ####"; DL!(X, 6); DL!(X, 9);: Print Tab(56);
+			'PF
             Print Using "####"; DL!(X, 7);: Print Tab(61);
+			'STL
             Print Using "###"; DL!(X, 8);: Print Tab(65);
+			'BLK
             Print Using "###"; DL!(X, 10);: Print Tab(69);
+			'PTS
             Print Using "#####"; DL!(X, 20);: Print Tab(75);
+			'AVG
             Print Using "###.#"; DL!(X, 19)
+
         End If
 
     Next
@@ -747,8 +840,11 @@ Sub LeagueStatsToScreen ()
     QK$ = GetKeyPress$
 
     Cls
-    Color 12: Print "                      DEFENSIVE TOTALS (cont)"
-    Color 14: Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+
+    Color 12
+	Print "                      DEFENSIVE TOTALS (cont)"
+    Color 14
+	Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 21 To 40

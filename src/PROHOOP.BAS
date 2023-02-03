@@ -4,6 +4,9 @@
 '$INCLUDE: 'PadRight.BI'
 '$INCLUDE: 'GameRoutines.BI'
 
+DefInt A-Z
+
+
 On Error GoTo Errhandler
 
 '----------------------------------------
@@ -1446,7 +1449,7 @@ U$ = "BALL OUT OF BOUNDS TO " + B$(D)
 If PB% = 0 Then
     Call DELAY
 Else
-    'PB% = 1 And
+    'PB% = 1
     If pbpDelay! <> 0 Then Print U$: Call MOREDELAY
 End If
 
@@ -1908,16 +1911,22 @@ If S <= R0 Then
 
     For F3 = 1 To 2
 
-        S = Int(Rnd(1) * 100) + 1
+        'Increase FT ATT
+        A!(P, B1!(P, B), 9) = A!(P, B1!(P, B), 9) + 1
 
-        FX% = A!(P, B1!(P, B), 1)
+        S = Int(Rnd(1) * 100) + 1
+        FX% = A!(P, B1(P, B), 1)
+        'If FA%(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
 
         If S <= FX% Then
+
             If PB% = 0 Then
-                NM% = NM% + 1: Call THREEFT
+                NM% = NM% + 1
+                Call THREEFT
             Else
-                'PB% = 1 Then
-                NM% = NM% + 1: Call MADEFT
+                'PB% = 1
+                NM% = NM% + 1
+                Call MADEFT
             End If
         Else
             'S > FX% And
@@ -1926,11 +1935,9 @@ If S <= R0 Then
             Else
                 'PB% = 1
                 Call MISSFT
-
             End If
-        End If
 
-        A!(P, B1!(P, B), 9) = A!(P, B1!(P, B), 9) + 1
+        End If
 
         If NM% = 1 Then Exit For
 
@@ -2008,7 +2015,7 @@ If S <= F - 2 Then
             Call MAKEPBP
             U$ = "STUFF BY " + AA$(P, B1!(P, B), 0) + " !!!": DK% = 0
         Else
-            'PB% = 1 Then
+            'PB% = 1
             U$ = "STUFF BY " + AA$(P, B1!(P, B), 0) + " !!!": DK% = 0
         End If
     Else
@@ -2264,10 +2271,19 @@ If pbpDelay! <> 0 Then
 End If
 
 572 '
-A!(P, B1!(P, B), 9) = A!(P, B1!(P, B), 9) + 1
+
 F3 = 1
+
+'Increase FT ATT
+A!(P, B1!(P, B), 9) = A!(P, B1!(P, B), 9) + 1
+
 S = Int(Rnd(1) * 100) + 1
 FX% = A!(P, B1!(P, B), 1)
+'If FA%(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
+
+'-- College only has this
+'If S <= FX% Then Call THREEFT
+'If S > FX% Then Call BADFT
 
 If S <= FX% Then
     If PB% = 0 Then
@@ -2526,15 +2542,22 @@ End If
 Call MOREDELAY
 NM% = 0
 
+A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 3
+
 For F3 = 1 To 3
+
     S = Int(Rnd(1) * 100) + 1
     FX% = A!(P, B1!(P, B), 1)
+    'If FA%(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
+
     If S <= FX% Then
         If PB% = 0 Then
-            NM% = NM% + 1: Call THREEFT
+            NM% = NM% + 1
+            Call THREEFT
         Else
             'PB% = 1
-            NM% = NM% + 1: Call MADEFT
+            NM% = NM% + 1
+            Call MADEFT
         End If
     Else
         'S > FX%
@@ -2543,8 +2566,6 @@ For F3 = 1 To 3
         Else
             Call MISSFT
         End If
-
-        A!(P, B1!(P, B), 9) = A!(P, B1!(P, B), 9) + 1
 
         If NM% = 2 Then Exit For
         If F3 = 2 And (RT% = 0 Or RT% = 1 And (P2(D) <= NB% And H <= 4 Or P2(D) <= 3 And H > 4)) Then Exit For
@@ -3110,3 +3131,4 @@ End Sub
 '$INCLUDE: 'QPProEqu.BM'
 '$INCLUDE: 'PadRight.BM'
 '$INCLUDE: 'GameRoutines.BM'
+

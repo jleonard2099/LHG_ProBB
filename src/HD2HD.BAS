@@ -40,7 +40,9 @@ Sub HD2HD ()
         Color , 0
 
         If ExitCode% <> 27 Then
+
             Select Case Selection%
+
                 Case 1:
 
                     RDD = 0

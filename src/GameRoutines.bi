@@ -93,3 +93,4 @@ Dim Shared PF%(1), PFA%(33), ST%(32), SX%(32, 1, 14)
 Dim Shared TOA%(33), TOF%(1), teamIndex%(500), W%(1, 14, 1)
 
 Dim Shared fileLength&, actualAttendance&
+

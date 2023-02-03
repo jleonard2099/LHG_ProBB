@@ -108,19 +108,19 @@ Sub ViewSeasonRecords ()
     Print
     Locate , 4: Print "CATEGORY                PLAYER           TEAM            RECORD"
     Color 7
-    Locate , 4: Print indRecords$(1); Tab(28); BRC$(1, 0); Tab(42); BRC$(1, 1); Tab(62); Using "####"; BRC!(1)
-    Locate , 4: Print indRecords$(2); Tab(28); BRC$(2, 0); Tab(42); BRC$(2, 1); Tab(62); Using "####"; BRC!(2)
-    Locate , 4: Print indRecords$(3); Tab(28); BRC$(3, 0); Tab(42); BRC$(3, 1); Tab(62); Using "####"; BRC!(3)
-    Locate , 4: Print indRecords$(4); Tab(28); BRC$(4, 0); Tab(42); BRC$(4, 1); Tab(62); Using "##.#"; BRC!(4) * 100
-    Locate , 4: Print indRecords$(5); Tab(28); BRC$(5, 0); Tab(42); BRC$(5, 1); Tab(62); Using "####"; BRC!(5)
-    Locate , 4: Print indRecords$(6); Tab(28); BRC$(6, 0); Tab(42); BRC$(6, 1); Tab(62); Using "####"; BRC!(6)
-    Locate , 4: Print indRecords$(7); Tab(28); BRC$(7, 0); Tab(42); BRC$(7, 1); Tab(62); Using "##.#"; BRC!(7) * 100
-    Locate , 4: Print indRecords$(8); Tab(28); BRC$(8, 0); Tab(42); BRC$(8, 1); Tab(62); Using "####"; BRC!(8)
-    Locate , 4: Print indRecords$(9); Tab(28); BRC$(9, 0); Tab(42); BRC$(9, 1); Tab(62); Using "####"; BRC!(9)
-    Locate , 4: Print indRecords$(10); Tab(28); BRC$(10, 0); Tab(42); BRC$(10, 1); Tab(62); Using "##.#"; BRC!(10) * 100
-    Locate , 4: Print indRecords$(11); Tab(28); BRC$(11, 0); Tab(42); BRC$(11, 1); Tab(62); Using "####"; BRC!(11)
-    Locate , 4: Print indRecords$(12); Tab(28); BRC$(12, 0); Tab(42); BRC$(12, 1); Tab(62); Using "####"; BRC!(12)
-    Locate , 4: Print indRecords$(13); Tab(28); BRC$(13, 0); Tab(42); BRC$(13, 1); Tab(62); Using "####"; BRC!(13)
+    Locate , 4: Print indRecords$(1); Tab(28); Left$(BRC$(1, 0), 14); Tab(42); BRC$(1, 1); Tab(62); Using "####"; BRC!(1)
+    Locate , 4: Print indRecords$(2); Tab(28); Left$(BRC$(2, 0), 14); Tab(42); BRC$(2, 1); Tab(62); Using "####"; BRC!(2)
+    Locate , 4: Print indRecords$(3); Tab(28); Left$(BRC$(3, 0), 14); Tab(42); BRC$(3, 1); Tab(62); Using "####"; BRC!(3)
+    Locate , 4: Print indRecords$(4); Tab(28); Left$(BRC$(4, 0), 14); Tab(42); BRC$(4, 1); Tab(62); Using "##.#"; BRC!(4) * 100
+    Locate , 4: Print indRecords$(5); Tab(28); Left$(BRC$(5, 0), 14); Tab(42); BRC$(5, 1); Tab(62); Using "####"; BRC!(5)
+    Locate , 4: Print indRecords$(6); Tab(28); Left$(BRC$(6, 0), 14); Tab(42); BRC$(6, 1); Tab(62); Using "####"; BRC!(6)
+    Locate , 4: Print indRecords$(7); Tab(28); Left$(BRC$(7, 0), 14); Tab(42); BRC$(7, 1); Tab(62); Using "##.#"; BRC!(7) * 100
+    Locate , 4: Print indRecords$(8); Tab(28); Left$(BRC$(8, 0), 14); Tab(42); BRC$(8, 1); Tab(62); Using "####"; BRC!(8)
+    Locate , 4: Print indRecords$(9); Tab(28); Left$(BRC$(9, 0), 14); Tab(42); BRC$(9, 1); Tab(62); Using "####"; BRC!(9)
+    Locate , 4: Print indRecords$(10); Tab(28); Left$(BRC$(10, 0), 14); Tab(42); BRC$(10, 1); Tab(62); Using "##.#"; BRC!(10) * 100
+    Locate , 4: Print indRecords$(11); Tab(28); Left$(BRC$(11, 0), 14); Tab(42); BRC$(11, 1); Tab(62); Using "####"; BRC!(11)
+    Locate , 4: Print indRecords$(12); Tab(28); Left$(BRC$(12, 0), 14); Tab(42); BRC$(12, 1); Tab(62); Using "####"; BRC!(12)
+    Locate , 4: Print indRecords$(13); Tab(28); Left$(BRC$(13, 0), 14); Tab(42); BRC$(13, 1); Tab(62); Using "####"; BRC!(13)
     Color 15
     Locate 22, 30: Print "HIT ANY KEY TO CONTINUE"
 
@@ -149,18 +149,18 @@ Sub ViewSeasonRecords ()
     Print
     Locate , 4: Print "CATEGORY                PLAYER           TEAM            RECORD"
     Color 7
-    Locate , 4: Print indRecords$(14); Tab(28); BRC$(14, 0); Tab(42); BRC$(14, 1); Tab(62); Using "####"; BRC!(14)
-    Locate , 4: Print indRecords$(15); Tab(28); BRC$(15, 0); Tab(42); BRC$(15, 1); Tab(62); Using "####"; BRC!(15)
-    Locate , 4: Print indRecords$(16); Tab(28); BRC$(16, 0); Tab(42); BRC$(16, 1); Tab(62); Using "####"; BRC!(16)
-    Locate , 4: Print indRecords$(17); Tab(28); BRC$(17, 0); Tab(42); BRC$(17, 1); Tab(62); Using "####"; BRC!(17)
-    Locate , 4: Print indRecords$(18); Tab(28); BRC$(18, 0); Tab(42); BRC$(18, 1); Tab(62); Using "##.#"; BRC!(18)
-    Locate , 4: Print indRecords$(19); Tab(28); BRC$(19, 0); Tab(42); BRC$(19, 1); Tab(62); Using "####"; BRC!(19)
-    Locate , 4: Print indRecords$(20); Tab(28); BRC$(20, 0); Tab(42); BRC$(20, 1); Tab(62); Using "####"; BRC!(20)
-    Locate , 4: Print indRecords$(21); Tab(28); BRC$(21, 0); Tab(42); BRC$(21, 1); Tab(62); Using "####"; BRC!(21)
-    Locate , 4: Print indRecords$(22); Tab(28); BRC$(22, 0); Tab(42); BRC$(22, 1); Tab(62); Using "####"; BRC!(22)
-    Locate , 4: Print indRecords$(23); Tab(28); BRC$(23, 0); Tab(42); BRC$(23, 1); Tab(62); Using "####"; BRC!(23)
-    Locate , 4: Print indRecords$(24); Tab(28); BRC$(24, 0); Tab(42); BRC$(24, 1); Tab(62); Using "##.#"; BRC!(24)
-    Locate , 4: Print indRecords$(25); Tab(28); BRC$(25, 0); Tab(42); BRC$(25, 1); Tab(62); Using "####"; BRC!(25)
+    Locate , 4: Print indRecords$(14); Tab(28); Left$(BRC$(14, 0), 14); Tab(42); BRC$(14, 1); Tab(62); Using "####"; BRC!(14)
+    Locate , 4: Print indRecords$(15); Tab(28); Left$(BRC$(15, 0), 14); Tab(42); BRC$(15, 1); Tab(62); Using "####"; BRC!(15)
+    Locate , 4: Print indRecords$(16); Tab(28); Left$(BRC$(16, 0), 14); Tab(42); BRC$(16, 1); Tab(62); Using "####"; BRC!(16)
+    Locate , 4: Print indRecords$(17); Tab(28); Left$(BRC$(17, 0), 14); Tab(42); BRC$(17, 1); Tab(62); Using "####"; BRC!(17)
+    Locate , 4: Print indRecords$(18); Tab(28); Left$(BRC$(18, 0), 14); Tab(42); BRC$(18, 1); Tab(62); Using "##.#"; BRC!(18)
+    Locate , 4: Print indRecords$(19); Tab(28); Left$(BRC$(19, 0), 14); Tab(42); BRC$(19, 1); Tab(62); Using "####"; BRC!(19)
+    Locate , 4: Print indRecords$(20); Tab(28); Left$(BRC$(20, 0), 14); Tab(42); BRC$(20, 1); Tab(62); Using "####"; BRC!(20)
+    Locate , 4: Print indRecords$(21); Tab(28); Left$(BRC$(21, 0), 14); Tab(42); BRC$(21, 1); Tab(62); Using "####"; BRC!(21)
+    Locate , 4: Print indRecords$(22); Tab(28); Left$(BRC$(22, 0), 14); Tab(42); BRC$(22, 1); Tab(62); Using "####"; BRC!(22)
+    Locate , 4: Print indRecords$(23); Tab(28); Left$(BRC$(23, 0), 14); Tab(42); BRC$(23, 1); Tab(62); Using "####"; BRC!(23)
+    Locate , 4: Print indRecords$(24); Tab(28); Left$(BRC$(24, 0), 14); Tab(42); BRC$(24, 1); Tab(62); Using "##.#"; BRC!(24)
+    Locate , 4: Print indRecords$(25); Tab(28); Left$(BRC$(25, 0), 14); Tab(42); BRC$(25, 1); Tab(62); Using "####"; BRC!(25)
     I$ = GetKeyPress$
     For I = 4 To 21: Locate I, 4
         Print Space$(72)

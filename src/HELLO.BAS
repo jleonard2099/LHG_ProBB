@@ -1,5 +1,5 @@
 
-Const GAME_VERSION$ = "4.29"
+Const GAME_VERSION$ = "4.29R"
 Const MAX_TEAMS = 500
 Const MAX_GAMES = 1500
 Const MAX_FILES = 1024 '1048576
@@ -14,6 +14,7 @@ DefInt A-Z
 '$INCLUDE: 'MainRoutines.BI'
 '$INCLUDE: 'TITLE.BI'
 '$INCLUDE: 'Variables.BI'
+
 
 DECLARE SUB TEAM_MENU ()
 DECLARE SUB REPLAY_STATS_MENU ()
@@ -323,12 +324,15 @@ End Sub
 '       Leaders_Menu Subroutine
 '----------------------------------------
 Sub LEADERS_MENU ()
+
     ReDim menuChoices$(1 To 8)
 
     Do
 
-        800 Call TITLE
+        Call TITLE
+
         _Title "Basketball: The Pro Game - League Menu"
+
         'Erase menuChoices$
         menuChoices$(1) = "CREATE/ EDIT A LEAGUE         "
         menuChoices$(2) = "UPDATE TOP 10'S/ STANDINGS    "
@@ -462,4 +466,3 @@ End Sub
 '$INCLUDE: 'SEELEAG.BAS'
 '$INCLUDE: 'SINPUT.BAS'
 '$INCLUDE: 'TRADE.BAS'
-
