@@ -47,7 +47,7 @@ Sub HD2HD ()
 
                     RDD = 0
 
-                    Call GetTeam_HD2HD
+                    Call GetTeam_HD2HD (TM$)
 
                     B$ = QQ$(1)
 
@@ -96,17 +96,17 @@ Sub HD2HD ()
                             Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
                             Do
-								Locate 10, 15							
+                                Locate 10, 15
                                 Color 7, 1
-								
+
                                 Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
                                 Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
                                 I$ = GetKeyPress$
-								Color 14, 0
+                                Color 14, 0
 
                             Loop Until UCase$(I$) = "S" Or UCase$(I$) = "P"
 
-							VPP = 0
+                            VPP = 0
 
                             If UCase$(I$) = "P" Then
                                 X1 = 1
@@ -171,6 +171,7 @@ Sub HD2HD ()
                                 Call PrintHD2HD
                             Else
                                 'Not sending to printer
+
                                 '--This should be a sub
                                 DV$(1) = D1$
                                 DV$(2) = D2$
@@ -179,33 +180,28 @@ Sub HD2HD ()
 
                                 Do
                                     Cls
-                                    Color 12
                                     Locate 2, 35
-                                    Color hd2hdT!(33), hd2hdT!(34): Print Z$
-                                    Color 0, 0
-                                    Color 3
-                                    Locate 4: Print Tab(15); String$(7, 196); " HOME "; String$(8, 196); Tab(36); Chr$(194); String$(7, 196); " AWAY "; String$(8, 196); Tab(58); Chr$(194); String$(6, 196); " TOTALS "; String$(7, 196)
-                                    Locate 5: Print Tab(15); "W"; Tab(17); "L"; Tab(21); "PCT."; Tab(26); "PF/G"; Tab(32); "PA/G"; Tab(36); Chr$(179); Tab(37); "W"; Tab(39); "L"; Tab(43); "PCT."; Tab(48); "PF/G"; Tab(54); "PA/G"; Tab(58); Chr$(179); Tab(59); "W"; Tab(61); "L"; Tab(65); "PCT."; Tab(70); "PF/G"; Tab(76); "PA/G"
+                                    Color hd2hdT!(33), hd2hdT!(34): Print TM$
+                                    Color 3, 0
+
+                                    'Table header
+                                    Locate 4
+                                    Print Tab(15); String$(7, 196); " HOME "; String$(8, 196); Tab(36); Chr$(194); String$(7, 196); " AWAY "; String$(8, 196); Tab(58); Chr$(194); String$(6, 196); " TOTALS "; String$(7, 196)
+                                    Locate 5
+                                    Print Tab(15); "W"; Tab(17); "L"; Tab(21); "PCT."; Tab(26); "PF/G"; Tab(32); "PA/G"; Tab(36); Chr$(179); Tab(37); "W"; Tab(39); "L"; Tab(43); "PCT."; Tab(48); "PF/G"; Tab(54); "PA/G"; Tab(58); Chr$(179); Tab(59); "W"; Tab(61); "L"; Tab(65); "PCT."; Tab(70); "PF/G"; Tab(76); "PA/G"
 
                                     RDD = RDD + 1
-                                    Select Case RDD
-                                        Case 1:
-                                            DD = 1: EE = 10
-                                            If DV$(RDD) = "XXX" Or DV$(RDD) = "" Then Exit Do
-                                        Case 2:
-                                            DD = 11: EE = 20
-                                            If DV$(RDD) = "XXX" Or DV$(RDD) = "" Then Exit Do
-                                        Case 3:
-                                            DD = 21: EE = 30
-                                            If DV$(RDD) = "XXX" Or DV$(RDD) = "" Then Exit Do
-                                        Case 4:
-                                            DD = 31: EE = 40
-                                            If DV$(RDD) = "XXX" Or DV$(RDD) = "" Then Exit Do
-                                    End Select
 
-                                    Color 11: Print DV$(RDD);: Color 3: Print Tab(36); Chr$(179); Tab(58); Chr$(179)
+                                    DD = ((RDD - 1) * 10) + 1
+                                    EE = RDD * 10
+
+                                    If DV$(RDD) = "XXX" Or DV$(RDD) = "" Then Exit Do
+
+                                    Color 11: Print DV$(RDD);
+                                    Color 3: Print Tab(36); Chr$(179); Tab(58); Chr$(179)
 
                                     For K = DD To EE
+
                                         If Z1$(K) <> "XXX" And Z1$(K) <> Q$(0) Then
 
                                             Color 15
@@ -309,17 +305,23 @@ Sub HD2HD ()
                                 Loop Until RDD = 4
 
                                 Cls
-                                Color 12
                                 Locate 2, 35
-                                Color hd2hdT!(33), hd2hdT!(34): Print Z$
-                                Color 0, 0
-                                Color 3
-                                Locate 4: Print Tab(9); String$(8, 196); " HOME "; String$(9, 196); Tab(32); Chr$(194); String$(8, 196); " AWAY "; String$(9, 196); Tab(56); Chr$(194); String$(7, 196); " TOTALS "; String$(8, 196)
-                                Locate 5: Print Tab(10); "W"; Tab(13); "L"; Tab(17); "PCT."; Tab(22); "PF/G"; Tab(28); "PA/G"; Tab(32); Chr$(179); Tab(34); "W"; Tab(37); "L"; Tab(41); "PCT."; Tab(46); "PF/G"; Tab(52); "PA/G"; Tab(56); Chr$(179); Tab(58); "W"; Tab(61); "L"; Tab(65); "PCT."; Tab(70); "PF/G"; Tab(76); "PA/G"
+                                Color hd2hdT!(33), hd2hdT!(34): Print TM$
+                                Color 3, 0
+
+                                Locate 4
+                                Print Tab(9); String$(8, 196); " HOME "; String$(9, 196); Tab(32); Chr$(194); String$(8, 196); " AWAY "; String$(9, 196); Tab(56); Chr$(194); String$(7, 196); " TOTALS "; String$(8, 196)
+                                Locate 5
+                                Print Tab(10); "W"; Tab(13); "L"; Tab(17); "PCT."; Tab(22); "PF/G"; Tab(28); "PA/G"; Tab(32); Chr$(179); Tab(34); "W"; Tab(37); "L"; Tab(41); "PCT."; Tab(46); "PF/G"; Tab(52); "PA/G"; Tab(56); Chr$(179); Tab(58); "W"; Tab(61); "L"; Tab(65); "PCT."; Tab(70); "PF/G"; Tab(76); "PA/G"
+
                                 Color 3: Print Tab(32); Chr$(179); Tab(56); Chr$(179)
 
                                 For W = 1 To DIVS_PER_CONFERENCE
+
                                     If DV$(W) <> "XXX" And DV$(W) <> "" Then
+
+                                        Color 3: Print Tab(32); Chr$(179); Tab(56); Chr$(179);
+
                                         Color 15: Locate , 1: Print Left$(DV$(W), 10);
                                         Color 7: Locate , 9: Print Using "##"; THW!(W);
                                         Locate , 12: Print Using "##"; THL!(W);
@@ -357,24 +359,38 @@ Sub HD2HD ()
                                         If TR2!(W) + TR4!(W) = 0 Then Locate , 75: Print "  0.0";
                                         If TR2!(W) + TR4!(W) > 0 Then Locate , 75: Print Using "###.#"; (TR2!(W) + TR4!(W)) / (THW!(W) + THL!(W) + TAW!(W) + TAL!(W))
 
-                                        Color 3: Print Tab(32); Chr$(179); Tab(56); Chr$(179);
                                     End If
 
                                 Next W
 
-                                THWW = 0: THLL = 0: TAWW = 0: TALL = 0
-
-                                For I = 1 To DIVS_PER_CONFERENCE
-                                    THWW = THWW + THW!(I): THLL = THLL + THL!(I): TAWW = TAWW + TAW!(I): TALL = TALL + TAL!(I)
-                                Next
-
-                                TR11 = 0: TR22 = 0: TR33 = 0: TR44 = 0
-
-                                For I = 1 To DIVS_PER_CONFERENCE
-                                    TR11 = TR11 + TR1!(I): TR22 = TR22 + TR2!(I): TR33 = TR33 + TR3!(I): TR44 = TR44 + TR4!(I)
-                                Next
-
+                                'Locate CsrLin + 1, 1
                                 Print
+                                Color 3: Print Tab(32); Chr$(179); Tab(56); Chr$(179)
+
+                                THWW = 0
+                                THLL = 0
+                                TAWW = 0
+                                TALL = 0
+
+                                For I = 1 To DIVS_PER_CONFERENCE
+                                    THWW = THWW + THW!(I)
+                                    THLL = THLL + THL!(I)
+                                    TAWW = TAWW + TAW!(I)
+                                    TALL = TALL + TAL!(I)
+                                Next
+
+                                TR11 = 0
+                                TR22 = 0
+                                TR33 = 0
+                                TR44 = 0
+
+                                For I = 1 To DIVS_PER_CONFERENCE
+                                    TR11 = TR11 + TR1!(I)
+                                    TR22 = TR22 + TR2!(I)
+                                    TR33 = TR33 + TR3!(I)
+                                    TR44 = TR44 + TR4!(I)
+                                Next
+
                                 Color 11: Print "TOTALS";
                                 Locate , 9: Print Using "##"; THWW;
                                 Locate , 12: Print Using "##"; THLL;
@@ -438,9 +454,9 @@ Sub PrintHD2HD ()
     Shared TAL!(), TAW!(), THL!(), THW!()
     Shared TR1!(), TR2!(), TR3!(), TR4!()
 
-	Dim DV$(1 to 4)
+    Dim DV$(1 To 4)
 
-	Color 0, 15
+    Color 0, 15
 
     DV$(1) = D1$
     DV$(2) = D2$
@@ -448,12 +464,12 @@ Sub PrintHD2HD ()
     DV$(4) = D4$
 
     LPrint Tab(55); Z$
-	LPrint
+    LPrint
     LPrint Tab(22); "--------- HOME ----------"; Tab(54); "--------- AWAY ----------"; Tab(86); "---------- TOTALS ----------"
-	'LPrint Tab(15); "--------- HOME ----------"; Tab(36); "--------- AWAY ----------"; Tab(58); "---------- TOTALS ----------"
-		
+    'LPrint Tab(15); "--------- HOME ----------"; Tab(36); "--------- AWAY ----------"; Tab(58); "---------- TOTALS ----------"
+
     LPrint Tab(22); "W"; Tab(26); "L"; Tab(30); "PCT."; Tab(36); "PF/G"; Tab(43); "PA/G"; Tab(54); "W"; Tab(58); "L"; Tab(62); "PCT."; Tab(68); "PF/G"; Tab(75); "PA/G"; Tab(86); "W"; Tab(91); "L"; Tab(97); "PCT."; Tab(103); "PF/G"; Tab(110); "PA/G"
-	'LPrint Tab(15); "W"; Tab(17); "L"; Tab(21); "PCT."; Tab(26); "PF/G"; Tab(32); "PA/G"; Tab(37); "W"; Tab(39); "L"; Tab(43); "PCT."; Tab(48); "PF/G"; Tab(54); "PA/G"; Tab(59); "W"; Tab(61); "L"; Tab(65); "PCT."; Tab(70); "PF/G"; Tab(76); "PA/G"
+    'LPrint Tab(15); "W"; Tab(17); "L"; Tab(21); "PCT."; Tab(26); "PF/G"; Tab(32); "PA/G"; Tab(37); "W"; Tab(39); "L"; Tab(43); "PCT."; Tab(48); "PF/G"; Tab(54); "PA/G"; Tab(59); "W"; Tab(61); "L"; Tab(65); "PCT."; Tab(70); "PF/G"; Tab(76); "PA/G"
 
     Do
         RDD = RDD + 1
@@ -656,7 +672,7 @@ End Sub
 '     GetTeam_HD2HD Subroutine
 '----------------------------------------
 '... explain here ...
-Sub GetTeam_HD2HD ()
+Sub GetTeam_HD2HD (TM$)
 
     Shared hd2hdT!()
 
@@ -668,8 +684,8 @@ Sub GetTeam_HD2HD ()
         Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
         Locate 7 + JJ, 8
         Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-		
-		Locate 7, 32
+
+        Locate 7, 32
         Locate , 12: Print "ENTER DISK ID: ": Print
         Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -679,21 +695,21 @@ Sub GetTeam_HD2HD ()
 
         If I$ <> Chr$(27) Then
             If I$ = Chr$(13) Then
-                Call SelectTeam_HD2HD(NY$, numberTeams)
+                Call SelectTeam_HD2HD(NY$, numberTeams, TM$)
             Else
                 Locate 7, 27: Print I$
                 Locate 7, 28: Line Input NY$
                 NY$ = I$ + NY$
                 Color 15, 0
 
-                If NY$ = "" And yearNumber$ <> "" Then 
+                If NY$ = "" And yearNumber$ <> "" Then
                     'NY$ = yearNumber$
-                    Call SelectTeam_HD2HD(yearNumber$, numberTeams)
+                    Call SelectTeam_HD2HD(yearNumber$, numberTeams, TM$)
                 Else
                     yearNumber$ = NY$
                     Erase teamNames$
                     Call ReadTeamData_HD2HD(yearNumber$, numberTeams)
-                    Call SelectTeam_HD2HD(yearNumber$, numberTeams)
+                    Call SelectTeam_HD2HD(yearNumber$, numberTeams, TM$)
                 End If
 
             End If
@@ -702,14 +718,14 @@ Sub GetTeam_HD2HD ()
                 BO% = 0
             Else
                 Locate 2, 33
-				Color hd2hdT!(33), hd2hdT!(34): Print QQ$(1)
-				
-				Color 15, 4
+                Color hd2hdT!(33), hd2hdT!(34): Print QQ$(1)
 
-				Do
-					Locate , 33: Print "ANY CHANGE (YN)";
-					A$ = GetKeyPress$
-				Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
+                Color 15, 4
+
+                Do
+                    Locate , 33: Print "ANY CHANGE (YN)";
+                    A$ = GetKeyPress$
+                Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
 
             End If
 
@@ -769,18 +785,18 @@ Sub SelectLeague_HD2HD (targetFile$)
                 _MouseHide
 
                 If ExitCode% <> 27 Then
-					Color 15, 1
+                    Color 15, 1
                     targetFile$ = RTrim$(leagueFiles$(Selection%))
                     Locate 2, 33: Print targetFile$
-					
-					Do
-						Locate , 33: Print "ANY CHANGE (YN)";
-						I$ = GetKeyPress$
-					Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-					Color 15, 0
-                
-				End If
+                    Do
+                        Locate , 33: Print "ANY CHANGE (YN)";
+                        I$ = GetKeyPress$
+                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+                    Color 15, 0
+
+                End If
 
             Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
@@ -832,11 +848,13 @@ Sub ReadTeamData_HD2HD (yearNumber$, numberTeams)
         CK% = CVI(Q$(9))
         If CK% = 999 Then
             numberTeams = numberTeams + 1
-            teamNames$(numberTeams) = Q$(0): teamIndex%(numberTeams) = I1
+            teamNames$(numberTeams) = Q$(0)
+            teamIndex%(numberTeams) = I1
         End If
 
     Next
     Close 1
+    
 End Sub
 
 '----------------------------------------
@@ -844,7 +862,7 @@ End Sub
 '----------------------------------------
 '...explanation...
 
-Sub SelectTeam_HD2HD (yearNumber$, numberTeams)
+Sub SelectTeam_HD2HD (yearNumber$, numberTeams, TM$)
 
     Shared hd2hdT!()
 
@@ -896,7 +914,7 @@ Sub SelectTeam_HD2HD (yearNumber$, numberTeams)
         Get #1, T1
 
         TM$ = Q$(0)
-        QQ$(1) = RTRim$(Q$(0))
+        QQ$(1) = RTrim$(Q$(0))
 
         For I = 0 To 34: hd2hdT!(I) = CVI(Q$(I + 10)): Next
 

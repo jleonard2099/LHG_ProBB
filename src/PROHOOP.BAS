@@ -6,7 +6,6 @@
 
 DefInt A-Z
 
-
 On Error GoTo Errhandler
 
 '----------------------------------------

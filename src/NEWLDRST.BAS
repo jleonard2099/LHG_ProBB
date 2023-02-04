@@ -94,12 +94,12 @@ Sub NEWLDRST ()
                         targetFile$ = RTrim$(leagueFiles$(Selection%))
                         Locate 2, 33: Print targetFile$
 
-						Do
-							Locate , 33: Print "ANY CHANGE (YN)";
-							I$ = GetKeyPress$
-						Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                        Do
+                            Locate , 33: Print "ANY CHANGE (YN)";
+                            I$ = GetKeyPress$
+                        Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-						Color 15, 0
+                        Color 15, 0
 
                     End If
 
@@ -113,9 +113,9 @@ Sub NEWLDRST ()
                     Open diskPaths$(1) + targetFile$ + ".TMS" For Input As #2
                     Input #2, LG$
                     Input #2, D1$
-					Input #2, D2$
-					Input #2, D3$
-					Input #2, D4$
+                    Input #2, D2$
+                    Input #2, D3$
+                    Input #2, D4$
 
                     For X = 1 To TEAMS_PER_CONFERENCE
                         Input #2, strZ1$(X): TML$(X) = strZ1$(X)
@@ -128,18 +128,18 @@ Sub NEWLDRST ()
                         'values of YY% are ???
                         YY% = YY% + 1
                         Color 14
-						Locate 7, 20: TMR% = TMR% - 1: Print Using "##"; TMR%
+                        Locate 7, 20: TMR% = TMR% - 1: Print Using "##"; TMR%
 
                         If strZ1$(KK) <> "*" Then
 
                             TML$(YY%) = strZ1$(KK)
 
-							Color 15, 0
-							Cls
+                            Color 15, 0
+                            Cls
 
-							Locate 5: Print "COMPUTING RECORDS . . . . . . PLEASE WAIT"
+                            Locate 5: Print "COMPUTING RECORDS . . . . . . PLEASE WAIT"
                             
-							If _FileExists(diskPaths$(1) + strZ1$(KK) + "S") Then
+                            If _FileExists(diskPaths$(1) + strZ1$(KK) + "S") Then
                                 Open diskPaths$(1) + strZ1$(KK) + "S" For Input As #1
                                 Input #1, XX%
                                 For J = 1 To 100: Input #1, O%(J): Next
@@ -195,51 +195,56 @@ Sub NEWLDRST ()
                     Next
                     Close #1
 
-					Do
-						Locate 15, 10
-						Color 12: Print "V";: Color 7: Print "iew or ";
-						Color 12: Print "P";: Color 7: Print "rint"
-						I$ = GetKeyPress$
-					Loop Until UCase$(I$) = "P" Or UCase$(I$) = "V"
+                    Do
+                        Locate 15, 10
+                        Color 12: Print "V";: Color 7: Print "iew or ";
+                        Color 12: Print "P";: Color 7: Print "rint"
+                        I$ = GetKeyPress$
+                    Loop Until UCase$(I$) = "P" Or UCase$(I$) = "V"
 
                     Select Case UCase$(I$)
                         Case "V":
+                            'Sort leaders
                             AA = 1
-							ZZ = 10
+                            ZZ = 10
 
                             For X = AA To ZZ - 1
 
                                 For Y = X + 1 To ZZ
 
-                                    DiffX = WW(X) - LL(X)
-                                    DiffY = WW(Y) - LL(Y)
+                                    diffX = WW(X) - LL(X)
+                                    diffY = WW(Y) - LL(Y)
 
-                                    If DiffX > DiffY Then 985
-                                    If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 985
-                                    If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 985
+                                    If diffX <= diffY Then
+                                        If diffX = diffY Then
+                                            If Not (WW(X) <= WW(Y) And WW(X) > LL(X)) Or Not (WW(X) >= WW(Y) And WW(X) < LL(X)) Then
 
-                                    TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
-                                    J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
-                                    J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
-                                    J% = HLL(X): HLL(X) = HLL(Y): HLL(Y) = J%
-                                    J% = RLL(X): RLL(X) = RLL(Y): RLL(Y) = J%
-                                    J% = HWW(X): HWW(X) = HWW(Y): HWW(Y) = J%
-                                    J% = RWW(X): RWW(X) = RWW(Y): RWW(Y) = J%
-                                    J% = LTL(X): LTL(X) = LTL(Y): LTL(Y) = J%
-                                    J% = LTW(X): LTW(X) = LTW(Y): LTW(Y) = J%
-                                    J% = TWS(X): TWS(X) = TWS(Y): TWS(Y) = J%
-                                    J% = TLS(X): TLS(X) = TLS(Y): TLS(Y) = J%
+                                                Swap TML$(X), TML$(Y)
+                                                Swap WW(X), WW(Y)
+                                                Swap LL(X), LL(Y)
+                                                Swap HLL(X), HLL(Y)
+                                                Swap RLL(X), RLL(Y)
+                                                Swap HWW(X), HWW(Y)
+                                                Swap RWW(X), RWW(Y)
+                                                Swap LTL(X), LTL(Y)
+                                                Swap LTW(X), LTW(Y)
+                                                Swap TWS(X), TWS(Y)
+                                                Swap TLS(X), TLS(Y)
+                                                
+                                            End If
+                                        End If
+                                    End If
 
-                                985 Next Y
+                                Next Y
 
                             Next X
 
                             Cls
 
                             Color 11
-							Locate 1, 35: Print LGF$
+                            Locate 1, 35: Print LGF$
                             Color 14
-							Locate 2: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
+                            Locate 2: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
                             Locate 3: Print D1$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
 
                             For I = 1 To 10
@@ -247,10 +252,10 @@ Sub NEWLDRST ()
                                 If TML$(I) <> "*" Then
                                     Color 3
 
-									'G / W / L
-									Print TML$(I);: Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
+                                    'G / W / L
+                                    Print TML$(I);: Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
 
-									' MAJ PCT
+                                    ' MAJ PCT
                                     If LL(I) = 0 And LL(I) + WW(I) <> 0 Then
                                         Print "1.000";
                                     Else
@@ -265,18 +270,18 @@ Sub NEWLDRST ()
                                         End If
                                     End If
 
-									' GB
-									'-- why is this done with a decimal?
+                                    ' GB
+                                    '-- why is this done with a decimal?
                                     If ((WW(1) - WW(I)) + (LL(I) - LL(1))) / 2 = 0 Then 
-										Print Tab(36); " ---";
-									Else                                    
-										Print Tab(36); Using "##.#"; ((WW(1) - WW(I)) + (LL(I) - LL(1))) / 2;
-									End If
-									
-									' #
+                                        Print Tab(36); " ---";
+                                    Else                                    
+                                        Print Tab(36); Using "##.#"; ((WW(1) - WW(I)) + (LL(I) - LL(1))) / 2;
+                                    End If
+                                    
+                                    ' #
                                     Print Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
-									
-									' Records: Home / Road / Last 10
+                                    
+                                    ' Records: Home / Road / Last 10
                                     Print Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
                                 End If
                             Next
@@ -288,11 +293,11 @@ Sub NEWLDRST ()
                             AA = 11: ZZ = 20
                             For X = AA To ZZ - 1
                                 For Y = X + 1 To ZZ
-                                    DiffX = WW(X) - LL(X)
-                                    DiffY = WW(Y) - LL(Y)
-                                    If DiffX > DiffY Then 1985
-                                    If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 1985
-                                    If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 1985
+                                    diffX = WW(X) - LL(X)
+                                    diffY = WW(Y) - LL(Y)
+                                    If diffX > diffY Then 1985
+                                    If diffX = diffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 1985
+                                    If diffX = diffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 1985
                                     TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
                                     J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
                                     J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
@@ -313,12 +318,12 @@ Sub NEWLDRST ()
                             For I = 11 To 20
 
                                 If TML$(I) <> "*" Then
-									'G / W / L
+                                    'G / W / L
                                     Color 3
-									Print TML$(I);
-									Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
+                                    Print TML$(I);
+                                    Color 15: Print Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
 
-									' MAJ PCT
+                                    ' MAJ PCT
                                     If LL(I) = 0 And LL(I) + WW(I) <> 0 Then 
                                         Print "1.000";
                                     Else
@@ -333,18 +338,18 @@ Sub NEWLDRST ()
                                         End If
                                     End If
 
-									' GB
-									'-- why is this done with a decimal?
+                                    ' GB
+                                    '-- why is this done with a decimal?
                                     If ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2 = 0 Then 
-										Print Tab(36); " ---";
-									Else
-										Print Tab(36); Using "##.#"; ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2;
-									End If
+                                        Print Tab(36); " ---";
+                                    Else
+                                        Print Tab(36); Using "##.#"; ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2;
+                                    End If
 
-									' #
+                                    ' #
                                     Print Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
 
-									' Records: Home / Road / Last 10
+                                    ' Records: Home / Road / Last 10
                                     Print Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
                                 End If
                             Next
@@ -359,11 +364,11 @@ Sub NEWLDRST ()
 
                            For X = AA To ZZ - 1
                                 For Y = X + 1 To ZZ
-                                    DiffX = WW(X) - LL(X)
-                                    DiffY = WW(Y) - LL(Y)
-                                    If DiffX > DiffY Then 2985
-                                    If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 2985
-                                    If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 2985
+                                    diffX = WW(X) - LL(X)
+                                    diffY = WW(Y) - LL(Y)
+                                    If diffX > diffY Then 2985
+                                    If diffX = diffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 2985
+                                    If diffX = diffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 2985
                                     TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
                                     J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
                                     J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
@@ -379,13 +384,13 @@ Sub NEWLDRST ()
                             Next X
 
                             Color 14
-							Locate 24: Print "HIT ANY KEY TO CONTINUE";
+                            Locate 24: Print "HIT ANY KEY TO CONTINUE";
                             I$ = GetKeyPress$
 
                             Cls
 
                             Color 14
-							Locate 2: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
+                            Locate 2: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
                             Locate 3: Print D3$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
 
                             For I = 21 To 30
@@ -409,10 +414,10 @@ Sub NEWLDRST ()
                                     End If
 
                                     If ((WW(21) - WW(I)) + (LL(I) - LL(21))) / 2 = 0 Then 
-										Print Tab(36); " ---";
-									Else
-										Print Tab(36); Using "##.#"; ((WW(21) - WW(I)) + (LL(I) - LL(21))) / 2;
-									End If
+                                        Print Tab(36); " ---";
+                                    Else
+                                        Print Tab(36); Using "##.#"; ((WW(21) - WW(I)) + (LL(I) - LL(21))) / 2;
+                                    End If
                                     Print Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
                                     Print Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
                                 End If
@@ -429,11 +434,11 @@ Sub NEWLDRST ()
 
                             For X = AA To ZZ - 1
                                 For Y = X + 1 To ZZ
-                                    DiffX = WW(X) - LL(X)
-                                    DiffY = WW(Y) - LL(Y)
-                                    If DiffX > DiffY Then 3985
-                                    If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 3985
-                                    If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 3985
+                                    diffX = WW(X) - LL(X)
+                                    diffY = WW(Y) - LL(Y)
+                                    If diffX > diffY Then 3985
+                                    If diffX = diffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 3985
+                                    If diffX = diffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 3985
                                     TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
                                     J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
                                     J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
@@ -449,7 +454,7 @@ Sub NEWLDRST ()
                             Next X
 
                             Color 14
-							Locate 12
+                            Locate 12
                             Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
                             Locate 13
                             Print D4$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
@@ -475,10 +480,10 @@ Sub NEWLDRST ()
                                     End If
 
                                     If ((WW(31) - WW(I)) + (LL(I) - LL(31))) / 2 = 0 Then 
-										Print Tab(36); " ---";
+                                        Print Tab(36); " ---";
                                     Else
-										Print Tab(36); Using "##.#"; ((WW(31) - WW(I)) + (LL(I) - LL(31))) / 2;
-									End If
+                                        Print Tab(36); Using "##.#"; ((WW(31) - WW(I)) + (LL(I) - LL(31))) / 2;
+                                    End If
                                     Print Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
                                     Print Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
                                 End If
@@ -498,11 +503,11 @@ Sub NEWLDRST ()
 
                             For X = AA To ZZ - 1
                                 For Y = X + 1 To ZZ
-                                    DiffX = WW(X) - LL(X)
-                                    DiffY = WW(Y) - LL(Y)
-                                    If DiffX > DiffY Then 4985
-                                    If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 4985
-                                    If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 4985
+                                    diffX = WW(X) - LL(X)
+                                    diffY = WW(Y) - LL(Y)
+                                    If diffX > diffY Then 4985
+                                    If diffX = diffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 4985
+                                    If diffX = diffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 4985
                                     TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
                                     J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
                                     J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
@@ -541,10 +546,10 @@ Sub NEWLDRST ()
                                 End If
 
                                 If ((WW(1) - WW(I)) + (LL(I) - LL(1))) / 2 = 0 Then 
-									LPrint Tab(36); " ---";
+                                    LPrint Tab(36); " ---";
                                 Else
-									LPrint Tab(36); Using "##.#"; ((WW(1) - WW(I)) + (LL(I) - LL(1))) / 2;
-								End If
+                                    LPrint Tab(36); Using "##.#"; ((WW(1) - WW(I)) + (LL(I) - LL(1))) / 2;
+                                End If
 
                                 LPrint Tab(42);
                                 MJ = 83 - WW(1) - LL(2)
@@ -562,11 +567,11 @@ Sub NEWLDRST ()
 
                             For X = AA To ZZ - 1
                                 For Y = X + 1 To ZZ
-                                    DiffX = WW(X) - LL(X)
-                                    DiffY = WW(Y) - LL(Y)
-                                    If DiffX > DiffY Then 5985
-                                    If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 5985
-                                    If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 5985
+                                    diffX = WW(X) - LL(X)
+                                    diffY = WW(Y) - LL(Y)
+                                    If diffX > diffY Then 5985
+                                    If diffX = diffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 5985
+                                    If diffX = diffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 5985
                                     TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
                                     J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
                                     J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
@@ -582,8 +587,8 @@ Sub NEWLDRST ()
                             Next X
 
                             LPrint
-							LPrint
-							LPrint Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
+                            LPrint
+                            LPrint Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
                             LPrint D2$; Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
 
                             For I = 11 To 20
@@ -607,10 +612,10 @@ Sub NEWLDRST ()
                                     End If
 
                                     If ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2 = 0 Then 
-										LPrint Tab(36); " ---";
-									Else
-										LPrint Tab(36); Using "##.#"; ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2;
-									End If
+                                        LPrint Tab(36); " ---";
+                                    Else
+                                        LPrint Tab(36); Using "##.#"; ((WW(11) - WW(I)) + (LL(I) - LL(11))) / 2;
+                                    End If
 
                                     LPrint Tab(42);
                                     MJ = 83 - WW(11) - LL(12)
@@ -632,11 +637,11 @@ Sub NEWLDRST ()
 
                             For X = AA To ZZ - 1
                                 For Y = X + 1 To ZZ
-                                    DiffX = WW(X) - LL(X)
-                                    DiffY = WW(Y) - LL(Y)
-                                    If DiffX > DiffY Then 6985
-                                    If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 6985
-                                    If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 6985
+                                    diffX = WW(X) - LL(X)
+                                    diffY = WW(Y) - LL(Y)
+                                    If diffX > diffY Then 6985
+                                    If diffX = diffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 6985
+                                    If diffX = diffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 6985
                                     TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
                                     J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
                                     J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
@@ -676,10 +681,10 @@ Sub NEWLDRST ()
                                     End If
 
                                     If ((WW(21) - WW(I)) + (LL(I) - LL(21))) / 2 = 0 Then 
-										LPrint Tab(36); " ---";
-									Else
-										LPrint Tab(36); Using "##.#"; ((WW(21) - WW(I)) + (LL(I) - LL(21))) / 2;
-									End If
+                                        LPrint Tab(36); " ---";
+                                    Else
+                                        LPrint Tab(36); Using "##.#"; ((WW(21) - WW(I)) + (LL(I) - LL(21))) / 2;
+                                    End If
 
                                     LPrint Tab(42);: If I = 21 Then LPrint Using "##"; 83 - WW(21) - LL(22);
                                     LPrint Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
@@ -697,11 +702,11 @@ Sub NEWLDRST ()
 
                             For X = AA To ZZ - 1
                                 For Y = X + 1 To ZZ
-                                    DiffX = WW(X) - LL(X)
-                                    DiffY = WW(Y) - LL(Y)
-                                    If DiffX > DiffY Then 7985
-                                    If DiffX = DiffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 7985
-                                    If DiffX = DiffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 7985
+                                    diffX = WW(X) - LL(X)
+                                    diffY = WW(Y) - LL(Y)
+                                    If diffX > diffY Then 7985
+                                    If diffX = diffY And WW(X) <= WW(Y) And WW(X) > LL(X) Then 7985
+                                    If diffX = diffY And WW(X) >= WW(Y) And WW(X) < LL(X) Then 7985
                                     TN$ = TML$(X): TML$(X) = TML$(Y): TML$(Y) = TN$
                                     J% = WW(X): WW(X) = WW(Y): WW(Y) = J%
                                     J% = LL(X): LL(X) = LL(Y): LL(Y) = J%
@@ -741,10 +746,10 @@ Sub NEWLDRST ()
                                     End If
 
                                     If ((WW(31) - WW(I)) + (LL(I) - LL(31))) / 2 = 0 Then 
-										LPrint Tab(36); " ---";
-									Else
-										LPrint Tab(36); Using "##.#"; ((WW(31) - WW(I)) + (LL(I) - LL(31))) / 2;
-									End If
+                                        LPrint Tab(36); " ---";
+                                    Else
+                                        LPrint Tab(36); Using "##.#"; ((WW(31) - WW(I)) + (LL(I) - LL(31))) / 2;
+                                    End If
 
                                     LPrint Tab(42);
                                     MJ = 83 - WW(31) - LL(32)
