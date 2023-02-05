@@ -2541,7 +2541,7 @@ End If
 Call MOREDELAY
 NM% = 0
 
-A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 3
+A!(P, B1!(P, B), 9) = A!(P, B1!(P, B), 9) + 3
 
 For F3 = 1 To 3
 
