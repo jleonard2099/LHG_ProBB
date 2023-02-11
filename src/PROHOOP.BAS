@@ -166,7 +166,11 @@ Close 1
 
 If Not _FileExists("DEFAULT") Then
     Open "DEFAULT" For Output As #1
-    For I = 1 To 12:
+    For I = 1 To 8:
+        Print #1, 0
+    Next
+    Print #1, 4
+    For I = 10 To 12:
         Print #1, 0
     Next
     Close 1
@@ -1837,6 +1841,7 @@ If S <= R0 Then
         If pbpDelay! <> 0 Then Print U$: Call MOREDELAY
     End If
 
+
     F3 = 1
 
     Call MOREDELAY
@@ -1854,9 +1859,11 @@ If S <= R0 Then
 
         If PB% = 0 Then
             If RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then
-                U$ = "2 TO MAKE 1 FT: " + AA$(P, B1!(P, B), 0) + Str$(A!(P, B1!(P, B), 1)) + " %": Call DELAY
+                U$ = "2 TO MAKE 1 FT: " + AA$(P, B1!(P, B), 0) + Str$(A!(P, B1!(P, B), 1)) + " %"
+                Call DELAY
             Else
-                U$ = "1 FT: " + AA$(P, B1!(P, B), 0) + Str$(A!(P, B1!(P, B), 1)) + " %": Call DELAY
+                U$ = "1 FT: " + AA$(P, B1!(P, B), 0) + Str$(A!(P, B1!(P, B), 1)) + " %"
+                Call DELAY
             End If
         Else
             'PB% = 1
@@ -1905,17 +1912,19 @@ If S <= R0 Then
 
     End If
 
-    '621
+    621 '
     NM% = 0
 
+    'Two FT Attempts
     For F3 = 1 To 2
 
         'Increase FT ATT
         A!(P, B1!(P, B), 9) = A!(P, B1!(P, B), 9) + 1
 
         S = Int(Rnd(1) * 100) + 1
-        FX% = A!(P, B1(P, B), 1)
-        'If FA%(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
+
+        'FT Success Chance
+        FX% = A!(P, B1!(P, B), 1)
 
         If S <= FX% Then
 
@@ -1939,7 +1948,6 @@ If S <= R0 Then
         End If
 
         If NM% = 1 Then Exit For
-
         If F3 = 1 And (RT% = 0 Or RT% = 1 And (P2(D) <= NB% And H <= 4 Or P2(D) <= 3 And H > 4)) Then Exit For
 
     Next F3
@@ -2271,18 +2279,16 @@ End If
 
 572 '
 
+'One FT Attempt
 F3 = 1
 
 'Increase FT ATT
 A!(P, B1!(P, B), 9) = A!(P, B1!(P, B), 9) + 1
 
 S = Int(Rnd(1) * 100) + 1
-FX% = A!(P, B1!(P, B), 1)
-'If FA%(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
 
-'-- College only has this
-'If S <= FX% Then Call THREEFT
-'If S > FX% Then Call BADFT
+'FT Success Chance
+FX% = A!(P, B1!(P, B), 1)
 
 If S <= FX% Then
     If PB% = 0 Then
@@ -2492,13 +2498,15 @@ If pbpDelay! <> 0 Then
         End If
     Else
         'PB% = 1
+        Call WINDEX
+        Print B$(P)
+
         If RT% = 1 And P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then
-            Call WINDEX
-            Print B$(P)
             Print "3 TO MAKE 2 FT: ";
             Print AA$(P, B1!(P, B), 0); "   "; A!(P, B1!(P, B), 1); " %"
         Else
-            Call WINDEX: Print B$(P): Print "2 FT: "; AA$(P, B1!(P, B), 0); "   "; A!(P, B1!(P, B), 1); " %"
+            Print "2 FT: ";
+            Print AA$(P, B1!(P, B), 0); "   "; A!(P, B1!(P, B), 1); " %"
         End If
     End If
 
@@ -2530,7 +2538,8 @@ If pbpDelay! <> 0 Then
             Print "3 TO MAKE 2 FT: ";
             Print AA$(P, B1!(P, B), 0); "   "; A!(P, B1!(P, B), 1); " %"
         Else
-            Print "2 FT: "; AA$(P, B1!(P, B), 0); "   "; A!(P, B1!(P, B), 1); " %"
+            Print "2 FT: ";
+            Print AA$(P, B1!(P, B), 0); "   "; A!(P, B1!(P, B), 1); " %"
         End If
 
     End If
@@ -2541,13 +2550,16 @@ End If
 Call MOREDELAY
 NM% = 0
 
-A!(P, B1!(P, B), 9) = A!(P, B1!(P, B), 9) + 3
-
+'Three FT Attempts
 For F3 = 1 To 3
 
+    'Increase FTA
+    A!(P, B1!(P, B), 9) = A!(P, B1!(P, B), 9) + 1
+
     S = Int(Rnd(1) * 100) + 1
+
+    'FT Success Chance
     FX% = A!(P, B1!(P, B), 1)
-    'If FA%(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
 
     If S <= FX% Then
         If PB% = 0 Then
@@ -2565,10 +2577,16 @@ For F3 = 1 To 3
         Else
             Call MISSFT
         End If
+    End If
 
-        If NM% = 2 Then Exit For
-        If F3 = 2 And (RT% = 0 Or RT% = 1 And (P2(D) <= NB% And H <= 4 Or P2(D) <= 3 And H > 4)) Then Exit For
+    'Only have to make 2 (3 to make 2 rules)
+    If NM% = 2 Then Exit For
 
+    'On 2nd attempt
+    If F3 = 2 Then
+        'Modern rules - just exit (only 2 FT)
+        '3 to make 2 - if 2 misses then done
+        If RT% = 0 Or (RT% = 1 And (P2(D) <= NB% And H <= 4 Or P2(D) <= 3 And H > 4)) Then Exit For
     End If
 
 Next F3
@@ -2593,6 +2611,7 @@ U$ = B$(P) + " BALL AFTER SCORE"
 Call SELECTPBP
 Locate 8, 41: Print Space$(12)
 Call Choices
+
 B = 6
 X = 0
 
@@ -3047,6 +3066,7 @@ If FF% = 1 Then
         End If
     End If
 
+    'Increase foul count
     A!(D, B1!(D, B), 11) = A!(D, B1!(D, B), 11) + 1
     R3(D) = R3(D) + 1
     Call UPDATESCREEN
@@ -3056,10 +3076,16 @@ If FF% = 1 Then
     PB$ = ""
 
     If P = 1 Then
-        P = 0: D = 1: P9 = 0: C1 = 2
+        P = 0
+        D = 1
+        P9 = 0
+        C1 = 2
     Else
         'P = 0;
-        P = 1: D = 0: P9 = 1: C1 = 2
+        P = 1
+        D = 0
+        P9 = 1
+        C1 = 2
     End If
 
     GoTo 565
@@ -3068,6 +3094,7 @@ Else
     A!(D, B1!(D, B), 11) = A!(D, B1!(D, B), 11) + 1
     R3(D) = R3(D) + 1
     Call UPDATESCREEN
+
     U$ = AA$(D, B1!(D, B), 0) + " HAS THE DEFENSIVE REBOUND"
 
     If pbpDelay! <> 0 Then
@@ -3091,10 +3118,16 @@ Else
     PB$ = ""
 
     If P = 1 Then
-        P = 0: D = 1: P9 = 0: C1 = 2
+        P = 0
+        D = 1
+        P9 = 0
+        C1 = 2
     Else
         'P = 0;
-        P = 1: D = 0: P9 = 1: C1 = 2
+        P = 1
+        D = 0
+        P9 = 1
+        C1 = 2
     End If
 
     FB% = 1

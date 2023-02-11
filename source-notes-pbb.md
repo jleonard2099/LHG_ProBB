@@ -5,6 +5,9 @@
 ???
 
 #### Useage ####
+
+FF% = something to do with fouls?
+
 CT = computer team
 (NOT Coin Toss)
 

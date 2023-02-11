@@ -1,3 +1,19 @@
+'------------------------------
+'    ALPHANUM Subroutine
+'------------------------------
+' ...explanation...
+Sub ALPHANUM (promptVal$, J)
+
+    J = Val(promptVal$)
+    If UCase$(promptVal$) = "A" Then J = 10
+    If UCase$(promptVal$) = "B" Then J = 11
+    If UCase$(promptVal$) = "C" Then J = 12
+    If UCase$(promptVal$) = "D" Then J = 13
+    If UCase$(promptVal$) = "E" Then J = 14
+
+End Sub
+
+
 '----------------------------------------
 '    TeamSelect_PROHOOP Subroutine
 '----------------------------------------
@@ -812,21 +828,22 @@ End Sub
 Sub Fouls (skipRandom%)
 
     If skipRandom% = 0 Then
-        630 '
         W5 = 0
         M9 = Int(Rnd(1) * F5%(D, 0)) + 1
 
-        For M8 = 0 To 4: W5 = W5 + A!(D, B1!(D, M8), 17)
+        For M8 = 0 To 4: 
+			W5 = W5 + A!(D, B1!(D, M8), 17)
             If M9 <= W5 Then
                 Exit For
             End If
         Next M8
 
         If M8 < 0 Or M8 > 4 Then M8 = Int(Rnd(1) * 5)
+
         W5 = M8
+
     End If
 
-    631 '
     A!(D, B1!(D, W5), 12) = A!(D, B1!(D, W5), 12) + 1
     P2(D) = P2(D) + 1
 
@@ -836,20 +853,23 @@ Sub Fouls (skipRandom%)
 
     If A!(D, B1!(D, W5), 12) < 6 Then
 
-        If PB% = 1 And pbpDelay! <> 0 Then
-            Call WINDEX
-            Print "FOUL ON "; AA$(D, B1!(D, W5), 0)
-            Call MOREDELAY
-            Print "HE HAS "; A!(D, B1!(D, W5), 12)
-            Call MOREDELAY
-        End If
-
-        If PB% = 0 Then U$ = "FOUL NUMBER" + Str$(A!(D, B1!(D, W5), 12)) + " CALLED ON " + AA$(D, B1!(D, W5), 0): Call DELAY
+        If PB% = 0 Then 
+			U$ = "FOUL NUMBER" + Str$(A!(D, B1!(D, W5), 12)) + " CALLED ON " + AA$(D, B1!(D, W5), 0): Call DELAY
+		Else
+			'PB% = 1 
+			If pbpDelay! <> 0 Then
+				Call WINDEX
+				Print "FOUL ON "; AA$(D, B1!(D, W5), 0)
+				Call MOREDELAY
+				Print "HE HAS "; A!(D, B1!(D, W5), 12)
+				Call MOREDELAY
+			End If
+		End If
 
         Call MOREDELAY
 
     Else
-        'A!(D, B1!(D, W5), 12) >= 6 Then
+        'A!(D, B1!(D, W5), 12) >= 6
         M9 = 0
 
         For I3 = 0 To 14
@@ -864,12 +884,21 @@ Sub Fouls (skipRandom%)
             End If
         Next I3
 
-        If PB% = 1 And pbpDelay! <> 0 Then Call WINDEX: Print "FOUL ON "; AA$(D, B1!(D, W5), 0): Call MOREDELAY
-        If PB% = 0 Then U$ = "FOUL CALLED ON " + AA$(D, B1!(D, W5), 0): Call DELAY
+        If PB% = 0 Then 
+			U$ = "FOUL CALLED ON " + AA$(D, B1!(D, W5), 0): Call DELAY
+		Else
+			'PB% = 1 
+			If pbpDelay! <> 0 Then Call WINDEX: Print "FOUL ON "; AA$(D, B1!(D, W5), 0): Call MOREDELAY
+		End If
+
         U$ = "HE HAS JUST FOULED OUT !!!"
 
-        If PB% = 0 Then Call DELAY
-        If PB% = 1 And pbpDelay! <> 0 Then Print U$: Call MOREDELAY
+        If PB% = 0 Then 
+			Call DELAY
+		Else
+			'PB% = 1 
+			If pbpDelay! <> 0 Then Print U$: Call MOREDELAY
+		End If
 
         Call MOREDELAY
         C9 = 9
@@ -879,7 +908,8 @@ Sub Fouls (skipRandom%)
         P3 = 1
 
         If U5 = 0 Or U5 = 1 And D = 1 - CT Then
-            P9 = D: C1 = 1
+            P9 = D
+			C1 = 1
             Call PlayStyle
             Call PlayItSafe
             Call Substitutions
@@ -1662,42 +1692,53 @@ Sub DISABLEPLAYERS ()
         Print "# NAME            GP"
 
         For I = 0 To 14
+
             If I <= 9 Then Print Using "#"; I;
             If I = 10 Then Print "A";
             If I = 11 Then Print "B";
             If I = 12 Then Print "C";
             If I = 13 Then Print "D";
             If I = 14 Then Print "E";
+
+            'Automatically disable "non-existent" players
             If AA$(P9, I, 0) = "XXX" Then B%(P9, I, 18) = -1: Color T(P9, 33), T(P9, 34)
+
             Print " ";
+
+            'Color players who have been disabled
             If B%(P9, I, 18) <> 0 Then Color T(P9, 33), T(P9, 34)
-            Print AA$(P9, I, 0);: Color 15, 0: Print Tab(18); B%(P9, I, 0)
+
+            'Print player name
+            Print AA$(P9, I, 0);
+			Color 15, 0
+
+            'Print player position, ...
+			Print Tab(18); B%(P9, I, 0)
+
         Next
 
         Do
-            9203 Locate 19, 1: Print "ENTER PLAYER # TO DISABLE/ENABLE (Z=FINISHED)"
+            Locate 19, 1: Print "ENTER PLAYER # TO DISABLE/ENABLE (Z=FINISHED)"
 
             I$ = GetKeyPress$
 
             If UCase$(I$) <> "Z" Then
 
                 I1 = Val(I$)
-                If UCase$(I$) = "A" Then I1 = 10
-                If UCase$(I$) = "B" Then I1 = 11
-                If UCase$(I$) = "C" Then I1 = 12
-                If UCase$(I$) = "D" Then I1 = 13
-                If UCase$(I$) = "E" Then I1 = 14
+				Call ALPHANUM(I$, I1)
 
                 If B%(P9, I1, 18) = 0 And DX% < 6 Then
                     B%(P9, I1, 18) = -1
                     DX% = DX% + 1
-                    Locate 3 + I1, 3: Color T(P9, 33), T(P9, 34): Print AA$(P9, I1, 0)
+                    Locate 3 + I1, 3
+					Color T(P9, 33), T(P9, 34): Print AA$(P9, I1, 0)
                     Color 15, 0
                 Else
                     If B%(P9, I1, 18) = -1 Then
                         B%(P9, I1, 18) = 0
                         DX% = DX% - 1
-                        Locate 3 + I1, 3: Color 15, 0: Print AA$(P9, I1, 0)
+                        Locate 3 + I1, 3
+						Color 15, 0: Print AA$(P9, I1, 0)
                     End If
                 End If
             End If
