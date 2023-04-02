@@ -172,6 +172,7 @@ Sub NewSchedule (scheduleFile$)
         Color 13: Print "MA";: Color 14: Print "-MODE OF PLAY  ";
         Color 11: Print " G";: Color 14: Print "-GOTO GAME";
         Color 11: Print " B";: Color 14: Print "-BOXSCORE OPTIONS"
+
         Locate 24, 1: Color , 1: Print Tab(80);: Locate 24, 1
         Color 11: Print "C";: Color 14: Print "-SAVE AND CONTINUE  ";
         Color 11: Print "A";: Color 14: Print "-ADD A GAME  ";
@@ -287,7 +288,7 @@ Sub NewSchedule (scheduleFile$)
 
                 DT$ = "10-01-91"
                 TM$ = "07:30P"
-                Call NewGame(V$, H$, targetGame%)
+                Call NewGame(V$, H$, YN$, targetGame%)
 
             Case "E"
                 Call EditGame
@@ -451,6 +452,7 @@ Sub EditGame ()
 
     Shared scheduleAP%()
     Shared scheduleH$(), scheduleV$()
+    Shared scheduleYN$()
     Shared NG%()
 
     ' *** EDIT A GAME ***
@@ -459,10 +461,15 @@ Sub EditGame ()
         Locate 23, 1: Input "ENTER GAME # TO EDIT "; targetGame%
     Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
 
-    V$ = scheduleV$(targetGame% - Int(targetGame% / 20) * 20)
-    H$ = scheduleH$(targetGame% - Int(targetGame% / 20) * 20)
-
-    If targetGame% - Int(targetGame% / 20) * 20 = 0 Then V$ = scheduleV$(20): H$ = scheduleH$(20)
+    If targetGame% - Int(targetGame% / 20) * 20 = 0 Then 
+		V$ = scheduleV$(20)
+		H$ = scheduleH$(20)
+		YN$ = scheduleYN$(20)
+	Else
+		V$ = scheduleV$(targetGame% - Int(targetGame% / 20) * 20)
+		H$ = scheduleH$(targetGame% - Int(targetGame% / 20) * 20)
+		YN$ = scheduleYN$(targetGame% - Int(targetGame% / 20) * 20)
+	End If
 
     I$ = "A"
     HR% = Int(NG%(targetGame%, 15) / 100)
@@ -472,19 +479,25 @@ Sub EditGame ()
     If HR% > 12 Then HR% = HR% - 12: I$ = "P"
     TM$ = Right$(Str$(HR%), 2) + ":"
 
-    If MIN% < 10 Then TM$ = TM$ + "0" + Right$(Str$(MIN%), 1)
-    If MIN% >= 10 Then TM$ = TM$ + Right$(Str$(MIN%), 2)
+    If MIN% < 10 Then 
+		TM$ = TM$ + "0" + Right$(Str$(MIN%), 1)
+	Else
+		TM$ = TM$ + Right$(Str$(MIN%), 2)
+	End If
 
     TM$ = TM$ + I$
     DT$ = Right$(Str$(NG%(targetGame%, 17)), 2) + "/"
-    DY = Val(Right$(Str$(NG%(targetGame%, 16)), 2))
+    DYMO% = Val(Right$(Str$(NG%(targetGame%, 16)), 2))
 
-    If DY < 10 Then DAY$ = "0" + Right$(Str$(NG%(targetGame%, 16)), 1)
-    If DY >= 10 Then DAY$ = Right$(Str$(NG%(targetGame%, 16)), 2)
+    If DYMO% < 10 Then 
+		DYMO$ = "0" + Right$(Str$(NG%(targetGame%, 16)), 1)
+	Else
+		DYMO$ = Right$(Str$(NG%(targetGame%, 16)), 2)
+	End If
 
-    DT$ = DT$ + DAY$ + "/" + Right$(Str$(NG%(targetGame%, 18)), 2)
+    DT$ = DT$ + DYMO$ + "/" + Right$(Str$(NG%(targetGame%, 18)), 2)
 
-    Call NewGame(V$, H$, targetGame%)
+    Call NewGame(V$, H$, YN$, targetGame%)
 
 End Sub
 
@@ -492,7 +505,7 @@ End Sub
 '           NewGame SubRoutine
 '----------------------------------------
 '...explanation...
-Sub NewGame (visitor$, home$, gameIndex%)
+Sub NewGame (visitor$, home$, YN$, gameIndex%)
 
     Dim CM$(0 To 1), FR$(0 To 1), FT$(0 To 1)
     Dim LC$(0 To 2), PO$(0 To 1), SC$(0 To 1)
@@ -565,7 +578,7 @@ Sub NewGame (visitor$, home$, gameIndex%)
 
         Select Case I%
             Case 1
-                180 NG%(gameIndex%, 8) = NG%(gameIndex%, 8) + 1: If NG%(gameIndex%, 8) > 3 Then NG%(gameIndex%, 8) = 0
+                NG%(gameIndex%, 8) = NG%(gameIndex%, 8) + 1: If NG%(gameIndex%, 8) > 3 Then NG%(gameIndex%, 8) = 0
                 GoTo 151
 
             Case 2 To 3
