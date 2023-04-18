@@ -418,6 +418,33 @@ Sub NewSchedule (scheduleFile$)
 
                 Run "PROHOOP.EXE"
 
+				'-- This code actually loads a schedule
+				Open diskPaths$(0) + scheduleFile$ + ".SCD" For Random As #1 Len = 48
+				Y = LOF(1)
+
+				scheduleAP%(0) = Y / 48
+
+				BS% = Int((scheduleAP%(0) - 1) / 20)
+
+				For X = 0 To 18
+					Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
+				Next
+
+				Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+
+				For I = 1 To scheduleAP%(0)
+					Get #1, I
+					For X = 0 To 18: NG%(I, X) = CVI(Q$(X + 1)): Next
+					For X = 0 To 1: scheduleYN$(I, X) = RTrim$(Q$(20 + X)): Next
+					visitingScore%(I) = CVI(Q$(22))
+					homeScore%(I) = CVI(Q$(23))
+				Next
+
+				Close 1
+
+				NS% = 0
+				'-- End of load routine
+
             Case "R"
                 ' *** RESET GAMES ***
                 For I = 1 To scheduleAP%(0)
@@ -1654,6 +1681,7 @@ Sub SelectScheduleFile (targetFile$, scheduleFiles$(), FileCount%, ExitCode%)
 
         Color 15, 0
 
+		'-- This code actually loads a schedule
         Open diskPaths$(0) + targetFile$ + ".SCD" For Random As #1 Len = 48
         Y = LOF(1)
 
