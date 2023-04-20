@@ -3,12 +3,12 @@ Sub SEELEAG ()
     Shared O1!(), O2!()
 
     Shared DL!(), OL!()
-    Shared Z!(), Z1!()
+    Shared statZ!(), statZ1!()
 
     Shared DL$(), OL$()
     Shared leagT$(), Z2$(), Z3$()
 
-    Shared LG$, D1$, D2$, D3$, D4$
+    Shared LG$, div1$, div2$, div3$, div4$
 
     _Title "Basketball: The Pro Game - View League"
 
@@ -76,13 +76,13 @@ Sub SEELEAG ()
                     WE$ = Left$(WE$, 8)
 
                     Open diskPaths$(1) + WE$ + ".TMS" For Input As #2
-                    Input #2, FF$, D1$, D2$, D3$, D4$
+                    Input #2, FF$, div1$, div2$, div3$, div4$
                     Close 2
 
-                    D1$ = PadRight$(D1$, 8)
-                    D2$ = PadRight$(D2$, 8)
-                    D3$ = PadRight$(D3$, 8)
-                    D4$ = PadRight$(D4$, 8)
+                    div1$ = PadRight$(div1$, 8)
+                    div2$ = PadRight$(div2$, 8)
+                    div3$ = PadRight$(div3$, 8)
+                    div4$ = PadRight$(div4$, 8)
 
                     Cls
                     Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
@@ -94,7 +94,7 @@ Sub SEELEAG ()
                     Next
 
                     For X = 1 To 250
-                        Input #2, Z2$(X), Z3$(X), Z!(X), Z1!(X)
+                        Input #2, Z2$(X), Z3$(X), statZ!(X), statZ1!(X)
                     Next
 
                     For X = 1 To TEAMS_PER_CONFERENCE
@@ -252,12 +252,12 @@ Sub LeagueStatsToScreen ()
     Shared O1!(), O2!()
 
     Shared DL!(), OL!()
-    Shared Z!(), Z1!()
+    Shared statZ!(), statZ1!()
 
     Shared DL$(), OL$(), OL!()
     Shared leagT$(), Z2$(), Z3$()
 
-    Shared LG$, D1$, D2$, D3$, D4$
+    Shared LG$, div1$, div2$, div3$, div4$
 
     Cls
     
@@ -265,7 +265,7 @@ Sub LeagueStatsToScreen ()
 	Print "                        "; LG$; " LEAGUE STANDINGS"
     Print
     Color 14
-	Print "    "; D1$; " DIVISION"
+	Print "    "; div1$; " DIVISION"
     Print
     Color 2
 	Print "                   W    L     PCT   GB"
@@ -305,7 +305,7 @@ Sub LeagueStatsToScreen ()
 	Print "                        "; LG$; " LEAGUE STANDINGS"
     Print
     Color 14
-	Print "    "; D2$; " DIVISION"
+	Print "    "; div2$; " DIVISION"
     Print
     Color 2
 	Print "                   W    L     PCT   GB"
@@ -343,7 +343,7 @@ Sub LeagueStatsToScreen ()
 	Print "                        "; LG$; " LEAGUE STANDINGS"
     Print
     Color 14
-	Print "    "; D3$; " DIVISION"
+	Print "    "; div3$; " DIVISION"
     Print
     Color 2
 	Print "                   W    L     PCT   GB"
@@ -380,7 +380,7 @@ Sub LeagueStatsToScreen ()
 	Print "                        "; LG$; " LEAGUE STANDINGS"
     Print
     Color 14
-	Print "    "; D4$; " DIVISION"
+	Print "    "; div4$; " DIVISION"
     Print
     Color 2
 	Print "                   W    L     PCT   GB"
@@ -422,7 +422,7 @@ Sub LeagueStatsToScreen ()
         If Z2$(P) <> "*" And Z2$(P) <> "" Then
             Print Left$(Z2$(P), 10) + ", " + Z3$(P);
 			Locate , 28
-            Print Using "##.#  ####"; Z!(P) * 100; Z1!(P)
+            Print Using "##.#  ####"; statZ!(P) * 100; statZ1!(P)
         End If
     Next
 
@@ -438,7 +438,7 @@ Sub LeagueStatsToScreen ()
             Locate , 41
 			Print Left$(Z2$(P), 10) + ", " + Z3$(P);
 			Locate , 68
-            Print Using "##.#  ####"; Z!(P) * 100; Z1!(P)
+            Print Using "##.#  ####"; statZ!(P) * 100; statZ1!(P)
         End If
     Next
 
@@ -456,7 +456,7 @@ Sub LeagueStatsToScreen ()
     For P = 1 To 20
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; Z!(P)
+            Locate , 34: Print Using "###.#"; statZ!(P)
         End If
     Next
 
@@ -470,7 +470,7 @@ Sub LeagueStatsToScreen ()
     For P = 21 To 40
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; Z!(P)
+            Locate , 74: Print Using "####"; statZ!(P)
         End If
     Next
 
@@ -488,7 +488,7 @@ Sub LeagueStatsToScreen ()
     For P = 81 To 90
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; Z!(P)
+            Locate , 34: Print Using "###.#"; statZ!(P)
         End If
     Next
 
@@ -500,7 +500,7 @@ Sub LeagueStatsToScreen ()
     For P = 91 To 100
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; Z!(P)
+            Locate , 74: Print Using "####"; statZ!(P)
         End If
     Next
 
@@ -512,7 +512,7 @@ Sub LeagueStatsToScreen ()
     For P = 101 To 110
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; Z!(P)
+            Locate , 34: Print Using "###.#"; statZ!(P)
         End If
     Next
 
@@ -524,7 +524,7 @@ Sub LeagueStatsToScreen ()
     For P = 111 To 120
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; Z!(P)
+            Locate , 74: Print Using "####"; statZ!(P)
         End If
     Next
 
@@ -541,7 +541,7 @@ Sub LeagueStatsToScreen ()
     For P = 121 To 130
         If Z2$(P) <> "" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; Z!(P) * 100
+            Locate , 34: Print Using "###.#"; statZ!(P) * 100
         End If
     Next P
 
@@ -553,7 +553,7 @@ Sub LeagueStatsToScreen ()
     For P = 141 To 150
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "###.#"; Z!(P)
+            Locate , 74: Print Using "###.#"; statZ!(P)
         End If
     Next P
 
@@ -565,7 +565,7 @@ Sub LeagueStatsToScreen ()
     For P = 131 To 140
         If Z2$(P) <> "" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "####"; Z!(P)
+            Locate , 34: Print Using "####"; statZ!(P)
         End If
     Next
 
@@ -577,7 +577,7 @@ Sub LeagueStatsToScreen ()
     For P = 151 To 160
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; Z!(P)
+            Locate , 74: Print Using "####"; statZ!(P)
         End If
     Next
 
@@ -595,7 +595,7 @@ Sub LeagueStatsToScreen ()
     For P = 161 To 170
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; Z!(P)
+            Locate , 34: Print Using "###.#"; statZ!(P)
         End If
     Next
 
@@ -607,7 +607,7 @@ Sub LeagueStatsToScreen ()
     For P = 171 To 180
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; Z!(P)
+            Locate , 74: Print Using "####"; statZ!(P)
         End If
     Next
 
@@ -619,7 +619,7 @@ Sub LeagueStatsToScreen ()
     For P = 181 To 190
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; Z!(P)
+            Locate , 34: Print Using "###.#"; statZ!(P)
         End If
     Next
 
@@ -631,7 +631,7 @@ Sub LeagueStatsToScreen ()
     For P = 191 To 200
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; Z!(P)
+            Locate , 74: Print Using "####"; statZ!(P)
         End If
     Next
 
@@ -648,7 +648,7 @@ Sub LeagueStatsToScreen ()
     For P = 201 To 210
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "####"; Z!(P)
+            Locate , 34: Print Using "####"; statZ!(P)
         End If
     Next
 
@@ -660,7 +660,7 @@ Sub LeagueStatsToScreen ()
     For P = 211 To 220
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; Z!(P)
+            Locate , 74: Print Using "####"; statZ!(P)
         End If
     Next
 
@@ -672,7 +672,7 @@ Sub LeagueStatsToScreen ()
     For P = 221 To 230
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; Z!(P)
+            Locate , 34: Print Using "###.#"; statZ!(P)
         End If
     Next
 
@@ -684,7 +684,7 @@ Sub LeagueStatsToScreen ()
     For P = 231 To 240
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; Z!(P)
+            Locate , 74: Print Using "####"; statZ!(P)
         End If
     Next
 
@@ -702,7 +702,7 @@ Sub LeagueStatsToScreen ()
     For P = 241 To 250
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "####"; Z!(P)
+            Locate , 34: Print Using "####"; statZ!(P)
         End If
     Next
 
@@ -874,12 +874,12 @@ Sub SavePrintLeagueStats (statFile$, destination)
 
     Shared O1!(), O2!()
     Shared DL!(), OL!()
-    Shared Z!(), Z1!()
+    Shared statZ!(), statZ1!()
 
     Shared OL$(), DL$(), leagT$()
 	Shared Z2$(), Z3$()
 
-    Shared LG$, D1$, D2$, D3$, D4$
+    Shared LG$, div1$, div2$, div3$, div4$
 
     'Save Report File
     Cls
@@ -892,7 +892,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
 
     Print #2, "                        "; LG$; " LEAGUE STANDINGS"
     Print #2,
-    Print #2, "    "; D1$; " DIVISION"
+    Print #2, "    "; div1$; " DIVISION"
     Print #2,
     Print #2, "                   W    L     PCT   GB"
 	
@@ -914,7 +914,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
     Next P
 
     Print #2,
-    Print #2, "    "; D2$; " DIVISION"
+    Print #2, "    "; div2$; " DIVISION"
     Print #2,
     Print #2, "                   W    L     PCT   GB"
 
@@ -936,7 +936,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
     Next P
 
     Print #2,
-    Print #2, "    "; D3$; " DIVISION"
+    Print #2, "    "; div3$; " DIVISION"
     Print #2,
     Print #2, "                   W    L     PCT   GB"
     For P = 21 To 30
@@ -956,7 +956,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
     Next P
 
     Print #2,
-    Print #2, "    "; D4$; " DIVISION"
+    Print #2, "    "; div4$; " DIVISION"
     Print #2,
     Print #2, "                   W    L     PCT   GB"
 
@@ -988,7 +988,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Left$(Z2$(P), 10) + ", " + Z3$(P);
             Print #2, Tab(28);
-            Print #2, Using "##.#  ####"; Z!(P) * 100; Z1!(P);
+            Print #2, Using "##.#  ####"; statZ!(P) * 100; statZ1!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 20) = "" Then
@@ -996,7 +996,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Left$(Z2$(P + 20), 10) + ", " + Z3$(P + 20);
             Print #2, Tab(68);
-            Print #2, Using "##.#  ####"; Z!(P + 20) * 100; Z1!(P)
+            Print #2, Using "##.#  ####"; statZ!(P + 20) * 100; statZ1!(P)
         End If
 
     Next
@@ -1010,7 +1010,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "###.#"; Z!(P);
+            Print #2, Using "###.#"; statZ!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 20) = "" Then
@@ -1018,7 +1018,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 20) + ", " + Z3$(P + 20);
             Print #2, Tab(74);
-            Print #2, Using "####"; Z!(P + 20)
+            Print #2, Using "####"; statZ!(P + 20)
         End If
     Next
 
@@ -1031,7 +1031,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "###.#"; Z!(P);
+            Print #2, Using "###.#"; statZ!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 10) = "" Then
@@ -1039,7 +1039,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; Z!(P + 10)
+            Print #2, Using "####"; statZ!(P + 10)
         End If
     Next
 
@@ -1052,7 +1052,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "###.#"; Z!(P);
+            Print #2, Using "###.#"; statZ!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 10) = "" Then
@@ -1060,7 +1060,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; Z!(P + 10)
+            Print #2, Using "####"; statZ!(P + 10)
         End If
     Next
 
@@ -1073,7 +1073,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "###.#"; Z!(P) * 100;
+            Print #2, Using "###.#"; statZ!(P) * 100;
             Print #2, Tab(41);
         End If
         If Z2$(P + 20) = "" Then
@@ -1081,7 +1081,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 20) + ", " + Z3$(P + 20);
             Print #2, Tab(74);
-            Print #2, Using "###.#"; Z!(P + 20)
+            Print #2, Using "###.#"; statZ!(P + 20)
         End If
     Next
 
@@ -1094,7 +1094,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "####"; Z!(P);
+            Print #2, Using "####"; statZ!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 20) = "" Then
@@ -1102,7 +1102,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 20) + ", " + Z3$(P + 20);
             Print #2, Tab(74);
-            Print #2, Using "####"; Z!(P + 20)
+            Print #2, Using "####"; statZ!(P + 20)
         End If
     Next
 
@@ -1115,7 +1115,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "###.#"; Z!(P);
+            Print #2, Using "###.#"; statZ!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 10) = "" Then
@@ -1123,7 +1123,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; Z!(P + 10)
+            Print #2, Using "####"; statZ!(P + 10)
         End If
     Next
 
@@ -1136,7 +1136,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "###.#"; Z!(P);
+            Print #2, Using "###.#"; statZ!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 10) = "" Then
@@ -1144,7 +1144,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; Z!(P + 20)
+            Print #2, Using "####"; statZ!(P + 20)
         End If
     Next
 
@@ -1157,7 +1157,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "####"; Z!(P);
+            Print #2, Using "####"; statZ!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 10) = "" Then
@@ -1165,7 +1165,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; Z!(P + 10)
+            Print #2, Using "####"; statZ!(P + 10)
         End If
     Next
 
@@ -1178,7 +1178,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "###.#"; Z!(P);
+            Print #2, Using "###.#"; statZ!(P);
             Print #2, Tab(41);
         End If
         If Z2$(P + 10) = "" Then
@@ -1186,7 +1186,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         Else
             Print #2, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; Z!(P + 10)
+            Print #2, Using "####"; statZ!(P + 10)
         End If
     Next
 
@@ -1197,7 +1197,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
         If Z2$(P) <> "" Then
             Print #2, Z2$(P) + ", " + Z3$(P);
             Print #2, Tab(34);
-            Print #2, Using "####"; Z!(P)
+            Print #2, Using "####"; statZ!(P)
         End If
     Next
 

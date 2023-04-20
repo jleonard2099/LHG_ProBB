@@ -60,11 +60,11 @@ Sub CreateCareerFile ()
 
     Dim initA!(62, 15)
     Dim initA$(62)
-    Dim W0!(62), W1!(62)
-    Dim Z!(15), Z1!(15)
+    Dim careerW0!(62), careerW1!(62)
 
     Shared AR$()
-    Shared ars!(), W0S!(), W1S!()
+    Shared ars!(), compareZ!(), compareZ1!()
+    Shared W0S!(), W1S!()
 
     TMR% = 945
 
@@ -147,13 +147,13 @@ Sub CreateCareerFile ()
                         For I = 0 To 14:
                             Input #1, initA$(I)
                             For J = 0 To 13: Input #1, initA!(I, J): Next
-                            Input #1, W0!(I)
-                            Input #1, W1!(I)
+                            Input #1, careerW0!(I)
+                            Input #1, careerW1!(I)
                             TMR% = TMR% - 1
                             Locate 21, 38: Color 5: Print Using "####"; TMR%
                         Next
-                        For L = 0 To 15: Input #1, Z!(L): Next
-                        For L = 0 To 15: Input #1, Z1!(L): Next
+                        For L = 0 To 15: Input #1, compareZ!(L): Next
+                        For L = 0 To 15: Input #1, compareZ1!(L): Next
                         Close #1
 
                         For I = 0 To 61
@@ -169,8 +169,8 @@ Sub CreateCareerFile ()
                             Next J
                             ars!(N, I, 14) = 1
                             ars!(N, I, 15) = Y
-                            W0S!(N, I) = W0!(I)
-                            W1S!(N, I) = W1!(I)
+                            W0S!(N, I) = careerW0!(I)
+                            W1S!(N, I) = careerW1!(I)
                         Next I
 
                         For I = 0 To 61: AR$(I) = initA$(I): Next
@@ -342,13 +342,13 @@ Sub AddYear (selectedFile$, statFile$)
     Dim initA$(62)
 
     Dim mergeA!(15, 62)
-    Dim W0!(62), W1!(62)
-    Dim Z!(15), Z1!(15)
+    Dim careerW0!(62), careerW1!(62)
 
     Shared AR$()
 
     Shared AL!()
-    Shared ars!(), W0S!(), W1S!()
+    Shared ars!(), compareZ!(), compareZ1!()
+    Shared W0S!(), W1S!()
 
     'needs to be a constant???
     TMR1% = 1875
@@ -395,14 +395,14 @@ Sub AddYear (selectedFile$, statFile$)
             For I = 0 To 14
                 Input #1, initA$(I)
                 For J = 0 To 13: Input #1, mergeA!(I, J): Next
-                Input #1, W0!(I)
-                Input #1, W1!(I)
+                Input #1, careerW0!(I)
+                Input #1, careerW1!(I)
                 TMR1% = TMR1% - 1
                 Locate 21, 38: Color 5: Print Using "####"; TMR1%
             Next
 
-            For L = 0 To 15: Input #1, Z!(L): Next
-            For L = 0 To 15: Input #1, Z1!(L): Next
+            For L = 0 To 15: Input #1, compareZ!(L): Next
+            For L = 0 To 15: Input #1, compareZ1!(L): Next
             Close #1
 
             For I = 0 To 14
@@ -434,8 +434,8 @@ Sub AddYear (selectedFile$, statFile$)
                         Next K
                         ars!(N, J, 14) = 1
                         ars!(N, J, 15) = statYear
-                        W0S!(N, J) = W0!(J)
-                        W1S!(N, J) = W1!(J)
+                        W0S!(N, J) = careerW0!(J)
+                        W1S!(N, J) = careerW1!(J)
                     Else
                         RR = RR + 1
                         If RR = 62 Then
@@ -449,8 +449,8 @@ Sub AddYear (selectedFile$, statFile$)
 
                                 ars!(N, NB, 14) = 1
                                 ars!(N, NB, 15) = statYear
-                                W0S!(N, NB) = W0!(NB)
-                                W1S!(N, NB) = W1!(NB)
+                                W0S!(N, NB) = careerW0!(NB)
+                                W1S!(N, NB) = careerW1!(NB)
                             End If
                         End If
 
@@ -495,7 +495,6 @@ End Sub
 '... explain here ...
 Sub ReadCareerLeaders (careerFile$)
 
-    '--- Variables here need to be Shared???
     Dim BL!(62), BLYR!(21)
     Dim initA$(62)
     Dim BL$(0 To 20)
@@ -714,21 +713,21 @@ Sub ViewCareerRecords ()
 
                 Do
 
-					Color 15, 0
-					Cls
+                    Color 15, 0
+                    Cls
 
-					Do
-						Locate 15, 10
-						Color 12: Print "V";: Color 7: Print "iew or ";
-						Color 12: Print "P";: Color 7: Print "rint"
-						I$ = GetKeyPress$
-					Loop Until UCase$(I$) = "P" Or UCase$(I$) = "V"
+                    Do
+                        Locate 15, 10
+                        Color 12: Print "V";: Color 7: Print "iew or ";
+                        Color 12: Print "P";: Color 7: Print "rint"
+                        I$ = GetKeyPress$
+                    Loop Until UCase$(I$) = "P" Or UCase$(I$) = "V"
 
                     Select Case UCase$(I$)
                         Case "V":
                             Do
                                 Cls
-								Color 0, 15
+                                Color 0, 15
 
                                 Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
                                 Print

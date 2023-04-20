@@ -9,12 +9,12 @@
 Sub LEAGCMPL ()
 
     Dim leagueT%(100)
-    Dim BRC!(32)
+    Dim leagBRC!(32)
 
     Shared O%()
 
-    Shared LD!(), O1!(), O2!(), S!()
-    Shared TRC!(), TRC1!(), W0!(), W1!()
+    Shared LD!(), O1!(), O2!(), leagS!()
+    Shared TRC!(), TRC1!(), statW0!(), statW1!()
 
     Shared BRC$(), DL$(), H1$()
     Shared N$(), O$(), OL$()
@@ -38,7 +38,7 @@ Sub LEAGCMPL ()
         Open diskPaths$(1) + "RECORDS.PBB" For Input As #1
 
         For I = 1 To 25
-            Input #1, BRC!(I)
+            Input #1, leagBRC!(I)
             Input #1, BRC$(I, 0)
             Input #1, BRC$(I, 1)
         Next
@@ -253,7 +253,7 @@ Sub LEAGCMPL ()
 
                     For I = 0 To 14
                         For J = 0 To 22
-                            S!(I, J) = 0
+                            leagS!(I, J) = 0
                         Next
                     Next
 
@@ -264,9 +264,9 @@ Sub LEAGCMPL ()
 
                         For I = 0 To 14
                             Input #2, N$(I)
-                            For J = 0 To 13: Input #2, S!(I, J): Next
-                            Input #2, W0!(I)
-                            Input #2, W1!(I)
+                            For J = 0 To 13: Input #2, leagS!(I, J): Next
+                            Input #2, statW0!(I)
+                            Input #2, statW1!(I)
                         Next I
 
                         For L = 1 To 16: Input #2, OT!(L): Next
@@ -275,65 +275,65 @@ Sub LEAGCMPL ()
 
                         For I = 0 To 14
 
-                            S!(I, 25) = S!(I, 13)
-                            S!(I, 26) = S!(I, 12)
-                            S!(I, 12) = S!(I, 2) * 2 + W0!(I) + S!(I, 4): ' *** PTS ***
+                            leagS!(I, 25) = leagS!(I, 13)
+                            leagS!(I, 26) = leagS!(I, 12)
+                            leagS!(I, 12) = leagS!(I, 2) * 2 + statW0!(I) + leagS!(I, 4): ' *** PTS ***
 
-                            If S!(I, 0) <> 0 Then
-                                S!(I, 13) = S!(I, 5) / S!(I, 0): ' *** RB/G ***
-                                S!(I, 14) = S!(I, 6) / S!(I, 0): ' *** FOULS/G ***
-                                S!(I, 15) = S!(I, 7) / S!(I, 0): ' *** STEALS/G ***
-                                S!(I, 16) = S!(I, 8) / S!(I, 0): ' *** ASSISTS/G ***
-                                S!(I, 17) = S!(I, 9) / S!(I, 0): ' *** BLOCKS/G ***
-                                S!(I, 24) = S!(I, 5) + S!(I, 12) - S!(I, 6) + S!(I, 8) + S!(I, 9) + S!(I, 7) - 2 * S!(I, 11)
-                                S!(I, 18) = S!(I, 10) / 60 / S!(I, 0): ' *** MIN/G ***
+                            If leagS!(I, 0) <> 0 Then
+                                leagS!(I, 13) = leagS!(I, 5) / leagS!(I, 0): ' *** RB/G ***
+                                leagS!(I, 14) = leagS!(I, 6) / leagS!(I, 0): ' *** FOULS/G ***
+                                leagS!(I, 15) = leagS!(I, 7) / leagS!(I, 0): ' *** STEALS/G ***
+                                leagS!(I, 16) = leagS!(I, 8) / leagS!(I, 0): ' *** ASSISTS/G ***
+                                leagS!(I, 17) = leagS!(I, 9) / leagS!(I, 0): ' *** BLOCKS/G ***
+                                leagS!(I, 24) = leagS!(I, 5) + leagS!(I, 12) - leagS!(I, 6) + leagS!(I, 8) + leagS!(I, 9) + leagS!(I, 7) - 2 * leagS!(I, 11)
+                                leagS!(I, 18) = leagS!(I, 10) / 60 / leagS!(I, 0): ' *** MIN/G ***
 
-                                If Not (S!(I, 1) = 0 Or (S!(I, 2) / S!(I, 0)) < 3.65) Then
-                                    S!(I, 19) = S!(I, 2) / S!(I, 1): ' *** FG% ***
+                                If Not (leagS!(I, 1) = 0 Or (leagS!(I, 2) / leagS!(I, 0)) < 3.65) Then
+                                    leagS!(I, 19) = leagS!(I, 2) / leagS!(I, 1): ' *** FG% ***
                                 End If
 
-                                If Not (S!(I, 3) = 0 Or (S!(I, 4) / S!(I, 0)) < 1.52) Then
-                                    S!(I, 20) = S!(I, 4) / S!(I, 3): ' *** FT% ***
+                                If Not (leagS!(I, 3) = 0 Or (leagS!(I, 4) / leagS!(I, 0)) < 1.52) Then
+                                    leagS!(I, 20) = leagS!(I, 4) / leagS!(I, 3): ' *** FT% ***
                                 End If
 
-                                If Not (W1!(I) = 0 Or W0!(I) / S!(I, 0) < .3) Then
-                                    S!(I, 21) = W0!(I) / W1!(I): ' *** 3FG% ***
+                                If Not (statW1!(I) = 0 Or statW0!(I) / leagS!(I, 0) < .3) Then
+                                    leagS!(I, 21) = statW0!(I) / statW1!(I): ' *** 3FG% ***
                                 End If
 
-                                S!(I, 22) = S!(I, 12) / S!(I, 0): ' *** PTS/G ***
-                                If S!(I, 0) > BRC!(1) Then BRC!(1) = S!(I, 0): BRC$(1, 0) = N$(I): BRC$(1, 1) = TN$
-                                If S!(I, 1) > BRC!(2) Then BRC!(2) = S!(I, 1): BRC$(2, 0) = N$(I): BRC$(2, 1) = TN$
-                                If S!(I, 2) > BRC!(3) Then BRC!(3) = S!(I, 2): BRC$(3, 0) = N$(I): BRC$(3, 1) = TN$
-                                If S!(I, 19) > BRC!(4) And UCase$(finalUpdate$) = "Y" And S!(I, 2) / S!(I, 0) >= 3.65 Then BRC!(4) = S!(I, 19): BRC$(4, 0) = N$(I): BRC$(4, 1) = TN$
+                                leagS!(I, 22) = leagS!(I, 12) / leagS!(I, 0): ' *** PTS/G ***
+                                If leagS!(I, 0) > leagBRC!(1) Then leagBRC!(1) = leagS!(I, 0): BRC$(1, 0) = N$(I): BRC$(1, 1) = TN$
+                                If leagS!(I, 1) > leagBRC!(2) Then leagBRC!(2) = leagS!(I, 1): BRC$(2, 0) = N$(I): BRC$(2, 1) = TN$
+                                If leagS!(I, 2) > leagBRC!(3) Then leagBRC!(3) = leagS!(I, 2): BRC$(3, 0) = N$(I): BRC$(3, 1) = TN$
+                                If leagS!(I, 19) > leagBRC!(4) And UCase$(finalUpdate$) = "Y" And leagS!(I, 2) / leagS!(I, 0) >= 3.65 Then leagBRC!(4) = leagS!(I, 19): BRC$(4, 0) = N$(I): BRC$(4, 1) = TN$
 
-                                If W1!(I) > BRC!(5) Then BRC!(5) = W1!(I): BRC$(5, 0) = N$(I): BRC$(5, 1) = TN$
-                                If W0!(I) > BRC!(6) Then BRC!(6) = W0!(I): BRC$(6, 0) = N$(I): BRC$(6, 1) = TN$
-                                If S!(I, 21) > BRC!(7) And UCase$(finalUpdate$) = "Y" And W0!(I) / S!(I, 0) >= .3 Then BRC!(7) = S!(I, 21): BRC$(7, 0) = N$(I): BRC$(7, 1) = TN$
+                                If statW1!(I) > leagBRC!(5) Then leagBRC!(5) = statW1!(I): BRC$(5, 0) = N$(I): BRC$(5, 1) = TN$
+                                If statW0!(I) > leagBRC!(6) Then leagBRC!(6) = statW0!(I): BRC$(6, 0) = N$(I): BRC$(6, 1) = TN$
+                                If leagS!(I, 21) > leagBRC!(7) And UCase$(finalUpdate$) = "Y" And statW0!(I) / leagS!(I, 0) >= .3 Then leagBRC!(7) = leagS!(I, 21): BRC$(7, 0) = N$(I): BRC$(7, 1) = TN$
 
-                                If S!(I, 3) > BRC!(8) Then BRC!(8) = S!(I, 3): BRC$(8, 0) = N$(I): BRC$(8, 1) = TN$
-                                If S!(I, 4) > BRC!(9) Then BRC!(9) = S!(I, 4): BRC$(9, 0) = N$(I): BRC$(9, 1) = TN$
-                                If S!(I, 20) > BRC!(10) And UCase$(finalUpdate$) = "Y" And S!(I, 4) / S!(I, 0) >= 1.52 Then BRC!(10) = S!(I, 20): BRC$(10, 0) = N$(I): BRC$(10, 1) = TN$
+                                If leagS!(I, 3) > leagBRC!(8) Then leagBRC!(8) = leagS!(I, 3): BRC$(8, 0) = N$(I): BRC$(8, 1) = TN$
+                                If leagS!(I, 4) > leagBRC!(9) Then leagBRC!(9) = leagS!(I, 4): BRC$(9, 0) = N$(I): BRC$(9, 1) = TN$
+                                If leagS!(I, 20) > leagBRC!(10) And UCase$(finalUpdate$) = "Y" And leagS!(I, 4) / leagS!(I, 0) >= 1.52 Then leagBRC!(10) = leagS!(I, 20): BRC$(10, 0) = N$(I): BRC$(10, 1) = TN$
 
-                                If S!(I, 10) / 60 > BRC!(11) Then BRC!(11) = S!(I, 10) / 60: BRC$(11, 0) = N$(I): BRC$(11, 1) = TN$
-                                If S!(I, 12) > BRC!(12) Then BRC!(12) = S!(I, 12): BRC$(12, 0) = N$(I): BRC$(12, 1) = TN$
-                                If S!(I, 22) > BRC!(13) And UCase$(finalUpdate$) = "Y" Then BRC!(13) = S!(I, 22): BRC$(13, 0) = N$(I): BRC$(13, 1) = TN$
+                                If leagS!(I, 10) / 60 > leagBRC!(11) Then leagBRC!(11) = leagS!(I, 10) / 60: BRC$(11, 0) = N$(I): BRC$(11, 1) = TN$
+                                If leagS!(I, 12) > leagBRC!(12) Then leagBRC!(12) = leagS!(I, 12): BRC$(12, 0) = N$(I): BRC$(12, 1) = TN$
+                                If leagS!(I, 22) > leagBRC!(13) And UCase$(finalUpdate$) = "Y" Then leagBRC!(13) = leagS!(I, 22): BRC$(13, 0) = N$(I): BRC$(13, 1) = TN$
 
-                                If S!(I, 25) > BRC!(14) Then BRC!(14) = S!(I, 25): BRC$(14, 0) = N$(I): BRC$(14, 1) = TN$
-                                If S!(I, 26) > BRC!(15) Then BRC!(15) = S!(I, 26): BRC$(15, 0) = N$(I): BRC$(15, 1) = TN$
-                                If S!(I, 5) - S!(I, 26) > BRC!(16) Then BRC!(16) = S!(I, 5) - S!(I, 26): BRC$(16, 0) = N$(I): BRC$(16, 1) = TN$
-                                If S!(I, 5) > BRC!(17) Then BRC!(17) = S!(I, 5): BRC$(17, 0) = N$(I): BRC$(17, 1) = TN$
-                                If S!(I, 13) > BRC!(18) And UCase$(finalUpdate$) = "Y" Then BRC!(18) = S!(I, 13): BRC$(18, 0) = N$(I): BRC$(18, 1) = TN$
+                                If leagS!(I, 25) > leagBRC!(14) Then leagBRC!(14) = leagS!(I, 25): BRC$(14, 0) = N$(I): BRC$(14, 1) = TN$
+                                If leagS!(I, 26) > leagBRC!(15) Then leagBRC!(15) = leagS!(I, 26): BRC$(15, 0) = N$(I): BRC$(15, 1) = TN$
+                                If leagS!(I, 5) - leagS!(I, 26) > leagBRC!(16) Then leagBRC!(16) = leagS!(I, 5) - leagS!(I, 26): BRC$(16, 0) = N$(I): BRC$(16, 1) = TN$
+                                If leagS!(I, 5) > leagBRC!(17) Then leagBRC!(17) = leagS!(I, 5): BRC$(17, 0) = N$(I): BRC$(17, 1) = TN$
+                                If leagS!(I, 13) > leagBRC!(18) And UCase$(finalUpdate$) = "Y" Then leagBRC!(18) = leagS!(I, 13): BRC$(18, 0) = N$(I): BRC$(18, 1) = TN$
 
-                                If S!(I, 6) > BRC!(19) Then BRC!(19) = S!(I, 6): BRC$(19, 0) = N$(I): BRC$(19, 1) = TN$
-                                If S!(I, 7) > BRC!(20) Then BRC!(20) = S!(I, 7): BRC$(20, 0) = N$(I): BRC$(20, 1) = TN$
-                                If S!(I, 8) > BRC!(21) Then BRC!(21) = S!(I, 8): BRC$(21, 0) = N$(I): BRC$(21, 1) = TN$
-                                If S!(I, 9) > BRC!(22) Then BRC!(22) = S!(I, 9): BRC$(22, 0) = N$(I): BRC$(22, 1) = TN$
-                                If S!(I, 11) > BRC!(23) Then BRC!(23) = S!(I, 11): BRC$(23, 0) = N$(I): BRC$(23, 1) = TN$
-                                If S!(I, 18) > BRC!(24) And UCase$(finalUpdate$) = "Y" Then BRC!(24) = S!(I, 18): BRC$(24, 0) = N$(I): BRC$(24, 1) = TN$
+                                If leagS!(I, 6) > leagBRC!(19) Then leagBRC!(19) = leagS!(I, 6): BRC$(19, 0) = N$(I): BRC$(19, 1) = TN$
+                                If leagS!(I, 7) > leagBRC!(20) Then leagBRC!(20) = leagS!(I, 7): BRC$(20, 0) = N$(I): BRC$(20, 1) = TN$
+                                If leagS!(I, 8) > leagBRC!(21) Then leagBRC!(21) = leagS!(I, 8): BRC$(21, 0) = N$(I): BRC$(21, 1) = TN$
+                                If leagS!(I, 9) > leagBRC!(22) Then leagBRC!(22) = leagS!(I, 9): BRC$(22, 0) = N$(I): BRC$(22, 1) = TN$
+                                If leagS!(I, 11) > leagBRC!(23) Then leagBRC!(23) = leagS!(I, 11): BRC$(23, 0) = N$(I): BRC$(23, 1) = TN$
+                                If leagS!(I, 18) > leagBRC!(24) And UCase$(finalUpdate$) = "Y" Then leagBRC!(24) = leagS!(I, 18): BRC$(24, 0) = N$(I): BRC$(24, 1) = TN$
 
-                                If S!(I, 24) > BRC!(25) Then BRC!(25) = S!(I, 24): BRC$(25, 0) = N$(I): BRC$(25, 1) = TN$
+                                If leagS!(I, 24) > leagBRC!(25) Then leagBRC!(25) = leagS!(I, 24): BRC$(25, 0) = N$(I): BRC$(25, 1) = TN$
 
-                            End If 'Done checking S!(I, 0)
+                            End If 'Done checking leagS!(I, 0)
 
                         Next
 
@@ -447,7 +447,7 @@ Sub LEAGCMPL ()
 
             Open diskPaths$(1) + "RECORDS.PBB" For Output As #1
             For I = 1 To 25
-                Print #1, BRC!(I)
+                Print #1, leagBRC!(I)
                 Print #1, BRC$(I, 0)
                 Print #1, BRC$(I, 1)
             Next
@@ -514,7 +514,7 @@ Sub CheckLeagueStats ()
 
     Shared DT!(), OT!()
     Shared DL!(), OL!()
-    Shared LD!(), S!(), W0!(), W1!()
+    Shared LD!(), leagS!(), statW0!(), statW1!()
     Shared DL$(), N$(), OL$()
     Shared Z2$(), Z3$()
     Shared TN$
@@ -525,9 +525,9 @@ Sub CheckLeagueStats ()
         Color 15: Print N$(X)
 
         'Division 1, 2 Record                        
-        If S!(X, 22) > LD!(20, 1) Then
+        If leagS!(X, 22) > LD!(20, 1) Then
 
-            LD!(20, 1) = S!(X, 22)
+            LD!(20, 1) = leagS!(X, 22)
             LD!(20, 2) = 0
             Z2$(20) = N$(X)
             Z3$(20) = TN$
@@ -544,9 +544,9 @@ Sub CheckLeagueStats ()
         End If
 
         'Division 3, 4 Record
-        If S!(X, 12) > LD!(40, 1) Then
+        If leagS!(X, 12) > LD!(40, 1) Then
 
-            LD!(40, 1) = S!(X, 12)
+            LD!(40, 1) = leagS!(X, 12)
             LD!(40, 2) = 0
             Z2$(40) = N$(X)
             Z3$(40) = TN$
@@ -565,10 +565,10 @@ Sub CheckLeagueStats ()
         End If
 
         'Field Goal %
-        If S!(X, 19) > LD!(60, 1) Then
+        If leagS!(X, 19) > LD!(60, 1) Then
 
-            LD!(60, 1) = S!(X, 19)
-            LD!(60, 2) = S!(X, 1)
+            LD!(60, 1) = leagS!(X, 19)
+            LD!(60, 2) = leagS!(X, 1)
             Z2$(60) = N$(X)
             Z3$(60) = TN$
 
@@ -586,10 +586,10 @@ Sub CheckLeagueStats ()
         End If
 
         'FT Percent
-        If S!(X, 20) > LD!(80, 1) Then
+        If leagS!(X, 20) > LD!(80, 1) Then
 
-            LD!(80, 1) = S!(X, 20)
-            LD!(80, 2) = S!(X, 3)
+            LD!(80, 1) = leagS!(X, 20)
+            LD!(80, 2) = leagS!(X, 3)
             Z2$(80) = N$(X)
             Z3$(80) = TN$
 
@@ -607,10 +607,10 @@ Sub CheckLeagueStats ()
         End If
 
         'Steals Per Game
-        If S!(X, 15) > LD!(90, 1) Then
+        If leagS!(X, 15) > LD!(90, 1) Then
 
-            LD!(90, 1) = S!(X, 15)
-            LD!(90, 2) = S!(X, 7)
+            LD!(90, 1) = leagS!(X, 15)
+            LD!(90, 2) = leagS!(X, 7)
             Z2$(90) = N$(X)
             Z3$(90) = TN$
 
@@ -628,9 +628,9 @@ Sub CheckLeagueStats ()
         End If
 
         'Steals
-        If S!(X, 7) > LD!(100, 1) Then
+        If leagS!(X, 7) > LD!(100, 1) Then
 
-            LD!(100, 1) = S!(X, 7)
+            LD!(100, 1) = leagS!(X, 7)
             LD!(100, 2) = 0
             Z2$(100) = N$(X)
             Z3$(100) = TN$
@@ -650,10 +650,10 @@ Sub CheckLeagueStats ()
         End If
 
         'Assists Per Game
-        If S!(X, 16) > LD!(110, 1) Then
+        If leagS!(X, 16) > LD!(110, 1) Then
 
-            LD!(110, 1) = S!(X, 16)
-            LD!(110, 2) = S!(X, 8)
+            LD!(110, 1) = leagS!(X, 16)
+            LD!(110, 2) = leagS!(X, 8)
             Z2$(110) = N$(X)
             Z3$(110) = TN$
 
@@ -672,10 +672,10 @@ Sub CheckLeagueStats ()
         End If
 
         'Assists
-        If S!(X, 8) > LD!(120, 1) Then
+        If leagS!(X, 8) > LD!(120, 1) Then
 
-            LD!(120, 1) = S!(X, 8)
-            LD!(120, 2) = S!(X, 8)
+            LD!(120, 1) = leagS!(X, 8)
+            LD!(120, 2) = leagS!(X, 8)
             Z2$(120) = N$(X)
             Z3$(120) = TN$
 
@@ -694,10 +694,10 @@ Sub CheckLeagueStats ()
         End If
 
         '3 FG Percent
-        If S!(X, 21) > LD!(130, 1) Then
+        If leagS!(X, 21) > LD!(130, 1) Then
 
-            LD!(130, 1) = S!(X, 21)
-            LD!(130, 2) = W1!(X)
+            LD!(130, 1) = leagS!(X, 21)
+            LD!(130, 2) = statW1!(X)
             Z2$(130) = N$(X)
             Z3$(130) = TN$
 
@@ -716,9 +716,9 @@ Sub CheckLeagueStats ()
         End If
 
         '3 FG Made
-        If W0!(X) > LD!(140, 1) Then
+        If statW0!(X) > LD!(140, 1) Then
 
-            LD!(140, 1) = W0!(X)
+            LD!(140, 1) = statW0!(X)
             LD!(140, 2) = 0
             Z2$(140) = N$(X)
             Z3$(140) = TN$
@@ -737,9 +737,9 @@ Sub CheckLeagueStats ()
         End If
 
         'Minutes Per Game
-        If S!(X, 18) > LD!(150, 1) Then
+        If leagS!(X, 18) > LD!(150, 1) Then
 
-            LD!(150, 1) = S!(X, 18)
+            LD!(150, 1) = leagS!(X, 18)
             LD!(150, 2) = 0
             Z2$(150) = N$(X)
             Z3$(150) = TN$
@@ -759,9 +759,9 @@ Sub CheckLeagueStats ()
         End If
 
         'Total Minutes
-        If S!(X, 10) / 60 > LD!(160, 1) Then
+        If leagS!(X, 10) / 60 > LD!(160, 1) Then
 
-            LD!(160, 1) = S!(X, 10) / 60
+            LD!(160, 1) = leagS!(X, 10) / 60
             LD!(160, 2) = 0
             Z2$(160) = N$(X)
             Z3$(160) = TN$
@@ -781,10 +781,10 @@ Sub CheckLeagueStats ()
         End If
 
         'Rebounds Per Game
-        If S!(X, 13) > LD!(170, 1) Then
+        If leagS!(X, 13) > LD!(170, 1) Then
 
-            LD!(170, 1) = S!(X, 13)
-            LD!(170, 2) = S!(X, 5)
+            LD!(170, 1) = leagS!(X, 13)
+            LD!(170, 2) = leagS!(X, 5)
             Z2$(170) = N$(X)
             Z3$(170) = TN$
 
@@ -803,9 +803,9 @@ Sub CheckLeagueStats ()
         End If
 
         'Rebounds
-        If S!(X, 5) > LD!(180, 1) Then
+        If leagS!(X, 5) > LD!(180, 1) Then
 
-            LD!(180, 1) = S!(X, 5)
+            LD!(180, 1) = leagS!(X, 5)
             LD!(18, 2) = 0
             Z2$(180) = N$(X)
             Z3$(180) = TN$
@@ -825,9 +825,9 @@ Sub CheckLeagueStats ()
         End If
 
         'Blocks Per Game
-        If S!(X, 17) > LD!(190, 1) Then
+        If leagS!(X, 17) > LD!(190, 1) Then
 
-            LD!(190, 1) = S!(X, 17)
+            LD!(190, 1) = leagS!(X, 17)
             LD!(190, 2) = 0
             Z2$(190) = N$(X)
             Z3$(190) = TN$
@@ -847,9 +847,9 @@ Sub CheckLeagueStats ()
         End If
 
         'Blocks
-        If S!(X, 9) > LD!(200, 1) Then
+        If leagS!(X, 9) > LD!(200, 1) Then
 
-            LD!(200, 1) = S!(X, 9)
+            LD!(200, 1) = leagS!(X, 9)
             LD!(200, 2) = 0
             Z2$(200) = N$(X)
             Z3$(200) = TN$
@@ -869,9 +869,9 @@ Sub CheckLeagueStats ()
         End If
 
         'Field Goals Made
-        If S!(X, 2) > LD!(210, 1) Then
+        If leagS!(X, 2) > LD!(210, 1) Then
 
-            LD!(210, 1) = S!(X, 2)
+            LD!(210, 1) = leagS!(X, 2)
             LD!(210, 2) = 0
             Z2$(210) = N$(X)
             Z3$(210) = TN$
@@ -891,9 +891,9 @@ Sub CheckLeagueStats ()
         End If
 
         'Free Throws Made
-        If S!(X, 4) > LD!(220, 1) Then
+        If leagS!(X, 4) > LD!(220, 1) Then
 
-            LD!(220, 1) = S!(X, 4)
+            LD!(220, 1) = leagS!(X, 4)
             LD!(220, 2) = 0
             Z2$(220) = N$(X)
             Z3$(220) = TN$
@@ -913,9 +913,9 @@ Sub CheckLeagueStats ()
         End If
 
         'Fouls Per Game
-        If S!(X, 14) > LD!(230, 1) Then
+        If leagS!(X, 14) > LD!(230, 1) Then
 
-            LD!(230, 1) = S!(X, 14)
+            LD!(230, 1) = leagS!(X, 14)
             LD!(230, 2) = 0
             Z2$(230) = N$(X)
             Z3$(230) = TN$
@@ -935,9 +935,9 @@ Sub CheckLeagueStats ()
         End If
 
         'Fouls
-        If S!(X, 6) > LD!(240, 1) Then
+        If leagS!(X, 6) > LD!(240, 1) Then
 
-            LD!(240, 1) = S!(X, 6)
+            LD!(240, 1) = leagS!(X, 6)
             LD!(240, 2) = 0
             Z2$(240) = N$(X)
             Z3$(240) = TN$
@@ -957,9 +957,9 @@ Sub CheckLeagueStats ()
         End If
 
         'MVP Points
-        If S!(X, 24) > LD!(250, 1) Then
+        If leagS!(X, 24) > LD!(250, 1) Then
 
-            LD!(250, 1) = S!(X, 24)
+            LD!(250, 1) = leagS!(X, 24)
             LD!(250, 2) = 0
             Z2$(250) = N$(X)
             Z3$(250) = TN$

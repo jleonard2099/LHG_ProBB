@@ -48,13 +48,17 @@ End Sub
 '... explain here ...
 Sub MergeStats ()
 
-    Dim ORD$(0 To 100), O$(0 To 100)
-    Dim A$(0 To 15), ARD$(0 To 14), mergeB$(0 To 26), H$(0 To 100), HRD$(0 To 100)
+    Dim ORD$(0 To 100)
+    Dim A$(0 To 15), ARD$(0 To 14), mergeB$(0 To 26), HRD$(0 To 100)
 
-    Dim O%(0 To 100), ORD%(0 To 100), mergeT%(0 To 100), TRD%(0 To 100)
+    Dim ORD%(0 To 100), mergeT%(0 To 100), TRD%(0 To 100)
 
-    Dim ARD(0 To 15, 0 To 14), W0!(0 To 15), W1!(0 To 15), W0RD(0 To 15), W1RD(0 To 15)
+    Dim ARD(0 To 15, 0 To 14), W0RD(0 To 15), W1RD(0 To 15)
     Dim Z!(0 To 15), Z1!(0 To 15), ZRD!(0 To 16), ZRD1!(0 To 16)
+
+	Shared O$(), statsH$()
+	Shared statO%()
+    Shared compareW0!(), compareW1!()
 
     Do
 
@@ -284,17 +288,17 @@ Sub MergeStats ()
                     Open PC$ + "\" + Z$ For Input As #1
                     Input #1, B$
                     For I = 0 To 14: Input #1, A$(I)
-                    For J = 0 To 13: Input #1, A(I, J): Next: Input #1, W0!(I): Input #1, W1!(I): Next
+                    For J = 0 To 13: Input #1, A(I, J): Next: Input #1, compareW0!(I): Input #1, compareW1!(I): Next
                     For L = 0 To 15: Input #1, Z!(L): Next
                     For L = 0 To 15: Input #1, Z1!(L): Next
                     Close #1
 
                     Open PR$ + "\" + Z$ + "S" For Input As #1
                     Input #1, Y%
-                    For I = 1 To 100: Input #1, O%(I): Next I
+                    For I = 1 To 100: Input #1, statO%(I): Next I
                     For I = 1 To 100: Input #1, O$(I): Next I
                     For I = 1 To 100: Input #1, mergeT%(I): Next I
-                    For I = 1 To 100: Input #1, H$(I): Next I
+                    For I = 1 To 100: Input #1, statsH$(I): Next I
                     Close #1
 
                     SEQ = 0
@@ -307,10 +311,10 @@ Sub MergeStats ()
 
                         For K = 1 To YR%
                             Y% = Y% + 1
-                            O%(Y%) = ORD%(K)
+                            statO%(Y%) = ORD%(K)
                             O$(Y%) = ORD$(K)
                             mergeT%(Y%) = TRD%(K)
-                            H$(Y%) = HRD$(K)
+                            statsH$(Y%) = HRD$(K)
                         Next
 
                         Locate 18, 20: Color 12: Print "MERGING STAT FILE AND SCHEDULE RESULTS . . . ."
@@ -319,8 +323,8 @@ Sub MergeStats ()
                             For J = 0 To 12
                                 A(I, J) = A(I, J) + ARD(I, J)
                             Next J
-                            W0!(I) = W0!(I) + W0RD(I)
-                            W1!(I) = W1!(I) + W1RD(I)
+                            compareW0!(I) = compareW0!(I) + W0RD(I)
+                            compareW1!(I) = compareW1!(I) + W1RD(I)
                             If A(I, 13) < ARD(I, 13) Then A(I, 13) = ARD(I, 13) Else A(I, 13) = A(I, 13)
                         Next I
 
@@ -332,17 +336,17 @@ Sub MergeStats ()
                         Open PC$ + "\" + Z$ For Output As #1
                         Write #1, B$
                         For I = 0 To 14: Write #1, A$(I)
-                        For J = 0 To 13: Write #1, A(I, J): Next: Write #1, W0!(I): Write #1, W1!(I): Next
+                        For J = 0 To 13: Write #1, A(I, J): Next: Write #1, compareW0!(I): Write #1, compareW1!(I): Next
                         For L = 0 To 15: Write #1, Z!(L): Next
                         For L = 0 To 15: Write #1, Z1!(L): Next
                         Close #1
 
                         Open PC$ + "\" + Z$ + "S" For Output As #1
                         Write #1, Y%
-                        For I = 1 To 100: Write #1, O%(I): Next I
+                        For I = 1 To 100: Write #1, statO%(I): Next I
                         For I = 1 To 100: Write #1, O$(I): Next I
                         For I = 1 To 100: Write #1, mergeT%(I): Next I
-                        For I = 1 To 100: Write #1, H$(I): Next I
+                        For I = 1 To 100: Write #1, statsH$(I): Next I
                         Close #1
 
                         Y = 0

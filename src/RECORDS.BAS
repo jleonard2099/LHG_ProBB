@@ -1,7 +1,7 @@
 Sub RECORDS (menuChoice%)
 
-    Shared RC$(), recordsTRC$()
-    Shared allRecords!(), TotalRecords!()
+    Shared indRecCategory$(), teamRecCategory$()
+    Shared allRecords!(), teamRecords!()
     Shared HALF$(), QTR$()
 
     _Title "Basketball: The Pro Game - View Leaders"
@@ -19,16 +19,16 @@ Sub RECORDS (menuChoice%)
             Input #1, allRecords!(I, I1)
         Next
         For I1 = 0 To 4
-            Input #1, RC$(I, I1)
+            Input #1, indRecCategory$(I, I1)
         Next
     Next
 
     For I = 0 To 125
         For I1 = 0 To 2
-            Input #1, TotalRecords!(I, I1)
+            Input #1, teamRecords!(I, I1)
         Next
         For I1 = 0 To 3
-            Input #1, recordsTRC$(I, I1)
+            Input #1, teamRecCategory$(I, I1)
         Next
     Next
     Close 1
@@ -47,17 +47,17 @@ Sub RECORDS (menuChoice%)
         Print
         Color 14: Print "MOST POINTS, GAME"
         Color 15
-        Print allRecords!(0, 0); "- "; RC$(0, 0); ", "; RC$(0, 1) + " " + RC$(0, 2) + " " + RC$(0, 3) + ", " + RC$(0, 4)
+        Print allRecords!(0, 0); "- "; indRecCategory$(0, 0); ", "; indRecCategory$(0, 1) + " " + indRecCategory$(0, 2) + " " + indRecCategory$(0, 3) + ", " + indRecCategory$(0, 4)
         Print
 
         Color 14: Print "MOST POINTS, ONE HALF"
         Color 15
-        Print allRecords!(1, 0); "- "; RC$(1, 0); ", "; RC$(1, 1) + " " + RC$(1, 2) + " " + RC$(1, 3) + ", " + RC$(1, 4); HALF$(allRecords!(1, 2))
+        Print allRecords!(1, 0); "- "; indRecCategory$(1, 0); ", "; indRecCategory$(1, 1) + " " + indRecCategory$(1, 2) + " " + indRecCategory$(1, 3) + ", " + indRecCategory$(1, 4); HALF$(allRecords!(1, 2))
         Print
 
         Color 14: Print "MOST POINTS, ONE QUARTER"
         Color 15
-        Print allRecords!(2, 0); "- "; RC$(2, 0); ", "; RC$(2, 1) + " " + RC$(2, 2) + " " + RC$(2, 3) + ", " + RC$(2, 4); QTR$(allRecords!(2, 2))
+        Print allRecords!(2, 0); "- "; indRecCategory$(2, 0); ", "; indRecCategory$(2, 1) + " " + indRecCategory$(2, 2) + " " + indRecCategory$(2, 3) + ", " + indRecCategory$(2, 4); QTR$(allRecords!(2, 2))
         Print
 
         Color 14: Print "MOST POINTS, OVERTIME PERIOD"
@@ -65,7 +65,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(3, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(3, 0); "- "; RC$(3, 0); ", "; RC$(3, 1) + " " + RC$(3, 2) + " " + RC$(3, 3) + ", " + RC$(3, 4)
+            Print allRecords!(3, 0); "- "; indRecCategory$(3, 0); ", "; indRecCategory$(3, 1) + " " + indRecCategory$(3, 2) + " " + indRecCategory$(3, 3) + ", " + indRecCategory$(3, 4)
         End If
         Print
 
@@ -80,7 +80,7 @@ Sub RECORDS (menuChoice%)
             Else
                 Print Using " .### "; allRecords!(4, 0);
             End If
-            Print "- "; RC$(4, 0); ", "; RC$(4, 1) + " " + RC$(4, 2) + " " + RC$(4, 3) + ", " + RC$(4, 4);
+            Print "- "; indRecCategory$(4, 0); ", "; indRecCategory$(4, 1) + " " + indRecCategory$(4, 2) + " " + indRecCategory$(4, 3) + ", " + indRecCategory$(4, 4);
             Print Using " (##/##)"; allRecords!(4, 1); allRecords!(4, 2)
         End If
 
@@ -93,7 +93,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(5, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(5, 0); "- "; RC$(5, 0); ", "; RC$(5, 1) + " " + RC$(5, 2) + " " + RC$(5, 3) + ", " + RC$(5, 4)
+            Print allRecords!(5, 0); "- "; indRecCategory$(5, 0); ", "; indRecCategory$(5, 1) + " " + indRecCategory$(5, 2) + " " + indRecCategory$(5, 3) + ", " + indRecCategory$(5, 4)
         End If
 
         Print
@@ -105,7 +105,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(6, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(6, 0); "- "; RC$(6, 0); ", "; RC$(6, 1) + " " + RC$(6, 2) + " " + RC$(6, 3) + ", " + RC$(6, 4)
+            Print allRecords!(6, 0); "- "; indRecCategory$(6, 0); ", "; indRecCategory$(6, 1) + " " + indRecCategory$(6, 2) + " " + indRecCategory$(6, 3) + ", " + indRecCategory$(6, 4)
         End If
         I$ = GetKeyPress$
 
@@ -114,17 +114,17 @@ Sub RECORDS (menuChoice%)
         Print
         Color 14: Print "MOST FIELD GOALS, GAME"
         Color 15
-        Print allRecords!(7, 0); "- "; RC$(7, 0); ", "; RC$(7, 1) + " " + RC$(7, 2) + " " + RC$(7, 3) + ", " + RC$(7, 4)
+        Print allRecords!(7, 0); "- "; indRecCategory$(7, 0); ", "; indRecCategory$(7, 1) + " " + indRecCategory$(7, 2) + " " + indRecCategory$(7, 3) + ", " + indRecCategory$(7, 4)
         Print
 
         Color 14: Print "MOST FIELD GOALS, ONE HALF"
         Color 15
-        Print allRecords!(8, 0); "- "; RC$(8, 0); ", "; RC$(8, 1) + " " + RC$(8, 2) + " " + RC$(8, 3) + ", " + RC$(8, 4); HALF$(allRecords!(8, 2))
+        Print allRecords!(8, 0); "- "; indRecCategory$(8, 0); ", "; indRecCategory$(8, 1) + " " + indRecCategory$(8, 2) + " " + indRecCategory$(8, 3) + ", " + indRecCategory$(8, 4); HALF$(allRecords!(8, 2))
         Print
 
         Color 14: Print "MOST FIELD GOALS, ONE QUARTER"
         Color 15
-        Print allRecords!(9, 0); "- "; RC$(9, 0); ", "; RC$(9, 1) + " " + RC$(9, 2) + " " + RC$(9, 3) + ", " + RC$(9, 4); QTR$(allRecords!(9, 2))
+        Print allRecords!(9, 0); "- "; indRecCategory$(9, 0); ", "; indRecCategory$(9, 1) + " " + indRecCategory$(9, 2) + " " + indRecCategory$(9, 3) + ", " + indRecCategory$(9, 4); QTR$(allRecords!(9, 2))
         Print
 
         Color 14: Print "MOST FIELD GOALS, OVERTIME"
@@ -132,23 +132,23 @@ Sub RECORDS (menuChoice%)
         If allRecords!(10, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(10, 0); "- "; RC$(10, 0); ", "; RC$(10, 1) + " " + RC$(10, 2) + " " + RC$(10, 3) + ", " + RC$(10, 4)
+            Print allRecords!(10, 0); "- "; indRecCategory$(10, 0); ", "; indRecCategory$(10, 1) + " " + indRecCategory$(10, 2) + " " + indRecCategory$(10, 3) + ", " + indRecCategory$(10, 4)
         End If
         Print
 
         Color 14: Print "MOST FIELD GOAL ATTEMPTS, GAME"
         Color 15
-        Print allRecords!(11, 0); "- "; RC$(11, 0); ", "; RC$(11, 1) + " " + RC$(11, 2) + " " + RC$(11, 3) + ", " + RC$(11, 4)
+        Print allRecords!(11, 0); "- "; indRecCategory$(11, 0); ", "; indRecCategory$(11, 1) + " " + indRecCategory$(11, 2) + " " + indRecCategory$(11, 3) + ", " + indRecCategory$(11, 4)
         Print
 
         Color 14: Print "MOST FIELD GOAL ATTEMPTS, ONE HALF"
         Color 15
-        Print allRecords!(12, 0); "- "; RC$(12, 0); ", "; RC$(12, 1) + " " + RC$(12, 2) + " " + RC$(12, 3) + ", " + RC$(12, 4); HALF$(allRecords!(12, 2))
+        Print allRecords!(12, 0); "- "; indRecCategory$(12, 0); ", "; indRecCategory$(12, 1) + " " + indRecCategory$(12, 2) + " " + indRecCategory$(12, 3) + ", " + indRecCategory$(12, 4); HALF$(allRecords!(12, 2))
         Print
 
         Color 14: Print "MOST FIELD GOAL ATTEMPTS, ONE QUARTER"
         Color 15
-        Print allRecords!(13, 0); "- "; RC$(13, 0); ", "; RC$(13, 1) + " " + RC$(13, 2) + " " + RC$(13, 3) + ", " + RC$(13, 4); QTR$(allRecords!(13, 2))
+        Print allRecords!(13, 0); "- "; indRecCategory$(13, 0); ", "; indRecCategory$(13, 1) + " " + indRecCategory$(13, 2) + " " + indRecCategory$(13, 3) + ", " + indRecCategory$(13, 4); QTR$(allRecords!(13, 2))
         Print
         I$ = GetKeyPress$
 
@@ -160,7 +160,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(15, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(15, 0); "- "; RC$(15, 0); ", "; RC$(15, 1) + " " + RC$(15, 2) + " " + RC$(15, 3) + ", " + RC$(15, 4)
+            Print allRecords!(15, 0); "- "; indRecCategory$(15, 0); ", "; indRecCategory$(15, 1) + " " + indRecCategory$(15, 2) + " " + indRecCategory$(15, 3) + ", " + indRecCategory$(15, 4)
         End If
         Print
 
@@ -169,7 +169,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(16, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(16, 0); "- "; RC$(16, 0); ", "; RC$(16, 1) + " " + RC$(16, 2) + " " + RC$(16, 3) + ", " + RC$(16, 4)
+            Print allRecords!(16, 0); "- "; indRecCategory$(16, 0); ", "; indRecCategory$(16, 1) + " " + indRecCategory$(16, 2) + " " + indRecCategory$(16, 3) + ", " + indRecCategory$(16, 4)
         End If
         Print
 
@@ -178,7 +178,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(17, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(17, 0); "- "; RC$(17, 0); ", "; RC$(17, 1) + " " + RC$(17, 2) + " " + RC$(17, 3) + ", " + RC$(17, 4)
+            Print allRecords!(17, 0); "- "; indRecCategory$(17, 0); ", "; indRecCategory$(17, 1) + " " + indRecCategory$(17, 2) + " " + indRecCategory$(17, 3) + ", " + indRecCategory$(17, 4)
         End If
         Print
 
@@ -187,7 +187,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(18, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(18, 0); "- "; RC$(18, 0); ", "; RC$(18, 1) + " " + RC$(18, 2) + " " + RC$(18, 3) + ", " + RC$(18, 4); HALF$(allRecords!(18, 2))
+            Print allRecords!(18, 0); "- "; indRecCategory$(18, 0); ", "; indRecCategory$(18, 1) + " " + indRecCategory$(18, 2) + " " + indRecCategory$(18, 3) + ", " + indRecCategory$(18, 4); HALF$(allRecords!(18, 2))
         End If
         Print
 
@@ -196,7 +196,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(19, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(19, 0); "- "; RC$(19, 0); ", "; RC$(19, 1) + " " + RC$(19, 2) + " " + RC$(19, 3) + ", " + RC$(19, 4); QTR$(allRecords!(19, 2))
+            Print allRecords!(19, 0); "- "; indRecCategory$(19, 0); ", "; indRecCategory$(19, 1) + " " + indRecCategory$(19, 2) + " " + indRecCategory$(19, 3) + ", " + indRecCategory$(19, 4); QTR$(allRecords!(19, 2))
         End If
         Print
 
@@ -205,7 +205,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(21, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(21, 0); "- "; RC$(21, 0); ", "; RC$(21, 1) + " " + RC$(21, 2) + " " + RC$(21, 3) + ", " + RC$(21, 4)
+            Print allRecords!(21, 0); "- "; indRecCategory$(21, 0); ", "; indRecCategory$(21, 1) + " " + indRecCategory$(21, 2) + " " + indRecCategory$(21, 3) + ", " + indRecCategory$(21, 4)
         End If
         Print
 
@@ -214,7 +214,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(22, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(22, 0); "- "; RC$(22, 0); ", "; RC$(22, 1) + " " + RC$(22, 2) + " " + RC$(22, 3) + ", " + RC$(22, 4); HALF$(allRecords!(22, 2))
+            Print allRecords!(22, 0); "- "; indRecCategory$(22, 0); ", "; indRecCategory$(22, 1) + " " + indRecCategory$(22, 2) + " " + indRecCategory$(22, 3) + ", " + indRecCategory$(22, 4); HALF$(allRecords!(22, 2))
         End If
         Print
 
@@ -229,7 +229,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(23, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(23, 0); "- "; RC$(23, 0); ", "; RC$(23, 1) + " " + RC$(23, 2) + " " + RC$(23, 3) + ", " + RC$(23, 4)
+            Print allRecords!(23, 0); "- "; indRecCategory$(23, 0); ", "; indRecCategory$(23, 1) + " " + indRecCategory$(23, 2) + " " + indRecCategory$(23, 3) + ", " + indRecCategory$(23, 4)
         End If
 
         Print
@@ -240,7 +240,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(24, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(24, 0); "- "; RC$(24, 0); ", "; RC$(24, 1) + " " + RC$(24, 2) + " " + RC$(24, 3) + ", " + RC$(24, 4)
+            Print allRecords!(24, 0); "- "; indRecCategory$(24, 0); ", "; indRecCategory$(24, 1) + " " + indRecCategory$(24, 2) + " " + indRecCategory$(24, 3) + ", " + indRecCategory$(24, 4)
         End If
 
         Print
@@ -251,7 +251,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(25, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(25, 0); "- "; RC$(25, 0); ", "; RC$(25, 1) + " " + RC$(25, 2) + " " + RC$(25, 3) + ", " + RC$(25, 4)
+            Print allRecords!(25, 0); "- "; indRecCategory$(25, 0); ", "; indRecCategory$(25, 1) + " " + indRecCategory$(25, 2) + " " + indRecCategory$(25, 3) + ", " + indRecCategory$(25, 4)
         End If
 
         Print
@@ -262,7 +262,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(26, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(26, 0); "- "; RC$(26, 0); ", "; RC$(26, 1) + " " + RC$(26, 2) + " " + RC$(26, 3) + ", " + RC$(26, 4); HALF$(allRecords!(26, 2))
+            Print allRecords!(26, 0); "- "; indRecCategory$(26, 0); ", "; indRecCategory$(26, 1) + " " + indRecCategory$(26, 2) + " " + indRecCategory$(26, 3) + ", " + indRecCategory$(26, 4); HALF$(allRecords!(26, 2))
         End If
 
         Print
@@ -273,7 +273,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(27, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(27, 0); "- "; RC$(27, 0); ", "; RC$(27, 1) + " " + RC$(27, 2) + " " + RC$(27, 3) + ", " + RC$(27, 4); QTR$(allRecords!(27, 2))
+            Print allRecords!(27, 0); "- "; indRecCategory$(27, 0); ", "; indRecCategory$(27, 1) + " " + indRecCategory$(27, 2) + " " + indRecCategory$(27, 3) + ", " + indRecCategory$(27, 4); QTR$(allRecords!(27, 2))
         End If
 
         Print
@@ -284,7 +284,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(28, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(28, 0); "- "; RC$(28, 0); ", "; RC$(28, 1) + " " + RC$(28, 2) + " " + RC$(28, 3) + ", " + RC$(28, 4)
+            Print allRecords!(28, 0); "- "; indRecCategory$(28, 0); ", "; indRecCategory$(28, 1) + " " + indRecCategory$(28, 2) + " " + indRecCategory$(28, 3) + ", " + indRecCategory$(28, 4)
         End If
 
         Print
@@ -295,7 +295,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(29, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(29, 0); "- "; RC$(29, 0); ", "; RC$(29, 1) + " " + RC$(29, 2) + " " + RC$(29, 3) + ", " + RC$(29, 4); HALF$(allRecords!(29, 2))
+            Print allRecords!(29, 0); "- "; indRecCategory$(29, 0); ", "; indRecCategory$(29, 1) + " " + indRecCategory$(29, 2) + " " + indRecCategory$(29, 3) + ", " + indRecCategory$(29, 4); HALF$(allRecords!(29, 2))
         End If
 
         Print
@@ -306,7 +306,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(30, 0) = 0 Then
             Print "NO RECORD AT THIS TIME";
         Else
-            Print allRecords!(30, 0); "- "; RC$(30, 0); ", "; RC$(30, 1) + " " + RC$(30, 2) + " " + RC$(30, 3) + ", " + RC$(30, 4); QTR$(allRecords!(30, 2));
+            Print allRecords!(30, 0); "- "; indRecCategory$(30, 0); ", "; indRecCategory$(30, 1) + " " + indRecCategory$(30, 2) + " " + indRecCategory$(30, 3) + ", " + indRecCategory$(30, 4); QTR$(allRecords!(30, 2));
         End If
 
         I$ = GetKeyPress$
@@ -322,7 +322,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(31, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(31, 0); "- "; RC$(31, 0); ", "; RC$(31, 1) + " " + RC$(31, 2) + " " + RC$(31, 3) + ", " + RC$(31, 4)
+            Print allRecords!(31, 0); "- "; indRecCategory$(31, 0); ", "; indRecCategory$(31, 1) + " " + indRecCategory$(31, 2) + " " + indRecCategory$(31, 3) + ", " + indRecCategory$(31, 4)
         End If
         Print
 
@@ -333,7 +333,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(32, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(32, 0); "- "; RC$(32, 0); ", "; RC$(32, 1) + " " + RC$(32, 2) + " " + RC$(32, 3) + ", " + RC$(32, 4); HALF$(allRecords!(32, 2))
+            Print allRecords!(32, 0); "- "; indRecCategory$(32, 0); ", "; indRecCategory$(32, 1) + " " + indRecCategory$(32, 2) + " " + indRecCategory$(32, 3) + ", " + indRecCategory$(32, 4); HALF$(allRecords!(32, 2))
         End If
 
         Print
@@ -344,7 +344,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(33, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(33, 0); "- "; RC$(33, 0); ", "; RC$(33, 1) + " " + RC$(33, 2) + " " + RC$(33, 3) + ", " + RC$(33, 4); QTR$(allRecords!(33, 2))
+            Print allRecords!(33, 0); "- "; indRecCategory$(33, 0); ", "; indRecCategory$(33, 1) + " " + indRecCategory$(33, 2) + " " + indRecCategory$(33, 3) + ", " + indRecCategory$(33, 4); QTR$(allRecords!(33, 2))
         End If
 
         Print
@@ -355,7 +355,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(34, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(34, 0); "- "; RC$(34, 0); ", "; RC$(34, 1) + " " + RC$(34, 2) + " " + RC$(34, 3) + ", " + RC$(34, 4)
+            Print allRecords!(34, 0); "- "; indRecCategory$(34, 0); ", "; indRecCategory$(34, 1) + " " + indRecCategory$(34, 2) + " " + indRecCategory$(34, 3) + ", " + indRecCategory$(34, 4)
         End If
 
         Print
@@ -366,7 +366,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(35, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(35, 0); "- "; RC$(35, 0); ", "; RC$(35, 1) + " " + RC$(35, 2) + " " + RC$(35, 3) + ", " + RC$(35, 4); HALF$(allRecords!(35, 2))
+            Print allRecords!(35, 0); "- "; indRecCategory$(35, 0); ", "; indRecCategory$(35, 1) + " " + indRecCategory$(35, 2) + " " + indRecCategory$(35, 3) + ", " + indRecCategory$(35, 4); HALF$(allRecords!(35, 2))
         End If
 
         Print
@@ -377,7 +377,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(36, 0) = 0 Then
             Print "NO RECORD AT THIS TIME";
         Else
-            Print allRecords!(36, 0); "- "; RC$(36, 0); ", "; RC$(36, 1) + " " + RC$(36, 2) + " " + RC$(36, 3) + ", " + RC$(36, 4); QTR$(allRecords!(36, 2));
+            Print allRecords!(36, 0); "- "; indRecCategory$(36, 0); ", "; indRecCategory$(36, 1) + " " + indRecCategory$(36, 2) + " " + indRecCategory$(36, 3) + ", " + indRecCategory$(36, 4); QTR$(allRecords!(36, 2));
         End If
 
         I$ = GetKeyPress$
@@ -393,7 +393,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(37, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(37, 0); "- "; RC$(37, 0); ", "; RC$(37, 1) + " " + RC$(37, 2) + " " + RC$(37, 3) + ", " + RC$(37, 4)
+            Print allRecords!(37, 0); "- "; indRecCategory$(37, 0); ", "; indRecCategory$(37, 1) + " " + indRecCategory$(37, 2) + " " + indRecCategory$(37, 3) + ", " + indRecCategory$(37, 4)
         End If
 
         Print
@@ -404,7 +404,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(38, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(38, 0); "- "; RC$(38, 0); ", "; RC$(38, 1) + " " + RC$(38, 2) + " " + RC$(38, 3) + ", " + RC$(38, 4); HALF$(allRecords!(38, 2))
+            Print allRecords!(38, 0); "- "; indRecCategory$(38, 0); ", "; indRecCategory$(38, 1) + " " + indRecCategory$(38, 2) + " " + indRecCategory$(38, 3) + ", " + indRecCategory$(38, 4); HALF$(allRecords!(38, 2))
         End If
         Print
 
@@ -414,7 +414,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(39, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(39, 0); "- "; RC$(39, 0); ", "; RC$(39, 1) + " " + RC$(39, 2) + " " + RC$(39, 3) + ", " + RC$(39, 4); QTR$(allRecords!(39, 2))
+            Print allRecords!(39, 0); "- "; indRecCategory$(39, 0); ", "; indRecCategory$(39, 1) + " " + indRecCategory$(39, 2) + " " + indRecCategory$(39, 3) + ", " + indRecCategory$(39, 4); QTR$(allRecords!(39, 2))
         End If
 
         Print
@@ -425,7 +425,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(40, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(40, 0); "- "; RC$(40, 0); ", "; RC$(40, 1) + " " + RC$(40, 2) + " " + RC$(40, 3) + ", " + RC$(40, 4)
+            Print allRecords!(40, 0); "- "; indRecCategory$(40, 0); ", "; indRecCategory$(40, 1) + " " + indRecCategory$(40, 2) + " " + indRecCategory$(40, 3) + ", " + indRecCategory$(40, 4)
         End If
 
         Print
@@ -436,7 +436,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(41, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(41, 0); "- "; RC$(41, 0); ", "; RC$(41, 1) + " " + RC$(41, 2) + " " + RC$(41, 3) + ", " + RC$(41, 4); HALF$(allRecords!(41, 2))
+            Print allRecords!(41, 0); "- "; indRecCategory$(41, 0); ", "; indRecCategory$(41, 1) + " " + indRecCategory$(41, 2) + " " + indRecCategory$(41, 3) + ", " + indRecCategory$(41, 4); HALF$(allRecords!(41, 2))
         End If
 
         Print
@@ -448,7 +448,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(42, 0) = 0 Then
             Print "NO RECORD AT THIS TIME";
         Else
-            Print allRecords!(42, 0); "- "; RC$(42, 0); ", "; RC$(42, 1) + " " + RC$(42, 2) + " " + RC$(42, 3) + ", " + RC$(42, 4); QTR$(allRecords!(42, 2));
+            Print allRecords!(42, 0); "- "; indRecCategory$(42, 0); ", "; indRecCategory$(42, 1) + " " + indRecCategory$(42, 2) + " " + indRecCategory$(42, 3) + ", " + indRecCategory$(42, 4); QTR$(allRecords!(42, 2));
         End If
         I$ = GetKeyPress$
 
@@ -463,7 +463,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(43, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(43, 0); "- "; RC$(43, 0); ", "; RC$(43, 1) + " " + RC$(43, 2) + " " + RC$(43, 3) + ", " + RC$(43, 4)
+            Print allRecords!(43, 0); "- "; indRecCategory$(43, 0); ", "; indRecCategory$(43, 1) + " " + indRecCategory$(43, 2) + " " + indRecCategory$(43, 3) + ", " + indRecCategory$(43, 4)
         End If
 
         Print
@@ -474,7 +474,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(44, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(44, 0); "- "; RC$(44, 0); ", "; RC$(44, 1) + " " + RC$(44, 2) + " " + RC$(44, 3) + ", " + RC$(44, 4); HALF$(allRecords!(44, 2))
+            Print allRecords!(44, 0); "- "; indRecCategory$(44, 0); ", "; indRecCategory$(44, 1) + " " + indRecCategory$(44, 2) + " " + indRecCategory$(44, 3) + ", " + indRecCategory$(44, 4); HALF$(allRecords!(44, 2))
         End If
 
         Print
@@ -485,7 +485,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(45, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(45, 0); "- "; RC$(45, 0); ", "; RC$(45, 1) + " " + RC$(45, 2) + " " + RC$(45, 3) + ", " + RC$(45, 4); QTR$(allRecords!(45, 2))
+            Print allRecords!(45, 0); "- "; indRecCategory$(45, 0); ", "; indRecCategory$(45, 1) + " " + indRecCategory$(45, 2) + " " + indRecCategory$(45, 3) + ", " + indRecCategory$(45, 4); QTR$(allRecords!(45, 2))
         End If
 
         Print
@@ -496,7 +496,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(46, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(46, 0); "- "; RC$(46, 0); ", "; RC$(46, 1) + " " + RC$(46, 2) + " " + RC$(46, 3) + ", " + RC$(46, 4)
+            Print allRecords!(46, 0); "- "; indRecCategory$(46, 0); ", "; indRecCategory$(46, 1) + " " + indRecCategory$(46, 2) + " " + indRecCategory$(46, 3) + ", " + indRecCategory$(46, 4)
         End If
 
         Print
@@ -507,7 +507,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(47, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print allRecords!(47, 0); "- "; RC$(47, 0); ", "; RC$(47, 1) + " " + RC$(47, 2) + " " + RC$(47, 3) + ", " + RC$(47, 4); HALF$(allRecords!(47, 2))
+            Print allRecords!(47, 0); "- "; indRecCategory$(47, 0); ", "; indRecCategory$(47, 1) + " " + indRecCategory$(47, 2) + " " + indRecCategory$(47, 3) + ", " + indRecCategory$(47, 4); HALF$(allRecords!(47, 2))
         End If
 
         Print
@@ -518,7 +518,7 @@ Sub RECORDS (menuChoice%)
         If allRecords!(48, 0) = 0 Then
             Print "NO RECORD AT THIS TIME";
         Else
-            Print allRecords!(48, 0); "- "; RC$(48, 0); ", "; RC$(48, 1) + " " + RC$(48, 2) + " " + RC$(48, 3) + ", " + RC$(48, 4); QTR$(allRecords!(48, 2));
+            Print allRecords!(48, 0); "- "; indRecCategory$(48, 0); ", "; indRecCategory$(48, 1) + " " + indRecCategory$(48, 2) + " " + indRecCategory$(48, 3) + ", " + indRecCategory$(48, 4); QTR$(allRecords!(48, 2));
         End If
 
         I$ = GetKeyPress$
@@ -531,48 +531,48 @@ Sub RECORDS (menuChoice%)
         Color 14: Print "MOST OVERTIME PERIODS"
         Color 15
 
-        If TotalRecords!(0, 0) = 0 Then
+        If teamRecords!(0, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print TotalRecords!(0, 0); "- "; recordsTRC$(0, 1);
-            Print Using " (###) AT "; TotalRecords!(0, 1);
-            Print recordsTRC$(0, 2);: Print Using " (###)"; TotalRecords!(0, 2);: Print ", " + recordsTRC$(0, 3)
+            Print teamRecords!(0, 0); "- "; teamRecCategory$(0, 1);
+            Print Using " (###) AT "; teamRecords!(0, 1);
+            Print teamRecCategory$(0, 2);: Print Using " (###)"; teamRecords!(0, 2);: Print ", " + teamRecCategory$(0, 3)
         End If
 
         Print
 
         Color 14: Print "MOST POINTS, GAME"
         Color 15
-        Print TotalRecords!(1, 0); "- "; recordsTRC$(1, 0) + " " + recordsTRC$(1, 1) + " " + recordsTRC$(1, 2) + ", " + recordsTRC$(1, 3)
+        Print teamRecords!(1, 0); "- "; teamRecCategory$(1, 0) + " " + teamRecCategory$(1, 1) + " " + teamRecCategory$(1, 2) + ", " + teamRecCategory$(1, 3)
         Print
 
         Color 14: Print "FEWEST POINTS, GAME"
         Color 15
-        Print TotalRecords!(2, 0); "- "; recordsTRC$(2, 0) + " " + recordsTRC$(2, 1) + " " + recordsTRC$(2, 2) + ", " + recordsTRC$(2, 3)
+        Print teamRecords!(2, 0); "- "; teamRecCategory$(2, 0) + " " + teamRecCategory$(2, 1) + " " + teamRecCategory$(2, 2) + ", " + teamRecCategory$(2, 3)
         Print
 
         Color 14: Print "MOST POINTS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(3, 0); "- "; recordsTRC$(3, 0);
-        Print Using " (###) "; TotalRecords!(3, 1);: Print recordsTRC$(3, 1) + " ";
-        Print recordsTRC$(3, 2);: Print Using " (###)"; TotalRecords!(3, 2);: Print ", " + recordsTRC$(3, 3)
+        Print teamRecords!(3, 0); "- "; teamRecCategory$(3, 0);
+        Print Using " (###) "; teamRecords!(3, 1);: Print teamRecCategory$(3, 1) + " ";
+        Print teamRecCategory$(3, 2);: Print Using " (###)"; teamRecords!(3, 2);: Print ", " + teamRecCategory$(3, 3)
         Print
 
         Color 14: Print "FEWEST POINTS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(4, 0); "- "; recordsTRC$(4, 0);
-        Print Using " (###) "; TotalRecords!(4, 1);: Print recordsTRC$(4, 1) + " ";
-        Print recordsTRC$(4, 2);: Print Using " (###)"; TotalRecords!(4, 2);: Print ", " + recordsTRC$(4, 3)
+        Print teamRecords!(4, 0); "- "; teamRecCategory$(4, 0);
+        Print Using " (###) "; teamRecords!(4, 1);: Print teamRecCategory$(4, 1) + " ";
+        Print teamRecCategory$(4, 2);: Print Using " (###)"; teamRecords!(4, 2);: Print ", " + teamRecCategory$(4, 3)
         Print
 
         Color 14: Print "MOST POINTS, FIRST HALF"
         Color 15
-        Print TotalRecords!(6, 0); "- "; recordsTRC$(6, 0) + " " + recordsTRC$(6, 1) + " " + recordsTRC$(6, 2) + ", " + recordsTRC$(6, 3)
+        Print teamRecords!(6, 0); "- "; teamRecCategory$(6, 0) + " " + teamRecCategory$(6, 1) + " " + teamRecCategory$(6, 2) + ", " + teamRecCategory$(6, 3)
         Print
 
         Color 14: Print "FEWEST POINTS, FIRST HALF"
         Color 15
-        Print TotalRecords!(7, 0); "- "; recordsTRC$(7, 0) + " " + recordsTRC$(7, 1) + " " + recordsTRC$(7, 2) + ", " + recordsTRC$(7, 3)
+        Print teamRecords!(7, 0); "- "; teamRecCategory$(7, 0) + " " + teamRecCategory$(7, 1) + " " + teamRecCategory$(7, 2) + ", " + teamRecCategory$(7, 3)
         Print
 
         I$ = GetKeyPress$
@@ -585,40 +585,40 @@ Sub RECORDS (menuChoice%)
 
         Color 14: Print "MOST POINTS, BOTH TEAMS, FIRST HALF"
         Color 15
-        Print TotalRecords!(8, 0); "- "; recordsTRC$(8, 0);
-        Print Using " (###) "; TotalRecords!(8, 1);: Print recordsTRC$(8, 1) + " ";
-        Print recordsTRC$(8, 2);: Print Using " (###)"; TotalRecords!(8, 2);: Print ", " + recordsTRC$(8, 3)
+        Print teamRecords!(8, 0); "- "; teamRecCategory$(8, 0);
+        Print Using " (###) "; teamRecords!(8, 1);: Print teamRecCategory$(8, 1) + " ";
+        Print teamRecCategory$(8, 2);: Print Using " (###)"; teamRecords!(8, 2);: Print ", " + teamRecCategory$(8, 3)
         Print
 
         Color 14: Print "FEWEST POINTS, BOTH TEAMS, FIRST HALF"
         Color 15
-        Print TotalRecords!(9, 0); "- "; recordsTRC$(9, 0);
-        Print Using " (###) "; TotalRecords!(9, 1);: Print recordsTRC$(9, 1) + " ";
-        Print recordsTRC$(9, 2);: Print Using " (###)"; TotalRecords!(9, 2);: Print ", " + recordsTRC$(9, 3)
+        Print teamRecords!(9, 0); "- "; teamRecCategory$(9, 0);
+        Print Using " (###) "; teamRecords!(9, 1);: Print teamRecCategory$(9, 1) + " ";
+        Print teamRecCategory$(9, 2);: Print Using " (###)"; teamRecords!(9, 2);: Print ", " + teamRecCategory$(9, 3)
         Print
 
         Color 14: Print "MOST POINTS, SECOND HALF"
         Color 15
-        Print TotalRecords!(10, 0); "- "; recordsTRC$(10, 0) + " " + recordsTRC$(10, 1) + " " + recordsTRC$(10, 2) + ", " + recordsTRC$(10, 3)
+        Print teamRecords!(10, 0); "- "; teamRecCategory$(10, 0) + " " + teamRecCategory$(10, 1) + " " + teamRecCategory$(10, 2) + ", " + teamRecCategory$(10, 3)
         Print
 
         Color 14: Print "FEWEST POINTS, SECOND HALF"
         Color 15
-        Print TotalRecords!(11, 0); "- "; recordsTRC$(11, 0) + " " + recordsTRC$(11, 1) + " " + recordsTRC$(11, 2) + ", " + recordsTRC$(11, 3)
+        Print teamRecords!(11, 0); "- "; teamRecCategory$(11, 0) + " " + teamRecCategory$(11, 1) + " " + teamRecCategory$(11, 2) + ", " + teamRecCategory$(11, 3)
         Print
 
         Color 14: Print "MOST POINTS, BOTH TEAMS, SECOND HALF"
         Color 15
-        Print TotalRecords!(12, 0); "- "; recordsTRC$(12, 0);
-        Print Using " (###) "; TotalRecords!(12, 1);: Print recordsTRC$(12, 1) + " ";
-        Print recordsTRC$(12, 2);: Print Using " (###)"; TotalRecords!(12, 2);: Print ", " + recordsTRC$(12, 3)
+        Print teamRecords!(12, 0); "- "; teamRecCategory$(12, 0);
+        Print Using " (###) "; teamRecords!(12, 1);: Print teamRecCategory$(12, 1) + " ";
+        Print teamRecCategory$(12, 2);: Print Using " (###)"; teamRecords!(12, 2);: Print ", " + teamRecCategory$(12, 3)
         Print
 
         Color 14: Print "FEWEST POINTS, BOTH TEAMS, SECOND HALF"
         Color 15
-        Print TotalRecords!(13, 0); "- "; recordsTRC$(13, 0);
-        Print Using " (###) "; TotalRecords!(13, 1);: Print recordsTRC$(13, 1) + " ";
-        Print recordsTRC$(13, 2);: Print Using " (###)"; TotalRecords!(13, 2);: Print ", " + recordsTRC$(13, 3)
+        Print teamRecords!(13, 0); "- "; teamRecCategory$(13, 0);
+        Print Using " (###) "; teamRecords!(13, 1);: Print teamRecCategory$(13, 1) + " ";
+        Print teamRecCategory$(13, 2);: Print Using " (###)"; teamRecords!(13, 2);: Print ", " + teamRecCategory$(13, 3)
         Print
 
         I$ = GetKeyPress$
@@ -629,50 +629,50 @@ Sub RECORDS (menuChoice%)
 
         Color 14: Print "MOST POINTS, FIRST QUARTER"
         Color 15
-        Print TotalRecords!(14, 0); "- "; recordsTRC$(14, 0) + " " + recordsTRC$(14, 1) + " " + recordsTRC$(14, 2) + ", " + recordsTRC$(14, 3)
+        Print teamRecords!(14, 0); "- "; teamRecCategory$(14, 0) + " " + teamRecCategory$(14, 1) + " " + teamRecCategory$(14, 2) + ", " + teamRecCategory$(14, 3)
         Print
 
         Color 14: Print "FEWEST POINTS, FIRST QUARTER"
         Color 15
-        Print TotalRecords!(15, 0); "- "; recordsTRC$(15, 0) + " " + recordsTRC$(15, 1) + " " + recordsTRC$(15, 2) + ", " + recordsTRC$(15, 3)
+        Print teamRecords!(15, 0); "- "; teamRecCategory$(15, 0) + " " + teamRecCategory$(15, 1) + " " + teamRecCategory$(15, 2) + ", " + teamRecCategory$(15, 3)
         Print
 
         Color 14: Print "MOST POINTS, BOTH TEAMS, FIRST QUARTER"
         Color 15
-        Print TotalRecords!(16, 0); "- "; recordsTRC$(16, 0);
-        Print Using " (###) "; TotalRecords!(16, 1);: Print recordsTRC$(16, 1) + " ";
-        Print recordsTRC$(16, 2);: Print Using " (###)"; TotalRecords!(16, 2);: Print ", " + recordsTRC$(16, 3)
+        Print teamRecords!(16, 0); "- "; teamRecCategory$(16, 0);
+        Print Using " (###) "; teamRecords!(16, 1);: Print teamRecCategory$(16, 1) + " ";
+        Print teamRecCategory$(16, 2);: Print Using " (###)"; teamRecords!(16, 2);: Print ", " + teamRecCategory$(16, 3)
         Print
 
         Color 14: Print "FEWEST POINTS, BOTH TEAMS, FIRST QUARTER"
         Color 15
-        Print TotalRecords!(17, 0); "- "; recordsTRC$(17, 0);
-        Print Using " (###) "; TotalRecords!(17, 1);: Print recordsTRC$(17, 1) + " ";
-        Print recordsTRC$(17, 2);: Print Using " (###)"; TotalRecords!(17, 2);: Print ", " + recordsTRC$(17, 3)
+        Print teamRecords!(17, 0); "- "; teamRecCategory$(17, 0);
+        Print Using " (###) "; teamRecords!(17, 1);: Print teamRecCategory$(17, 1) + " ";
+        Print teamRecCategory$(17, 2);: Print Using " (###)"; teamRecords!(17, 2);: Print ", " + teamRecCategory$(17, 3)
         Print
 
         Color 14: Print "MOST POINTS, SECOND QUARTER"
         Color 15
-        Print TotalRecords!(18, 0); "- "; recordsTRC$(18, 0) + " " + recordsTRC$(18, 1) + " " + recordsTRC$(18, 2) + ", " + recordsTRC$(18, 3)
+        Print teamRecords!(18, 0); "- "; teamRecCategory$(18, 0) + " " + teamRecCategory$(18, 1) + " " + teamRecCategory$(18, 2) + ", " + teamRecCategory$(18, 3)
         Print
 
         Color 14: Print "FEWEST POINTS, SECOND QUARTER"
         Color 15
-        Print TotalRecords!(19, 0); "- "; recordsTRC$(19, 0) + " " + recordsTRC$(19, 1) + " " + recordsTRC$(19, 2) + ", " + recordsTRC$(19, 3)
+        Print teamRecords!(19, 0); "- "; teamRecCategory$(19, 0) + " " + teamRecCategory$(19, 1) + " " + teamRecCategory$(19, 2) + ", " + teamRecCategory$(19, 3)
         Print
 
         Color 14: Print "MOST POINTS, BOTH TEAMS, SECOND QUARTER"
         Color 15
-        Print TotalRecords!(20, 0); "- "; recordsTRC$(20, 0);
-        Print Using " (###) "; TotalRecords!(20, 1);: Print recordsTRC$(20, 1) + " ";
-        Print recordsTRC$(20, 2);: Print Using " (###)"; TotalRecords!(20, 2);: Print ", " + recordsTRC$(20, 3)
+        Print teamRecords!(20, 0); "- "; teamRecCategory$(20, 0);
+        Print Using " (###) "; teamRecords!(20, 1);: Print teamRecCategory$(20, 1) + " ";
+        Print teamRecCategory$(20, 2);: Print Using " (###)"; teamRecords!(20, 2);: Print ", " + teamRecCategory$(20, 3)
         Print
 
         Color 14: Print "FEWEST POINTS, BOTH TEAMS, SECOND QUARTER"
         Color 15
-        Print TotalRecords!(21, 0); "- "; recordsTRC$(21, 0);
-        Print Using " (###) "; TotalRecords!(21, 1);: Print recordsTRC$(21, 1) + " ";
-        Print recordsTRC$(21, 2);: Print Using " (###)"; TotalRecords!(21, 2);: Print ", " + recordsTRC$(21, 3);
+        Print teamRecords!(21, 0); "- "; teamRecCategory$(21, 0);
+        Print Using " (###) "; teamRecords!(21, 1);: Print teamRecCategory$(21, 1) + " ";
+        Print teamRecCategory$(21, 2);: Print Using " (###)"; teamRecords!(21, 2);: Print ", " + teamRecCategory$(21, 3);
         I$ = GetKeyPress$
 
         Cls
@@ -681,50 +681,50 @@ Sub RECORDS (menuChoice%)
 
         Color 14: Print "MOST POINTS, THIRD QUARTER"
         Color 15
-        Print TotalRecords!(22, 0); "- "; recordsTRC$(22, 0) + " " + recordsTRC$(22, 1) + " " + recordsTRC$(22, 2) + ", " + recordsTRC$(22, 3)
+        Print teamRecords!(22, 0); "- "; teamRecCategory$(22, 0) + " " + teamRecCategory$(22, 1) + " " + teamRecCategory$(22, 2) + ", " + teamRecCategory$(22, 3)
         Print
 
         Color 14: Print "FEWEST POINTS, THIRD QUARTER"
         Color 15
-        Print TotalRecords!(23, 0); "- "; recordsTRC$(23, 0) + " " + recordsTRC$(23, 1) + " " + recordsTRC$(23, 2) + ", " + recordsTRC$(23, 3)
+        Print teamRecords!(23, 0); "- "; teamRecCategory$(23, 0) + " " + teamRecCategory$(23, 1) + " " + teamRecCategory$(23, 2) + ", " + teamRecCategory$(23, 3)
         Print
 
         Color 14: Print "MOST POINTS, BOTH TEAMS, THIRD QUARTER"
         Color 15
-        Print TotalRecords!(24, 0); "- "; recordsTRC$(24, 0);
-        Print Using " (###) "; TotalRecords!(24, 1);: Print recordsTRC$(24, 1) + " ";
-        Print recordsTRC$(24, 2);: Print Using " (###)"; TotalRecords!(24, 2);: Print ", " + recordsTRC$(24, 3)
+        Print teamRecords!(24, 0); "- "; teamRecCategory$(24, 0);
+        Print Using " (###) "; teamRecords!(24, 1);: Print teamRecCategory$(24, 1) + " ";
+        Print teamRecCategory$(24, 2);: Print Using " (###)"; teamRecords!(24, 2);: Print ", " + teamRecCategory$(24, 3)
         Print
 
         Color 14: Print "FEWEST POINTS, BOTH TEAMS, THIRD QUARTER"
         Color 15
-        Print TotalRecords!(25, 0); "- "; recordsTRC$(25, 0);
-        Print Using " (###) "; TotalRecords!(25, 1);: Print recordsTRC$(25, 1) + " ";
-        Print recordsTRC$(25, 2);: Print Using " (###)"; TotalRecords!(25, 2);: Print ", " + recordsTRC$(25, 3)
+        Print teamRecords!(25, 0); "- "; teamRecCategory$(25, 0);
+        Print Using " (###) "; teamRecords!(25, 1);: Print teamRecCategory$(25, 1) + " ";
+        Print teamRecCategory$(25, 2);: Print Using " (###)"; teamRecords!(25, 2);: Print ", " + teamRecCategory$(25, 3)
         Print
 
         Color 14: Print "MOST POINTS, FOURTH QUARTER"
         Color 15
-        Print TotalRecords!(26, 0); "- "; recordsTRC$(26, 0) + " " + recordsTRC$(26, 1) + " " + recordsTRC$(26, 2) + ", " + recordsTRC$(26, 3)
+        Print teamRecords!(26, 0); "- "; teamRecCategory$(26, 0) + " " + teamRecCategory$(26, 1) + " " + teamRecCategory$(26, 2) + ", " + teamRecCategory$(26, 3)
         Print
 
         Color 14: Print "FEWEST POINTS, FOURTH QUARTER"
         Color 15
-        Print TotalRecords!(27, 0); "- "; recordsTRC$(27, 0) + " " + recordsTRC$(27, 1) + " " + recordsTRC$(27, 2) + ", " + recordsTRC$(27, 3)
+        Print teamRecords!(27, 0); "- "; teamRecCategory$(27, 0) + " " + teamRecCategory$(27, 1) + " " + teamRecCategory$(27, 2) + ", " + teamRecCategory$(27, 3)
         Print
 
         Color 14: Print "MOST POINTS, BOTH TEAMS, FOURTH QUARTER"
         Color 15
-        Print TotalRecords!(28, 0); "- "; recordsTRC$(28, 0);
-        Print Using " (###) "; TotalRecords!(28, 1);: Print recordsTRC$(28, 1) + " ";
-        Print recordsTRC$(28, 2);: Print Using " (###)"; TotalRecords!(28, 2);: Print ", " + recordsTRC$(28, 3)
+        Print teamRecords!(28, 0); "- "; teamRecCategory$(28, 0);
+        Print Using " (###) "; teamRecords!(28, 1);: Print teamRecCategory$(28, 1) + " ";
+        Print teamRecCategory$(28, 2);: Print Using " (###)"; teamRecords!(28, 2);: Print ", " + teamRecCategory$(28, 3)
         Print
 
         Color 14: Print "FEWEST POINTS, BOTH TEAMS, FOURTH QUARTER"
         Color 15
-        Print TotalRecords!(29, 0); "- "; recordsTRC$(29, 0);
-        Print Using " (###) "; TotalRecords!(29, 1);: Print recordsTRC$(29, 1) + " ";
-        Print recordsTRC$(29, 2);: Print Using " (###)"; TotalRecords!(29, 2);: Print ", " + recordsTRC$(29, 3);
+        Print teamRecords!(29, 0); "- "; teamRecCategory$(29, 0);
+        Print Using " (###) "; teamRecords!(29, 1);: Print teamRecCategory$(29, 1) + " ";
+        Print teamRecCategory$(29, 2);: Print Using " (###)"; teamRecords!(29, 2);: Print ", " + teamRecCategory$(29, 3);
 
         I$ = GetKeyPress$
 
@@ -734,50 +734,50 @@ Sub RECORDS (menuChoice%)
 
         Color 14: Print "HIGHEST FIELD GOAL PERCENTAGE, GAME"
         Color 15
-        Print Using ".### "; TotalRecords!(30, 0);: Print "- "; recordsTRC$(30, 0) + " " + recordsTRC$(30, 1) + " " + recordsTRC$(30, 2) + ", " + recordsTRC$(30, 3);: Print Using "###/###"; TotalRecords!(30, 1); TotalRecords!(30, 2)
+        Print Using ".### "; teamRecords!(30, 0);: Print "- "; teamRecCategory$(30, 0) + " " + teamRecCategory$(30, 1) + " " + teamRecCategory$(30, 2) + ", " + teamRecCategory$(30, 3);: Print Using "###/###"; teamRecords!(30, 1); teamRecords!(30, 2)
         Print
 
         Color 14: Print "LOWEST FIELD GOAL PERCENTAGE, GAME"
         Color 15
-        Print Using ".### "; TotalRecords!(31, 0);: Print "- "; recordsTRC$(31, 0) + " " + recordsTRC$(31, 1) + " " + recordsTRC$(31, 2) + ", " + recordsTRC$(31, 3);: Print Using "###/###"; TotalRecords!(31, 1); TotalRecords!(31, 2)
+        Print Using ".### "; teamRecords!(31, 0);: Print "- "; teamRecCategory$(31, 0) + " " + teamRecCategory$(31, 1) + " " + teamRecCategory$(31, 2) + ", " + teamRecCategory$(31, 3);: Print Using "###/###"; teamRecords!(31, 1); teamRecords!(31, 2)
         Print
 
         Color 14: Print "HIGHEST FIELD GOAL PERCENTAGE, BOTH TEAMS, GAME"
         Color 15
-        Print Using ".### "; TotalRecords!(32, 0);: Print "- "; recordsTRC$(32, 0);
-        Print Using " (.###) "; TotalRecords!(32, 1);: Print recordsTRC$(32, 1) + " ";
-        Print recordsTRC$(32, 2);: Print Using " (.###)"; TotalRecords!(32, 2);: Print ", " + recordsTRC$(32, 3)
+        Print Using ".### "; teamRecords!(32, 0);: Print "- "; teamRecCategory$(32, 0);
+        Print Using " (.###) "; teamRecords!(32, 1);: Print teamRecCategory$(32, 1) + " ";
+        Print teamRecCategory$(32, 2);: Print Using " (.###)"; teamRecords!(32, 2);: Print ", " + teamRecCategory$(32, 3)
         Print
 
         Color 14: Print "LOWEST FIELD GOAL PERCENTAGE, BOTH TEAMS, GAME"
         Color 15
-        Print Using ".### "; TotalRecords!(33, 0);: Print "- "; recordsTRC$(33, 0);
-        Print Using " (.###) "; TotalRecords!(33, 1);: Print recordsTRC$(33, 1) + " ";
-        Print recordsTRC$(33, 2);: Print Using " (.###)"; TotalRecords!(33, 2);: Print ", " + recordsTRC$(33, 3)
+        Print Using ".### "; teamRecords!(33, 0);: Print "- "; teamRecCategory$(33, 0);
+        Print Using " (.###) "; teamRecords!(33, 1);: Print teamRecCategory$(33, 1) + " ";
+        Print teamRecCategory$(33, 2);: Print Using " (.###)"; teamRecords!(33, 2);: Print ", " + teamRecCategory$(33, 3)
         Print
 
         Color 14: Print "MOST FIELD GOALS, GAME"
         Color 15
-        Print TotalRecords!(34, 0); "- "; recordsTRC$(34, 0) + " " + recordsTRC$(34, 1) + " " + recordsTRC$(34, 2) + ", " + recordsTRC$(34, 3)
+        Print teamRecords!(34, 0); "- "; teamRecCategory$(34, 0) + " " + teamRecCategory$(34, 1) + " " + teamRecCategory$(34, 2) + ", " + teamRecCategory$(34, 3)
         Print
 
         Color 14: Print "FEWEST FIELD GOALS, GAME"
         Color 15
-        Print TotalRecords!(35, 0); "- "; recordsTRC$(35, 0) + " " + recordsTRC$(35, 1) + " " + recordsTRC$(35, 2) + ", " + recordsTRC$(35, 3)
+        Print teamRecords!(35, 0); "- "; teamRecCategory$(35, 0) + " " + teamRecCategory$(35, 1) + " " + teamRecCategory$(35, 2) + ", " + teamRecCategory$(35, 3)
         Print
 
         Color 14: Print "MOST FIELD GOALS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(36, 0); "- "; recordsTRC$(36, 0);
-        Print Using " (###) "; TotalRecords!(36, 1);: Print recordsTRC$(36, 1) + " ";
-        Print recordsTRC$(36, 2);: Print Using " (###)"; TotalRecords!(36, 2);: Print ", " + recordsTRC$(36, 3)
+        Print teamRecords!(36, 0); "- "; teamRecCategory$(36, 0);
+        Print Using " (###) "; teamRecords!(36, 1);: Print teamRecCategory$(36, 1) + " ";
+        Print teamRecCategory$(36, 2);: Print Using " (###)"; teamRecords!(36, 2);: Print ", " + teamRecCategory$(36, 3)
         Print
 
         Color 14: Print "FEWEST FIELD GOALS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(37, 0); "- "; recordsTRC$(37, 0);
-        Print Using " (###) "; TotalRecords!(37, 1);: Print recordsTRC$(37, 1) + " ";
-        Print recordsTRC$(37, 2);: Print Using " (###)"; TotalRecords!(37, 2);: Print ", " + recordsTRC$(37, 3);
+        Print teamRecords!(37, 0); "- "; teamRecCategory$(37, 0);
+        Print Using " (###) "; teamRecords!(37, 1);: Print teamRecCategory$(37, 1) + " ";
+        Print teamRecCategory$(37, 2);: Print Using " (###)"; teamRecords!(37, 2);: Print ", " + teamRecCategory$(37, 3);
 
         I$ = GetKeyPress$
 
@@ -788,46 +788,46 @@ Sub RECORDS (menuChoice%)
 
         Color 14: Print "MOST FIELD GOALS, ONE HALF"
         Color 15
-        Print TotalRecords!(38, 0); "- "; recordsTRC$(38, 0) + " " + recordsTRC$(38, 1) + " " + recordsTRC$(38, 2) + ", " + recordsTRC$(38, 3); HALF$(TotalRecords!(38, 1))
+        Print teamRecords!(38, 0); "- "; teamRecCategory$(38, 0) + " " + teamRecCategory$(38, 1) + " " + teamRecCategory$(38, 2) + ", " + teamRecCategory$(38, 3); HALF$(teamRecords!(38, 1))
         Print
 
         Color 14: Print "MOST FIELD GOALS, BOTH TEAMS, ONE HALF"
         Color 15
-        Print TotalRecords!(39, 0); "- "; recordsTRC$(39, 0); " "; recordsTRC$(39, 1); " "; recordsTRC$(39, 2); ", "; recordsTRC$(39, 3); HALF$(TotalRecords!(39, 1))
+        Print teamRecords!(39, 0); "- "; teamRecCategory$(39, 0); " "; teamRecCategory$(39, 1); " "; teamRecCategory$(39, 2); ", "; teamRecCategory$(39, 3); HALF$(teamRecords!(39, 1))
         Print
 
         Color 14: Print "MOST FIELD GOALS, ONE QUARTER"
         Color 15
-        Print TotalRecords!(40, 0); "- "; recordsTRC$(40, 0) + " " + recordsTRC$(40, 1) + " " + recordsTRC$(40, 2) + ", " + recordsTRC$(40, 3); QTR$(TotalRecords!(40, 1))
+        Print teamRecords!(40, 0); "- "; teamRecCategory$(40, 0) + " " + teamRecCategory$(40, 1) + " " + teamRecCategory$(40, 2) + ", " + teamRecCategory$(40, 3); QTR$(teamRecords!(40, 1))
         Print
 
         Color 14: Print "MOST FIELD GOALS, BOTH TEAMS, ONE QUARTER"
         Color 15
-        Print TotalRecords!(41, 0); "- "; recordsTRC$(41, 0); " "; recordsTRC$(41, 1); " "; recordsTRC$(41, 2); ", "; recordsTRC$(41, 3); QTR$(TotalRecords!(41, 1))
+        Print teamRecords!(41, 0); "- "; teamRecCategory$(41, 0); " "; teamRecCategory$(41, 1); " "; teamRecCategory$(41, 2); ", "; teamRecCategory$(41, 3); QTR$(teamRecords!(41, 1))
         Print
 
         Color 14: Print "MOST FIELD GOAL ATTEMPTS, GAME"
         Color 15
-        Print TotalRecords!(42, 0); "- "; recordsTRC$(42, 0) + " " + recordsTRC$(42, 1) + " " + recordsTRC$(42, 2) + ", " + recordsTRC$(42, 3)
+        Print teamRecords!(42, 0); "- "; teamRecCategory$(42, 0) + " " + teamRecCategory$(42, 1) + " " + teamRecCategory$(42, 2) + ", " + teamRecCategory$(42, 3)
         Print
 
         Color 14: Print "FEWEST FIELD GOAL ATTEMPTS, GAME"
         Color 15
-        Print TotalRecords!(43, 0); "- "; recordsTRC$(43, 0) + " " + recordsTRC$(43, 1) + " " + recordsTRC$(43, 2) + ", " + recordsTRC$(43, 3)
+        Print teamRecords!(43, 0); "- "; teamRecCategory$(43, 0) + " " + teamRecCategory$(43, 1) + " " + teamRecCategory$(43, 2) + ", " + teamRecCategory$(43, 3)
         Print
 
         Color 14: Print "MOST FIELD GOAL ATTEMPTS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(44, 0); "- "; recordsTRC$(44, 0);
-        Print Using " (###) "; TotalRecords!(44, 1);: Print recordsTRC$(44, 1) + " ";
-        Print recordsTRC$(44, 2);: Print Using " (###)"; TotalRecords!(44, 2);: Print ", " + recordsTRC$(44, 3)
+        Print teamRecords!(44, 0); "- "; teamRecCategory$(44, 0);
+        Print Using " (###) "; teamRecords!(44, 1);: Print teamRecCategory$(44, 1) + " ";
+        Print teamRecCategory$(44, 2);: Print Using " (###)"; teamRecords!(44, 2);: Print ", " + teamRecCategory$(44, 3)
         Print
 
         Color 14: Print "FEWEST FIELD GOAL ATTEMPTS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(45, 0); "- "; recordsTRC$(45, 0);
-        Print Using " (###) "; TotalRecords!(45, 1);: Print recordsTRC$(45, 1) + " ";
-        Print recordsTRC$(45, 2);: Print Using " (###)"; TotalRecords!(45, 2);: Print ", " + recordsTRC$(45, 3);
+        Print teamRecords!(45, 0); "- "; teamRecCategory$(45, 0);
+        Print Using " (###) "; teamRecords!(45, 1);: Print teamRecCategory$(45, 1) + " ";
+        Print teamRecCategory$(45, 2);: Print Using " (###)"; teamRecords!(45, 2);: Print ", " + teamRecCategory$(45, 3);
 
         I$ = GetKeyPress$
 
@@ -838,31 +838,31 @@ Sub RECORDS (menuChoice%)
 
         Color 14: Print "MOST FIELD GOAL ATTEMPTS, ONE HALF"
         Color 15
-        Print TotalRecords!(46, 0); "- "; recordsTRC$(46, 0) + " " + recordsTRC$(46, 1) + " " + recordsTRC$(46, 2) + ", " + recordsTRC$(46, 3); HALF$(TotalRecords!(46, 1))
+        Print teamRecords!(46, 0); "- "; teamRecCategory$(46, 0) + " " + teamRecCategory$(46, 1) + " " + teamRecCategory$(46, 2) + ", " + teamRecCategory$(46, 3); HALF$(teamRecords!(46, 1))
         Print
 
         Color 14: Print "MOST FIELD GOAL ATTEMPTS, BOTH TEAMS, ONE HALF"
         Color 15
-        Print TotalRecords!(47, 0); "- "; recordsTRC$(47, 0); " "; recordsTRC$(47, 1); " "; recordsTRC$(47, 2); ", "; recordsTRC$(47, 3); HALF$(TotalRecords!(47, 1))
+        Print teamRecords!(47, 0); "- "; teamRecCategory$(47, 0); " "; teamRecCategory$(47, 1); " "; teamRecCategory$(47, 2); ", "; teamRecCategory$(47, 3); HALF$(teamRecords!(47, 1))
         Print
 
         Color 14: Print "MOST FIELD GOAL ATTEMPTS, ONE QUARTER"
         Color 15
-        Print TotalRecords!(48, 0); "- "; recordsTRC$(48, 0) + " " + recordsTRC$(48, 1) + " " + recordsTRC$(48, 2) + ", " + recordsTRC$(48, 3); QTR$(TotalRecords!(48, 1))
+        Print teamRecords!(48, 0); "- "; teamRecCategory$(48, 0) + " " + teamRecCategory$(48, 1) + " " + teamRecCategory$(48, 2) + ", " + teamRecCategory$(48, 3); QTR$(teamRecords!(48, 1))
         Print
 
         Color 14: Print "MOST FIELD GOAL ATTEMPTS, BOTH TEAMS, ONE QUARTER"
         Color 15
-        Print TotalRecords!(49, 0); "- "; recordsTRC$(49, 0); " "; recordsTRC$(49, 1); " "; recordsTRC$(49, 2); ", "; recordsTRC$(49, 3); QTR$(TotalRecords!(49, 1))
+        Print teamRecords!(49, 0); "- "; teamRecCategory$(49, 0); " "; teamRecCategory$(49, 1); " "; teamRecCategory$(49, 2); ", "; teamRecCategory$(49, 3); QTR$(teamRecords!(49, 1))
         Print
 
         Color 14: Print "MOST THREE-POINT FIELD GOALS, NO MISSES, GAME"
         Color 15
 
-        If TotalRecords!(50, 0) = 0 Then
+        If teamRecords!(50, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print TotalRecords!(50, 0); "- "; recordsTRC$(50, 0) + " " + recordsTRC$(50, 1) + " " + recordsTRC$(50, 2) + ", " + recordsTRC$(50, 3)
+            Print teamRecords!(50, 0); "- "; teamRecCategory$(50, 0) + " " + teamRecCategory$(50, 1) + " " + teamRecCategory$(50, 2) + ", " + teamRecCategory$(50, 3)
         End If
 
         Print
@@ -870,12 +870,12 @@ Sub RECORDS (menuChoice%)
         Color 14: Print "MOST THREE-POINT FIELD GOALS, NO MISSES, BOTH TEAMS, GAME"
         Color 15
 
-        If TotalRecords!(51, 0) = 0 Then
+        If teamRecords!(51, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print TotalRecords!(51, 0); "- "; recordsTRC$(51, 0);
-            Print Using " (###) "; TotalRecords!(51, 1);: Print recordsTRC$(51, 1) + " ";
-            Print recordsTRC$(51, 2);: Print Using " (###)"; TotalRecords!(51, 2);: Print ", " + recordsTRC$(51, 3)
+            Print teamRecords!(51, 0); "- "; teamRecCategory$(51, 0);
+            Print Using " (###) "; teamRecords!(51, 1);: Print teamRecCategory$(51, 1) + " ";
+            Print teamRecCategory$(51, 2);: Print Using " (###)"; teamRecords!(51, 2);: Print ", " + teamRecCategory$(51, 3)
         End If
 
         Print
@@ -883,10 +883,10 @@ Sub RECORDS (menuChoice%)
         Color 14: Print "MOST THREE-POINT FIELD GOAL ATTEMPTS, NONE MADE, GAME"
         Color 15
 
-        If TotalRecords!(52, 0) = 0 Then
+        If teamRecords!(52, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print TotalRecords!(52, 0); "- "; recordsTRC$(52, 0) + " " + recordsTRC$(52, 1) + " " + recordsTRC$(52, 2) + ", " + recordsTRC$(52, 3)
+            Print teamRecords!(52, 0); "- "; teamRecCategory$(52, 0) + " " + teamRecCategory$(52, 1) + " " + teamRecCategory$(52, 2) + ", " + teamRecCategory$(52, 3)
         End If
 
         Print
@@ -901,41 +901,41 @@ Sub RECORDS (menuChoice%)
 
         Color 14: Print "MOST THREE-POINT FIELD GOALS, GAME"
         Color 15
-        Print TotalRecords!(53, 0); "- "; recordsTRC$(53, 0) + " " + recordsTRC$(53, 1) + " " + recordsTRC$(53, 2) + ", " + recordsTRC$(53, 3)
+        Print teamRecords!(53, 0); "- "; teamRecCategory$(53, 0) + " " + teamRecCategory$(53, 1) + " " + teamRecCategory$(53, 2) + ", " + teamRecCategory$(53, 3)
         Print
 
         Color 14: Print "MOST THREE-POINT FIELD GOALS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(54, 0); "- "; recordsTRC$(54, 0);
-        Print Using " (###) "; TotalRecords!(54, 1);: Print recordsTRC$(54, 1) + " ";
-        Print recordsTRC$(54, 2);: Print Using " (###)"; TotalRecords!(54, 2);: Print ", " + recordsTRC$(54, 3)
+        Print teamRecords!(54, 0); "- "; teamRecCategory$(54, 0);
+        Print Using " (###) "; teamRecords!(54, 1);: Print teamRecCategory$(54, 1) + " ";
+        Print teamRecCategory$(54, 2);: Print Using " (###)"; teamRecords!(54, 2);: Print ", " + teamRecCategory$(54, 3)
         Print
 
         Color 14: Print "MOST THREE-POINT FIELD GOALS, ONE HALF"
         Color 15
-        Print TotalRecords!(55, 0); "- "; recordsTRC$(55, 0) + " " + recordsTRC$(55, 1) + " " + recordsTRC$(55, 2) + ", " + recordsTRC$(55, 3); HALF$(TotalRecords!(55, 1))
+        Print teamRecords!(55, 0); "- "; teamRecCategory$(55, 0) + " " + teamRecCategory$(55, 1) + " " + teamRecCategory$(55, 2) + ", " + teamRecCategory$(55, 3); HALF$(teamRecords!(55, 1))
         Print
 
         Color 14: Print "MOST THREE-POINT FIELD GOALS, ONE QUARTER"
         Color 15
-        Print TotalRecords!(56, 0); "- "; recordsTRC$(56, 0) + " " + recordsTRC$(56, 1) + " " + recordsTRC$(56, 2) + ", " + recordsTRC$(56, 3); QTR$(TotalRecords!(56, 1))
+        Print teamRecords!(56, 0); "- "; teamRecCategory$(56, 0) + " " + teamRecCategory$(56, 1) + " " + teamRecCategory$(56, 2) + ", " + teamRecCategory$(56, 3); QTR$(teamRecords!(56, 1))
         Print
 
         Color 14: Print "MOST THREE-POINT FIELD GOAL ATTEMPTS, GAME"
         Color 15
-        Print TotalRecords!(57, 0); "- "; recordsTRC$(57, 0) + " " + recordsTRC$(57, 1) + " " + recordsTRC$(57, 2) + ", " + recordsTRC$(57, 3)
+        Print teamRecords!(57, 0); "- "; teamRecCategory$(57, 0) + " " + teamRecCategory$(57, 1) + " " + teamRecCategory$(57, 2) + ", " + teamRecCategory$(57, 3)
         Print
 
         Color 14: Print "MOST THREE-POINT FIELD GOAL ATTEMPTS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(58, 0); "- "; recordsTRC$(58, 0);
-        Print Using " (###) "; TotalRecords!(58, 1);: Print recordsTRC$(58, 1) + " ";
-        Print recordsTRC$(58, 2);: Print Using " (###)"; TotalRecords!(58, 2);: Print ", " + recordsTRC$(58, 3)
+        Print teamRecords!(58, 0); "- "; teamRecCategory$(58, 0);
+        Print Using " (###) "; teamRecords!(58, 1);: Print teamRecCategory$(58, 1) + " ";
+        Print teamRecCategory$(58, 2);: Print Using " (###)"; teamRecords!(58, 2);: Print ", " + teamRecCategory$(58, 3)
         Print
 
         Color 14: Print "MOST THREE-POINT FIELD GOAL ATTEMPTS, ONE HALF"
         Color 15
-        Print TotalRecords!(59, 0); "- "; recordsTRC$(59, 0) + " " + recordsTRC$(59, 1) + " " + recordsTRC$(59, 2) + ", " + recordsTRC$(59, 3); HALF$(TotalRecords!(59, 1))
+        Print teamRecords!(59, 0); "- "; teamRecCategory$(59, 0) + " " + teamRecCategory$(59, 1) + " " + teamRecCategory$(59, 2) + ", " + teamRecCategory$(59, 3); HALF$(teamRecords!(59, 1))
         I$ = GetKeyPress$
 
         Cls
@@ -945,54 +945,54 @@ Sub RECORDS (menuChoice%)
 
         Color 14: Print "MOST FREE THROWS MADE, NO MISSES, GAME"
         Color 15
-        If TotalRecords!(60, 0) = 0 Then
+        If teamRecords!(60, 0) = 0 Then
             Print "NO RECORD AT THIS TIME"
         Else
-            Print TotalRecords!(60, 0); "- "; recordsTRC$(60, 0) + " " + recordsTRC$(60, 1) + " " + recordsTRC$(60, 2) + ", " + recordsTRC$(60, 3)
+            Print teamRecords!(60, 0); "- "; teamRecCategory$(60, 0) + " " + teamRecCategory$(60, 1) + " " + teamRecCategory$(60, 2) + ", " + teamRecCategory$(60, 3)
         End If
         Print
 
         Color 14: Print "LOWEST FREE THROW PERCENTAGE, GAME"
         Color 15
-        Print Using ".### "; TotalRecords!(61, 0);: Print "- "; recordsTRC$(61, 0) + " " + recordsTRC$(61, 1) + " " + recordsTRC$(61, 2) + ", " + recordsTRC$(61, 3);: Print Using "###/###"; TotalRecords!(61, 1); TotalRecords!(61, 2)
+        Print Using ".### "; teamRecords!(61, 0);: Print "- "; teamRecCategory$(61, 0) + " " + teamRecCategory$(61, 1) + " " + teamRecCategory$(61, 2) + ", " + teamRecCategory$(61, 3);: Print Using "###/###"; teamRecords!(61, 1); teamRecords!(61, 2)
         Print
 
         Color 14: Print "HIGHEST FREE THROW PERCENTAGE, BOTH TEAMS, GAME"
         Color 15
-        Print Using ".### "; TotalRecords!(62, 0);: Print "- "; recordsTRC$(62, 0);
-        Print Using " (.###) "; TotalRecords!(62, 1);: Print recordsTRC$(62, 1) + " ";
-        Print recordsTRC$(62, 2);: Print Using " (.###)"; TotalRecords!(62, 2);: Print ", " + recordsTRC$(62, 3)
+        Print Using ".### "; teamRecords!(62, 0);: Print "- "; teamRecCategory$(62, 0);
+        Print Using " (.###) "; teamRecords!(62, 1);: Print teamRecCategory$(62, 1) + " ";
+        Print teamRecCategory$(62, 2);: Print Using " (.###)"; teamRecords!(62, 2);: Print ", " + teamRecCategory$(62, 3)
         Print
 
         Color 14: Print "LOWEST FREE THROW PERCENTAGE, BOTH TEAMS, GAME"
         Color 15
-        Print Using ".### "; TotalRecords!(63, 0);: Print "- "; recordsTRC$(63, 0);
-        Print Using " (.###) "; TotalRecords!(63, 1);: Print recordsTRC$(63, 1) + " ";
-        Print recordsTRC$(63, 2);: Print Using " (.###)"; TotalRecords!(63, 2);: Print ", " + recordsTRC$(63, 3)
+        Print Using ".### "; teamRecords!(63, 0);: Print "- "; teamRecCategory$(63, 0);
+        Print Using " (.###) "; teamRecords!(63, 1);: Print teamRecCategory$(63, 1) + " ";
+        Print teamRecCategory$(63, 2);: Print Using " (.###)"; teamRecords!(63, 2);: Print ", " + teamRecCategory$(63, 3)
         Print
 
         Color 14: Print "MOST FREE THROWS MADE, GAME"
         Color 15
-        Print TotalRecords!(64, 0); "- "; recordsTRC$(64, 0) + " " + recordsTRC$(64, 1) + " " + recordsTRC$(64, 2) + ", " + recordsTRC$(64, 3)
+        Print teamRecords!(64, 0); "- "; teamRecCategory$(64, 0) + " " + teamRecCategory$(64, 1) + " " + teamRecCategory$(64, 2) + ", " + teamRecCategory$(64, 3)
         Print
 
         Color 14: Print "FEWEST FREE THROWS MADE, GAME"
         Color 15
-        Print TotalRecords!(65, 0); "- "; recordsTRC$(65, 0) + " " + recordsTRC$(65, 1) + " " + recordsTRC$(65, 2) + ", " + recordsTRC$(65, 3)
+        Print teamRecords!(65, 0); "- "; teamRecCategory$(65, 0) + " " + teamRecCategory$(65, 1) + " " + teamRecCategory$(65, 2) + ", " + teamRecCategory$(65, 3)
         Print
 
         Color 14: Print "MOST FREE THROWS MADE, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(66, 0); "- "; recordsTRC$(66, 0);
-        Print Using " (###) "; TotalRecords!(66, 1);: Print recordsTRC$(66, 1) + " ";
-        Print recordsTRC$(66, 2);: Print Using " (###)"; TotalRecords!(66, 2);: Print ", " + recordsTRC$(66, 3)
+        Print teamRecords!(66, 0); "- "; teamRecCategory$(66, 0);
+        Print Using " (###) "; teamRecords!(66, 1);: Print teamRecCategory$(66, 1) + " ";
+        Print teamRecCategory$(66, 2);: Print Using " (###)"; teamRecords!(66, 2);: Print ", " + teamRecCategory$(66, 3)
         Print
 
         Color 14: Print "FEWEST FREE THROWS MADE, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(67, 0); "- "; recordsTRC$(67, 0);
-        Print Using " (###) "; TotalRecords!(67, 1);: Print recordsTRC$(67, 1) + " ";
-        Print recordsTRC$(67, 2);: Print Using " (###)"; TotalRecords!(67, 2);: Print ", " + recordsTRC$(67, 3);
+        Print teamRecords!(67, 0); "- "; teamRecCategory$(67, 0);
+        Print Using " (###) "; teamRecords!(67, 1);: Print teamRecCategory$(67, 1) + " ";
+        Print teamRecCategory$(67, 2);: Print Using " (###)"; teamRecords!(67, 2);: Print ", " + teamRecCategory$(67, 3);
 
         I$ = GetKeyPress$
 
@@ -1003,46 +1003,46 @@ Sub RECORDS (menuChoice%)
 
         Color 14: Print "MOST FREE THROWS MADE, ONE HALF"
         Color 15
-        Print TotalRecords!(68, 0); "- "; recordsTRC$(68, 0) + " " + recordsTRC$(68, 1) + " " + recordsTRC$(68, 2) + ", " + recordsTRC$(68, 3); HALF$(TotalRecords!(68, 1))
+        Print teamRecords!(68, 0); "- "; teamRecCategory$(68, 0) + " " + teamRecCategory$(68, 1) + " " + teamRecCategory$(68, 2) + ", " + teamRecCategory$(68, 3); HALF$(teamRecords!(68, 1))
         Print
 
         Color 14: Print "MOST FREE THROWS MADE, ONE QUARTER"
         Color 15
-        Print TotalRecords!(70, 0); "- "; recordsTRC$(70, 0) + " " + recordsTRC$(70, 1) + " " + recordsTRC$(70, 2) + ", " + recordsTRC$(70, 3); QTR$(TotalRecords!(70, 1))
+        Print teamRecords!(70, 0); "- "; teamRecCategory$(70, 0) + " " + teamRecCategory$(70, 1) + " " + teamRecCategory$(70, 2) + ", " + teamRecCategory$(70, 3); QTR$(teamRecords!(70, 1))
         Print
 
         Color 14: Print "MOST FREE THROW ATTEMPTS, GAME"
         Color 15
-        Print TotalRecords!(72, 0); "- "; recordsTRC$(72, 0) + " " + recordsTRC$(72, 1) + " " + recordsTRC$(72, 2) + ", " + recordsTRC$(72, 3)
+        Print teamRecords!(72, 0); "- "; teamRecCategory$(72, 0) + " " + teamRecCategory$(72, 1) + " " + teamRecCategory$(72, 2) + ", " + teamRecCategory$(72, 3)
         Print
 
         Color 14: Print "FEWEST FREE THROW ATTEMPTS, GAME"
         Color 15
-        Print TotalRecords!(73, 0); "- "; recordsTRC$(73, 0) + " " + recordsTRC$(73, 1) + " " + recordsTRC$(73, 2) + ", " + recordsTRC$(73, 3)
+        Print teamRecords!(73, 0); "- "; teamRecCategory$(73, 0) + " " + teamRecCategory$(73, 1) + " " + teamRecCategory$(73, 2) + ", " + teamRecCategory$(73, 3)
         Print
 
         Color 14: Print "MOST FREE THROW ATTEMPTS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(74, 0); "- "; recordsTRC$(74, 0);
-        Print Using " (###) "; TotalRecords!(74, 1);: Print recordsTRC$(74, 1) + " ";
-        Print recordsTRC$(74, 2);: Print Using " (###)"; TotalRecords!(74, 2);: Print ", " + recordsTRC$(74, 3)
+        Print teamRecords!(74, 0); "- "; teamRecCategory$(74, 0);
+        Print Using " (###) "; teamRecords!(74, 1);: Print teamRecCategory$(74, 1) + " ";
+        Print teamRecCategory$(74, 2);: Print Using " (###)"; teamRecords!(74, 2);: Print ", " + teamRecCategory$(74, 3)
         Print
 
         Color 14: Print "FEWEST FREE THROW ATTEMPTS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(75, 0); "- "; recordsTRC$(75, 0);
-        Print Using " (###) "; TotalRecords!(75, 1);: Print recordsTRC$(75, 1) + " ";
-        Print recordsTRC$(75, 2);: Print Using " (###)"; TotalRecords!(75, 2);: Print ", " + recordsTRC$(75, 3)
+        Print teamRecords!(75, 0); "- "; teamRecCategory$(75, 0);
+        Print Using " (###) "; teamRecords!(75, 1);: Print teamRecCategory$(75, 1) + " ";
+        Print teamRecCategory$(75, 2);: Print Using " (###)"; teamRecords!(75, 2);: Print ", " + teamRecCategory$(75, 3)
         Print
 
         Color 14: Print "MOST FREE THROW ATTEMPTS, ONE HALF"
         Color 15
-        Print TotalRecords!(76, 0); "- "; recordsTRC$(76, 0) + " " + recordsTRC$(76, 1) + " " + recordsTRC$(76, 2) + ", " + recordsTRC$(76, 3); HALF$(TotalRecords!(76, 1))
+        Print teamRecords!(76, 0); "- "; teamRecCategory$(76, 0) + " " + teamRecCategory$(76, 1) + " " + teamRecCategory$(76, 2) + ", " + teamRecCategory$(76, 3); HALF$(teamRecords!(76, 1))
         Print
 
         Color 14: Print "MOST FREE THROW ATTEMPTS, ONE QUARTER"
         Color 15
-        Print TotalRecords!(78, 0); "- "; recordsTRC$(78, 0) + " " + recordsTRC$(78, 1) + " " + recordsTRC$(78, 2) + ", " + recordsTRC$(78, 3); QTR$(TotalRecords!(78, 1));
+        Print teamRecords!(78, 0); "- "; teamRecCategory$(78, 0) + " " + teamRecCategory$(78, 1) + " " + teamRecCategory$(78, 2) + ", " + teamRecCategory$(78, 3); QTR$(teamRecords!(78, 1));
         I$ = GetKeyPress$
 
         Cls
@@ -1053,36 +1053,36 @@ Sub RECORDS (menuChoice%)
         Print
         Color 14: Print "MOST REBOUNDS, GAME"
         Color 15
-        Print TotalRecords!(80, 0); "- "; recordsTRC$(80, 0) + " " + recordsTRC$(80, 1) + " " + recordsTRC$(80, 2) + ", " + recordsTRC$(80, 3)
+        Print teamRecords!(80, 0); "- "; teamRecCategory$(80, 0) + " " + teamRecCategory$(80, 1) + " " + teamRecCategory$(80, 2) + ", " + teamRecCategory$(80, 3)
         Print
 
         Color 14: Print "FEWEST REBOUNDS, GAME"
         Color 15
-        Print TotalRecords!(81, 0); "- "; recordsTRC$(81, 0) + " " + recordsTRC$(81, 1) + " " + recordsTRC$(81, 2) + ", " + recordsTRC$(81, 3)
+        Print teamRecords!(81, 0); "- "; teamRecCategory$(81, 0) + " " + teamRecCategory$(81, 1) + " " + teamRecCategory$(81, 2) + ", " + teamRecCategory$(81, 3)
         Print
 
         Color 14: Print "MOST REBOUNDS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(82, 0); "- "; recordsTRC$(82, 0);
-        Print Using " (###) "; TotalRecords!(82, 1);: Print recordsTRC$(82, 1) + " ";
-        Print recordsTRC$(82, 2);: Print Using " (###)"; TotalRecords!(82, 2);: Print ", " + recordsTRC$(82, 3)
+        Print teamRecords!(82, 0); "- "; teamRecCategory$(82, 0);
+        Print Using " (###) "; teamRecords!(82, 1);: Print teamRecCategory$(82, 1) + " ";
+        Print teamRecCategory$(82, 2);: Print Using " (###)"; teamRecords!(82, 2);: Print ", " + teamRecCategory$(82, 3)
         Print
 
         Color 14: Print "FEWEST REBOUNDS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(83, 0); "- "; recordsTRC$(83, 0);
-        Print Using " (###) "; TotalRecords!(83, 1);: Print recordsTRC$(83, 1) + " ";
-        Print recordsTRC$(83, 2);: Print Using " (###)"; TotalRecords!(83, 2);: Print ", " + recordsTRC$(83, 3)
+        Print teamRecords!(83, 0); "- "; teamRecCategory$(83, 0);
+        Print Using " (###) "; teamRecords!(83, 1);: Print teamRecCategory$(83, 1) + " ";
+        Print teamRecCategory$(83, 2);: Print Using " (###)"; teamRecords!(83, 2);: Print ", " + teamRecCategory$(83, 3)
         Print
 
         Color 14: Print "MOST REBOUNDS, ONE HALF"
         Color 15
-        Print TotalRecords!(84, 0); "- "; recordsTRC$(84, 0) + " " + recordsTRC$(84, 1) + " " + recordsTRC$(84, 2) + ", " + recordsTRC$(84, 3); HALF$(TotalRecords!(84, 1))
+        Print teamRecords!(84, 0); "- "; teamRecCategory$(84, 0) + " " + teamRecCategory$(84, 1) + " " + teamRecCategory$(84, 2) + ", " + teamRecCategory$(84, 3); HALF$(teamRecords!(84, 1))
         Print
 
         Color 14: Print "MOST REBOUNDS, ONE QUARTER"
         Color 15
-        Print TotalRecords!(85, 0); "- "; recordsTRC$(85, 0) + " " + recordsTRC$(85, 1) + " " + recordsTRC$(85, 2) + ", " + recordsTRC$(85, 3); QTR$(TotalRecords!(85, 1))
+        Print teamRecords!(85, 0); "- "; teamRecCategory$(85, 0) + " " + teamRecCategory$(85, 1) + " " + teamRecCategory$(85, 2) + ", " + teamRecCategory$(85, 3); QTR$(teamRecords!(85, 1))
         Print
         I$ = GetKeyPress$
 
@@ -1094,26 +1094,26 @@ Sub RECORDS (menuChoice%)
         Print
         Color 14: Print "MOST OFFENSIVE REBOUNDS, GAME"
         Color 15
-        Print TotalRecords!(86, 0); "- "; recordsTRC$(86, 0) + " " + recordsTRC$(86, 1) + " " + recordsTRC$(86, 2) + ", " + recordsTRC$(86, 3)
+        Print teamRecords!(86, 0); "- "; teamRecCategory$(86, 0) + " " + teamRecCategory$(86, 1) + " " + teamRecCategory$(86, 2) + ", " + teamRecCategory$(86, 3)
         Print
 
         Color 14: Print "MOST OFFENSIVE REBOUNDS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(88, 0); "- "; recordsTRC$(88, 0);
-        Print Using " (###) "; TotalRecords!(88, 1);: Print recordsTRC$(88, 1) + " ";
-        Print recordsTRC$(88, 2);: Print Using " (###)"; TotalRecords!(88, 2);: Print ", " + recordsTRC$(88, 3)
+        Print teamRecords!(88, 0); "- "; teamRecCategory$(88, 0);
+        Print Using " (###) "; teamRecords!(88, 1);: Print teamRecCategory$(88, 1) + " ";
+        Print teamRecCategory$(88, 2);: Print Using " (###)"; teamRecords!(88, 2);: Print ", " + teamRecCategory$(88, 3)
         Print
 
         Color 14: Print "FEWEST OFFENSIVE REBOUNDS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(89, 0); "- "; recordsTRC$(89, 0);
-        Print Using " (###) "; TotalRecords!(89, 1);: Print recordsTRC$(89, 1) + " ";
-        Print recordsTRC$(89, 2);: Print Using " (###)"; TotalRecords!(89, 2);: Print ", " + recordsTRC$(89, 3)
+        Print teamRecords!(89, 0); "- "; teamRecCategory$(89, 0);
+        Print Using " (###) "; teamRecords!(89, 1);: Print teamRecCategory$(89, 1) + " ";
+        Print teamRecCategory$(89, 2);: Print Using " (###)"; teamRecords!(89, 2);: Print ", " + teamRecCategory$(89, 3)
         Print
 
         Color 14: Print "MOST OFFENSIVE REBOUNDS, ONE HALF"
         Color 15
-        Print TotalRecords!(90, 0); "- "; recordsTRC$(90, 0) + " " + recordsTRC$(90, 1) + " " + recordsTRC$(90, 2) + ", " + recordsTRC$(90, 3); HALF$(TotalRecords!(90, 1))
+        Print teamRecords!(90, 0); "- "; teamRecCategory$(90, 0) + " " + teamRecCategory$(90, 1) + " " + teamRecCategory$(90, 2) + ", " + teamRecCategory$(90, 3); HALF$(teamRecords!(90, 1))
         Print
         I$ = GetKeyPress$
 
@@ -1124,36 +1124,36 @@ Sub RECORDS (menuChoice%)
         Print
         Color 14: Print "MOST ASSISTS, GAME"
         Color 15
-        Print TotalRecords!(96, 0); "- "; recordsTRC$(96, 0) + " " + recordsTRC$(96, 1) + " " + recordsTRC$(96, 2) + ", " + recordsTRC$(96, 3)
+        Print teamRecords!(96, 0); "- "; teamRecCategory$(96, 0) + " " + teamRecCategory$(96, 1) + " " + teamRecCategory$(96, 2) + ", " + teamRecCategory$(96, 3)
         Print
 
         Color 14: Print "FEWEST ASSISTS, GAME"
         Color 15
-        Print TotalRecords!(97, 0); "- "; recordsTRC$(97, 0) + " " + recordsTRC$(97, 1) + " " + recordsTRC$(97, 2) + ", " + recordsTRC$(97, 3)
+        Print teamRecords!(97, 0); "- "; teamRecCategory$(97, 0) + " " + teamRecCategory$(97, 1) + " " + teamRecCategory$(97, 2) + ", " + teamRecCategory$(97, 3)
         Print
 
         Color 14: Print "MOST ASSISTS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(98, 0); "- "; recordsTRC$(98, 0);
-        Print Using " (###) "; TotalRecords!(98, 1);: Print recordsTRC$(98, 1) + " ";
-        Print recordsTRC$(98, 2);: Print Using " (###)"; TotalRecords!(98, 2);: Print ", " + recordsTRC$(98, 3)
+        Print teamRecords!(98, 0); "- "; teamRecCategory$(98, 0);
+        Print Using " (###) "; teamRecords!(98, 1);: Print teamRecCategory$(98, 1) + " ";
+        Print teamRecCategory$(98, 2);: Print Using " (###)"; teamRecords!(98, 2);: Print ", " + teamRecCategory$(98, 3)
         Print
 
         Color 14: Print "FEWEST ASSISTS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(99, 0); "- "; recordsTRC$(99, 0);
-        Print Using " (###) "; TotalRecords!(99, 1);: Print recordsTRC$(99, 1) + " ";
-        Print recordsTRC$(99, 2);: Print Using " (###)"; TotalRecords!(99, 2);: Print ", " + recordsTRC$(99, 3)
+        Print teamRecords!(99, 0); "- "; teamRecCategory$(99, 0);
+        Print Using " (###) "; teamRecords!(99, 1);: Print teamRecCategory$(99, 1) + " ";
+        Print teamRecCategory$(99, 2);: Print Using " (###)"; teamRecords!(99, 2);: Print ", " + teamRecCategory$(99, 3)
         Print
 
         Color 14: Print "MOST ASSISTS, ONE HALF"
         Color 15
-        Print TotalRecords!(100, 0); "- "; recordsTRC$(100, 0) + " " + recordsTRC$(100, 1) + " " + recordsTRC$(100, 2) + ", " + recordsTRC$(100, 3); HALF$(TotalRecords!(100, 1))
+        Print teamRecords!(100, 0); "- "; teamRecCategory$(100, 0) + " " + teamRecCategory$(100, 1) + " " + teamRecCategory$(100, 2) + ", " + teamRecCategory$(100, 3); HALF$(teamRecords!(100, 1))
         Print
 
         Color 14: Print "MOST ASSISTS, ONE QUARTER"
         Color 15
-        Print TotalRecords!(102, 0); "- "; recordsTRC$(102, 0) + " " + recordsTRC$(102, 1) + " " + recordsTRC$(102, 2) + ", " + recordsTRC$(102, 3); QTR$(TotalRecords!(102, 1))
+        Print teamRecords!(102, 0); "- "; teamRecCategory$(102, 0) + " " + teamRecCategory$(102, 1) + " " + teamRecCategory$(102, 2) + ", " + teamRecCategory$(102, 3); QTR$(teamRecords!(102, 1))
         Print
 
         I$ = GetKeyPress$
@@ -1163,46 +1163,46 @@ Sub RECORDS (menuChoice%)
         Print "                            TEAM RECORDS"
         Color 14: Print "MOST PERSONAL FOULS, GAME"
         Color 15
-        Print TotalRecords!(104, 0); "- "; recordsTRC$(104, 0) + " " + recordsTRC$(104, 1) + " " + recordsTRC$(104, 2) + ", " + recordsTRC$(104, 3)
+        Print teamRecords!(104, 0); "- "; teamRecCategory$(104, 0) + " " + teamRecCategory$(104, 1) + " " + teamRecCategory$(104, 2) + ", " + teamRecCategory$(104, 3)
         Print
 
         Color 14: Print "FEWEST PERSONAL FOULS, GAME"
         Color 15
-        Print TotalRecords!(105, 0); "- "; recordsTRC$(105, 0) + " " + recordsTRC$(105, 1) + " " + recordsTRC$(105, 2) + ", " + recordsTRC$(105, 3)
+        Print teamRecords!(105, 0); "- "; teamRecCategory$(105, 0) + " " + teamRecCategory$(105, 1) + " " + teamRecCategory$(105, 2) + ", " + teamRecCategory$(105, 3)
         Print
 
         Color 14: Print "MOST PERSONAL FOULS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(106, 0); "- "; recordsTRC$(106, 0);
-        Print Using " (###) "; TotalRecords!(106, 1);: Print recordsTRC$(106, 1) + " ";
-        Print recordsTRC$(106, 2);: Print Using " (###)"; TotalRecords!(106, 2);: Print ", " + recordsTRC$(106, 3)
+        Print teamRecords!(106, 0); "- "; teamRecCategory$(106, 0);
+        Print Using " (###) "; teamRecords!(106, 1);: Print teamRecCategory$(106, 1) + " ";
+        Print teamRecCategory$(106, 2);: Print Using " (###)"; teamRecords!(106, 2);: Print ", " + teamRecCategory$(106, 3)
         Print
 
         Color 14: Print "FEWEST PERSONAL FOULS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(107, 0); "- "; recordsTRC$(107, 0);
-        Print Using " (###) "; TotalRecords!(107, 1);: Print recordsTRC$(107, 1) + " ";
-        Print recordsTRC$(107, 2);: Print Using " (###)"; TotalRecords!(107, 2);: Print ", " + recordsTRC$(107, 3)
+        Print teamRecords!(107, 0); "- "; teamRecCategory$(107, 0);
+        Print Using " (###) "; teamRecords!(107, 1);: Print teamRecCategory$(107, 1) + " ";
+        Print teamRecCategory$(107, 2);: Print Using " (###)"; teamRecords!(107, 2);: Print ", " + teamRecCategory$(107, 3)
         Print
 
         Color 14: Print "MOST PERSONAL FOULS, ONE HALF"
         Color 15
-        Print TotalRecords!(108, 0); "- "; recordsTRC$(108, 0) + " " + recordsTRC$(108, 1) + " " + recordsTRC$(108, 2) + ", " + recordsTRC$(108, 3); HALF$(TotalRecords!(108, 1))
+        Print teamRecords!(108, 0); "- "; teamRecCategory$(108, 0) + " " + teamRecCategory$(108, 1) + " " + teamRecCategory$(108, 2) + ", " + teamRecCategory$(108, 3); HALF$(teamRecords!(108, 1))
         Print
 
         Color 14: Print "MOST PERSONAL FOULS, BOTH TEAMS, ONE HALF"
         Color 15
-        Print TotalRecords!(109, 0); "- "; recordsTRC$(109, 0); " "; recordsTRC$(109, 1); " "; recordsTRC$(109, 2); ", "; recordsTRC$(109, 3); HALF$(TotalRecords!(109, 1))
+        Print teamRecords!(109, 0); "- "; teamRecCategory$(109, 0); " "; teamRecCategory$(109, 1); " "; teamRecCategory$(109, 2); ", "; teamRecCategory$(109, 3); HALF$(teamRecords!(109, 1))
         Print
 
         Color 14: Print "MOST PERSONAL FOULS, ONE QUARTER"
         Color 15
-        Print TotalRecords!(110, 0); "- "; recordsTRC$(110, 0) + " " + recordsTRC$(110, 1) + " " + recordsTRC$(110, 2) + ", " + recordsTRC$(110, 3); QTR$(TotalRecords!(110, 1))
+        Print teamRecords!(110, 0); "- "; teamRecCategory$(110, 0) + " " + teamRecCategory$(110, 1) + " " + teamRecCategory$(110, 2) + ", " + teamRecCategory$(110, 3); QTR$(teamRecords!(110, 1))
         Print
 
         Color 14: Print "MOST PERSONAL FOULS, BOTH TEAMS, ONE QUARTER"
         Color 15
-        Print TotalRecords!(111, 0); "- "; recordsTRC$(111, 0); " "; recordsTRC$(111, 1); " "; recordsTRC$(111, 2); ", "; recordsTRC$(111, 3); QTR$(TotalRecords!(111, 1));
+        Print teamRecords!(111, 0); "- "; teamRecCategory$(111, 0); " "; teamRecCategory$(111, 1); " "; teamRecCategory$(111, 2); ", "; teamRecCategory$(111, 3); QTR$(teamRecords!(111, 1));
 
         I$ = GetKeyPress$
 
@@ -1212,36 +1212,36 @@ Sub RECORDS (menuChoice%)
         Print
         Color 14: Print "MOST STEALS, GAME"
         Color 15
-        Print TotalRecords!(112, 0); "- "; recordsTRC$(112, 0) + " " + recordsTRC$(112, 1) + " " + recordsTRC$(112, 2) + ", " + recordsTRC$(112, 3)
+        Print teamRecords!(112, 0); "- "; teamRecCategory$(112, 0) + " " + teamRecCategory$(112, 1) + " " + teamRecCategory$(112, 2) + ", " + teamRecCategory$(112, 3)
         Print
 
         Color 14: Print "MOST STEALS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(114, 0); "- "; recordsTRC$(114, 0);
-        Print Using " (###) "; TotalRecords!(114, 1);: Print recordsTRC$(114, 1) + " ";
-        Print recordsTRC$(114, 2);: Print Using " (###)"; TotalRecords!(114, 2);: Print ", " + recordsTRC$(114, 3)
+        Print teamRecords!(114, 0); "- "; teamRecCategory$(114, 0);
+        Print Using " (###) "; teamRecords!(114, 1);: Print teamRecCategory$(114, 1) + " ";
+        Print teamRecCategory$(114, 2);: Print Using " (###)"; teamRecords!(114, 2);: Print ", " + teamRecCategory$(114, 3)
         Print
 
         Color 14: Print "MOST STEALS, ONE HALF"
         Color 15
-        Print TotalRecords!(116, 0); "- "; recordsTRC$(116, 0) + " " + recordsTRC$(116, 1) + " " + recordsTRC$(116, 2) + ", " + recordsTRC$(116, 3); HALF$(TotalRecords!(116, 1))
+        Print teamRecords!(116, 0); "- "; teamRecCategory$(116, 0) + " " + teamRecCategory$(116, 1) + " " + teamRecCategory$(116, 2) + ", " + teamRecCategory$(116, 3); HALF$(teamRecords!(116, 1))
         Print
 
         Color 14: Print "MOST STEALS, ONE QUARTER"
         Color 15
-        Print TotalRecords!(117, 0); "- "; recordsTRC$(117, 0) + " " + recordsTRC$(117, 1) + " " + recordsTRC$(117, 2) + ", " + recordsTRC$(117, 3); QTR$(TotalRecords!(117, 1))
+        Print teamRecords!(117, 0); "- "; teamRecCategory$(117, 0) + " " + teamRecCategory$(117, 1) + " " + teamRecCategory$(117, 2) + ", " + teamRecCategory$(117, 3); QTR$(teamRecords!(117, 1))
         Print
 
         Color 14: Print "MOST BLOCKS, GAME"
         Color 15
-        Print TotalRecords!(118, 0); "- "; recordsTRC$(118, 0) + " " + recordsTRC$(118, 1) + " " + recordsTRC$(118, 2) + ", " + recordsTRC$(118, 3)
+        Print teamRecords!(118, 0); "- "; teamRecCategory$(118, 0) + " " + teamRecCategory$(118, 1) + " " + teamRecCategory$(118, 2) + ", " + teamRecCategory$(118, 3)
         Print
 
         Color 14: Print "MOST BLOCKS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(119, 0); "- "; recordsTRC$(119, 0);
-        Print Using " (###) "; TotalRecords!(119, 1);: Print recordsTRC$(119, 1) + " ";
-        Print recordsTRC$(119, 2);: Print Using " (###)"; TotalRecords!(119, 2);: Print ", " + recordsTRC$(119, 3)
+        Print teamRecords!(119, 0); "- "; teamRecCategory$(119, 0);
+        Print Using " (###) "; teamRecords!(119, 1);: Print teamRecCategory$(119, 1) + " ";
+        Print teamRecCategory$(119, 2);: Print Using " (###)"; teamRecords!(119, 2);: Print ", " + teamRecCategory$(119, 3)
         Print
         I$ = GetKeyPress$
 
@@ -1251,26 +1251,26 @@ Sub RECORDS (menuChoice%)
         Print
         Color 14: Print "MOST TURNOVERS, GAME"
         Color 15
-        Print TotalRecords!(122, 0); "- "; recordsTRC$(122, 0) + " " + recordsTRC$(122, 1) + " " + recordsTRC$(122, 2) + ", " + recordsTRC$(122, 3)
+        Print teamRecords!(122, 0); "- "; teamRecCategory$(122, 0) + " " + teamRecCategory$(122, 1) + " " + teamRecCategory$(122, 2) + ", " + teamRecCategory$(122, 3)
         Print
 
         Color 14: Print "FEWEST TURNOVERS, GAME"
         Color 15
-        Print TotalRecords!(123, 0); "- "; recordsTRC$(123, 0) + " " + recordsTRC$(123, 1) + " " + recordsTRC$(123, 2) + ", " + recordsTRC$(123, 3)
+        Print teamRecords!(123, 0); "- "; teamRecCategory$(123, 0) + " " + teamRecCategory$(123, 1) + " " + teamRecCategory$(123, 2) + ", " + teamRecCategory$(123, 3)
         Print
 
         Color 14: Print "MOST TURNOVERS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(124, 0); "- "; recordsTRC$(124, 0);
-        Print Using " (###) "; TotalRecords!(124, 1);: Print recordsTRC$(124, 1) + " ";
-        Print recordsTRC$(124, 2);: Print Using " (###)"; TotalRecords!(124, 2);: Print ", " + recordsTRC$(124, 3)
+        Print teamRecords!(124, 0); "- "; teamRecCategory$(124, 0);
+        Print Using " (###) "; teamRecords!(124, 1);: Print teamRecCategory$(124, 1) + " ";
+        Print teamRecCategory$(124, 2);: Print Using " (###)"; teamRecords!(124, 2);: Print ", " + teamRecCategory$(124, 3)
         Print
 
         Color 14: Print "FEWEST TURNOVERS, BOTH TEAMS, GAME"
         Color 15
-        Print TotalRecords!(125, 0); "- "; recordsTRC$(125, 0);
-        Print Using " (###) "; TotalRecords!(125, 1);: Print recordsTRC$(125, 1) + " ";
-        Print recordsTRC$(125, 2);: Print Using " (###)"; TotalRecords!(125, 2);: Print ", " + recordsTRC$(125, 3)
+        Print teamRecords!(125, 0); "- "; teamRecCategory$(125, 0);
+        Print Using " (###) "; teamRecords!(125, 1);: Print teamRecCategory$(125, 1) + " ";
+        Print teamRecCategory$(125, 2);: Print Using " (###)"; teamRecords!(125, 2);: Print ", " + teamRecCategory$(125, 3)
         Print
 
         I$ = GetKeyPress$
@@ -1285,8 +1285,8 @@ End Sub
 '...explanation...
 Sub WriteRecords ()
 
-    Shared RC$(), recordsTRC$()
-    Shared allRecords!(), TotalRecords!()
+    Shared indRecCategory$(), teamRecCategory$()
+    Shared allRecords!(), teamRecords!()
     Shared HALF$(), QTR$()
 
     Color 0, 15
@@ -1296,20 +1296,20 @@ Sub WriteRecords ()
     Print #2, "                            INDIVIDUAL RECORDS"
     Print #2,
     Print #2, "MOST POINTS, GAME"
-    Print #2, allRecords!(0, 0); "- "; RC$(0, 0); ", "; RC$(0, 1) + " " + RC$(0, 2) + " " + RC$(0, 3) + ", " + RC$(0, 4)
+    Print #2, allRecords!(0, 0); "- "; indRecCategory$(0, 0); ", "; indRecCategory$(0, 1) + " " + indRecCategory$(0, 2) + " " + indRecCategory$(0, 3) + ", " + indRecCategory$(0, 4)
     Print #2,
     Print #2, "MOST POINTS, ONE HALF"
-    Print #2, allRecords!(1, 0); "- "; RC$(1, 0); ", "; RC$(1, 1) + " " + RC$(1, 2) + " " + RC$(1, 3) + ", " + RC$(1, 4); HALF$(allRecords!(1, 2))
+    Print #2, allRecords!(1, 0); "- "; indRecCategory$(1, 0); ", "; indRecCategory$(1, 1) + " " + indRecCategory$(1, 2) + " " + indRecCategory$(1, 3) + ", " + indRecCategory$(1, 4); HALF$(allRecords!(1, 2))
     Print #2,
     Print #2, "MOST POINTS, ONE QUARTER"
-    Print #2, allRecords!(2, 0); "- "; RC$(2, 0); ", "; RC$(2, 1) + " " + RC$(2, 2) + " " + RC$(2, 3) + ", " + RC$(2, 4); QTR$(allRecords!(2, 2))
+    Print #2, allRecords!(2, 0); "- "; indRecCategory$(2, 0); ", "; indRecCategory$(2, 1) + " " + indRecCategory$(2, 2) + " " + indRecCategory$(2, 3) + ", " + indRecCategory$(2, 4); QTR$(allRecords!(2, 2))
     Print #2,
     Print #2, "MOST POINTS, OVERTIME PERIOD"
 
     If allRecords!(3, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(3, 0); "- "; RC$(3, 0); ", "; RC$(3, 1) + " " + RC$(3, 2) + " " + RC$(3, 3) + ", " + RC$(3, 4)
+        Print #2, allRecords!(3, 0); "- "; indRecCategory$(3, 0); ", "; indRecCategory$(3, 1) + " " + indRecCategory$(3, 2) + " " + indRecCategory$(3, 3) + ", " + indRecCategory$(3, 4)
     End If
 
     Print #2,
@@ -1323,7 +1323,7 @@ Sub WriteRecords ()
         Else
             Print #2, Using " .### "; allRecords!(4, 0);
         End If
-        Print #2, "- "; RC$(4, 0); ", "; RC$(4, 1) + " " + RC$(4, 2) + " " + RC$(4, 3) + ", " + RC$(4, 4);
+        Print #2, "- "; indRecCategory$(4, 0); ", "; indRecCategory$(4, 1) + " " + indRecCategory$(4, 2) + " " + indRecCategory$(4, 3) + ", " + indRecCategory$(4, 4);
         Print #2, Using " (##/##)"; allRecords!(4, 1); allRecords!(4, 2)
     End If
 
@@ -1333,7 +1333,7 @@ Sub WriteRecords ()
     If allRecords!(5, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(5, 0); "- "; RC$(5, 0); ", "; RC$(5, 1) + " " + RC$(5, 2) + " " + RC$(5, 3) + ", " + RC$(5, 4)
+        Print #2, allRecords!(5, 0); "- "; indRecCategory$(5, 0); ", "; indRecCategory$(5, 1) + " " + indRecCategory$(5, 2) + " " + indRecCategory$(5, 3) + ", " + indRecCategory$(5, 4)
     End If
 
     Print #2,
@@ -1342,43 +1342,43 @@ Sub WriteRecords ()
     If allRecords!(6, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(6, 0); "- "; RC$(6, 0); ", "; RC$(6, 1) + " " + RC$(6, 2) + " " + RC$(6, 3) + ", " + RC$(6, 4)
+        Print #2, allRecords!(6, 0); "- "; indRecCategory$(6, 0); ", "; indRecCategory$(6, 1) + " " + indRecCategory$(6, 2) + " " + indRecCategory$(6, 3) + ", " + indRecCategory$(6, 4)
     End If
 
     Print #2,
     Print #2, "MOST FIELD GOALS, GAME"
-    Print #2, allRecords!(7, 0); "- "; RC$(7, 0); ", "; RC$(7, 1) + " " + RC$(7, 2) + " " + RC$(7, 3) + ", " + RC$(7, 4)
+    Print #2, allRecords!(7, 0); "- "; indRecCategory$(7, 0); ", "; indRecCategory$(7, 1) + " " + indRecCategory$(7, 2) + " " + indRecCategory$(7, 3) + ", " + indRecCategory$(7, 4)
     Print #2,
     Print #2, "MOST FIELD GOALS, ONE HALF"
-    Print #2, allRecords!(8, 0); "- "; RC$(8, 0); ", "; RC$(8, 1) + " " + RC$(8, 2) + " " + RC$(8, 3) + ", " + RC$(8, 4); HALF$(allRecords!(8, 2))
+    Print #2, allRecords!(8, 0); "- "; indRecCategory$(8, 0); ", "; indRecCategory$(8, 1) + " " + indRecCategory$(8, 2) + " " + indRecCategory$(8, 3) + ", " + indRecCategory$(8, 4); HALF$(allRecords!(8, 2))
     Print #2,
     Print #2, "MOST FIELD GOALS, ONE QUARTER"
-    Print #2, allRecords!(9, 0); "- "; RC$(9, 0); ", "; RC$(9, 1) + " " + RC$(9, 2) + " " + RC$(9, 3) + ", " + RC$(9, 4); QTR$(allRecords!(9, 2))
+    Print #2, allRecords!(9, 0); "- "; indRecCategory$(9, 0); ", "; indRecCategory$(9, 1) + " " + indRecCategory$(9, 2) + " " + indRecCategory$(9, 3) + ", " + indRecCategory$(9, 4); QTR$(allRecords!(9, 2))
     Print #2,
     Print #2, "MOST FIELD GOALS, OVERTIME"
 
     If allRecords!(10, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(10, 0); "- "; RC$(10, 0); ", "; RC$(10, 1) + " " + RC$(10, 2) + " " + RC$(10, 3) + ", " + RC$(10, 4)
+        Print #2, allRecords!(10, 0); "- "; indRecCategory$(10, 0); ", "; indRecCategory$(10, 1) + " " + indRecCategory$(10, 2) + " " + indRecCategory$(10, 3) + ", " + indRecCategory$(10, 4)
     End If
 
     Print #2,
     Print #2, "MOST FIELD GOAL ATTEMPTS, GAME"
-    Print #2, allRecords!(11, 0); "- "; RC$(11, 0); ", "; RC$(11, 1) + " " + RC$(11, 2) + " " + RC$(11, 3) + ", " + RC$(11, 4)
+    Print #2, allRecords!(11, 0); "- "; indRecCategory$(11, 0); ", "; indRecCategory$(11, 1) + " " + indRecCategory$(11, 2) + " " + indRecCategory$(11, 3) + ", " + indRecCategory$(11, 4)
     Print #2,
     Print #2, "MOST FIELD GOAL ATTEMPTS, ONE HALF"
-    Print #2, allRecords!(12, 0); "- "; RC$(12, 0); ", "; RC$(12, 1) + " " + RC$(12, 2) + " " + RC$(12, 3) + ", " + RC$(12, 4); HALF$(allRecords!(12, 2))
+    Print #2, allRecords!(12, 0); "- "; indRecCategory$(12, 0); ", "; indRecCategory$(12, 1) + " " + indRecCategory$(12, 2) + " " + indRecCategory$(12, 3) + ", " + indRecCategory$(12, 4); HALF$(allRecords!(12, 2))
     Print #2,
     Print #2, "MOST FIELD GOAL ATTEMPTS, ONE QUARTER"
-    Print #2, allRecords!(13, 0); "- "; RC$(13, 0); ", "; RC$(13, 1) + " " + RC$(13, 2) + " " + RC$(13, 3) + ", " + RC$(13, 4); QTR$(allRecords!(13, 2))
+    Print #2, allRecords!(13, 0); "- "; indRecCategory$(13, 0); ", "; indRecCategory$(13, 1) + " " + indRecCategory$(13, 2) + " " + indRecCategory$(13, 3) + ", " + indRecCategory$(13, 4); QTR$(allRecords!(13, 2))
     Print #2,
     Print #2, "MOST THREE-POINT FIELD GOALS, NO MISSES, GAME"
 
     If allRecords!(15, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(15, 0); "- "; RC$(15, 0); ", "; RC$(15, 1) + " " + RC$(15, 2) + " " + RC$(15, 3) + ", " + RC$(15, 4)
+        Print #2, allRecords!(15, 0); "- "; indRecCategory$(15, 0); ", "; indRecCategory$(15, 1) + " " + indRecCategory$(15, 2) + " " + indRecCategory$(15, 3) + ", " + indRecCategory$(15, 4)
     End If
 
     Print #2,
@@ -1387,7 +1387,7 @@ Sub WriteRecords ()
     If allRecords!(16, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(16, 0); "- "; RC$(16, 0); ", "; RC$(16, 1) + " " + RC$(16, 2) + " " + RC$(16, 3) + ", " + RC$(16, 4)
+        Print #2, allRecords!(16, 0); "- "; indRecCategory$(16, 0); ", "; indRecCategory$(16, 1) + " " + indRecCategory$(16, 2) + " " + indRecCategory$(16, 3) + ", " + indRecCategory$(16, 4)
     End If
 
     Print #2,
@@ -1396,7 +1396,7 @@ Sub WriteRecords ()
     If allRecords!(17, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(17, 0); "- "; RC$(17, 0); ", "; RC$(17, 1) + " " + RC$(17, 2) + " " + RC$(17, 3) + ", " + RC$(17, 4)
+        Print #2, allRecords!(17, 0); "- "; indRecCategory$(17, 0); ", "; indRecCategory$(17, 1) + " " + indRecCategory$(17, 2) + " " + indRecCategory$(17, 3) + ", " + indRecCategory$(17, 4)
     End If
 
     Print #2,
@@ -1405,7 +1405,7 @@ Sub WriteRecords ()
     If allRecords!(18, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(18, 0); "- "; RC$(18, 0); ", "; RC$(18, 1) + " " + RC$(18, 2) + " " + RC$(18, 3) + ", " + RC$(18, 4); HALF$(allRecords!(18, 2))
+        Print #2, allRecords!(18, 0); "- "; indRecCategory$(18, 0); ", "; indRecCategory$(18, 1) + " " + indRecCategory$(18, 2) + " " + indRecCategory$(18, 3) + ", " + indRecCategory$(18, 4); HALF$(allRecords!(18, 2))
     End If
 
     Print #2,
@@ -1414,7 +1414,7 @@ Sub WriteRecords ()
     If allRecords!(19, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(19, 0); "- "; RC$(19, 0); ", "; RC$(19, 1) + " " + RC$(19, 2) + " " + RC$(19, 3) + ", " + RC$(19, 4); QTR$(allRecords!(19, 2))
+        Print #2, allRecords!(19, 0); "- "; indRecCategory$(19, 0); ", "; indRecCategory$(19, 1) + " " + indRecCategory$(19, 2) + " " + indRecCategory$(19, 3) + ", " + indRecCategory$(19, 4); QTR$(allRecords!(19, 2))
     End If
 
     Print #2,
@@ -1423,7 +1423,7 @@ Sub WriteRecords ()
     If allRecords!(21, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(21, 0); "- "; RC$(21, 0); ", "; RC$(21, 1) + " " + RC$(21, 2) + " " + RC$(21, 3) + ", " + RC$(21, 4)
+        Print #2, allRecords!(21, 0); "- "; indRecCategory$(21, 0); ", "; indRecCategory$(21, 1) + " " + indRecCategory$(21, 2) + " " + indRecCategory$(21, 3) + ", " + indRecCategory$(21, 4)
     End If
 
     Print #2,
@@ -1432,7 +1432,7 @@ Sub WriteRecords ()
     If allRecords!(22, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(22, 0); "- "; RC$(22, 0); ", "; RC$(22, 1) + " " + RC$(22, 2) + " " + RC$(22, 3) + ", " + RC$(22, 4); HALF$(allRecords!(22, 2))
+        Print #2, allRecords!(22, 0); "- "; indRecCategory$(22, 0); ", "; indRecCategory$(22, 1) + " " + indRecCategory$(22, 2) + " " + indRecCategory$(22, 3) + ", " + indRecCategory$(22, 4); HALF$(allRecords!(22, 2))
     End If
 
     Print #2,
@@ -1441,7 +1441,7 @@ Sub WriteRecords ()
     If allRecords!(23, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(23, 0); "- "; RC$(23, 0); ", "; RC$(23, 1) + " " + RC$(23, 2) + " " + RC$(23, 3) + ", " + RC$(23, 4)
+        Print #2, allRecords!(23, 0); "- "; indRecCategory$(23, 0); ", "; indRecCategory$(23, 1) + " " + indRecCategory$(23, 2) + " " + indRecCategory$(23, 3) + ", " + indRecCategory$(23, 4)
     End If
 
     Print #2,
@@ -1450,7 +1450,7 @@ Sub WriteRecords ()
     If allRecords!(24, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(24, 0); "- "; RC$(24, 0); ", "; RC$(24, 1) + " " + RC$(24, 2) + " " + RC$(24, 3) + ", " + RC$(24, 4)
+        Print #2, allRecords!(24, 0); "- "; indRecCategory$(24, 0); ", "; indRecCategory$(24, 1) + " " + indRecCategory$(24, 2) + " " + indRecCategory$(24, 3) + ", " + indRecCategory$(24, 4)
     End If
 
     Print #2,
@@ -1459,7 +1459,7 @@ Sub WriteRecords ()
     If allRecords!(25, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(25, 0); "- "; RC$(25, 0); ", "; RC$(25, 1) + " " + RC$(25, 2) + " " + RC$(25, 3) + ", " + RC$(25, 4)
+        Print #2, allRecords!(25, 0); "- "; indRecCategory$(25, 0); ", "; indRecCategory$(25, 1) + " " + indRecCategory$(25, 2) + " " + indRecCategory$(25, 3) + ", " + indRecCategory$(25, 4)
     End If
 
     Print #2,
@@ -1468,7 +1468,7 @@ Sub WriteRecords ()
     If allRecords!(26, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(26, 0); "- "; RC$(26, 0); ", "; RC$(26, 1) + " " + RC$(26, 2) + " " + RC$(26, 3) + ", " + RC$(26, 4); HALF$(allRecords!(26, 2))
+        Print #2, allRecords!(26, 0); "- "; indRecCategory$(26, 0); ", "; indRecCategory$(26, 1) + " " + indRecCategory$(26, 2) + " " + indRecCategory$(26, 3) + ", " + indRecCategory$(26, 4); HALF$(allRecords!(26, 2))
     End If
 
     Print #2,
@@ -1477,7 +1477,7 @@ Sub WriteRecords ()
     If allRecords!(27, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(27, 0); "- "; RC$(27, 0); ", "; RC$(27, 1) + " " + RC$(27, 2) + " " + RC$(27, 3) + ", " + RC$(27, 4); QTR$(allRecords!(27, 2))
+        Print #2, allRecords!(27, 0); "- "; indRecCategory$(27, 0); ", "; indRecCategory$(27, 1) + " " + indRecCategory$(27, 2) + " " + indRecCategory$(27, 3) + ", " + indRecCategory$(27, 4); QTR$(allRecords!(27, 2))
     End If
 
     Print #2,
@@ -1486,7 +1486,7 @@ Sub WriteRecords ()
     If allRecords!(28, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(28, 0); "- "; RC$(28, 0); ", "; RC$(28, 1) + " " + RC$(28, 2) + " " + RC$(28, 3) + ", " + RC$(28, 4)
+        Print #2, allRecords!(28, 0); "- "; indRecCategory$(28, 0); ", "; indRecCategory$(28, 1) + " " + indRecCategory$(28, 2) + " " + indRecCategory$(28, 3) + ", " + indRecCategory$(28, 4)
     End If
 
     Print #2,
@@ -1495,7 +1495,7 @@ Sub WriteRecords ()
     If allRecords!(29, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(29, 0); "- "; RC$(29, 0); ", "; RC$(29, 1) + " " + RC$(29, 2) + " " + RC$(29, 3) + ", " + RC$(29, 4); HALF$(allRecords!(29, 2))
+        Print #2, allRecords!(29, 0); "- "; indRecCategory$(29, 0); ", "; indRecCategory$(29, 1) + " " + indRecCategory$(29, 2) + " " + indRecCategory$(29, 3) + ", " + indRecCategory$(29, 4); HALF$(allRecords!(29, 2))
     End If
 
     Print #2,
@@ -1504,7 +1504,7 @@ Sub WriteRecords ()
     If allRecords!(30, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME";
     Else
-        Print #2, allRecords!(30, 0); "- "; RC$(30, 0); ", "; RC$(30, 1) + " " + RC$(30, 2) + " " + RC$(30, 3) + ", " + RC$(30, 4); QTR$(allRecords!(30, 2))
+        Print #2, allRecords!(30, 0); "- "; indRecCategory$(30, 0); ", "; indRecCategory$(30, 1) + " " + indRecCategory$(30, 2) + " " + indRecCategory$(30, 3) + ", " + indRecCategory$(30, 4); QTR$(allRecords!(30, 2))
     End If
 
     Print #2,
@@ -1513,7 +1513,7 @@ Sub WriteRecords ()
     If allRecords!(31, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(31, 0); "- "; RC$(31, 0); ", "; RC$(31, 1) + " " + RC$(31, 2) + " " + RC$(31, 3) + ", " + RC$(31, 4)
+        Print #2, allRecords!(31, 0); "- "; indRecCategory$(31, 0); ", "; indRecCategory$(31, 1) + " " + indRecCategory$(31, 2) + " " + indRecCategory$(31, 3) + ", " + indRecCategory$(31, 4)
     End If
 
     Print #2,
@@ -1522,7 +1522,7 @@ Sub WriteRecords ()
     If allRecords!(32, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(32, 0); "- "; RC$(32, 0); ", "; RC$(32, 1) + " " + RC$(32, 2) + " " + RC$(32, 3) + ", " + RC$(32, 4); HALF$(allRecords!(32, 2))
+        Print #2, allRecords!(32, 0); "- "; indRecCategory$(32, 0); ", "; indRecCategory$(32, 1) + " " + indRecCategory$(32, 2) + " " + indRecCategory$(32, 3) + ", " + indRecCategory$(32, 4); HALF$(allRecords!(32, 2))
     End If
 
     Print #2,
@@ -1531,7 +1531,7 @@ Sub WriteRecords ()
     If allRecords!(33, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(33, 0); "- "; RC$(33, 0); ", "; RC$(33, 1) + " " + RC$(33, 2) + " " + RC$(33, 3) + ", " + RC$(33, 4); QTR$(allRecords!(33, 2))
+        Print #2, allRecords!(33, 0); "- "; indRecCategory$(33, 0); ", "; indRecCategory$(33, 1) + " " + indRecCategory$(33, 2) + " " + indRecCategory$(33, 3) + ", " + indRecCategory$(33, 4); QTR$(allRecords!(33, 2))
     End If
 
     Print #2,
@@ -1540,7 +1540,7 @@ Sub WriteRecords ()
     If allRecords!(34, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(34, 0); "- "; RC$(34, 0); ", "; RC$(34, 1) + " " + RC$(34, 2) + " " + RC$(34, 3) + ", " + RC$(34, 4)
+        Print #2, allRecords!(34, 0); "- "; indRecCategory$(34, 0); ", "; indRecCategory$(34, 1) + " " + indRecCategory$(34, 2) + " " + indRecCategory$(34, 3) + ", " + indRecCategory$(34, 4)
     End If
 
     Print #2,
@@ -1548,7 +1548,7 @@ Sub WriteRecords ()
     If allRecords!(35, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(35, 0); "- "; RC$(35, 0); ", "; RC$(35, 1) + " " + RC$(35, 2) + " " + RC$(35, 3) + ", " + RC$(35, 4); HALF$(allRecords!(35, 2))
+        Print #2, allRecords!(35, 0); "- "; indRecCategory$(35, 0); ", "; indRecCategory$(35, 1) + " " + indRecCategory$(35, 2) + " " + indRecCategory$(35, 3) + ", " + indRecCategory$(35, 4); HALF$(allRecords!(35, 2))
     End If
 
     Print #2,
@@ -1557,7 +1557,7 @@ Sub WriteRecords ()
     If allRecords!(36, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME";
     Else
-        Print #2, allRecords!(36, 0); "- "; RC$(36, 0); ", "; RC$(36, 1) + " " + RC$(36, 2) + " " + RC$(36, 3) + ", " + RC$(36, 4); QTR$(allRecords!(36, 2))
+        Print #2, allRecords!(36, 0); "- "; indRecCategory$(36, 0); ", "; indRecCategory$(36, 1) + " " + indRecCategory$(36, 2) + " " + indRecCategory$(36, 3) + ", " + indRecCategory$(36, 4); QTR$(allRecords!(36, 2))
     End If
 
     Print #2,
@@ -1566,7 +1566,7 @@ Sub WriteRecords ()
     If allRecords!(37, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(37, 0); "- "; RC$(37, 0); ", "; RC$(37, 1) + " " + RC$(37, 2) + " " + RC$(37, 3) + ", " + RC$(37, 4)
+        Print #2, allRecords!(37, 0); "- "; indRecCategory$(37, 0); ", "; indRecCategory$(37, 1) + " " + indRecCategory$(37, 2) + " " + indRecCategory$(37, 3) + ", " + indRecCategory$(37, 4)
     End If
 
     Print #2,
@@ -1575,7 +1575,7 @@ Sub WriteRecords ()
     If allRecords!(38, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(38, 0); "- "; RC$(38, 0); ", "; RC$(38, 1) + " " + RC$(38, 2) + " " + RC$(38, 3) + ", " + RC$(38, 4); HALF$(allRecords!(38, 2))
+        Print #2, allRecords!(38, 0); "- "; indRecCategory$(38, 0); ", "; indRecCategory$(38, 1) + " " + indRecCategory$(38, 2) + " " + indRecCategory$(38, 3) + ", " + indRecCategory$(38, 4); HALF$(allRecords!(38, 2))
     End If
 
     Print #2,
@@ -1584,7 +1584,7 @@ Sub WriteRecords ()
     If allRecords!(39, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(39, 0); "- "; RC$(39, 0); ", "; RC$(39, 1) + " " + RC$(39, 2) + " " + RC$(39, 3) + ", " + RC$(39, 4); QTR$(allRecords!(39, 2))
+        Print #2, allRecords!(39, 0); "- "; indRecCategory$(39, 0); ", "; indRecCategory$(39, 1) + " " + indRecCategory$(39, 2) + " " + indRecCategory$(39, 3) + ", " + indRecCategory$(39, 4); QTR$(allRecords!(39, 2))
     End If
 
     Print #2,
@@ -1593,7 +1593,7 @@ Sub WriteRecords ()
     If allRecords!(40, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(40, 0); "- "; RC$(40, 0); ", "; RC$(40, 1) + " " + RC$(40, 2) + " " + RC$(40, 3) + ", " + RC$(40, 4)
+        Print #2, allRecords!(40, 0); "- "; indRecCategory$(40, 0); ", "; indRecCategory$(40, 1) + " " + indRecCategory$(40, 2) + " " + indRecCategory$(40, 3) + ", " + indRecCategory$(40, 4)
     End If
 
     Print #2,
@@ -1602,7 +1602,7 @@ Sub WriteRecords ()
     If allRecords!(41, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(41, 0); "- "; RC$(41, 0); ", "; RC$(41, 1) + " " + RC$(41, 2) + " " + RC$(41, 3) + ", " + RC$(41, 4); HALF$(allRecords!(41, 2))
+        Print #2, allRecords!(41, 0); "- "; indRecCategory$(41, 0); ", "; indRecCategory$(41, 1) + " " + indRecCategory$(41, 2) + " " + indRecCategory$(41, 3) + ", " + indRecCategory$(41, 4); HALF$(allRecords!(41, 2))
     End If
 
     Print #2,
@@ -1611,7 +1611,7 @@ Sub WriteRecords ()
     If allRecords!(42, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(42, 0); "- "; RC$(42, 0); ", "; RC$(42, 1) + " " + RC$(42, 2) + " " + RC$(42, 3) + ", " + RC$(42, 4); QTR$(allRecords!(42, 2))
+        Print #2, allRecords!(42, 0); "- "; indRecCategory$(42, 0); ", "; indRecCategory$(42, 1) + " " + indRecCategory$(42, 2) + " " + indRecCategory$(42, 3) + ", " + indRecCategory$(42, 4); QTR$(allRecords!(42, 2))
     End If
 
     Print #2,
@@ -1620,7 +1620,7 @@ Sub WriteRecords ()
     If allRecords!(43, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(43, 0); "- "; RC$(43, 0); ", "; RC$(43, 1) + " " + RC$(43, 2) + " " + RC$(43, 3) + ", " + RC$(43, 4)
+        Print #2, allRecords!(43, 0); "- "; indRecCategory$(43, 0); ", "; indRecCategory$(43, 1) + " " + indRecCategory$(43, 2) + " " + indRecCategory$(43, 3) + ", " + indRecCategory$(43, 4)
     End If
 
     Print #2,
@@ -1629,7 +1629,7 @@ Sub WriteRecords ()
     If allRecords!(44, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(44, 0); "- "; RC$(44, 0); ", "; RC$(44, 1) + " " + RC$(44, 2) + " " + RC$(44, 3) + ", " + RC$(44, 4); HALF$(allRecords!(44, 2))
+        Print #2, allRecords!(44, 0); "- "; indRecCategory$(44, 0); ", "; indRecCategory$(44, 1) + " " + indRecCategory$(44, 2) + " " + indRecCategory$(44, 3) + ", " + indRecCategory$(44, 4); HALF$(allRecords!(44, 2))
     End If
 
     Print #2,
@@ -1638,7 +1638,7 @@ Sub WriteRecords ()
     If allRecords!(45, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(45, 0); "- "; RC$(45, 0); ", "; RC$(45, 1) + " " + RC$(45, 2) + " " + RC$(45, 3) + ", " + RC$(45, 4); QTR$(allRecords!(45, 2))
+        Print #2, allRecords!(45, 0); "- "; indRecCategory$(45, 0); ", "; indRecCategory$(45, 1) + " " + indRecCategory$(45, 2) + " " + indRecCategory$(45, 3) + ", " + indRecCategory$(45, 4); QTR$(allRecords!(45, 2))
     End If
 
     Print #2,
@@ -1647,7 +1647,7 @@ Sub WriteRecords ()
     If allRecords!(46, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(46, 0); "- "; RC$(46, 0); ", "; RC$(46, 1) + " " + RC$(46, 2) + " " + RC$(46, 3) + ", " + RC$(46, 4)
+        Print #2, allRecords!(46, 0); "- "; indRecCategory$(46, 0); ", "; indRecCategory$(46, 1) + " " + indRecCategory$(46, 2) + " " + indRecCategory$(46, 3) + ", " + indRecCategory$(46, 4)
     End If
 
     Print #2,
@@ -1656,7 +1656,7 @@ Sub WriteRecords ()
     If allRecords!(47, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, allRecords!(47, 0); "- "; RC$(47, 0); ", "; RC$(47, 1) + " " + RC$(47, 2) + " " + RC$(47, 3) + ", " + RC$(47, 4); HALF$(allRecords!(47, 2))
+        Print #2, allRecords!(47, 0); "- "; indRecCategory$(47, 0); ", "; indRecCategory$(47, 1) + " " + indRecCategory$(47, 2) + " " + indRecCategory$(47, 3) + ", " + indRecCategory$(47, 4); HALF$(allRecords!(47, 2))
     End If
 
     Print #2,
@@ -1665,7 +1665,7 @@ Sub WriteRecords ()
     If allRecords!(48, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME";
     Else
-        Print #2, allRecords!(48, 0); "- "; RC$(48, 0); ", "; RC$(48, 1) + " " + RC$(48, 2) + " " + RC$(48, 3) + ", " + RC$(48, 4); QTR$(allRecords!(48, 2));
+        Print #2, allRecords!(48, 0); "- "; indRecCategory$(48, 0); ", "; indRecCategory$(48, 1) + " " + indRecCategory$(48, 2) + " " + indRecCategory$(48, 3) + ", " + indRecCategory$(48, 4); QTR$(allRecords!(48, 2));
     End If
 
     Print #2, Chr$(12)
@@ -1674,441 +1674,441 @@ Sub WriteRecords ()
     Print #2,
     Print #2, "MOST OVERTIME PERIODS"
 
-    If TotalRecords!(0, 0) = 0 Then
+    If teamRecords!(0, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, TotalRecords!(0, 0); "- "; recordsTRC$(0, 1);
-        Print #2, Using " (###) AT "; TotalRecords!(0, 1);
-        Print #2, recordsTRC$(0, 2);: Print #2, Using " (###)"; TotalRecords!(0, 2);: Print #2, ", " + recordsTRC$(0, 3)
+        Print #2, teamRecords!(0, 0); "- "; teamRecCategory$(0, 1);
+        Print #2, Using " (###) AT "; teamRecords!(0, 1);
+        Print #2, teamRecCategory$(0, 2);: Print #2, Using " (###)"; teamRecords!(0, 2);: Print #2, ", " + teamRecCategory$(0, 3)
     End If
 
     Print #2,
     Print #2, "MOST POINTS, GAME"
-    Print #2, TotalRecords!(1, 0); "- "; recordsTRC$(1, 0) + " " + recordsTRC$(1, 1) + " " + recordsTRC$(1, 2) + ", " + recordsTRC$(1, 3)
+    Print #2, teamRecords!(1, 0); "- "; teamRecCategory$(1, 0) + " " + teamRecCategory$(1, 1) + " " + teamRecCategory$(1, 2) + ", " + teamRecCategory$(1, 3)
     Print #2,
     Print #2, "FEWEST POINTS, GAME"
-    Print #2, TotalRecords!(2, 0); "- "; recordsTRC$(2, 0) + " " + recordsTRC$(2, 1) + " " + recordsTRC$(2, 2) + ", " + recordsTRC$(2, 3)
+    Print #2, teamRecords!(2, 0); "- "; teamRecCategory$(2, 0) + " " + teamRecCategory$(2, 1) + " " + teamRecCategory$(2, 2) + ", " + teamRecCategory$(2, 3)
     Print #2,
     Print #2, "MOST POINTS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(3, 0); "- "; recordsTRC$(3, 0);
-    Print #2, Using " (###) "; TotalRecords!(3, 1);: Print #2, recordsTRC$(3, 1) + " ";
-    Print #2, recordsTRC$(3, 2);: Print #2, Using " (###)"; TotalRecords!(3, 2);: Print #2, ", " + recordsTRC$(3, 3)
+    Print #2, teamRecords!(3, 0); "- "; teamRecCategory$(3, 0);
+    Print #2, Using " (###) "; teamRecords!(3, 1);: Print #2, teamRecCategory$(3, 1) + " ";
+    Print #2, teamRecCategory$(3, 2);: Print #2, Using " (###)"; teamRecords!(3, 2);: Print #2, ", " + teamRecCategory$(3, 3)
     Print #2,
     Print #2, "FEWEST POINTS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(4, 0); "- "; recordsTRC$(4, 0);
-    Print #2, Using " (###) "; TotalRecords!(4, 1);: Print #2, recordsTRC$(4, 1) + " ";
-    Print #2, recordsTRC$(4, 2);: Print #2, Using " (###)"; TotalRecords!(4, 2);: Print #2, ", " + recordsTRC$(4, 3)
+    Print #2, teamRecords!(4, 0); "- "; teamRecCategory$(4, 0);
+    Print #2, Using " (###) "; teamRecords!(4, 1);: Print #2, teamRecCategory$(4, 1) + " ";
+    Print #2, teamRecCategory$(4, 2);: Print #2, Using " (###)"; teamRecords!(4, 2);: Print #2, ", " + teamRecCategory$(4, 3)
     Print #2,
     Print #2, "MOST POINTS, FIRST HALF"
-    Print #2, TotalRecords!(6, 0); "- "; recordsTRC$(6, 0) + " " + recordsTRC$(6, 1) + " " + recordsTRC$(6, 2) + ", " + recordsTRC$(6, 3)
+    Print #2, teamRecords!(6, 0); "- "; teamRecCategory$(6, 0) + " " + teamRecCategory$(6, 1) + " " + teamRecCategory$(6, 2) + ", " + teamRecCategory$(6, 3)
     Print #2,
     Print #2, "FEWEST POINTS, FIRST HALF"
-    Print #2, TotalRecords!(7, 0); "- "; recordsTRC$(7, 0) + " " + recordsTRC$(7, 1) + " " + recordsTRC$(7, 2) + ", " + recordsTRC$(7, 3)
+    Print #2, teamRecords!(7, 0); "- "; teamRecCategory$(7, 0) + " " + teamRecCategory$(7, 1) + " " + teamRecCategory$(7, 2) + ", " + teamRecCategory$(7, 3)
     Print #2,
 
     Print #2, "MOST POINTS, BOTH TEAMS, FIRST HALF"
-    Print #2, TotalRecords!(8, 0); "- "; recordsTRC$(8, 0);
-    Print #2, Using " (###) "; TotalRecords!(8, 1);: Print #2, recordsTRC$(8, 1) + " ";
-    Print #2, recordsTRC$(8, 2);: Print #2, Using " (###)"; TotalRecords!(8, 2);: Print #2, ", " + recordsTRC$(8, 3)
+    Print #2, teamRecords!(8, 0); "- "; teamRecCategory$(8, 0);
+    Print #2, Using " (###) "; teamRecords!(8, 1);: Print #2, teamRecCategory$(8, 1) + " ";
+    Print #2, teamRecCategory$(8, 2);: Print #2, Using " (###)"; teamRecords!(8, 2);: Print #2, ", " + teamRecCategory$(8, 3)
     Print #2,
     Print #2, "FEWEST POINTS, BOTH TEAMS, FIRST HALF"
-    Print #2, TotalRecords!(9, 0); "- "; recordsTRC$(9, 0);
-    Print #2, Using " (###) "; TotalRecords!(9, 1);: Print #2, recordsTRC$(9, 1) + " ";
-    Print #2, recordsTRC$(9, 2);: Print #2, Using " (###)"; TotalRecords!(9, 2);: Print #2, ", " + recordsTRC$(9, 3)
+    Print #2, teamRecords!(9, 0); "- "; teamRecCategory$(9, 0);
+    Print #2, Using " (###) "; teamRecords!(9, 1);: Print #2, teamRecCategory$(9, 1) + " ";
+    Print #2, teamRecCategory$(9, 2);: Print #2, Using " (###)"; teamRecords!(9, 2);: Print #2, ", " + teamRecCategory$(9, 3)
     Print #2,
     Print #2, "MOST POINTS, SECOND HALF"
-    Print #2, TotalRecords!(10, 0); "- "; recordsTRC$(10, 0) + " " + recordsTRC$(10, 1) + " " + recordsTRC$(10, 2) + ", " + recordsTRC$(10, 3)
+    Print #2, teamRecords!(10, 0); "- "; teamRecCategory$(10, 0) + " " + teamRecCategory$(10, 1) + " " + teamRecCategory$(10, 2) + ", " + teamRecCategory$(10, 3)
     Print #2,
     Print #2, "FEWEST POINTS, SECOND HALF"
-    Print #2, TotalRecords!(11, 0); "- "; recordsTRC$(11, 0) + " " + recordsTRC$(11, 1) + " " + recordsTRC$(11, 2) + ", " + recordsTRC$(11, 3)
+    Print #2, teamRecords!(11, 0); "- "; teamRecCategory$(11, 0) + " " + teamRecCategory$(11, 1) + " " + teamRecCategory$(11, 2) + ", " + teamRecCategory$(11, 3)
     Print #2,
     Print #2, "MOST POINTS, BOTH TEAMS, SECOND HALF"
-    Print #2, TotalRecords!(12, 0); "- "; recordsTRC$(12, 0);
-    Print #2, Using " (###) "; TotalRecords!(12, 1);: Print #2, recordsTRC$(12, 1) + " ";
-    Print #2, recordsTRC$(12, 2);: Print #2, Using " (###)"; TotalRecords!(12, 2);: Print #2, ", " + recordsTRC$(12, 3)
+    Print #2, teamRecords!(12, 0); "- "; teamRecCategory$(12, 0);
+    Print #2, Using " (###) "; teamRecords!(12, 1);: Print #2, teamRecCategory$(12, 1) + " ";
+    Print #2, teamRecCategory$(12, 2);: Print #2, Using " (###)"; teamRecords!(12, 2);: Print #2, ", " + teamRecCategory$(12, 3)
     Print #2,
     Print #2, "FEWEST POINTS, BOTH TEAMS, SECOND HALF"
-    Print #2, TotalRecords!(13, 0); "- "; recordsTRC$(13, 0);
-    Print #2, Using " (###) "; TotalRecords!(13, 1);: Print #2, recordsTRC$(13, 1) + " ";
-    Print #2, recordsTRC$(13, 2);: Print #2, Using " (###)"; TotalRecords!(13, 2);: Print #2, ", " + recordsTRC$(13, 3)
+    Print #2, teamRecords!(13, 0); "- "; teamRecCategory$(13, 0);
+    Print #2, Using " (###) "; teamRecords!(13, 1);: Print #2, teamRecCategory$(13, 1) + " ";
+    Print #2, teamRecCategory$(13, 2);: Print #2, Using " (###)"; teamRecords!(13, 2);: Print #2, ", " + teamRecCategory$(13, 3)
     Print #2,
 
     Print #2, "MOST POINTS, FIRST QUARTER"
-    Print #2, TotalRecords!(14, 0); "- "; recordsTRC$(14, 0) + " " + recordsTRC$(14, 1) + " " + recordsTRC$(14, 2) + ", " + recordsTRC$(14, 3)
+    Print #2, teamRecords!(14, 0); "- "; teamRecCategory$(14, 0) + " " + teamRecCategory$(14, 1) + " " + teamRecCategory$(14, 2) + ", " + teamRecCategory$(14, 3)
     Print #2,
     Print #2, "FEWEST POINTS, FIRST QUARTER"
-    Print #2, TotalRecords!(15, 0); "- "; recordsTRC$(15, 0) + " " + recordsTRC$(15, 1) + " " + recordsTRC$(15, 2) + ", " + recordsTRC$(15, 3)
+    Print #2, teamRecords!(15, 0); "- "; teamRecCategory$(15, 0) + " " + teamRecCategory$(15, 1) + " " + teamRecCategory$(15, 2) + ", " + teamRecCategory$(15, 3)
     Print #2,
     Print #2, "MOST POINTS, BOTH TEAMS, FIRST QUARTER"
-    Print #2, TotalRecords!(16, 0); "- "; recordsTRC$(16, 0);
-    Print #2, Using " (###) "; TotalRecords!(16, 1);: Print #2, recordsTRC$(16, 1) + " ";
-    Print #2, recordsTRC$(16, 2);: Print #2, Using " (###)"; TotalRecords!(16, 2);: Print #2, ", " + recordsTRC$(16, 3)
+    Print #2, teamRecords!(16, 0); "- "; teamRecCategory$(16, 0);
+    Print #2, Using " (###) "; teamRecords!(16, 1);: Print #2, teamRecCategory$(16, 1) + " ";
+    Print #2, teamRecCategory$(16, 2);: Print #2, Using " (###)"; teamRecords!(16, 2);: Print #2, ", " + teamRecCategory$(16, 3)
     Print #2,
     Print #2, "FEWEST POINTS, BOTH TEAMS, FIRST QUARTER"
-    Print #2, TotalRecords!(17, 0); "- "; recordsTRC$(17, 0);
-    Print #2, Using " (###) "; TotalRecords!(17, 1);: Print #2, recordsTRC$(17, 1) + " ";
-    Print #2, recordsTRC$(17, 2);: Print #2, Using " (###)"; TotalRecords!(17, 2);: Print #2, ", " + recordsTRC$(17, 3)
+    Print #2, teamRecords!(17, 0); "- "; teamRecCategory$(17, 0);
+    Print #2, Using " (###) "; teamRecords!(17, 1);: Print #2, teamRecCategory$(17, 1) + " ";
+    Print #2, teamRecCategory$(17, 2);: Print #2, Using " (###)"; teamRecords!(17, 2);: Print #2, ", " + teamRecCategory$(17, 3)
     Print #2,
     Print #2, "MOST POINTS, SECOND QUARTER"
-    Print #2, TotalRecords!(18, 0); "- "; recordsTRC$(18, 0) + " " + recordsTRC$(18, 1) + " " + recordsTRC$(18, 2) + ", " + recordsTRC$(18, 3)
+    Print #2, teamRecords!(18, 0); "- "; teamRecCategory$(18, 0) + " " + teamRecCategory$(18, 1) + " " + teamRecCategory$(18, 2) + ", " + teamRecCategory$(18, 3)
     Print #2,
     Print #2, "FEWEST POINTS, SECOND QUARTER"
-    Print #2, TotalRecords!(19, 0); "- "; recordsTRC$(19, 0) + " " + recordsTRC$(19, 1) + " " + recordsTRC$(19, 2) + ", " + recordsTRC$(19, 3)
+    Print #2, teamRecords!(19, 0); "- "; teamRecCategory$(19, 0) + " " + teamRecCategory$(19, 1) + " " + teamRecCategory$(19, 2) + ", " + teamRecCategory$(19, 3)
     Print #2,
     Print #2, "MOST POINTS, BOTH TEAMS, SECOND QUARTER"
-    Print #2, TotalRecords!(20, 0); "- "; recordsTRC$(20, 0);
-    Print #2, Using " (###) "; TotalRecords!(20, 1);: Print #2, recordsTRC$(20, 1) + " ";
-    Print #2, recordsTRC$(20, 2);: Print #2, Using " (###)"; TotalRecords!(20, 2);: Print #2, ", " + recordsTRC$(20, 3)
+    Print #2, teamRecords!(20, 0); "- "; teamRecCategory$(20, 0);
+    Print #2, Using " (###) "; teamRecords!(20, 1);: Print #2, teamRecCategory$(20, 1) + " ";
+    Print #2, teamRecCategory$(20, 2);: Print #2, Using " (###)"; teamRecords!(20, 2);: Print #2, ", " + teamRecCategory$(20, 3)
     Print #2,
     Print #2, "FEWEST POINTS, BOTH TEAMS, SECOND QUARTER"
-    Print #2, TotalRecords!(21, 0); "- "; recordsTRC$(21, 0);
-    Print #2, Using " (###) "; TotalRecords!(21, 1);: Print #2, recordsTRC$(21, 1) + " ";
-    Print #2, recordsTRC$(21, 2);: Print #2, Using " (###)"; TotalRecords!(21, 2);: Print #2, ", " + recordsTRC$(21, 3)
+    Print #2, teamRecords!(21, 0); "- "; teamRecCategory$(21, 0);
+    Print #2, Using " (###) "; teamRecords!(21, 1);: Print #2, teamRecCategory$(21, 1) + " ";
+    Print #2, teamRecCategory$(21, 2);: Print #2, Using " (###)"; teamRecords!(21, 2);: Print #2, ", " + teamRecCategory$(21, 3)
     Print #2,
     Print #2, "MOST POINTS, THIRD QUARTER"
-    Print #2, TotalRecords!(22, 0); "- "; recordsTRC$(22, 0) + " " + recordsTRC$(22, 1) + " " + recordsTRC$(22, 2) + ", " + recordsTRC$(22, 3)
+    Print #2, teamRecords!(22, 0); "- "; teamRecCategory$(22, 0) + " " + teamRecCategory$(22, 1) + " " + teamRecCategory$(22, 2) + ", " + teamRecCategory$(22, 3)
     Print #2,
     Print #2, "FEWEST POINTS, THIRD QUARTER"
-    Print #2, TotalRecords!(23, 0); "- "; recordsTRC$(23, 0) + " " + recordsTRC$(23, 1) + " " + recordsTRC$(23, 2) + ", " + recordsTRC$(23, 3)
+    Print #2, teamRecords!(23, 0); "- "; teamRecCategory$(23, 0) + " " + teamRecCategory$(23, 1) + " " + teamRecCategory$(23, 2) + ", " + teamRecCategory$(23, 3)
     Print #2,
     Print #2, "MOST POINTS, BOTH TEAMS, THIRD QUARTER"
-    Print #2, TotalRecords!(24, 0); "- "; recordsTRC$(24, 0);
-    Print #2, Using " (###) "; TotalRecords!(24, 1);: Print #2, recordsTRC$(24, 1) + " ";
-    Print #2, recordsTRC$(24, 2);: Print #2, Using " (###)"; TotalRecords!(24, 2);: Print #2, ", " + recordsTRC$(24, 3)
+    Print #2, teamRecords!(24, 0); "- "; teamRecCategory$(24, 0);
+    Print #2, Using " (###) "; teamRecords!(24, 1);: Print #2, teamRecCategory$(24, 1) + " ";
+    Print #2, teamRecCategory$(24, 2);: Print #2, Using " (###)"; teamRecords!(24, 2);: Print #2, ", " + teamRecCategory$(24, 3)
     Print #2,
     Print #2, "FEWEST POINTS, BOTH TEAMS, THIRD QUARTER"
-    Print #2, TotalRecords!(25, 0); "- "; recordsTRC$(25, 0);
-    Print #2, Using " (###) "; TotalRecords!(25, 1);: Print #2, recordsTRC$(25, 1) + " ";
-    Print #2, recordsTRC$(25, 2);: Print #2, Using " (###)"; TotalRecords!(25, 2);: Print #2, ", " + recordsTRC$(25, 3)
+    Print #2, teamRecords!(25, 0); "- "; teamRecCategory$(25, 0);
+    Print #2, Using " (###) "; teamRecords!(25, 1);: Print #2, teamRecCategory$(25, 1) + " ";
+    Print #2, teamRecCategory$(25, 2);: Print #2, Using " (###)"; teamRecords!(25, 2);: Print #2, ", " + teamRecCategory$(25, 3)
     Print #2,
     Print #2, "MOST POINTS, FOURTH QUARTER"
-    Print #2, TotalRecords!(26, 0); "- "; recordsTRC$(26, 0) + " " + recordsTRC$(26, 1) + " " + recordsTRC$(26, 2) + ", " + recordsTRC$(26, 3)
+    Print #2, teamRecords!(26, 0); "- "; teamRecCategory$(26, 0) + " " + teamRecCategory$(26, 1) + " " + teamRecCategory$(26, 2) + ", " + teamRecCategory$(26, 3)
     Print #2,
     Print #2, "FEWEST POINTS, FOURTH QUARTER"
-    Print #2, TotalRecords!(27, 0); "- "; recordsTRC$(27, 0) + " " + recordsTRC$(27, 1) + " " + recordsTRC$(27, 2) + ", " + recordsTRC$(27, 3)
+    Print #2, teamRecords!(27, 0); "- "; teamRecCategory$(27, 0) + " " + teamRecCategory$(27, 1) + " " + teamRecCategory$(27, 2) + ", " + teamRecCategory$(27, 3)
     Print #2,
     Print #2, "MOST POINTS, BOTH TEAMS, FOURTH QUARTER"
-    Print #2, TotalRecords!(28, 0); "- "; recordsTRC$(28, 0);
-    Print #2, Using " (###) "; TotalRecords!(28, 1);: Print #2, recordsTRC$(28, 1) + " ";
-    Print #2, recordsTRC$(28, 2);: Print #2, Using " (###)"; TotalRecords!(28, 2);: Print #2, ", " + recordsTRC$(28, 3)
+    Print #2, teamRecords!(28, 0); "- "; teamRecCategory$(28, 0);
+    Print #2, Using " (###) "; teamRecords!(28, 1);: Print #2, teamRecCategory$(28, 1) + " ";
+    Print #2, teamRecCategory$(28, 2);: Print #2, Using " (###)"; teamRecords!(28, 2);: Print #2, ", " + teamRecCategory$(28, 3)
     Print #2,
     Print #2, "FEWEST POINTS, BOTH TEAMS, FOURTH QUARTER"
-    Print #2, TotalRecords!(29, 0); "- "; recordsTRC$(29, 0);
-    Print #2, Using " (###) "; TotalRecords!(29, 1);: Print #2, recordsTRC$(29, 1) + " ";
-    Print #2, recordsTRC$(29, 2);: Print #2, Using " (###)"; TotalRecords!(29, 2);: Print #2, ", " + recordsTRC$(29, 3)
+    Print #2, teamRecords!(29, 0); "- "; teamRecCategory$(29, 0);
+    Print #2, Using " (###) "; teamRecords!(29, 1);: Print #2, teamRecCategory$(29, 1) + " ";
+    Print #2, teamRecCategory$(29, 2);: Print #2, Using " (###)"; teamRecords!(29, 2);: Print #2, ", " + teamRecCategory$(29, 3)
     Print #2,
     Print #2, "HIGHEST FIELD GOAL PERCENTAGE, GAME"
-    Print #2, Using ".### "; TotalRecords!(30, 0);: Print #2, "- "; recordsTRC$(30, 0) + " " + recordsTRC$(30, 1) + " " + recordsTRC$(30, 2) + ", " + recordsTRC$(30, 3);: Print #2, Using "###/###"; TotalRecords!(30, 1); TotalRecords!(30, 2)
+    Print #2, Using ".### "; teamRecords!(30, 0);: Print #2, "- "; teamRecCategory$(30, 0) + " " + teamRecCategory$(30, 1) + " " + teamRecCategory$(30, 2) + ", " + teamRecCategory$(30, 3);: Print #2, Using "###/###"; teamRecords!(30, 1); teamRecords!(30, 2)
     Print #2,
     Print #2, "LOWEST FIELD GOAL PERCENTAGE, GAME"
-    Print #2, Using ".### "; TotalRecords!(31, 0);: Print #2, "- "; recordsTRC$(31, 0) + " " + recordsTRC$(31, 1) + " " + recordsTRC$(31, 2) + ", " + recordsTRC$(31, 3);: Print #2, Using "###/###"; TotalRecords!(31, 1); TotalRecords!(31, 2)
+    Print #2, Using ".### "; teamRecords!(31, 0);: Print #2, "- "; teamRecCategory$(31, 0) + " " + teamRecCategory$(31, 1) + " " + teamRecCategory$(31, 2) + ", " + teamRecCategory$(31, 3);: Print #2, Using "###/###"; teamRecords!(31, 1); teamRecords!(31, 2)
     Print #2,
     Print #2, "HIGHEST FIELD GOAL PERCENTAGE, BOTH TEAMS, GAME"
-    Print #2, Using ".### "; TotalRecords!(32, 0);: Print #2, "- "; recordsTRC$(32, 0);
-    Print #2, Using " (.###) "; TotalRecords!(32, 1);: Print #2, recordsTRC$(32, 1) + " ";
-    Print #2, recordsTRC$(32, 2);: Print #2, Using " (.###)"; TotalRecords!(32, 2);: Print #2, ", " + recordsTRC$(32, 3)
+    Print #2, Using ".### "; teamRecords!(32, 0);: Print #2, "- "; teamRecCategory$(32, 0);
+    Print #2, Using " (.###) "; teamRecords!(32, 1);: Print #2, teamRecCategory$(32, 1) + " ";
+    Print #2, teamRecCategory$(32, 2);: Print #2, Using " (.###)"; teamRecords!(32, 2);: Print #2, ", " + teamRecCategory$(32, 3)
     Print #2,
     Print #2, "LOWEST FIELD GOAL PERCENTAGE, BOTH TEAMS, GAME"
-    Print #2, Using ".### "; TotalRecords!(33, 0);: Print #2, "- "; recordsTRC$(33, 0);
-    Print #2, Using " (.###) "; TotalRecords!(33, 1);: Print #2, recordsTRC$(33, 1) + " ";
-    Print #2, recordsTRC$(33, 2);: Print #2, Using " (.###)"; TotalRecords!(33, 2);: Print #2, ", " + recordsTRC$(33, 3)
+    Print #2, Using ".### "; teamRecords!(33, 0);: Print #2, "- "; teamRecCategory$(33, 0);
+    Print #2, Using " (.###) "; teamRecords!(33, 1);: Print #2, teamRecCategory$(33, 1) + " ";
+    Print #2, teamRecCategory$(33, 2);: Print #2, Using " (.###)"; teamRecords!(33, 2);: Print #2, ", " + teamRecCategory$(33, 3)
     Print #2,
     Print #2, "MOST FIELD GOALS, GAME"
-    Print #2, TotalRecords!(34, 0); "- "; recordsTRC$(34, 0) + " " + recordsTRC$(34, 1) + " " + recordsTRC$(34, 2) + ", " + recordsTRC$(34, 3)
+    Print #2, teamRecords!(34, 0); "- "; teamRecCategory$(34, 0) + " " + teamRecCategory$(34, 1) + " " + teamRecCategory$(34, 2) + ", " + teamRecCategory$(34, 3)
     Print #2,
     Print #2, "FEWEST FIELD GOALS, GAME"
-    Print #2, TotalRecords!(35, 0); "- "; recordsTRC$(35, 0) + " " + recordsTRC$(35, 1) + " " + recordsTRC$(35, 2) + ", " + recordsTRC$(35, 3)
+    Print #2, teamRecords!(35, 0); "- "; teamRecCategory$(35, 0) + " " + teamRecCategory$(35, 1) + " " + teamRecCategory$(35, 2) + ", " + teamRecCategory$(35, 3)
     Print #2,
     Print #2, "MOST FIELD GOALS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(36, 0); "- "; recordsTRC$(36, 0);
-    Print #2, Using " (###) "; TotalRecords!(36, 1);: Print #2, recordsTRC$(36, 1) + " ";
-    Print #2, recordsTRC$(36, 2);: Print #2, Using " (###)"; TotalRecords!(36, 2);: Print #2, ", " + recordsTRC$(36, 3)
+    Print #2, teamRecords!(36, 0); "- "; teamRecCategory$(36, 0);
+    Print #2, Using " (###) "; teamRecords!(36, 1);: Print #2, teamRecCategory$(36, 1) + " ";
+    Print #2, teamRecCategory$(36, 2);: Print #2, Using " (###)"; teamRecords!(36, 2);: Print #2, ", " + teamRecCategory$(36, 3)
     Print #2,
     Print #2, "FEWEST FIELD GOALS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(37, 0); "- "; recordsTRC$(37, 0);
-    Print #2, Using " (###) "; TotalRecords!(37, 1);: Print #2, recordsTRC$(37, 1) + " ";
-    Print #2, recordsTRC$(37, 2);: Print #2, Using " (###)"; TotalRecords!(37, 2);: Print #2, ", " + recordsTRC$(37, 3)
+    Print #2, teamRecords!(37, 0); "- "; teamRecCategory$(37, 0);
+    Print #2, Using " (###) "; teamRecords!(37, 1);: Print #2, teamRecCategory$(37, 1) + " ";
+    Print #2, teamRecCategory$(37, 2);: Print #2, Using " (###)"; teamRecords!(37, 2);: Print #2, ", " + teamRecCategory$(37, 3)
     Print #2,
     Print #2, "MOST FIELD GOALS, ONE HALF"
-    Print #2, TotalRecords!(38, 0); "- "; recordsTRC$(38, 0) + " " + recordsTRC$(38, 1) + " " + recordsTRC$(38, 2) + ", " + recordsTRC$(38, 3); HALF$(TotalRecords!(38, 1))
+    Print #2, teamRecords!(38, 0); "- "; teamRecCategory$(38, 0) + " " + teamRecCategory$(38, 1) + " " + teamRecCategory$(38, 2) + ", " + teamRecCategory$(38, 3); HALF$(teamRecords!(38, 1))
     Print #2,
     Print #2, "MOST FIELD GOALS, BOTH TEAMS, ONE HALF"
-    Print #2, TotalRecords!(39, 0); "- "; recordsTRC$(39, 0); " "; recordsTRC$(39, 1); " "; recordsTRC$(39, 2); ", "; recordsTRC$(39, 3); HALF$(TotalRecords!(39, 1))
+    Print #2, teamRecords!(39, 0); "- "; teamRecCategory$(39, 0); " "; teamRecCategory$(39, 1); " "; teamRecCategory$(39, 2); ", "; teamRecCategory$(39, 3); HALF$(teamRecords!(39, 1))
     Print #2,
     Print #2, "MOST FIELD GOALS, ONE QUARTER"
-    Print #2, TotalRecords!(40, 0); "- "; recordsTRC$(40, 0) + " " + recordsTRC$(40, 1) + " " + recordsTRC$(40, 2) + ", " + recordsTRC$(40, 3); QTR$(TotalRecords!(40, 1))
+    Print #2, teamRecords!(40, 0); "- "; teamRecCategory$(40, 0) + " " + teamRecCategory$(40, 1) + " " + teamRecCategory$(40, 2) + ", " + teamRecCategory$(40, 3); QTR$(teamRecords!(40, 1))
     Print #2,
     Print #2, "MOST FIELD GOALS, BOTH TEAMS, ONE QUARTER"
-    Print #2, TotalRecords!(41, 0); "- "; recordsTRC$(41, 0); " "; recordsTRC$(41, 1); " "; recordsTRC$(41, 2); ", "; recordsTRC$(41, 3); QTR$(TotalRecords!(41, 1))
+    Print #2, teamRecords!(41, 0); "- "; teamRecCategory$(41, 0); " "; teamRecCategory$(41, 1); " "; teamRecCategory$(41, 2); ", "; teamRecCategory$(41, 3); QTR$(teamRecords!(41, 1))
     Print #2,
     Print #2, "MOST FIELD GOAL ATTEMPTS, GAME"
-    Print #2, TotalRecords!(42, 0); "- "; recordsTRC$(42, 0) + " " + recordsTRC$(42, 1) + " " + recordsTRC$(42, 2) + ", " + recordsTRC$(42, 3)
+    Print #2, teamRecords!(42, 0); "- "; teamRecCategory$(42, 0) + " " + teamRecCategory$(42, 1) + " " + teamRecCategory$(42, 2) + ", " + teamRecCategory$(42, 3)
     Print #2,
     Print #2, "FEWEST FIELD GOAL ATTEMPTS, GAME"
-    Print #2, TotalRecords!(43, 0); "- "; recordsTRC$(43, 0) + " " + recordsTRC$(43, 1) + " " + recordsTRC$(43, 2) + ", " + recordsTRC$(43, 3)
+    Print #2, teamRecords!(43, 0); "- "; teamRecCategory$(43, 0) + " " + teamRecCategory$(43, 1) + " " + teamRecCategory$(43, 2) + ", " + teamRecCategory$(43, 3)
     Print #2,
     Print #2, "MOST FIELD GOAL ATTEMPTS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(44, 0); "- "; recordsTRC$(44, 0);
-    Print #2, Using " (###) "; TotalRecords!(44, 1);: Print #2, recordsTRC$(44, 1) + " ";
-    Print #2, recordsTRC$(44, 2);: Print #2, Using " (###)"; TotalRecords!(44, 2);: Print #2, ", " + recordsTRC$(44, 3)
+    Print #2, teamRecords!(44, 0); "- "; teamRecCategory$(44, 0);
+    Print #2, Using " (###) "; teamRecords!(44, 1);: Print #2, teamRecCategory$(44, 1) + " ";
+    Print #2, teamRecCategory$(44, 2);: Print #2, Using " (###)"; teamRecords!(44, 2);: Print #2, ", " + teamRecCategory$(44, 3)
     Print #2,
     Print #2, "FEWEST FIELD GOAL ATTEMPTS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(45, 0); "- "; recordsTRC$(45, 0);
-    Print #2, Using " (###) "; TotalRecords!(45, 1);: Print #2, recordsTRC$(45, 1) + " ";
-    Print #2, recordsTRC$(45, 2);: Print #2, Using " (###)"; TotalRecords!(45, 2);: Print #2, ", " + recordsTRC$(45, 3)
+    Print #2, teamRecords!(45, 0); "- "; teamRecCategory$(45, 0);
+    Print #2, Using " (###) "; teamRecords!(45, 1);: Print #2, teamRecCategory$(45, 1) + " ";
+    Print #2, teamRecCategory$(45, 2);: Print #2, Using " (###)"; teamRecords!(45, 2);: Print #2, ", " + teamRecCategory$(45, 3)
     Print #2,
     Print #2, "MOST FIELD GOAL ATTEMPTS, ONE HALF"
-    Print #2, TotalRecords!(46, 0); "- "; recordsTRC$(46, 0) + " " + recordsTRC$(46, 1) + " " + recordsTRC$(46, 2) + ", " + recordsTRC$(46, 3); HALF$(TotalRecords!(46, 1))
+    Print #2, teamRecords!(46, 0); "- "; teamRecCategory$(46, 0) + " " + teamRecCategory$(46, 1) + " " + teamRecCategory$(46, 2) + ", " + teamRecCategory$(46, 3); HALF$(teamRecords!(46, 1))
     Print #2,
     Print #2, "MOST FIELD GOAL ATTEMPTS, BOTH TEAMS, ONE HALF"
-    Print #2, TotalRecords!(47, 0); "- "; recordsTRC$(47, 0); " "; recordsTRC$(47, 1); " "; recordsTRC$(47, 2); ", "; recordsTRC$(47, 3); HALF$(TotalRecords!(47, 1))
+    Print #2, teamRecords!(47, 0); "- "; teamRecCategory$(47, 0); " "; teamRecCategory$(47, 1); " "; teamRecCategory$(47, 2); ", "; teamRecCategory$(47, 3); HALF$(teamRecords!(47, 1))
     Print #2,
     Print #2, "MOST FIELD GOAL ATTEMPTS, ONE QUARTER"
-    Print #2, TotalRecords!(48, 0); "- "; recordsTRC$(48, 0) + " " + recordsTRC$(48, 1) + " " + recordsTRC$(48, 2) + ", " + recordsTRC$(48, 3); QTR$(TotalRecords!(48, 1))
+    Print #2, teamRecords!(48, 0); "- "; teamRecCategory$(48, 0) + " " + teamRecCategory$(48, 1) + " " + teamRecCategory$(48, 2) + ", " + teamRecCategory$(48, 3); QTR$(teamRecords!(48, 1))
     Print #2,
     Print #2, "MOST FIELD GOAL ATTEMPTS, BOTH TEAMS, ONE QUARTER"
-    Print #2, TotalRecords!(49, 0); "- "; recordsTRC$(49, 0); " "; recordsTRC$(49, 1); " "; recordsTRC$(49, 2); ", "; recordsTRC$(49, 3); QTR$(TotalRecords!(49, 1))
+    Print #2, teamRecords!(49, 0); "- "; teamRecCategory$(49, 0); " "; teamRecCategory$(49, 1); " "; teamRecCategory$(49, 2); ", "; teamRecCategory$(49, 3); QTR$(teamRecords!(49, 1))
     Print #2,
     Print #2, "MOST THREE-POINT FIELD GOALS, NO MISSES, GAME"
-    If TotalRecords!(50, 0) = 0 Then
+    If teamRecords!(50, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, TotalRecords!(50, 0); "- "; recordsTRC$(50, 0) + " " + recordsTRC$(50, 1) + " " + recordsTRC$(50, 2) + ", " + recordsTRC$(50, 3)
+        Print #2, teamRecords!(50, 0); "- "; teamRecCategory$(50, 0) + " " + teamRecCategory$(50, 1) + " " + teamRecCategory$(50, 2) + ", " + teamRecCategory$(50, 3)
     End If
     Print #2,
     Print #2, "MOST THREE-POINT FIELD GOALS, NO MISSES, BOTH TEAMS, GAME"
-    If TotalRecords!(51, 0) = 0 Then
+    If teamRecords!(51, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, TotalRecords!(51, 0); "- "; recordsTRC$(51, 0);
-        Print #2, Using " (###) "; TotalRecords!(51, 1);: Print #2, recordsTRC$(51, 1) + " ";
-        Print #2, recordsTRC$(51, 2);: Print #2, Using " (###)"; TotalRecords!(51, 2);: Print #2, ", " + recordsTRC$(51, 3)
+        Print #2, teamRecords!(51, 0); "- "; teamRecCategory$(51, 0);
+        Print #2, Using " (###) "; teamRecords!(51, 1);: Print #2, teamRecCategory$(51, 1) + " ";
+        Print #2, teamRecCategory$(51, 2);: Print #2, Using " (###)"; teamRecords!(51, 2);: Print #2, ", " + teamRecCategory$(51, 3)
     End If
     Print #2,
     Print #2, "MOST THREE-POINT FIELD GOAL ATTEMPTS, NONE MADE, GAME"
-    If TotalRecords!(52, 0) = 0 Then
+    If teamRecords!(52, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, TotalRecords!(52, 0); "- "; recordsTRC$(52, 0) + " " + recordsTRC$(52, 1) + " " + recordsTRC$(52, 2) + ", " + recordsTRC$(52, 3)
+        Print #2, teamRecords!(52, 0); "- "; teamRecCategory$(52, 0) + " " + teamRecCategory$(52, 1) + " " + teamRecCategory$(52, 2) + ", " + teamRecCategory$(52, 3)
     End If
     Print #2,
     Print #2,
     Print #2, "MOST THREE-POINT FIELD GOALS, GAME"
-    Print #2, TotalRecords!(53, 0); "- "; recordsTRC$(53, 0) + " " + recordsTRC$(53, 1) + " " + recordsTRC$(53, 2) + ", " + recordsTRC$(53, 3)
+    Print #2, teamRecords!(53, 0); "- "; teamRecCategory$(53, 0) + " " + teamRecCategory$(53, 1) + " " + teamRecCategory$(53, 2) + ", " + teamRecCategory$(53, 3)
     Print #2,
     Print #2, "MOST THREE-POINT FIELD GOALS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(54, 0); "- "; recordsTRC$(54, 0);
-    Print #2, Using " (###) "; TotalRecords!(54, 1);: Print #2, recordsTRC$(54, 1) + " ";
-    Print #2, recordsTRC$(54, 2);: Print #2, Using " (###)"; TotalRecords!(54, 2);: Print #2, ", " + recordsTRC$(54, 3)
+    Print #2, teamRecords!(54, 0); "- "; teamRecCategory$(54, 0);
+    Print #2, Using " (###) "; teamRecords!(54, 1);: Print #2, teamRecCategory$(54, 1) + " ";
+    Print #2, teamRecCategory$(54, 2);: Print #2, Using " (###)"; teamRecords!(54, 2);: Print #2, ", " + teamRecCategory$(54, 3)
     Print #2,
     Print #2, "MOST THREE-POINT FIELD GOALS, ONE HALF"
-    Print #2, TotalRecords!(55, 0); "- "; recordsTRC$(55, 0) + " " + recordsTRC$(55, 1) + " " + recordsTRC$(55, 2) + ", " + recordsTRC$(55, 3); HALF$(TotalRecords!(55, 1))
+    Print #2, teamRecords!(55, 0); "- "; teamRecCategory$(55, 0) + " " + teamRecCategory$(55, 1) + " " + teamRecCategory$(55, 2) + ", " + teamRecCategory$(55, 3); HALF$(teamRecords!(55, 1))
     Print #2,
     Print #2, "MOST THREE-POINT FIELD GOALS, ONE QUARTER"
-    Print #2, TotalRecords!(56, 0); "- "; recordsTRC$(56, 0) + " " + recordsTRC$(56, 1) + " " + recordsTRC$(56, 2) + ", " + recordsTRC$(56, 3); QTR$(TotalRecords!(56, 1))
+    Print #2, teamRecords!(56, 0); "- "; teamRecCategory$(56, 0) + " " + teamRecCategory$(56, 1) + " " + teamRecCategory$(56, 2) + ", " + teamRecCategory$(56, 3); QTR$(teamRecords!(56, 1))
     Print #2,
     Print #2, "MOST THREE-POINT FIELD GOAL ATTEMPTS, GAME"
-    Print #2, TotalRecords!(57, 0); "- "; recordsTRC$(57, 0) + " " + recordsTRC$(57, 1) + " " + recordsTRC$(57, 2) + ", " + recordsTRC$(57, 3)
+    Print #2, teamRecords!(57, 0); "- "; teamRecCategory$(57, 0) + " " + teamRecCategory$(57, 1) + " " + teamRecCategory$(57, 2) + ", " + teamRecCategory$(57, 3)
     Print #2,
     Print #2, "MOST THREE-POINT FIELD GOAL ATTEMPTS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(58, 0); "- "; recordsTRC$(58, 0);
-    Print #2, Using " (###) "; TotalRecords!(58, 1);: Print #2, recordsTRC$(58, 1) + " ";
-    Print #2, recordsTRC$(58, 2);: Print #2, Using " (###)"; TotalRecords!(58, 2);: Print #2, ", " + recordsTRC$(58, 3)
+    Print #2, teamRecords!(58, 0); "- "; teamRecCategory$(58, 0);
+    Print #2, Using " (###) "; teamRecords!(58, 1);: Print #2, teamRecCategory$(58, 1) + " ";
+    Print #2, teamRecCategory$(58, 2);: Print #2, Using " (###)"; teamRecords!(58, 2);: Print #2, ", " + teamRecCategory$(58, 3)
     Print #2,
     Print #2, "MOST THREE-POINT FIELD GOAL ATTEMPTS, ONE HALF"
-    Print #2, TotalRecords!(59, 0); "- "; recordsTRC$(59, 0) + " " + recordsTRC$(59, 1) + " " + recordsTRC$(59, 2) + ", " + recordsTRC$(59, 3); HALF$(TotalRecords!(59, 1))
+    Print #2, teamRecords!(59, 0); "- "; teamRecCategory$(59, 0) + " " + teamRecCategory$(59, 1) + " " + teamRecCategory$(59, 2) + ", " + teamRecCategory$(59, 3); HALF$(teamRecords!(59, 1))
     Print #2,
     Print #2, "MOST FREE THROWS MADE, NO MISSES, GAME"
-    If TotalRecords!(60, 0) = 0 Then
+    If teamRecords!(60, 0) = 0 Then
         Print #2, "NO RECORD AT THIS TIME"
     Else
-        Print #2, TotalRecords!(60, 0); "- "; recordsTRC$(60, 0) + " " + recordsTRC$(60, 1) + " " + recordsTRC$(60, 2) + ", " + recordsTRC$(60, 3)
+        Print #2, teamRecords!(60, 0); "- "; teamRecCategory$(60, 0) + " " + teamRecCategory$(60, 1) + " " + teamRecCategory$(60, 2) + ", " + teamRecCategory$(60, 3)
     End If
     Print #2,
     Print #2, "LOWEST FREE THROW PERCENTAGE, GAME"
-    Print #2, Using ".### "; TotalRecords!(61, 0);: Print #2, "- "; recordsTRC$(61, 0) + " " + recordsTRC$(61, 1) + " " + recordsTRC$(61, 2) + ", " + recordsTRC$(61, 3);: Print #2, Using "###/###"; TotalRecords!(61, 1); TotalRecords!(61, 2)
+    Print #2, Using ".### "; teamRecords!(61, 0);: Print #2, "- "; teamRecCategory$(61, 0) + " " + teamRecCategory$(61, 1) + " " + teamRecCategory$(61, 2) + ", " + teamRecCategory$(61, 3);: Print #2, Using "###/###"; teamRecords!(61, 1); teamRecords!(61, 2)
     Print #2,
     Print #2, "HIGHEST FREE THROW PERCENTAGE, BOTH TEAMS, GAME"
-    Print #2, Using ".### "; TotalRecords!(62, 0);: Print #2, "- "; recordsTRC$(62, 0);
-    Print #2, Using " (.###) "; TotalRecords!(62, 1);: Print #2, recordsTRC$(62, 1) + " ";
-    Print #2, recordsTRC$(62, 2);: Print #2, Using " (.###)"; TotalRecords!(62, 2);: Print #2, ", " + recordsTRC$(62, 3)
+    Print #2, Using ".### "; teamRecords!(62, 0);: Print #2, "- "; teamRecCategory$(62, 0);
+    Print #2, Using " (.###) "; teamRecords!(62, 1);: Print #2, teamRecCategory$(62, 1) + " ";
+    Print #2, teamRecCategory$(62, 2);: Print #2, Using " (.###)"; teamRecords!(62, 2);: Print #2, ", " + teamRecCategory$(62, 3)
     Print #2,
     Print #2, "LOWEST FREE THROW PERCENTAGE, BOTH TEAMS, GAME"
-    Print #2, Using ".### "; TotalRecords!(63, 0);: Print #2, "- "; recordsTRC$(63, 0);
-    Print #2, Using " (.###) "; TotalRecords!(63, 1);: Print #2, recordsTRC$(63, 1) + " ";
-    Print #2, recordsTRC$(63, 2);: Print #2, Using " (.###)"; TotalRecords!(63, 2);: Print #2, ", " + recordsTRC$(63, 3)
+    Print #2, Using ".### "; teamRecords!(63, 0);: Print #2, "- "; teamRecCategory$(63, 0);
+    Print #2, Using " (.###) "; teamRecords!(63, 1);: Print #2, teamRecCategory$(63, 1) + " ";
+    Print #2, teamRecCategory$(63, 2);: Print #2, Using " (.###)"; teamRecords!(63, 2);: Print #2, ", " + teamRecCategory$(63, 3)
     Print #2,
     Print #2, "MOST FREE THROWS MADE, GAME"
-    Print #2, TotalRecords!(64, 0); "- "; recordsTRC$(64, 0) + " " + recordsTRC$(64, 1) + " " + recordsTRC$(64, 2) + ", " + recordsTRC$(64, 3)
+    Print #2, teamRecords!(64, 0); "- "; teamRecCategory$(64, 0) + " " + teamRecCategory$(64, 1) + " " + teamRecCategory$(64, 2) + ", " + teamRecCategory$(64, 3)
     Print #2,
     Print #2, "FEWEST FREE THROWS MADE, GAME"
-    Print #2, TotalRecords!(65, 0); "- "; recordsTRC$(65, 0) + " " + recordsTRC$(65, 1) + " " + recordsTRC$(65, 2) + ", " + recordsTRC$(65, 3)
+    Print #2, teamRecords!(65, 0); "- "; teamRecCategory$(65, 0) + " " + teamRecCategory$(65, 1) + " " + teamRecCategory$(65, 2) + ", " + teamRecCategory$(65, 3)
     Print #2,
     Print #2, "MOST FREE THROWS MADE, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(66, 0); "- "; recordsTRC$(66, 0);
-    Print #2, Using " (###) "; TotalRecords!(66, 1);: Print #2, recordsTRC$(66, 1) + " ";
-    Print #2, recordsTRC$(66, 2);: Print #2, Using " (###)"; TotalRecords!(66, 2);: Print #2, ", " + recordsTRC$(66, 3)
+    Print #2, teamRecords!(66, 0); "- "; teamRecCategory$(66, 0);
+    Print #2, Using " (###) "; teamRecords!(66, 1);: Print #2, teamRecCategory$(66, 1) + " ";
+    Print #2, teamRecCategory$(66, 2);: Print #2, Using " (###)"; teamRecords!(66, 2);: Print #2, ", " + teamRecCategory$(66, 3)
     Print #2,
     Print #2, "FEWEST FREE THROWS MADE, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(67, 0); "- "; recordsTRC$(67, 0);
-    Print #2, Using " (###) "; TotalRecords!(67, 1);: Print #2, recordsTRC$(67, 1) + " ";
-    Print #2, recordsTRC$(67, 2);: Print #2, Using " (###)"; TotalRecords!(67, 2);: Print #2, ", " + recordsTRC$(67, 3)
+    Print #2, teamRecords!(67, 0); "- "; teamRecCategory$(67, 0);
+    Print #2, Using " (###) "; teamRecords!(67, 1);: Print #2, teamRecCategory$(67, 1) + " ";
+    Print #2, teamRecCategory$(67, 2);: Print #2, Using " (###)"; teamRecords!(67, 2);: Print #2, ", " + teamRecCategory$(67, 3)
     Print #2,
     Print #2, "MOST FREE THROWS MADE, ONE HALF"
-    Print #2, TotalRecords!(68, 0); "- "; recordsTRC$(68, 0) + " " + recordsTRC$(68, 1) + " " + recordsTRC$(68, 2) + ", " + recordsTRC$(68, 3); HALF$(TotalRecords!(68, 1))
+    Print #2, teamRecords!(68, 0); "- "; teamRecCategory$(68, 0) + " " + teamRecCategory$(68, 1) + " " + teamRecCategory$(68, 2) + ", " + teamRecCategory$(68, 3); HALF$(teamRecords!(68, 1))
     Print #2,
     Print #2, "MOST FREE THROWS MADE, ONE QUARTER"
-    Print #2, TotalRecords!(70, 0); "- "; recordsTRC$(70, 0) + " " + recordsTRC$(70, 1) + " " + recordsTRC$(70, 2) + ", " + recordsTRC$(70, 3); QTR$(TotalRecords!(70, 1))
+    Print #2, teamRecords!(70, 0); "- "; teamRecCategory$(70, 0) + " " + teamRecCategory$(70, 1) + " " + teamRecCategory$(70, 2) + ", " + teamRecCategory$(70, 3); QTR$(teamRecords!(70, 1))
     Print #2,
     Print #2, "MOST FREE THROW ATTEMPTS, GAME"
-    Print #2, TotalRecords!(72, 0); "- "; recordsTRC$(72, 0) + " " + recordsTRC$(72, 1) + " " + recordsTRC$(72, 2) + ", " + recordsTRC$(72, 3)
+    Print #2, teamRecords!(72, 0); "- "; teamRecCategory$(72, 0) + " " + teamRecCategory$(72, 1) + " " + teamRecCategory$(72, 2) + ", " + teamRecCategory$(72, 3)
     Print #2,
     Print #2, "FEWEST FREE THROW ATTEMPTS, GAME"
-    Print #2, TotalRecords!(73, 0); "- "; recordsTRC$(73, 0) + " " + recordsTRC$(73, 1) + " " + recordsTRC$(73, 2) + ", " + recordsTRC$(73, 3)
+    Print #2, teamRecords!(73, 0); "- "; teamRecCategory$(73, 0) + " " + teamRecCategory$(73, 1) + " " + teamRecCategory$(73, 2) + ", " + teamRecCategory$(73, 3)
     Print #2,
     Print #2, "MOST FREE THROW ATTEMPTS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(74, 0); "- "; recordsTRC$(74, 0);
-    Print #2, Using " (###) "; TotalRecords!(74, 1);: Print #2, recordsTRC$(74, 1) + " ";
-    Print #2, recordsTRC$(74, 2);: Print #2, Using " (###)"; TotalRecords!(74, 2);: Print #2, ", " + recordsTRC$(74, 3)
+    Print #2, teamRecords!(74, 0); "- "; teamRecCategory$(74, 0);
+    Print #2, Using " (###) "; teamRecords!(74, 1);: Print #2, teamRecCategory$(74, 1) + " ";
+    Print #2, teamRecCategory$(74, 2);: Print #2, Using " (###)"; teamRecords!(74, 2);: Print #2, ", " + teamRecCategory$(74, 3)
     Print #2,
     Print #2, "FEWEST FREE THROW ATTEMPTS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(75, 0); "- "; recordsTRC$(75, 0);
-    Print #2, Using " (###) "; TotalRecords!(75, 1);: Print #2, recordsTRC$(75, 1) + " ";
-    Print #2, recordsTRC$(75, 2);: Print #2, Using " (###)"; TotalRecords!(75, 2);: Print #2, ", " + recordsTRC$(75, 3)
+    Print #2, teamRecords!(75, 0); "- "; teamRecCategory$(75, 0);
+    Print #2, Using " (###) "; teamRecords!(75, 1);: Print #2, teamRecCategory$(75, 1) + " ";
+    Print #2, teamRecCategory$(75, 2);: Print #2, Using " (###)"; teamRecords!(75, 2);: Print #2, ", " + teamRecCategory$(75, 3)
     Print #2,
     Print #2, "MOST FREE THROW ATTEMPTS, ONE HALF"
-    Print #2, TotalRecords!(76, 0); "- "; recordsTRC$(76, 0) + " " + recordsTRC$(76, 1) + " " + recordsTRC$(76, 2) + ", " + recordsTRC$(76, 3); HALF$(TotalRecords!(76, 1))
+    Print #2, teamRecords!(76, 0); "- "; teamRecCategory$(76, 0) + " " + teamRecCategory$(76, 1) + " " + teamRecCategory$(76, 2) + ", " + teamRecCategory$(76, 3); HALF$(teamRecords!(76, 1))
     Print #2,
     Print #2, "MOST FREE THROW ATTEMPTS, ONE QUARTER"
-    Print #2, TotalRecords!(78, 0); "- "; recordsTRC$(78, 0) + " " + recordsTRC$(78, 1) + " " + recordsTRC$(78, 2) + ", " + recordsTRC$(78, 3); QTR$(TotalRecords!(78, 1))
+    Print #2, teamRecords!(78, 0); "- "; teamRecCategory$(78, 0) + " " + teamRecCategory$(78, 1) + " " + teamRecCategory$(78, 2) + ", " + teamRecCategory$(78, 3); QTR$(teamRecords!(78, 1))
     Print #2,
     Print #2, "MOST REBOUNDS, GAME"
-    Print #2, TotalRecords!(80, 0); "- "; recordsTRC$(80, 0) + " " + recordsTRC$(80, 1) + " " + recordsTRC$(80, 2) + ", " + recordsTRC$(80, 3)
+    Print #2, teamRecords!(80, 0); "- "; teamRecCategory$(80, 0) + " " + teamRecCategory$(80, 1) + " " + teamRecCategory$(80, 2) + ", " + teamRecCategory$(80, 3)
     Print #2,
     Print #2, "FEWEST REBOUNDS, GAME"
-    Print #2, TotalRecords!(81, 0); "- "; recordsTRC$(81, 0) + " " + recordsTRC$(81, 1) + " " + recordsTRC$(81, 2) + ", " + recordsTRC$(81, 3)
+    Print #2, teamRecords!(81, 0); "- "; teamRecCategory$(81, 0) + " " + teamRecCategory$(81, 1) + " " + teamRecCategory$(81, 2) + ", " + teamRecCategory$(81, 3)
     Print #2,
     Print #2, "MOST REBOUNDS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(82, 0); "- "; recordsTRC$(82, 0);
-    Print #2, Using " (###) "; TotalRecords!(82, 1);: Print #2, recordsTRC$(82, 1) + " ";
-    Print #2, recordsTRC$(82, 2);: Print #2, Using " (###)"; TotalRecords!(82, 2);: Print #2, ", " + recordsTRC$(82, 3)
+    Print #2, teamRecords!(82, 0); "- "; teamRecCategory$(82, 0);
+    Print #2, Using " (###) "; teamRecords!(82, 1);: Print #2, teamRecCategory$(82, 1) + " ";
+    Print #2, teamRecCategory$(82, 2);: Print #2, Using " (###)"; teamRecords!(82, 2);: Print #2, ", " + teamRecCategory$(82, 3)
     Print #2,
     Print #2, "FEWEST REBOUNDS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(83, 0); "- "; recordsTRC$(83, 0);
-    Print #2, Using " (###) "; TotalRecords!(83, 1);: Print #2, recordsTRC$(83, 1) + " ";
-    Print #2, recordsTRC$(83, 2);: Print #2, Using " (###)"; TotalRecords!(83, 2);: Print #2, ", " + recordsTRC$(83, 3)
+    Print #2, teamRecords!(83, 0); "- "; teamRecCategory$(83, 0);
+    Print #2, Using " (###) "; teamRecords!(83, 1);: Print #2, teamRecCategory$(83, 1) + " ";
+    Print #2, teamRecCategory$(83, 2);: Print #2, Using " (###)"; teamRecords!(83, 2);: Print #2, ", " + teamRecCategory$(83, 3)
     Print #2,
     Print #2, "MOST REBOUNDS, ONE HALF"
-    Print #2, TotalRecords!(84, 0); "- "; recordsTRC$(84, 0) + " " + recordsTRC$(84, 1) + " " + recordsTRC$(84, 2) + ", " + recordsTRC$(84, 3); HALF$(TotalRecords!(84, 1))
+    Print #2, teamRecords!(84, 0); "- "; teamRecCategory$(84, 0) + " " + teamRecCategory$(84, 1) + " " + teamRecCategory$(84, 2) + ", " + teamRecCategory$(84, 3); HALF$(teamRecords!(84, 1))
     Print #2,
     Print #2, "MOST REBOUNDS, ONE QUARTER"
-    Print #2, TotalRecords!(85, 0); "- "; recordsTRC$(85, 0) + " " + recordsTRC$(85, 1) + " " + recordsTRC$(85, 2) + ", " + recordsTRC$(85, 3); QTR$(TotalRecords!(85, 1))
+    Print #2, teamRecords!(85, 0); "- "; teamRecCategory$(85, 0) + " " + teamRecCategory$(85, 1) + " " + teamRecCategory$(85, 2) + ", " + teamRecCategory$(85, 3); QTR$(teamRecords!(85, 1))
     Print #2,
     Print #2,
     Print #2, "MOST OFFENSIVE REBOUNDS, GAME"
-    Print #2, TotalRecords!(86, 0); "- "; recordsTRC$(86, 0) + " " + recordsTRC$(86, 1) + " " + recordsTRC$(86, 2) + ", " + recordsTRC$(86, 3)
+    Print #2, teamRecords!(86, 0); "- "; teamRecCategory$(86, 0) + " " + teamRecCategory$(86, 1) + " " + teamRecCategory$(86, 2) + ", " + teamRecCategory$(86, 3)
     Print #2,
     Print #2, "MOST OFFENSIVE REBOUNDS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(88, 0); "- "; recordsTRC$(88, 0);
-    Print #2, Using " (###) "; TotalRecords!(88, 1);: Print #2, recordsTRC$(88, 1) + " ";
-    Print #2, recordsTRC$(88, 2);: Print #2, Using " (###)"; TotalRecords!(88, 2);: Print #2, ", " + recordsTRC$(88, 3)
+    Print #2, teamRecords!(88, 0); "- "; teamRecCategory$(88, 0);
+    Print #2, Using " (###) "; teamRecords!(88, 1);: Print #2, teamRecCategory$(88, 1) + " ";
+    Print #2, teamRecCategory$(88, 2);: Print #2, Using " (###)"; teamRecords!(88, 2);: Print #2, ", " + teamRecCategory$(88, 3)
     Print #2,
     Print #2, "FEWEST OFFENSIVE REBOUNDS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(89, 0); "- "; recordsTRC$(89, 0);
-    Print #2, Using " (###) "; TotalRecords!(89, 1);: Print #2, recordsTRC$(89, 1) + " ";
-    Print #2, recordsTRC$(89, 2);: Print #2, Using " (###)"; TotalRecords!(89, 2);: Print #2, ", " + recordsTRC$(89, 3)
+    Print #2, teamRecords!(89, 0); "- "; teamRecCategory$(89, 0);
+    Print #2, Using " (###) "; teamRecords!(89, 1);: Print #2, teamRecCategory$(89, 1) + " ";
+    Print #2, teamRecCategory$(89, 2);: Print #2, Using " (###)"; teamRecords!(89, 2);: Print #2, ", " + teamRecCategory$(89, 3)
     Print #2,
     Print #2, "MOST OFFENSIVE REBOUNDS, ONE HALF"
-    Print #2, TotalRecords!(90, 0); "- "; recordsTRC$(90, 0) + " " + recordsTRC$(90, 1) + " " + recordsTRC$(90, 2) + ", " + recordsTRC$(90, 3); HALF$(TotalRecords!(90, 1))
+    Print #2, teamRecords!(90, 0); "- "; teamRecCategory$(90, 0) + " " + teamRecCategory$(90, 1) + " " + teamRecCategory$(90, 2) + ", " + teamRecCategory$(90, 3); HALF$(teamRecords!(90, 1))
     Print #2,
     Print #2, "MOST ASSISTS, GAME"
-    Print #2, TotalRecords!(96, 0); "- "; recordsTRC$(96, 0) + " " + recordsTRC$(96, 1) + " " + recordsTRC$(96, 2) + ", " + recordsTRC$(96, 3)
+    Print #2, teamRecords!(96, 0); "- "; teamRecCategory$(96, 0) + " " + teamRecCategory$(96, 1) + " " + teamRecCategory$(96, 2) + ", " + teamRecCategory$(96, 3)
     Print #2,
     Print #2, "FEWEST ASSISTS, GAME"
-    Print #2, TotalRecords!(97, 0); "- "; recordsTRC$(97, 0) + " " + recordsTRC$(97, 1) + " " + recordsTRC$(97, 2) + ", " + recordsTRC$(97, 3)
+    Print #2, teamRecords!(97, 0); "- "; teamRecCategory$(97, 0) + " " + teamRecCategory$(97, 1) + " " + teamRecCategory$(97, 2) + ", " + teamRecCategory$(97, 3)
     Print #2,
     Print #2, "MOST ASSISTS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(98, 0); "- "; recordsTRC$(98, 0);
-    Print #2, Using " (###) "; TotalRecords!(98, 1);: Print #2, recordsTRC$(98, 1) + " ";
-    Print #2, recordsTRC$(98, 2);: Print #2, Using " (###)"; TotalRecords!(98, 2);: Print #2, ", " + recordsTRC$(98, 3)
+    Print #2, teamRecords!(98, 0); "- "; teamRecCategory$(98, 0);
+    Print #2, Using " (###) "; teamRecords!(98, 1);: Print #2, teamRecCategory$(98, 1) + " ";
+    Print #2, teamRecCategory$(98, 2);: Print #2, Using " (###)"; teamRecords!(98, 2);: Print #2, ", " + teamRecCategory$(98, 3)
     Print #2,
     Print #2, "FEWEST ASSISTS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(99, 0); "- "; recordsTRC$(99, 0);
-    Print #2, Using " (###) "; TotalRecords!(99, 1);: Print #2, recordsTRC$(99, 1) + " ";
-    Print #2, recordsTRC$(99, 2);: Print #2, Using " (###)"; TotalRecords!(99, 2);: Print #2, ", " + recordsTRC$(99, 3)
+    Print #2, teamRecords!(99, 0); "- "; teamRecCategory$(99, 0);
+    Print #2, Using " (###) "; teamRecords!(99, 1);: Print #2, teamRecCategory$(99, 1) + " ";
+    Print #2, teamRecCategory$(99, 2);: Print #2, Using " (###)"; teamRecords!(99, 2);: Print #2, ", " + teamRecCategory$(99, 3)
     Print #2,
     Print #2, "MOST ASSISTS, ONE HALF"
-    Print #2, TotalRecords!(100, 0); "- "; recordsTRC$(100, 0) + " " + recordsTRC$(100, 1) + " " + recordsTRC$(100, 2) + ", " + recordsTRC$(100, 3); HALF$(TotalRecords!(100, 1))
+    Print #2, teamRecords!(100, 0); "- "; teamRecCategory$(100, 0) + " " + teamRecCategory$(100, 1) + " " + teamRecCategory$(100, 2) + ", " + teamRecCategory$(100, 3); HALF$(teamRecords!(100, 1))
     Print #2,
     Print #2, "MOST ASSISTS, ONE QUARTER"
-    Print #2, TotalRecords!(102, 0); "- "; recordsTRC$(102, 0) + " " + recordsTRC$(102, 1) + " " + recordsTRC$(102, 2) + ", " + recordsTRC$(102, 3); QTR$(TotalRecords!(102, 1))
+    Print #2, teamRecords!(102, 0); "- "; teamRecCategory$(102, 0) + " " + teamRecCategory$(102, 1) + " " + teamRecCategory$(102, 2) + ", " + teamRecCategory$(102, 3); QTR$(teamRecords!(102, 1))
     Print #2,
     Print #2, "MOST PERSONAL FOULS, GAME"
-    Print #2, TotalRecords!(104, 0); "- "; recordsTRC$(104, 0) + " " + recordsTRC$(104, 1) + " " + recordsTRC$(104, 2) + ", " + recordsTRC$(104, 3)
+    Print #2, teamRecords!(104, 0); "- "; teamRecCategory$(104, 0) + " " + teamRecCategory$(104, 1) + " " + teamRecCategory$(104, 2) + ", " + teamRecCategory$(104, 3)
     Print #2,
     Print #2, "FEWEST PERSONAL FOULS, GAME"
-    Print #2, TotalRecords!(105, 0); "- "; recordsTRC$(105, 0) + " " + recordsTRC$(105, 1) + " " + recordsTRC$(105, 2) + ", " + recordsTRC$(105, 3)
+    Print #2, teamRecords!(105, 0); "- "; teamRecCategory$(105, 0) + " " + teamRecCategory$(105, 1) + " " + teamRecCategory$(105, 2) + ", " + teamRecCategory$(105, 3)
     Print #2,
     Print #2, "MOST PERSONAL FOULS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(106, 0); "- "; recordsTRC$(106, 0);
-    Print #2, Using " (###) "; TotalRecords!(106, 1);: Print #2, recordsTRC$(106, 1) + " ";
-    Print #2, recordsTRC$(106, 2);: Print #2, Using " (###)"; TotalRecords!(106, 2);: Print #2, ", " + recordsTRC$(106, 3)
+    Print #2, teamRecords!(106, 0); "- "; teamRecCategory$(106, 0);
+    Print #2, Using " (###) "; teamRecords!(106, 1);: Print #2, teamRecCategory$(106, 1) + " ";
+    Print #2, teamRecCategory$(106, 2);: Print #2, Using " (###)"; teamRecords!(106, 2);: Print #2, ", " + teamRecCategory$(106, 3)
     Print #2,
     Print #2, "FEWEST PERSONAL FOULS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(107, 0); "- "; recordsTRC$(107, 0);
-    Print #2, Using " (###) "; TotalRecords!(107, 1);: Print #2, recordsTRC$(107, 1) + " ";
-    Print #2, recordsTRC$(107, 2);: Print #2, Using " (###)"; TotalRecords!(107, 2);: Print #2, ", " + recordsTRC$(107, 3)
+    Print #2, teamRecords!(107, 0); "- "; teamRecCategory$(107, 0);
+    Print #2, Using " (###) "; teamRecords!(107, 1);: Print #2, teamRecCategory$(107, 1) + " ";
+    Print #2, teamRecCategory$(107, 2);: Print #2, Using " (###)"; teamRecords!(107, 2);: Print #2, ", " + teamRecCategory$(107, 3)
     Print #2,
     Print #2, "MOST PERSONAL FOULS, ONE HALF"
-    Print #2, TotalRecords!(108, 0); "- "; recordsTRC$(108, 0) + " " + recordsTRC$(108, 1) + " " + recordsTRC$(108, 2) + ", " + recordsTRC$(108, 3); HALF$(TotalRecords!(108, 1))
+    Print #2, teamRecords!(108, 0); "- "; teamRecCategory$(108, 0) + " " + teamRecCategory$(108, 1) + " " + teamRecCategory$(108, 2) + ", " + teamRecCategory$(108, 3); HALF$(teamRecords!(108, 1))
     Print #2,
     Print #2, "MOST PERSONAL FOULS, BOTH TEAMS, ONE HALF"
-    Print #2, TotalRecords!(109, 0); "- "; recordsTRC$(109, 0); " "; recordsTRC$(109, 1); " "; recordsTRC$(109, 2); ", "; recordsTRC$(109, 3); HALF$(TotalRecords!(109, 1))
+    Print #2, teamRecords!(109, 0); "- "; teamRecCategory$(109, 0); " "; teamRecCategory$(109, 1); " "; teamRecCategory$(109, 2); ", "; teamRecCategory$(109, 3); HALF$(teamRecords!(109, 1))
     Print #2,
     Print #2, "MOST PERSONAL FOULS, ONE QUARTER"
-    Print #2, TotalRecords!(110, 0); "- "; recordsTRC$(110, 0) + " " + recordsTRC$(110, 1) + " " + recordsTRC$(110, 2) + ", " + recordsTRC$(110, 3); QTR$(TotalRecords!(110, 1))
+    Print #2, teamRecords!(110, 0); "- "; teamRecCategory$(110, 0) + " " + teamRecCategory$(110, 1) + " " + teamRecCategory$(110, 2) + ", " + teamRecCategory$(110, 3); QTR$(teamRecords!(110, 1))
     Print #2,
     Print #2, "MOST PERSONAL FOULS, BOTH TEAMS, ONE QUARTER"
-    Print #2, TotalRecords!(111, 0); "- "; recordsTRC$(111, 0); " "; recordsTRC$(111, 1); " "; recordsTRC$(111, 2); ", "; recordsTRC$(111, 3); QTR$(TotalRecords!(111, 1));
+    Print #2, teamRecords!(111, 0); "- "; teamRecCategory$(111, 0); " "; teamRecCategory$(111, 1); " "; teamRecCategory$(111, 2); ", "; teamRecCategory$(111, 3); QTR$(teamRecords!(111, 1));
 
     Print #2,
     Print #2, "MOST STEALS, GAME"
-    Print #2, TotalRecords!(112, 0); "- "; recordsTRC$(112, 0) + " " + recordsTRC$(112, 1) + " " + recordsTRC$(112, 2) + ", " + recordsTRC$(112, 3)
+    Print #2, teamRecords!(112, 0); "- "; teamRecCategory$(112, 0) + " " + teamRecCategory$(112, 1) + " " + teamRecCategory$(112, 2) + ", " + teamRecCategory$(112, 3)
     Print #2,
     Print #2, "MOST STEALS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(114, 0); "- "; recordsTRC$(114, 0);
-    Print #2, Using " (###) "; TotalRecords!(114, 1);: Print #2, recordsTRC$(114, 1) + " ";
-    Print #2, recordsTRC$(114, 2);: Print #2, Using " (###)"; TotalRecords!(114, 2);: Print #2, ", " + recordsTRC$(114, 3)
+    Print #2, teamRecords!(114, 0); "- "; teamRecCategory$(114, 0);
+    Print #2, Using " (###) "; teamRecords!(114, 1);: Print #2, teamRecCategory$(114, 1) + " ";
+    Print #2, teamRecCategory$(114, 2);: Print #2, Using " (###)"; teamRecords!(114, 2);: Print #2, ", " + teamRecCategory$(114, 3)
     Print #2,
     Print #2, "MOST STEALS, ONE HALF"
-    Print #2, TotalRecords!(116, 0); "- "; recordsTRC$(116, 0) + " " + recordsTRC$(116, 1) + " " + recordsTRC$(116, 2) + ", " + recordsTRC$(116, 3); HALF$(TotalRecords!(116, 1))
+    Print #2, teamRecords!(116, 0); "- "; teamRecCategory$(116, 0) + " " + teamRecCategory$(116, 1) + " " + teamRecCategory$(116, 2) + ", " + teamRecCategory$(116, 3); HALF$(teamRecords!(116, 1))
     Print #2,
     Print #2, "MOST STEALS, ONE QUARTER"
-    Print #2, TotalRecords!(117, 0); "- "; recordsTRC$(117, 0) + " " + recordsTRC$(117, 1) + " " + recordsTRC$(117, 2) + ", " + recordsTRC$(117, 3); QTR$(TotalRecords!(117, 1))
+    Print #2, teamRecords!(117, 0); "- "; teamRecCategory$(117, 0) + " " + teamRecCategory$(117, 1) + " " + teamRecCategory$(117, 2) + ", " + teamRecCategory$(117, 3); QTR$(teamRecords!(117, 1))
     Print #2,
     Print #2, "MOST BLOCKS, GAME"
-    Print #2, TotalRecords!(118, 0); "- "; recordsTRC$(118, 0) + " " + recordsTRC$(118, 1) + " " + recordsTRC$(118, 2) + ", " + recordsTRC$(118, 3)
+    Print #2, teamRecords!(118, 0); "- "; teamRecCategory$(118, 0) + " " + teamRecCategory$(118, 1) + " " + teamRecCategory$(118, 2) + ", " + teamRecCategory$(118, 3)
     Print #2,
     Print #2, "MOST BLOCKS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(119, 0); "- "; recordsTRC$(119, 0);
-    Print #2, Using " (###) "; TotalRecords!(119, 1);: Print #2, recordsTRC$(119, 1) + " ";
-    Print #2, recordsTRC$(119, 2);: Print #2, Using " (###)"; TotalRecords!(119, 2);: Print #2, ", " + recordsTRC$(119, 3)
+    Print #2, teamRecords!(119, 0); "- "; teamRecCategory$(119, 0);
+    Print #2, Using " (###) "; teamRecords!(119, 1);: Print #2, teamRecCategory$(119, 1) + " ";
+    Print #2, teamRecCategory$(119, 2);: Print #2, Using " (###)"; teamRecords!(119, 2);: Print #2, ", " + teamRecCategory$(119, 3)
     Print #2,
     Print #2, "MOST TURNOVERS, GAME"
-    Print #2, TotalRecords!(122, 0); "- "; recordsTRC$(122, 0) + " " + recordsTRC$(122, 1) + " " + recordsTRC$(122, 2) + ", " + recordsTRC$(122, 3)
+    Print #2, teamRecords!(122, 0); "- "; teamRecCategory$(122, 0) + " " + teamRecCategory$(122, 1) + " " + teamRecCategory$(122, 2) + ", " + teamRecCategory$(122, 3)
     Print #2,
     Print #2, "FEWEST TURNOVERS, GAME"
-    Print #2, TotalRecords!(123, 0); "- "; recordsTRC$(123, 0) + " " + recordsTRC$(123, 1) + " " + recordsTRC$(123, 2) + ", " + recordsTRC$(123, 3)
+    Print #2, teamRecords!(123, 0); "- "; teamRecCategory$(123, 0) + " " + teamRecCategory$(123, 1) + " " + teamRecCategory$(123, 2) + ", " + teamRecCategory$(123, 3)
     Print #2,
     Print #2, "MOST TURNOVERS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(124, 0); "- "; recordsTRC$(124, 0);
-    Print #2, Using " (###) "; TotalRecords!(124, 1);: Print #2, recordsTRC$(124, 1) + " ";
-    Print #2, recordsTRC$(124, 2);: Print #2, Using " (###)"; TotalRecords!(124, 2);: Print #2, ", " + recordsTRC$(124, 3)
+    Print #2, teamRecords!(124, 0); "- "; teamRecCategory$(124, 0);
+    Print #2, Using " (###) "; teamRecords!(124, 1);: Print #2, teamRecCategory$(124, 1) + " ";
+    Print #2, teamRecCategory$(124, 2);: Print #2, Using " (###)"; teamRecords!(124, 2);: Print #2, ", " + teamRecCategory$(124, 3)
     Print #2,
     Print #2, "FEWEST TURNOVERS, BOTH TEAMS, GAME"
-    Print #2, TotalRecords!(125, 0); "- "; recordsTRC$(125, 0);
-    Print #2, Using " (###) "; TotalRecords!(125, 1);: Print #2, recordsTRC$(125, 1) + " ";
-    Print #2, recordsTRC$(125, 2);: Print #2, Using " (###)"; TotalRecords!(125, 2);: Print #2, ", " + recordsTRC$(125, 3)
+    Print #2, teamRecords!(125, 0); "- "; teamRecCategory$(125, 0);
+    Print #2, Using " (###) "; teamRecords!(125, 1);: Print #2, teamRecCategory$(125, 1) + " ";
+    Print #2, teamRecCategory$(125, 2);: Print #2, Using " (###)"; teamRecords!(125, 2);: Print #2, ", " + teamRecCategory$(125, 3)
     Close 2
 
     Open "RECORDS" For Input As #2

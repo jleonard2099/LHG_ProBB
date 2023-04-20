@@ -1,8 +1,10 @@
 
-Const GAME_VERSION$ = "4.30"
+DefInt A-Z
+
+Const GAME_VERSION$ = "4.32"
 Const MAX_TEAMS = 500
 Const MAX_GAMES = 1500
-Const MAX_FILES = 10240 
+Const MAX_FILES = 10240
 'optimium = 1048576 (but slows code)
 Const MAX_CONFERENCES = 40
 Const TEAMS_PER_DIV = 10
@@ -14,15 +16,18 @@ DefInt A-Z
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 '$INCLUDE: 'PadRight.BI'
+
+' For Utils
 '$INCLUDE: 'MainRoutines.BI'
 '$INCLUDE: 'TITLE.BI'
 '$INCLUDE: 'Variables.BI'
 
+' For Game
+'$INCLUDE: 'GameRoutines.BI'
 
-DECLARE SUB TEAM_MENU ()
-DECLARE SUB REPLAY_STATS_MENU ()
-DECLARE SUB LEADERS_MENU ()
-DECLARE SUB ConfigureDrives ()
+
+On Error GoTo Errhandler
+
 
 '----------------------------------------
 '          READ IN ALL DATA
@@ -130,6 +135,46 @@ Data FREE THROWS ATTEMPTED,FREE THROWS MADE,FREE THROW %,OFFENSIVE REBOUNDS,DEFE
 Data PERSONAL FOULS,STEALS,ASSISTS,BLOCKS,TURNOVERS,POINTS,POINTS PER GAME
 For I = 1 To 20: Read teamRecords$(I): Next
 
+Data L,1,1,1,2,2,2,H,H,3,3,3,4,4,F
+For I = 0 To 14
+    Read R$(I)
+Next
+
+Data 60,61,60,58,58,59,59,59,59,58,58,58,57,58,57,51,51,52,49,50,44,45,42,47,43,43,42,39,38,38,35,34,34
+For I = 0 To 32
+    Read TOA%(I)
+Next
+
+Data 9,8,8,8,8,8,8,9,8,9,8,8,7,7,06,07,07,07,08,08,08,08,08,08,08,09,09,09,09,09,09,09,08
+For I = 0 To 32
+    Read PFA%(I)
+Next
+
+Data "REG M-M     ","SAGGING M-M ","TRAPPING M-M","TIGHT M-M   ","LOOSE M-M   "
+For I = 1 To 5
+    Read defenseStyles$(I)
+Next I
+
+Data -2,-2,-3,-4,-4,-5,-5,-6,-7
+Data -4,-5,-5,-6,-7,-8,-9,-10,-11
+Data 0,0,-1,-2,-3,-4,-5,-5,-6
+Data -3,-3,-4,-5,-6,-6,-7,-8,-9
+Data -6,-7,-8,-8,-8,-9,-10,-11,-12
+
+For I = 0 To 1
+    For I1 = 1 To 9
+        Read CF%(I, I1)
+    Next I1
+Next I
+
+For I = 0 To 2
+    For I1 = 1 To 9
+        Read GF%(I, I1)
+    Next I1
+Next I
+
+
+
 '----------------------------------------
 '               MAIN CODE
 '----------------------------------------
@@ -163,6 +208,17 @@ Loop Until Selection% = 8
 End
 
 System
+
+
+'----------------------------------------
+
+Errhandler:
+Open "errlog" For Append As #9
+Print #9, "Error #"; Err; "on program file line"; _ErrorLine
+Print #9,
+Close #9
+Resume Next ' moves program to code following the error.
+
 
 '----------------------------------------
 '       Main_Menu Subroutine
@@ -205,7 +261,7 @@ Sub Main_Menu (menuSelection%)
 
         If ExitCode% <> 27 Then
             Select Case menuSelection%
-                Case 1: Run "PROHOOP.EXE"
+                Case 1: Call PROHOOP
                 Case 2: Call TEAM_MENU
                 Case 3: Call REPLAY_STATS_MENU
                 Case 4: Call LEADERS_MENU
@@ -469,4 +525,8 @@ End Sub
 '$INCLUDE: 'SEELEAG.BAS'
 '$INCLUDE: 'SINPUT.BAS'
 '$INCLUDE: 'TRADE.BAS'
+
+' For Game
+'$INCLUDE: 'PROHOOP.BAS'
+'$INCLUDE: 'GameRoutines.BM'
 

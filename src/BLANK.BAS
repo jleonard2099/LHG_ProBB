@@ -1,6 +1,6 @@
 Sub BLANK ()
 
-    Dim H1$(40)
+    Shared H1$()
 
     _Title "Basketball: The Pro Game - Erase League"
 

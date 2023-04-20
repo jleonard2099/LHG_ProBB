@@ -1,13 +1,13 @@
 Sub HD2HD ()
 
-    Cls
-
     Dim DV$(4), O$(100), H$(1 To 100)
     Dim Z2$(TEAMS_PER_CONFERENCE)
     ReDim menuChoices$(1 To 2)
 
-    Dim O%(100), intT%(100), intZ1%(TEAMS_PER_CONFERENCE)
+    Dim intT%(100)
 
+	Shared statO%(), intZ1%()
+	
     Shared AW!(), hd2hdAL!(), hd2hdT!(), HL!(), HW!()
     Shared R1!(), R2!(), R3!(), R4!()
     Shared TAL!(), TAW!(), THL!(), THW!()
@@ -78,7 +78,7 @@ Sub HD2HD ()
                     Else
                         Open diskPaths$(1) + Z$ + "S" For Input As #4
                         Input #4, Y
-                        For J = 1 To 100: Input #4, O%(J): Next
+                        For J = 1 To 100: Input #4, statO%(J): Next
                         For J = 1 To 100: Input #4, O$(J): Next
                         For J = 1 To 100: Input #4, intT%(J): Next
                         For J = 1 To 100: Input #4, H$(J): Next
@@ -155,14 +155,14 @@ Sub HD2HD ()
                             For K = 1 To TEAMS_PER_CONFERENCE
                                 If Z1$(K) <> "XXX" Then
                                     For I = 1 To Y
-                                        If O%(I) > intT%(I) And Left$(H$(I), 1) = "V" And O$(I) = Z1$(K) Then AW!(K) = AW!(K) + 1
-                                        If O%(I) > intT%(I) And (Left$(H$(I), 1) = "H" Or Left$(H$(I), 1) = "N") And O$(I) = Z1$(K) Then HW!(K) = HW!(K) + 1
-                                        If O%(I) < intT%(I) And Left$(H$(I), 1) = "V" And O$(I) = Z1$(K) Then hd2hdAL!(K) = hd2hdAL!(K) + 1
-                                        If O%(I) < intT%(I) And (Left$(H$(I), 1) = "H" Or Left$(H$(I), 1) = "N") And O$(I) = Z1$(K) Then HL!(K) = HL!(K) + 1
+                                        If statO%(I) > intT%(I) And Left$(H$(I), 1) = "V" And O$(I) = Z1$(K) Then AW!(K) = AW!(K) + 1
+                                        If statO%(I) > intT%(I) And (Left$(H$(I), 1) = "H" Or Left$(H$(I), 1) = "N") And O$(I) = Z1$(K) Then HW!(K) = HW!(K) + 1
+                                        If statO%(I) < intT%(I) And Left$(H$(I), 1) = "V" And O$(I) = Z1$(K) Then hd2hdAL!(K) = hd2hdAL!(K) + 1
+                                        If statO%(I) < intT%(I) And (Left$(H$(I), 1) = "H" Or Left$(H$(I), 1) = "N") And O$(I) = Z1$(K) Then HL!(K) = HL!(K) + 1
                                         If O$(I) = Z1$(K) And (Left$(H$(I), 1) = "H" Or Left$(H$(I), 1) = "N") Then R2!(K) = R2!(K) + intT%(I)
-                                        If O$(I) = Z1$(K) And (Left$(H$(I), 1) = "H" Or Left$(H$(I), 1) = "N") Then R1!(K) = R1!(K) + O%(I)
+                                        If O$(I) = Z1$(K) And (Left$(H$(I), 1) = "H" Or Left$(H$(I), 1) = "N") Then R1!(K) = R1!(K) + statO%(I)
                                         If O$(I) = Z1$(K) And Left$(H$(I), 1) = "V" Then R4!(K) = R4!(K) + intT%(I)
-                                        If O$(I) = Z1$(K) And Left$(H$(I), 1) = "V" Then R3!(K) = R3!(K) + O%(I)
+                                        If O$(I) = Z1$(K) And Left$(H$(I), 1) = "V" Then R3!(K) = R3!(K) + statO%(I)
                                     Next I
                                 End If
                             Next K

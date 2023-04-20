@@ -1,9 +1,11 @@
 Sub DRAFT ()
 
     ReDim menuChoices$(1 To 3)
+
+    Dim TTL%(34)
+
     Shared draftAA$(), draftB$(), draftYears$()
     Shared draftB%(), draftL%(), draftLT%(), draftT%()
-    Dim TTL%(34)
 
     _Title "Basketball: The Pro Game - Team Draft"
 

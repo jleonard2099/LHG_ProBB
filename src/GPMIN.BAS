@@ -1,4 +1,4 @@
-	Sub GPMIN ()
+Sub GPMIN ()
 
     ReDim menuChoices$(1 To 2)
 
