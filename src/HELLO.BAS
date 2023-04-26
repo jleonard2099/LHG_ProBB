@@ -1,6 +1,4 @@
 
-DefInt A-Z
-
 Const GAME_VERSION$ = "4.32"
 Const MAX_TEAMS = 500
 Const MAX_GAMES = 1500
@@ -10,6 +8,8 @@ Const MAX_CONFERENCES = 40
 Const TEAMS_PER_DIV = 10
 Const DIVS_PER_CONFERENCE = 4
 Const TEAMS_PER_CONFERENCE = 40
+
+'Const NUM_STATRECORDS = 162
 
 DefInt A-Z
 
@@ -37,7 +37,6 @@ Data 1964,1965,1966,1967,1968,"1968 A",1969,"1969 A",1970,"1970 A"
 Data 1971,"1971 A",1972,"1972 A",1973,"1973 A",1974,"1974 A",1975,"1975 A"
 Data 1976,"1976 A",1977,1978,1979,1980,1981,1982,1983,1984
 Data 1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996
-
 For I = 1 To 52
     Read draftYears$(I)
     While Len(draftYears$(I)) <> 6
@@ -99,7 +98,6 @@ Data 86,43,47,23,34
 Data 84,43,47,22,33
 Data 81,42,47,24,36
 Data 80,41,46,23,37
-
 For I = 1 To 52
     For I1 = 1 To 5
         Read draftLG%(I, I1)
@@ -160,19 +158,16 @@ Data -4,-5,-5,-6,-7,-8,-9,-10,-11
 Data 0,0,-1,-2,-3,-4,-5,-5,-6
 Data -3,-3,-4,-5,-6,-6,-7,-8,-9
 Data -6,-7,-8,-8,-8,-9,-10,-11,-12
-
 For I = 0 To 1
     For I1 = 1 To 9
         Read CF%(I, I1)
     Next I1
 Next I
-
 For I = 0 To 2
     For I1 = 1 To 9
         Read GF%(I, I1)
     Next I1
 Next I
-
 
 
 '----------------------------------------
@@ -182,7 +177,6 @@ _Title "Basketball: The Pro Game - Menu"
 $ExeIcon:'./lhg_probb.ico'
 _Icon
 _AllowFullScreen
-
 
 If Not _FileExists("DEV.BAS") Then
     Open "DEV.BAS" For Output As #1
@@ -199,7 +193,6 @@ Next
 Close 1
 
 Selection% = 1
-
 
 Do
     Call Main_Menu(Selection%)
@@ -218,7 +211,6 @@ Print #9, "Error #"; Err; "on program file line"; _ErrorLine
 Print #9,
 Close #9
 Resume Next ' moves program to code following the error.
-
 
 '----------------------------------------
 '       Main_Menu Subroutine
@@ -242,17 +234,17 @@ Sub Main_Menu (menuSelection%)
         menuChoices$(7) = "CONFIGURE DRIVES FOR TEAMS,STATS"
         menuChoices$(8) = "EXIT TO DOS                     "
 
-        'ExitCode% = 8
         menuSelection% = 1
         Count% = 8
+        Start% = 1
+        'ExitCode% = 8
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
+        Row% = 8
         Column% = 25
 
         Call box0(7, 24, 16, 57, 2, 15, 1)
-        Start% = 1
-        Row% = 8
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), menuSelection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
@@ -262,177 +254,22 @@ Sub Main_Menu (menuSelection%)
         If ExitCode% <> 27 Then
             Select Case menuSelection%
                 Case 1: Call PROHOOP
-                Case 2: Call TEAM_MENU
-                Case 3: Call REPLAY_STATS_MENU
-                Case 4: Call LEADERS_MENU
+                Case 2: Call TeamMgt_Menu
+                Case 3: Call Replay_Menu
+                Case 4: Call Leaders_Menu
                 Case 5: Call SCHEDULE
                     'Case 6: Run "INSTALL.EXE"
                 Case 7: Call ConfigureDrives
                 Case 8: Cls
             End Select
-        Else
-            menuSelection% = 8
         End If
 
     Loop Until menuSelection% = 8 Or ExitCode% = 27
 
-End Sub
-
-'----------------------------------------
-'       Team_Menu Subroutine
-'----------------------------------------
-Sub TEAM_MENU ()
-
-    ReDim menuChoices$(1 To 8)
-
-    Do
-
-        Selection% = 1
-        
-        Call TITLE
-        'Erase menuChoices$
-        menuChoices$(1) = "INPUT A NEW TEAM              "
-        menuChoices$(2) = "EDIT AN EXISTING TEAM         "
-        menuChoices$(3) = "PRINT TEAM ROSTER / REPORT    "
-        menuChoices$(4) = "VIEW TEAM ROSTER / REPORT     "
-        menuChoices$(5) = "DRAFT TO NEW / EXISTING TEAM  "
-        menuChoices$(6) = "TRADE PLAYERS                 "
-        menuChoices$(7) = "ADJUST PLAYING TIME (MIN/GAME)"
-        menuChoices$(8) = "RETURN TO MAIN MENU           "
-        Count% = 8
-        Start% = 1
-        ExitCode% = 8
-        FileFGColr% = 15: FileBGColr% = 1
-        HiLiteFGColr% = 0: HiLiteBGColr% = 7
-        Spacing% = 1
-        Row% = 8
-        Column% = 27
-        Call box0(7, 26, 16, 57, 2, 15, 1)
-
-        _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
-        _MouseHide
-
-        Color , 0
-
-        If ExitCode% <> 27 Then
-            Select Case Selection%
-                Case 1: Call BINPUT(1)
-                Case 2: Call BINPUT(2)
-                Case 3: Call BINPUT(3)
-                Case 4: Call BINPUT(4)
-                Case 5: Call DRAFT
-                Case 6: Call TRADE
-                Case 7: Call GPMIN
-                Case 8: Cls
-            End Select
-        End If
-
-    Loop Until Selection% = 8 Or ExitCode% = 27
+    If ExitCode% = 27 Then menuSelection% = 8
 
 End Sub
 
-'----------------------------------------
-'       Replay_Stats Subroutine
-'----------------------------------------
-Sub REPLAY_STATS_MENU ()
-    ReDim menuChoices$(1 To 5)
-
-    Selection% = 1
-
-    Do
-        Call TITLE
-        _Title "Basketball: The Pro Game - Stats Menu"
-        'Erase menuChoices$
-        menuChoices$(1) = "VIEW / PRINT COMPILED STATISTICS "
-        menuChoices$(2) = "ENCYCLOPEDIA/ TEAM REPLAY OPTIONS"
-        menuChoices$(3) = "COMPARE REPLAY STATS TO ACTUAL   "
-        menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES "
-        menuChoices$(5) = "RETURN TO MAIN MENU              "
-        Count% = 5
-        Start% = 1
-        ExitCode% = 5
-        FileFGColr% = 15: FileBGColr% = 1
-        HiLiteFGColr% = 0: HiLiteBGColr% = 7
-        Spacing% = 1
-        Row% = 8
-        Column% = 25
-
-        Call box0(7, 24, 13, 58, 2, 15, 1)
-
-        _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
-        _MouseHide
-
-        Color , 0
-        If ExitCode% <> 27 Then
-            Select Case Selection%
-                Case 1: Call LOOKY
-                Case 2: Call CAREER
-                Case 3: Call COMPARE
-                Case 4: Call MERGE
-                Case 5: Cls
-            End Select
-        End If
-
-    Loop Until Selection% = 5 Or ExitCode% = 27
-
-End Sub
-
-'----------------------------------------
-'       Leaders_Menu Subroutine
-'----------------------------------------
-Sub LEADERS_MENU ()
-
-    ReDim menuChoices$(1 To 8)
-
-    Do
-
-        Call TITLE
-
-        _Title "Basketball: The Pro Game - League Menu"
-
-        'Erase menuChoices$
-        menuChoices$(1) = "CREATE/ EDIT A LEAGUE         "
-        menuChoices$(2) = "UPDATE TOP 10'S/ STANDINGS    "
-        menuChoices$(3) = "VIEW/ PRINT TOP 10'S/STANDINGS"
-        menuChoices$(4) = "HEAD-TO-HEAD RESULTS AND STATS"
-        menuChoices$(5) = "LEAGUE RECORD BOOKS           "
-        menuChoices$(6) = "EXPANDED LEADERS/STANDINGS    "
-        menuChoices$(7) = "DELETE ALL STATS FOR A LEAGUE "
-        menuChoices$(8) = "RETURN TO MAIN MENU           "
-        Selection% = 1
-        Count% = 8
-        Start% = 1
-        ExitCode% = 8
-        FileFGColr% = 15: FileBGColr% = 1
-        HiLiteFGColr% = 0: HiLiteBGColr% = 7
-        Spacing% = 1
-        Row% = 8
-        Column% = 26
-        Call box0(7, 25, 16, 56, 2, 15, 1)
-
-        _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
-        _MouseHide
-
-        Color , 0
-        If ExitCode% <> 27 Then
-            Select Case Selection%
-                Case 1: Call CREATE
-                Case 2: Call LEAGCMPL
-                Case 3: Call SEELEAG
-                Case 4: Call HD2HD
-                Case 5: Call REC
-                Case 6: Call NEWLDR
-                Case 7: Call BLANK
-                Case 8: Cls
-            End Select
-        End If
-
-    Loop Until Selection% = 8 Or ExitCode% = 27
-
-End Sub
 
 '----------------------------------------
 '       ConfigureDrives Subroutine
@@ -500,9 +337,174 @@ Sub ConfigureDrives ()
 
 End Sub
 
+
+'----------------------------------------
+'        TeamMgmt_Menu Subroutine
+'----------------------------------------
+'...explanation...
+Sub TeamMgt_Menu ()
+
+    ReDim menuChoices$(1 To 8)
+
+    Do
+
+        Selection% = 1
+        
+        Call TITLE
+        'Erase menuChoices$
+        menuChoices$(1) = "INPUT A NEW TEAM              "
+        menuChoices$(2) = "EDIT AN EXISTING TEAM         "
+        menuChoices$(3) = "PRINT TEAM ROSTER / REPORT    "
+        menuChoices$(4) = "VIEW TEAM ROSTER / REPORT     "
+        menuChoices$(5) = "DRAFT TO NEW / EXISTING TEAM  "
+        menuChoices$(6) = "TRADE PLAYERS                 "
+        menuChoices$(7) = "ADJUST PLAYING TIME (MIN/GAME)"
+        menuChoices$(8) = "RETURN TO MAIN MENU           "
+        Count% = 8
+        Start% = 1
+        ExitCode% = 8
+        FileFGColr% = 15: FileBGColr% = 1
+        HiLiteFGColr% = 0: HiLiteBGColr% = 7
+        Spacing% = 1
+        Row% = 8
+        Column% = 27
+        Call box0(7, 26, 16, 57, 2, 15, 1)
+
+        _MouseShow "DEFAULT"
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        _MouseHide
+
+        Color , 0
+
+        If ExitCode% <> 27 Then
+            Select Case Selection%
+                Case 1: Call BINPUT(1)
+                Case 2: Call BINPUT(2)
+                Case 3: Call BINPUT(3)
+                Case 4: Call BINPUT(4)
+                Case 5: Call DRAFT
+                Case 6: Call TRADE
+                Case 7: Call GPMIN
+                Case 8: Cls
+            End Select
+        End If
+
+    Loop Until Selection% = 8 Or ExitCode% = 27
+
+End Sub
+
+
+'----------------------------------------
+'         Replay_Menu Subroutine
+'----------------------------------------
+'...explanation...
+Sub Replay_Menu ()
+    ReDim menuChoices$(1 To 5)
+
+    Selection% = 1
+
+    Do
+        Call TITLE
+        _Title "Basketball: The Pro Game - Stats Menu"
+        'Erase menuChoices$
+        menuChoices$(1) = "VIEW / PRINT COMPILED STATISTICS "
+        menuChoices$(2) = "ENCYCLOPEDIA/ TEAM REPLAY OPTIONS"
+        menuChoices$(3) = "COMPARE REPLAY STATS TO ACTUAL   "
+        menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES "
+        menuChoices$(5) = "RETURN TO MAIN MENU              "
+        Count% = 5
+        Start% = 1
+        ExitCode% = 5
+        FileFGColr% = 15: FileBGColr% = 1
+        HiLiteFGColr% = 0: HiLiteBGColr% = 7
+        Spacing% = 1
+        Row% = 8
+        Column% = 25
+
+        Call box0(7, 24, 13, 58, 2, 15, 1)
+
+        _MouseShow "DEFAULT"
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        _MouseHide
+
+        Color , 0
+        If ExitCode% <> 27 Then
+            Select Case Selection%
+                Case 1: Call LOOKY
+                Case 2: Call CAREER
+                Case 3: Call COMPARE
+                Case 4: Call MERGE
+                Case 5: Cls
+            End Select
+        End If
+
+    Loop Until Selection% = 5 Or ExitCode% = 27
+
+End Sub
+
+
+'----------------------------------------
+'        Leaders_Menu Subroutine
+'----------------------------------------
+'...explanation...
+Sub Leaders_Menu ()
+
+    ReDim menuChoices$(1 To 8)
+
+    Do
+
+        Call TITLE
+
+        _Title "Basketball: The Pro Game - League Menu"
+
+        'Erase menuChoices$
+        menuChoices$(1) = "CREATE/ EDIT A LEAGUE         "
+        menuChoices$(2) = "UPDATE TOP 10'S/ STANDINGS    "
+        menuChoices$(3) = "VIEW/ PRINT TOP 10'S/STANDINGS"
+        menuChoices$(4) = "HEAD-TO-HEAD RESULTS AND STATS"
+        menuChoices$(5) = "LEAGUE RECORD BOOKS           "
+        menuChoices$(6) = "EXPANDED LEADERS/STANDINGS    "
+        menuChoices$(7) = "DELETE ALL STATS FOR A LEAGUE "
+        menuChoices$(8) = "RETURN TO MAIN MENU           "
+        Selection% = 1
+        Count% = 8
+        Start% = 1
+        ExitCode% = 8
+        FileFGColr% = 15: FileBGColr% = 1
+        HiLiteFGColr% = 0: HiLiteBGColr% = 7
+        Spacing% = 1
+        Row% = 8
+        Column% = 26
+        Call box0(7, 25, 16, 56, 2, 15, 1)
+
+        _MouseShow "DEFAULT"
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        _MouseHide
+
+        Color , 0
+        If ExitCode% <> 27 Then
+            Select Case Selection%
+                Case 1: Call CREATE
+                Case 2: Call LEAGCMPL
+                Case 3: Call SEELEAG
+                Case 4: Call HD2HD
+                Case 5: Call REC
+                Case 6: Call NEWLDR
+                Case 7: Call BLANK
+                Case 8: Cls
+            End Select
+        End If
+
+    Loop Until Selection% = 8 Or ExitCode% = 27
+
+End Sub
+
+
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'
 '$INCLUDE: 'PadRight.BM'
+
+' For Utils
 '$INCLUDE: 'TITLE.BM'
 '$INCLUDE: 'ALIGN.BAS'
 '$INCLUDE: 'BLANK.BAS'
@@ -529,4 +531,3 @@ End Sub
 ' For Game
 '$INCLUDE: 'PROHOOP.BAS'
 '$INCLUDE: 'GameRoutines.BM'
-

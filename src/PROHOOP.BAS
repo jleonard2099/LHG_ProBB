@@ -1,26 +1,25 @@
 Sub PROHOOP
 
-    '----------------------------------------
-    '           GAME CODE
-    '----------------------------------------
     _Title "Basketball: The Pro Game v" + GAME_VERSION$ + " - HOOPS!"
     '$ExeIcon:'./lhg_probb.ico'
     '_Icon
     '_AllowFullScreen
+
+    'Open "pbplog" For Output As #7
 
     Color 7, 0
     Cls
 
     Randomize Timer
 
-    '----------------------------------------
-    '    INITIALIZE ALL VARIABLES
-    '----------------------------------------
+	'----------------------------------------
+	'        INITIALIZE ALL VARIABLES
+	'----------------------------------------
 
     Call InitVar
 
     '----------------------------------------
-    '       DETERMINE GAME OPTIONS
+    '         DETERMINE GAME OPTIONS
     '----------------------------------------
 
     If Not _FileExists("DEV.BAS") Then
@@ -36,7 +35,6 @@ Sub PROHOOP
         Input #1, diskPaths$(I)
     Next
     Close 1
-
 
     If Not _FileExists("DEFAULT") Then
         Open "DEFAULT" For Output As #1
@@ -64,7 +62,6 @@ Sub PROHOOP
     Input #1, FR%
     Input #1, PB%
     Close 1
-
 
     If _FileExists("TICKER") Then
 
@@ -95,13 +92,14 @@ Sub PROHOOP
         TMT = 0
     End If
 
-
     'Load game in-progress, if there is one
     If _FileExists("GAME82") Then
 
         Open "GAME82" For Input As #2
         Input #2, FF$
-        For I = 0 To 2: Input #2, AP%(I): Next
+        For I = 0 To 2:
+            Input #2, AP%(I)
+        Next
         Close 2
 
         Open diskPaths$(0) + FF$ For Random As #1 Len = 48
@@ -703,34 +701,26 @@ Sub PROHOOP
     Locate 9 + JJ, 8
     Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
-
     If AP <> 1 Then
 
         Do
-            Locate 9, 30
-
-            ' Prompt to play another game
             U$ = "PLAY ANOTHER GAME (YN)"
-            Locate , (80 - Len(U$)) / 2
+            Locate 7, (80 - Len(U$)) / 2
             Print U$
 
             Color 15, 0
             I$ = GetKeyPress$
         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-        If UCase$(I$) = "N" Then
-            'End
-            'System
-            Exit Sub
-
-        End If
-
     End If
 
-    Cls
-    Print "PLEASE WAIT ..."
-    Call PROHOOP
+    If UCase$(I$) = "Y" Or AP = 1 Then
+        Cls
+        Print "PLEASE WAIT ..."
+        Call PROHOOP
+    End If
 
+    Exit Sub
 
     '----------------------------------------
     '           END OF GAME!!!
@@ -738,7 +728,7 @@ Sub PROHOOP
 
     '================================================================================
     ' Below are all the different GoTo branches for the gameplay
-    ' These have not yet been worked out into a different flow
+    ' These have not been worked out into a different flow
     ' yet for the game's logic.
     '================================================================================
 
@@ -3180,30 +3170,4 @@ Sub InitVar ()
     Erase PF%, ST%, SX%
     Erase TOF%, teamIndex%, W%
 
-
 End Sub
-
-
-
-'================================================================================
-
-'In order to use this subroutine,
-' we would need to mvoe the code
-' that is relevant, and then
-' we could shorten up some of
-' logic flow / spaghetti strains
-
-Sub ShotTest ()
-
-    '    If R0 <= 8 + F7%(P, 1) + F7%(D, 2) + A!(D, B1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
-    '        GoTo 513
-    '    Else
-    '        R0 = Int(Rnd(1) * 1000) + 1
-
-    '        If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
-    '        If PASS% = 4 Then 445
-    '        GoTo 437
-    '    End If
-
-End Sub
-

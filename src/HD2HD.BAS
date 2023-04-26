@@ -723,7 +723,7 @@ Sub GetTeam_HD2HD (TM$)
                 Color 15, 4
 
                 Do
-                    Locate , 33: Print "ANY CHANGE (YN)";
+                    Locate 3, 33: Print "ANY CHANGE (YN)";
                     A$ = GetKeyPress$
                 Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
 
@@ -790,7 +790,7 @@ Sub SelectLeague_HD2HD (targetFile$)
                     Locate 2, 33: Print targetFile$
 
                     Do
-                        Locate , 33: Print "ANY CHANGE (YN)";
+                        Locate 3, 33: Print "ANY CHANGE (YN)";
                         I$ = GetKeyPress$
                     Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 

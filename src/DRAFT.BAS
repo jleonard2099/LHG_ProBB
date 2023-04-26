@@ -43,7 +43,9 @@ Sub DRAFT ()
 
                 Color 15, 4
 
-                Locate , 30: Print "ANY CHANGE (YN)";: I$ = GetKeyPress$
+                Locate , 30: Print "ANY CHANGE (YN)";
+				
+				I$ = GetKeyPress$
 
             Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
@@ -352,7 +354,7 @@ Sub DraftExistingTeam (TTL%())
             Color draftT%(0, 33), draftT%(0, 34): Print draftAA$(0, 0)
 
             Do
-                Locate , 33
+                Locate 3, 33
                 Color 15, 4: Print "ANY CHANGE (YN)"
                 I$ = GetKeyPress$
             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
@@ -568,7 +570,7 @@ Sub DoTheDraft (TTL%())
                         Color 15, 4
 
                         Do
-                            Locate , 33: Print "ANY CHANGE (YN)";
+                            Locate 3, 33: Print "ANY CHANGE (YN)";
                             I$ = GetKeyPress$
                         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
                     End If
