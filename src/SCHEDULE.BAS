@@ -161,12 +161,13 @@ Sub NewSchedule (scheduleFile$)
 
     schedSC$(0) = "24"
     schedSC$(1) = "30"
+
     scheduleTS$(0) = "N"
     scheduleTS$(1) = "Y"
 
     Do
 
-        25 Cls
+        Cls
         Locate 23, 1: Color , 1: Print Tab(80);: Locate 23, 1
         Color 13: Print "SC";: Color 14: Print "-SHOT CLOCK  ";
         Color 13: Print "MA";: Color 14: Print "-MODE OF PLAY  ";
@@ -190,7 +191,7 @@ Sub NewSchedule (scheduleFile$)
         Locate 1, 33: Color 14: Print "AUTO SCHEDULER"
         Color , 0
 
-        50 Locate 2, 1
+        Locate 2, 1
         Color 14
         Print "GAME  DATE      TIME    VISITING TEAM        HOME TEAM            MA  HC  3  SC"
         Color 15
@@ -342,7 +343,6 @@ Sub NewSchedule (scheduleFile$)
             Case "P"
                 Call SaveScheduleFile(scheduleFile$)
 
-
                 ' *** PLAY GAMES ***
                 Color , 0
                 Cls
@@ -418,32 +418,7 @@ Sub NewSchedule (scheduleFile$)
 
                 Call PROHOOP
 
-                '-- This code actually loads a schedule
-                Open diskPaths$(0) + scheduleFile$ + ".SCD" For Random As #1 Len = 48
-                Y = LOF(1)
-
-                scheduleAP%(0) = Y / 48
-
-                BS% = Int((scheduleAP%(0) - 1) / 20)
-
-                For X = 0 To 18
-                    Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
-                Next
-
-                Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
-
-                For I = 1 To scheduleAP%(0)
-                    Get #1, I
-                    For X = 0 To 18: scheduleNG%(I, X) = CVI(Q$(X + 1)): Next
-                    For X = 0 To 1: scheduleYN$(I, X) = RTrim$(Q$(20 + X)): Next
-                    visitingScore%(I) = CVI(Q$(22))
-                    homeScore%(I) = CVI(Q$(23))
-                Next
-
-                Close 1
-
-                NS% = 0
-                '-- End of load routine
+				Call LoadScheduleInfo (scheduleFile$)
 
             Case "R"
                 ' *** RESET GAMES ***
@@ -1368,31 +1343,24 @@ End Sub 'ChangeGlobalSettings
 '       LoadSchedule SubRoutine
 '----------------------------------------
 '...explanation...
-Sub LoadSchedule (newFile$)
-
-    Shared BS%, NS%
-
-    Shared scheduleAP%(), homeScore%(), visitingScore%()
-    Shared scheduleNG%()
-    Shared scheduleYN$()
+Sub LoadSchedule (targetFile$)
 
     Spec$ = diskPaths$(0) + "*.SCD"
 
     Do
         'Display list of files...
         null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-        FileCount% = DirCount%
+        Count% = DirCount%
 
-        If FileCount% = 0 Then
+        If Count% = 0 Then
             Locate 10, 8
             Call CSMsgBox("NO SCHEDULE FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
             I$ = GetKeyPress$
             Call CSMsgBox("", 0, Pass)
-            Exit Sub
         Else
-            ReDim scheduleFiles$(0 To FileCount%)
+            ReDim scheduleFiles$(0 To Count%)
 
-            For X = 1 To FileCount%
+            For X = 1 To Count%
                 scheduleFiles$(X) = Space$(12)
             Next
 
@@ -1400,13 +1368,14 @@ Sub LoadSchedule (newFile$)
 
             Call ReadFile(scheduleFiles$())
 
-            Call SelectScheduleFile(newFile$, scheduleFiles$(), FileCount%, menuExit%)
+            Call SelectScheduleFile(targetFile$, scheduleFiles$(), Count%, menuExit%)
 
         End If
 
-    Loop Until FileCount% = 0 Or newFile$ <> "" Or menuExit% = 27
+    Loop Until Count% = 0 Or targetFile$ <> "" Or menuExit% = 27
 
-End Sub 'LoadSchedule
+End Sub
+
 
 '----------------------------------------
 '   SelectTeam_Schedule SubRoutine
@@ -1628,12 +1597,6 @@ End Sub
 '...explanation...
 Sub SelectScheduleFile (targetFile$, scheduleFiles$(), FileCount%, ExitCode%)
 
-    Shared BS%, NS%
-
-    Shared scheduleAP%(), homeScore%(), visitingScore%()
-    Shared scheduleNG%()
-    Shared scheduleYN$()
-
     Do
         Cls
         Color , 1
@@ -1677,38 +1640,63 @@ Sub SelectScheduleFile (targetFile$, scheduleFiles$(), FileCount%, ExitCode%)
 
     If ExitCode% <> 27 Then
 
-        WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-        targetFile$ = WE$
+        targetFile$ = RTrim$(targetFile$)
 
+		'-- This is where we strip the file extension
+		'-- If we remove this, we can drop the .SCD in the rest of the code
+        fileNoExt$ = Left$(targetFile$, Len(targetFile$) - 4)
+        targetFile$ = fileNoExt$
         Color 15, 0
-
-        '-- This code actually loads a schedule
-        Open diskPaths$(0) + targetFile$ + ".SCD" For Random As #1 Len = 48
-        Y = LOF(1)
-
-        scheduleAP%(0) = Y / 48
-
-        BS% = Int((scheduleAP%(0) - 1) / 20)
-
-        For X = 0 To 18
-            Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
-        Next
-
-        Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
-
-        For I = 1 To scheduleAP%(0)
-            Get #1, I
-            For X = 0 To 18: scheduleNG%(I, X) = CVI(Q$(X + 1)): Next
-            For X = 0 To 1: scheduleYN$(I, X) = RTrim$(Q$(20 + X)): Next
-            visitingScore%(I) = CVI(Q$(22))
-            homeScore%(I) = CVI(Q$(23))
-        Next
-
-        Close 1
-
-        NS% = 0
+		
+		Call LoadScheduleInfo (targetFile$)
 
     End If
 
 End Sub
 
+
+'----------------------------------------
+'      LoadScheduleInfo SubRoutine
+'----------------------------------------
+'...explanation...
+Sub LoadScheduleInfo (targetFile$)
+
+    Shared BS%, NS%
+
+    Shared scheduleAP%(), scheduleNG%()
+	Shared homeScore%(), visitingScore%()
+    Shared scheduleYN$()
+
+	Open diskPaths$(0) + targetFile$ + ".SCD" For Random As #1 Len = 48
+	Y = LOF(1)
+
+	scheduleAP%(0) = Y / 48
+	BS% = Int((scheduleAP%(0) - 1) / 20)
+
+	For X = 0 To 18
+		Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
+	Next
+
+	Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+
+	For I = 1 To scheduleAP%(0)
+		Get #1, I
+
+		For X = 0 To 18: 
+			scheduleNG%(I, X) = CVI(Q$(X + 1))
+		Next
+
+		For X = 0 To 1: 
+			scheduleYN$(I, X) = RTrim$(Q$(20 + X))
+		Next
+
+		visitingScore%(I) = CVI(Q$(22))
+		homeScore%(I) = CVI(Q$(23))
+
+	Next
+
+	Close 1
+
+	NS% = 0
+
+End Sub
