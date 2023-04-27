@@ -7,11 +7,13 @@ Sub NEWLDRST ()
     Dim RLL(TEAMS_PER_CONFERENCE), RWW(TEAMS_PER_CONFERENCE)
     Dim TLS(TEAMS_PER_CONFERENCE), TWS(TEAMS_PER_CONFERENCE), WW(TEAMS_PER_CONFERENCE)
 
-    Dim O%(100), statsT%(100)
+    Dim statsT%(100)
 
-    Dim H$(100), O$(100), TML$(TEAMS_PER_CONFERENCE), strZ1$(TEAMS_PER_CONFERENCE)
+    Dim TML$(TEAMS_PER_CONFERENCE), strZ1$(TEAMS_PER_CONFERENCE)
     ReDim menuChoices$(1 To 2)
 
+	Shared statsH$(), O$()
+	Shared statO%()
     Shared YY%
 
     _Title "Basketball: The Pro Game - League Standings"
@@ -95,7 +97,7 @@ Sub NEWLDRST ()
                         Locate 2, 33: Print targetFile$
 
                         Do
-                            Locate , 33: Print "ANY CHANGE (YN)";
+                            Locate 3, 33: Print "ANY CHANGE (YN)";
                             I$ = GetKeyPress$
                         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -142,33 +144,33 @@ Sub NEWLDRST ()
                             If _FileExists(diskPaths$(1) + strZ1$(KK) + "S") Then
                                 Open diskPaths$(1) + strZ1$(KK) + "S" For Input As #1
                                 Input #1, XX%
-                                For J = 1 To 100: Input #1, O%(J): Next
+                                For J = 1 To 100: Input #1, statO%(J): Next
                                 For J = 1 To 100: Input #1, O$(J): Next
                                 For J = 1 To 100: Input #1, statsT%(J): Next
-                                For J = 1 To 100: Input #1, H$(J): Next
+                                For J = 1 To 100: Input #1, statsH$(J): Next
                                 Close 1
                                 LWS(YY%) = 0
                                 LLS(YY%) = 0
                                 TWS(YY%) = 0
                                 TLS(YY%) = 0
                                 For I = 1 To XX%
-                                    If O%(I) > statsT%(I) Then WW(YY%) = WW(YY%) + 1
-                                    If O%(I) > statsT%(I) And H$(I) = "V" Then RWW(YY%) = RWW(YY%) + 1
-                                    If O%(I) > statsT%(I) And H$(I) = "V1" Then RWW(YY%) = RWW(YY%) + 1
-                                    If O%(I) > statsT%(I) And H$(I) = "V2" Then RWW(YY%) = RWW(YY%) + 1
-                                    If O%(I) > statsT%(I) And H$(I) = "H" Then HWW(YY%) = HWW(YY%) + 1
-                                    If O%(I) > statsT%(I) And H$(I) = "H1" Then HWW(YY%) = HWW(YY%) + 1
-                                    If O%(I) > statsT%(I) And H$(I) = "H2" Then HWW(YY%) = HWW(YY%) + 1
-                                    If statsT%(I) > O%(I) Then LL(YY%) = LL(YY%) + 1
-                                    If statsT%(I) > O%(I) And H$(I) = "V" Then RLL(YY%) = RLL(YY%) + 1
-                                    If statsT%(I) > O%(I) And H$(I) = "V1" Then RLL(YY%) = RLL(YY%) + 1
-                                    If statsT%(I) > O%(I) And H$(I) = "V2" Then RLL(YY%) = RLL(YY%) + 1
-                                    If statsT%(I) > O%(I) And H$(I) = "H" Then HLL(YY%) = HLL(YY%) + 1
-                                    If statsT%(I) > O%(I) And H$(I) = "H1" Then HLL(YY%) = HLL(YY%) + 1
-                                    If statsT%(I) > O%(I) And H$(I) = "H2" Then HLL(YY%) = HLL(YY%) + 1
-                                    If O%(I) > statsT%(I) Then LWS(YY%) = LWS(YY%) + 1: LLS(YY%) = 0
+                                    If statO%(I) > statsT%(I) Then WW(YY%) = WW(YY%) + 1
+                                    If statO%(I) > statsT%(I) And statsH$(I) = "V" Then RWW(YY%) = RWW(YY%) + 1
+                                    If statO%(I) > statsT%(I) And statsH$(I) = "V1" Then RWW(YY%) = RWW(YY%) + 1
+                                    If statO%(I) > statsT%(I) And statsH$(I) = "V2" Then RWW(YY%) = RWW(YY%) + 1
+                                    If statO%(I) > statsT%(I) And statsH$(I) = "H" Then HWW(YY%) = HWW(YY%) + 1
+                                    If statO%(I) > statsT%(I) And statsH$(I) = "H1" Then HWW(YY%) = HWW(YY%) + 1
+                                    If statO%(I) > statsT%(I) And statsH$(I) = "H2" Then HWW(YY%) = HWW(YY%) + 1
+                                    If statsT%(I) > statO%(I) Then LL(YY%) = LL(YY%) + 1
+                                    If statsT%(I) > statO%(I) And statsH$(I) = "V" Then RLL(YY%) = RLL(YY%) + 1
+                                    If statsT%(I) > statO%(I) And statsH$(I) = "V1" Then RLL(YY%) = RLL(YY%) + 1
+                                    If statsT%(I) > statO%(I) And statsH$(I) = "V2" Then RLL(YY%) = RLL(YY%) + 1
+                                    If statsT%(I) > statO%(I) And statsH$(I) = "H" Then HLL(YY%) = HLL(YY%) + 1
+                                    If statsT%(I) > statO%(I) And statsH$(I) = "H1" Then HLL(YY%) = HLL(YY%) + 1
+                                    If statsT%(I) > statO%(I) And statsH$(I) = "H2" Then HLL(YY%) = HLL(YY%) + 1
+                                    If statO%(I) > statsT%(I) Then LWS(YY%) = LWS(YY%) + 1: LLS(YY%) = 0
                                     If LWS(YY%) > TWS(YY%) Then TWS(YY%) = LWS(YY%)
-                                    If O%(I) < statsT%(I) Then LLS(YY%) = LLS(YY%) + 1: LWS(YY%) = 0
+                                    If statO%(I) < statsT%(I) Then LLS(YY%) = LLS(YY%) + 1: LWS(YY%) = 0
                                     If LLS(YY%) > TLS(YY%) Then TLS(YY%) = LLS(YY%)
                                 Next I
 
@@ -178,8 +180,8 @@ Sub NEWLDRST ()
                                     M = XX% - 9
 
                                     For J = M To XX%
-                                        If O%(J) > statsT%(J) Then LTW(YY%) = LTW(YY%) + 1
-                                        If statsT%(J) > O%(J) Then LTL(YY%) = LTL(YY%) + 1
+                                        If statO%(J) > statsT%(J) Then LTW(YY%) = LTW(YY%) + 1
+                                        If statsT%(J) > statO%(J) Then LTL(YY%) = LTL(YY%) + 1
                                     Next J
                                 End If
                             End If

@@ -42,13 +42,14 @@ End Sub
 '----------------------------------------
 '... explain here ...
 Sub TradePlayers ()
-    Dim A1$(1), B1$(2, 14)
-    Dim F$(1), NY$(1), YN$(1)
-    Dim S!(1), ZZtrade(2, 15), ZZ1trade(2, 15)
 
-    Shared B1!(), tradeW0!(), tradeW1!()
+    Dim tradeA1$(1), B1$(2, 14)
+    Dim F$(1), NY$(1)
+    Dim tradeS!(1), tradeZZ(2, 15), tradeZZ1(2, 15)
+
+    Shared tradeB1!(), tradeW0!(), tradeW1!()
     Shared teamSettings%(), tradeB%(), tradeL%()
-    Shared SA$(), tradeAA$(), tradeB$()
+    Shared draftYN$(), SA$(), tradeAA$(), tradeB$()
 
     Shared tradeT!()
 
@@ -75,14 +76,14 @@ Sub TradePlayers ()
         Locate 7, 38: Input NY$(tradeTeam)
 
         If NY$(tradeTeam) = "" Then 
-            Call SelectTeam_TRADE (tradeTeam, NTMS, YN$())
+            Call SelectTeam_TRADE (tradeTeam, NTMS, draftYN$())
         Else
-            YN$(tradeTeam) = NY$(tradeTeam)
+            draftYN$(tradeTeam) = NY$(tradeTeam)
             Erase teamNames$
 
             NTMS = 0
 
-            Open diskPaths$(0) + "PROBBTMS." + YN$(tradeTeam) For Random As #1 Len = 1031
+            Open diskPaths$(0) + "PROBBTMS." + draftYN$(tradeTeam) For Random As #1 Len = 1031
             Y = LOF(1)
             Field #1, 15 As Q$(0), 15 As Q$(1)
 
@@ -118,7 +119,7 @@ Sub TradePlayers ()
 
             'TS% = INT((NTMS - 1) / 80)
 
-            Call SelectTeam_TRADE (tradeTeam, NTMS, YN$())
+            Call SelectTeam_TRADE (tradeTeam, NTMS, draftYN$())
         End If
 
         If BO% = 1 Then 
@@ -130,7 +131,7 @@ Sub TradePlayers ()
 			Color 15, 4
 
 			Do
-				Locate , 33: Print "ANY CHANGE (YN)";
+				Locate 3, 33: Print "ANY CHANGE (YN)";
 				I$ = GetKeyPress$
 			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -140,7 +141,7 @@ Sub TradePlayers ()
 
     Color 15, 0
 	Cls
-    S!(0) = 0
+    tradeS!(0) = 0
     JJ = 1
 
     Locate 6, 8: Color teamSettings%(tradeTeam, 33), teamSettings%(tradeTeam, 34)
@@ -182,16 +183,16 @@ Sub TradePlayers ()
 
                 If _FileExists(diskPaths$(1) + F$(tradeTeam)) Then
                     Open diskPaths$(1) + F$(tradeTeam) For Input As #1
-                    Input #1, A1$(tradeTeam)
+                    Input #1, tradeA1$(tradeTeam)
                     For I = 0 To 14: Input #1, B1$(tradeTeam, I)
-                        For I1 = 0 To 13: Input #1, B1!(tradeTeam, I, I1): Next I1
+                        For I1 = 0 To 13: Input #1, tradeB1!(tradeTeam, I, I1): Next I1
                     Input #1, tradeW0!(tradeTeam, I): Input #1, tradeW1!(tradeTeam, I): Next I
 
-                    For L = 0 To 15: Input #1, ZZtrade(tradeTeam, L): Next L
-                    For L = 0 To 15: Input #1, ZZ1trade(tradeTeam, L): Next L
+                    For L = 0 To 15: Input #1, tradeZZ(tradeTeam, L): Next L
+                    For L = 0 To 15: Input #1, tradeZZ1(tradeTeam, L): Next L
                     Close 1
                 Else
-                    S!(tradeTeam) = 1
+                    tradeS!(tradeTeam) = 1
                 End If
 
             Else
@@ -200,7 +201,7 @@ Sub TradePlayers ()
 
         Next XX
     Else
-        S!(0) = 1
+        tradeS!(0) = 1
     End If
 
     Do
@@ -225,12 +226,12 @@ Sub TradePlayers ()
         Locate 7, 38: Input NY$(tradeTeam)
 
         If NY$(tradeTeam) = "" Then 
-            Call SelectTeam_TRADE (tradeTeam, NTMS, YN$())
+            Call SelectTeam_TRADE (tradeTeam, NTMS, draftYN$())
         Else
-            YN$(tradeTeam) = NY$(tradeTeam)
+            draftYN$(tradeTeam) = NY$(tradeTeam)
             Erase teamNames$
             NTMS = 0
-            Open diskPaths$(0) + "PROBBTMS." + YN$(tradeTeam) For Random As #1 Len = 1031
+            Open diskPaths$(0) + "PROBBTMS." + draftYN$(tradeTeam) For Random As #1 Len = 1031
             Y = LOF(1)
             Field #1, 15 As Q$(0), 15 As Q$(1)
             For I = 0 To 6
@@ -259,7 +260,7 @@ Sub TradePlayers ()
 
             'TS% = INT((NTMS - 1) / 80)
 
-            Call SelectTeam_TRADE (tradeTeam, NTMS, YN$())
+            Call SelectTeam_TRADE (tradeTeam, NTMS, draftYN$())
         End If
 
         If BO% = 1 Then 
@@ -271,7 +272,7 @@ Sub TradePlayers ()
 			Color 15, 4
 
 			Do
-				Locate , 33: Print "ANY CHANGE (YN)";
+				Locate 3, 33: Print "ANY CHANGE (YN)";
 				I$ = GetKeyPress$
 			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -281,7 +282,7 @@ Sub TradePlayers ()
 
     Color 15, 0
 	Cls
-    S!(1) = 0
+    tradeS!(1) = 0
     JJ = 1
 
     Locate 6, 8: Color teamSettings%(tradeTeam, 33), teamSettings%(tradeTeam, 34)
@@ -302,7 +303,7 @@ Sub TradePlayers ()
 	Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 		
     If UCase$(I$) = "N" Then 
-        S!(1) = 1
+        tradeS!(1) = 1
     Else
         For XX = 4 To 11
 			If Mid$(SA$(tradeTeam), XX, 1) = " " Or Mid$(SA$(tradeTeam), XX, 1) = "/" Or Mid$(SA$(tradeTeam), XX, 1) = "." Then Mid$(SA$(tradeTeam), XX, 1) = "_"
@@ -321,16 +322,16 @@ Sub TradePlayers ()
 
                 If _FileExists(diskPaths$(1) + F$(tradeTeam)) Then
                     Open diskPaths$(1) + F$(tradeTeam) For Input As #1
-                    Input #1, A1$(tradeTeam)
+                    Input #1, tradeA1$(tradeTeam)
                     For I = 0 To 14: Input #1, B1$(tradeTeam, I)
-                        For I1 = 0 To 13: Input #1, B1!(tradeTeam, I, I1): Next I1
+                        For I1 = 0 To 13: Input #1, tradeB1!(tradeTeam, I, I1): Next I1
                     Input #1, tradeW0!(tradeTeam, I): Input #1, tradeW1!(tradeTeam, I): Next I
 
-                    For L = 0 To 15: Input #1, ZZtrade(tradeTeam, L): Next L
-                    For L = 0 To 15: Input #1, ZZ1trade(tradeTeam, L): Next L
+                    For L = 0 To 15: Input #1, tradeZZ(tradeTeam, L): Next L
+                    For L = 0 To 15: Input #1, tradeZZ1(tradeTeam, L): Next L
                     Close 1
                 Else
-                    S!(tradeTeam) = 1
+                    tradeS!(tradeTeam) = 1
                 End If
 
             Else
@@ -353,7 +354,7 @@ Sub TradePlayers ()
 
         If UCase$(I$) = "T" Then
 
-            If S!(0) <> 1 Or S!(1) <> 1 Then
+            If tradeS!(0) <> 1 Or tradeS!(1) <> 1 Then
                 Cls
                 Print
                 Print
@@ -415,11 +416,11 @@ Sub TradePlayers ()
             For I2 = 0 To 19: Swap tradeB%(0, I, I2), tradeB%(1, I1, I2): Next I2
             Swap B1$(0, I), B1$(1, I1)
 
-            If S!(0) = 1 Or S!(1) = 1 Or W1 = 0 Then 
-                For I2 = 0 To 13: B1!(0, I, I2) = 0: B1!(1, I1, I2) = 0: Next
+            If tradeS!(0) = 1 Or tradeS!(1) = 1 Or W1 = 0 Then 
+                For I2 = 0 To 13: tradeB1!(0, I, I2) = 0: tradeB1!(1, I1, I2) = 0: Next
                 tradeW0!(1, I1) = 0: tradeW1!(1, I1) = 0: tradeW0!(0, I) = 0: tradeW1!(0, I) = 0
             Else
-                For I2 = 0 To 13: Swap B1!(0, I, I2), B1!(1, I1, I2): Next I2
+                For I2 = 0 To 13: Swap tradeB1!(0, I, I2), tradeB1!(1, I1, I2): Next I2
                 Swap tradeW0!(0, I), tradeW0!(1, I1)
                 Swap tradeW1!(0, I), tradeW1!(1, I1)
             End If
@@ -433,7 +434,7 @@ Sub TradePlayers ()
 			'No more trades
 
             For J = 0 To 1
-                Open diskPaths$(0) + "PROBBTMS." + YN$(J) For Random As #1 Len = 1031
+                Open diskPaths$(0) + "PROBBTMS." + draftYN$(J) For Random As #1 Len = 1031
                 Field #1, 15 As Q$(0), 15 As Q$(1)
                 For I = 0 To 6
                     Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
@@ -478,11 +479,11 @@ Sub TradePlayers ()
             Next J
 
             For J = 0 To 1
-                If S!(J) <> 1 Then
+                If tradeS!(J) <> 1 Then
                     Open diskPaths$(1) + F$(J) For Output As #1
-                    Print #1, A1$(J): For I = 0 To 14: Print #1, B1$(J, I): For I1 = 0 To 13: Print #1, B1!(J, I, I1): Next I1: Print #1, tradeW0!(J, I): Print #1, tradeW1!(J, I): Next I
-                    For L = 0 To 15: Print #1, ZZtrade(J, L): Next L
-                    For L = 0 To 15: Print #1, ZZ1trade(J, L): Next L
+                    Print #1, tradeA1$(J): For I = 0 To 14: Print #1, B1$(J, I): For I1 = 0 To 13: Print #1, tradeB1!(J, I, I1): Next I1: Print #1, tradeW0!(J, I): Print #1, tradeW1!(J, I): Next I
+                    For L = 0 To 15: Print #1, tradeZZ(J, L): Next L
+                    For L = 0 To 15: Print #1, tradeZZ1(J, L): Next L
                     Close 1
                 End If
             Next J
@@ -498,7 +499,7 @@ End Sub
 '     SelectTeam_TRADE Subroutine
 '----------------------------------------
 '... explain here ...
-Sub SelectTeam_TRADE (tradeTeam, numberTeams, YN$())
+Sub SelectTeam_TRADE (tradeTeam, numberTeams, draftYN$())
 
     shared tradeT!()
     Shared SA$(), tradeAA$(), tradeB$()
@@ -529,7 +530,7 @@ Sub SelectTeam_TRADE (tradeTeam, numberTeams, YN$())
 
 		tradeT!(tradeTeam) = teamIndex%(Selection%)
 
-		Open diskPaths$(0) + "PROBBTMS." + YN$(tradeTeam) For Random As #1 Len = 1031
+		Open diskPaths$(0) + "PROBBTMS." + draftYN$(tradeTeam) For Random As #1 Len = 1031
 
 		Field #1, 15 As Q$(0), 15 As Q$(1)
 
@@ -596,7 +597,7 @@ End Sub
 'the trade that is being proposed
 Sub PrintTradeSummary ()
 
-    Shared B1!(), tradeW0!(), tradeW1!()
+    Shared tradeB1!(), tradeW0!(), tradeW1!()
     Shared teamSettings%(), tradeB%()
     Shared tradeAA$(), tradeB$()
 
@@ -606,37 +607,37 @@ Sub PrintTradeSummary ()
     Locate , 50: Color teamSettings%(1, 33), teamSettings%(1, 34): Print tradeAA$(1, 0)
     Color 3, 0: Print
     Locate , 10: Print tradeB$(0, I, 0); " "; tradeB$(0, I, 1); Tab(50); tradeB$(1, I1, 0); " "; tradeB$(1, I1, 1)
-    Locate , 5: Print Using "  ##   GAMES     ##"; tradeB%(0, I, 0); B1!(0, I, 0)
-    Locate , 5: Print Using "####  MINUTES  ####"; tradeB%(0, I, 1); B1!(0, I, 10) / 60
-    Locate , 5: Print Using "####    FGA    ####"; tradeB%(0, I, 2); B1!(0, I, 1)
-    Locate , 5: Print Using "####    FGM    ####"; tradeB%(0, I, 3); B1!(0, I, 2)
-    Locate , 5: Print Using "####    FTA    ####"; tradeB%(0, I, 4); B1!(0, I, 3)
-    Locate , 5: Print Using "####    FTM    ####"; tradeB%(0, I, 5); B1!(0, I, 4)
-    Locate , 5: Print Using "####  OFF REB  ####"; tradeB%(0, I, 6); B1!(0, I, 12)
-    Locate , 5: Print Using "####  TOT REB  ####"; tradeB%(0, I, 6) + tradeB%(0, I, 7); B1!(0, I, 5)
-    Locate , 5: Print Using "####   FOULS   ####"; tradeB%(0, I, 9); B1!(0, I, 6)
-    Locate , 5: Print Using "####  STEALS   ####"; tradeB%(0, I, 11); B1!(0, I, 7)
-    Locate , 5: Print Using "####  ASSISTS  ####"; tradeB%(0, I, 8); B1!(0, I, 8)
-    Locate , 5: Print Using "####  BLOCKS   ####"; tradeB%(0, I, 12); B1!(0, I, 9)
-    Locate , 5: Print Using "     TURNOVERS ####"; B1!(0, I, 11)
+    Locate , 5: Print Using "  ##   GAMES     ##"; tradeB%(0, I, 0); tradeB1!(0, I, 0)
+    Locate , 5: Print Using "####  MINUTES  ####"; tradeB%(0, I, 1); tradeB1!(0, I, 10) / 60
+    Locate , 5: Print Using "####    FGA    ####"; tradeB%(0, I, 2); tradeB1!(0, I, 1)
+    Locate , 5: Print Using "####    FGM    ####"; tradeB%(0, I, 3); tradeB1!(0, I, 2)
+    Locate , 5: Print Using "####    FTA    ####"; tradeB%(0, I, 4); tradeB1!(0, I, 3)
+    Locate , 5: Print Using "####    FTM    ####"; tradeB%(0, I, 5); tradeB1!(0, I, 4)
+    Locate , 5: Print Using "####  OFF REB  ####"; tradeB%(0, I, 6); tradeB1!(0, I, 12)
+    Locate , 5: Print Using "####  TOT REB  ####"; tradeB%(0, I, 6) + tradeB%(0, I, 7); tradeB1!(0, I, 5)
+    Locate , 5: Print Using "####   FOULS   ####"; tradeB%(0, I, 9); tradeB1!(0, I, 6)
+    Locate , 5: Print Using "####  STEALS   ####"; tradeB%(0, I, 11); tradeB1!(0, I, 7)
+    Locate , 5: Print Using "####  ASSISTS  ####"; tradeB%(0, I, 8); tradeB1!(0, I, 8)
+    Locate , 5: Print Using "####  BLOCKS   ####"; tradeB%(0, I, 12); tradeB1!(0, I, 9)
+    Locate , 5: Print Using "     TURNOVERS ####"; tradeB1!(0, I, 11)
     Locate , 5: Print Using "####   3FGA    ####"; tradeB%(0, I, 13); tradeW1!(0, I)
     Locate , 5: Print Using "####   3FGM    ####"; tradeB%(0, I, 14); tradeW0!(0, I)
-    Locate , 5: Print Using "  ##  HI GAME    ##"; tradeB%(0, I, 15); B1!(0, I, 13)
-    Locate 6, 45: Print Using "  ##   GAMES     ##"; tradeB%(1, I1, 0); B1!(1, I1, 0)
-    Locate , 45: Print Using "####  MINUTES  ####"; tradeB%(1, I1, 1); B1!(1, I1, 10) / 60
-    Locate , 45: Print Using "####    FGA    ####"; tradeB%(1, I1, 2); B1!(1, I1, 1)
-    Locate , 45: Print Using "####    FGM    ####"; tradeB%(1, I1, 3); B1!(1, I1, 2)
-    Locate , 45: Print Using "####    FTA    ####"; tradeB%(1, I1, 4); B1!(1, I1, 3)
-    Locate , 45: Print Using "####    FTM    ####"; tradeB%(1, I1, 5); B1!(1, I1, 4)
-    Locate , 45: Print Using "####  OFF REB  ####"; tradeB%(1, I1, 6); B1!(1, I1, 12)
-    Locate , 45: Print Using "####  TOT REB  ####"; tradeB%(1, I1, 6) + tradeB%(1, I1, 7); B1!(1, I1, 5)
-    Locate , 45: Print Using "####   FOULS   ####"; tradeB%(1, I1, 9); B1!(1, I1, 6)
-    Locate , 45: Print Using "####  STEALS   ####"; tradeB%(1, I1, 11); B1!(1, I1, 7)
-    Locate , 45: Print Using "####  ASSISTS  ####"; tradeB%(1, I1, 8); B1!(1, I1, 8)
-    Locate , 45: Print Using "####  BLOCKS   ####"; tradeB%(1, I1, 12); B1!(1, I1, 9)
-    Locate , 45: Print Using "     TURNOVERS ####"; B1!(1, I1, 11)
+    Locate , 5: Print Using "  ##  HI GAME    ##"; tradeB%(0, I, 15); tradeB1!(0, I, 13)
+    Locate 6, 45: Print Using "  ##   GAMES     ##"; tradeB%(1, I1, 0); tradeB1!(1, I1, 0)
+    Locate , 45: Print Using "####  MINUTES  ####"; tradeB%(1, I1, 1); tradeB1!(1, I1, 10) / 60
+    Locate , 45: Print Using "####    FGA    ####"; tradeB%(1, I1, 2); tradeB1!(1, I1, 1)
+    Locate , 45: Print Using "####    FGM    ####"; tradeB%(1, I1, 3); tradeB1!(1, I1, 2)
+    Locate , 45: Print Using "####    FTA    ####"; tradeB%(1, I1, 4); tradeB1!(1, I1, 3)
+    Locate , 45: Print Using "####    FTM    ####"; tradeB%(1, I1, 5); tradeB1!(1, I1, 4)
+    Locate , 45: Print Using "####  OFF REB  ####"; tradeB%(1, I1, 6); tradeB1!(1, I1, 12)
+    Locate , 45: Print Using "####  TOT REB  ####"; tradeB%(1, I1, 6) + tradeB%(1, I1, 7); tradeB1!(1, I1, 5)
+    Locate , 45: Print Using "####   FOULS   ####"; tradeB%(1, I1, 9); tradeB1!(1, I1, 6)
+    Locate , 45: Print Using "####  STEALS   ####"; tradeB%(1, I1, 11); tradeB1!(1, I1, 7)
+    Locate , 45: Print Using "####  ASSISTS  ####"; tradeB%(1, I1, 8); tradeB1!(1, I1, 8)
+    Locate , 45: Print Using "####  BLOCKS   ####"; tradeB%(1, I1, 12); tradeB1!(1, I1, 9)
+    Locate , 45: Print Using "     TURNOVERS ####"; tradeB1!(1, I1, 11)
     Locate , 45: Print Using "####   3FGA    ####"; tradeB%(1, I1, 13); tradeW1!(1, I1)
     Locate , 45: Print Using "####   3FGM    ####"; tradeB%(1, I1, 14); tradeW0!(1, I1)
-    Locate , 45: Print Using "  ##  HI GAME    ##"; tradeB%(1, I1, 15); B1!(1, I1, 13)
+    Locate , 45: Print Using "  ##  HI GAME    ##"; tradeB%(1, I1, 15); tradeB1!(1, I1, 13)
 
 End Sub

@@ -153,7 +153,7 @@ Sub DoTheInput (action%)
                 Color 15, 4
 
                 Do
-                    Locate , 33
+                    Locate 3, 33
                     Print "ANY CHANGE (YN)";
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
@@ -954,8 +954,8 @@ Sub DoTheInput (action%)
                             Print "16. 3-FGM "; inputB%(rosterNumber, 14)
                             Print "17. 3-FGA "; inputB%(rosterNumber, 13)
                             Print "18. HI-GAME "; inputB%(rosterNumber, 15)
-                            Print: 'PRINT "19. PENETRATION (1-9) ";inputB%(rosterNumber,16)
-                            Print: 'PRINT "20. DEF ADJ (-5 TO 5) ";inputB%(rosterNumber,17)
+                            Print 'PRINT "19. PENETRATION (1-9) ";inputB%(rosterNumber,16)
+                            Print 'PRINT "20. DEF ADJ (-5 TO 5) ";inputB%(rosterNumber,17)
                             Print "21. ACTIVE FLAG (0-YES 1-NO) "; inputB%(rosterNumber, 18)
                         End If 'Done checking roster #
 

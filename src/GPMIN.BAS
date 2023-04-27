@@ -1,4 +1,4 @@
-	Sub GPMIN ()
+Sub GPMIN ()
 
     ReDim menuChoices$(1 To 2)
 
@@ -142,7 +142,7 @@ Sub AdjustGames (selectedIndex)
 				Color 15, 4
 
 				Do
-					Locate , 33: Print "ANY CHANGE (YN)";					
+					Locate 3, 33: Print "ANY CHANGE (YN)";					
 					A$ = GetKeyPress$
 				Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
 

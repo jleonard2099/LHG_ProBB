@@ -1,13 +1,12 @@
 Sub CREATE ()
 
-    Shared D1$, D2$, D3$, D4$
+    Shared div1$, div2$, div3$, div4$
 
     ReDim menuChoices$(1 To 3)
-    Dim memberTeams$(1 To TEAMS_PER_CONFERENCE), memberYears$(1 To TEAMS_PER_CONFERENCE)
-    Dim Z2$(TEAMS_PER_CONFERENCE)
-    Dim compareT%(34)
 
-    Shared intZ1%()
+    Dim memberTeams$(1 To TEAMS_PER_CONFERENCE), memberYears$(1 To TEAMS_PER_CONFERENCE)
+
+    Shared compareT%(), intZ1%()
 
     Dim Y As Long
 
@@ -138,7 +137,7 @@ Sub CREATE ()
                                 Locate 2, 33: Print targetFile$
 
                                 Do
-                                    Locate , 33: Print "ANY CHANGE (YN)";
+                                    Locate 3, 33: Print "ANY CHANGE (YN)";
                                     I$ = GetKeyPress$
                                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -154,10 +153,10 @@ Sub CREATE ()
 
                             Open diskPaths$(1) + LG$ + ".LIB" For Input As #2
                             Input #2, LG$
-                            Input #2, D1$
-                            Input #2, D2$
-                            Input #2, D3$
-                            Input #2, D4$
+                            Input #2, div1$
+                            Input #2, div2$
+                            Input #2, div3$
+                            Input #2, div4$
                             For X = 1 To TEAMS_PER_CONFERENCE
                                 Input #2, memberTeams$(X)
                                 Input #2, intZ1%(X)
@@ -192,7 +191,7 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague, league$)
     Dim T1$
     Shared intZ1%()
     Shared compareT%()
-    Shared D1$, D2$, D3$, D4$
+    Shared div1$, div2$, div3$, div4$
 
     FG = 0
     BG = 7
@@ -204,39 +203,39 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague, league$)
         Color 15, 1
 
         Locate 5, 1: QPrint "Name for Division 1 ", 14, 1, -1
-        Locate , 21: QPrint PadRight$(D1$, 10), FG, BG, -1
+        Locate , 21: QPrint PadRight$(div1$, 10), FG, BG, -1
         Locate 7, 1: QPrint "Name for Division 2 ", 14, 1, -1
-        Locate , 21: QPrint PadRight$(D2$, 10), FG, BG, -1
+        Locate , 21: QPrint PadRight$(div2$, 10), FG, BG, -1
         Locate 9, 1: QPrint "Name for Division 3 ", 14, 1, -1
-        Locate , 21: QPrint PadRight$(D3$, 10), FG, BG, -1
+        Locate , 21: QPrint PadRight$(div3$, 10), FG, BG, -1
         Locate 11, 1: QPrint "Name for Division 4 ", 14, 1, -1
-        Locate , 21: QPrint PadRight$(D4$, 10), FG, BG, -1
+        Locate , 21: QPrint PadRight$(div4$, 10), FG, BG, -1
 
         GetDiv1:
         Locate 5, 21 'location of beginning of field
         CapsOn = 0: NumOnly = 0: Max = 10 'specify field parameters
-        Call TextIn(D1$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+        Call TextIn(div1$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
         If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
         If XCode = 2 GoTo Done 'all done entering data
 
         GetDiv2:
         Locate 7, 21 'location of beginning of field
         CapsOn = 0: NumOnly = 0: Max = 10 'specify field parameters
-        Call TextIn(D2$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+        Call TextIn(div2$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
         If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
         If XCode = 2 GoTo Done 'all done entering data
 
         GetDiv3:
         Locate 9, 21 'location of beginning of field
         CapsOn = 0: NumOnly = 0: Max = 10 'specify field parameters
-        Call TextIn(D3$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+        Call TextIn(div3$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
         If XCode = 1 GoTo GetDiv2: 'can't back up any more, stay here
         If XCode = 2 GoTo Done 'all done entering data
 
         GetDiv4:
         Locate 11, 21 'location of beginning of field
         CapsOn = 0: NumOnly = 0: Max = 10 'specify field parameters
-        Call TextIn(D4$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+        Call TextIn(div4$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
         If XCode = 1 GoTo GetDiv3: 'can't back up any more, stay here
 
         Done:
@@ -258,7 +257,7 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague, league$)
         Cls
         Print
         Print "  "; league$; " LEAGUE ": Print: Color 12
-        Locate , 4: Print D1$; Tab(24); D2$; Tab(44); D3$; Tab(64); D4$
+        Locate , 4: Print div1$; Tab(24); div2$; Tab(44); div3$; Tab(64); div4$
 
         For I = 1 To 10
             Color 2: Print Using "## "; I;: Color 15: Print memberTeams$(I);
@@ -368,7 +367,7 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague, league$)
                         Color 15, 4
 
                         Do
-                            Locate , 33: Print "ANY CHANGE (YN)";
+                            Locate 3, 33: Print "ANY CHANGE (YN)";
                             A$ = GetKeyPress$
                         Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
 
@@ -389,7 +388,7 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague, league$)
     Cls
 
     Open diskPaths$(1) + league$ + ".LIB" For Output As #2
-    Print #2, league$: Print #2, D1$: Print #2, D2$: Print #2, D3$: Print #2, D4$
+    Print #2, league$: Print #2, div1$: Print #2, div2$: Print #2, div3$: Print #2, div4$
     For X = 1 To TEAMS_PER_CONFERENCE
         Print #2, memberTeams$(X)
         Print #2, intZ1%(X)
@@ -431,7 +430,7 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague, league$)
 
     Open diskPaths$(1) + Q$ For Output As #2
 
-    Write #2, league$: Write #2, D1$: Write #2, D2$: Write #2, D3$: Write #2, D4$
+    Write #2, league$: Write #2, div1$: Write #2, div2$: Write #2, div3$: Write #2, div4$
 
     For X = 1 To TEAMS_PER_CONFERENCE
         Write #2, memberTeams$(X)

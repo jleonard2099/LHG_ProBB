@@ -93,7 +93,7 @@ Sub LOOKY ()
             Color 15, 4
 
             Do
-                Locate , 33: Print "ANY CHANGE (YN)";
+                Locate 3, 33: Print "ANY CHANGE (YN)";
                 I$ = GetKeyPress$
             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -143,15 +143,17 @@ End Sub
 '...explanation...
 Sub ReadStats (statFile$, totalGames%, teamRatings%(), teamChoice)
 
-    Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, X%
+    Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, Z%
 
     Dim P%(0 To 100)
-    Shared O%(), H$(), O$()
 
-    Shared compareZ!(), compareZ1!()
+	Shared O%()
 
     Shared categories$(), lookyA$()
-    Shared values!(), W0!(), W1!()
+    Shared O$(), statsH$()
+
+    Shared compareZ!(), compareZ1!()
+    Shared values!(), statW0!(), statW1!()
 
     ' *** READ IN TEAM STATS ***
 
@@ -160,7 +162,7 @@ Sub ReadStats (statFile$, totalGames%, teamRatings%(), teamChoice)
     P%(1) = 0
     L% = 0
     W% = 0
-    X% = 0
+    Z% = 0
     HW% = 0
     VW% = 0
     NW% = 0
@@ -170,23 +172,23 @@ Sub ReadStats (statFile$, totalGames%, teamRatings%(), teamChoice)
 
     Open diskPaths$(1) + statFile$ + "S" For Input As #2
     Input #2, totalGames%
-    For I = 1 To 100: Input #2, O%(I): Next I
+    For I = 1 To 100: Input #2, statO%(I): Next I
     For I = 1 To 100: Input #2, O$(I): Next I
     For I = 1 To 100: Input #2, teamRatings%(I): Next I
-    For I = 1 To 100: Input #2, H$(I): Next I
+    For I = 1 To 100: Input #2, statsH$(I): Next I
     Close #2
 
     For I = 1 To totalGames%
-        If O%(I) > teamRatings%(I) Then W% = W% + 1
-        If O%(I) > teamRatings%(I) And Left$(H$(I), 1) = "H" Then HW% = HW% + 1
-        If O%(I) > teamRatings%(I) And Left$(H$(I), 1) = "V" Then VW% = VW% + 1
-        If O%(I) > teamRatings%(I) And Left$(H$(I), 1) = "N" Then NW% = NW% + 1
-        If O%(I) < teamRatings%(I) Then L% = L% + 1
-        If O%(I) < teamRatings%(I) And Left$(H$(I), 1) = "H" Then HL% = HL% + 1
-        If O%(I) < teamRatings%(I) And Left$(H$(I), 1) = "V" Then VL% = VL% + 1
-        If O%(I) < teamRatings%(I) And Left$(H$(I), 1) = "N" Then NL% = NL% + 1
-        If O%(I) = teamRatings%(I) Then X% = X% + 1
-        P%(0) = P%(0) + O%(I)
+        If statO%(I) > teamRatings%(I) Then W% = W% + 1
+        If statO%(I) > teamRatings%(I) And Left$(statsH$(I), 1) = "H" Then HW% = HW% + 1
+        If statO%(I) > teamRatings%(I) And Left$(statsH$(I), 1) = "V" Then VW% = VW% + 1
+        If statO%(I) > teamRatings%(I) And Left$(statsH$(I), 1) = "N" Then NW% = NW% + 1
+        If statO%(I) < teamRatings%(I) Then L% = L% + 1
+        If statO%(I) < teamRatings%(I) And Left$(statsH$(I), 1) = "H" Then HL% = HL% + 1
+        If statO%(I) < teamRatings%(I) And Left$(statsH$(I), 1) = "V" Then VL% = VL% + 1
+        If statO%(I) < teamRatings%(I) And Left$(statsH$(I), 1) = "N" Then NL% = NL% + 1
+        If statO%(I) = teamRatings%(I) Then Z% = Z% + 1
+        P%(0) = P%(0) + statO%(I)
         P%(1) = P%(1) + teamRatings%(I)
     Next
 
@@ -197,19 +199,19 @@ Sub ReadStats (statFile$, totalGames%, teamRatings%(), teamChoice)
         For J = 0 To 13
             Input #1, values!(I, J)
         Next
-        Input #1, W0!(I)
-        Input #1, W1!(I)
+        Input #1, statW0!(I)
+        Input #1, statW1!(I)
     Next
     For K = 0 To 15: Input #1, compareZ!(K): Next
     For K = 0 To 15: Input #1, compareZ1!(K): Next
     Close #1
 
     For I = 0 To 14
-        If values!(I, 0) <> 0 Then values!(I, 14) = values!(I, 10) / values!(I, 0): values!(I, 20) = (values!(I, 2) * 2 + values!(I, 4) + W0!(I)) / values!(I, 0): values!(I, 21) = values!(I, 5) / values!(I, 0)
-        values!(I, 22) = values!(I, 2) * 2 + values!(I, 4) + W0!(I)
+        If values!(I, 0) <> 0 Then values!(I, 14) = values!(I, 10) / values!(I, 0): values!(I, 20) = (values!(I, 2) * 2 + values!(I, 4) + statW0!(I)) / values!(I, 0): values!(I, 21) = values!(I, 5) / values!(I, 0)
+        values!(I, 22) = values!(I, 2) * 2 + values!(I, 4) + statW0!(I)
         values!(I, 23) = values!(I, 5) - values!(I, 12)
         If values!(I, 1) <> 0 Then values!(I, 15) = values!(I, 2) / values!(I, 1)
-        values!(I, 18) = W0!(I): values!(I, 19) = W1!(I)
+        values!(I, 18) = statW0!(I): values!(I, 19) = statW1!(I)
         If values!(I, 19) <> 0 Then values!(I, 16) = values!(I, 18) / values!(I, 19)
         If values!(I, 3) <> 0 Then values!(I, 17) = values!(I, 4) / values!(I, 3)
     Next
@@ -222,15 +224,17 @@ End Sub
 '...explanation...
 Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
 
-    Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, X%
+    Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%
 
     Dim P%(0 To 100)
-    Shared O%(), H$(), O$()
 
-    Shared compareZ!(), compareZ1!()
+	Shared O%()
 
     Shared categories$(), lookyA$()
-    Shared values!(), W0!(), W1!()
+    Shared O$(), statsH$()
+
+    Shared compareZ!(), compareZ1!()
+    Shared values!(), statW0!(), statW1!()
 
     '-----
     'Record
@@ -259,23 +263,23 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
         If I > 54 Then Exit For
 
         If I > 36 Then
-            Locate I - 35, 53: Print Using "###"; O%(I);
+            Locate I - 35, 53: Print Using "###"; statO%(I);
             Print Tab(57); Left$(O$(I), 14);
             Print Tab(72); Using "###"; teamRatings%(I);
-            Print Tab(76); H$(I)
+            Print Tab(76); statsH$(I)
 
         Else
             If I > 18 Then
-                Locate I - 17, 27: Print Using "###"; O%(I);
+                Locate I - 17, 27: Print Using "###"; statO%(I);
                 Print Tab(31); Left$(O$(I), 14);
                 Print Tab(46); Using "###"; teamRatings%(I);
-                Print Tab(50); H$(I)
+                Print Tab(50); statsH$(I)
 
             Else
-                Print Using "###"; O%(I);
+                Print Using "###"; statO%(I);
                 Print Tab(5); Left$(O$(I), 14);
                 Print Tab(20); Using "###"; teamRatings%(I);
-                Print Tab(24); H$(I)
+                Print Tab(24); statsH$(I)
             End If
 
         End If
@@ -358,16 +362,16 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
         If I / 2 = Int(I / 2) Then Color 15
         If I >= 55 Then
             If I <= 72 Then
-                Print Using "###"; O%(I);
+                Print Using "###"; statO%(I);
                 Print Tab(5); Left$(O$(I), 14);
                 Print Tab(20); Using "###"; teamRatings%(I);
-                Print Tab(24); H$(I)
+                Print Tab(24); statsH$(I)
             Else
                 Locate I - 71, 27
-                Print Using "###"; O%(I);
+                Print Using "###"; statO%(I);
                 Print Tab(31); Left$(O$(I), 14);
                 Print Tab(46); Using "###"; teamRatings%(I);
-                Print Tab(50); H$(I)
+                Print Tab(50); statsH$(I)
             End If
         End If
 
@@ -497,18 +501,18 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
             End If
 
             '3FGM, 3FGA, 3FG PCT
-            Locate , 44: Print Using "#### ####"; W0!(I); W1!(I);: Locate , 54
+            Locate , 44: Print Using "#### ####"; statW0!(I); statW1!(I);: Locate , 54
 
-            If W1!(I) = 0 Then
+            If statW1!(I) = 0 Then
                 Print ".---";
             Else
-                If W1!(I) = W0!(I) Then
+                If statW1!(I) = statW0!(I) Then
                     Print "1.00";
                 Else
-                    If W0!(I) = 0 Then
+                    If statW0!(I) = 0 Then
                         Print ".000";
                     Else
-                        threeFGPCT! = W0!(I) / W1!(I)
+                        threeFGPCT! = statW0!(I) / statW1!(I)
                         Print Using ".###"; threeFGPCT!;
                     End If
                 End If
@@ -683,10 +687,10 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
                     Print Left$(lookyA$(I), 13);: Locate , 15
 
                     'Points
-                    Print Using "####"; values!(I, 2) * 2 + values!(I, 4) + W0!(I);
+                    Print Using "####"; values!(I, 2) * 2 + values!(I, 4) + statW0!(I);
 
                     'Average
-                    If values!(I, 0) > 0 Then Locate , 21: Print Using "##.#"; (values!(I, 2) * 2 + values!(I, 4) + W0!(I)) / values!(I, 0);
+                    If values!(I, 0) > 0 Then Locate , 21: Print Using "##.#"; (values!(I, 2) * 2 + values!(I, 4) + statW0!(I)) / values!(I, 0);
 
                     'Highest Points, Rebounds
                     Locate , 26: Print Using "## #### #### ####"; values!(I, 13); values!(I, 12); values!(I, 5) - values!(I, 12); values!(I, 5);
@@ -795,7 +799,7 @@ End Sub
 '...explanation...
 Sub SortStats (CP%)
 
-    Shared values!(), W0!(), W1!()
+    Shared values!(), statW0!(), statW1!()
     Shared lookyA$()
 
     'SORT BASED ON CATEGORY
@@ -827,8 +831,8 @@ Sub SortStats (CP%)
         For Z1 = Z + 1 To 14
             If values!(Z, SG%) < values!(Z1, SG%) Then
                 For I = 0 To 24: Swap values!(Z, I), values!(Z1, I): Next
-                Swap W0!(Z), W0!(Z1)
-                Swap W1!(Z), W1!(Z1)
+                Swap statW0!(Z), statW0!(Z1)
+                Swap statW1!(Z), statW1!(Z1)
                 Swap lookyA$(Z), lookyA$(Z1)
             End If
         Next Z1
@@ -909,32 +913,32 @@ End Sub
 '...explanation...
 Sub PrintStatsSchedule (totalGames%, teamRatings%(), B$)
 
-    Shared O%(), H$(), O$()
+    Shared O%(), statsH$(), O$()
 
     LPrint "SCHEDULE RESULTS FOR "; B$
     LPrint
 
     For I = 1 To 28
-        LPrint Using "###"; O%(I);
+        LPrint Using "###"; statO%(I);
         LPrint Tab(5); Left$(O$(I), 14);
         LPrint Tab(20); Using "###"; teamRatings%(I);
-        LPrint Tab(24); H$(I); Tab(27);
+        LPrint Tab(24); statsH$(I); Tab(27);
 
         If I + 28 > totalGames% Then
             LPrint
         Else
-            LPrint Using "###"; O%(I + 28);
+            LPrint Using "###"; statO%(I + 28);
             LPrint Tab(31); Left$(O$(I + 28), 14);
             LPrint Tab(46); Using "###"; teamRatings%(I + 28);
-            LPrint Tab(50); H$(I + 28); Tab(53);
+            LPrint Tab(50); statsH$(I + 28); Tab(53);
 
             If I + 56 > totalGames% Then
                 LPrint
             Else
-                LPrint Using "###"; O%(I + 56);
+                LPrint Using "###"; statO%(I + 56);
                 LPrint Tab(57); Left$(O$(I + 56), 14);
                 LPrint Tab(72); Using "###"; teamRatings%(I + 56);
-                LPrint Tab(76); H$(I + 56)
+                LPrint Tab(76); statsH$(I + 56)
             End If
         End If
 
@@ -950,7 +954,7 @@ End Sub
 '...explanation...
 Sub PrintStatsSummary (totalGames%, compareZ!(), compareZ1!(), B$)
 
-    Shared values!(), W0!(), W1!()
+    Shared values!(), statW0!(), statW1!()
     Shared lookyA$()
 
     LPrint "STATISTICS SUMMARY FOR "; B$
@@ -986,19 +990,19 @@ Sub PrintStatsSummary (totalGames%, compareZ!(), compareZ1!(), B$)
         End If
 
         '3FGM, 3FGA, 3FG PCT
-        LPrint Tab(44); Using "#### ####"; W0!(I); W1!(I);: LPrint Tab(54);
+        LPrint Tab(44); Using "#### ####"; statW0!(I); statW1!(I);: LPrint Tab(54);
 
-        If W1!(I) = 0 Then
+        If statW1!(I) = 0 Then
             LPrint ".---";
         Else
-            If W1!(I) = W0!(I) Then
+            If statW1!(I) = statW0!(I) Then
                 LPrint "1.00";
             Else
 
-                If W0!(I) = 0 Then
+                If statW0!(I) = 0 Then
                     LPrint ".000";
                 Else
-                    threeFGPCT! = W0!(I) / W1!(I)
+                    threeFGPCT! = statW0!(I) / statW1!(I)
                     LPrint Using ".###"; threeFGPCT!;
                 End If
             End If
@@ -1074,10 +1078,10 @@ Sub PrintStatsSummary (totalGames%, compareZ!(), compareZ1!(), B$)
         LPrint Left$(lookyA$(I), 13);: LPrint Tab(15);
 
         'Points
-        LPrint Using "####"; values!(I, 2) * 2 + values!(I, 4) + W0!(I);
+        LPrint Using "####"; values!(I, 2) * 2 + values!(I, 4) + statW0!(I);
 
         'Average
-        If values!(I, 0) > 0 Then LPrint Tab(21); Using "##.#"; (values!(I, 2) * 2 + values!(I, 4) + W0!(I)) / values!(I, 0);
+        If values!(I, 0) > 0 Then LPrint Tab(21); Using "##.#"; (values!(I, 2) * 2 + values!(I, 4) + statW0!(I)) / values!(I, 0);
         
         'Highest Points, Rebounds
         LPrint Tab(26); Using "## #### #### ####"; values!(I, 13); values!(I, 12); values!(I, 5) - values!(I, 12); values!(I, 5);

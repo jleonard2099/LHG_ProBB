@@ -47,7 +47,7 @@ Sub ViewComparisons ()
 
     Shared compareL%(), compareT%()
     Shared compareA$(), compareAA$(), compareB$(), comparePS$(), compareT$()
-    Shared compareW0!(), compareW1!()
+    Shared compareA!(), compareW0!(), compareW1!()
     Shared compareZ!(), compareZ1!()
 
     Do
@@ -111,7 +111,7 @@ Sub ViewComparisons ()
                 For I = 0 To 14
                     Input #1, compareA$(I)
                     For J = 0 To 13
-                        Input #1, A!(I, J)
+                        Input #1, compareA!(I, J)
                     Next
                     Input #1, compareW0!(I)
                     Input #1, compareW1!(I)
@@ -162,7 +162,7 @@ Sub ViewComparisons ()
 			Color 15, 4
 
             Do
-				Locate , 33: Print "ANY CHANGE (YN)";
+				Locate 3, 33: Print "ANY CHANGE (YN)";
 				I$ = GetKeyPress$
 			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
         Else
@@ -362,7 +362,6 @@ Sub StatsToScreen (AL, AW, HL, HW)
     Shared compareA$(), compareB$()
     Shared compareB%(), compareT%()
     Shared comparePS$(), compareT$()
-    Shared W0!(), W1!()
     Shared compareZ!(), compareZ1!()
 
     Cls
@@ -622,11 +621,11 @@ End Sub
 '...explanation...
 Sub PlayerComparisons_Screen ()
 
-    Shared A!()
+    Shared compareA!()
     Shared compareA$(), compareB$()
     Shared compareB%(), compareT%()
     Shared comparePS$(), compareT$()
-    Shared W0!(), W1!()
+    Shared compareW0!(), compareW1!()
     Shared compareZ!(), compareZ1!()
 
     300 '
@@ -760,65 +759,65 @@ Sub PlayerComparisons_Screen ()
 
     Color 7, 0: Print String$(2, 177)
     Color 14, 11
-    Locate 6, 14: Print Using "###"; A!(I, 0);
+    Locate 6, 14: Print Using "###"; compareA!(I, 0);
 
-    If A!(I, 10) = 0 Then Locate , 17: Print "    0";
-    If A!(I, 10) > 0 Then Locate , 17: Print Using "#####"; (A!(I, 10) + 30) / 60;
+    If compareA!(I, 10) = 0 Then Locate , 17: Print "    0";
+    If compareA!(I, 10) > 0 Then Locate , 17: Print Using "#####"; (compareA!(I, 10) + 30) / 60;
 
-    Locate , 22: Print Using "#####"; A!(I, 2);
-    Locate , 27: Print Using "#####"; A!(I, 1);
+    Locate , 22: Print Using "#####"; compareA!(I, 2);
+    Locate , 27: Print Using "#####"; compareA!(I, 1);
 
-    If A!(I, 2) = 0 Then Locate , 32: Print "    0.0";: Print "%";
-    If A!(I, 2) > 0 Then Locate , 32: Print Using "#####.#"; (A!(I, 2) / A!(I, 1)) * 100;: Print "%";
+    If compareA!(I, 2) = 0 Then Locate , 32: Print "    0.0";: Print "%";
+    If compareA!(I, 2) > 0 Then Locate , 32: Print Using "#####.#"; (compareA!(I, 2) / compareA!(I, 1)) * 100;: Print "%";
 
-    Locate 6, 40: Print Using "#####"; A!(I, 4);
-    Locate 6, 45: Print Using "#####"; A!(I, 3);
+    Locate 6, 40: Print Using "#####"; compareA!(I, 4);
+    Locate 6, 45: Print Using "#####"; compareA!(I, 3);
 
-    If A!(I, 4) = 0 Then Locate , 50: Print "    0.0";: Print "%";
-    If A!(I, 4) > 0 Then Locate , 50: Print Using "#####.#"; A!(I, 4) / A!(I, 3) * 100;: Print "%";
+    If compareA!(I, 4) = 0 Then Locate , 50: Print "    0.0";: Print "%";
+    If compareA!(I, 4) > 0 Then Locate , 50: Print Using "#####.#"; compareA!(I, 4) / compareA!(I, 3) * 100;: Print "%";
 
-    Locate , 58: Print Using "#######"; A!(I, 12);
+    Locate , 58: Print Using "#######"; compareA!(I, 12);
 
-    If A!(I, 0) = 0 Or A!(I, 12) = 0 Then Locate , 65: Print "      0.0";
-    If A!(I, 0) > 0 And A!(I, 12) = 0 Then Locate , 65: Print "      0.0";
-    If A!(I, 0) > 0 And A!(I, 12) > 0 Then Locate , 65: Print Using "#######.#"; A!(I, 12) / A!(I, 0);
+    If compareA!(I, 0) = 0 Or compareA!(I, 12) = 0 Then Locate , 65: Print "      0.0";
+    If compareA!(I, 0) > 0 And compareA!(I, 12) = 0 Then Locate , 65: Print "      0.0";
+    If compareA!(I, 0) > 0 And compareA!(I, 12) > 0 Then Locate , 65: Print Using "#######.#"; compareA!(I, 12) / compareA!(I, 0);
 
     Color 7, 0: Print String$(2, 177)
     Locate , 16: Print String$(60, 177)
     Color 14, 11
-    Locate 11, 14: Print Using "######"; A!(I, 5) - A!(I, 12);
+    Locate 11, 14: Print Using "######"; compareA!(I, 5) - compareA!(I, 12);
 
-    If A!(I, 0) = 0 Or (A!(I, 5) - A!(I, 12)) = 0 Then Locate , 20: Print "      0.0";
-    If A!(I, 0) > 0 And (A!(I, 5) - A!(I, 12)) = 0 Then Locate , 20: Print "      0.0";
-    If A!(I, 0) > 0 And (A!(I, 5) - A!(I, 12)) > 0 Then Locate , 20: Print Using "#######.#"; (A!(I, 5) - A!(I, 12)) / A!(I, 0);
+    If compareA!(I, 0) = 0 Or (compareA!(I, 5) - compareA!(I, 12)) = 0 Then Locate , 20: Print "      0.0";
+    If compareA!(I, 0) > 0 And (compareA!(I, 5) - compareA!(I, 12)) = 0 Then Locate , 20: Print "      0.0";
+    If compareA!(I, 0) > 0 And (compareA!(I, 5) - compareA!(I, 12)) > 0 Then Locate , 20: Print Using "#######.#"; (compareA!(I, 5) - compareA!(I, 12)) / compareA!(I, 0);
 
-    Locate , 29: Print Using "######"; A!(I, 8);
+    Locate , 29: Print Using "######"; compareA!(I, 8);
 
-    If A!(I, 0) = 0 Or A!(I, 8) = 0 Then Locate , 35: Print "     0.0";
-    If A!(I, 0) > 0 And A!(I, 8) = 0 Then Locate , 35: Print "     0.0";
-    If A!(I, 0) > 0 And A!(I, 8) > 0 Then Locate , 35: Print Using "######.#"; A!(I, 8) / A!(I, 0);
+    If compareA!(I, 0) = 0 Or compareA!(I, 8) = 0 Then Locate , 35: Print "     0.0";
+    If compareA!(I, 0) > 0 And compareA!(I, 8) = 0 Then Locate , 35: Print "     0.0";
+    If compareA!(I, 0) > 0 And compareA!(I, 8) > 0 Then Locate , 35: Print Using "######.#"; compareA!(I, 8) / compareA!(I, 0);
 
-    Locate , 43: Print Using "#######"; A!(I, 6);
+    Locate , 43: Print Using "#######"; compareA!(I, 6);
 
-    If A!(I, 0) = 0 Or A!(I, 6) = 0 Then Locate , 50: Print "  0.0";
-    If A!(I, 0) > 0 And A!(I, 6) = 0 Then Locate , 50: Print "  0.0";
-    If A!(I, 0) > 0 And A!(I, 6) > 0 Then Locate , 50: Print Using "###.#"; A!(I, 6) / A!(I, 0);
+    If compareA!(I, 0) = 0 Or compareA!(I, 6) = 0 Then Locate , 50: Print "  0.0";
+    If compareA!(I, 0) > 0 And compareA!(I, 6) = 0 Then Locate , 50: Print "  0.0";
+    If compareA!(I, 0) > 0 And compareA!(I, 6) > 0 Then Locate , 50: Print Using "###.#"; compareA!(I, 6) / compareA!(I, 0);
 
-    Locate , 55: Print Using "######"; A!(I, 5);
-    Locate , 61: Print Using "#####"; A!(I, 7);
+    Locate , 55: Print Using "######"; compareA!(I, 5);
+    Locate , 61: Print Using "#####"; compareA!(I, 7);
 
-    If A!(I, 0) = 0 Or A!(I, 7) = 0 Then Locate , 66: Print "    0.0";
-    If A!(I, 0) > 0 And A!(I, 7) = 0 Then Locate , 66: Print "    0.0";
-    If A!(I, 0) > 0 And A!(I, 7) > 0 Then Locate , 66: Print Using "#####.#"; A!(I, 7) / A!(I, 0);
+    If compareA!(I, 0) = 0 Or compareA!(I, 7) = 0 Then Locate , 66: Print "    0.0";
+    If compareA!(I, 0) > 0 And compareA!(I, 7) = 0 Then Locate , 66: Print "    0.0";
+    If compareA!(I, 0) > 0 And compareA!(I, 7) > 0 Then Locate , 66: Print Using "#####.#"; compareA!(I, 7) / compareA!(I, 0);
 
     Color 7, 0: Print String$(2, 177)
     Locate , 16: Print String$(59, 177)
     Color 14, 11
-    Locate 16, 14: Print Using "####"; A!(I, 9);
+    Locate 16, 14: Print Using "####"; compareA!(I, 9);
 
-    If A!(I, 0) = 0 Or A!(I, 9) = 0 Then Locate , 18: Print "    0.0";
-    If A!(I, 0) > 0 And A!(I, 9) = 0 Then Locate , 18: Print "    0.0";
-    If A!(I, 0) > 0 And A!(I, 9) > 0 Then Locate , 18: Print Using "#####.#"; A!(I, 9) / A!(I, 0);
+    If compareA!(I, 0) = 0 Or compareA!(I, 9) = 0 Then Locate , 18: Print "    0.0";
+    If compareA!(I, 0) > 0 And compareA!(I, 9) = 0 Then Locate , 18: Print "    0.0";
+    If compareA!(I, 0) > 0 And compareA!(I, 9) > 0 Then Locate , 18: Print Using "#####.#"; compareA!(I, 9) / compareA!(I, 0);
 
     Locate , 25: Print Using "#######"; compareW0!(I);
     Locate , 32: Print Using "#######"; compareW1!(I);
@@ -826,13 +825,13 @@ Sub PlayerComparisons_Screen ()
     If compareW0!(I) = 0 Then Locate , 39: Print "      0.0";: Print "%";
     If compareW0!(I) > 0 Then Locate , 39: Print Using "#######.#"; compareW0!(I) / compareW1!(I) * 100;: Print "%";
 
-    Locate , 49: Print Using "#######"; A!(I, 13);
-    Locate , 56: Print Using "######"; (A!(I, 2) * 2) + A!(I, 4) + compareW0!(I);
+    Locate , 49: Print Using "#######"; compareA!(I, 13);
+    Locate , 56: Print Using "######"; (compareA!(I, 2) * 2) + compareA!(I, 4) + compareW0!(I);
 
-    If (A!(I, 2) * 2) + A!(I, 4) + compareW0!(I) = 0 Then Locate , 62: Print "   0.0";
-    If (A!(I, 2) * 2) + A!(I, 4) + compareW0!(I) > 0 Then Locate , 62: Print Using "####.#"; ((A!(I, 2) * 2) + A!(I, 4) + compareW0!(I)) / A!(I, 0);
-    If A!(I, 10) = 0 Then Locate , 68: Print "    0.0";
-    If A!(I, 10) > 0 Then Locate , 68: Print Using "#####.#"; ((A!(I, 10) + 30) / 60) / A!(I, 0);
+    If (compareA!(I, 2) * 2) + compareA!(I, 4) + compareW0!(I) = 0 Then Locate , 62: Print "   0.0";
+    If (compareA!(I, 2) * 2) + compareA!(I, 4) + compareW0!(I) > 0 Then Locate , 62: Print Using "####.#"; ((compareA!(I, 2) * 2) + compareA!(I, 4) + compareW0!(I)) / compareA!(I, 0);
+    If compareA!(I, 10) = 0 Then Locate , 68: Print "    0.0";
+    If compareA!(I, 10) > 0 Then Locate , 68: Print Using "#####.#"; ((compareA!(I, 10) + 30) / 60) / compareA!(I, 0);
 
     Color 7, 0: Print String$(2, 177)
     Locate , 16: Print String$(61, 177)

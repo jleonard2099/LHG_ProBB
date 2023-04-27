@@ -70,7 +70,7 @@ Sub TeamSelect_PROHOOP (teamIndicator)
             Color 15, 4
 
             Do
-                Locate , 33
+                Locate 3, 33
                 Print "ANY CHANGE (YN)";
                 I$ = GetKeyPress$
             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
@@ -629,7 +629,7 @@ End Sub
 Sub Choices ()
 
     810 '
-    NL% = 1
+    nbrLines% = 1
     A1$ = ""
     B1$ = ""
     C1$ = ""
@@ -716,7 +716,7 @@ Sub Substitutions ()
     Do
 
         220 '
-        NL% = 1
+        nbrLines% = 1
         A1$ = ""
         B1$ = ""
         C1$ = ""
@@ -831,8 +831,8 @@ Sub Fouls (skipRandom%)
         W5 = 0
         M9 = Int(Rnd(1) * F5%(D, 0)) + 1
 
-        For M8 = 0 To 4: 
-			W5 = W5 + A!(D, B1!(D, M8), 17)
+        For M8 = 0 To 4:
+            W5 = W5 + A!(D, B1!(D, M8), 17)
             If M9 <= W5 Then
                 Exit For
             End If
@@ -853,18 +853,18 @@ Sub Fouls (skipRandom%)
 
     If A!(D, B1!(D, W5), 12) < 6 Then
 
-        If PB% = 0 Then 
-			U$ = "FOUL NUMBER" + Str$(A!(D, B1!(D, W5), 12)) + " CALLED ON " + AA$(D, B1!(D, W5), 0): Call DELAY
-		Else
-			'PB% = 1 
-			If pbpDelay! <> 0 Then
-				Call WINDEX
-				Print "FOUL ON "; AA$(D, B1!(D, W5), 0)
-				Call MOREDELAY
-				Print "HE HAS "; A!(D, B1!(D, W5), 12)
-				Call MOREDELAY
-			End If
-		End If
+        If PB% = 0 Then
+            U$ = "FOUL NUMBER" + Str$(A!(D, B1!(D, W5), 12)) + " CALLED ON " + AA$(D, B1!(D, W5), 0): Call DELAY
+        Else
+            'PB% = 1
+            If pbpDelay! <> 0 Then
+                Call WINDEX
+                Print "FOUL ON "; AA$(D, B1!(D, W5), 0)
+                Call MOREDELAY
+                Print "HE HAS "; A!(D, B1!(D, W5), 12)
+                Call MOREDELAY
+            End If
+        End If
 
         Call MOREDELAY
 
@@ -884,21 +884,21 @@ Sub Fouls (skipRandom%)
             End If
         Next I3
 
-        If PB% = 0 Then 
-			U$ = "FOUL CALLED ON " + AA$(D, B1!(D, W5), 0): Call DELAY
-		Else
-			'PB% = 1 
-			If pbpDelay! <> 0 Then Call WINDEX: Print "FOUL ON "; AA$(D, B1!(D, W5), 0): Call MOREDELAY
-		End If
+        If PB% = 0 Then
+            U$ = "FOUL CALLED ON " + AA$(D, B1!(D, W5), 0): Call DELAY
+        Else
+            'PB% = 1
+            If pbpDelay! <> 0 Then Call WINDEX: Print "FOUL ON "; AA$(D, B1!(D, W5), 0): Call MOREDELAY
+        End If
 
         U$ = "HE HAS JUST FOULED OUT !!!"
 
-        If PB% = 0 Then 
-			Call DELAY
-		Else
-			'PB% = 1 
-			If pbpDelay! <> 0 Then Print U$: Call MOREDELAY
-		End If
+        If PB% = 0 Then
+            Call DELAY
+        Else
+            'PB% = 1
+            If pbpDelay! <> 0 Then Print U$: Call MOREDELAY
+        End If
 
         Call MOREDELAY
         C9 = 9
@@ -909,7 +909,7 @@ Sub Fouls (skipRandom%)
 
         If U5 = 0 Or U5 = 1 And D = 1 - CT Then
             P9 = D
-			C1 = 1
+            C1 = 1
             Call PlayStyle
             Call PlayItSafe
             Call Substitutions
@@ -1710,10 +1710,10 @@ Sub DISABLEPLAYERS ()
 
             'Print player name
             Print AA$(P9, I, 0);
-			Color 15, 0
+            Color 15, 0
 
             'Print player position, ...
-			Print Tab(18); B%(P9, I, 0)
+            Print Tab(18); B%(P9, I, 0)
 
         Next
 
@@ -1725,20 +1725,20 @@ Sub DISABLEPLAYERS ()
             If UCase$(I$) <> "Z" Then
 
                 I1 = Val(I$)
-				Call ALPHANUM(I$, I1)
+                Call ALPHANUM(I$, I1)
 
                 If B%(P9, I1, 18) = 0 And DX% < 6 Then
                     B%(P9, I1, 18) = -1
                     DX% = DX% + 1
                     Locate 3 + I1, 3
-					Color T(P9, 33), T(P9, 34): Print AA$(P9, I1, 0)
+                    Color T(P9, 33), T(P9, 34): Print AA$(P9, I1, 0)
                     Color 15, 0
                 Else
                     If B%(P9, I1, 18) = -1 Then
                         B%(P9, I1, 18) = 0
                         DX% = DX% - 1
                         Locate 3 + I1, 3
-						Color 15, 0: Print AA$(P9, I1, 0)
+                        Color 15, 0: Print AA$(P9, I1, 0)
                     End If
                 End If
             End If
@@ -2210,8 +2210,10 @@ Sub SAVESTATFILES ()
 
         AP%(2) = AP%(2) + 1
         AP = 1
+
         If AP%(1) < AP%(0) + AP%(2) Then
             Kill "GAME82"
+            'All Done
             AD = 1
         Else
             Open "GAME82" For Output As #2
@@ -2219,6 +2221,7 @@ Sub SAVESTATFILES ()
             For I = 0 To 2: Print #2, AP%(I): Next
             Close 2
         End If
+
     End If
 
     Cls
@@ -2470,10 +2473,6 @@ Sub SAVESTATFILES ()
         Z!(12) = 0
 
     Loop Until Q = 2
-
-    If AP <> 1 Or AD = 1 Then
-        If AD = 1 Then Run "HELLO.EXE"
-    End If
 
 6292 End Sub
 
@@ -3187,15 +3186,15 @@ Sub DELAY ()
 
         Locate 8, 1
 
-        If NL% = 1 Then A1$ = U$: VG(1) = T(P, 33): VH(1) = T(P, 34)
-        If NL% = 2 Then B1$ = U$: VG(2) = T(P, 33): VH(2) = T(P, 34)
-        If NL% = 3 Then C1$ = U$: VG(3) = T(P, 33): VH(3) = T(P, 34)
-        If NL% = 4 Then D1$ = U$: VG(4) = T(P, 33): VH(4) = T(P, 34)
-        If NL% = 5 Then E1$ = U$: VG(5) = T(P, 33): VH(5) = T(P, 34)
-        If NL% = 6 Then F1$ = U$: VG(6) = T(P, 33): VH(6) = T(P, 34)
-        If NL% = 7 Then G1$ = U$: VG(7) = T(P, 33): VH(7) = T(P, 34)
-        If NL% = 8 Then H1$ = U$: VG(8) = T(P, 33): VH(8) = T(P, 34)
-        If NL% > 8 Then
+        If nbrLines% = 1 Then A1$ = U$: VG(1) = T(P, 33): VH(1) = T(P, 34)
+        If nbrLines% = 2 Then B1$ = U$: VG(2) = T(P, 33): VH(2) = T(P, 34)
+        If nbrLines% = 3 Then C1$ = U$: VG(3) = T(P, 33): VH(3) = T(P, 34)
+        If nbrLines% = 4 Then D1$ = U$: VG(4) = T(P, 33): VH(4) = T(P, 34)
+        If nbrLines% = 5 Then E1$ = U$: VG(5) = T(P, 33): VH(5) = T(P, 34)
+        If nbrLines% = 6 Then F1$ = U$: VG(6) = T(P, 33): VH(6) = T(P, 34)
+        If nbrLines% = 7 Then G1$ = U$: VG(7) = T(P, 33): VH(7) = T(P, 34)
+        If nbrLines% = 8 Then H1$ = U$: VG(8) = T(P, 33): VH(8) = T(P, 34)
+        If nbrLines% > 8 Then
             A1$ = B1$
             B1$ = C1$
             C1$ = D1$
@@ -3212,7 +3211,7 @@ Sub DELAY ()
             VH(8) = T(P, 34)
         End If
 
-        NL% = NL% + 1
+        nbrLines% = nbrLines% + 1
 
         Color VG(1), VH(1): Print A1$
         Color VG(2), VH(2): Print B1$
@@ -4797,7 +4796,7 @@ End Sub
 ' ...explanation...
 Sub RECORDSCHECK ()
 
-    'Dim RC$(50, 4), REC!(50, 2) As Single
+    'Dim RC$(50, 4), indRecords!(50, 2) As Single
     Dim TRC$(125, 3), TREC(125, 2) As Single
     Dim V8(1, 14)
     Dim SITE$(1)
@@ -4852,7 +4851,7 @@ Sub RECORDSCHECK ()
 
         For I = 0 To 48
             For I1 = 0 To 2
-                Input #1, REC!(I, I1)
+                Input #1, indRecords!(I, I1)
             Next
             For I1 = 0 To 4
                 Input #1, RC$(I, I1)
@@ -4877,10 +4876,10 @@ Sub RECORDSCHECK ()
         For I1 = 0 To 14
 
             ' SCORING RECORDS FOR POINTS IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
-            If A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0) > REC!(0, 0) Then
-                REC!(0, 0) = A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0) ' POINTS
-                REC!(0, 1) = 1 ' TIMES DONE
-                REC!(0, 2) = 0 ' GAME
+            If A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0) > indRecords!(0, 0) Then
+                indRecords!(0, 0) = A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0) ' POINTS
+                indRecords!(0, 1) = 1 ' TIMES DONE
+                indRecords!(0, 2) = 0 ' GAME
                 RC$(0, 0) = AA$(I, I1, 0) ' NAME
                 RC$(0, 1) = B$(I) ' TEAM
                 RC$(0, 2) = SITE$(I) ' AT/VS
@@ -4888,10 +4887,10 @@ Sub RECORDSCHECK ()
                 RC$(0, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 13) + QQ(I, 2, I1, 13) > REC!(1, 0) Then
-                REC!(1, 0) = QQ(I, 1, I1, 13) + QQ(I, 2, I1, 13) ' POINTS
-                REC!(1, 1) = 1 ' TIMES DONE
-                REC!(1, 2) = 1 ' HALF
+            If QQ(I, 1, I1, 13) + QQ(I, 2, I1, 13) > indRecords!(1, 0) Then
+                indRecords!(1, 0) = QQ(I, 1, I1, 13) + QQ(I, 2, I1, 13) ' POINTS
+                indRecords!(1, 1) = 1 ' TIMES DONE
+                indRecords!(1, 2) = 1 ' HALF
                 RC$(1, 0) = AA$(I, I1, 0) ' NAME
                 RC$(1, 1) = B$(I) ' TEAM
                 RC$(1, 2) = SITE$(I) ' AT/VS
@@ -4899,10 +4898,10 @@ Sub RECORDSCHECK ()
                 RC$(1, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 13) + QQ(I, 4, I1, 13) > REC!(1, 0) Then
-                REC!(1, 0) = QQ(I, 3, I1, 13) + QQ(I, 4, I1, 13) ' POINTS
-                REC!(1, 1) = 1 ' TIMES DONE
-                REC!(1, 2) = 2 ' HALF
+            If QQ(I, 3, I1, 13) + QQ(I, 4, I1, 13) > indRecords!(1, 0) Then
+                indRecords!(1, 0) = QQ(I, 3, I1, 13) + QQ(I, 4, I1, 13) ' POINTS
+                indRecords!(1, 1) = 1 ' TIMES DONE
+                indRecords!(1, 2) = 2 ' HALF
                 RC$(1, 0) = AA$(I, I1, 0) ' NAME
                 RC$(1, 1) = B$(I) ' TEAM
                 RC$(1, 2) = SITE$(I) ' AT/VS
@@ -4911,10 +4910,10 @@ Sub RECORDSCHECK ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 13) > REC!(2, 0) Then
-                    REC!(2, 0) = QQ(I, I2, I1, 13) ' POINTS
-                    REC!(2, 1) = 1 ' TIMES DONE
-                    REC!(2, 2) = I2 ' QTR
+                If QQ(I, I2, I1, 13) > indRecords!(2, 0) Then
+                    indRecords!(2, 0) = QQ(I, I2, I1, 13) ' POINTS
+                    indRecords!(2, 1) = 1 ' TIMES DONE
+                    indRecords!(2, 2) = I2 ' QTR
                     RC$(2, 0) = AA$(I, I1, 0) ' NAME
                     RC$(2, 1) = B$(I) ' TEAM
                     RC$(2, 2) = SITE$(I) ' AT/VS
@@ -4924,10 +4923,10 @@ Sub RECORDSCHECK ()
             Next I2
 
             For I2 = 5 To 8
-                If QQ(I, I2, I1, 13) > REC!(3, 0) Then
-                    REC!(3, 0) = QQ(I, I2, I1, 13) ' POINTS
-                    REC!(3, 1) = 1 ' TIMES DONE
-                    REC!(3, 2) = I2 ' QTR
+                If QQ(I, I2, I1, 13) > indRecords!(3, 0) Then
+                    indRecords!(3, 0) = QQ(I, I2, I1, 13) ' POINTS
+                    indRecords!(3, 1) = 1 ' TIMES DONE
+                    indRecords!(3, 2) = I2 ' QTR
                     RC$(3, 0) = AA$(I, I1, 0) ' NAME
                     RC$(3, 1) = B$(I) ' TEAM
                     RC$(3, 2) = SITE$(I) ' AT/VS
@@ -4938,10 +4937,10 @@ Sub RECORDSCHECK ()
 
             ' FIELD GOAL PERCENTAGE RECORDS FOR HIGH %, MOST W/NO MISSES, MOST W/NONE MADE
             If A!(I, I1, 8) >= 15 Then
-                If A!(I, I1, 8) / A!(I, I1, 7) > REC!(4, 0) Then
-                    REC!(4, 0) = A!(I, I1, 8) / A!(I, I1, 7) ' PCTG
-                    REC!(4, 1) = A!(I, I1, 8) ' FGM
-                    REC!(4, 2) = A!(I, I1, 7) ' FGA
+                If A!(I, I1, 8) / A!(I, I1, 7) > indRecords!(4, 0) Then
+                    indRecords!(4, 0) = A!(I, I1, 8) / A!(I, I1, 7) ' PCTG
+                    indRecords!(4, 1) = A!(I, I1, 8) ' FGM
+                    indRecords!(4, 2) = A!(I, I1, 7) ' FGA
                     RC$(4, 0) = AA$(I, I1, 0) ' NAME
                     RC$(4, 1) = B$(I) ' TEAM
                     RC$(4, 2) = SITE$(I) ' AT/VS
@@ -4951,8 +4950,8 @@ Sub RECORDSCHECK ()
             End If
 
             900
-            If A!(I, I1, 8) = A!(I, I1, 7) And A!(I, I1, 7) > REC!(5, 0) Then
-                REC!(5, 0) = A!(I, I1, 7) ' MOST FGM
+            If A!(I, I1, 8) = A!(I, I1, 7) And A!(I, I1, 7) > indRecords!(5, 0) Then
+                indRecords!(5, 0) = A!(I, I1, 7) ' MOST FGM
                 RC$(5, 0) = AA$(I, I1, 0) ' NAME
                 RC$(5, 1) = B$(I) ' TEAM
                 RC$(5, 2) = SITE$(I) ' AT/VS
@@ -4960,8 +4959,8 @@ Sub RECORDSCHECK ()
                 RC$(5, 4) = Date$ ' DATE
             End If
 
-            If A!(I, I1, 8) = 0 And A!(I, I1, 7) > REC!(6, 0) Then
-                REC!(6, 0) = A!(I, I1, 7) ' 0 FGM /FGA
+            If A!(I, I1, 8) = 0 And A!(I, I1, 7) > indRecords!(6, 0) Then
+                indRecords!(6, 0) = A!(I, I1, 7) ' 0 FGM /FGA
                 RC$(6, 0) = AA$(I, I1, 0) ' NAME
                 RC$(6, 1) = B$(I) ' TEAM
                 RC$(6, 2) = SITE$(I) ' AT/VS
@@ -4970,10 +4969,10 @@ Sub RECORDSCHECK ()
             End If
 
             ' FIELD GOALS MADE IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
-            If A!(I, I1, 8) > REC!(7, 0) Then
-                REC!(7, 0) = A!(I, I1, 8) ' FGM
-                REC!(7, 1) = 1 ' TIMES DONE
-                REC!(7, 2) = 0 ' GAME
+            If A!(I, I1, 8) > indRecords!(7, 0) Then
+                indRecords!(7, 0) = A!(I, I1, 8) ' FGM
+                indRecords!(7, 1) = 1 ' TIMES DONE
+                indRecords!(7, 2) = 0 ' GAME
                 RC$(7, 0) = AA$(I, I1, 0) ' NAME
                 RC$(7, 1) = B$(I) ' TEAM
                 RC$(7, 2) = SITE$(I) ' AT/VS
@@ -4981,10 +4980,10 @@ Sub RECORDSCHECK ()
                 RC$(7, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 2) + QQ(I, 2, I1, 2) > REC!(8, 0) Then
-                REC!(8, 0) = QQ(I, 1, I1, 2) + QQ(I, 2, I1, 2) ' FGM
-                REC!(8, 1) = 1 ' TIMES DONE
-                REC!(8, 2) = 1 ' HALF
+            If QQ(I, 1, I1, 2) + QQ(I, 2, I1, 2) > indRecords!(8, 0) Then
+                indRecords!(8, 0) = QQ(I, 1, I1, 2) + QQ(I, 2, I1, 2) ' FGM
+                indRecords!(8, 1) = 1 ' TIMES DONE
+                indRecords!(8, 2) = 1 ' HALF
                 RC$(8, 0) = AA$(I, I1, 0) ' NAME
                 RC$(8, 1) = B$(I) ' TEAM
                 RC$(8, 2) = SITE$(I) ' AT/VS
@@ -4992,10 +4991,10 @@ Sub RECORDSCHECK ()
                 RC$(8, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 2) + QQ(I, 4, I1, 2) > REC!(8, 0) Then
-                REC!(8, 0) = QQ(I, 3, I1, 2) + QQ(I, 4, I1, 2) ' FGM
-                REC!(8, 1) = 1 ' TIMES DONE
-                REC!(8, 2) = 2 ' HALF
+            If QQ(I, 3, I1, 2) + QQ(I, 4, I1, 2) > indRecords!(8, 0) Then
+                indRecords!(8, 0) = QQ(I, 3, I1, 2) + QQ(I, 4, I1, 2) ' FGM
+                indRecords!(8, 1) = 1 ' TIMES DONE
+                indRecords!(8, 2) = 2 ' HALF
                 RC$(8, 0) = AA$(I, I1, 0) ' NAME
                 RC$(8, 1) = B$(I) ' TEAM
                 RC$(8, 2) = SITE$(I) ' AT/VS
@@ -5004,10 +5003,10 @@ Sub RECORDSCHECK ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 2) > REC!(9, 0) Then
-                    REC!(9, 0) = QQ(I, I2, I1, 2) ' FGM
-                    REC!(9, 1) = 1 ' TIMES DONE
-                    REC!(9, 2) = I2 ' QTR
+                If QQ(I, I2, I1, 2) > indRecords!(9, 0) Then
+                    indRecords!(9, 0) = QQ(I, I2, I1, 2) ' FGM
+                    indRecords!(9, 1) = 1 ' TIMES DONE
+                    indRecords!(9, 2) = I2 ' QTR
                     RC$(9, 0) = AA$(I, I1, 0) ' NAME
                     RC$(9, 1) = B$(I) ' TEAM
                     RC$(9, 2) = SITE$(I) ' AT/VS
@@ -5017,10 +5016,10 @@ Sub RECORDSCHECK ()
             Next I2
 
             For I2 = 5 To 8
-                If QQ(I, I2, I1, 2) > REC!(10, 0) Then
-                    REC!(10, 0) = QQ(I, I2, I1, 2) ' FGM
-                    REC!(10, 1) = 1 ' TIMES DONE
-                    REC!(10, 2) = I2 ' QTR
+                If QQ(I, I2, I1, 2) > indRecords!(10, 0) Then
+                    indRecords!(10, 0) = QQ(I, I2, I1, 2) ' FGM
+                    indRecords!(10, 1) = 1 ' TIMES DONE
+                    indRecords!(10, 2) = I2 ' QTR
                     RC$(10, 0) = AA$(I, I1, 0) ' NAME
                     RC$(10, 1) = B$(I) ' TEAM
                     RC$(10, 2) = SITE$(I) ' AT/VS
@@ -5030,10 +5029,10 @@ Sub RECORDSCHECK ()
             Next I2
 
             ' FIELD GOAL ATTEMPTS MADE IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
-            If A!(I, I1, 7) > REC!(11, 0) Then
-                REC!(11, 0) = A!(I, I1, 7) ' FGA
-                REC!(11, 1) = 1 ' TIMES DONE
-                REC!(11, 2) = 0 ' GAME
+            If A!(I, I1, 7) > indRecords!(11, 0) Then
+                indRecords!(11, 0) = A!(I, I1, 7) ' FGA
+                indRecords!(11, 1) = 1 ' TIMES DONE
+                indRecords!(11, 2) = 0 ' GAME
                 RC$(11, 0) = AA$(I, I1, 0) ' NAME
                 RC$(11, 1) = B$(I) ' TEAM
                 RC$(11, 2) = SITE$(I) ' AT/VS
@@ -5041,10 +5040,10 @@ Sub RECORDSCHECK ()
                 RC$(11, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 1) + QQ(I, 2, I1, 1) > REC!(12, 0) Then
-                REC!(12, 0) = QQ(I, 1, I1, 1) + QQ(I, 2, I1, 1) ' FGA
-                REC!(12, 1) = 1 ' TIMES DONE
-                REC!(12, 2) = 1 ' HALF
+            If QQ(I, 1, I1, 1) + QQ(I, 2, I1, 1) > indRecords!(12, 0) Then
+                indRecords!(12, 0) = QQ(I, 1, I1, 1) + QQ(I, 2, I1, 1) ' FGA
+                indRecords!(12, 1) = 1 ' TIMES DONE
+                indRecords!(12, 2) = 1 ' HALF
                 RC$(12, 0) = AA$(I, I1, 0) ' NAME
                 RC$(12, 1) = B$(I) ' TEAM
                 RC$(12, 2) = SITE$(I) ' AT/VS
@@ -5052,10 +5051,10 @@ Sub RECORDSCHECK ()
                 RC$(12, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 1) + QQ(I, 4, I1, 1) > REC!(12, 0) Then
-                REC!(12, 0) = QQ(I, 3, I1, 1) + QQ(I, 4, I1, 1) ' FGA
-                REC!(12, 1) = 1 ' TIMES DONE
-                REC!(12, 2) = 2 ' HALF
+            If QQ(I, 3, I1, 1) + QQ(I, 4, I1, 1) > indRecords!(12, 0) Then
+                indRecords!(12, 0) = QQ(I, 3, I1, 1) + QQ(I, 4, I1, 1) ' FGA
+                indRecords!(12, 1) = 1 ' TIMES DONE
+                indRecords!(12, 2) = 2 ' HALF
                 RC$(12, 0) = AA$(I, I1, 0) ' NAME
                 RC$(12, 1) = B$(I) ' TEAM
                 RC$(12, 2) = SITE$(I) ' AT/VS
@@ -5064,10 +5063,10 @@ Sub RECORDSCHECK ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 1) > REC!(13, 0) Then
-                    REC!(13, 0) = QQ(I, I2, I1, 1) ' FGA
-                    REC!(13, 1) = 1 ' TIMES DONE
-                    REC!(13, 2) = I2 ' QTR
+                If QQ(I, I2, I1, 1) > indRecords!(13, 0) Then
+                    indRecords!(13, 0) = QQ(I, I2, I1, 1) ' FGA
+                    indRecords!(13, 1) = 1 ' TIMES DONE
+                    indRecords!(13, 2) = I2 ' QTR
                     RC$(13, 0) = AA$(I, I1, 0) ' NAME
                     RC$(13, 1) = B$(I) ' TEAM
                     RC$(13, 2) = SITE$(I) ' AT/VS
@@ -5077,10 +5076,10 @@ Sub RECORDSCHECK ()
             Next I2
 
             For I2 = 5 To 8
-                If QQ(I, I2, I1, 1) > REC!(14, 0) Then
-                    REC!(14, 0) = QQ(I, I2, I1, 1) ' FGA
-                    REC!(14, 1) = 1 ' TIMES DONE
-                    REC!(14, 2) = I2 ' QTR
+                If QQ(I, I2, I1, 1) > indRecords!(14, 0) Then
+                    indRecords!(14, 0) = QQ(I, I2, I1, 1) ' FGA
+                    indRecords!(14, 1) = 1 ' TIMES DONE
+                    indRecords!(14, 2) = I2 ' QTR
                     RC$(14, 0) = AA$(I, I1, 0) ' NAME
                     RC$(14, 1) = B$(I) ' TEAM
                     RC$(14, 2) = SITE$(I) ' AT/VS
@@ -5090,8 +5089,8 @@ Sub RECORDSCHECK ()
             Next I2
 
             ' THREE-POINT FIELD GOALS MOST MADE NO MISSES, MOST ATT NONE MADE
-            If W%(I, I1, 0) = W%(I, I1, 1) And W%(I, I1, 0) > REC!(15, 0) Then
-                REC!(15, 0) = W%(I, I1, 0) ' MOST 3-FGM
+            If W%(I, I1, 0) = W%(I, I1, 1) And W%(I, I1, 0) > indRecords!(15, 0) Then
+                indRecords!(15, 0) = W%(I, I1, 0) ' MOST 3-FGM
                 RC$(15, 0) = AA$(I, I1, 0) ' NAME
                 RC$(15, 1) = B$(I) ' TEAM
                 RC$(15, 2) = SITE$(I) ' AT/VS
@@ -5099,8 +5098,8 @@ Sub RECORDSCHECK ()
                 RC$(15, 4) = Date$ ' DATE
             End If
 
-            If W%(I, I1, 0) = 0 And W%(I, I1, 1) > REC!(16, 0) Then
-                REC!(16, 0) = W%(I, I1, 1) ' 0 3FGM /3FGA
+            If W%(I, I1, 0) = 0 And W%(I, I1, 1) > indRecords!(16, 0) Then
+                indRecords!(16, 0) = W%(I, I1, 1) ' 0 3FGM /3FGA
                 RC$(16, 0) = AA$(I, I1, 0) ' NAME
                 RC$(16, 1) = B$(I) ' TEAM
                 RC$(16, 2) = SITE$(I) ' AT/VS
@@ -5109,10 +5108,10 @@ Sub RECORDSCHECK ()
             End If
 
             ' 3-FIELD GOALS MADE IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
-            If W%(I, I1, 0) > REC!(17, 0) Then
-                REC!(17, 0) = W%(I, I1, 0) ' 3FGM
-                REC!(17, 1) = 1 ' TIMES DONE
-                REC!(17, 2) = 0 ' GAME
+            If W%(I, I1, 0) > indRecords!(17, 0) Then
+                indRecords!(17, 0) = W%(I, I1, 0) ' 3FGM
+                indRecords!(17, 1) = 1 ' TIMES DONE
+                indRecords!(17, 2) = 0 ' GAME
                 RC$(17, 0) = AA$(I, I1, 0) ' NAME
                 RC$(17, 1) = B$(I) ' TEAM
                 RC$(17, 2) = SITE$(I) ' AT/VS
@@ -5120,10 +5119,10 @@ Sub RECORDSCHECK ()
                 RC$(17, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 10) + QQ(I, 2, I1, 10) > REC!(18, 0) Then
-                REC!(18, 0) = QQ(I, 1, I1, 10) + QQ(I, 2, I1, 10) ' 3FGM
-                REC!(18, 1) = 1 ' TIMES DONE
-                REC!(18, 2) = 1 ' HALF
+            If QQ(I, 1, I1, 10) + QQ(I, 2, I1, 10) > indRecords!(18, 0) Then
+                indRecords!(18, 0) = QQ(I, 1, I1, 10) + QQ(I, 2, I1, 10) ' 3FGM
+                indRecords!(18, 1) = 1 ' TIMES DONE
+                indRecords!(18, 2) = 1 ' HALF
                 RC$(18, 0) = AA$(I, I1, 0) ' NAME
                 RC$(18, 1) = B$(I) ' TEAM
                 RC$(18, 2) = SITE$(I) ' AT/VS
@@ -5131,10 +5130,10 @@ Sub RECORDSCHECK ()
                 RC$(18, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) > REC!(18, 0) Then
-                REC!(18, 0) = QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) ' 3FGM
-                REC!(18, 1) = 1 ' TIMES DONE
-                REC!(18, 2) = 2 ' HALF
+            If QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) > indRecords!(18, 0) Then
+                indRecords!(18, 0) = QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) ' 3FGM
+                indRecords!(18, 1) = 1 ' TIMES DONE
+                indRecords!(18, 2) = 2 ' HALF
                 RC$(18, 0) = AA$(I, I1, 0) ' NAME
                 RC$(18, 1) = B$(I) ' TEAM
                 RC$(18, 2) = SITE$(I) ' AT/VS
@@ -5143,10 +5142,10 @@ Sub RECORDSCHECK ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 10) > REC!(19, 0) Then
-                    REC!(19, 0) = QQ(I, I2, I1, 10) ' 3FGM
-                    REC!(19, 1) = 1 ' TIMES DONE
-                    REC!(19, 2) = I2 ' QTR
+                If QQ(I, I2, I1, 10) > indRecords!(19, 0) Then
+                    indRecords!(19, 0) = QQ(I, I2, I1, 10) ' 3FGM
+                    indRecords!(19, 1) = 1 ' TIMES DONE
+                    indRecords!(19, 2) = I2 ' QTR
                     RC$(19, 0) = AA$(I, I1, 0) ' NAME
                     RC$(19, 1) = B$(I) ' TEAM
                     RC$(19, 2) = SITE$(I) ' AT/VS
@@ -5156,10 +5155,10 @@ Sub RECORDSCHECK ()
             Next I2
 
             For I2 = 5 To 8
-                If QQ(I, I2, I1, 10) > REC!(20, 0) Then
-                    REC!(20, 0) = QQ(I, I2, I1, 10) ' 3FGM
-                    REC!(20, 1) = 1 ' TIMES DONE
-                    REC!(20, 2) = I2 ' QTR
+                If QQ(I, I2, I1, 10) > indRecords!(20, 0) Then
+                    indRecords!(20, 0) = QQ(I, I2, I1, 10) ' 3FGM
+                    indRecords!(20, 1) = 1 ' TIMES DONE
+                    indRecords!(20, 2) = I2 ' QTR
                     RC$(20, 0) = AA$(I, I1, 0) ' NAME
                     RC$(20, 1) = B$(I) ' TEAM
                     RC$(20, 2) = SITE$(I) ' AT/VS
@@ -5169,10 +5168,10 @@ Sub RECORDSCHECK ()
             Next I2
 
             ' 3-FIELD GOALS ATT IN A GAME, HALF
-            If W%(I, I1, 1) > REC!(21, 0) Then
-                REC!(21, 0) = W%(I, I1, 1) ' 3FGA
-                REC!(21, 1) = 1 ' TIMES DONE
-                REC!(21, 2) = 0 ' GAME
+            If W%(I, I1, 1) > indRecords!(21, 0) Then
+                indRecords!(21, 0) = W%(I, I1, 1) ' 3FGA
+                indRecords!(21, 1) = 1 ' TIMES DONE
+                indRecords!(21, 2) = 0 ' GAME
                 RC$(21, 0) = AA$(I, I1, 0) ' NAME
                 RC$(21, 1) = B$(I) ' TEAM
                 RC$(21, 2) = SITE$(I) ' AT/VS
@@ -5180,10 +5179,10 @@ Sub RECORDSCHECK ()
                 RC$(21, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 11) + QQ(I, 2, I1, 11) > REC!(22, 0) Then
-                REC!(22, 0) = QQ(I, 1, I1, 11) + QQ(I, 2, I1, 11) ' 3FGA
-                REC!(22, 1) = 1 ' TIMES DONE
-                REC!(22, 2) = 1 ' HALF
+            If QQ(I, 1, I1, 11) + QQ(I, 2, I1, 11) > indRecords!(22, 0) Then
+                indRecords!(22, 0) = QQ(I, 1, I1, 11) + QQ(I, 2, I1, 11) ' 3FGA
+                indRecords!(22, 1) = 1 ' TIMES DONE
+                indRecords!(22, 2) = 1 ' HALF
                 RC$(22, 0) = AA$(I, I1, 0) ' NAME
                 RC$(22, 1) = B$(I) ' TEAM
                 RC$(22, 2) = SITE$(I) ' AT/VS
@@ -5191,10 +5190,10 @@ Sub RECORDSCHECK ()
                 RC$(22, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 11) + QQ(I, 4, I1, 11) > REC!(22, 0) Then
-                REC!(22, 0) = QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) ' 3FGA
-                REC!(22, 1) = 1 ' TIMES DONE
-                REC!(22, 2) = 2 ' HALF
+            If QQ(I, 3, I1, 11) + QQ(I, 4, I1, 11) > indRecords!(22, 0) Then
+                indRecords!(22, 0) = QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) ' 3FGA
+                indRecords!(22, 1) = 1 ' TIMES DONE
+                indRecords!(22, 2) = 2 ' HALF
                 RC$(22, 0) = AA$(I, I1, 0) ' NAME
                 RC$(22, 1) = B$(I) ' TEAM
                 RC$(22, 2) = SITE$(I) ' AT/VS
@@ -5203,8 +5202,8 @@ Sub RECORDSCHECK ()
             End If
 
             ' FREE THROWS -  MOST MADE NO MISSES, MOST ATT NONE MADE
-            If A!(I, I1, 9) = A!(I, I1, 10) And A!(I, I1, 9) > REC!(23, 0) Then
-                REC!(23, 0) = A!(I, I1, 9) ' MOST FTM
+            If A!(I, I1, 9) = A!(I, I1, 10) And A!(I, I1, 9) > indRecords!(23, 0) Then
+                indRecords!(23, 0) = A!(I, I1, 9) ' MOST FTM
                 RC$(23, 0) = AA$(I, I1, 0) ' NAME
                 RC$(23, 1) = B$(I) ' TEAM
                 RC$(23, 2) = SITE$(I) ' AT/VS
@@ -5212,8 +5211,8 @@ Sub RECORDSCHECK ()
                 RC$(23, 4) = Date$ ' DATE
             End If
 
-            If A!(I, I1, 10) = 0 And A!(I, I1, 9) > REC!(24, 0) Then
-                REC!(24, 0) = A!(I, I1, 10) ' 0 FTM /FTA
+            If A!(I, I1, 10) = 0 And A!(I, I1, 9) > indRecords!(24, 0) Then
+                indRecords!(24, 0) = A!(I, I1, 10) ' 0 FTM /FTA
                 RC$(24, 0) = AA$(I, I1, 0) ' NAME
                 RC$(24, 1) = B$(I) ' TEAM
                 RC$(24, 2) = SITE$(I) ' AT/VS
@@ -5222,10 +5221,10 @@ Sub RECORDSCHECK ()
             End If
 
             ' MADE FREE THROWS IN A GAME, HALF, QUARTER
-            If A!(I, I1, 10) > REC!(25, 0) Then
-                REC!(25, 0) = A!(I, I1, 10) ' FTM
-                REC!(25, 1) = 1 ' TIMES DONE
-                REC!(25, 2) = 0 ' GAME
+            If A!(I, I1, 10) > indRecords!(25, 0) Then
+                indRecords!(25, 0) = A!(I, I1, 10) ' FTM
+                indRecords!(25, 1) = 1 ' TIMES DONE
+                indRecords!(25, 2) = 0 ' GAME
                 RC$(25, 0) = AA$(I, I1, 0) ' NAME
                 RC$(25, 1) = B$(I) ' TEAM
                 RC$(25, 2) = SITE$(I) ' AT/VS
@@ -5233,10 +5232,10 @@ Sub RECORDSCHECK ()
                 RC$(25, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 4) + QQ(I, 2, I1, 4) > REC!(26, 0) Then
-                REC!(26, 0) = QQ(I, 1, I1, 4) + QQ(I, 2, I1, 4) ' FTM
-                REC!(26, 1) = 1 ' TIMES DONE
-                REC!(26, 2) = 1 ' HALF
+            If QQ(I, 1, I1, 4) + QQ(I, 2, I1, 4) > indRecords!(26, 0) Then
+                indRecords!(26, 0) = QQ(I, 1, I1, 4) + QQ(I, 2, I1, 4) ' FTM
+                indRecords!(26, 1) = 1 ' TIMES DONE
+                indRecords!(26, 2) = 1 ' HALF
                 RC$(26, 0) = AA$(I, I1, 0) ' NAME
                 RC$(26, 1) = B$(I) ' TEAM
                 RC$(26, 2) = SITE$(I) ' AT/VS
@@ -5244,10 +5243,10 @@ Sub RECORDSCHECK ()
                 RC$(26, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 4) + QQ(I, 4, I1, 4) > REC!(26, 0) Then
-                REC!(26, 0) = QQ(I, 3, I1, 4) + QQ(I, 4, I1, 4) ' FTM
-                REC!(26, 1) = 1 ' TIMES DONE
-                REC!(26, 2) = 2 ' HALF
+            If QQ(I, 3, I1, 4) + QQ(I, 4, I1, 4) > indRecords!(26, 0) Then
+                indRecords!(26, 0) = QQ(I, 3, I1, 4) + QQ(I, 4, I1, 4) ' FTM
+                indRecords!(26, 1) = 1 ' TIMES DONE
+                indRecords!(26, 2) = 2 ' HALF
                 RC$(26, 0) = AA$(I, I1, 0) ' NAME
                 RC$(26, 1) = B$(I) ' TEAM
                 RC$(26, 2) = SITE$(I) ' AT/VS
@@ -5256,10 +5255,10 @@ Sub RECORDSCHECK ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 4) > REC!(27, 0) Then
-                    REC!(27, 0) = QQ(I, I2, I1, 4) ' FTM
-                    REC!(27, 1) = 1 ' TIMES DONE
-                    REC!(27, 2) = I2 ' QTR
+                If QQ(I, I2, I1, 4) > indRecords!(27, 0) Then
+                    indRecords!(27, 0) = QQ(I, I2, I1, 4) ' FTM
+                    indRecords!(27, 1) = 1 ' TIMES DONE
+                    indRecords!(27, 2) = I2 ' QTR
                     RC$(27, 0) = AA$(I, I1, 0) ' NAME
                     RC$(27, 1) = B$(I) ' TEAM
                     RC$(27, 2) = SITE$(I) ' AT/VS
@@ -5269,10 +5268,10 @@ Sub RECORDSCHECK ()
             Next I2
 
             ' FREE THROWS ATTEMPTS IN A GAME, HALF, QUARTER
-            If A!(I, I1, 9) > REC!(28, 0) Then
-                REC!(28, 0) = A!(I, I1, 9) ' FTA
-                REC!(28, 1) = 1 ' TIMES DONE
-                REC!(28, 2) = 0 ' GAME
+            If A!(I, I1, 9) > indRecords!(28, 0) Then
+                indRecords!(28, 0) = A!(I, I1, 9) ' FTA
+                indRecords!(28, 1) = 1 ' TIMES DONE
+                indRecords!(28, 2) = 0 ' GAME
                 RC$(28, 0) = AA$(I, I1, 0) ' NAME
                 RC$(28, 1) = B$(I) ' TEAM
                 RC$(28, 2) = SITE$(I) ' AT/VS
@@ -5280,10 +5279,10 @@ Sub RECORDSCHECK ()
                 RC$(28, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 3) + QQ(I, 2, I1, 3) > REC!(29, 0) Then
-                REC!(29, 0) = QQ(I, 1, I1, 3) + QQ(I, 2, I1, 3) ' FTA
-                REC!(29, 1) = 1 ' TIMES DONE
-                REC!(29, 2) = 1 ' HALF
+            If QQ(I, 1, I1, 3) + QQ(I, 2, I1, 3) > indRecords!(29, 0) Then
+                indRecords!(29, 0) = QQ(I, 1, I1, 3) + QQ(I, 2, I1, 3) ' FTA
+                indRecords!(29, 1) = 1 ' TIMES DONE
+                indRecords!(29, 2) = 1 ' HALF
                 RC$(29, 0) = AA$(I, I1, 0) ' NAME
                 RC$(29, 1) = B$(I) ' TEAM
                 RC$(29, 2) = SITE$(I) ' AT/VS
@@ -5291,10 +5290,10 @@ Sub RECORDSCHECK ()
                 RC$(29, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 3) + QQ(I, 4, I1, 3) > REC!(29, 0) Then
-                REC!(29, 0) = QQ(I, 3, I1, 3) + QQ(I, 4, I1, 3) ' FTM
-                REC!(29, 1) = 1 ' TIMES DONE
-                REC!(29, 2) = 2 ' HALF
+            If QQ(I, 3, I1, 3) + QQ(I, 4, I1, 3) > indRecords!(29, 0) Then
+                indRecords!(29, 0) = QQ(I, 3, I1, 3) + QQ(I, 4, I1, 3) ' FTM
+                indRecords!(29, 1) = 1 ' TIMES DONE
+                indRecords!(29, 2) = 2 ' HALF
                 RC$(29, 0) = AA$(I, I1, 0) ' NAME
                 RC$(29, 1) = B$(I) ' TEAM
                 RC$(29, 2) = SITE$(I) ' AT/VS
@@ -5303,10 +5302,10 @@ Sub RECORDSCHECK ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 3) > REC!(30, 0) Then
-                    REC!(30, 0) = QQ(I, I2, I1, 3) ' FTM
-                    REC!(30, 1) = 1 ' TIMES DONE
-                    REC!(30, 2) = I2 ' QTR
+                If QQ(I, I2, I1, 3) > indRecords!(30, 0) Then
+                    indRecords!(30, 0) = QQ(I, I2, I1, 3) ' FTM
+                    indRecords!(30, 1) = 1 ' TIMES DONE
+                    indRecords!(30, 2) = I2 ' QTR
                     RC$(30, 0) = AA$(I, I1, 0) ' NAME
                     RC$(30, 1) = B$(I) ' TEAM
                     RC$(30, 2) = SITE$(I) ' AT/VS
@@ -5316,10 +5315,10 @@ Sub RECORDSCHECK ()
             Next I2
 
             ' TOTAL REBOUNDS IN A GAME, HALF, QUARTER
-            If A!(I, I1, 11) > REC!(31, 0) Then
-                REC!(31, 0) = A!(I, I1, 11) ' FTA
-                REC!(31, 1) = 1 ' TIMES DONE
-                REC!(31, 2) = 0 ' GAME
+            If A!(I, I1, 11) > indRecords!(31, 0) Then
+                indRecords!(31, 0) = A!(I, I1, 11) ' FTA
+                indRecords!(31, 1) = 1 ' TIMES DONE
+                indRecords!(31, 2) = 0 ' GAME
                 RC$(31, 0) = AA$(I, I1, 0) ' NAME
                 RC$(31, 1) = B$(I) ' TEAM
                 RC$(31, 2) = SITE$(I) ' AT/VS
@@ -5327,10 +5326,10 @@ Sub RECORDSCHECK ()
                 RC$(31, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) > REC!(32, 0) Then
-                REC!(32, 0) = QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) ' RB
-                REC!(32, 1) = 1 ' TIMES DONE
-                REC!(32, 2) = 1 ' HALF
+            If QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) > indRecords!(32, 0) Then
+                indRecords!(32, 0) = QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) ' RB
+                indRecords!(32, 1) = 1 ' TIMES DONE
+                indRecords!(32, 2) = 1 ' HALF
                 RC$(32, 0) = AA$(I, I1, 0) ' NAME
                 RC$(32, 1) = B$(I) ' TEAM
                 RC$(32, 2) = SITE$(I) ' AT/VS
@@ -5338,10 +5337,10 @@ Sub RECORDSCHECK ()
                 RC$(32, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) > REC!(32, 0) Then
-                REC!(32, 0) = QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) ' RB
-                REC!(32, 1) = 1 ' TIMES DONE
-                REC!(32, 2) = 2 ' HALF
+            If QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) > indRecords!(32, 0) Then
+                indRecords!(32, 0) = QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) ' RB
+                indRecords!(32, 1) = 1 ' TIMES DONE
+                indRecords!(32, 2) = 2 ' HALF
                 RC$(32, 0) = AA$(I, I1, 0) ' NAME
                 RC$(32, 1) = B$(I) ' TEAM
                 RC$(32, 2) = SITE$(I) ' AT/VS
@@ -5350,10 +5349,10 @@ Sub RECORDSCHECK ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 5) > REC!(33, 0) Then
-                    REC!(33, 0) = QQ(I, I2, I1, 5) ' RB
-                    REC!(33, 1) = 1 ' TIMES DONE
-                    REC!(33, 2) = I2 ' QTR
+                If QQ(I, I2, I1, 5) > indRecords!(33, 0) Then
+                    indRecords!(33, 0) = QQ(I, I2, I1, 5) ' RB
+                    indRecords!(33, 1) = 1 ' TIMES DONE
+                    indRecords!(33, 2) = I2 ' QTR
                     RC$(33, 0) = AA$(I, I1, 0) ' NAME
                     RC$(33, 1) = B$(I) ' TEAM
                     RC$(33, 2) = SITE$(I) ' AT/VS
@@ -5363,10 +5362,10 @@ Sub RECORDSCHECK ()
             Next I2
 
             ' TOTAL OFFENSIVE REBOUNDS IN A GAME, HALF, QUARTER
-            If A!(I, I1, 24) > REC!(34, 0) Then
-                REC!(34, 0) = A!(I, I1, 24) ' FTA
-                REC!(34, 1) = 1 ' TIMES DONE
-                REC!(34, 2) = 0 ' GAME
+            If A!(I, I1, 24) > indRecords!(34, 0) Then
+                indRecords!(34, 0) = A!(I, I1, 24) ' FTA
+                indRecords!(34, 1) = 1 ' TIMES DONE
+                indRecords!(34, 2) = 0 ' GAME
                 RC$(34, 0) = AA$(I, I1, 0) ' NAME
                 RC$(34, 1) = B$(I) ' TEAM
                 RC$(34, 2) = SITE$(I) ' AT/VS
@@ -5374,10 +5373,10 @@ Sub RECORDSCHECK ()
                 RC$(34, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12) > REC!(35, 0) Then
-                REC!(35, 0) = QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12) ' RB
-                REC!(35, 1) = 1 ' TIMES DONE
-                REC!(35, 2) = 1 ' HALF
+            If QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12) > indRecords!(35, 0) Then
+                indRecords!(35, 0) = QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12) ' RB
+                indRecords!(35, 1) = 1 ' TIMES DONE
+                indRecords!(35, 2) = 1 ' HALF
                 RC$(35, 0) = AA$(I, I1, 0) ' NAME
                 RC$(35, 1) = B$(I) ' TEAM
                 RC$(35, 2) = SITE$(I) ' AT/VS
@@ -5385,10 +5384,10 @@ Sub RECORDSCHECK ()
                 RC$(35, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12) > REC!(35, 0) Then
-                REC!(35, 0) = QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12) ' RB
-                REC!(35, 1) = 1 ' TIMES DONE
-                REC!(35, 2) = 2 ' HALF
+            If QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12) > indRecords!(35, 0) Then
+                indRecords!(35, 0) = QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12) ' RB
+                indRecords!(35, 1) = 1 ' TIMES DONE
+                indRecords!(35, 2) = 2 ' HALF
                 RC$(35, 0) = AA$(I, I1, 0) ' NAME
                 RC$(35, 1) = B$(I) ' TEAM
                 RC$(35, 2) = SITE$(I) ' AT/VS
@@ -5397,10 +5396,10 @@ Sub RECORDSCHECK ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 12) > REC!(36, 0) Then
-                    REC!(36, 0) = QQ(I, I2, I1, 12) ' RB
-                    REC!(36, 1) = 1 ' TIMES DONE
-                    REC!(36, 2) = I2 ' QTR
+                If QQ(I, I2, I1, 12) > indRecords!(36, 0) Then
+                    indRecords!(36, 0) = QQ(I, I2, I1, 12) ' RB
+                    indRecords!(36, 1) = 1 ' TIMES DONE
+                    indRecords!(36, 2) = I2 ' QTR
                     RC$(36, 0) = AA$(I, I1, 0) ' NAME
                     RC$(36, 1) = B$(I) ' TEAM
                     RC$(36, 2) = SITE$(I) ' AT/VS
@@ -5410,10 +5409,10 @@ Sub RECORDSCHECK ()
             Next I2
 
             ' TOTAL DEFENSIVE REBOUNDS IN A GAME, HALF, QUARTER
-            If A!(I, I1, 11) - A!(I, I1, 24) > REC!(37, 0) Then
-                REC!(37, 0) = A!(I, I1, 11) - A!(I, I1, 24) ' FTA
-                REC!(37, 1) = 1 ' TIMES DONE
-                REC!(37, 2) = 0 ' GAME
+            If A!(I, I1, 11) - A!(I, I1, 24) > indRecords!(37, 0) Then
+                indRecords!(37, 0) = A!(I, I1, 11) - A!(I, I1, 24) ' FTA
+                indRecords!(37, 1) = 1 ' TIMES DONE
+                indRecords!(37, 2) = 0 ' GAME
                 RC$(37, 0) = AA$(I, I1, 0) ' NAME
                 RC$(37, 1) = B$(I) ' TEAM
                 RC$(37, 2) = SITE$(I) ' AT/VS
@@ -5421,10 +5420,10 @@ Sub RECORDSCHECK ()
                 RC$(37, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) - (QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12)) > REC!(38, 0) Then
-                REC!(38, 0) = QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) - (QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12)) ' RB
-                REC!(38, 1) = 1 ' TIMES DONE
-                REC!(38, 2) = 1 ' HALF
+            If QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) - (QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12)) > indRecords!(38, 0) Then
+                indRecords!(38, 0) = QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) - (QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12)) ' RB
+                indRecords!(38, 1) = 1 ' TIMES DONE
+                indRecords!(38, 2) = 1 ' HALF
                 RC$(38, 0) = AA$(I, I1, 0) ' NAME
                 RC$(38, 1) = B$(I) ' TEAM
                 RC$(38, 2) = SITE$(I) ' AT/VS
@@ -5432,10 +5431,10 @@ Sub RECORDSCHECK ()
                 RC$(38, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) - (QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12)) > REC!(38, 0) Then
-                REC!(38, 0) = QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) - (QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12)) ' RB
-                REC!(38, 1) = 1 ' TIMES DONE
-                REC!(38, 2) = 2 ' HALF
+            If QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) - (QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12)) > indRecords!(38, 0) Then
+                indRecords!(38, 0) = QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) - (QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12)) ' RB
+                indRecords!(38, 1) = 1 ' TIMES DONE
+                indRecords!(38, 2) = 2 ' HALF
                 RC$(38, 0) = AA$(I, I1, 0) ' NAME
                 RC$(38, 1) = B$(I) ' TEAM
                 RC$(38, 2) = SITE$(I) ' AT/VS
@@ -5444,10 +5443,10 @@ Sub RECORDSCHECK ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 5) - QQ(I, I2, I1, 12) > REC!(39, 0) Then
-                    REC!(39, 0) = QQ(I, I2, I1, 5) - QQ(I, I2, I1, 12) ' RB
-                    REC!(39, 1) = 1 ' TIMES DONE
-                    REC!(39, 2) = I2 ' QTR
+                If QQ(I, I2, I1, 5) - QQ(I, I2, I1, 12) > indRecords!(39, 0) Then
+                    indRecords!(39, 0) = QQ(I, I2, I1, 5) - QQ(I, I2, I1, 12) ' RB
+                    indRecords!(39, 1) = 1 ' TIMES DONE
+                    indRecords!(39, 2) = I2 ' QTR
                     RC$(39, 0) = AA$(I, I1, 0) ' NAME
                     RC$(39, 1) = B$(I) ' TEAM
                     RC$(39, 2) = SITE$(I) ' AT/VS
@@ -5457,10 +5456,10 @@ Sub RECORDSCHECK ()
             Next I2
 
             ' ASSISTS IN A GAME, HALF, QUARTER
-            If A!(I, I1, 14) > REC!(40, 0) Then
-                REC!(40, 0) = A!(I, I1, 14) ' FTA
-                REC!(40, 1) = 1 ' TIMES DONE
-                REC!(40, 2) = 0 ' GAME
+            If A!(I, I1, 14) > indRecords!(40, 0) Then
+                indRecords!(40, 0) = A!(I, I1, 14) ' FTA
+                indRecords!(40, 1) = 1 ' TIMES DONE
+                indRecords!(40, 2) = 0 ' GAME
                 RC$(40, 0) = AA$(I, I1, 0) ' NAME
                 RC$(40, 1) = B$(I) ' TEAM
                 RC$(40, 2) = SITE$(I) ' AT/VS
@@ -5468,10 +5467,10 @@ Sub RECORDSCHECK ()
                 RC$(40, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 8) + QQ(I, 2, I1, 8) > REC!(41, 0) Then
-                REC!(41, 0) = QQ(I, 1, I1, 8) + QQ(I, 2, I1, 8) ' FTA
-                REC!(41, 1) = 1 ' TIMES DONE
-                REC!(41, 2) = 1 ' HALF
+            If QQ(I, 1, I1, 8) + QQ(I, 2, I1, 8) > indRecords!(41, 0) Then
+                indRecords!(41, 0) = QQ(I, 1, I1, 8) + QQ(I, 2, I1, 8) ' FTA
+                indRecords!(41, 1) = 1 ' TIMES DONE
+                indRecords!(41, 2) = 1 ' HALF
                 RC$(41, 0) = AA$(I, I1, 0) ' NAME
                 RC$(41, 1) = B$(I) ' TEAM
                 RC$(41, 2) = SITE$(I) ' AT/VS
@@ -5479,10 +5478,10 @@ Sub RECORDSCHECK ()
                 RC$(41, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 8) + QQ(I, 4, I1, 8) > REC!(41, 0) Then
-                REC!(41, 0) = QQ(I, 3, I1, 8) + QQ(I, 4, I1, 8) ' FTM
-                REC!(41, 1) = 1 ' TIMES DONE
-                REC!(41, 2) = 2 ' HALF
+            If QQ(I, 3, I1, 8) + QQ(I, 4, I1, 8) > indRecords!(41, 0) Then
+                indRecords!(41, 0) = QQ(I, 3, I1, 8) + QQ(I, 4, I1, 8) ' FTM
+                indRecords!(41, 1) = 1 ' TIMES DONE
+                indRecords!(41, 2) = 2 ' HALF
                 RC$(41, 0) = AA$(I, I1, 0) ' NAME
                 RC$(41, 1) = B$(I) ' TEAM
                 RC$(41, 2) = SITE$(I) ' AT/VS
@@ -5491,10 +5490,10 @@ Sub RECORDSCHECK ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 8) > REC!(42, 0) Then
-                    REC!(42, 0) = QQ(I, I2, I1, 8) ' FTM
-                    REC!(42, 1) = 1 ' TIMES DONE
-                    REC!(42, 2) = I2 ' QTR
+                If QQ(I, I2, I1, 8) > indRecords!(42, 0) Then
+                    indRecords!(42, 0) = QQ(I, I2, I1, 8) ' FTM
+                    indRecords!(42, 1) = 1 ' TIMES DONE
+                    indRecords!(42, 2) = I2 ' QTR
                     RC$(42, 0) = AA$(I, I1, 0) ' NAME
                     RC$(42, 1) = B$(I) ' TEAM
                     RC$(42, 2) = SITE$(I) ' AT/VS
@@ -5504,10 +5503,10 @@ Sub RECORDSCHECK ()
             Next I2
 
             ' STEALS IN A GAME, HALF, QUARTER
-            If A!(I, I1, 13) > REC!(43, 0) Then
-                REC!(43, 0) = A!(I, I1, 13) ' FTA
-                REC!(43, 1) = 1 ' TIMES DONE
-                REC!(43, 2) = 0 ' GAME
+            If A!(I, I1, 13) > indRecords!(43, 0) Then
+                indRecords!(43, 0) = A!(I, I1, 13) ' FTA
+                indRecords!(43, 1) = 1 ' TIMES DONE
+                indRecords!(43, 2) = 0 ' GAME
                 RC$(43, 0) = AA$(I, I1, 0) ' NAME
                 RC$(43, 1) = B$(I) ' TEAM
                 RC$(43, 2) = SITE$(I) ' AT/VS
@@ -5515,10 +5514,10 @@ Sub RECORDSCHECK ()
                 RC$(43, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 7) + QQ(I, 2, I1, 7) > REC!(44, 0) Then
-                REC!(44, 0) = QQ(I, 1, I1, 7) + QQ(I, 2, I1, 7) ' FTA
-                REC!(44, 1) = 1 ' TIMES DONE
-                REC!(44, 2) = 1 ' HALF
+            If QQ(I, 1, I1, 7) + QQ(I, 2, I1, 7) > indRecords!(44, 0) Then
+                indRecords!(44, 0) = QQ(I, 1, I1, 7) + QQ(I, 2, I1, 7) ' FTA
+                indRecords!(44, 1) = 1 ' TIMES DONE
+                indRecords!(44, 2) = 1 ' HALF
                 RC$(44, 0) = AA$(I, I1, 0) ' NAME
                 RC$(44, 1) = B$(I) ' TEAM
                 RC$(44, 2) = SITE$(I) ' AT/VS
@@ -5526,10 +5525,10 @@ Sub RECORDSCHECK ()
                 RC$(44, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 7) + QQ(I, 4, I1, 7) > REC!(44, 0) Then
-                REC!(44, 0) = QQ(I, 3, I1, 7) + QQ(I, 4, I1, 7) ' FTM
-                REC!(44, 1) = 1 ' TIMES DONE
-                REC!(44, 2) = 2 ' HALF
+            If QQ(I, 3, I1, 7) + QQ(I, 4, I1, 7) > indRecords!(44, 0) Then
+                indRecords!(44, 0) = QQ(I, 3, I1, 7) + QQ(I, 4, I1, 7) ' FTM
+                indRecords!(44, 1) = 1 ' TIMES DONE
+                indRecords!(44, 2) = 2 ' HALF
                 RC$(44, 0) = AA$(I, I1, 0) ' NAME
                 RC$(44, 1) = B$(I) ' TEAM
                 RC$(44, 2) = SITE$(I) ' AT/VS
@@ -5538,10 +5537,10 @@ Sub RECORDSCHECK ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 7) > REC!(45, 0) Then
-                    REC!(45, 0) = QQ(I, I2, I1, 7) ' FTM
-                    REC!(45, 1) = 1 ' TIMES DONE
-                    REC!(45, 2) = I2 ' QTR
+                If QQ(I, I2, I1, 7) > indRecords!(45, 0) Then
+                    indRecords!(45, 0) = QQ(I, I2, I1, 7) ' FTM
+                    indRecords!(45, 1) = 1 ' TIMES DONE
+                    indRecords!(45, 2) = I2 ' QTR
                     RC$(45, 0) = AA$(I, I1, 0) ' NAME
                     RC$(45, 1) = B$(I) ' TEAM
                     RC$(45, 2) = SITE$(I) ' AT/VS
@@ -5551,10 +5550,10 @@ Sub RECORDSCHECK ()
             Next I2
 
             ' BLOCKS IN A GAME, HALF, QUARTER
-            If A!(I, I1, 15) > REC!(46, 0) Then
-                REC!(46, 0) = A!(I, I1, 15) ' FTA
-                REC!(46, 1) = 1 ' TIMES DONE
-                REC!(46, 2) = 0 ' GAME
+            If A!(I, I1, 15) > indRecords!(46, 0) Then
+                indRecords!(46, 0) = A!(I, I1, 15) ' FTA
+                indRecords!(46, 1) = 1 ' TIMES DONE
+                indRecords!(46, 2) = 0 ' GAME
                 RC$(46, 0) = AA$(I, I1, 0) ' NAME
                 RC$(46, 1) = B$(I) ' TEAM
                 RC$(46, 2) = SITE$(I) ' AT/VS
@@ -5562,10 +5561,10 @@ Sub RECORDSCHECK ()
                 RC$(46, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 9) + QQ(I, 2, I1, 9) > REC!(47, 0) Then
-                REC!(47, 0) = QQ(I, 1, I1, 9) + QQ(I, 2, I1, 9) ' FTA
-                REC!(47, 1) = 1 ' TIMES DONE
-                REC!(47, 2) = 1 ' HALF
+            If QQ(I, 1, I1, 9) + QQ(I, 2, I1, 9) > indRecords!(47, 0) Then
+                indRecords!(47, 0) = QQ(I, 1, I1, 9) + QQ(I, 2, I1, 9) ' FTA
+                indRecords!(47, 1) = 1 ' TIMES DONE
+                indRecords!(47, 2) = 1 ' HALF
                 RC$(47, 0) = AA$(I, I1, 0) ' NAME
                 RC$(47, 1) = B$(I) ' TEAM
                 RC$(47, 2) = SITE$(I) ' AT/VS
@@ -5573,10 +5572,10 @@ Sub RECORDSCHECK ()
                 RC$(47, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 9) + QQ(I, 4, I1, 9) > REC!(47, 0) Then
-                REC!(47, 0) = QQ(I, 3, I1, 9) + QQ(I, 4, I1, 9) ' FTM
-                REC!(47, 1) = 1 ' TIMES DONE
-                REC!(47, 2) = 2 ' HALF
+            If QQ(I, 3, I1, 9) + QQ(I, 4, I1, 9) > indRecords!(47, 0) Then
+                indRecords!(47, 0) = QQ(I, 3, I1, 9) + QQ(I, 4, I1, 9) ' FTM
+                indRecords!(47, 1) = 1 ' TIMES DONE
+                indRecords!(47, 2) = 2 ' HALF
                 RC$(47, 0) = AA$(I, I1, 0) ' NAME
                 RC$(47, 1) = B$(I) ' TEAM
                 RC$(47, 2) = SITE$(I) ' AT/VS
@@ -5585,10 +5584,10 @@ Sub RECORDSCHECK ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 9) > REC!(48, 0) Then
-                    REC!(48, 0) = QQ(I, I2, I1, 9) ' FTM
-                    REC!(48, 1) = 1 ' TIMES DONE
-                    REC!(48, 2) = I2 ' QTR
+                If QQ(I, I2, I1, 9) > indRecords!(48, 0) Then
+                    indRecords!(48, 0) = QQ(I, I2, I1, 9) ' FTM
+                    indRecords!(48, 1) = 1 ' TIMES DONE
+                    indRecords!(48, 2) = I2 ' QTR
                     RC$(48, 0) = AA$(I, I1, 0) ' NAME
                     RC$(48, 1) = B$(I) ' TEAM
                     RC$(48, 2) = SITE$(I) ' AT/VS
@@ -6926,7 +6925,7 @@ Sub RECORDSCHECK ()
 
     For I = 0 To 48
         For I1 = 0 To 2
-            Write #1, REC!(I, I1)
+            Write #1, indRecords!(I, I1)
         Next
         For I1 = 0 To 4
             Write #1, RC$(I, I1)
@@ -7054,3 +7053,4 @@ Sub UPDATESCREEN ()
     End If
 
 End Sub
+

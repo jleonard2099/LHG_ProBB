@@ -1,11 +1,10 @@
-
 Dim menuChoices$(1 To 8)
 Dim YY%
 
 '----------------------------------------
 ' Used across more than one source file
 '----------------------------------------
-Dim Shared A!(15, 14)
+Dim Shared compareA!(15, 14)
 
 Dim Shared diskPaths$(3), Q$(0 To 377)
 Dim Shared teamNames$(MAX_TEAMS), Z1$(40)
@@ -48,7 +47,7 @@ Dim compareZ!(0 To 15), compareZ1!(0 To 15)
 '----------------------------------------
 ' Used across CREATE.BAS routines
 '----------------------------------------
-Dim intZ1%(40)
+Dim intZ1%(TEAMS_PER_CONFERENCE)
 
 '----------------------------------------
 ' Used across DRAFT.BAS routines
@@ -78,25 +77,25 @@ Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
 ' Used across LOOKY.BAS,
 '   LEAGCMPL.BAS routines
 '----------------------------------------
-Dim categories$(0 To 25), H$(0 To 100), lookyA$(0 To 14), O$(0 To 100)
-Dim values!(0 To 14, 0 To 24), W0!(0 To 14), W1!(0 To 14)
-Dim O%(0 To 100)
+Dim categories$(0 To 25), statsH$(0 To 100), lookyA$(0 To 14), O$(0 To 100)
+Dim values!(0 To 14, 0 To 24), statW0!(0 To 14), statW1!(0 To 14)
+Dim statO%(0 To 100)
 
 '----------------------------------------
 ' Used across LEAGCMPL.BAS,
 '   SEELEAG.BAS routines
 '----------------------------------------
-Dim DL!(40, 20), LD!(250, 2), S!(14, 26)
+Dim DL!(40, 20), LD!(250, 2), leagS!(14, 26)
 Dim O1!(40), O2!(40), OL!(40, 20)
-Dim P!(40), Z!(260), Z1!(260)
+Dim P!(40), statZ!(260), statZ1!(260)
 
 Dim DL$(40), N$(14), Z2$(260), Z3$(260)
 Dim H1$(40), OL$(40), leagT$(40)
 
 Dim DT!(21), OT!(21)
 
-Dim LG$, D1$, D2$, D3$, D4$
-Dim HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, X%
+Dim LG$, div1$, div2$, div3$, div4$
+Dim HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, Z%
 
 '----------------------------------------
 ' Used across NEWLDR.BAS routines
@@ -126,8 +125,8 @@ Dim BRC!(25), TRC!(21), TRC1!(21)
 '----------------------------------------
 ' Used across RECORDS.BAS routines
 '----------------------------------------
-Dim RC$(50, 4), recordsTRC$(125, 3)
-Dim allRecords!(50, 2), TotalRecords!(125, 2)
+Dim indRecCategory$(50, 4), teamRecCategory$(125, 3)
+Dim allRecords!(50, 2), teamRecords!(125, 2)
 Dim HALF$(2), QTR$(4)
 
 '----------------------------------------
@@ -138,7 +137,7 @@ Dim N$
 Dim scheduleAP%(1), homeScore%(MAX_GAMES), visitingScore%(MAX_GAMES)
 
 'NG = Number of Games; not sure about the 18
-Dim NG%(MAX_GAMES, 18)
+Dim scheduleNG%(MAX_GAMES, 18)
 
 ReDim scheduleH$(0 To 20), scheduleV$(0 To 20)
 Dim scheduleYN$(MAX_GAMES, 1)
@@ -146,7 +145,7 @@ Dim scheduleYN$(MAX_GAMES, 1)
 '----------------------------------------
 ' Used across TRADE.BAS routines
 '----------------------------------------
-Dim B1!(2, 14, 14), tradeT!(1)
+Dim tradeB1!(2, 14, 14), tradeT!(1)
 Dim tradeW0!(2, 14), tradeW1!(2, 14)
 Dim tradeAA$(1, 6), tradeB$(0 To 1, 0 To 14, 0 To 1)
 Dim SA$(1)
@@ -156,3 +155,43 @@ Dim tradeB%(0 To 1, 0 To 14, 0 To 19), tradeL%(0 To 1, 0 To 6)
 '----------------------------------------
 ' Used across Game Routines
 '----------------------------------------
+Dim Shared AD, AP, B, CT, D, F3, H, JJ, JY, N, NTMS
+Dim Shared P, P7, P9, PO, QQ, QR, SC, T, T1, TE, TMT
+Dim Shared X, X1, X8, U5, VG, VH
+
+Dim Shared B1!(1, 4), C1(1, 14)
+Dim Shared D1(1), D2(1), D8(6, 6), F1(14), G4(14), G5(14)
+Dim Shared P2(1), P4(5), P5(5), P7(1), QQ(1, 8, 14, 14), QR(1, 7, 14)
+Dim Shared R3(1), RB(0 To 10), S3(14), SC(1)
+Dim Shared T(1, 34), T0(1), T1(1), TF(1)
+Dim Shared V9(14), VG(9), VH(9), W2(1, 14), W3(1, 14)
+Dim Shared X$(4), X7(1), Z5(1), Z6(1), ZF(1), ZZ(2, 14)
+
+Dim Shared pbpDelay!
+
+Dim Shared A!(1, 14, 25), M9!(1), indRecords!(50, 2)
+Dim Shared S!(1, 14), W0!(1, 14), W1!(1, 14)
+Dim Shared Z!(15), Z1!(15), Z2!(14, 14)
+
+Dim Shared A1$, B1$, C1$, D$, D1$, E1$, F1$, FF$, G1$, H1$, O$
+Dim Shared P7$, PB$, PS$, TS$, U$, Y2$, Z3$
+
+Dim Shared AA$(1, 14, 1), ABB$(3), A1$(3), B$(3), C$(3), CM$(1)
+Dim Shared defenseStyles$(5), FR$(1), FT$(1)
+Dim Shared H$(100), HO$(100), LC$(2), offenseStyles$(2)
+Dim Shared PO$(1), P7$(1), PB$(1), PS$(4)
+Dim Shared R$(14), RC$(50, 4), S$(3), SC$(1), SX$(32, 1)
+Dim Shared TS$(1), U5$(3), Y$(1), YN$(3)
+
+Dim Shared CF%, CM%, DK%, EG%, FB%, FR%, FT%, GF%, HH%, HT%
+Dim Shared NB%, nbrLines%, NM%, OX%, OY%, PB%, PT%, PZ%, RT%
+Dim Shared TS%, TTS%, X4%, XY%
+
+Dim Shared AP%(2), B%(1, 14, 19), CF%(1, 9), E%(13)
+Dim Shared F%(1, 9), F5%(1, 4), F7%(1, 9), G9%(1), GF%(2, 9)
+Dim Shared HT%(100), L%(1, 6), NG%(18)
+Dim Shared N0%(2, 2, 4), OX%(2), OY%(2), O%(100), O0%(1)
+Dim Shared PF%(1), PFA%(33), ST%(32), SX%(32, 1, 14)
+Dim Shared TOA%(33), TOF%(1), W%(1, 14, 1)
+
+Dim Shared fileLength&, actualAttendance&

@@ -103,7 +103,7 @@ Sub ViewLeagueStats ()
                 Locate 2, 33: Print targetFile$
 
                 Do
-                    Locate , 33: Print "ANY CHANGE (YN)";
+                    Locate 3, 33: Print "ANY CHANGE (YN)";
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -1118,10 +1118,9 @@ Sub BUILDSTATS (statFile$, JB, TS)
     Shared GMA!(), TYP!()
     Shared W0L!(), W1L!()
 
-
     Dim TBN
 
-    Shared A!()
+    Shared compareA!()
     Shared YY%
 
     TMR% = 1280
@@ -1142,7 +1141,7 @@ Sub BUILDSTATS (statFile$, JB, TS)
                 For I = 0 To 14
                     Input #1, lookyA$(I)
                     For J = 0 To 13
-                        Input #1, A!(I, J)
+                        Input #1, compareA!(I, J)
                     Next
                     Input #1, compareW0!(I)
                     Input #1, compareW1!(I)
@@ -1174,7 +1173,7 @@ Sub BUILDSTATS (statFile$, JB, TS)
                         K1 = 0
                         For I1 = 0 To 13
                             K1 = K1 + 1
-                            AL!(JB, K1) = A!(I, I1)
+                            AL!(JB, K1) = compareA!(I, I1)
                         Next I1
                         W0L!(JB) = compareW0!(I): W1L!(JB) = compareW1!(I)
                     End If
