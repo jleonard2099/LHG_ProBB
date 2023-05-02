@@ -13,17 +13,17 @@ Const TEAMS_PER_CONFERENCE = 40
 
 DefInt A-Z
 
-'$INCLUDE: 'KeyInput.BI'
-'$INCLUDE: 'QPProEqu.BI'
-'$INCLUDE: 'PadRight.BI'
+'$INCLUDE: 'KeyInput.bi'
+'$INCLUDE: 'QPProEqu.bi'
+'$INCLUDE: 'PadRight.bi'
 
 ' For Utils
-'$INCLUDE: 'MainRoutines.BI'
-'$INCLUDE: 'TITLE.BI'
-'$INCLUDE: 'Variables.BI'
+'$INCLUDE: 'MainRoutines.bi'
+'$INCLUDE: 'TITLE.bi'
+'$INCLUDE: 'Variables.bi'
 
 ' For Game
-'$INCLUDE: 'GameRoutines.BI'
+'$INCLUDE: 'GameRoutines.bi'
 
 
 On Error GoTo Errhandler
@@ -500,12 +500,12 @@ Sub Leaders_Menu ()
 End Sub
 
 
-'$INCLUDE: 'KeyInput.BM'
-'$INCLUDE: 'QPProEqu.BM'
-'$INCLUDE: 'PadRight.BM'
+'$INCLUDE: 'KeyInput.bm'
+'$INCLUDE: 'QPProEqu.bm'
+'$INCLUDE: 'PadRight.bm'
 
 ' For Utils
-'$INCLUDE: 'TITLE.BM'
+'$INCLUDE: 'TITLE.bm'
 '$INCLUDE: 'ALIGN.BAS'
 '$INCLUDE: 'BLANK.BAS'
 '$INCLUDE: 'BINPUT.BAS'
@@ -530,5 +530,4 @@ End Sub
 
 ' For Game
 '$INCLUDE: 'PROHOOP.BAS'
-'$INCLUDE: 'GameRoutines.BM'
-
+'$INCLUDE: 'GameRoutines.bm'
