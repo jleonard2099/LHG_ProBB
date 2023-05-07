@@ -2,7 +2,8 @@
 *.7z
 *.exe
 *.ini
-bin
+bin/DEV.BAS
+bin/HELLO*
 doc/*.odt
 src/DEFAULT
 src/DEV.BAS
