@@ -1,9 +1,13 @@
-Dim menuChoices$(1 To 8)
+'----------------------------------------
+' Used mostly for HELLO
+'----------------------------------------
 Dim YY%
 
 '----------------------------------------
 ' Used across more than one source file
 '----------------------------------------
+Dim opSysType$
+
 Dim Shared compareA!(15, 14)
 
 Dim Shared diskPaths$(3), Q$(0 To 377)
@@ -23,19 +27,39 @@ Dim Shared DT$, TM$
 
 
 '----------------------------------------
-' Used across BINPUT.BAS routines
+' Used across ALIGN, MERGE routines
+'----------------------------------------
+Dim alignA$(15), alignAR$(15)
+Dim AN$(0 To 14)
+Dim ORD$(0 To 100)
+Dim HRD$(0 To 100)
+
+Dim AN(15, 14), AR(15, 14), ARD(0 To 15, 0 To 14)
+Dim W0N(15), WN1(15)
+Dim W0RD(0 To 15), W1RD(0 To 15)
+Dim W0R(15), WR1(15)
+Dim ZR(15), ZR1(15)
+
+Dim alignZ!(0 To 15), alignZ1!(0 To 15)
+Dim ZRD!(0 To 16), ZRD1!(0 To 16)
+
+Dim ORD%(0 To 100), mergeT%(0 To 100), TRD%(0 To 100)
+
+
+'----------------------------------------
+' Used across BINPUT routines
 '----------------------------------------
 Dim inputB%(0 To 14, 0 To 19), inputT%(35), inputL%(0 To 6)
 Dim inputB$(15, 1), inputT$(4)
 
 '----------------------------------------
-' Used across CAREER.BAS routines
+' Used across CAREER routines
 '----------------------------------------
 Dim ars!(15, 62, 15), W0S!(15, 62), W1S!(15, 62)
 Dim AR$(62)
 
 '----------------------------------------
-' Used across COMPARE.BAS routines
+' Used across COMPARE routines
 '----------------------------------------
 Dim compareA$(15), compareAA$(15, 1), compareB$(14)
 Dim compareT$(0), comparePS$(15)
@@ -45,12 +69,12 @@ Dim compareW0!(15), compareW1!(15)
 Dim compareZ!(0 To 15), compareZ1!(0 To 15)
 
 '----------------------------------------
-' Used across CREATE.BAS routines
+' Used across CREATE routines
 '----------------------------------------
 Dim intZ1%(TEAMS_PER_CONFERENCE)
 
 '----------------------------------------
-' Used across DRAFT.BAS routines
+' Used across DRAFT routines
 '----------------------------------------
 Dim draftB%(0 To 1, 0 To 14, 0 To 19), draftL%(0 To 1, 0 To 6)
 Dim draftLG%(0 To 52, 0 To 5), draftLT%(0 To 14, 0 To 34)
@@ -58,13 +82,13 @@ Dim draftT%(0 To 1, 0 To 34)
 Dim draftAA$(1, 4), draftB$(1, 14, 1), draftYears$(1 To 52), draftYN$(0 To 1)
 
 '----------------------------------------
-' Used across GPMIN.BAS routines
+' Used across GPMIN routines
 '----------------------------------------
 Dim adjustB$(15, 1), adjustT$(0 To 4)
 Dim adjustB%(0 To 14, 19), adjustL%(0 To 6), adjustT%(0 To 34)
 
 '----------------------------------------
-' Used across HD2HD.BAS routines
+' Used across HD2HD routines
 '----------------------------------------
 Dim Shared QQ$(1)
 '--> could be converted to Dim / Shared split
@@ -74,16 +98,16 @@ Dim TAL!(40), TAW!(40), THL!(40), THW!(40)
 Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
 
 '----------------------------------------
-' Used across LOOKY.BAS,
-'   LEAGCMPL.BAS routines
+' Used across LOOKY,
+'   LEAGCMPL routines
 '----------------------------------------
 Dim categories$(0 To 25), statsH$(0 To 100), lookyA$(0 To 14), O$(0 To 100)
 Dim values!(0 To 14, 0 To 24), statW0!(0 To 14), statW1!(0 To 14)
 Dim statO%(0 To 100)
 
 '----------------------------------------
-' Used across LEAGCMPL.BAS,
-'   SEELEAG.BAS routines
+' Used across LEAGCMPL,
+'   SEELEAG routines
 '----------------------------------------
 Dim DL!(40, 20), LD!(250, 2), leagS!(14, 26)
 Dim O1!(40), O2!(40), OL!(40, 20)
@@ -98,7 +122,7 @@ Dim LG$, div1$, div2$, div3$, div4$
 Dim HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, Z%
 
 '----------------------------------------
-' Used across NEWLDR.BAS routines
+' Used across NEWLDR routines
 '----------------------------------------
 Dim AL$(600)
 
@@ -116,21 +140,21 @@ Dim W0L!(600), W1L!(600)
 Dim printOrView%
 
 '----------------------------------------
-' Used across REC.BAS routines
+' Used across REC routines
 '----------------------------------------
 Dim teamRecords$(20), indRecords$(25)
 Dim BRC$(25, 1), TRC$(21), TRC1$(21)
 Dim BRC!(25), TRC!(21), TRC1!(21)
 
 '----------------------------------------
-' Used across RECORDS.BAS routines
+' Used across RECORDS routines
 '----------------------------------------
 Dim indRecCategory$(50, 4), teamRecCategory$(125, 3)
 Dim allRecords!(50, 2), teamRecords!(125, 2)
 Dim HALF$(2), QTR$(4)
 
 '----------------------------------------
-' Used across SCHEDULE.BAS routines
+' Used across SCHEDULE routines
 '----------------------------------------
 Dim BS%, NS%
 Dim N$
@@ -143,7 +167,7 @@ ReDim scheduleH$(0 To 20), scheduleV$(0 To 20)
 Dim scheduleYN$(MAX_GAMES, 1)
 
 '----------------------------------------
-' Used across TRADE.BAS routines
+' Used across TRADE routines
 '----------------------------------------
 Dim tradeB1!(2, 14, 14), tradeT!(1)
 Dim tradeW0!(2, 14), tradeW1!(2, 14)
