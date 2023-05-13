@@ -1,3 +1,4 @@
+$Debug
 
 Const GAME_VERSION$ = "4.32"
 Const MAX_TEAMS = 1000
@@ -320,8 +321,8 @@ Sub ConfigureDrives ()
     GetDiv1:
     Locate 7, 16 'location of beginning of field
     CapsOn = 0
-	NumOnly = 0
-	Max = 50
+    NumOnly = 0
+    Max = 50
     Call TextIn(diskPaths$(0), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
@@ -330,8 +331,8 @@ Sub ConfigureDrives ()
     GetDiv2:
     Locate 9, 16 'location of beginning of field
     CapsOn = 0
-	NumOnly = 0
-	Max = 50
+    NumOnly = 0
+    Max = 50
     Call TextIn(diskPaths$(1), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
