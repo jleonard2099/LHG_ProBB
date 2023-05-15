@@ -1,41 +1,43 @@
 Sub LOOKY ()
 
+    _Title "Basketball: The Pro Game - View Stats"
+
     Dim teamRatings%(0 To 100)
 
     Shared categories$(), lookyA$()
 
-    _Title "Basketball: The Pro Game - View Stats"
-
-    Color 15, 0
-    Cls
-
-    Call TITLE_HEADER
-
-    newTeam = 0
-
     Do
-        'Pick a team to view stats for
+
         Color 15, 0
         Cls
+
         JJ = 6
-        SN = 1: Locate 6, 8: Color 15, 4
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+        Locate 6, 8: Color 15, 4
+
+        'Print box top
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+        'Print box sides
+        For II = 1 To JJ
+            Locate 6 + II, 8
+            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+        Next
+
+        'Print box bottom
         Locate 7 + JJ, 8
         Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
         Locate 7, 32
+
         Locate , 12: Print "ENTER DISK ID: ": Print
         Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
         Print
         Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
+
         Locate 7, 27: Input NY$
 
         If NY$ = "" And YN$ <> "" Then
-            'Load existing team names from previous choice
-            'NY$ = YN$
-            'Call SelectTeam_BINPUT(YN$, NTMS, teamIdx%)
             Call SelectTeam_LOOKY(YN$, NTMS, teamRatings%())
         Else
             YN$ = NY$
@@ -133,7 +135,7 @@ Sub LOOKY ()
 
         End If 'Done checking BO%
 
-    Loop Until I$ = Chr$(27) Or UCase$(I$) = "N" Or newTeam = 0
+    Loop Until UCase$(I$) = "N" Or I$ = Chr$(27) Or Z$ = "END" Or newTeam = 0
 
 End Sub
 
@@ -147,7 +149,7 @@ Sub ReadStats (statFile$, totalGames%, teamRatings%(), teamChoice)
 
     Dim P%(0 To 100)
 
-	Shared O%()
+    Shared statO%()
 
     Shared categories$(), lookyA$()
     Shared O$(), statsH$()
@@ -228,7 +230,7 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
 
     Dim P%(0 To 100)
 
-	Shared O%()
+    Shared statO%()
 
     Shared categories$(), lookyA$()
     Shared O$(), statsH$()
@@ -315,7 +317,7 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
 
             Case "P":
                 Color 0, 15
-                
+
                 Call PrintStatsSchedule(totalGames%, teamRatings%(), B$)
 
                 LPrint
@@ -324,7 +326,7 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
                 LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
                 LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
                 LPrint Chr$(12)
-                
+
                 I$ = GetKeyPress$
 
                 Call PrintStatsSummary(totalGames%, compareZ!(), compareZ1!(), B$)
@@ -443,9 +445,9 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
     142 '
     ' *** DISPLAYING STATS ***
     Call TITLE_HEADER
-    
+
     Color , 1
-    
+
     Locate 24, 1
 
     Color 15, 1: Print "SCHEDULE ";
@@ -460,10 +462,10 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
     Color 14: Print "[P]  ";
     Color 15: Print "DELETE STATS ";
     Color 14: Print "[D]";
-        
+
     Color 12, 0
     Locate 2, 1: Print "SORT BY: "; categories$(CP%); Tab(40);
-    
+
     Locate 3, 1
     Color 14, 0: Print B$
     Print "NAME"; Tab(15);
@@ -520,7 +522,7 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
 
             'FTM, FTA, FT PCT
             Locate , 60: Print Using "#### ####"; values!(I, 4); values!(I, 3);
-            
+
             Locate , 70
 
             If values!(I, 3) = 0 Then
@@ -569,7 +571,7 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
 
     '2nd Row
     'Opponents???
-    
+
     'Games
     Color 12: Locate , 15: Print Using "##"; totalGames%;
 
@@ -789,7 +791,7 @@ Sub ViewStatSummary (statFile$, totalGames%, teamRatings%(), B$)
 
     End If 'Done checking for ESC
 
-	'Call ResetStatsPrompt (statFile$)
+    'Call ResetStatsPrompt (statFile$)
 
 End Sub
 
@@ -1082,7 +1084,7 @@ Sub PrintStatsSummary (totalGames%, compareZ!(), compareZ1!(), B$)
 
         'Average
         If values!(I, 0) > 0 Then LPrint Tab(21); Using "##.#"; (values!(I, 2) * 2 + values!(I, 4) + statW0!(I)) / values!(I, 0);
-        
+
         'Highest Points, Rebounds
         LPrint Tab(26); Using "## #### #### ####"; values!(I, 13); values!(I, 12); values!(I, 5) - values!(I, 12); values!(I, 5);
 
@@ -1116,7 +1118,7 @@ Sub PrintStatsSummary (totalGames%, compareZ!(), compareZ1!(), B$)
     '-- Should be HI points but is excluded; perhaps because it is not a TOTAL
     '-- however it could be updated to do a MAX of the "HI" values
     'LPrint Tab(18); Using "## "; compareZ1!(13)
-    
+
     'Rebounds
     If totalGames% > 0 Then rebCalc! = compareZ1!(5) / totalGames% Else rebCalc! = 0
     LPrint Tab(29); Using "#### #### ####  ##.#"; compareZ1!(12); compareZ1!(5) - compareZ1!(12) - compareZ1!(15); compareZ1!(5); rebCalc!;
@@ -1136,74 +1138,75 @@ End Sub
 ' If they chose so, and confirm, then
 ' it will proceed to delete the files.
 Sub ResetStatPrompt (statFile$)
-	
-	Cls
 
-	JJ = 1
-	Locate 6, 8
+    Cls
 
-	'Print box top
-	Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+    JJ = 1
+    Locate 6, 8
 
-	'Print box sides
-	For II = 1 To JJ
-		Locate 6 + II, 8
-		Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-	Next
+    'Print box top
+    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
-	'Print box bottom
-	Locate 7 + JJ, 8
-	Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+    'Print box sides
+    For II = 1 To JJ
+        Locate 6 + II, 8
+        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Next
 
-	Locate 7
+    'Print box bottom
+    Locate 7 + JJ, 8
+    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
-	Do
-		U$ = "RESET COMPILED STATS TO 0 (YN)"
-		Locate , (80 - Len(U$)) / 2
-		Print U$
-		I$ = GetKeyPress$
-	Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+    Locate 7
 
-	Color 15, 0
+    Do
+        U$ = "RESET COMPILED STATS TO 0 (YN)"
+        Locate , (80 - Len(U$)) / 2
+        Print U$
+        I$ = GetKeyPress$
+    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-	If UCase$(I$) = "Y" Then
+    Color 15, 0
 
-		'Do
-		JJ = 1
-		Locate 6, 8
+    If UCase$(I$) = "Y" Then
 
-		'Print box top
-		Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+        'Do
+        JJ = 1
+        Locate 6, 8
 
-		'Print box sides
-		For II = 1 To JJ
-			Locate 6 + II, 8
-			Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-		Next
+        'Print box top
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
-		'Print box bottom
-		Locate 7 + JJ, 8
-		Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+        'Print box sides
+        For II = 1 To JJ
+            Locate 6 + II, 8
+            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+        Next
 
-		Locate 7
+        'Print box bottom
+        Locate 7 + JJ, 8
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
-		Do
-			U$ = "ARE YOU SURE (YN)"
-			Locate , (80 - Len(U$)) / 2
-			Print U$
-			I$ = GetKeyPress$
-		Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+        Locate 7
 
-		Color 15, 0
+        Do
+            U$ = "ARE YOU SURE (YN)"
+            Locate , (80 - Len(U$)) / 2
+            Print U$
+            I$ = GetKeyPress$
+        Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-		If UCase$(I$) = "Y" Then
-			Kill diskPaths$(1) + statFile$
-			Kill diskPaths$(1) + statFile$ + "S"
-			If _FileExists(diskPaths$(1) + statFile$ + "R") Then Kill diskPaths$(1) + statFile$ + "R"
-		End If
+        Color 15, 0
 
-		'Loop Until UCase$(I$) = "N"
+        If UCase$(I$) = "Y" Then
+            Kill diskPaths$(1) + statFile$
+            Kill diskPaths$(1) + statFile$ + "S"
+            If _FileExists(diskPaths$(1) + statFile$ + "R") Then Kill diskPaths$(1) + statFile$ + "R"
+        End If
 
-	End If 'Done checking if reset stats
+        'Loop Until UCase$(I$) = "N"
+
+    End If 'Done checking if reset stats
 
 End Sub
+

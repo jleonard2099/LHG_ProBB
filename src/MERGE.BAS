@@ -51,12 +51,14 @@ Sub MergeStats ()
 
     Dim ARD$(0 To 14)
 
+    Shared Ycurr%, Yroad%
+
     Shared alignA$()
     Shared O$(), statsH$()
     Shared ORD$()
     Shared HRD$()
 
-    Shared ARD()
+    Shared ARD!()
     Shared ORD%(), mergeT%(), statO%()
     Shared TRD%(), W0RD!(), W1RD!()
 
@@ -106,16 +108,16 @@ Sub MergeStats ()
 
             If UCase$(I$) = "N" Then
 
-                If _FileExists(pathRoadStats$ + "\" + statFile$) Then
+                If _FileExists(pathRoadStats$ + statFile$) Then
 
-                    Open pathRoadStats$ + "\" + statFile$ For Input As #1
+                    Open pathRoadStats$ + statFile$ For Input As #1
                     Input #1, B$
 
                     For I = 0 To 14
                         Input #1, ARD$(I)
 
                         For J = 0 To 13
-                            Input #1, ARD(I, J)
+                            Input #1, ARD!(I, J)
                         Next
                         Input #1, W0RD!(I)
                         Input #1, W1RD!(I)
@@ -126,8 +128,8 @@ Sub MergeStats ()
 
                     Close #1
 
-                    Open pathRoadStats$ + "\" + statFile$ + "S" For Input As #1
-                    Input #1, YR%
+                    Open pathRoadStats$ + statFile$ + "S" For Input As #1
+                    Input #1, Yroad%
                     For I = 1 To 100: Input #1, ORD%(I): Next I
                     For I = 1 To 100: Input #1, ORD$(I): Next I
                     For I = 1 To 100: Input #1, TRD%(I): Next I
@@ -139,9 +141,9 @@ Sub MergeStats ()
                         Print Space$(64)
                     Next
 
-                    If _FileExists(pathCurrentStats$ + "\" + statFile$) Then
+                    If _FileExists(pathCurrentStats$ + statFile$) Then
 
-                        Open pathCurrentStats$ + "\" + statFile$ For Input As #1
+                        Open pathCurrentStats$ + statFile$ For Input As #1
                         Input #1, B$
 
                         For I = 0 To 14:
@@ -154,8 +156,8 @@ Sub MergeStats ()
                         For L = 0 To 15: Input #1, alignZ1!(L): Next
                         Close #1
 
-                        Open pathRoadStats$ + "\" + statFile$ + "S" For Input As #1
-                        Input #1, Y%
+                        Open pathCurrentStats$ + statFile$ + "S" For Input As #1
+                        Input #1, Ycurr%
                         For I = 1 To 100: Input #1, statO%(I): Next I
                         For I = 1 To 100: Input #1, O$(I): Next I
                         For I = 1 To 100: Input #1, mergeT%(I): Next I
@@ -172,7 +174,7 @@ Sub MergeStats ()
 
                         If SEQ = 0 Then
 
-                            Call DoTheMerge(pathCurrentStats$, statFile$)
+                            Call DoTheMerge(pathCurrentStats$, statFile$, B$)
 
                             For J = 13 To 23
                                 Locate J
@@ -254,36 +256,44 @@ End Sub
 '       DoTheMerge Subroutine
 '----------------------------------------
 '...explanation...
-Sub DoTheMerge (pathCurrentStats$, statFile$)
+Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
+
+    Shared Ycurr%, Yroad%
 
     Shared alignA$()
     Shared HRD$(), ORD$()
     Shared O$(), statsH$()
 
-    Shared ARD()
+    Shared ARD!()
     Shared ORD%(), mergeT%(), TRD%()
     Shared statO%(), W0RD!(), W1RD!()
 
     Shared compareA!(), compareW0!(), compareW1!()
     Shared alignZ!(), alignZ1!(), ZRD!(), ZRD1!()
 
-    For K = 1 To YR%
-        Y% = Y% + 1
-        statO%(Y%) = ORD%(K)
-        O$(Y%) = ORD$(K)
-        mergeT%(Y%) = TRD%(K)
-        statsH$(Y%) = HRD$(K)
+    For K = 1 To Yroad%
+        Ycurr% = Ycurr% + 1
+        statO%(Ycurr%) = ORD%(K)
+        O$(Ycurr%) = ORD$(K)
+        mergeT%(Ycurr%) = TRD%(K)
+        statsH$(Ycurr%) = HRD$(K)
     Next
 
     Locate 18, 20: Color 12: Print "MERGING STAT FILE AND SCHEDULE RESULTS . . . ."
 
     For I = 0 To 14
         For J = 0 To 12
-            compareA!(I, J) = compareA!(I, J) + ARD(I, J)
+            compareA!(I, J) = compareA!(I, J) + ARD!(I, J)
         Next J
+
         compareW0!(I) = compareW0!(I) + W0RD!(I)
         compareW1!(I) = compareW1!(I) + W1RD!(I)
-        If compareA!(I, 13) < ARD(I, 13) Then compareA!(I, 13) = ARD(I, 13) Else compareA!(I, 13) = compareA!(I, 13)
+
+        If compareA!(I, 13) < ARD!(I, 13) Then
+            compareA!(I, 13) = ARD!(I, 13)
+        Else
+            compareA!(I, 13) = compareA!(I, 13)
+        End If
     Next I
 
     For L = 0 To 14
@@ -291,16 +301,23 @@ Sub DoTheMerge (pathCurrentStats$, statFile$)
         alignZ1!(L) = alignZ1!(L) + ZRD1!(L)
     Next
 
-    Open pathCurrentStats$ + "\" + statFile$ For Output As #1
+    Open pathCurrentStats$ + statFile$ For Output As #1
     Write #1, B$
-    For I = 0 To 14: Write #1, alignA$(I)
-    For J = 0 To 13: Write #1, compareA!(I, J): Next: Write #1, compareW0!(I): Write #1, compareW1!(I): Next
+
+    For I = 0 To 14:
+        Write #1, alignA$(I)
+        For J = 0 To 13: Write #1, compareA!(I, J): Next
+        Write #1, compareW0!(I)
+        Write #1, compareW1!(I)
+    Next
+
     For L = 0 To 15: Write #1, alignZ!(L): Next
     For L = 0 To 15: Write #1, alignZ1!(L): Next
+
     Close #1
 
-    Open pathCurrentStats$ + "\" + statFile$ + "S" For Output As #1
-    Write #1, Y%
+    Open pathCurrentStats$ + statFile$ + "S" For Output As #1
+    Write #1, Ycurr%
     For I = 1 To 100: Write #1, statO%(I): Next I
     For I = 1 To 100: Write #1, O$(I): Next I
     For I = 1 To 100: Write #1, mergeT%(I): Next I
@@ -340,7 +357,7 @@ Sub GetMergePaths (pathCurrentStats$, pathRoadStats$, promptResponse$)
                 Locate , 5: Print "           /usr/bin/haffner"
                 Locate , 5: Print "           /usr/bin/haffner/1960"
                 Locate , 5: Print "           /home/haffner/pbasket"
-            Case "[MAC]","[MACOSX]":
+            Case "[MAC]", "[MACOSX]":
                 Locate 4, 5: Print "EXAMPLE - /Volumes/floppy"
                 Locate , 5: Print "           /Applications/haffner"
                 Locate , 5: Print "           /Applications/haffner/1960"

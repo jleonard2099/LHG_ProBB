@@ -29,12 +29,14 @@ Dim Shared DT$, TM$
 '----------------------------------------
 ' Used across ALIGN, MERGE routines
 '----------------------------------------
+Dim Ycurr%, Yroad%
+
 Dim alignA$(15), alignAR$(15)
 Dim AN$(0 To 14)
 Dim ORD$(0 To 100)
 Dim HRD$(0 To 100)
 
-Dim AN!(15, 14), AR!(15, 14), ARD(0 To 15, 0 To 14)
+Dim AN!(15, 14), AR!(15, 14), ARD!(0 To 15, 0 To 14)
 Dim alignZ!(0 To 15), alignZ1!(0 To 15)
 Dim W0N!(15), WN1!(15)
 Dim W0RD!(0 To 15), W1RD!(0 To 15)

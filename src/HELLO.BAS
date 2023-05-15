@@ -1,4 +1,3 @@
-$Debug
 
 Const GAME_VERSION$ = "4.32"
 Const MAX_TEAMS = 1000
@@ -307,7 +306,7 @@ Sub ConfigureDrives ()
         Case "[LINUX]":
             Locate , 31: Print "/mnt/floppy"
             Locate , 31: Print "/usr/bin/probb/teams"
-        Case "[MAC]","[MACOSX]":
+        Case "[MAC]", "[MACOSX]":
             Locate , 31: Print "/Volumes/floppy"
             Locate , 31: Print "/Applications/probb/teams"
     End Select
