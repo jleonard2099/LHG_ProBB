@@ -53,10 +53,10 @@ Sub ViewLeagueStats ()
     For X = 1 To TEAMS_PER_CONFERENCE
         Z1$(X) = "XXX"
     Next
+	
     Spec$ = diskPaths$(1) + "*.TMS"
+	Count% = FCount%(Spec$)
 
-    null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-    Count% = DirCount%
     If Count% = 0 Then
         Locate 10, 8
         Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)

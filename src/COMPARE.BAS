@@ -72,7 +72,7 @@ Sub ViewComparisons ()
             'NY$ = YN$
             Call SelectTeam_COMPARE(YN$, NTMS)
         Else
-            YN$ = NY$
+            YN$ = RTrim$(NY$)
             Erase teamNames$
             Call ReadTeamData_COMPARE(YN$, NTMS)
             Call SelectTeam_COMPARE(YN$, NTMS)
@@ -190,8 +190,10 @@ Sub ViewComparisons ()
 			Locate 10
 			Color 7, 1
 
-			Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
-			Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
+			Locate , 30: Print "STATS TO ";
+			Color 15: Print "S";: Color 7: Print "CREEN"
+			Locate , 30: Print "STATS TO ";
+			Color 15: Print "P";: Color 7: Print "RINTER"
             I$ = GetKeyPress$
 
         Loop Until UCase$(I$) = "P" Or UCase$(I$) = "S" Or I$ = Chr$(27)
@@ -222,7 +224,10 @@ End Sub
 Sub ReadTeamData_COMPARE (yearNumber$, numberTeams)
 
     numberTeams = 0
-    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+	teamYear$ = RTRim$(yearNumber$)
+
+    Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
+
     Y = LOF(1)
 
     Field #1, 15 As Q$(0), 15 As Q$(1)
@@ -251,7 +256,8 @@ Sub ReadTeamData_COMPARE (yearNumber$, numberTeams)
         CK% = CVI(Q$(9))
         If CK% = 999 Then
             numberTeams = numberTeams + 1
-            teamNames$(numberTeams) = Q$(0): teamIndex%(numberTeams) = I1
+            teamNames$(numberTeams) = Q$(0)
+			teamIndex%(numberTeams) = I1
         End If
     Next
 
@@ -292,8 +298,9 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams)
     If ExitCode% <> 27 Then
 
         T1 = teamIndex%(Selection%)
-
-        Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+		teamYear$ = RTrim$(yearNumber$)
+		
+        Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
 
         Field #1, 15 As Q$(0), 15 As Q$(1)
 

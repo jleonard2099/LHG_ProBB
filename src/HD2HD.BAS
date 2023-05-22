@@ -96,11 +96,14 @@ Sub HD2HD ()
                             Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
                             Do
-                                Locate 10, 15
+                                Locate 10
                                 Color 7, 1
 
-                                Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
-                                Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
+                                Locate , 30: Print "STATS TO ";
+								Color 15: Print "S";: Color 7: Print "CREEN"
+                                Locate , 30: Print "STATS TO ";
+								Color 15: Print "P";: Color 7: Print "RINTER"
+
                                 I$ = GetKeyPress$
                                 Color 14, 0
 
@@ -694,19 +697,22 @@ Sub GetTeam_HD2HD (TM$)
         I$ = GetKeyPress$
 
         If I$ <> Chr$(27) Then
+
             If I$ = Chr$(13) Then
+				NY$ = RTrim$(NY$)
                 Call SelectTeam_HD2HD(NY$, numberTeams, TM$)
             Else
                 Locate 7, 27: Print I$
                 Locate 7, 28: Line Input NY$
-                NY$ = I$ + NY$
+                NY$ = RTrim$(I$ + NY$)
                 Color 15, 0
 
                 If NY$ = "" And yearNumber$ <> "" Then
                     'NY$ = yearNumber$
+					yearNumber$ = RTrim$(yearNumber$)
                     Call SelectTeam_HD2HD(yearNumber$, numberTeams, TM$)
                 Else
-                    yearNumber$ = NY$
+                    yearNumber$ = RTrim$(NY$)
                     Erase teamNames$
                     Call ReadTeamData_HD2HD(yearNumber$, numberTeams)
                     Call SelectTeam_HD2HD(yearNumber$, numberTeams, TM$)
@@ -743,8 +749,7 @@ Sub SelectLeague_HD2HD (targetFile$)
 
     Do
         Spec$ = diskPaths$(1) + "*.LIB"
-        null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-        Count% = DirCount%
+		Count% = FCount%(Spec$)
 
         If Count% = 0 Then
             Locate 10, 8
@@ -818,7 +823,9 @@ Sub ReadTeamData_HD2HD (yearNumber$, numberTeams)
 
     numberTeams = 0
 
-    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+	teamYear$ = RTrim$(yearNumber$)
+	
+    Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
 
     Y = LOF(1)
 
@@ -889,7 +896,9 @@ Sub SelectTeam_HD2HD (yearNumber$, numberTeams, TM$)
     If ExitCode% <> 27 Then
 
         T1 = teamIndex%(Selection%)
-        Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+		teamYear$ = RTrim$(yearNumber$)
+		
+        Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
 
         Field #1, 15 As Q$(0), 15 As Q$(1)
 

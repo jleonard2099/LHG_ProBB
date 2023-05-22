@@ -76,6 +76,7 @@ Sub AdjustGames (selectedIndex)
 		If I$ <> Chr$(27) Then
 
 			If I$ = Chr$(13) Then 
+				YN$ = RTrim$(YN$)
 				Call SelectTeam_GPMIN(YN$, NTMS, selectedIndex)
 			Else
 				Locate 7, 27: Print I$
@@ -84,11 +85,11 @@ Sub AdjustGames (selectedIndex)
 				Color 15, 0
 				If NY$ = "" And YN$ <> "" Then 
 					'NY$ = YN$
+					YN$ = RTrim$(YN$)
 					Call SelectTeam_GPMIN(YN$, NTMS, selectedIndex)
 				Else
-					YN$ = NY$
+					YN$ = RTrim$(NY$)
 					Erase teamNames$
-
 					NTMS = 0
 
 					Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
@@ -200,13 +201,19 @@ Sub AdjustGames (selectedIndex)
 				Input "ENTER SELECTION "; B1
 
 				If B1 < 15 Then 
-					Locate 23, 1: Print Space$(38);: Locate 23, 1
-					Print adjustB$(B1, 0); " ";: Input "GAMES PLAYED "; gamesPlayed
-					Locate 23, 1: Print Space$(38);: Locate 23, 1
-					Print adjustB$(B1, 0); " ";: Input "MINUTES PER GAME "; minutesPerGame
+					Locate 23, 1: Print Space$(38);
+					Locate 23, 1: Print adjustB$(B1, 0); " ";
+					Input "GAMES PLAYED "; gamesPlayed
+
+					Locate 23, 1: Print Space$(38);
+					Locate 23, 1: Print adjustB$(B1, 0); " ";
+					Input "MINUTES PER GAME "; minutesPerGame
+
 					adjustB%(B1, 16) = gamesPlayed * -1
 					adjustB%(B1, 17) = minutesPerGame * gamesPlayed * -1
 				Else
+					YN$ = RTrim$(YN$)
+
 					Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
 
 					Field #1, 15 As Q$(0), 15 As Q$(1)
@@ -280,22 +287,29 @@ Sub SelectTeam_GPMIN (yearNumber$, numberTeams, selectedIndex)
 	If ExitCode% <> 27 Then
 
 		selectedIndex = teamIndex%(Selection%)
+		teamYear$ = RTrim$(yearNumber$)
 
-		Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+		Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
+
 		Field #1, 15 As Q$(0), 15 As Q$(1)
+
 		For I = 0 To 6
 			Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
 		Next
+
 		Field #1, 44 As X$, 2 As Q$(9)
+
 		For I = 0 To 34
 			Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
 		Next
+
 		For I = 0 To 14
 			Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
 			For I1 = 0 To 19
 				Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
 			Next
 		Next
+
 		Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 
 		Get #1, selectedIndex

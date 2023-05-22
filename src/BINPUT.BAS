@@ -98,11 +98,12 @@ Sub DoTheInput (action%)
                 'NY$ = YN$
                 Call SelectTeam_BINPUT(YN$, NTMS, teamIdx, action%)
             Else
-                YN$ = NY$
+                YN$ = RTrim$(NY$)
                 Erase teamNames$
                 NTMS = 0
 
                 Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+
                 Y = LOF(1)
 
                 Field #1, 15 As Q$(0), 15 As Q$(1)
@@ -1013,8 +1014,10 @@ Sub SelectTeam_BINPUT (yearNumber$, numberTeams, teamIdx, action%)
     If ExitCode% <> 27 Then
 
         teamIdx = teamIndex%(Selection%)
+		teamYear$ = RTrim$(yearNumber$)
 
-        Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+        Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
+
         Y = LOF(1)
 
         Field #1, 15 As Q$(0), 15 As Q$(1)

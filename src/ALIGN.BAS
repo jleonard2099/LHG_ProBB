@@ -293,11 +293,12 @@ Sub GetDiskID_ALIGN (A$)
                 If NY$ = "" And yearNumber$ <> "" Then
                     Call SelectTeam_MERGE(yearNumber$, numberTeams)
                 Else
-                    yearNumber$ = NY$
+                    yearNumber$ = RTrim$(NY$)
                     Erase teamNames$
                     numberTeams = 0
 
                     Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+
                     Y = LOF(1)
 
                     Field #1, 15 As Q$(0), 15 As Q$(1)
@@ -397,10 +398,11 @@ Sub SelectTeam_ALIGN (yearNumber$, numberTeams)
     If ExitCode% <> 27 Then
 
         T1 = teamIndex%(Selection%)
-
+		teamYear$ = RTrim$(yearNumber$)
+		
         Locate 2, 33: Color 31: Print "LOADING..."
 
-        If Not _FileExists(diskPaths$(0) + "PROBBTMS." + yearNumber$) Then
+        If Not _FileExists(diskPaths$(0) + "PROBBTMS." + teamYear$) Then
             BO% = 1
             Locate 10, 8
             Call CSMsgBox("NO TEAM FILES WERE FOUND MATCHING THIS ID.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
@@ -408,7 +410,7 @@ Sub SelectTeam_ALIGN (yearNumber$, numberTeams)
             Call CSMsgBox("", 0, Pass)
         Else
 
-            Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+            Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
 
             Field #1, 15 As Q$(0), 15 As Q$(1)
 

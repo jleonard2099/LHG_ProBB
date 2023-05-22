@@ -132,7 +132,7 @@ Sub SEELEAG ()
 
 							Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 							
-							Locate 10, 15
+							Locate 10
 							Color 7, 1
 							
 							Locate , 30: Print "STATS TO ";

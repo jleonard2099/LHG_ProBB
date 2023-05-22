@@ -217,10 +217,10 @@ Sub DraftExistingTeam (TTL%())
             'NY$ = draftYN$(0)
             Call SelectTeam_Draft(NTMS)
         Else
-            draftYN$(0) = NY$
+            draftYN$(0) = RTrim$(NY$)
             Erase teamNames$
-
             NTMS = 0
+			
             Open diskPaths$(0) + "PROBBTMS." + draftYN$(0) For Random As #1 Len = 1031
 
             Y = LOF(1)
@@ -285,8 +285,9 @@ Sub DraftExistingTeam (TTL%())
             If ExitCode% <> 27 Then
 
                 T = teamIndex%(Selection%)
+				teamYear$ = RTrim$(draftYN$(0))
 
-                Open diskPaths$(0) + "PROBBTMS." + draftYN$(0) For Random As #1 Len = 1031
+                Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
 
                 Field #1, 15 As Q$(0), 15 As Q$(1)
 
@@ -512,16 +513,17 @@ Sub DoTheDraft (TTL%())
                     Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
                     Locate , 12: Print "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
                     Locate 7, 27: Input NY$
+
                     If NY$ = "" And draftYN$(1) <> "" Then
                         'NY$ = draftYN$(1)
                         Call SelectTeam_Draft(NTMS)
                     Else
-                        draftYN$(1) = NY$
+                        draftYN$(1) = RTrim$(NY$)
                         Erase teamNames$
-
                         NTMS = 0
 
                         Open diskPaths$(0) + "PROBBTMS." + draftYN$(1) For Random As #1 Len = 1031
+
                         Y = LOF(1)
 
                         Field #1, 15 As Q$(0), 15 As Q$(1)
@@ -645,7 +647,9 @@ Sub DoTheDraft (TTL%())
                     draftT%(0, I1) = TTL%(I1)
                 Next
 
-                Open diskPaths$(0) + "PROBBTMS." + draftYN$(0) For Random As #1 Len = 1031
+				teamYear$ = RTrim$(draftYN$(0))
+
+                Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
 
                 Y = LOF(1)
 
@@ -727,7 +731,9 @@ Sub SelectTeam_Draft (numberTeams)
 
         teamIdx = teamIndex%(Selection%)
 
-        Open diskPaths$(0) + "PROBBTMS." + draftYN$(1) For Random As #1 Len = 1031
+		teamYear$ = draftYN$(1)
+
+        Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
 
         Field #1, 15 As Q$(0), 15 As Q$(1)
 

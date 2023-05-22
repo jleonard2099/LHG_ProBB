@@ -40,11 +40,12 @@ Sub LOOKY ()
         If NY$ = "" And YN$ <> "" Then
             Call SelectTeam_LOOKY(YN$, NTMS, teamRatings%())
         Else
-            YN$ = NY$
+            YN$ = RTrim$(NY$)
             Erase teamNames$
             NTMS = 0
 
             Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+			
             Y = LOF(1)
 
             Field #1, 15 As Q$(0), 15 As Q$(1)
@@ -73,7 +74,8 @@ Sub LOOKY ()
                 CK% = CVI(Q$(9))
                 If CK% = 999 Then
                     NTMS = NTMS + 1
-                    teamNames$(NTMS) = Q$(0): teamIndex%(NTMS) = I1
+                    teamNames$(NTMS) = Q$(0)
+					teamIndex%(NTMS) = I1
                 End If
             Next
             Close 1
@@ -871,8 +873,9 @@ Sub SelectTeam_LOOKY (yearNumber$, numberTeams, teamInfo%())
     If ExitCode% <> 27 Then
 
         T1 = teamIndex%(Selection%)
+		teamYear$ = RTrim$(yearNumber$)
 
-        Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+        Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
 
         Field #1, 15 As Q$(0), 15 As Q$(1)
 

@@ -78,13 +78,14 @@ Sub TradePlayers ()
         If NY$(tradeTeam) = "" Then 
             Call SelectTeam_TRADE (tradeTeam, NTMS, draftYN$())
         Else
-            draftYN$(tradeTeam) = NY$(tradeTeam)
+            draftYN$(tradeTeam) = RTrim$(NY$(tradeTeam))
             Erase teamNames$
-
             NTMS = 0
 
             Open diskPaths$(0) + "PROBBTMS." + draftYN$(tradeTeam) For Random As #1 Len = 1031
+
             Y = LOF(1)
+
             Field #1, 15 As Q$(0), 15 As Q$(1)
 
             For I = 0 To 6
@@ -228,26 +229,35 @@ Sub TradePlayers ()
         If NY$(tradeTeam) = "" Then 
             Call SelectTeam_TRADE (tradeTeam, NTMS, draftYN$())
         Else
-            draftYN$(tradeTeam) = NY$(tradeTeam)
+            draftYN$(tradeTeam) = RTrim$(NY$(tradeTeam))
             Erase teamNames$
             NTMS = 0
+
             Open diskPaths$(0) + "PROBBTMS." + draftYN$(tradeTeam) For Random As #1 Len = 1031
+
             Y = LOF(1)
+
             Field #1, 15 As Q$(0), 15 As Q$(1)
+
             For I = 0 To 6
                 Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
             Next
+
             Field #1, 44 As X$, 2 As Q$(9)
+
             For I = 0 To 34
                 Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
             Next
+
             For I = 0 To 14
                 Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
                 For I1 = 0 To 19
                     Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
                 Next
             Next
+
             Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+
             For I1 = 1 To Y / 1031
                 Get #1, I1
                 CK% = CVI(Q$(9))
@@ -256,9 +266,8 @@ Sub TradePlayers ()
                     teamNames$(NTMS) = Q$(0): teamIndex%(NTMS) = I1
                 End If
             Next
-            Close 1
 
-            'TS% = INT((NTMS - 1) / 80)
+            Close 1
 
             Call SelectTeam_TRADE (tradeTeam, NTMS, draftYN$())
         End If
@@ -286,11 +295,16 @@ Sub TradePlayers ()
     JJ = 1
 
     Locate 6, 8: Color teamSettings%(tradeTeam, 33), teamSettings%(tradeTeam, 34)
+
+	'Boxes boxes boxes!
     Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
+
     For II = 1 To JJ: Locate 6 + II, 8
         Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
     Next
+
     Locate 7 + JJ, 8
+
     Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
 
 	Do
@@ -434,11 +448,15 @@ Sub TradePlayers ()
 			'No more trades
 
             For J = 0 To 1
-                Open diskPaths$(0) + "PROBBTMS." + draftYN$(J) For Random As #1 Len = 1031
+
+                Open diskPaths$(0) + "PROBBTMS." + RTrim$(draftYN$(J)) For Random As #1 Len = 1031
+
                 Field #1, 15 As Q$(0), 15 As Q$(1)
+
                 For I = 0 To 6
                     Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
                 Next
+
                 Field #1, 44 As X$, 2 As Q$(9)
 
                 For I = 0 To 34
@@ -529,8 +547,9 @@ Sub SelectTeam_TRADE (tradeTeam, numberTeams, draftYN$())
 	If ExitCode% <> 27 Then
 
 		tradeT!(tradeTeam) = teamIndex%(Selection%)
-
-		Open diskPaths$(0) + "PROBBTMS." + draftYN$(tradeTeam) For Random As #1 Len = 1031
+		teamYear$ = RTrim$(draftYN$(tradeTeam))
+		
+		Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
 
 		Field #1, 15 As Q$(0), 15 As Q$(1)
 

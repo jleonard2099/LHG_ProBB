@@ -243,8 +243,7 @@ Sub MergeCareerFiles ()
     If UCase$(I$) = "Y" Then
 
         Spec$ = diskPaths$(1) + "*.CAR"
-        null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-        Count% = DirCount%
+		Count% = FCount%(Spec$)
 
         If Count% = 0 Then
             Locate , 10
@@ -641,8 +640,7 @@ Sub ViewCareerRecords ()
         'Display list of files...
 
         Spec$ = diskPaths$(1) + "*.CLD"
-        null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-        Count% = DirCount%
+		Count% = FCount%(Spec$)
 
         If Count% = 0 Then
             Locate , 10
@@ -851,9 +849,10 @@ Sub GetTeam (teamIDX)
             Else
                 YN$ = NY$
                 Erase teamNames$
-
                 NTMS = 0
+				
                 Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+
                 Y = LOF(1)
 
                 Field #1, 15 As Q$(0), 15 As Q$(1)

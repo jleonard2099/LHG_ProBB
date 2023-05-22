@@ -180,9 +180,9 @@ Dim tradeB%(0 To 1, 0 To 14, 0 To 19), tradeL%(0 To 1, 0 To 6)
 '----------------------------------------
 ' Used across Game Routines
 '----------------------------------------
-Dim Shared AD, AP, B, CT, D, F3, H, JJ, JY, N, NTMS
+Dim Shared AD, AP, B, CT, D, F3, H, JY, N, NTMS
 Dim Shared P, P7, P9, PO, QQ, QR, SC, T, T1, TE, TMT
-Dim Shared X, X1, X8, U5, VG, VH
+Dim Shared X, X8, U5, VG, VH
 
 Dim Shared B1!(1, 4), C1(1, 14)
 Dim Shared D1(1), D2(1), D8(6, 6), F1(14), G4(14), G5(14)
@@ -201,14 +201,15 @@ Dim Shared Z!(15), Z1!(15), Z2!(14, 14)
 Dim Shared A1$, B1$, C1$, D$, D1$, E1$, F1$, FF$, G1$, H1$, O$
 Dim Shared P7$, PB$, PS$, TS$, U$, Y2$, Z3$
 
-Dim Shared AA$(1, 14, 1), ABB$(3), A1$(3), B$(3), C$(3), CM$(1)
+Dim Shared AA$(1, 14, 1), ABB$(3), A1$(3), B$(3), CM$(1)
 Dim Shared defenseStyles$(5), FR$(1), FT$(1)
+Dim Shared gameCoach$(3), gameStadium$(3)
 Dim Shared H$(100), HO$(100), LC$(2), offenseStyles$(2)
 Dim Shared PO$(1), P7$(1), PB$(1), PS$(4)
-Dim Shared R$(14), RC$(50, 4), S$(3), SC$(1), SX$(32, 1)
+Dim Shared R$(14), RC$(50, 4), SC$(1), SX$(32, 1)
 Dim Shared TS$(1), U5$(3), Y$(1), YN$(3)
 
-Dim Shared CF%, CM%, DK%, EG%, FB%, FR%, FT%, GF%, HH%, HT%
+Dim Shared CF%, CM%, DK%, endOfGame, FB%, FR%, FT%, GF%, HH%, HT%
 Dim Shared NB%, nbrLines%, NM%, OX%, OY%, PB%, PT%, PZ%, RT%
 Dim Shared TS%, TTS%, X4%, XY%
 
@@ -219,4 +220,5 @@ Dim Shared N0%(2, 2, 4), OX%(2), OY%(2), O%(100), O0%(1)
 Dim Shared PF%(1), PFA%(33), ST%(32), SX%(32, 1, 14)
 Dim Shared TOA%(33), TOF%(1), W%(1, 14, 1)
 
-Dim Shared fileLength&, actualAttendance&
+Dim Shared avgAttendance&(1)
+Dim Shared actualAttendance&

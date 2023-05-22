@@ -610,12 +610,13 @@ Sub NewGame (visitor$, home$, YN$, gameIndex%)
                     Locate 7, 27: Input NY$
 
                     If NY$ = "" Then
-                        NY$ = YN$
+                        NY$ = RTrim$(YN$)
                         Call GetTeam_Schedule(NTMS, NY$, T1)
                     Else
-                        YN$ = NY$
+                        YN$ = RTrim$(NY$)
                         Erase teamNames$
                         NTMS = 0
+
                         Call SelectTeam_Schedule(YN$, NTMS)
                         Call GetTeam_Schedule(NTMS, YN$, T1)
                     End If
@@ -830,9 +831,10 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                     'NY$ = YN$
                     Call GetTeam_Schedule(NTMS, YN$, T1)
                 Else
-                    YN$ = NY$
+                    YN$ = RTrim$(NY$)
                     Erase teamNames$
                     NTMS = 0
+
                     Call SelectTeam_Schedule(YN$, NTMS)
                     Call GetTeam_Schedule(NTMS, YN$, T1)
                 End If
@@ -870,7 +872,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                                 I1 = Val(I$)
                             Loop Until I1 = 0 Or I1 = 1
 
-                            Input "ENTER DISPLAY VARIABLE FOR THESE GAMES "; displayPause!
+                            Input "ENTER DISPLAY PAUSE FOR THESE GAMES "; displayPause!
                         End If
 
                         For I = 1 To scheduleAP%(0)
@@ -1045,10 +1047,9 @@ Sub BoxscoreMaintenance ()
 
                 Case 2
                     Spec$ = diskPaths$(1) + "*.SPC"
-                    null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-                    Count% = DirCount%
+					Count% = FCount%(Spec$)
 
-                    If FileCount% = 0 Then
+                    If Count% = 0 Then
                         Locate 10, 8
                         Call CSMsgBox("NO SPECIAL EVENTS BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 26, Pass)
                         I$ = GetKeyPress$
@@ -1345,12 +1346,11 @@ End Sub 'ChangeGlobalSettings
 '...explanation...
 Sub LoadSchedule (targetFile$)
 
-    Spec$ = diskPaths$(0) + "*.SCD"
 
     Do
         'Display list of files...
-        null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-        Count% = DirCount%
+		Spec$ = diskPaths$(0) + "*.SCD"
+		Count% = FCount%(Spec$)
 
         If Count% = 0 Then
             Locate 10, 8
@@ -1383,7 +1383,9 @@ End Sub
 '...explanation...
 Sub SelectTeam_Schedule (yearNumber$, numberTeams)
 
-    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+	teamYear$ = RTrim$(yearNumber$)
+	
+    Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
 
     Y = LOF(1)
 
@@ -1448,7 +1450,9 @@ Sub CheckTeam_Schedule (teamInfo, yearNumber$)
 
     Shared scheduleT!()
 
-    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+	teamYear$ = RTrim$(yearNumber$)
+	
+    Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
 
     Field #1, 15 As Q$(0)
 
