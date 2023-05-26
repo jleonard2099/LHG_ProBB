@@ -1,5 +1,3 @@
-$Debug
-
 Const GAME_VERSION$ = "4.32"
 Const MAX_TEAMS = 1000
 Const MAX_GAMES = 1500
@@ -19,6 +17,9 @@ DefInt A-Z
 '$INCLUDE: 'QPProEqu.bi'
 '$INCLUDE: 'PadRight.bi'
 '$INCLUDE: 'Variables.bi'
+
+Dim Shared P, P7, P9, PO, QQ, QR, SC, T, T1, TE, TMT
+Dim Shared R3(1), RB(0 To 10), S3(14), SC(0 To 1)
 
 ' For Utils
 '$INCLUDE: 'MainRoutines.bi'
@@ -562,3 +563,4 @@ End Sub
 ' For Game
 '$INCLUDE: 'PROHOOP.BAS'
 '$INCLUDE: 'GameRoutines.bm'
+

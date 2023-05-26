@@ -1,14 +1,14 @@
 Sub BLANK ()
 
-    Shared H1$()
-
     _Title "Basketball: The Pro Game - Erase League"
 
-    Cls
+    Shared H1$()
 
     Do
-        'Display list of files...
 
+        Cls
+
+        'Display list of files...
         Spec$ = diskPaths$(1) + "*.LIB"
 		Count% = FCount%(Spec$)
 
@@ -25,12 +25,9 @@ Sub BLANK ()
 			Next
 
 			leagueFiles$(0) = Spec$
-
 			Call ReadFile(leagueFiles$())
 
 			Do
-
-				Cls
 				Color , 1
 				Cls
 				Locate , 28
@@ -45,9 +42,11 @@ Sub BLANK ()
 				Spacing% = 6
 				Row% = 4
 				Column% = 1
+
 				Locate 25, 1
 				Color 14
-				Print "ENTER";: Color 15
+				Print "ENTER";
+				Color 15
 				Print "-SELECTS LEAGUE   ";
 				Color 14
 				Print "HIT ESCAPE KEY TO EXIT";
@@ -59,21 +58,19 @@ Sub BLANK ()
 
 				If ExitCode% <> 27 Then
 					Color 15, 1
-
 					targetFile$ = RTrim$(leagueFiles$(Selection%))
 					Locate 2, 33: Print targetFile$
 					
 					Do
 						Locate 3, 33: Print "ANY CHANGE (YN)";
 						I$ = GetKeyPress$
-					Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or I$ = Chr$(27)
 
 					Color 15, 0
 
-					If UCase$(I$) = "Y" Then
-					'proceed with erasing all files
-						WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-						LH$ = Left$(WE$, 8)
+					If UCase$(I$) = "N" Then
+                        WE$ = Left$(targetFile$, Len(targetFile$) - 4)
+                        leagueFile$ = Left$(WE$, 8)
 
 						Cls
 						Locate 10, 8
@@ -81,9 +78,9 @@ Sub BLANK ()
 						A$ = GetKeyPress$
 						Call CSMsgBox("", 0, Pass)
 
-						If A$ = "Y" Then
+                        If UCase$(A$) = "Y" Then
 
-							Open diskPaths$(1) + LH$ + ".TMS" For Input As #2
+							Open diskPaths$(1) + leagueFile$ + ".TMS" For Input As #2
 							Input #2, LG$, D1$, D2$, D3$, D4$
 							For XW = 1 To TEAMS_PER_CONFERENCE
 								Input #2, H1$(XW)
@@ -92,23 +89,23 @@ Sub BLANK ()
 
 							For XW = 1 To TEAMS_PER_CONFERENCE
 								If H1$(XW) <> Chr$(42) Then
-
+                                    statFile$ = diskPaths$(1) + H1$(XW)
 									Print "DELETING "; H1$(XW); " STATS"
-									Kill (diskPaths$(1) + H1$(XW))
-									Kill (diskPaths$(1) + H1$(XW) + "R")
-									Kill (diskPaths$(1) + H1$(XW) + "S")
-									Kill (diskPaths$(1) + H1$(XW) + "D")
+                                    If _FileExists (statFile$) Then Kill statFile$
+                                    If _FileExists (statFile$ + "R") Then Kill statFile$ + "R"
+                                    If _FileExists (statFile$ + "S") Then Kill statFile$ + "S"
+                                    If _FileExists (statFile$ + "D") Then Kill statFile$ + "D"
 								End If
 							Next
-							Cls
-						End If
 
-					End If 'Done checking for Any Change
+                        End If 'Done with keypress from CsMsgBox
 
-				End If 'Done checking for ESC
+                    End If 'Done confirming no changes
+
+                End If 'Done checking Exit Code from file selection
 
 			'Done looping through league selection / confirmation
-			Loop Until ExitCode% = 27
+            Loop Until ExitCode% = 27 Or UCase$(I$) = "N"
 
 		End If 'Done checking file count
 

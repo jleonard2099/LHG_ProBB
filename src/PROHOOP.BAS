@@ -6,6 +6,7 @@ Sub PROHOOP
     '_AllowFullScreen
 
     'Open "pbplog" For Output As #7
+    Shared scheduleFile$
 
     Color 7, 0
     Cls
@@ -95,13 +96,13 @@ Sub PROHOOP
     If _FileExists("GAME82") Then
 
         Open "GAME82" For Input As #2
-        Input #2, FF$
+        Input #2, scheduleFile$
         For I = 0 To 2:
             Input #2, AP%(I)
         Next
         Close 2
 
-        Open diskPaths$(0) + FF$ For Random As #1 Len = 48
+        Open diskPaths$(0) + scheduleFile$ For Random As #1 Len = 48
 
         For X = 0 To 18
             Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
@@ -111,8 +112,13 @@ Sub PROHOOP
 
         Get #1, AP%(0) + AP%(2)
 
-        For X = 0 To 18: NG%(X) = CVI(Q$(X + 1)): Next
-        For X = 0 To 1: YN$(X) = Q$(20 + X): Next
+        For X = 0 To 18: 
+            NG%(X) = CVI(Q$(X + 1))
+        Next
+        
+        For X = 0 To 1: 
+            YN$(X) = Q$(20 + X)
+        Next
 
         VS% = CVI(Q$(22))
         HS% = CVI(Q$(23))
@@ -315,13 +321,10 @@ Sub PROHOOP
 
         If I$ <> Chr$(27) And UCase$(I$) <> "Q" Then
 
-            'TICKER PROMPT
             Cls
             Color 3
 
-            Call TEAMBOX (6, 1)
-
-            Locate 7, 11
+            Call TEAMBOX (7, 1)
 
             Print "IF YOU ARE USING THE 10 MINUTE TICKER OPTION FOR THIS GAME,"
             Locate , 11: Print "ENTER STARTING TIME FOR GAME IN THIS FORMAT"
@@ -622,14 +625,8 @@ Sub PROHOOP
         I$ = GetKeyPress
     End If
 
+    '--Start "EndOfGame" routine
     Call POSTGAME
-
-'	If AP <> 1 And AD = 1 Then Exit Sub
-
-    If Not (AP = 1 And AD <> 1) Then
-    'If AP <> 1 Then
-        If AD = 1 Then Exit Sub
-    End If
 
     ' Prompt to play another game
     Cls
@@ -651,10 +648,13 @@ Sub PROHOOP
     End If
 
     If UCase$(I$) = "Y" Or AP = 1 Then
+
         Cls
         Print "PLEASE WAIT ..."
         Call PROHOOP
+
     End If
+    '--End "EndOfGame" routine
 
     Exit Sub
 

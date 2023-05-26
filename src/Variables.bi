@@ -180,14 +180,16 @@ Dim tradeB%(0 To 1, 0 To 14, 0 To 19), tradeL%(0 To 1, 0 To 6)
 '----------------------------------------
 ' Used across Game Routines
 '----------------------------------------
+Dim scheduleFile$
+
 Dim Shared AD, AP, B, CT, D, F3, H, JY, N, NTMS
-Dim Shared P, P7, P9, PO, QQ, QR, SC, T, T1, TE, TMT
+'Dim Shared P, P7, P9, PO, QQ, QR, SC, T, T1, TE, TMT
 Dim Shared X, X8, U5, VG, VH
 
 Dim Shared B1!(1, 4), C1(1, 14)
 Dim Shared D1(1), D2(1), D8(6, 6), F1(14), G4(14), G5(14)
 Dim Shared P2(1), P4(5), P5(5), P7(1), QQ(1, 8, 14, 14), QR(1, 7, 14)
-Dim Shared R3(1), RB(0 To 10), S3(14), SC(1)
+'Dim Shared R3(1), RB(0 To 10), S3(14), SC(0 to 1)
 Dim Shared T(1, 34), T0(1), T1(1), TF(1)
 Dim Shared V9(14), VG(9), VH(9), W2(1, 14), W3(1, 14)
 Dim Shared X$(4), X7(1), Z5(1), Z6(1), ZF(1), ZZ(2, 14)
@@ -198,7 +200,7 @@ Dim Shared A!(1, 14, 25), M9!(1), indRecords!(50, 2)
 Dim Shared S!(1, 14), W0!(1, 14), W1!(1, 14)
 Dim Shared Z!(15), Z1!(15), Z2!(14, 14)
 
-Dim Shared A1$, B1$, C1$, D$, D1$, E1$, F1$, FF$, G1$, H1$, O$
+Dim Shared A1$, B1$, C1$, D$, D1$, E1$, F1$, G1$, H1$, O$
 Dim Shared P7$, PB$, PS$, TS$, U$, Y2$, Z3$
 
 Dim Shared AA$(1, 14, 1), ABB$(3), A1$(3), B$(3), CM$(1)
