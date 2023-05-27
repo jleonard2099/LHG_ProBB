@@ -6,6 +6,8 @@
 ' in from file or assigned elsewhere
 Sub InitVar ()
 
+    Shared scheduleFile$
+
     For I = 0 To 1
         For I1 = 0 To 4
             B1!(I, I1) = -1
@@ -81,7 +83,6 @@ Sub InitVar ()
     PB$(0) = "VERBOSE        "
     PB$(1) = "HAFFNER CLASSIC"
 
-    AD = 0
     AP = 0
     B = 0
     CT = 0
@@ -115,6 +116,7 @@ Sub InitVar ()
     P7$ = ""
     PB$ = ""
     PS$ = ""
+    scheduleFile$ = ""
     TS$ = ""
     U$ = ""
     Y2$ = ""
@@ -6426,7 +6428,7 @@ Sub SAVESTATS ()
             If AP%(1) < AP%(0) + AP%(2) Then
                 Kill "GAME82"
                 'All Done
-                AD = 1
+                endGame = 1
             Else
                 Open "GAME82" For Output As #2
                 Print #2, scheduleFile$
@@ -6452,11 +6454,6 @@ End Sub
 Sub TickerSchedule
 
     Shared scheduleFile$
-
-    Open "GAME82" For Input As #2
-    Input #2, scheduleFile$
-    For I = 0 To 2: Input #2, AP%(I): Next
-    Close 2
 
     If AP%(2) <= 31 Then
 
@@ -7009,14 +7006,6 @@ Sub BOXOPTIONS (outputChoice)
                     Print "ENTER 8-CHARACTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";: Input NM$
                     NM$ = NM$ + ".SPC"
                 Else
-                    ' Determine game #
-                    Open "GAME82" For Input As #1
-                    Input #1, scheduleFile$
-                    For I = 0 To 2
-                        Input #1, AP%(I)
-                    Next
-                    Close 1
-
                     ' NM$ = "BOXSCORE." + MID$(STR$(AP%(0) + AP%(2)), 2, LEN(STR$(AP%(0) + AP%(2))))
                     NM$ = "BOX" + Mid$(Str$(AP%(0) + AP%(2)), 2, Len(Str$(AP%(0) + AP%(2))))
                 End If
