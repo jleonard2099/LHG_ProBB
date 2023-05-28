@@ -14,7 +14,7 @@ Sub NEWLDRST ()
 
 	Shared statsH$(), O$()
 	Shared statO%()
-    Shared YY%
+    Shared statIdx
 
     _Title "Basketball: The Pro Game - League Standings"
 
@@ -22,7 +22,7 @@ Sub NEWLDRST ()
         Cls
         Call TITLE
 
-        YY% = 0
+        statIdx = 0
         TMR% = 40
 
         'Erase menuChoices$
@@ -125,14 +125,15 @@ Sub NEWLDRST ()
                     Cls
 
                     For KK = 1 To TEAMS_PER_CONFERENCE
-                        'values of YY% are ???
-                        YY% = YY% + 1
+
+                        statIdx = statIdx + 1
                         Color 14
-                        Locate 7, 20: TMR% = TMR% - 1: Print Using "##"; TMR%
+                        Locate 7, 20
+                        TMR% = TMR% - 1: Print Using "##"; TMR%
 
                         If strZ1$(KK) <> "*" Then
 
-                            TML$(YY%) = strZ1$(KK)
+                            TML$(statIdx) = strZ1$(KK)
 
                             Color 15, 0
                             Cls
@@ -147,39 +148,39 @@ Sub NEWLDRST ()
                                 For J = 1 To 100: Input #1, statsT%(J): Next
                                 For J = 1 To 100: Input #1, statsH$(J): Next
                                 Close 1
-                                LWS(YY%) = 0
-                                LLS(YY%) = 0
-                                TWS(YY%) = 0
-                                TLS(YY%) = 0
+                                LWS(statIdx) = 0
+                                LLS(statIdx) = 0
+                                TWS(statIdx) = 0
+                                TLS(statIdx) = 0
                                 For I = 1 To XX%
-                                    If statO%(I) > statsT%(I) Then WW(YY%) = WW(YY%) + 1
-                                    If statO%(I) > statsT%(I) And statsH$(I) = "V" Then RWW(YY%) = RWW(YY%) + 1
-                                    If statO%(I) > statsT%(I) And statsH$(I) = "V1" Then RWW(YY%) = RWW(YY%) + 1
-                                    If statO%(I) > statsT%(I) And statsH$(I) = "V2" Then RWW(YY%) = RWW(YY%) + 1
-                                    If statO%(I) > statsT%(I) And statsH$(I) = "H" Then HWW(YY%) = HWW(YY%) + 1
-                                    If statO%(I) > statsT%(I) And statsH$(I) = "H1" Then HWW(YY%) = HWW(YY%) + 1
-                                    If statO%(I) > statsT%(I) And statsH$(I) = "H2" Then HWW(YY%) = HWW(YY%) + 1
-                                    If statsT%(I) > statO%(I) Then LL(YY%) = LL(YY%) + 1
-                                    If statsT%(I) > statO%(I) And statsH$(I) = "V" Then RLL(YY%) = RLL(YY%) + 1
-                                    If statsT%(I) > statO%(I) And statsH$(I) = "V1" Then RLL(YY%) = RLL(YY%) + 1
-                                    If statsT%(I) > statO%(I) And statsH$(I) = "V2" Then RLL(YY%) = RLL(YY%) + 1
-                                    If statsT%(I) > statO%(I) And statsH$(I) = "H" Then HLL(YY%) = HLL(YY%) + 1
-                                    If statsT%(I) > statO%(I) And statsH$(I) = "H1" Then HLL(YY%) = HLL(YY%) + 1
-                                    If statsT%(I) > statO%(I) And statsH$(I) = "H2" Then HLL(YY%) = HLL(YY%) + 1
-                                    If statO%(I) > statsT%(I) Then LWS(YY%) = LWS(YY%) + 1: LLS(YY%) = 0
-                                    If LWS(YY%) > TWS(YY%) Then TWS(YY%) = LWS(YY%)
-                                    If statO%(I) < statsT%(I) Then LLS(YY%) = LLS(YY%) + 1: LWS(YY%) = 0
-                                    If LLS(YY%) > TLS(YY%) Then TLS(YY%) = LLS(YY%)
+                                    If statO%(I) > statsT%(I) Then WW(statIdx) = WW(statIdx) + 1
+                                    If statO%(I) > statsT%(I) And statsH$(I) = "V" Then RWW(statIdx) = RWW(statIdx) + 1
+                                    If statO%(I) > statsT%(I) And statsH$(I) = "V1" Then RWW(statIdx) = RWW(statIdx) + 1
+                                    If statO%(I) > statsT%(I) And statsH$(I) = "V2" Then RWW(statIdx) = RWW(statIdx) + 1
+                                    If statO%(I) > statsT%(I) And statsH$(I) = "H" Then HWW(statIdx) = HWW(statIdx) + 1
+                                    If statO%(I) > statsT%(I) And statsH$(I) = "H1" Then HWW(statIdx) = HWW(statIdx) + 1
+                                    If statO%(I) > statsT%(I) And statsH$(I) = "H2" Then HWW(statIdx) = HWW(statIdx) + 1
+                                    If statsT%(I) > statO%(I) Then LL(statIdx) = LL(statIdx) + 1
+                                    If statsT%(I) > statO%(I) And statsH$(I) = "V" Then RLL(statIdx) = RLL(statIdx) + 1
+                                    If statsT%(I) > statO%(I) And statsH$(I) = "V1" Then RLL(statIdx) = RLL(statIdx) + 1
+                                    If statsT%(I) > statO%(I) And statsH$(I) = "V2" Then RLL(statIdx) = RLL(statIdx) + 1
+                                    If statsT%(I) > statO%(I) And statsH$(I) = "H" Then HLL(statIdx) = HLL(statIdx) + 1
+                                    If statsT%(I) > statO%(I) And statsH$(I) = "H1" Then HLL(statIdx) = HLL(statIdx) + 1
+                                    If statsT%(I) > statO%(I) And statsH$(I) = "H2" Then HLL(statIdx) = HLL(statIdx) + 1
+                                    If statO%(I) > statsT%(I) Then LWS(statIdx) = LWS(statIdx) + 1: LLS(statIdx) = 0
+                                    If LWS(statIdx) > TWS(statIdx) Then TWS(statIdx) = LWS(statIdx)
+                                    If statO%(I) < statsT%(I) Then LLS(statIdx) = LLS(statIdx) + 1: LWS(statIdx) = 0
+                                    If LLS(statIdx) > TLS(statIdx) Then TLS(statIdx) = LLS(statIdx)
                                 Next I
 
                                 If XX% <= 10 Then
-                                    LTL(YY%) = LL(YY%): LTW(YY%) = WW(YY%)
+                                    LTL(statIdx) = LL(statIdx): LTW(statIdx) = WW(statIdx)
                                 Else
                                     M = XX% - 9
 
                                     For J = M To XX%
-                                        If statO%(J) > statsT%(J) Then LTW(YY%) = LTW(YY%) + 1
-                                        If statsT%(J) > statO%(J) Then LTL(YY%) = LTL(YY%) + 1
+                                        If statO%(J) > statsT%(J) Then LTW(statIdx) = LTW(statIdx) + 1
+                                        If statsT%(J) > statO%(J) Then LTL(statIdx) = LTL(statIdx) + 1
                                     Next J
                                 End If
                             End If

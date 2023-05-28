@@ -199,7 +199,7 @@ Sub ViewIndividualLeaders (JB, TS)
 
     ReDim menuChoices$(1 To 3)
 
-    Shared printOrView%, YY%
+    Shared printOrView%, statIdx
 
     Color , 0
     Cls
@@ -1121,7 +1121,7 @@ Sub BUILDSTATS (statFile$, JB, TS)
     Dim TBN
 
     Shared compareA!()
-    Shared YY%
+    Shared statIdx
 
     TMR% = 1280
 
@@ -1129,7 +1129,9 @@ Sub BUILDSTATS (statFile$, JB, TS)
     Cls
     Print
 
-    For KK = 1 To 40: YY% = YY% + 1
+    For KK = 1 To 40: 
+
+        statIdx = statIdx + 1
 
         If Z1$(KK) <> "*" Then
 

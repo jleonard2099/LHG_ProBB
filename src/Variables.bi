@@ -1,30 +1,26 @@
 '----------------------------------------
-' Used mostly for HELLO
-'----------------------------------------
-Dim YY%
-
-'----------------------------------------
 ' Used across more than one source file
 '----------------------------------------
+Dim statIdx
+
 Dim opSysType$
 
-Dim Shared compareA!(15, 14)
-
-Dim Shared diskPaths$(3), Q$(0 To 377)
-Dim Shared teamNames$(MAX_TEAMS), Z1$(40)
-Dim Shared teamIndex%(MAX_TEAMS)
-Dim Shared DirCount%
-Dim Shared scheduleT!(0 To 34)
-
-'File size
-Dim Shared Y As Long
-
 Dim Shared BO%
-Dim Shared A$, YN$, Z1$
 Dim Shared TMR%, TMR1%
 
+Dim Shared fileLength&
+
+Dim Shared A$, YN$, Z1$
 Dim Shared DT$, TM$
 
+Dim Shared compareA!(15, 14)
+Dim Shared scheduleT!(0 To 34)
+
+Dim Shared Z1$(40)
+
+Dim Shared diskPaths$(3), Q$(0 To 377)
+Dim Shared teamNames$(MAX_TEAMS)
+Dim Shared teamIndex%(MAX_TEAMS)
 
 '----------------------------------------
 ' Used across ALIGN, MERGE routines

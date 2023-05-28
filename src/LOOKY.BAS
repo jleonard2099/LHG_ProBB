@@ -46,7 +46,7 @@ Sub LOOKY ()
 
             Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
 			
-            Y = LOF(1)
+            fileLength& = LOF(1)
 
             Field #1, 15 As Q$(0), 15 As Q$(1)
 
@@ -69,7 +69,7 @@ Sub LOOKY ()
 
             Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 
-            For I1 = 1 To Y / 1031
+            For I1 = 1 to fileLength& / 1031
                 Get #1, I1
                 CK% = CVI(Q$(9))
                 If CK% = 999 Then

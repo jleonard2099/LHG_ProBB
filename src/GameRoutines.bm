@@ -1165,6 +1165,8 @@ End Sub
 ' ...explanation...
 Sub LOADSTATS ()
 
+    Dim nbrStats
+
     For I = 0 To 1
 
         Cls
@@ -1181,14 +1183,14 @@ Sub LOADSTATS ()
         If _FileExists(diskPaths$(1) + R$) Then
 
             Open diskPaths$(1) + R$ For Input As #2
-            Input #2, YY%
+            Input #2, nbrStats
             For I1 = 1 To 100: Input #2, O%(I1): Next
             For I1 = 1 To 100: Input #2, HO$(I1): Next
             For I1 = 1 To 100: Input #2, HT%(I1): Next
             For I1 = 1 To 100: Input #2, HO$(I1): Next
             Close 2
 
-            For I1 = 1 To YY%
+            For I1 = 1 To nbrStats
                 If O%(I1) > HT%(I1) Then Z5(I) = Z5(I) + 1
                 If O%(I1) < HT%(I1) Then Z6(I) = Z6(I) + 1
             Next
