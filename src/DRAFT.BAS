@@ -653,7 +653,7 @@ Sub DoTheDraft (TTL%())
 
                 fileLength& = LOF(1)
 
-                If DNT% = 0 Then teamIdx = Y / 1031 + 1
+                If DNT% = 0 Then teamIdx = fileLength& / 1031 + 1
                 Field #1, 15 As Q$(0), 15 As Q$(1)
 
                 For I = 0 To 6

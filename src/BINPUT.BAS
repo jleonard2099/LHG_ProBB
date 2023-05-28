@@ -1090,7 +1090,7 @@ Sub SaveTeamFile (yearNumber$, teamIdx, action%)
 
     fileLength& = LOF(1)
 
-    If action% = 0 Then teamIdx = Y / 1031 + 1
+    If action% = 0 Then teamIdx = fileLength& / 1031 + 1
 
     Field #1, 15 As Q$(0), 15 As Q$(1)
 
