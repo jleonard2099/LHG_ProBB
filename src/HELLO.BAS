@@ -1,3 +1,4 @@
+
 Const GAME_VERSION$ = "4.32"
 Const MAX_TEAMS = 1000
 Const MAX_GAMES = 1500
@@ -7,6 +8,7 @@ Const MAX_CONFERENCES = 40
 Const TEAMS_PER_DIV = 10
 Const DIVS_PER_CONFERENCE = 4
 Const TEAMS_PER_CONFERENCE = 40
+Const TEAM_SIZE_BYTES = 1031
 
 'Const NUM_STATRECORDS = 162
 
@@ -17,9 +19,6 @@ DefInt A-Z
 '$INCLUDE: 'QPProEqu.bi'
 '$INCLUDE: 'PadRight.bi'
 '$INCLUDE: 'Variables.bi'
-
-Dim Shared P, P7, P9, PO, QQ, QR, SC, T, T1, TE, TMT
-Dim Shared R3(1), RB(0 To 10), S3(14), SC(0 To 1)
 
 ' For Utils
 '$INCLUDE: 'MainRoutines.bi'
@@ -171,6 +170,46 @@ For I = 0 To 2
         Read GF%(I, I1)
     Next I1
 Next I
+
+' Game options
+MO$(0) = "HUMAN OPPONENT           "
+MO$(1) = "COMPUTER IS VISITING TEAM"
+MO$(2) = "COMPUTER IS HOME TEAM    "
+MO$(3) = "COMPUTER VS COMPUTER     "
+
+modeAbbrev$(0) = "HH"
+modeAbbrev$(1) = "CV"
+modeAbbrev$(2) = "CH"
+modeAbbrev$(3) = "CC"
+
+coachOpt$(0) = "COACH AND SELECT SHOTS           "
+coachOpt$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
+
+foulOption$(0) = "ONLY IN BONUS OR ACT OF SHOOTING"
+foulOption$(1) = "SHOOT ON ALL FOULS              "
+
+freeThrowOpt$(0) = "CURRENT RULES            "
+freeThrowOpt$(1) = "3 TO MAKE 2 / 2 TO MAKE 1"
+
+playoffGame$(0) = "REGULAR SEASON"
+playoffGame$(1) = "PLAYOFF       "
+
+sClockOpt$(0) = "24 SEC SHOT CLOCK"
+sClockOpt$(1) = "30 SEC SHOT CLOCK"
+
+teamEraOpt$(0) = "VISITING     "
+teamEraOpt$(1) = "HOME         "
+teamEraOpt$(2) = "NO ADJUSTMENT"
+
+TS$(0) = "NO "
+TS$(1) = "YES"
+
+yesNo$(0) = "N"
+yesNo$(1) = "Y"
+
+location$(0) = "@ TEAM 1            "
+location$(1) = "HOME COURT ADVANTAGE"
+location$(2) = "NEUTRAL SITE        "
 
 
 '----------------------------------------

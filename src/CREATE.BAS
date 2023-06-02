@@ -362,9 +362,8 @@ Sub CreateEditLeague (yearNumbers$(), memberTeams$(), newLeague, league$)
                         Locate 2, 33
                         Color compareT%(33), compareT%(34): Print T1$
 
-                        Color 15, 4
-
                         Do
+                            Color 15, 4
                             Locate 3, 33: Print "ANY CHANGE (YN)";
                             A$ = GetKeyPress$
                         Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"

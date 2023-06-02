@@ -140,9 +140,8 @@ Sub AdjustGames (selectedIndex)
 				Locate 2, 33
 				Color adjustT%(33), adjustT%(34): Print adjustT$(0)
 
-				Color 15, 4
-
 				Do
+					Color 15, 4
 					Locate 3, 33: Print "ANY CHANGE (YN)";					
 					A$ = GetKeyPress$
 				Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"

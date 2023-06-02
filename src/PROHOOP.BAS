@@ -7,15 +7,19 @@ Sub PROHOOP
 
     'Open "pbplog" For Output As #7
     Shared scheduleFile$
+    Shared tickerStart
+
+    Shared coachOpt$(), MO$()
+    Shared sClockOpt$(), yesNo$()
 
     Color 7, 0
     Cls
 
     Randomize Timer
 
-	'----------------------------------------
-	'        INITIALIZE ALL VARIABLES
-	'----------------------------------------
+    '----------------------------------------
+    '        INITIALIZE ALL VARIABLES
+    '----------------------------------------
     Call InitVar
 
     '----------------------------------------
@@ -131,23 +135,7 @@ Sub PROHOOP
 
     If AP = 1 Then
 
-        'AUTO-PLAY OPTIONS
-        XY% = NG%(3)
-        U5 = NG%(8)
-        PO = NG%(5)
-        SC = NG%(7)
-        N = NG%(2)
-        pbpDelay! = NG%(4) / 10
-        CM% = NG%(9)
-        NB% = NG%(14)
-        FR% = NG%(11)
-        RT% = NG%(10)
-        For P9 = 0 To 1
-            I1 = NG%(P9)
-            YN$ = YN$(P9)
-            Call GETATEAM(I1, YN$)
-        Next P9
-
+        Call AUTOSETUP
         Call SETUPRATINGS
 
     Else
@@ -164,7 +152,7 @@ Sub PROHOOP
             Print Tab(29); "SELECT OPENING OPTIONS"
             Print
             Locate 2, 2: Color 14
-            Print "(1) ";: Color 15: Print U5$(U5)
+            Print "(1) ";: Color 15: Print MO$(U5)
             Locate 3, 2: Color 14
             Print "(2) ";: Color 15: Print "VISITING TEAM: ";: Color T(0, 33), T(0, 34): Print B$(0)
             Color , 0
@@ -174,28 +162,28 @@ Sub PROHOOP
             Locate 5, 2: Color 14
             Print "(4) ";: Color 15: Print "3-POINT SHOT: "; TS$(XY%)
             Locate 6, 2: Color 14
-            Print "(5) ";: Color 15: Print SC$(SC)
+            Print "(5) ";: Color 15: Print sClockOpt$(SC)
             Locate 7, 2: Color 14
-            Print "(6) ";: Color 15: Print "LOCATION: "; LC$(N)
+            Print "(6) ";: Color 15: Print "LOCATION: "; location$(N)
             Locate 8, 2: Color 14
             Print "(7) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#"; pbpDelay!
             Locate 9, 2: Color 14
             Print "(8) ";: Color 15: Print "START GAME"
             Locate 10, 2: Color 14
-            Print "(9) ";: Color 15: Print PO$(PO)
+            Print "(9) ";: Color 15: Print playoffGame$(PO)
             Locate 11, 2: Color 14
             Print "(0) ";: Color 15: Print "SAVE SETTINGS"
             Locate 12, 2: Color 14
-            Print "(A) ";: Color 15: Print "SHOW SHOT PERCENTAGES: "; P7$(X4%)
+            Print "(A) ";: Color 15: Print "SHOW SHOT PERCENTAGES: "; TS$(X4%)
             Locate 13, 2: Color 14
-            Print "(B) ";: Color 15: Print "HUMAN COACHES WILL: "; CM$(CM%);
+            Print "(B) ";: Color 15: Print "HUMAN COACHES WILL: "; coachOpt$(CM%);
             Locate 1, 1
             Locate 14, 2: Color 14
             Print "(C) ";: Color 15: Print "BONUS AFTER FOUL # "; NB%
             Locate 15, 2: Color 14
-            Print "(D) ";: Color 15: Print "NUMBER OF FREE THROWS "; FT$(RT%)
+            Print "(D) ";: Color 15: Print "NUMBER OF FREE THROWS "; freeThrowOpt$(RT%)
             Locate 16, 2: Color 14
-            Print "(E) ";: Color 15: Print "FREE THROW RULES "; FR$(FR%)
+            Print "(E) ";: Color 15: Print "FREE THROW RULES "; foulOption$(FR%)
             Locate 17, 2: Color 14
             Print "(F) ";: Color 15: Print "PLAY BY PLAY "; PB$(PB%)
             Locate 18, 2: Color 14
@@ -248,12 +236,12 @@ Sub PROHOOP
                     Case 2:
                         P9 = 0
                         Call TeamSelect_PROHOOP(P9)
-						Call DISABLEPLAYERS
+                        Call DISABLEPLAYERS
 
                     Case 3:
                         P9 = 1
                         Call TeamSelect_PROHOOP(P9)
-						Call DISABLEPLAYERS
+                        Call DISABLEPLAYERS
 
                     Case 4:
                         XY% = XY% + 1
@@ -321,28 +309,36 @@ Sub PROHOOP
 
         If I$ <> Chr$(27) And UCase$(I$) <> "Q" Then
 
+            'TICKER PROMPT
             Cls
             Color 3
 
             Call TEAMBOX (7, 1)
 
+            Locate 7, 11
+
             Print "IF YOU ARE USING THE 10 MINUTE TICKER OPTION FOR THIS GAME,"
             Locate , 11: Print "ENTER STARTING TIME FOR GAME IN THIS FORMAT"
             Locate , 11: Print "(EXAMPLES: 1:00P, 11:30A). OTHERWISE, JUST HIT ENTER"
             Print
-            Locate , 11: Input "START TIME: "; ST$
+            Locate , 11: Input "START TIME: "; startTime$
 
-            L = Len(ST$)
+            L = Len(startTime$)
 
-            If L = 5 Then HR = Val(Left$(ST$, 1)): MIN = Val(Mid$(ST$, 3, 2))
-            If L = 6 Then HR = Val(Left$(ST$, 2)): MIN = Val(Mid$(ST$, 4, 2))
+           If L < 4 Then 
+                startTime$ = "1:00P"
+            Else
+                10:00P
+                If L = 5 Then HR = Val(Left$(startTime$, 1)): MIN = Val(Mid$(startTime$, 3, 2))
+                If L = 6 Then HR = Val(Left$(startTime$, 2)): MIN = Val(Mid$(startTime$, 4, 2))
+            End If
 
-            T$ = Right$(ST$, 1)
+            tickerMeridian$ = Right$(tickerStart, 1)
 
-            If UCase$(T$) = "P" And Left$(ST$, 2) <> "12" Then HR = HR + 12
+            If UCase$(tickerMeridian$) = "P" And Left$(startTime$, 2) <> "12" Then HR = HR + 12
 
             TM = HR * 60 + MIN
-            TTS% = Int(TM / 30 - 18)
+            tickerStart = Int(TM / 30) - 18
 
             Call SETUPRATINGS
 
@@ -388,7 +384,7 @@ Sub PROHOOP
     C7 = 1
     LS = 0
 
-    If T < 6 And LT = 4 Then LS = 4
+    If gameClock! < 6 And LT = 4 Then LS = 4
 
     'Determine subs / play parameters
     '230
@@ -444,11 +440,9 @@ Sub PROHOOP
         P = 1: D = 0: P9 = 1: C1 = 2
     End If
 
-    'GoSub 210
     Call LastShot
-
-    'TIMEEXP
-    If T <= 0 Then TE = T: Call PlayingTime: T = 0: GoTo 170
+    Call CheckZeroTime
+    If gameClock! = 0 Then 170
 
     X8 = SC(SC)
     LS = 4
@@ -497,13 +491,13 @@ Sub PROHOOP
 
     '----- NOODLE -----
     170 '
-    T = 0
+    gameClock! = 0
     TF(0) = TF(0) + P2(0)
     TF(1) = TF(1) + P2(1)
     Call QUARTERTOTAL
     H = H + 1
 
-    275 '*** ADJUST TIMEOUTS ***
+    ' *** ADJUST TIMEOUTS ***
     If H >= 4 Then
         For PG = 0 To 1
             If T1(PG) > 4 Then T1(PG) = 4
@@ -536,11 +530,11 @@ Sub PROHOOP
             I$ = GetKeyPress$
         End If
 
+        halfTime = 1
         Call BOXOPTIONS(0)
-        
-        HT% = 1
+        endGame = 0
         Call TICKER
-        HT% = 0
+        halfTime = 0
 
         For I = 0 To 1
 
@@ -564,7 +558,6 @@ Sub PROHOOP
     End If
 
     If H < 5 And U5 <> 0 Then
-        175 '
         If U5 = 1 Then P9 = CT: Call COMPUTERSUBS
         If U5 = 2 Then P9 = 0: Call COMPUTERSUBS: P9 = 1: Call COMPUTERSUBS
     End If
@@ -579,7 +572,7 @@ Sub PROHOOP
 
         B = -1
         Call Substitutions
-        T = 720
+        gameClock! = 720
         Call UPDATESCREEN
 
         GoTo 250
@@ -608,7 +601,7 @@ Sub PROHOOP
         End Select
         T1(0) = T1(0) + 1
         T1(1) = T1(1) + 1
-        T = 300
+        gameClock! = 300
         ZF(0) = 0
         ZF(1) = 0
 
@@ -669,7 +662,7 @@ Sub PROHOOP
     '================================================================================
 
     300 '
-    ST = 0
+    'ST = 0
     FO = 0
     LS = 0
     XS = 0
@@ -684,7 +677,7 @@ Sub PROHOOP
         'GoSub 835
         If P = 0 Then D = 1
         If P = 1 Then D = 0
-        If T < 6 And LT <> 4 Then LS = 4
+        If gameClock! < 6 And LT <> 4 Then LS = 4
 
     End If
 
@@ -764,11 +757,13 @@ Sub PROHOOP
 
     X8 = SC(SC)
     LS = 4
-    T = T - 4
-    TE = 4
+    gameClock! = gameClock! - 4
+    timeElapsed! = 4
 
     Call PlayingTime
-    Call CheckZeroTime: If T = 0 Then GoTo 170
+    Call CheckZeroTime
+    If gameClock! = 0 Then 170
+
     Call UPDATESCREEN
 
     GoTo 670
@@ -1039,7 +1034,7 @@ Sub PROHOOP
     '----- NOODLE -----
 
     445 '
-    If Not (H = 4 And T <= 120 Or H > 4) Then
+    If Not (H = 4 And gameClock! <= 120 Or H > 4) Then
         If A!(P, B1!(P, B), 3) - A!(P, B1!(P, B), 7) - A!(P, B1!(P, B), 11) - A!(P, B1!(P, B), 12) <= 0 Then 437
     End If
 
@@ -1068,7 +1063,7 @@ Sub PROHOOP
                 GoTo 520
             End If
         Else
-            If H >= 4 And T < 30 And S!(D, 0) - S!(P, 0) > 3 And A!(P, B1!(P, B), 19) >= 3 Then
+            If H >= 4 And gameClock! < 30 And S!(D, 0) - S!(P, 0) > 3 And A!(P, B1!(P, B), 19) >= 3 Then
                 PZ% = 4
                 X = 0
                 F3S% = A!(P, B1!(P, B), 20) + F7%(D, 4)
@@ -1209,7 +1204,8 @@ Sub PROHOOP
     C1 = 2
     P9 = D
 
-    Call CheckZeroTime: If T = 0 Then GoTo 170
+    Call CheckZeroTime
+    If gameClock! = 0 Then 170
 
     'GoSub 3000
     'AKA ChangePosession
@@ -1266,7 +1262,8 @@ Sub PROHOOP
 
     Locate 10, 1
 
-    Call CheckZeroTime: If T = 0 Then GoTo 170
+    Call CheckZeroTime
+    If gameClock! = 0 Then 170
 
     'GoSub 3000
     'AKA ChangePosession
@@ -1293,7 +1290,8 @@ Sub PROHOOP
 
     520 '
     Call LastShot
-    Call CheckZeroTime: If T = 0 Then GoTo 170
+    Call CheckZeroTime
+    If gameClock! = 0 Then 170
 
     If PZ% = 4 And F3S% <= 0 Then F3S% = 3
 
@@ -1475,7 +1473,7 @@ Sub PROHOOP
 
     If U5 <> 0 Or CM% = 1 Then
 
-        If H >= 4 And T <= 240 And S!(P, 0) - S!(D, 0) > 0 And U5 = 1 And P = CT Then
+        If H >= 4 And gameClock! <= 240 And S!(P, 0) - S!(D, 0) > 0 And U5 = 1 And P = CT Then
 
             '985
             U$ = Str$(A!(P, B1!(P, B), 1)) + " FT%  INTENTIONAL FOUL (YN)"
@@ -1491,10 +1489,10 @@ Sub PROHOOP
             If U5 = 2 Or U5 = 1 And D = CT Then
 
                 '980
-                If T <= 240 And H >= 4 And S!(P, 0) - S!(D, 0) > 10 Then
+                If gameClock! <= 240 And H >= 4 And S!(P, 0) - S!(D, 0) > 10 Then
                     If (U5 = 1 Or U5 = 0) And CM% <> 1 Then 530
                 Else
-                    If T <= 30 And H >= 4 And S!(P, 0) - S!(D, 0) > 0 Then P6 = 3: GoTo 532
+                    If gameClock! <= 30 And H >= 4 And S!(P, 0) - S!(D, 0) > 0 Then P6 = 3: GoTo 532
                     If (U5 = 1 Or U5 = 0) And CM% <> 1 Then 530
                 End If
 
@@ -1503,13 +1501,13 @@ Sub PROHOOP
 
 
         951 '
-        If T <= 1 Or X8 <= 6 Then
+        If gameClock! <= 1 Or X8 <= 6 Then
             P6 = 1
         Else
-            If T <= 8 And S!(P, 0) - S!(D, 0) <= -3 And H >= 4 Then
+            If gameClock! <= 8 And S!(P, 0) - S!(D, 0) <= -3 And H >= 4 Then
                 P6 = 1
             Else
-                If T <= 20 And S!(P, 0) - S!(D, 0) <= -5 And H >= 4 Then
+                If gameClock! <= 20 And S!(P, 0) - S!(D, 0) <= -5 And H >= 4 Then
                     P6 = 1
                 Else
                     If PZ% > 1 Then
@@ -1549,14 +1547,14 @@ Sub PROHOOP
     If UCase$(I$) = "Z" Or I$ = "/" Then Call CHANGESTRATEGY(I$)
     If UCase$(I$) = "S" Then Call SCOUTREPORT
     If UCase$(I$) = "Q" Then Run "HELLO.EXE"
-    If Val(I$) = 3 And (U5 = 0 Or U5 = 1 And P = CT) And H >= 4 And T < 240 Then P6 = 3
+    If Val(I$) = 3 And (U5 = 0 Or U5 = 1 And P = CT) And H >= 4 And gameClock! < 240 Then P6 = 3
     If Val(I$) = 2 And (U5 = 0 Or U5 = 1 And D = CT) And T1(P) > 0 Then P6 = 2
 
     P3 = P6
 
     If P6 = 2 And T1(P) = 0 Then 530
     If P6 = 3 And H < 4 Or P6 = 3 And U5 = 1 And D = CT Then 530
-    If P6 = 3 And H = 4 And T > 240 Then 530
+    If P6 = 3 And H = 4 And gameClock! > 240 Then 530
     If (P6 = 1 Or P6 = 4) And PZ% = 4 Then P6 = 4
 
     caseVar = P6 + 1
@@ -1594,7 +1592,7 @@ Sub PROHOOP
     R0 = Int(Rnd(1) * 100) + 1
     A!(P, B1!(P, B), 7) = A!(P, B1!(P, B), 7) + 1
 
-    If H > 3 And T <= 30 And S!(D, 0) - S!(P, 0) = 2 Or H > 3 And T <= 30 And S!(D, 0) - S!(P, 0) = 0 Then 540
+    If H > 3 And gameClock! <= 30 And S!(D, 0) - S!(P, 0) = 2 Or H > 3 And gameClock! <= 30 And S!(D, 0) - S!(P, 0) = 0 Then 540
 
     If R0 <= A!(P, B1!(P, B), 16) + F7%(D, 3) Then
         A!(P, B1!(P, B), 7) = A!(P, B1!(P, B), 7) - 1
@@ -1612,8 +1610,8 @@ Sub PROHOOP
         X8 = SC(SC)
         LS = 4
 
-        T = T - 4
-        TE = 4
+        gameClock! = gameClock! - 4
+        timeElapsed! = 4
         Call PlayingTime
         Call UPDATESCREEN
 
@@ -1758,7 +1756,8 @@ Sub PROHOOP
         Next F3
 
         624 '
-        Call CheckZeroTime: If T = 0 Then GoTo 170
+        Call CheckZeroTime
+        If gameClock! = 0 Then 170
 
         X = 99
 
@@ -1906,11 +1905,13 @@ Sub PROHOOP
         End If
         If PB% = 0 Then Locate 8, 41: Print Space$(12): Call PBP
         X8 = SC(SC): LS = 4
-        T = T - 4
-        TE = 4
+        gameClock! = gameClock! - 4
+        timeElapsed! = 4
 
         Call PlayingTime
-        Call CheckZeroTime: If T = 0 Then GoTo 170
+        Call CheckZeroTime
+        If gameClock! = 0 Then 170
+
         Call UPDATESCREEN
 
         'GoSub 3000
@@ -2008,11 +2009,13 @@ Sub PROHOOP
     'GoTo 546
 
     546 '
-    T = T - 4
-    TE = 4
+    gameClock! = gameClock! - 4
+    timeElapsed! = 4
 
     Call PlayingTime
-    Call CheckZeroTime: If T = 0 Then GoTo 170
+    Call CheckZeroTime
+    If gameClock! = 0 Then 170
+
     Call UPDATESCREEN
 
     GoTo 670
@@ -2025,7 +2028,8 @@ Sub PROHOOP
     566 '
     If P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then 570
 
-    Call CheckZeroTime: If T = 0 Then GoTo 170
+    Call CheckZeroTime
+    If gameClock! = 0 Then 170
 
     If FR% = 0 Then
 
@@ -2114,7 +2118,8 @@ Sub PROHOOP
 
     LT = 0
 
-    Call CheckZeroTime: If T = 0 Then GoTo 170
+    Call CheckZeroTime
+    If gameClock! = 0 Then 170
 
     If S > FX% Then 650
 
@@ -2199,7 +2204,8 @@ Sub PROHOOP
     B = W5
     If P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then 570
 
-    Call CheckZeroTime: If T = 0 Then GoTo 170
+    Call CheckZeroTime
+    If gameClock! = 0 Then 170
 
     U$ = "OFFENSIVE FOUL"
 
@@ -2261,7 +2267,8 @@ Sub PROHOOP
     IN = 99
 
     Call LastShot
-    Call CheckZeroTime: If T = 0 Then GoTo 170
+    Call CheckZeroTime
+    If gameClock! = 0 Then 170
 
     C1 = 2
     P9 = D
@@ -2286,8 +2293,8 @@ Sub PROHOOP
 
     '----- NOODLE -----
     589 '
-    T = T - 4
-    TE = 4
+    gameClock! = gameClock! - 4
+    timeElapsed! = 4
 
     Call PlayingTime
     Call UPDATESCREEN
@@ -2397,7 +2404,8 @@ Sub PROHOOP
     Next F3
 
     596 '
-    Call CheckZeroTime: If T = 0 Then GoTo 170
+    Call CheckZeroTime
+    If gameClock! = 0 Then 170
 
     If S > A!(P, B1!(P, B), 1) Then 650
 
@@ -2441,8 +2449,8 @@ Sub PROHOOP
     640 '
     If T1(P) > 0 Then
         T1(P) = T1(P) - 1
-        T = T + M5
-        TE = -M5
+        gameClock! = gameClock! + M5
+        timeElapsed! = -M5
         Call PlayingTime
         X8 = X8 + M5
         U$ = "TIMEOUT " + B$(P):
@@ -2496,7 +2504,7 @@ Sub PROHOOP
     S = 0
     R0 = Int(Rnd(1) * 100) + 1
 
-    If H > 3 And T < 30 And S!(D, 0) - S!(P, 0) = 2 And R0 <= 12 Or H > 3 And T < 30 And S!(D, 0) - S!(P, 0) = 0 And R0 <= 12 Then
+    If H > 3 And gameClock! < 30 And S!(D, 0) - S!(P, 0) = 2 And R0 <= 12 Or H > 3 And gameClock! < 30 And S!(D, 0) - S!(P, 0) = 0 And R0 <= 12 Then
         Call ReboundRoutine1
         GoTo 760
     End If
@@ -2529,7 +2537,7 @@ Sub PROHOOP
 
     GG = S!(D, 0) - S!(P, 0)
 
-    If R0 <= 12 And H > 3 And T < 30 And (GG = 2 Or GG = 0) Then 700
+    If R0 <= 12 And H > 3 And gameClock! < 30 And (GG = 2 Or GG = 0) Then 700
     '-- End Loop
 
     Select Case R0
@@ -2720,7 +2728,7 @@ Sub PROHOOP
     For I = 0 To 9: RB(I) = 0: Next
 
     For I = 0 To 4
-        If H > 4 Or H = 4 And T <= 120 Then 773
+        If H > 4 Or H = 4 And gameClock! <= 120 Then 773
         If A!(P, B1!(P, I), 3) - A!(P, B1!(P, I), 7) - A!(P, B1!(P, I), 11) - A!(P, B1!(P, I), 12) <= 0 Then
             RB(I) = RB(I) + A!(P, B1!(P, I), 21) * .65: RB = RB + A!(P, B1!(P, I), 21) * .65
         Else
@@ -2729,7 +2737,7 @@ Sub PROHOOP
     Next
 
     For I = 0 To 4
-        If H > 4 Or H = 4 And T <= 120 Then 778
+        If H > 4 Or H = 4 And gameClock! <= 120 Then 778
 
         If A!(1 - P, B1!(1 - P, I), 3) - A!(1 - P, B1!(1 - P, I), 7) - A!(1 - P, B1!(1 - P, I), 11) - A!(1 - P, B1!(1 - P, I), 12) <= 0 Then
             RB(I + 5) = RB(I + 5) + A!(1 - P, B1!(1 - P, I), 2) * .5: RB = RB + A!(1 - P, B1!(1 - P, I), 2) * .5
@@ -2824,7 +2832,8 @@ Sub PROHOOP
         End If
     End If
 
-    Call CheckZeroTime: If T = 0 Then GoTo 170
+    Call CheckZeroTime
+    If gameClock! = 0 Then 170
 
     PB$ = AA$(P, B1!(P, B), 0)
     R0 = Int(Rnd(1) * 10) + 1
@@ -2838,7 +2847,7 @@ Sub PROHOOP
         If N <> 2 Then F = F - 2
     End If
 
-    If Not (H > 4 Or H = 4 And T <= 120) Then
+    If Not (H > 4 Or H = 4 And gameClock! <= 120) Then
         If A!(P, B1!(P, B), 3) - A!(P, B1!(P, B), 7) - A!(P, B1!(P, B), 11) - A!(P, B1!(P, B), 12) <= 0 Then F = F * .6
     End If
 

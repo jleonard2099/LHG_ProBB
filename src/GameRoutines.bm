@@ -19,10 +19,7 @@ Sub InitVar ()
     SC(1) = 30
     NB% = 5
 
-    P7$(1) = "YES"
-    P7$(0) = " NO"
-
-    T = 720
+    gameClock! = 720
     H = 1
 
     T1(1) = 7
@@ -43,42 +40,15 @@ Sub InitVar ()
     D2(0) = 1
     D2(1) = 1
 
-    TS$(0) = "NO ":
-    TS$(1) = "YES"
-
-    SC$(0) = "24 SEC SHOT CLOCK"
-    SC$(1) = "30 SEC SHOT CLOCK"
-
-    FT$(0) = "CURRENT RULES            "
-    FT$(1) = "3 TO MAKE 2 / 2 TO MAKE 1"
-
-    FR$(0) = "ONLY IN BONUS OR ACT OF SHOOTING"
-    FR$(1) = "SHOOT ON ALL FOULS              "
-
     offenseStyles$(0) = "NORMAL      "
     offenseStyles$(1) = "AGGRESSIVE  "
     offenseStyles$(2) = "SAFE        "
-
-    U5$(0) = "HUMAN OPPONENT           "
-    U5$(1) = "COMPUTER IS VISITING TEAM"
-    U5$(2) = "COMPUTER IS HOME TEAM    "
-    U5$(3) = "COMPUTER VS COMPUTER     "
-
-    LC$(0) = "@ TEAM 1            "
-    LC$(1) = "HOME COURT ADVANTAGE"
-    LC$(2) = "NEUTRAL SITE        "
 
     X$(0) = "A "
     X$(1) = "B "
     X$(2) = "C "
     X$(3) = "D "
     X$(4) = "E "
-
-    PO$(0) = "REGULAR SEASON"
-    PO$(1) = "PLAYOFF       "
-
-    CM$(0) = "COACH AND SELECT SHOTS           "
-    CM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
 
     PB$(0) = "VERBOSE        "
     PB$(1) = "HAFFNER CLASSIC"
@@ -96,12 +66,28 @@ Sub InitVar ()
     QQ = 0
     QR = 0
     T1 = 0
-    TE = 0
+    timeElapsed! = 0
     TMT = 0
     X = 0
     X8 = 0
     VG = 0
     VH = 0
+
+    CF% = 0
+    DK% = 0
+    FB% = 0
+    FT% = 0
+    GF% = 0
+    HH% = 0
+    halfTime = 0
+    NM% = 0
+    OX% = 0
+    OY% = 0
+    PT% = 0
+    PZ% = 0
+
+    statSpecial = 0
+    endGame = 0
 
     A1$ = ""
     B1$ = ""
@@ -121,24 +107,6 @@ Sub InitVar ()
     U$ = ""
     Y2$ = ""
     Z3$ = ""
-
-    CF% = 0
-    DK% = 0
-    FB% = 0
-    FT% = 0
-    GF% = 0
-    HH% = 0
-    HT% = 0
-    NM% = 0
-    OX% = 0
-    OY% = 0
-    PT% = 0
-    PZ% = 0
-    TS% = 0
-    TTS% = 0
-
-    statSpecial = 0
-    endGame = 0
 
     Erase C1
     Erase D1, D8, F1, G4, G5
@@ -165,6 +133,34 @@ Sub InitVar ()
 
     actualAttendance& = 0
     Erase avgAttendance&
+
+End Sub
+
+
+'------------------------------
+'    AUTOSETUP Subroutine
+'------------------------------
+' ...explanation...
+Sub AUTOSETUP
+
+    'AUTO-PLAY OPTIONS
+    N = NG%(2)
+    XY% = NG%(3)
+    pbpDelay! = NG%(4) / 10
+    PO = NG%(5)
+    SC = NG%(7)
+    U5 = NG%(8)
+    CM% = NG%(9)
+    RT% = NG%(10)
+    FR% = NG%(11)
+    tickerStart = NG%(12)
+    NB% = NG%(14)
+
+    For P9 = 0 To 1
+        I1 = NG%(P9)
+        YN$ = YN$(P9)
+        Call GETATEAM(I1, YN$)
+    Next P9
 
 End Sub
 
@@ -248,7 +244,7 @@ End Sub
 
 
 '----------------------------------------
-'           PlayStyle Subroutine
+'          PlayStyle Subroutine
 '----------------------------------------
 '...explanation...
 Sub PlayStyle ()
@@ -262,9 +258,12 @@ Sub PlayStyle ()
 
     Color 14
     Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
-    Locate 21, 32: Color 15: Print "O";: Color 3: Print "FFENSE STYLE-";: Color 7: Print offenseStyles$(O0%(P9))
-    Locate 22, 32: Color 3: Print "DE";: Color 15: Print "F";: Color 3: Print "ENSE STYLE-";: Color 7: Print defenseStyles$(D2(P9))
-    Locate 23, 32: Color 3: Print "FULL COURT ";: Color 15: Print "P";: Color 3: Print "RESS-";: Color 7: Print P7$(P7(P9))
+    Locate 21, 32: Color 15: Print "O";: Color 3: Print "FFENSE STYLE-";
+    Color 7: Print offenseStyles$(O0%(P9))
+    Locate 22, 32: Color 3: Print "DE";: Color 15: Print "F";: Color 3: Print "ENSE STYLE-";
+    Color 7: Print defenseStyles$(D2(P9))
+    Locate 23, 32: Color 3: Print "FULL COURT ";: Color 15: Print "P";: Color 3: Print "RESS-";
+    Color 7: Print TS$(P7(P9))
 
     If C1 = 1 Then
 
@@ -326,7 +325,7 @@ Sub PlayStyle ()
                     Color 3: Print "FULL COURT ";
                     Color 15: Print "P";
                     Color 3: Print "RESS-";
-                    Color 7: Print P7$(P7(P9))
+                    Color 7: Print TS$(P7(P9))
 
                 Else
 
@@ -396,7 +395,7 @@ Sub PlayStyle ()
             Color 3: Print "FULL COURT ";
             Color 15: Print "P";
             Color 3: Print "RESS-";
-            Color 7: Print P7$(P7(P9))
+            Color 7: Print TS$(P7(P9))
 
         End If
 
@@ -589,7 +588,7 @@ Sub PlayItSafe ()
     MJ = 0
     FO = 99
 
-    If H = 1 And T = 720 Then FO = 0
+    If H = 1 And gameClock! = 720 Then FO = 0
 
 End Sub
 
@@ -599,10 +598,10 @@ End Sub
 '...explanation...
 Sub CheckZeroTime ()
 
-    If T <= 0 Then
-        TE = T
+    If gameClock! <= 0 Then
+        timeElapsed! = gameClock!
         Call PlayingTime
-        T = 0
+        gameClock! = 0
         Call UPDATESCREEN
     End If
 
@@ -616,8 +615,11 @@ Sub PlayingTime ()
 
     ' *** INCREMENT MINUTES ***
     For I3 = 0 To 1
+
         For I4 = 0 To 4
-            ZZ(I3, B1!(I3, I4)) = ZZ(I3, B1!(I3, I4)) + TE
+
+            timePlayed(I3, B1!(I3, I4)) = timePlayed(I3, B1!(I3, I4)) + timeElapsed!
+
         Next
     Next
 
@@ -640,25 +642,25 @@ Sub SomeCalcs ()
 
             M6 = A!(P9, I1, 3) - A!(P9, I1, 7) - A!(P9, I1, 11) - A!(P9, I1, 12)
 
-            If H < 4 And M6 <= 0 Or H = 4 And T > 120 And M6 <= 0 Then M1 = M1 + 1
+            If H < 4 And M6 <= 0 Or H = 4 And gameClock! > 120 And M6 <= 0 Then M1 = M1 + 1
 
-            If AA$(P9, I1, 0) = "XXX" Or A!(P9, I1, 12) >= 6 Or B%(P9, I1, 18) <> 0 Or H = 1 And A!(P9, I1, 12) >= 2 Or H = 2 And A!(P9, I1, 12) >= 4 Or H = 3 And A!(P9, I1, 12) >= 5 Or H = 4 And T > 300 And A!(P9, I1, 12) = 5 Then M2 = M2 + 1
+            If AA$(P9, I1, 0) = "XXX" Or A!(P9, I1, 12) >= 6 Or B%(P9, I1, 18) <> 0 Or H = 1 And A!(P9, I1, 12) >= 2 Or H = 2 And A!(P9, I1, 12) >= 4 Or H = 3 And A!(P9, I1, 12) >= 5 Or H = 4 And gameClock! > 300 And A!(P9, I1, 12) = 5 Then M2 = M2 + 1
 
             If I1 <= 4 Then
                 M6 = A!(P9, B1!(P9, I1), 3) - A!(P9, B1!(P9, I1), 7) - A!(P9, B1!(P9, I1), 11) - A!(P9, B1!(P9, I1), 12)
 
-                If M6 <= 0 And H < 4 Or M6 <= 0 And H = 4 And T > 120 Then M3 = M3 + 1
+                If M6 <= 0 And H < 4 Or M6 <= 0 And H = 4 And gameClock! > 120 Then M3 = M3 + 1
 
-                If AA$(P9, B1!(P9, I1), 0) = "XXX" Or A!(P9, B1!(P9, I1), 12) >= 6 Or B%(P9, B1!(P9, I1), 18) <> 0 Or H = 1 And A!(P9, B1!(P9, I1), 12) >= 2 Or H = 2 And A!(P9, B1!(P9, I1), 12) >= 4 Or H = 3 And A!(P9, B1!(P9, I1), 12) >= 5 Or H = 4 And T > 300 And A!(P9, B1!(P9, I1), 12) = 5 Then M4 = M4 + 1
+                If AA$(P9, B1!(P9, I1), 0) = "XXX" Or A!(P9, B1!(P9, I1), 12) >= 6 Or B%(P9, B1!(P9, I1), 18) <> 0 Or H = 1 And A!(P9, B1!(P9, I1), 12) >= 2 Or H = 2 And A!(P9, B1!(P9, I1), 12) >= 4 Or H = 3 And A!(P9, B1!(P9, I1), 12) >= 5 Or H = 4 And gameClock! > 300 And A!(P9, B1!(P9, I1), 12) = 5 Then M4 = M4 + 1
 
             End If
         Next I1
 
-        If M3 >= 1 And 5 - M3 < 15 - M1 Or H = 4 And T < 120 Or H > 4 Or M4 >= 1 And M2 < 14 Then Call COMPUTERSUBS
+        If M3 >= 1 And 5 - M3 < 15 - M1 Or H = 4 And gameClock! < 120 Or H > 4 Or M4 >= 1 And M2 < 14 Then Call COMPUTERSUBS
 
     End If
 
-    If H = 4 And T <= 120 Then G9%(P9) = 1
+    If H = 4 And gameClock! <= 120 Then G9%(P9) = 1
 
 End Sub
 
@@ -720,7 +722,7 @@ Sub ReboundRoutine1 ()
         'and vice versa)
         XZ = A!(P, B1!(P, I), 21)
 
-        If Not (H > 2 Or H = 2 And T <= 120) Then
+        If Not (H > 2 Or H = 2 And gameClock! <= 120) Then
             'This line, referencing P, is the other one changed
             'between the 2 routines
             If A!(P, B1!(P, I), 3) - A!(P, B1!(P, I), 7) - A!(P, B1!(P, I), 11) - A!(P, B1!(P, I), 12) <= 0 Then XZ = XZ * .5
@@ -760,7 +762,7 @@ Sub ReboundRoutine2 ()
         RB(I) = 0
         XZ = A!(1 - P, B1!(1 - P, I), 2)
 
-        If Not (H > 2 Or H = 2 And T <= 120) Then
+        If Not (H > 2 Or H = 2 And gameClock! <= 120) Then
             If A!(1 - P, B1!(1 - P, I), 3) - A!(1 - P, B1!(1 - P, I), 7) - A!(1 - P, B1!(1 - P, I), 11) - A!(1 - P, B1!(1 - P, I), 12) <= 0 Then XZ = XZ * .5
         End If
 
@@ -822,7 +824,8 @@ Sub Choices ()
         S2 = 0
         P9 = P
         C1 = 2
-        If T <= 0 Then TE = T: Call PlayingTime
+        Call CheckZeroTime
+       
     Else
 
         If pbpDelay! <> 0 Then
@@ -846,7 +849,7 @@ Sub Choices ()
                 S2 = 0
                 P9 = P
                 C1 = 2
-                If T <= 0 Then TE = T: Call PlayingTime
+                Call CheckZeroTime
             Else
                 If Not (T1(P) <= 0 Or P3 = 1 And P = CT And U5 = 1) Then T1(P) = T1(P) - 1: Color 15, 0: Call Substitutions
                 'Exit Do
@@ -918,8 +921,7 @@ Sub Substitutions ()
             P9 = P
             C1 = 2
 
-            If T <= 0 Then TE = T: Call PlayingTime
-
+            Call CheckZeroTime
             Call RATINGTABLES
 
         Else
@@ -942,8 +944,7 @@ Sub Substitutions ()
                 P9 = P
                 C1 = 2
 
-                If T <= 0 Then TE = T: Call PlayingTime
-
+                Call CheckZeroTime
                 Call RATINGTABLES
 
                 If LC% = 1 Then
@@ -1079,7 +1080,7 @@ Sub Fouls (skipRandom%)
             Call NEWSCREEN
         End If
 
-        If T <= 0 Then TE = T: Call PlayingTime
+        Call CheckZeroTime
 
         X = 0
 
@@ -1097,19 +1098,19 @@ Sub LastShot ()
 
     M5 = 0
 
-    If T <= 2 Or IN = 99 Then
+    If gameClock! <= 2 Or IN = 99 Then
         M5 = 2
     Else
-        If T > 2 And T <= 4 Then M5 = 2
-        If T > 4 And T <= 16 Then M5 = Int(Rnd(1) * 2) + 3
-        If T > 16 Then M5 = Int(Rnd(1) * 2) + 4: 'CHANGED AFTER DEF RB CHANGE FROM +4 TO +3
+        If gameClock! > 2 And gameClock! <= 4 Then M5 = 2
+        If gameClock! > 4 And gameClock! <= 16 Then M5 = Int(Rnd(1) * 2) + 3
+        If gameClock! > 16 Then M5 = Int(Rnd(1) * 2) + 4: 'CHANGED AFTER DEF RB CHANGE FROM +4 TO +3
     End If
 
-    TE = M5
+    timeElapsed! = M5
 
     Call PlayingTime
 
-    T = T - M5
+    gameClock! = gameClock! - M5
     IN = 0
 
     X8 = X8 - M5
@@ -1124,7 +1125,7 @@ End Sub
 '...explanation...
 Sub ZeroCheck ()
 
-    If T <= .001 Then TE = T: Call PlayingTime: T = 0
+    If gameClock! <= .001 Then timeElapsed! = gameClock!: Call PlayingTime: gameClock! = 0
 
     If X8 <= 0 Then X8 = 0
 
@@ -1205,7 +1206,7 @@ End Sub
 
 
 '------------------------------
-'   DISABLEPLAYERS Subroutine
+'   DISABLEPLAYERS Subroutine  
 '------------------------------
 ' ...explanation...
 Sub DISABLEPLAYERS ()
@@ -1233,8 +1234,10 @@ Sub DISABLEPLAYERS ()
     If UCase$(I$) = "Y" Then
 
         DX% = 0
+
         Cls
-        Print "TEAM ROSTER FOR ";: Color T(P9, 33), T(P9, 34): Print B$(P9)
+        Print "TEAM ROSTER FOR ";
+        Color T(P9, 33), T(P9, 34): Print B$(P9)
         Color 15, 0
         Print "# NAME            GP"
 
@@ -1247,10 +1250,10 @@ Sub DISABLEPLAYERS ()
             If I = 13 Then Print "D";
             If I = 14 Then Print "E";
 
+            Print " ";
+
             'Automatically disable "non-existent" players
             If AA$(P9, I, 0) = "XXX" Then B%(P9, I, 18) = -1: Color T(P9, 33), T(P9, 34)
-
-            Print " ";
 
             'Color players who have been disabled
             If B%(P9, I, 18) <> 0 Then Color T(P9, 33), T(P9, 34)
@@ -1285,7 +1288,8 @@ Sub DISABLEPLAYERS ()
                         B%(P9, I1, 18) = 0
                         DX% = DX% - 1
                         Locate 3 + I1, 3
-                        Color 15, 0: Print AA$(P9, I1, 0)
+                        Color 15, 0
+                        Print " "; AA$(P9, I1, 0)
                     End If
                 End If
             End If
@@ -1426,13 +1430,13 @@ Sub NEWSCREEN ()
     Color T(0, 33), T(0, 34): Print B$(0);
 
     Locate 1, 37
-    Color 15, 0: Print Using "##"; Int(T / 60);: Print ":";
+    Color 15, 0: Print Using "##"; Int(gameClock! / 60);: Print ":";
 
-    If T - Int(T / 60) * 60 < 10 Then
+    If gameClock! - Int(gameClock! / 60) * 60 < 10 Then
         Print "0";
-        Print Using "#"; T - Int(T / 60) * 60;
+        Print Using "#"; gameClock! - Int(gameClock! / 60) * 60;
     Else
-        Print Using "##"; T - Int(T / 60) * 60;
+        Print Using "##"; gameClock! - Int(gameClock! / 60) * 60;
     End If
 
     Locate 2, 56: Color T(1, 33), T(1, 34): Print B$(1)
@@ -1537,7 +1541,7 @@ Sub NEWSCREEN ()
             Print Using "##"; A!(0, B1!(0, I1), 2) * 2 / 10;
         End If
 
-        If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And T > 120) Then Color 12
+        If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And gameClock! > 120) Then Color 12
 
         Print Using "### "; J;
         Color 15
@@ -1575,7 +1579,7 @@ Sub NEWSCREEN ()
             Print Using "##"; A!(1, B1!(1, I1), 2) * 2 / 10;
         End If
 
-        If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And T > 120) Then Color 12
+        If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And gameClock! > 120) Then Color 12
 
         Print Using "### "; J;
 
@@ -1628,7 +1632,7 @@ Sub QUARTERTOTAL ()
             V9(9) = V9(9) + A!(I, I1, 13)
             V9(11) = V9(11) + A!(I, I1, 24)
             V9(12) = V9(12) + A!(I, I1, 23)
-            V9(10) = V9(10) + ZZ(I, I1)
+            V9(10) = V9(10) + timePlayed(I, I1)
         Next
 
         If H = 1 Or H = 2 Then
@@ -2162,7 +2166,7 @@ Sub CHANGESTRATEGY (I$)
                 Locate , 14: Print "0 - RETURN TO GAME"
                 Locate , 14: Print "1 - SELECT OFFENSIVE STYLE OF PLAY"
                 Locate , 14: Print "2 - SELECT DEFENSIVE STYLE OF PLAY"
-                Locate , 14: Print "3 - FULL COURT PRESS "; P7$(P7(TS%))
+                Locate , 14: Print "3 - FULL COURT PRESS "; TS$(P7(TS%))
 
                 Do
                     I$ = GetKeyPress$
@@ -2242,12 +2246,12 @@ Sub COMPUTERCOACH ()
         If H = 3 And I5 > 20 Then D2(P9) = 1: P7(P9) = 0
         If H = 3 And I5 >= 10 And I5 < 20 Then D2(P9) = 1: P7(P9) = 1
         If H = 3 And I5 < 10 Then D2(P9) = 1: P7(P9) = 0
-        If H = 4 And T >= 120 And I5 > 20 Then D2(P9) = 1: P7(P9) = 0
-        If H = 4 And T >= 120 And I5 > 10 And I5 < 20 Then D2(P9) = 3: P7(P9) = 1
-        If H = 4 And T >= 120 And I5 <= 10 Then D2(P9) = 1: P7(P9) = 1
-        If H = 4 And T < 120 And I5 > 10 Then D2(P9) = 1: P7(P9) = 0
-        If H = 4 And T < 120 And I5 <= 10 And I5 > 4 Then D2(P9) = 3: P7(P9) = 1
-        If H = 4 And T < 120 And I5 <= 4 Then D2(P9) = 1: P7(P9) = 1
+        If H = 4 And gameClock! >= 120 And I5 > 20 Then D2(P9) = 1: P7(P9) = 0
+        If H = 4 And gameClock! >= 120 And I5 > 10 And I5 < 20 Then D2(P9) = 3: P7(P9) = 1
+        If H = 4 And gameClock! >= 120 And I5 <= 10 Then D2(P9) = 1: P7(P9) = 1
+        If H = 4 And gameClock! < 120 And I5 > 10 Then D2(P9) = 1: P7(P9) = 0
+        If H = 4 And gameClock! < 120 And I5 <= 10 And I5 > 4 Then D2(P9) = 3: P7(P9) = 1
+        If H = 4 And gameClock! < 120 And I5 <= 4 Then D2(P9) = 1: P7(P9) = 1
         If H > 4 Then D2(P9) = 1: P7(P9) = 1
 
     Else
@@ -2297,15 +2301,15 @@ Sub COMPUTERSUBS ()
 
             If Left$(AA$(P9, I1, 1), 1) = P$ Or Right$(AA$(P9, I1, 1), 1) = P$ Then
 
-                If Not (AA$(P9, I1, 0) = "XXX" Or A!(P9, I1, 12) >= 6 Or B%(P9, I1, 18) <> 0 Or H = 1 And A!(P9, I1, 12) >= 2 + FS% Or H = 2 And A!(P9, I1, 12) >= 4 + FS% Or H = 3 And A!(P9, I1, 12) >= 5 Or H = 4 And T > 300 And A!(P9, I1, 12) = 5) Then
+                If Not (AA$(P9, I1, 0) = "XXX" Or A!(P9, I1, 12) >= 6 Or B%(P9, I1, 18) <> 0 Or H = 1 And A!(P9, I1, 12) >= 2 + FS% Or H = 2 And A!(P9, I1, 12) >= 4 + FS% Or H = 3 And A!(P9, I1, 12) >= 5 Or H = 4 And gameClock! > 300 And A!(P9, I1, 12) = 5) Then
 
                     M6 = A!(P9, I1, 3) - A!(P9, I1, 7) - A!(P9, I1, 11) - A!(P9, I1, 12)
 
                     If B1!(P9, I2) > -1 Then M7 = A!(P9, B1!(P9, I2), 3) - A!(P9, B1!(P9, I2), 7) - A!(P9, B1!(P9, I2), 11) - A!(P9, B1!(P9, I2), 12)
 
-                    If H = 4 And T < 120 Or H > 4 Then M6 = A!(P9, I1, 3)
+                    If H = 4 And gameClock! < 120 Or H > 4 Then M6 = A!(P9, I1, 3)
 
-                    If (H = 4 And T < 120 Or H > 4) And B1!(P9, I2) > -1 Then M7 = A!(P9, B1!(P9, I2), 3)
+                    If (H = 4 And gameClock! < 120 Or H > 4) And B1!(P9, I2) > -1 Then M7 = A!(P9, B1!(P9, I2), 3)
 
                     If I2 <> 1 Or B1!(P9, 0) <> I1 Then
                         If B1!(P9, I2) = -1 Or M6 >= M7 Then B1!(P9, I2) = I1
@@ -2341,13 +2345,13 @@ Sub COMPUTERSUBS ()
 
             If Left$(AA$(P9, I1, 1), 1) = P$ Or Right$(AA$(P9, I1, 1), 1) = P$ Then
 
-                If Not (AA$(P9, I1, 0) = "XXX" Or A!(P9, I1, 12) >= 6 Or B%(P9, I1, 18) <> 0 Or H = 1 And A!(P9, I1, 12) >= 2 + FS% Or H = 2 And A!(P9, I1, 12) >= 4 + FS% Or H = 3 And A!(P9, I1, 12) >= 5 Or H = 4 And T > 300 And A!(P9, I1, 12) = 5) Then
+                If Not (AA$(P9, I1, 0) = "XXX" Or A!(P9, I1, 12) >= 6 Or B%(P9, I1, 18) <> 0 Or H = 1 And A!(P9, I1, 12) >= 2 + FS% Or H = 2 And A!(P9, I1, 12) >= 4 + FS% Or H = 3 And A!(P9, I1, 12) >= 5 Or H = 4 And gameClock! > 300 And A!(P9, I1, 12) = 5) Then
 
                     M6 = A!(P9, I1, 3) - A!(P9, I1, 7) - A!(P9, I1, 11) - A!(P9, I1, 12)
 
                     If B1!(P9, I2) > -1 Then M7 = A!(P9, B1!(P9, I2), 3) - A!(P9, B1!(P9, I2), 7) - A!(P9, B1!(P9, I2), 11) - A!(P9, B1!(P9, I2), 12)
-                    If H = 4 And T < 120 Or H > 4 Then M6 = A!(P9, I1, 3)
-                    If (H = 4 And T < 120 Or H > 4) And B1!(P9, I2) > -1 Then M7 = A!(P9, B1!(P9, I2), 3)
+                    If H = 4 And gameClock! < 120 Or H > 4 Then M6 = A!(P9, I1, 3)
+                    If (H = 4 And gameClock! < 120 Or H > 4) And B1!(P9, I2) > -1 Then M7 = A!(P9, B1!(P9, I2), 3)
 
                     If Not (I2 = 2 And (B1!(P9, 0) = I1 Or B1!(P9, 1) = I1)) Then
                         If Not (I2 = 3 And (B1!(P9, 0) = I1 Or B1!(P9, 1) = I1 Or B1!(P9, 2) = I1)) Then
@@ -2383,11 +2387,11 @@ Sub COMPUTERSUBS ()
         M6 = 0: M7 = 0
         If Left$(AA$(P9, I1, 1), 1) = P$ Or Right$(AA$(P9, I1, 1), 1) = P$ Then
 
-            If Not (AA$(P9, I1, 0) = "XXX" Or A!(P9, I1, 12) >= 6 Or B%(P9, I1, 18) <> 0 Or H = 1 And A!(P9, I1, 12) >= 2 + FS% Or H = 2 And A!(P9, I1, 12) >= 4 + FS% Or H = 3 And A!(P9, I1, 12) >= 5 Or H = 4 And T > 300 And A!(P9, I1, 12) = 5) Then
+            If Not (AA$(P9, I1, 0) = "XXX" Or A!(P9, I1, 12) >= 6 Or B%(P9, I1, 18) <> 0 Or H = 1 And A!(P9, I1, 12) >= 2 + FS% Or H = 2 And A!(P9, I1, 12) >= 4 + FS% Or H = 3 And A!(P9, I1, 12) >= 5 Or H = 4 And gameClock! > 300 And A!(P9, I1, 12) = 5) Then
                 M6 = A!(P9, I1, 3) - A!(P9, I1, 7) - A!(P9, I1, 11) - A!(P9, I1, 12)
                 If B1!(P9, 4) > -1 Then M7 = A!(P9, B1!(P9, 4), 3) - A!(P9, B1!(P9, 4), 7) - A!(P9, B1!(P9, 4), 11) - A!(P9, B1!(P9, 4), 12)
-                If H = 4 And T < 120 Or H > 4 Then M6 = A!(P9, I1, 3)
-                If (H = 4 And T < 120 Or H > 4) And B1!(P9, I2) > -1 Then M7 = A!(P9, B1!(P9, I2), 3)
+                If H = 4 And gameClock! < 120 Or H > 4 Then M6 = A!(P9, I1, 3)
+                If (H = 4 And gameClock! < 120 Or H > 4) And B1!(P9, I2) > -1 Then M7 = A!(P9, B1!(P9, I2), 3)
 
                 If Not (B1!(P9, 0) = I1 Or B1!(P9, 1) = I1 Or B1!(P9, 2) = I1 Or B1!(P9, 3) = I1) Then
                     If B1!(P9, 4) = -1 Or M6 >= M7 Then B1!(P9, 4) = I1
@@ -3456,9 +3460,9 @@ Sub ROSTER ()
 
             If H <= 3 And J / A!(P9, R1, 3) < .25 Then Locate , 61: Print " T";
             If J / A!(P9, R1, 3) < .5 And H <= 2 Then Locate , 61: Print " T";
-            If H = 4 And T > 200 And J / A!(P9, R1, 3) <= T / 2880 Then Locate , 61: Print " T";
+            If H = 4 And gameClock! > 200 And J / A!(P9, R1, 3) <= gameClock! / 2880 Then Locate , 61: Print " T";
             If A!(P9, R1, 3) - A!(P9, R1, 7) - A!(P9, R1, 11) - A!(P9, R1, 12) <= 0 Then Locate , 61: Print "EX";
-            If H > 4 Or H = 4 And T <= 120 And T <> 0 Then Locate , 61: Print "  ";
+            If H > 4 Or H = 4 And gameClock! <= 120 And gameClock! <> 0 Then Locate , 61: Print "  ";
 
             Locate , 63: Print Using "### # ### ##.#"; A!(P9, R1, 8) * 2 + A!(P9, R1, 10) + W%(P9, R1, 0); A!(P9, R1, 12); A!(P9, R1, 17); (B%(P9, R1, 3) * 2 + B%(P9, R1, 5) + B%(P9, R1, 14)) / B%(P9, R1, 0)
         End If
@@ -3544,7 +3548,7 @@ Sub TICKER ()
 
         RN = Int(Rnd(1) * 100) + 1
 
-        If HT% = 1 Then
+        If halfTime = 1 Then
 
             If G9 = 0 Then
                 If RN <= 50 Then
@@ -3574,7 +3578,7 @@ Sub TICKER ()
                     End Select
                 End If
             Else
-                If HT% = 0 Then Locate , 30: Print "LANCE HAFFNER GAMES SCOREBOARD"
+                If halfTime = 0 Then Locate , 30: Print "LANCE HAFFNER GAMES SCOREBOARD"
             End If
 
         End If
@@ -3584,461 +3588,461 @@ Sub TICKER ()
         If TMT = 0 Then
             Locate 10, 28: Print "NO OTHER GAMES SCHEDULED"
         Else
-            If H = 1 And T < 720 And T >= 480 Then TE = 1
-            If H = 1 And T < 480 And T >= 240 Then TE = 2
-            If H = 1 And T < 240 Then TE = 3
-            If H = 2 And T < 720 And T >= 480 Then TE = 4
-            If H = 2 And T < 480 And T >= 240 Then TE = 5
-            If H = 2 And T < 240 Then TE = 6
-            If H = 3 And T < 720 And T >= 480 Then TE = 9
-            If H = 3 And T < 480 And T >= 240 Then TE = 10
-            If H = 3 And T < 240 Then TE = 11
-            If H = 4 And T < 720 And T >= 480 Then TE = 12
-            If H = 4 And T < 480 And T >= 240 Then TE = 13
-            If H = 4 And T < 240 Then TE = 14
-            If H = 5 And T < 720 And T >= 480 Then TE = 15
-            If H = 5 And T < 480 And T >= 240 Then TE = 16
-            If H = 5 And T < 240 Then TE = 17
+            If H = 1 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 1
+            If H = 1 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 2
+            If H = 1 And gameClock! < 240 Then timeInterval = 3
+            If H = 2 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 4
+            If H = 2 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 5
+            If H = 2 And gameClock! < 240 Then timeInterval = 6
+            If H = 3 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 9
+            If H = 3 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 10
+            If H = 3 And gameClock! < 240 Then timeInterval = 11
+            If H = 4 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 12
+            If H = 4 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 13
+            If H = 4 And gameClock! < 240 Then timeInterval = 14
+            If H = 5 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 15
+            If H = 5 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 16
+            If H = 5 And gameClock! < 240 Then timeInterval = 17
 
-            If HT% = 1 Then TE = 8
+            If HT% = 1 Then timeInterval = 8
 
             If Left$(SX$(1, 0), 3) <> "XXX" Then
                 Locate 2, 1
                 X = 1
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(1, 0), 13);
-                Locate , 15: Print Using "### "; SX%(1, 0, TS%);
-                Print R$(TS%)
+                Locate , 15: Print Using "### "; SX%(1, 0, tickInterval);
+                Print R$(tickInterval)
 
                 Print Left$(SX$(1, 1), 13);
-                Locate , 15: Print Using "### #"; SX%(1, 1, TS%)
+                Locate , 15: Print Using "### #"; SX%(1, 1, tickInterval)
             End If
 
             If Left$(SX$(2, 0), 3) <> "XXX" Then
                 Locate 5, 1
                 X = 2
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(2, 0), 13);
-                Locate , 15: Print Using "### "; SX%(2, 0, TS%);
-                Print R$(TS%)
+                Locate , 15: Print Using "### "; SX%(2, 0, tickInterval);
+                Print R$(tickInterval)
 
                 Print Left$(SX$(2, 1), 13);
-                Locate , 15: Print Using "### #"; SX%(2, 1, TS%)
+                Locate , 15: Print Using "### #"; SX%(2, 1, tickInterval)
             End If
 
             If Left$(SX$(3, 0), 3) <> "XXX" Then
                 Locate 8, 1
                 X = 3
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(3, 0), 13);
-                Locate , 15: Print Using "### "; SX%(3, 0, TS%);
-                Print R$(TS%)
+                Locate , 15: Print Using "### "; SX%(3, 0, tickInterval);
+                Print R$(tickInterval)
 
                 Print Left$(SX$(3, 1), 13);
-                Locate , 15: Print Using "### #"; SX%(3, 1, TS%)
+                Locate , 15: Print Using "### #"; SX%(3, 1, tickInterval)
             End If
 
             If Left$(SX$(4, 0), 3) <> "XXX" Then
                 Locate 11, 1
                 X = 4
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(4, 0), 13);
-                Locate , 15: Print Using "### "; SX%(4, 0, TS%);
-                Print R$(TS%)
+                Locate , 15: Print Using "### "; SX%(4, 0, tickInterval);
+                Print R$(tickInterval)
 
                 Print Left$(SX$(4, 1), 13);
-                Locate , 15: Print Using "### #"; SX%(4, 1, TS%)
+                Locate , 15: Print Using "### #"; SX%(4, 1, tickInterval)
             End If
 
             If Left$(SX$(5, 0), 3) <> "XXX" Then
                 Locate 14, 1
                 X = 5
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(5, 0), 13);
-                Locate , 15: Print Using "### "; SX%(5, 0, TS%);
-                Print R$(TS%)
+                Locate , 15: Print Using "### "; SX%(5, 0, tickInterval);
+                Print R$(tickInterval)
 
                 Print Left$(SX$(5, 1), 13);
-                Locate , 15: Print Using "### #"; SX%(5, 1, TS%)
+                Locate , 15: Print Using "### #"; SX%(5, 1, tickInterval)
             End If
 
             If Left$(SX$(6, 0), 3) <> "XXX" Then
                 Locate 17, 1
                 X = 6
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(6, 0), 13);
-                Locate , 15: Print Using "### "; SX%(6, 0, TS%);
-                Print R$(TS%)
+                Locate , 15: Print Using "### "; SX%(6, 0, tickInterval);
+                Print R$(tickInterval)
 
                 Print Left$(SX$(6, 1), 13);
-                Locate , 15: Print Using "### #"; SX%(6, 1, TS%)
+                Locate , 15: Print Using "### #"; SX%(6, 1, tickInterval)
             End If
 
             If Left$(SX$(7, 0), 3) <> "XXX" Then
                 Locate 20, 1
                 X = 7
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(7, 0), 13);
-                Locate , 15: Print Using "### "; SX%(7, 0, TS%);
-                Print R$(TS%)
+                Locate , 15: Print Using "### "; SX%(7, 0, tickInterval);
+                Print R$(tickInterval)
 
                 Print Left$(SX$(7, 1), 13);
-                Locate , 15: Print Using "### #"; SX%(7, 1, TS%)
+                Locate , 15: Print Using "### #"; SX%(7, 1, tickInterval)
             End If
 
             If Left$(SX$(8, 0), 3) <> "XXX" Then
                 Locate 23, 1
                 X = 8
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(8, 0), 13);
-                Locate , 15: Print Using "### "; SX%(8, 0, TS%);
-                Print R$(TS%)
+                Locate , 15: Print Using "### "; SX%(8, 0, tickInterval);
+                Print R$(tickInterval)
 
                 Print Left$(SX$(8, 1), 13);
-                Locate , 15: Print Using "### #"; SX%(8, 1, TS%);
+                Locate , 15: Print Using "### #"; SX%(8, 1, tickInterval);
             End If
 
             If Left$(SX$(9, 0), 3) <> "XXX" Then
                 Locate 2, 21
                 X = 9
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(9, 0), 13);
-                Locate , 35: Print Using "### "; SX%(9, 0, TS%);
-                Print R$(TS%)
+                Locate , 35: Print Using "### "; SX%(9, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 21
 
                 Print Left$(SX$(9, 1), 13);
-                Locate , 35: Print Using "### #"; SX%(9, 1, TS%)
+                Locate , 35: Print Using "### #"; SX%(9, 1, tickInterval)
             End If
 
             If Left$(SX$(10, 0), 3) <> "XXX" Then
                 Locate 5, 21
                 X = 10
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(10, 0), 13);
-                Locate , 35: Print Using "### "; SX%(10, 0, TS%);
-                Print R$(TS%)
+                Locate , 35: Print Using "### "; SX%(10, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 21
 
                 Print Left$(SX$(10, 1), 13);
-                Locate , 35: Print Using "### #"; SX%(10, 1, TS%)
+                Locate , 35: Print Using "### #"; SX%(10, 1, tickInterval)
             End If
 
             If Left$(SX$(11, 0), 3) <> "XXX" Then
                 Locate 8, 21
                 X = 11
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(11, 0), 13);
-                Locate , 35: Print Using "### "; SX%(11, 0, TS%);
-                Print R$(TS%)
+                Locate , 35: Print Using "### "; SX%(11, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 21
 
                 Print Left$(SX$(11, 1), 13);
-                Locate , 35: Print Using "### #"; SX%(11, 1, TS%)
+                Locate , 35: Print Using "### #"; SX%(11, 1, tickInterval)
             End If
 
             If Left$(SX$(12, 0), 3) <> "XXX" Then
                 Locate 11, 21
                 X = 12
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(12, 0), 13);
-                Locate , 35: Print Using "### "; SX%(12, 0, TS%);
-                Print R$(TS%)
+                Locate , 35: Print Using "### "; SX%(12, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 21
 
                 Print Left$(SX$(12, 1), 13);
-                Locate , 35: Print Using "### #"; SX%(12, 1, TS%)
+                Locate , 35: Print Using "### #"; SX%(12, 1, tickInterval)
             End If
 
             If Left$(SX$(13, 0), 3) <> "XXX" Then
                 Locate 14, 21
                 X = 13
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(13, 0), 13);
-                Locate , 35: Print Using "### "; SX%(13, 0, TS%);
-                Print R$(TS%)
+                Locate , 35: Print Using "### "; SX%(13, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 21
 
                 Print Left$(SX$(13, 1), 13);
-                Locate , 35: Print Using "### #"; SX%(13, 1, TS%)
+                Locate , 35: Print Using "### #"; SX%(13, 1, tickInterval)
             End If
 
             If Left$(SX$(14, 0), 3) <> "XXX" Then
                 Locate 17, 21
                 X = 14
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(14, 0), 13);
-                Locate , 35: Print Using "### "; SX%(14, 0, TS%);
-                Print R$(TS%)
+                Locate , 35: Print Using "### "; SX%(14, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 21
 
                 Print Left$(SX$(14, 1), 13);
-                Locate , 35: Print Using "### #"; SX%(14, 1, TS%)
+                Locate , 35: Print Using "### #"; SX%(14, 1, tickInterval)
             End If
 
             If Left$(SX$(15, 0), 3) <> "XXX" Then
                 Locate 20, 21
                 X = 15
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(15, 0), 13);
-                Locate , 35: Print Using "### "; SX%(15, 0, TS%);
-                Print R$(TS%)
+                Locate , 35: Print Using "### "; SX%(15, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 21
 
                 Print Left$(SX$(15, 1), 13);
-                Locate , 35: Print Using "### #"; SX%(15, 1, TS%)
+                Locate , 35: Print Using "### #"; SX%(15, 1, tickInterval)
             End If
 
             If Left$(SX$(16, 0), 3) <> "XXX" Then
                 Locate 23, 21
                 X = 16
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(16, 0), 13);
-                Locate , 35: Print Using "### "; SX%(16, 0, TS%);
-                Print R$(TS%)
+                Locate , 35: Print Using "### "; SX%(16, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 21
 
                 Print Left$(SX$(16, 1), 13);
-                Locate , 35: Print Using "### #"; SX%(16, 1, TS%);
+                Locate , 35: Print Using "### #"; SX%(16, 1, tickInterval);
             End If
 
             If Left$(SX$(17, 0), 3) <> "XXX" Then
                 Locate 2, 41
                 X = 17
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(17, 0), 13);
-                Locate , 55: Print Using "### "; SX%(17, 0, TS%);
-                Print R$(TS%)
+                Locate , 55: Print Using "### "; SX%(17, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 41
 
                 Print Left$(SX$(17, 1), 13);
-                Locate , 55: Print Using "### #"; SX%(17, 1, TS%)
+                Locate , 55: Print Using "### #"; SX%(17, 1, tickInterval)
             End If
 
             If Left$(SX$(18, 0), 3) <> "XXX" Then
                 Locate 5, 41
                 X = 18
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(18, 0), 13);
-                Locate , 55: Print Using "### "; SX%(18, 0, TS%);
-                Print R$(TS%)
+                Locate , 55: Print Using "### "; SX%(18, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 41
 
                 Print Left$(SX$(18, 1), 13);
-                Locate , 55: Print Using "### #"; SX%(18, 1, TS%)
+                Locate , 55: Print Using "### #"; SX%(18, 1, tickInterval)
             End If
 
             If Left$(SX$(19, 0), 3) <> "XXX" Then
                 Locate 8, 41
                 X = 19
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(19, 0), 13);
-                Locate , 55: Print Using "### "; SX%(19, 0, TS%);
-                Print R$(TS%)
+                Locate , 55: Print Using "### "; SX%(19, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 41
 
                 Print Left$(SX$(19, 1), 13);
-                Locate , 55: Print Using "### #"; SX%(19, 1, TS%)
+                Locate , 55: Print Using "### #"; SX%(19, 1, tickInterval)
             End If
 
             If Left$(SX$(20, 0), 3) <> "XXX" Then
                 Locate 11, 41
                 X = 20
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(20, 0), 13);
-                Locate , 55: Print Using "### "; SX%(20, 0, TS%);
-                Print R$(TS%)
+                Locate , 55: Print Using "### "; SX%(20, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 41
 
                 Print Left$(SX$(20, 1), 13);
-                Locate , 55: Print Using "### #"; SX%(20, 1, TS%)
+                Locate , 55: Print Using "### #"; SX%(20, 1, tickInterval)
             End If
 
             If Left$(SX$(21, 0), 3) <> "XXX" Then
                 Locate 14, 41
                 X = 21
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(21, 0), 13);
-                Locate , 55: Print Using "### "; SX%(21, 0, TS%);
-                Print R$(TS%)
+                Locate , 55: Print Using "### "; SX%(21, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 41
                 Print Left$(SX$(21, 1), 13);
-                Locate , 55: Print Using "### #"; SX%(21, 1, TS%)
+                Locate , 55: Print Using "### #"; SX%(21, 1, tickInterval)
             End If
 
             If Left$(SX$(22, 0), 3) <> "XXX" Then
                 Locate 17, 41
                 X = 22
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(22, 0), 13);
-                Locate , 55: Print Using "### "; SX%(22, 0, TS%);
-                Print R$(TS%)
+                Locate , 55: Print Using "### "; SX%(22, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 41
 
                 Print Left$(SX$(22, 1), 13);
-                Locate , 55: Print Using "### #"; SX%(22, 1, TS%)
+                Locate , 55: Print Using "### #"; SX%(22, 1, tickInterval)
             End If
 
             If Left$(SX$(23, 0), 3) <> "XXX" Then
                 Locate 20, 41
                 X = 23
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(23, 0), 13);
-                Locate , 55: Print Using "### "; SX%(23, 0, TS%);
-                Print R$(TS%)
+                Locate , 55: Print Using "### "; SX%(23, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 41
 
                 Print Left$(SX$(23, 1), 13);
-                Locate , 55: Print Using "### #"; SX%(23, 1, TS%)
+                Locate , 55: Print Using "### #"; SX%(23, 1, tickInterval)
             End If
 
             If Left$(SX$(24, 0), 3) <> "XXX" Then
                 Locate 23, 41
                 X = 24
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(24, 0), 13);
-                Locate , 55: Print Using "### "; SX%(24, 0, TS%);
-                Print R$(TS%)
+                Locate , 55: Print Using "### "; SX%(24, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 41
 
                 Print Left$(SX$(24, 1), 13);
-                Locate , 55: Print Using "### #"; SX%(24, 1, TS%);
+                Locate , 55: Print Using "### #"; SX%(24, 1, tickInterval);
             End If
 
             If Left$(SX$(25, 0), 3) <> "XXX" Then
                 Locate 2, 61
                 X = 25
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(25, 0), 13);
-                Locate , 75: Print Using "### "; SX%(25, 0, TS%);
-                Print R$(TS%)
+                Locate , 75: Print Using "### "; SX%(25, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 61
 
                 Print Left$(SX$(25, 1), 13);
-                Locate , 75: Print Using "### #"; SX%(25, 1, TS%)
+                Locate , 75: Print Using "### #"; SX%(25, 1, tickInterval)
             End If
 
             If Left$(SX$(26, 0), 3) <> "XXX" Then
                 Locate 5, 61
                 X = 26
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(26, 0), 13);
-                Locate , 75: Print Using "### "; SX%(26, 0, TS%);
-                Print R$(TS%)
+                Locate , 75: Print Using "### "; SX%(26, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 61
 
                 Print Left$(SX$(26, 1), 13);
-                Locate , 75: Print Using "### #"; SX%(26, 1, TS%)
+                Locate , 75: Print Using "### #"; SX%(26, 1, tickInterval)
             End If
 
             If Left$(SX$(27, 0), 3) <> "XXX" Then
                 Locate 8, 61
                 X = 27
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(27, 0), 13);
-                Locate , 75: Print Using "### "; SX%(27, 0, TS%);
-                Print R$(TS%)
+                Locate , 75: Print Using "### "; SX%(27, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 61
 
                 Print Left$(SX$(27, 1), 13);
-                Locate , 75: Print Using "### #"; SX%(27, 1, TS%)
+                Locate , 75: Print Using "### #"; SX%(27, 1, tickInterval)
             End If
 
             If Left$(SX$(28, 0), 3) <> "XXX" Then
                 Locate 11, 61
                 X = 28
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(28, 0), 13);
-                Locate , 75: Print Using "### "; SX%(28, 0, TS%);
-                Print R$(TS%)
+                Locate , 75: Print Using "### "; SX%(28, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 61
 
                 Print Left$(SX$(28, 1), 13);
-                Locate , 75: Print Using "### #"; SX%(28, 1, TS%)
+                Locate , 75: Print Using "### #"; SX%(28, 1, tickInterval)
             End If
 
             If Left$(SX$(29, 0), 3) <> "XXX" Then
                 Locate 14, 61
                 X = 29
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(29, 0), 13);
-                Locate , 75: Print Using "### "; SX%(29, 0, TS%);
-                Print R$(TS%)
+                Locate , 75: Print Using "### "; SX%(29, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 61
 
                 Print Left$(SX$(29, 1), 13);
-                Locate , 75: Print Using "### #"; SX%(29, 1, TS%)
+                Locate , 75: Print Using "### #"; SX%(29, 1, tickInterval)
             End If
 
             If Left$(SX$(30, 0), 3) <> "XXX" Then
                 Locate 17, 61
                 X = 30
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(30, 0), 13);
-                Locate , 75: Print Using "### "; SX%(30, 0, TS%);
-                Print R$(TS%)
+                Locate , 75: Print Using "### "; SX%(30, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 61
 
                 Print Left$(SX$(30, 1), 13);
-                Locate , 75: Print Using "### #"; SX%(30, 1, TS%)
+                Locate , 75: Print Using "### #"; SX%(30, 1, tickInterval)
             End If
 
             If Left$(SX$(31, 0), 3) <> "XXX" Then
                 Locate 20, 61
                 X = 31
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(31, 0), 13);
-                Locate , 75: Print Using "### "; SX%(31, 0, TS%);
-                Print R$(TS%)
+                Locate , 75: Print Using "### "; SX%(31, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 61
 
                 Print Left$(SX$(31, 1), 13);
-                Locate , 75: Print Using "### #"; SX%(31, 1, TS%)
+                Locate , 75: Print Using "### #"; SX%(31, 1, tickInterval)
             End If
 
             If Left$(SX$(32, 0), 3) <> "XXX" Then
                 Locate 23, 61
                 X = 32
-                Call TickerTime
+                tickInterval = TickerTime%(timeInterval, X)
 
                 Print Left$(SX$(32, 0), 13);
-                Locate , 75: Print Using "### "; SX%(32, 0, TS%);
-                Print R$(TS%)
+                Locate , 75: Print Using "### "; SX%(32, 0, tickInterval);
+                Print R$(tickInterval)
                 Locate , 61
 
                 Print Left$(SX$(32, 1), 13);
-                Locate , 75: Print Using "### #"; SX%(32, 1, TS%);
+                Locate , 75: Print Using "### #"; SX%(32, 1, tickInterval);
             End If
 
         End If
@@ -4053,21 +4057,6 @@ End Sub
 
 
 '------------------------------
-'     TickerTime Subroutine
-'------------------------------
-'...explanation
-Sub TickerTime ()
-
-    TS% = TE + (TTS% - ST%(X)) * 3
-
-    If TS% < 0 Then TS% = 0
-    If TS% > 14 Then TS% = 14
-    If endGame = 1 Then TS% = 14
-
-End Sub
-
-
-'------------------------------
 '    TICKERUPDATE Subroutine
 '------------------------------
 ' ...explanation...
@@ -4075,20 +4064,20 @@ Sub TICKERUPDATE ()
 
     If AP = 1 And AP%(2) <= 31 Then
 
-        If H = 1 And T <= 480 And SX%(1 + AP%(2), 0, 1) = -1 Then SX%(1 + AP%(2), 0, 1) = S!(0, 0): SX%(1 + AP%(2), 1, 1) = S!(1, 0): GoTo 2580
-        If H = 1 And T <= 240 And SX%(1 + AP%(2), 0, 2) = -1 Then SX%(1 + AP%(2), 0, 2) = S!(0, 0): SX%(1 + AP%(2), 1, 2) = S!(1, 0): GoTo 2580
+        If H = 1 And gameClock! <= 480 And SX%(1 + AP%(2), 0, 1) = -1 Then SX%(1 + AP%(2), 0, 1) = S!(0, 0): SX%(1 + AP%(2), 1, 1) = S!(1, 0): GoTo 2580
+        If H = 1 And gameClock! <= 240 And SX%(1 + AP%(2), 0, 2) = -1 Then SX%(1 + AP%(2), 0, 2) = S!(0, 0): SX%(1 + AP%(2), 1, 2) = S!(1, 0): GoTo 2580
         If H > 1 And SX%(1 + AP%(2), 0, 3) = -1 Then SX%(1 + AP%(2), 0, 3) = S!(0, 1): SX%(1 + AP%(2), 1, 3) = S!(1, 1): GoTo 2580
 
-        If H = 2 And T <= 480 And SX%(1 + AP%(2), 0, 4) = -1 Then SX%(1 + AP%(2), 0, 4) = S!(0, 0): SX%(1 + AP%(2), 1, 4) = S!(1, 0): GoTo 2580
-        If H = 2 And T <= 240 And SX%(1 + AP%(2), 0, 5) = -1 Then SX%(1 + AP%(2), 0, 5) = S!(0, 0): SX%(1 + AP%(2), 1, 5) = S!(1, 0): GoTo 2580
+        If H = 2 And gameClock! <= 480 And SX%(1 + AP%(2), 0, 4) = -1 Then SX%(1 + AP%(2), 0, 4) = S!(0, 0): SX%(1 + AP%(2), 1, 4) = S!(1, 0): GoTo 2580
+        If H = 2 And gameClock! <= 240 And SX%(1 + AP%(2), 0, 5) = -1 Then SX%(1 + AP%(2), 0, 5) = S!(0, 0): SX%(1 + AP%(2), 1, 5) = S!(1, 0): GoTo 2580
         If H > 2 And SX%(1 + AP%(2), 0, 6) = -1 Then For I2 = 6 To 8: SX%(1 + AP%(2), 0, I2) = S!(0, 2) + S!(0, 1): SX%(1 + AP%(2), 1, I2) = S!(1, 2) + S!(1, 1): Next: GoTo 2580
 
-        If H = 3 And T <= 480 And SX%(1 + AP%(2), 0, 9) = -1 Then SX%(1 + AP%(2), 0, 9) = S!(0, 0): SX%(1 + AP%(2), 1, 9) = S!(1, 0): GoTo 2580
-        If H = 3 And T <= 240 And SX%(1 + AP%(2), 0, 10) = -1 Then SX%(1 + AP%(2), 0, 10) = S!(0, 0): SX%(1 + AP%(2), 1, 10) = S!(1, 0): GoTo 2580
+        If H = 3 And gameClock! <= 480 And SX%(1 + AP%(2), 0, 9) = -1 Then SX%(1 + AP%(2), 0, 9) = S!(0, 0): SX%(1 + AP%(2), 1, 9) = S!(1, 0): GoTo 2580
+        If H = 3 And gameClock! <= 240 And SX%(1 + AP%(2), 0, 10) = -1 Then SX%(1 + AP%(2), 0, 10) = S!(0, 0): SX%(1 + AP%(2), 1, 10) = S!(1, 0): GoTo 2580
         If H > 3 And SX%(1 + AP%(2), 0, 11) = -1 Then SX%(1 + AP%(2), 0, 11) = S!(0, 3) + S!(0, 2) + S!(0, 1): SX%(1 + AP%(2), 1, 11) = S!(1, 3) + S!(1, 2) + S!(1, 1): GoTo 2580
 
-        If H = 4 And T <= 480 And SX%(1 + AP%(2), 0, 12) = -1 Then SX%(1 + AP%(2), 0, 12) = S!(0, 0): SX%(1 + AP%(2), 1, 12) = S!(1, 0): GoTo 2580
-        If H = 4 And T <= 240 And SX%(1 + AP%(2), 0, 13) = -1 Then SX%(1 + AP%(2), 0, 13) = S!(0, 0): SX%(1 + AP%(2), 1, 13) = S!(1, 0): GoTo 2580
+        If H = 4 And gameClock! <= 480 And SX%(1 + AP%(2), 0, 12) = -1 Then SX%(1 + AP%(2), 0, 12) = S!(0, 0): SX%(1 + AP%(2), 1, 12) = S!(1, 0): GoTo 2580
+        If H = 4 And gameClock! <= 240 And SX%(1 + AP%(2), 0, 13) = -1 Then SX%(1 + AP%(2), 0, 13) = S!(0, 0): SX%(1 + AP%(2), 1, 13) = S!(1, 0): GoTo 2580
 
         SX%(1 + AP%(2), 0, 14) = S!(0, 0): SX%(1 + AP%(2), 1, 14) = S!(1, 0)
 
@@ -5232,7 +5221,7 @@ Sub CheckRecords ()
                 V8(I2, 9) = V8(I2, 9) + A!(I2, I1, 13)
                 V8(I2, 11) = V8(I2, 11) + A!(I2, I1, 24)
                 V8(I2, 12) = V8(I2, 12) + A!(I2, I1, 23)
-                V8(I2, 10) = V8(I2, 10) + ZZ(I2, I1)
+                V8(I2, 10) = V8(I2, 10) + timePlayed(I2, I1)
             Next
         Next
 
@@ -6278,12 +6267,12 @@ Sub UPDATESCREEN ()
     'M A I N   S C R E E N
     Call TICKERUPDATE
 
-    Locate 1, 37: Color 15, 0: Print Using "##"; Int(T / 60);: Print ":";
+    Locate 1, 37: Color 15, 0: Print Using "##"; Int(gameClock! / 60);: Print ":";
 
-    If T - Int(T / 60) * 60 < 10 Then
-        Print "0";: Print Using "#"; T - Int(T / 60) * 60;
+    If gameClock! - Int(gameClock! / 60) * 60 < 10 Then
+        Print "0";: Print Using "#"; gameClock! - Int(gameClock! / 60) * 60;
     Else
-        Print Using "##"; T - Int(T / 60) * 60;
+        Print Using "##"; gameClock! - Int(gameClock! / 60) * 60;
     End If
 
     Locate 4, 13: Color 14, 0: Print Using "###"; S!(0, 0);
@@ -6302,7 +6291,7 @@ Sub UPDATESCREEN ()
     Locate 6, 9: Print "TIMEOUTS:"; T1(0);: Locate , 56: Print "TIMEOUTS:"; T1(1)
     Locate 6, 37: Color 15, 0: Print Using " :##"; X8
 
-    If T < 25 And X8 >= T Or H > 4 And T = 300 Then Locate 6, 37: Print " :  "
+    If gameClock! < 25 And X8 >= gameClock! Or H > 4 And gameClock! = 300 Then Locate 6, 37: Print " :  "
 
     If pbpDelay! <> 0 Then
         Locate 8, 58
@@ -6338,7 +6327,7 @@ Sub UPDATESCREEN ()
                 Print Using "##"; A!(0, B1!(0, I1), 2) * 2 / 10;
             End If
 
-            If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And T > 120) Then Color 12
+            If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And gameClock! > 120) Then Color 12
 
             Print Using "### "; J;
             Color 15
@@ -6364,7 +6353,7 @@ Sub UPDATESCREEN ()
             If A!(1, B1!(1, I1), 1) >= 100 Then A!(1, B1!(1, I1), 1) = 99
             Print Using "## ## "; A!(1, B1!(1, I1), 0); A!(1, B1!(1, I1), 1);
             If P = 1 Then Print Using "##"; A!(1, B1!(1, I1), 21) * 2 / 10; Else Print Using "##"; A!(1, B1!(1, I1), 2) * 2 / 10;
-            If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And T > 120) Then Color 12
+            If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And gameClock! > 120) Then Color 12
             Print Using "### "; J;
             Color 15
             Print Using "## ##"; A!(1, B1!(1, I1), 4) / 10; A!(1, B1!(1, I1), 5) / 10;
@@ -6498,7 +6487,7 @@ End Sub
 ' COMPILESTATFILES Subroutine
 '------------------------------
 ' ...explanation...
-Sub COMPILESTATFILES (X1)
+Sub COMPILESTATFILES (compileOpt)
 
     Dim TG!
 
@@ -6508,7 +6497,7 @@ Sub COMPILESTATFILES (X1)
 
     For PX = 0 To 1
         For J = 0 To 14
-            A!(PX, J, 16) = ZZ(PX, J)
+            A!(PX, J, 16) = timePlayed(PX, J)
             A!(PX, J, 17) = A!(PX, J, 23)
             A!(PX, J, 18) = A!(PX, J, 24)
         Next
@@ -6525,7 +6514,7 @@ Sub COMPILESTATFILES (X1)
         Y$(PX) = B$(PX)
     Next
 
-    Q = 0
+    teamIdx = 0
 
     Do
         C% = 0
@@ -6533,7 +6522,7 @@ Sub COMPILESTATFILES (X1)
         If AP <> 1 Then
             I$ = "Y"
 
-            If X1 = 1 And Q = 1 Or X1 = 2 And Q = 0 Then I$ = "N"
+            If compileOpt = 1 And teamIdx = 1 Or compileOpt = 2 And teamIdx = 0 Then I$ = "N"
 
             If UCase$(I$) = "N" Then
                 C% = 1
@@ -6545,36 +6534,36 @@ Sub COMPILESTATFILES (X1)
         If C% <> 1 Then
 
             For XX = 4 To 11
-                If Mid$(B$(Q), XX, 1) = " " Or Mid$(B$(Q), XX, 1) = "." Then Mid$(B$(Q), XX, 1) = "_"
+                If Mid$(B$(teamIdx), XX, 1) = " " Or Mid$(B$(teamIdx), XX, 1) = "." Then Mid$(B$(teamIdx), XX, 1) = "_"
             Next XX
 
             For XX = 12 To 14
-                If Mid$(B$(Q), XX, 2) = "ST" Then Mid$(B$(Q), 9, 1) = "_": Mid$(B$(Q), 10, 2) = "ST"
+                If Mid$(B$(teamIdx), XX, 2) = "ST" Then Mid$(B$(teamIdx), 9, 1) = "_": Mid$(B$(teamIdx), 10, 2) = "ST"
             Next XX
 
             QQ = 8
 
             For XX = 11 To 4 Step -1
-                If Mid$(B$(Q), XX, 1) = "_" Then
+                If Mid$(B$(teamIdx), XX, 1) = "_" Then
                     QQ = XX - 4
                 Else
                     Exit For
                 End If
             Next XX
 
-            F$ = Mid$(B$(Q), 4, QQ)
-            R$ = F$ + "." + Left$(B$(Q), 2)
+            F$ = Mid$(B$(teamIdx), 4, QQ)
+            R$ = F$ + "." + Left$(B$(teamIdx), 2)
 
             If _FileExists(diskPaths$(1) + R$) Then
 
                 Open diskPaths$(1) + R$ For Input As #2
-                Input #2, B$(Q)
+                Input #2, B$(teamIdx)
 
                 For I = 0 To 14:
-                    Input #2, AA$(Q, I, 0)
+                    Input #2, AA$(teamIdx, I, 0)
                     For J = 0 To 13: Input #2, Z2!(I, J): Next J
-                    Input #2, W2(Q, I)
-                    Input #2, W3(Q, I)
+                    Input #2, W2(teamIdx, I)
+                    Input #2, W3(teamIdx, I)
                 Next I
 
                 For L = 0 To 15: Input #2, Z!(L): Next L
@@ -6588,21 +6577,21 @@ Sub COMPILESTATFILES (X1)
 
             For I = 0 To 14
 
-                If A!(Q, I, 2) * 2 + A!(Q, I, 4) + W0!(Q, I) > Z2!(I, 13) Then Z2!(I, 13) = A!(Q, I, 2) * 2 + A!(Q, I, 4) + W0!(Q, I)
+                If A!(teamIdx, I, 2) * 2 + A!(teamIdx, I, 4) + W0!(teamIdx, I) > Z2!(I, 13) Then Z2!(I, 13) = A!(teamIdx, I, 2) * 2 + A!(teamIdx, I, 4) + W0!(teamIdx, I)
 
-                If A!(Q, I, 10) > 0 Then Z2!(I, 0) = Z2!(I, 0) + 1
+                If A!(teamIdx, I, 10) > 0 Then Z2!(I, 0) = Z2!(I, 0) + 1
 
                 For J = 1 To 12
-                    Z2!(I, J) = Z2!(I, J) + A!(Q, I, J)
+                    Z2!(I, J) = Z2!(I, J) + A!(teamIdx, I, J)
 
                     If Not (J = 5 Or J = 6 Or J = 10 Or J = 11) Then
-                        Z!(J) = Z!(J) + A!(Q, I, J)
-                        Z1!(J) = Z1!(J) + A!(1 - Q, I, J)
+                        Z!(J) = Z!(J) + A!(teamIdx, I, J)
+                        Z1!(J) = Z1!(J) + A!(1 - teamIdx, I, J)
                     End If
                 Next J
 
-                Z!(0) = Z!(0) + A!(Q, I, 10)
-                TG! = TG! + A!(Q, I, 10)
+                Z!(0) = Z!(0) + A!(teamIdx, I, 10)
+                TG! = TG! + A!(teamIdx, I, 10)
 
             Next I
 
@@ -6613,45 +6602,45 @@ Sub COMPILESTATFILES (X1)
                 Next
             Next
 
-            Z!(15) = Z!(15) + R3(Q) - V9(Q)
-            Z1!(15) = Z1!(15) + R3(1 - Q) - V9(1 - Q)
+            Z!(15) = Z!(15) + R3(teamIdx) - V9(teamIdx)
+            Z1!(15) = Z1!(15) + R3(1 - teamIdx) - V9(1 - teamIdx)
 
-            Z!(6) = Z!(6) + TF(Q)
-            Z1!(6) = Z1!(6) + TF(1 - Q)
+            Z!(6) = Z!(6) + TF(teamIdx)
+            Z1!(6) = Z1!(6) + TF(1 - teamIdx)
 
-            Z!(5) = Z!(5) + R3(Q)
-            Z1!(5) = Z1!(5) + R3(1 - Q)
+            Z!(5) = Z!(5) + R3(teamIdx)
+            Z1!(5) = Z1!(5) + R3(1 - teamIdx)
 
-            Z!(11) = Z!(11) + T0(Q)
-            Z1!(11) = Z1!(11) + T0(1 - Q)
+            Z!(11) = Z!(11) + T0(teamIdx)
+            Z1!(11) = Z1!(11) + T0(1 - teamIdx)
 
             For J = 0 To 14:
-                Z!(13) = Z!(13) + W0!(Q, J)
-                Z!(14) = Z!(14) + W1!(Q, J)
-                Z1!(13) = Z1!(13) + W0!(1 - Q, J)
-                Z1!(14) = Z1!(14) + W1!(1 - Q, J)
-                W2(Q, J) = W2(Q, J) + W0!(Q, J)
-                W3(Q, J) = W3(Q, J) + W1!(Q, J)
+                Z!(13) = Z!(13) + W0!(teamIdx, J)
+                Z!(14) = Z!(14) + W1!(teamIdx, J)
+                Z1!(13) = Z1!(13) + W0!(1 - teamIdx, J)
+                Z1!(14) = Z1!(14) + W1!(1 - teamIdx, J)
+                W2(teamIdx, J) = W2(teamIdx, J) + W0!(teamIdx, J)
+                W3(teamIdx, J) = W3(teamIdx, J) + W1!(teamIdx, J)
             Next J
 
-            Z!(10) = Z!(10) + S!(Q, 0)
-            Z1!(10) = Z1!(10) + S!(1 - Q, 0)
+            Z!(10) = Z!(10) + S!(teamIdx, 0)
+            Z1!(10) = Z1!(10) + S!(1 - teamIdx, 0)
 
-            Call TEAMBOX(1, Q)
-            U$ = "SAVING STATS FOR " + B$(Q)
+            Call TEAMBOX(1, teamIdx)
+            U$ = "SAVING STATS FOR " + B$(teamIdx)
             Locate , (80 - Len(U$)) / 2
             Print U$
             Color 15, 0
 
             Open diskPaths$(1) + R$ For Output As #1
 
-            Print #1, Y$(Q)
+            Print #1, Y$(teamIdx)
 
             For I = 0 To 14:
-                Print #1, AA$(Q, I, 0)
+                Print #1, AA$(teamIdx, I, 0)
                 For J = 0 To 13: Print #1, Z2!(I, J): Next J
-                Print #1, W2(Q, I)
-                Print #1, W3(Q, I)
+                Print #1, W2(teamIdx, I)
+                Print #1, W3(teamIdx, I)
             Next I
 
             For L = 0 To 15
@@ -6694,7 +6683,7 @@ Sub COMPILESTATFILES (X1)
                             H$(Y%) = "N4"
                     End Select
 
-                Case Is = Q
+                Case Is = teamIdx
                     Select Case TG!
                         Case Is < 14500
                             H$(Y%) = "H"
@@ -6708,7 +6697,7 @@ Sub COMPILESTATFILES (X1)
                             H$(Y%) = "H4"
                     End Select
 
-                Case Is <> Q
+                Case Is <> teamIdx
                     Select Case TG!
                         Case Is < 14500
                             H$(Y%) = "V"
@@ -6724,9 +6713,9 @@ Sub COMPILESTATFILES (X1)
 
             End Select
 
-            O%(Y%) = S!(Q, 0)
-            HO$(Y%) = B$(1 - Q)
-            HT%(Y%) = S!(1 - Q, 0)
+            O%(Y%) = S!(teamIdx, 0)
+            HO$(Y%) = B$(1 - teamIdx)
+            HT%(Y%) = S!(1 - teamIdx, 0)
 
             Open diskPaths$(1) + R$ For Output As #1
             Print #1, Y%
@@ -6736,7 +6725,13 @@ Sub COMPILESTATFILES (X1)
             For I = 1 To 100: Print #1, H$(I): Next I
             Close #1
 
-            For I = 1 To 100: O%(I) = 0: HT%(I) = 0: HO$(I) = "": H$(I) = "": Next I
+            'Reset arrays for next iteration
+            For I = 1 To 100: 
+                O%(I) = 0
+                HT%(I) = 0
+                HO$(I) = ""
+                H$(I) = ""
+            Next I
 
             For J = 0 To 14
                 For K = 0 To 13
@@ -6751,10 +6746,10 @@ Sub COMPILESTATFILES (X1)
 
         End If
 
-        Q = Q + 1
+        teamIdx = teamIdx + 1
         Z!(12) = 0
 
-    Loop Until Q = 2
+    Loop Until teamIdx = 2
 
 End Sub
 
@@ -6929,7 +6924,6 @@ Sub POSTGAME ()
 
         Call BOXOPTIONS(X)
         Call TICKER
-        endGame = 0
 
         'Reset option for next call
         If X <> 0 Then X = 0
@@ -6939,10 +6933,10 @@ Sub POSTGAME ()
         Cls
 
         If Not (AP = 1 And U5 = 2) Then
-            'Using Home Team's color for the box
-            Call TEAMBOX(1, 1)
 
             Do
+                'Using Home Team's color for the box
+                Call TEAMBOX(1, 1)
                 U$ = "DISPLAY STATS AGAIN (YN)"
                 Locate 7, (80 - Len(U$)) / 2
                 Print U$
@@ -6959,16 +6953,16 @@ Sub POSTGAME ()
     'If we had special events
     If specialStat = 1 Then
 
-        'Copy the BOX file as a "Special" file (.SPC)
-        srcFile$ = diskPaths$(1) + NM$
-        dstFile$ = diskPaths$(1) + "BOX" + Mid$(Str$(Count), 2, Len(Str$(Count%))) + ".SPC"
-        Call FCopy(srcFile$, dstFile$, null$, ErrCode%)
+        NM$ = "BOX" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".SPC"
 
         'Append special events
         Call BOX2SPC(NM$)
 
+        Call BOX2FILE(2, NM$)
+
     End If
 
+    endGame = 0
     specialStat = 0
 
 End Sub
@@ -7035,7 +7029,7 @@ End Sub
 '   print, line-by-line
 Sub BOX2FILE (printChoice, NM$)
 
-    Open diskPaths$(1) + NM$ For Output As #2
+    Open diskPaths$(1) + NM$ For Append As #2
 
     If N = 2 Then
         Print #2, "SITE: NEUTRAL"
@@ -7094,20 +7088,20 @@ Sub BOX2FILE (printChoice, NM$)
 
         For I1 = 0 To 14
 
-            If ZZ(I, I1) <> 0 Then
+            If timePlayed(I, I1) <> 0 Then
 
                 'Player Name
                 Print #2, AA$(I, I1, 0); Tab(14);
 
                 'Player Time
-                If ZZ(I, I1) = 0 Then
+                If timePlayed(I, I1) = 0 Then
                     Print #2, Tab(15); "DNP";
                 Else
-                    Print #2, Using "##"; Int(ZZ(I, I1) / 60);: Print #2, ":";
-                    If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then
-                        Print #2, Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+                    Print #2, Using "##"; Int(timePlayed(I, I1) / 60);: Print #2, ":";
+                    If timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60 > 9 Then
+                        Print #2, Using "##"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
                     Else
-                        Print #2, "0";: Print #2, Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+                        Print #2, "0";: Print #2, Using "#"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
                     End If
                 End If
 
@@ -7143,7 +7137,7 @@ Sub BOX2FILE (printChoice, NM$)
                 V9(9) = V9(9) + A!(I, I1, 13)
                 V9(11) = V9(11) + A!(I, I1, 24)
                 V9(12) = V9(12) + A!(I, I1, 23)
-                V9(10) = V9(10) + ZZ(I, I1)
+                V9(10) = V9(10) + timePlayed(I, I1)
 
             End If
 
@@ -7255,23 +7249,29 @@ Sub ScoreSummary ()
 
     Locate 4, 17
     Color 14
-    Print "P1  P2  P3  P4  ";
 
-    If S!(0, 1) + S!(0, 2) + S!(0, 3) + S!(0, 4) = S!(1, 1) + S!(1, 2) + S!(1, 3) + S!(1, 4) Then
+    If halfTime = 1 Then
+        Print "P1  P2  "; Tab(35); "GAME"
+    Else
+        Print "P1  P2  P3  P4  ";
 
-        Locate , 34
-        Print "OT  ";
+        If S!(0, 1) + S!(0, 2) + S!(0, 3) + S!(0, 4) = S!(1, 1) + S!(1, 2) + S!(1, 3) + S!(1, 4) Then
 
-        If S!(0, 1) + S!(0, 2) + S!(0, 3) + S!(0, 4) + S!(0, 5) = S!(1, 1) + S!(1, 2) + S!(1, 3) + S!(1, 4) + S!(1, 5) Then
-            Locate , 38
-            Print "O2  "
+            Locate , 34
+            Print "OT  ";
+
+            If S!(0, 1) + S!(0, 2) + S!(0, 3) + S!(0, 4) + S!(0, 5) = S!(1, 1) + S!(1, 2) + S!(1, 3) + S!(1, 4) + S!(1, 5) Then
+                Locate , 38
+                Print "O2  "
+            Else
+                Locate , 39
+                Print "GAME"
+            End If
         Else
-            Locate , 39
+            Locate , 35
             Print "GAME"
         End If
-    Else
-        Locate , 35
-        Print "GAME"
+
     End If
 
     Color 15, 0
@@ -7282,24 +7282,31 @@ Sub ScoreSummary ()
         Print B$(I);
 
         Color 15, 0
-        Print Tab(16); Str$(S!(I, 1)); Tab(20); Str$(S!(I, 2));
-        Print Tab(24); Str$(S!(I, 3)); Tab(28); Str$(S!(I, 4));
-
-        If S!(0, 1) + S!(0, 2) + S!(0, 3) + S!(0, 4) = S!(1, 1) + S!(1, 2) + S!(1, 3) + S!(1, 4) Then
-            Locate , 32: Print Str$(S!(I, 5));
-
-            If S!(0, 1) + S!(0, 2) + S!(0, 3) + S!(0, 4) + S!(0, 5) = S!(1, 1) + S!(1, 2) + S!(1, 3) + S!(1, 4) + S!(1, 5) Then
-                Locate , 36: Print Str$(S!(I, 6));
-                Locate , 40: Print " - "; Str$(S!(I, 0))
-            Else
-                Locate , 35: Print " - "; Str$(S!(I, 0))
-            End If
+        
+        If halfTime = 1 Then
+            Print Tab(16); Str$(S!(I, 1)); Tab(20); Str$(S!(I, 2)); Tab(32); " - "; Str$(S!(I, 0))
 
         Else
+            Print Tab(16); Str$(S!(I, 1)); Tab(20); Str$(S!(I, 2));
+            Print Tab(24); Str$(S!(I, 3)); Tab(28); Str$(S!(I, 4));
 
-            Locate , 32: Print " - "; Str$(S!(I, 0))
+            If S!(0, 1) + S!(0, 2) + S!(0, 3) + S!(0, 4) = S!(1, 1) + S!(1, 2) + S!(1, 3) + S!(1, 4) Then
+                Locate , 32: Print Str$(S!(I, 5));
 
-        End If
+                If S!(0, 1) + S!(0, 2) + S!(0, 3) + S!(0, 4) + S!(0, 5) = S!(1, 1) + S!(1, 2) + S!(1, 3) + S!(1, 4) + S!(1, 5) Then
+                    Locate , 36: Print Str$(S!(I, 6));
+                    Locate , 40: Print " - "; Str$(S!(I, 0))
+                Else
+                    Locate , 35: Print " - "; Str$(S!(I, 0))
+                End If
+
+            Else
+
+                Locate , 32: Print " - "; Str$(S!(I, 0))
+
+            End If
+
+        End If 'Done checking if half time
 
     Next I
 
@@ -7324,7 +7331,7 @@ SUB STATS2SCREEN
 
         For I1 = 0 To 14
 
-            If AA$(I, I1, 0) <> "XXX" And ZZ(I, I1) <> 0 Then
+            If AA$(I, I1, 0) <> "XXX" And timePlayed(I, I1) <> 0 Then
 
                 Color 15
 
@@ -7332,14 +7339,14 @@ SUB STATS2SCREEN
                 Print AA$(I, I1, 0); Tab(14);
 
                 'Minutes
-                If ZZ(I, I1) <> 0 Then
-                    Print Using "##"; Int(ZZ(I, I1) / 60);
+                If timePlayed(I, I1) <> 0 Then
+                    Print Using "##"; Int(timePlayed(I, I1) / 60);
                     Print ":";
-                    If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then
-                        Print Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+                    If timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60 > 9 Then
+                        Print Using "##"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
                     Else
                         Print "0";
-                        Print Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+                        Print Using "#"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
                     End If
                 End If
 
@@ -7363,7 +7370,7 @@ SUB STATS2SCREEN
                 'Rebounds / PT / F / A /  B / S / TO
                 Print Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A!(I, I1, 24); A!(I, I1, 11); A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0); A!(I, I1, 12); A!(I, I1, 14); A!(I, I1, 15); A!(I, I1, 13); A!(I, I1, 23);
 
-                If ZZ(I, I1) = 0 Then Locate , 15: Print "DNP" Else Print
+                If timePlayed(I, I1) = 0 Then Locate , 15: Print "DNP" Else Print
 
                 V9(0) = V9(0) + A!(I, I1, 8)
                 V9(1) = V9(1) + A!(I, I1, 7)
@@ -7379,7 +7386,7 @@ SUB STATS2SCREEN
                 V9(9) = V9(9) + A!(I, I1, 13)
                 V9(11) = V9(11) + A!(I, I1, 24)
                 V9(12) = V9(12) + A!(I, I1, 23)
-                V9(10) = V9(10) + ZZ(I, I1)
+                V9(10) = V9(10) + timePlayed(I, I1)
 
             End If
 
@@ -7461,5 +7468,24 @@ Sub BOX2SPC (NM$)
             If W%(I, I1, 0) > E%(11) Then Print #2, AA$(I, I1, 0);: Print #2, Using " MADE MORE THAN ### 3-PT FIELD GOALS"; E%(11)
         Next
     Next
+
+End Sub
+
+
+'------------------------------
+'     TickerTime Function
+'------------------------------
+'...explanation
+Function TickerTime% (timeInterval, X)
+
+    Shared tickerStart
+
+    tickerIdx = timeInterval + (tickerStart - ST%(X)) * 3
+
+    If tickerIdx < 0 Then tickerIdx = 0
+    If tickerIdx > 14 Then tickerIdx = 14
+    If endGame% = 1 Then tickerIdx = 14
+
+    TickerTime% = tickerIdx
 
 End Sub

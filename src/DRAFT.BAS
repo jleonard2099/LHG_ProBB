@@ -569,9 +569,8 @@ Sub DoTheDraft (TTL%())
                         Locate 2, 33
                         Color draftT%(1, 33), draftT%(1, 34): Print draftAA$(1, 0)
 
-                        Color 15, 4
-
                         Do
+                            Color 15, 4
                             Locate 3, 33: Print "ANY CHANGE (YN)";
                             I$ = GetKeyPress$
                         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"

@@ -726,9 +726,8 @@ Sub GetTeam_HD2HD (TM$)
                 Locate 2, 33
                 Color hd2hdT!(33), hd2hdT!(34): Print QQ$(1)
 
-                Color 15, 4
-
                 Do
+                    Color 15, 4
                     Locate 3, 33: Print "ANY CHANGE (YN)";
                     A$ = GetKeyPress$
                 Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"

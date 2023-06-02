@@ -129,9 +129,8 @@ Sub TradePlayers ()
             Locate 2, 33
 			Color teamSettings%(tradeTeam, 33), teamSettings%(tradeTeam, 34): Print tradeAA$(tradeTeam, 0)
 			
-			Color 15, 4
-
 			Do
+				Color 15, 4
 				Locate 3, 33: Print "ANY CHANGE (YN)";
 				I$ = GetKeyPress$
 			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
@@ -278,9 +277,8 @@ Sub TradePlayers ()
             Locate 2, 33
             Color teamSettings%(tradeTeam, 33), teamSettings%(tradeTeam, 34): Print tradeAA$(tradeTeam, 0)
 			
-			Color 15, 4
-
 			Do
+				Color 15, 4
 				Locate 3, 33: Print "ANY CHANGE (YN)";
 				I$ = GetKeyPress$
 			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
