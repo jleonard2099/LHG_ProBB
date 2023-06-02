@@ -17,7 +17,7 @@ Lance Haffner Games were some of the premier sports simulators of the 80's. They
 
 ### Visuals ###
 <img src="pbb-manual.png" width="316" height="626">
-<img src="pbb-screen1.png"
+<img src="pbb-screen1.png">
 
 # The Game #
 ### Installation ###
