@@ -14,14 +14,10 @@ Sub InitVar ()
         Next I1
     Next I
 
-    nbrLines% = 1
     SC(0) = 24
     SC(1) = 30
-    NB% = 5
 
-    gameClock! = 720
-    H = 1
-
+    ' # of timeouts
     T1(1) = 7
     T1(0) = 7
 
@@ -53,11 +49,20 @@ Sub InitVar ()
     PB$(0) = "VERBOSE        "
     PB$(1) = "HAFFNER CLASSIC"
 
+    H = 1
+    nbrLines% = 1
+    NB% = 5
+
+    gameClock! = 720
+
     AP = 0
     B = 0
     CT = 0
     D = 0
+    endAllGames = 0
+    endGame = 0
     F3 = 0
+    halfTime = 0
     JY = 0
     NTMS = 0
     P = 0
@@ -65,13 +70,13 @@ Sub InitVar ()
     P9 = 0
     QQ = 0
     QR = 0
+    shotClock = 0
+    statSpecial = 0
     T1 = 0
-    timeElapsed! = 0
     TMT = 0
-    X = 0
-    X8 = 0
     VG = 0
     VH = 0
+    X = 0
 
     CF% = 0
     DK% = 0
@@ -79,15 +84,13 @@ Sub InitVar ()
     FT% = 0
     GF% = 0
     HH% = 0
-    halfTime = 0
     NM% = 0
     OX% = 0
     OY% = 0
     PT% = 0
     PZ% = 0
 
-    statSpecial = 0
-    endGame = 0
+    timeElapsed! = 0
 
     A1$ = ""
     B1$ = ""
@@ -113,10 +116,10 @@ Sub InitVar ()
     Erase P2, P4, P5, P7, QQ, QR
     Erase R3, RB, S!, S3
     Erase T, T0, TF
-    Erase V9, VG, VH, W0!, W1!, W2, W3
-    Erase X7, Z5, Z6, ZF, ZZ
+    Erase V9, VG, VH, W2, W3
+    Erase X7, Z5, Z6, ZF, timePlayed
 
-    Erase A!, M9!, indRecords!, Z!, Z1!, Z2!
+    Erase A!, M9!, indRecords!, W0!, W1!, Z!, Z1!, Z2!
 
     Erase AA$, ABB$, A1$, B$
     Erase gameCoach$, gameStadium$
@@ -148,7 +151,7 @@ Sub AUTOSETUP
     XY% = NG%(3)
     pbpDelay! = NG%(4) / 10
     PO = NG%(5)
-    SC = NG%(7)
+    sClockVal = NG%(7)
     U5 = NG%(8)
     CM% = NG%(9)
     RT% = NG%(10)
@@ -243,13 +246,28 @@ Sub FRAMEOPTION (boxHeight, teamIdx)
 End Sub
 
 
+'------------------------------
+'  ResetShotClock Subroutine
+'------------------------------
+' ...explanation...
+Sub ResetShotClock ()
+
+    Select Case sClockVal
+        Case 0: shotClock = 24
+        Case 1: shotClock = 30
+    End Select
+
+	LS = 4
+
+End Sub
+
+
 '----------------------------------------
 '          PlayStyle Subroutine
 '----------------------------------------
 '...explanation...
 Sub PlayStyle ()
 
-    '70
     Call ROSTER
 
     Locate 19, 1
@@ -260,27 +278,38 @@ Sub PlayStyle ()
     Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
     Locate 21, 32: Color 15: Print "O";: Color 3: Print "FFENSE STYLE-";
     Color 7: Print offenseStyles$(O0%(P9))
+
     Locate 22, 32: Color 3: Print "DE";: Color 15: Print "F";: Color 3: Print "ENSE STYLE-";
     Color 7: Print defenseStyles$(D2(P9))
+
     Locate 23, 32: Color 3: Print "FULL COURT ";: Color 15: Print "P";: Color 3: Print "RESS-";
     Color 7: Print TS$(P7(P9))
 
     If C1 = 1 Then
 
         For M = 0 To 4
+
             Locate M + 20, 1
-            Color 2, 0: Print Using "# "; M;
-            Color 15, 0: Print "ENTER "; PS$(M); " # ";
+            Color 2, 0
+            Print Using "# "; M;
+            Color 15, 0
+            Print "ENTER "; PS$(M); " # ";
+
             Z = B1!(P9, M)
             CV% = 0
 
             For IP% = 0 To Z
+                '-- College BB also checks for player Name
+                '   ... Or AA$(P9, IP%, 0) = "" Or AA$(P9, IP%, 0) = "XXX"
                 If B%(P9, IP%, 18) <> 0 Then CV% = CV% + 1
             Next
 
             Print AA$(P9, Z, 0);
-            Locate Z + 3 - CV%, 3: Color T(P9, 33), T(P9, 34): Print Left$(AA$(P9, Z, 0), 12)
+            Locate Z + 3 - CV%, 3
+            Color T(P9, 33), T(P9, 34)
+            Print Left$(AA$(P9, Z, 0), 12)
             Color 15, 0
+
         Next
 
     Else
@@ -304,23 +333,25 @@ Sub PlayStyle ()
                 End Select
 
                 If J = 15 Then
-                    '100
+
                     If UCase$(I$) = "P" Then P7(P9) = 1 - P7(P9)
                     If UCase$(I$) = "F" Then D2(P9) = D2(P9) + 1: If D2(P9) > 5 Then D2(P9) = 1
                     If UCase$(I$) = "O" Then O0%(P9) = O0%(P9) + 1: If O0%(P9) > 2 Then O0%(P9) = 0
 
-                    '105
                     Color 14
                     Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
+
                     Locate 21, 32
                     Color 15: Print "O";
                     Color 3: Print "FFENSE STYLE-";
                     Color 7: Print offenseStyles$(O0%(P9))
+
                     Locate 22, 32
                     Color 3: Print "DE";
                     Color 15: Print "F";
                     Color 3: Print "ENSE STYLE-";
                     Color 7: Print defenseStyles$(D2(P9))
+
                     Locate 23, 32
                     Color 3: Print "FULL COURT ";
                     Color 15: Print "P";
@@ -342,7 +373,10 @@ Sub PlayStyle ()
             B1!(P9, I) = J
             Z = J
             CV% = 0
+
             For IP% = 0 To Z
+                '--College BB also checks for player name
+                '    Or AA$(P9, IP%, 0) = "" Or AA$(P9, IP%, 0) = "XXX"
                 If B%(P9, IP%, 18) <> 0 Then
                     CV% = CV% + 1
                 End If
@@ -382,15 +416,18 @@ Sub PlayStyle ()
             '105
             Color 14
             Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
+
             Locate 21, 32
             Color 15: Print "O";
             Color 3: Print "FFENSE STYLE-";
             Color 7: Print offenseStyles$(O0%(P9))
+
             Locate 22, 32
             Color 3: Print "DE";
             Color 15: Print "F";
             Color 3: Print "ENSE STYLE-";
             Color 7: Print defenseStyles$(D2(P9))
+
             Locate 23, 32
             Color 3: Print "FULL COURT ";
             Color 15: Print "P";
@@ -402,24 +439,33 @@ Sub PlayStyle ()
         If I1 <= 4 Then
 
             If X = 50 And I1 = B And P9 = P Then
-                Locate 20, 29: Color 14, 0: Print AA$(P9, B1!(P9, I1), 0); " IS AT THE FT LINE"
+
+                Locate 20, 29
+                Color 14, 0: Print AA$(P9, B1!(P9, I1), 0); " IS AT THE FT LINE"
+
             Else
+
                 Locate 25, 1: Print Space$(25);
+
                 J = B1!(P9, I1)
                 Z = J
-
                 CV% = 0
+
                 For IP% = 0 To Z:
+                    '-- College BB also checks for player Name
+                    '   ... Or AA$(P9, IP%, 0) = "" Or AA$(P9, IP%, 0) = "XXX"
                     If B%(P9, IP%, 18) <> 0 Then CV% = CV% + 1
                 Next
 
                 Locate J + 3 - CV%, 3
                 Color 15, 0: Print Left$(AA$(P9, J, 0), 12)
 
-                '77
                 Do
+
                     Locate I1 + 20, 1: Print Space$(26);
+
                     B1!(P9, I1) = -1
+
                     Locate , 1
                     Color 2: Print Using "# "; I1;
                     Color 15: Print "ENTER "; PS$(I1); " # ";
@@ -455,9 +501,13 @@ Sub PlayStyle ()
                 B1!(P9, I1) = J
                 Z = J
                 CV% = 0
+
                 For IP% = 0 To Z
+                    '-- College BB also checks for player Name
+                    '   ... Or AA$(P9, IP%, 0) = "" Or AA$(P9, IP%, 0) = "XXX"
                     If B%(P9, IP%, 18) <> 0 Then CV% = CV% + 1
                 Next
+
                 Print AA$(P9, J, 0);
                 Locate J + 3 - CV%, 3
                 Color T(P9, 33), T(P9, 34): Print Left$(AA$(P9, J, 0), 12)
@@ -479,7 +529,11 @@ End Sub
 '...explanation...
 Sub PlayItSafe ()
 
+    skipSelection% = 0
+    skipPlaySafe% = 0
+
     Cls
+
     A = 0
     S2 = 1
     S3 = 1
@@ -490,100 +544,125 @@ Sub PlayItSafe ()
         If A!(P9, B1!(P9, ZZ), 22) = 50 And SW = 1 And S2 < 6 Then Locate S2 + 3, 1: Print S2; "-"; AA$(P9, B1!(P9, ZZ), 0): P5(A) = S2: P4(A) = ZZ: S2 = S2 + 1: S3 = S3 + 1
     Next ZZ
 
-    If SW = 0 Then 1214
+    If SW <> 0 Then
 
-    A = 1
-    Print
-    Print "Z - CONTINUE"
-
-    Do
-
-        Do
-            '1206
-            I$ = GetKeyPress$
-
-            If UCase$(I$) = "Z" Then
-                If MJ = 0 Then 1214
-                If MJ = 25 Then 1230
-            Else
-                P6 = Val(I$)
-            End If
-
-        Loop Until P6 <= 1 And P6 <= (S2 + 1)
-
-        A = P6
-
-        If P6 = P5(P6) Then
-            A!(P9, B1!(P9, P4(A)), 17) = A!(P9, B1!(P9, P4(A)), 17) * 3
-            A!(P9, B1!(P9, P4(A)), 22) = 0
-            Locate P5(A) + 3, 20
-            Print AA$(P9, B1!(P9, P4(A)), 0); " WILL NOW PLAY NORMAL DEFENSE!"
-            Call RATINGTABLES
-            D1(P9) = D1(P9) - 1
-            A = A + 1
-            MJ = 25
-        End If
-
-    Loop Until P6 <> P5(6)
-
-    1214 '
-    A = 0
-    S2 = 1
-
-    For ZZ = 0 To 4
-        If H <= 2 And A!(P9, B1!(P9, ZZ), 12) >= 3 And A!(P9, B1!(P9, ZZ), 22) = 0 Or A!(P9, B1!(P9, ZZ), 12) = 5 And A!(P9, B1!(P9, ZZ), 22) = 0 Then
-            A = A + 1
-            If S2 = 1 Then
-                Cls
-                Print
-                Print "THE FOLLOWING PLAYER(S) CAN BE MADE TO PLAY SAFE IF YOU WISH"
-                Print
-            End If
-        End If
-        If A = 0 And ZZ > 3 Then
-            skipKey% = 1
-        Else
-            If S2 = A And S2 < 6 Then
-                Print S2; "- "; AA$(P9, B1!(P9, ZZ), 0)
-                P5(A) = S2
-                P4(A) = ZZ
-                S2 = S2 + 1
-                S3 = S3 + 1
-            End If
-        End If
-    Next ZZ
-
-    If skipKey% = 0 Then
         A = 1
         Print
         Print "Z - CONTINUE"
 
         Do
-            I$ = GetKeyPress$
 
-            P6 = Val(I$)
+            Do
 
-            If UCase$(I$) <> "Z" Then
+                I$ = GetKeyPress$
+
+                If UCase$(I$) = "Z" Then
+                    If MJ = 0 Then skipSelection% = 1
+                    If MJ = 25 Then skipPlaySafe% = 1
+                Else
+                    P6 = Val(I$)
+                End If
+
+            Loop Until P6 <= 1 And P6 <= (S2 + 1) Or UCase$(I$) = "Z"
+
+            If skipSelection% <> 1 Then
 
                 A = P6
 
                 If P6 = P5(P6) Then
-                    A!(P9, B1!(P9, P4(A)), 17) = Int((A!(P9, B1!(P9, P4(A)), 17) + 1) / 3)
-                    A!(P9, B1!(P9, P4(A)), 22) = 50
+
+                    A!(P9, B1!(P9, P4(A)), 17) = A!(P9, B1!(P9, P4(A)), 17) * 3
+                    A!(P9, B1!(P9, P4(A)), 22) = 0
+
                     Locate P5(A) + 3, 20
-                    Print AA$(P9, B1!(P9, P4(A)), 0); " WILL NOW PLAY SAFE!"
+                    Print AA$(P9, B1!(P9, P4(A)), 0); " WILL NOW PLAY NORMAL DEFENSE!"
                     Call RATINGTABLES
-                    D1(P9) = D1(P9) + 1
+
+                    D1(P9) = D1(P9) - 1
                     A = A + 1
-                    S3 = S3 + 1
+                    MJ = 25
+
                 End If
 
             End If
 
-        Loop Until P6 >= 1 And P6 <= (S2 + 1)
+        Loop Until P6 <> P5(6) Or UCase$(I$) = "Z"
+
     End If
 
-    1230 '
+    If skipPlaySafe% <> 1 Then
+
+        A = 0
+        S2 = 1
+        skipKey% = 0
+
+        For ZZ = 0 To 4
+
+            If H <= 2 And A!(P9, B1!(P9, ZZ), 12) >= 3 And A!(P9, B1!(P9, ZZ), 22) = 0 Or A!(P9, B1!(P9, ZZ), 12) = 5 And A!(P9, B1!(P9, ZZ), 22) = 0 Then
+
+                A = A + 1
+
+                If S2 = 1 Then
+                    Cls
+                    Print
+                    Print "THE FOLLOWING PLAYER(S) CAN BE MADE TO PLAY SAFE IF YOU WISH"
+                    Print
+                End If
+
+            End If
+
+            If A = 0 And ZZ > 3 Then
+                skipKey% = 1
+            Else
+                If S2 = A And S2 < 6 Then
+                    Print S2; "- "; AA$(P9, B1!(P9, ZZ), 0)
+                    P5(A) = S2
+                    P4(A) = ZZ
+                    S2 = S2 + 1
+                    S3 = S3 + 1
+                End If
+            End If
+
+        Next ZZ
+
+        If skipKey% <> 1 Then
+
+            A = 1
+            Print
+            Print "Z - CONTINUE"
+
+            Do
+                I$ = GetKeyPress$
+
+                P6 = Val(I$)
+
+                If UCase$(I$) <> "Z" Then
+
+                    A = P6
+
+                    If P6 = P5(P6) Then
+
+                        A!(P9, B1!(P9, P4(A)), 17) = Int((A!(P9, B1!(P9, P4(A)), 17) + 1) / 3)
+                        A!(P9, B1!(P9, P4(A)), 22) = 50
+
+                        Locate P5(A) + 3, 20
+                        Print AA$(P9, B1!(P9, P4(A)), 0); " WILL NOW PLAY SAFE!"
+                        Call RATINGTABLES
+
+                        D1(P9) = D1(P9) + 1
+                        A = A + 1
+                        S3 = S3 + 1
+
+                    End If
+
+                End If
+
+            Loop Until P6 >= 1 And P6 <= (S2 + 1)
+
+        End If
+
+    End If
+
     'Cls
     MJ = 0
     FO = 99
@@ -592,6 +671,46 @@ Sub PlayItSafe ()
 
 End Sub
 
+
+'------------------------------
+'    WHOGESTBALL Subroutine
+'------------------------------
+' ...explanation...
+Sub WHOGETSBALL
+
+    CNT% = 0
+
+    While (CNT% < 4)
+
+        CNT% = CNT% + 1
+
+        If CNT% <> 4 Then
+
+            M9 = 0
+            B = Int(Rnd(1) * 5)
+            X = Int(Rnd(1) * 100) + 1
+
+            If X > 30 Then
+
+                For I = 0 To 4
+
+                    M8 = Int(B%(P, B1!(P, I), 2) / B%(P, B1!(P, I), 0) + .5) - A!(P, B1!(P, I), 7)
+
+                    If M8 <= 0 Then M8 = 0
+                    If M8 <= 0 And A!(P, B1!(P, I), 3) - A!(P, B1!(P, I), 7) - A!(P, B1!(P, I), 11) - A!(P, B1!(P, I), 12) > 0 Then M8 = A!(P, B1!(P, I), 3) - A!(P, B1!(P, I), 7) - A!(P, B1!(P, I), 11) - A!(P, B1!(P, I), 12)
+                    If M8 >= M9 Then B = I: M9 = M8
+
+                Next I
+
+            End If
+
+        End If
+
+    Wend
+
+End Sub
+
+
 '----------------------------------------
 '       CheckZeroTime Subroutine
 '----------------------------------------
@@ -599,19 +718,24 @@ End Sub
 Sub CheckZeroTime ()
 
     If gameClock! <= 0 Then
+
         timeElapsed! = gameClock!
-        Call PlayingTime
+
+        Call AdjustPlayTime
+
         gameClock! = 0
+
         Call UPDATESCREEN
+
     End If
 
 End Sub
 
 '----------------------------------------
-'       PlayingTime Subroutine
+'       AdjustPlayTime Subroutine
 '----------------------------------------
 '...explanation...
-Sub PlayingTime ()
+Sub AdjustPlayTime ()
 
     ' *** INCREMENT MINUTES ***
     For I3 = 0 To 1
@@ -656,7 +780,9 @@ Sub SomeCalcs ()
             End If
         Next I1
 
-        If M3 >= 1 And 5 - M3 < 15 - M1 Or H = 4 And gameClock! < 120 Or H > 4 Or M4 >= 1 And M2 < 14 Then Call COMPUTERSUBS
+        If M3 >= 1 And 5 - M3 < 15 - M1 Or H = 4 And gameClock! < 120 Or H > 4 Or M4 >= 1 And M2 < 14 Then 
+            Call COMPUTERSUBS
+        End If
 
     End If
 
@@ -670,7 +796,7 @@ End Sub
 '...explanation...
 Sub CreditAssists ()
 
-    1054 'CREDIT ASSISTS
+    'CREDIT ASSISTS
     R0 = Int(Rnd(1) * 100) + 1
 
     If R0 > F7%(P, 7) Then
@@ -1108,12 +1234,12 @@ Sub LastShot ()
 
     timeElapsed! = M5
 
-    Call PlayingTime
+    Call AdjustPlayTime
 
     gameClock! = gameClock! - M5
     IN = 0
 
-    X8 = X8 - M5
+    shotClock = shotClock - M5
 
     Call ZeroCheck
 
@@ -1125,9 +1251,9 @@ End Sub
 '...explanation...
 Sub ZeroCheck ()
 
-    If gameClock! <= .001 Then timeElapsed! = gameClock!: Call PlayingTime: gameClock! = 0
+    If gameClock! <= .001 Then timeElapsed! = gameClock!: Call AdjustPlayTime: gameClock! = 0
 
-    If X8 <= 0 Then X8 = 0
+    If shotClock <= 0 Then shotClock = 0
 
     Call UPDATESCREEN
 
@@ -1239,7 +1365,8 @@ Sub DISABLEPLAYERS ()
         Print "TEAM ROSTER FOR ";
         Color T(P9, 33), T(P9, 34): Print B$(P9)
         Color 15, 0
-        Print "# NAME            GP"
+        '-- Print "# NAME              POS GP"
+        Print "# NAME              GP"
 
         For I = 0 To 14
 
@@ -1262,8 +1389,9 @@ Sub DISABLEPLAYERS ()
             Print AA$(P9, I, 0);
             Color 15, 0
 
-            'Print player position, ...
-            Print Tab(18); B%(P9, I, 0)
+            'Print player position, GP
+            '-- POSITION = PS$(B1!(P9, I1)) ???
+            Print Tab(20); B%(P9, I, 0)
 
         Next
 
@@ -1388,16 +1516,25 @@ Sub GETATEAM (I1, YN$)
     If Not (U5 = 0 Or U5 = 1 And P9 <> CT Or AP = 1 And U5 = 0 Or AP = 1 And U5 = 1 And P9 <> CT) Then
 
         While (CNT% < 10)
+
             CNT% = 0
+
             For I = 0 To 14
                 If B%(P9, I, 18) = -1 Then B%(P9, I, 18) = 0
+
                 RN = Int(Rnd(1) * 100) + 1
-                If UCase$(AA$(P9, I, 0)) = "XXX" Or (B%(P9, I, 18) = 0 And RN > Int(B%(P9, I, 0) / L%(P9, 0) * 100 + .5)) Then B%(P9, I, 18) = -1
+
+                'Auto disable specific players
+                If UCase$(AA$(P9, I, 0)) = "XXX" Or (B%(P9, I, 18) = 0 And RN > Int(B%(P9, I, 0) / L%(P9, 0) * 100 + .5)) Then 
+                    B%(P9, I, 18) = -1
+                End If
+
             Next
 
             For I = 0 To 14:
                 If B%(P9, I, 18) = 0 Then CNT% = CNT% + 1
             Next
+
         Wend
 
     End If
@@ -1821,8 +1958,6 @@ End Sub
 Sub SETUPRATINGS ()
 
     Dim FTF!, X3!, JX!
-
-    ' *** SET UP TEAM RATINGS***
 
     For I = 0 To 1
 
@@ -2293,11 +2428,14 @@ Sub COMPUTERSUBS ()
     Next
 
     For I2 = 0 To 1
+
         P$ = "G"
 
         8781 '
         For I1 = 14 To 0 Step -1:
-            M6 = 0: M7 = 0
+
+            M6 = 0
+            M7 = 0
 
             If Left$(AA$(P9, I1, 1), 1) = P$ Or Right$(AA$(P9, I1, 1), 1) = P$ Then
 
@@ -2322,26 +2460,38 @@ Sub COMPUTERSUBS ()
         Next I1
 
         If B1!(P9, I2) = -1 And FS% <> 1 Then
-            If P$ = "G" Then P$ = "F": GoTo 8781
 
-            If P$ = "F" Then
-                P$ = "C": GoTo 8781
+            If P$ = "G" Then 
+                P$ = "F"
             Else
-                FS% = 1
-                P$ = "G"
-                GoTo 8781
+                If P$ = "F" Then
+                    P$ = "C"
+                Else
+                    'Condition: P$ = "C"
+                    P$ = "G"
+                    FS% = 1
+                End If
             End If
+
+            GoTo 8781
+        
+        Else
+            FS% = 0
         End If
 
-        FS% = 0
+        'Loop Until FS% = 1 And B1!(P9, I2) <> -1
 
     Next I2
 
     For I2 = 2 To 3
+
         P$ = "F"
 
-        8783 For I1 = 14 To 0 Step -1:
-            M6 = 0: M7 = 0
+        8783 '
+        For I1 = 14 To 0 Step -1:
+
+            M6 = 0
+            M7 = 0
 
             If Left$(AA$(P9, I1, 1), 1) = P$ Or Right$(AA$(P9, I1, 1), 1) = P$ Then
 
@@ -2620,7 +2770,7 @@ Sub MAKEPBP ()
 
         Select Case PT%
             Case 1
-                1410 'TURNOVER
+                'TURNOVER
                 U$ = AA$(P, B1!(P, B), 0)
                 RN = Int(Rnd(1) * 14) + 1
 
@@ -2642,7 +2792,7 @@ Sub MAKEPBP ()
                 End Select
 
             Case 2
-                1420 'DUNK
+                'DUNK
                 RN = Int(Rnd(1) * 39) + 1
 
                 Select Case RN
@@ -2688,13 +2838,13 @@ Sub MAKEPBP ()
                 End Select
 
             Case 3
-                1430 'SHOOTS...PZ%567 SML
+                'SHOOTS...PZ%567 SML
                 U$ = AA$(P, B1!(P, B), 0)
 
                 Select Case PZ%
 
                     Case 1
-                        1431 'BAD
+                        'BAD
 
                         Select Case RN
                             Case 1 To 40: U$ = U$ + " TAKES A TOUGH SHOT"
@@ -2710,7 +2860,7 @@ Sub MAKEPBP ()
                         End Select
 
                     Case 2
-                        1432 'INSIDE W/ASSIST
+                        'INSIDE W/ASSIST
 
                         Select Case RN
                             Case 1 To 10
@@ -2772,7 +2922,7 @@ Sub MAKEPBP ()
                         End Select
 
                     Case 3
-                        1433 'PENETRATE
+                        'PENETRATE
                         If Z3$ = "C" Then
                             Select Case RN
                                 Case 1 To 15: U$ = "HE PUTS IT OFF THE GLASS"
@@ -2823,7 +2973,7 @@ Sub MAKEPBP ()
                         End If
 
                     Case 4
-                        1434 'THREE!
+                        'THREE!
                         If FT% = 1 Then
                             If RN <= 50 Then
                                 U$ = U$ + " THROWS UP A PRAYER"
@@ -2848,7 +2998,7 @@ Sub MAKEPBP ()
                         End If
 
                     Case 5
-                        1435 'SHORT JUMP
+                        'SHORT JUMP
                         RN = Int(Rnd(1) * 59) + 1
 
                         Select Case RN
@@ -2940,7 +3090,6 @@ Sub MAKEPBP ()
                         End Select
 
                     Case 6
-                        1436 '
                         RN = Int(Rnd(1) * 59) + 1
 
                         Select Case RN
@@ -3006,8 +3155,6 @@ Sub MAKEPBP ()
                         End Select
 
                     Case 7
-                        1438 '
-
                         Select Case RN
                             Case 1 To 20: U$ = "HE SAILS TO THE HOOP"
                             Case 21 To 23: U$ = "HE TAKES IT TO THE BUCKET"
@@ -3024,7 +3171,7 @@ Sub MAKEPBP ()
                         End Select
 
                     Case 8
-                        1439 'BACK AFTER REB
+                        'BACK AFTER REB
                         U$ = "HE "
                         RN = Int(Rnd(1) * 11) + 1
 
@@ -3048,7 +3195,7 @@ Sub MAKEPBP ()
                 End Select
 
             Case 4
-                1440 'THREE GOOD
+                'THREE GOOD
                 U$ = "HE "
 
                 Select Case RN
@@ -3064,7 +3211,7 @@ Sub MAKEPBP ()
                 End Select
 
             Case 5
-                1445 'THREE BAD
+                'THREE BAD
                 U$ = "HE "
 
                 Select Case RN
@@ -3078,7 +3225,7 @@ Sub MAKEPBP ()
                 End Select
 
             Case 6
-                1450 'FAST BREAK
+                'FAST BREAK
                 U$ = AA$(P, B1!(P, B), 0)
                 RN = Int(Rnd(1) * 38) + 1
 
@@ -3124,7 +3271,7 @@ Sub MAKEPBP ()
                 End Select
 
             Case 7
-                1460 'FAST BREAK SCORE
+                'FAST BREAK SCORE
                 FB% = 0
                 RN = Int(Rnd(1) * 39) + 1
 
@@ -3171,7 +3318,7 @@ Sub MAKEPBP ()
                 End Select
 
             Case 8
-                1470 'MISS
+                'MISS
                 If PZ% = 8 Then
                     PZ% = 0
                     FB% = 0
@@ -3245,7 +3392,7 @@ Sub MAKEPBP ()
                 End If
 
             Case 9
-                1480 'NOPASS
+                'NOPASS
                 U$ = AA$(P, B1!(P, B), 0) + " "
                 RN = Int(Rnd(1) * 56) + 1
 
@@ -3309,7 +3456,7 @@ Sub MAKEPBP ()
                 End Select
 
             Case 10
-                1490 'PASS PB$=PREV HANDLER
+                'PASS PB$=PREV HANDLER
                 V$ = AA$(P, B1!(P, B), 0)
 
                 RN = Int(Rnd(1) * 60) + 1
@@ -6289,9 +6436,9 @@ Sub UPDATESCREEN ()
     If P2(1) > NB% - 1 And H <= 4 Or P2(1) > 2 And H > 4 Then Locate , 29: Color 0, 2: Print "BONUS": Color 7, 0
 
     Locate 6, 9: Print "TIMEOUTS:"; T1(0);: Locate , 56: Print "TIMEOUTS:"; T1(1)
-    Locate 6, 37: Color 15, 0: Print Using " :##"; X8
+    Locate 6, 37: Color 15, 0: Print Using " :##"; shotClock
 
-    If gameClock! < 25 And X8 >= gameClock! Or H > 4 And gameClock! = 300 Then Locate 6, 37: Print " :  "
+    If gameClock! < 25 And shotClock >= gameClock! Or H > 4 And gameClock! = 300 Then Locate 6, 37: Print " :  "
 
     If pbpDelay! <> 0 Then
         Locate 8, 58
@@ -6418,15 +6565,18 @@ Sub SAVESTATS ()
             
             If AP%(1) < AP%(0) + AP%(2) Then
                 Kill "GAME82"
-                'All Done
-                endGame = 1
+                endAllGames = 1
             Else
                 Open "GAME82" For Output As #2
+
                 Print #2, scheduleFile$
+
                 For I = 0 To 2: 
                     Print #2, AP%(I)
                 Next
+
                 Close 2
+
             End If
 
         End If
@@ -6948,8 +7098,6 @@ Sub POSTGAME ()
 
     Loop Until UCase$(I$) = "N" Or (AP = 1 And U5 = 2)
 
-    Call SAVESTATS
-
     'If we had special events
     If specialStat = 1 Then
 
@@ -6961,6 +7109,8 @@ Sub POSTGAME ()
         Call BOX2FILE(2, NM$)
 
     End If
+
+    Call SAVESTATS
 
     endGame = 0
     specialStat = 0
@@ -7083,12 +7233,14 @@ Sub BOX2FILE (printChoice, NM$)
     Next I
 
     For I = 0 To 1
-        Print #2,: Print #2, B$(I)
+
+        Print #2,
+        Print #2, B$(I)
         Print #2, "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
 
         For I1 = 0 To 14
 
-            If timePlayed(I, I1) <> 0 Then
+            If AA$(I, I1, 0) <> "XXX" Then
 
                 'Player Name
                 Print #2, AA$(I, I1, 0); Tab(14);
@@ -7098,6 +7250,7 @@ Sub BOX2FILE (printChoice, NM$)
                     Print #2, Tab(15); "DNP";
                 Else
                     Print #2, Using "##"; Int(timePlayed(I, I1) / 60);: Print #2, ":";
+
                     If timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60 > 9 Then
                         Print #2, Using "##"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
                     Else
@@ -7168,18 +7321,25 @@ Sub BOX2FILE (printChoice, NM$)
         Print #2, "TOTAL TURNOVERS -"; T0(I)
         Print #2, "TOTAL REBOUNDS  -"; R3(I)
 
-        For I2 = 0 To 14
-            V9(I2) = 0
-        Next I2
+        Erase V9
 
-        If X = 0 Then
-            If AP = 1 And U5 = 2 Then
-                If X = 0 Then Cls
-                I$ = GetKeyPress$
+    Next I
+
+
+    Print #2,
+    Print #2, "BENCH WARMERS"
+
+    For I = 0 to 1
+
+        For I1 = 0 To 13
+
+            'Automatically disable "non-existent" players
+            If AA$(I, I1, 0) <> "XXX" And B%(I, I1, 18) = -1 Then
+                Print #2, AA$(I, I1, 0); " ["; B$(I); "]"
             End If
 
-            If X = 0 Then Cls
-        End If
+        Next I1
+
     Next I
 
     If printChoice = 1 Then Print #2, Chr$(12)
@@ -7469,6 +7629,10 @@ Sub BOX2SPC (NM$)
         Next
     Next
 
+    Print #2, 
+
+    Close #2
+
 End Sub
 
 
@@ -7484,8 +7648,20 @@ Function TickerTime% (timeInterval, X)
 
     If tickerIdx < 0 Then tickerIdx = 0
     If tickerIdx > 14 Then tickerIdx = 14
-    If endGame% = 1 Then tickerIdx = 14
+    If endGame = 1 Then tickerIdx = 14
 
     TickerTime% = tickerIdx
+
+End Sub
+
+
+'------------------------------
+'        pbplog Function
+'------------------------------
+'...explanation
+Sub pbplog (lineNumber)
+
+    Print #7, "Called from line "; lineNumber
+    Print #7,
 
 End Sub

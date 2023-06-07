@@ -190,9 +190,9 @@ Dim scheduleFile$
 
 Dim tickerStart
 
-Dim Shared AD, AP, B, CT, D, endOfGame, F3, H, halfTime, JY
-Dim Shared N, NTMS, P, P7, P9, PO, QQ, QR, SC, T1, TMT
-Dim Shared X, X8, U5, VG, VH
+Dim Shared AD, AP, B, CT, D, endGame, endAllGames, F3, H, halfTime, JY
+Dim Shared N, NTMS, P, P7, P9, PO, QQ, QR, sClockVal, shotClock
+Dim Shared T1, TMT, X, U5, VG, VH
 
 Dim Shared CF%, CM%, DK%, FB%, FR%, FT%, GF%, HH%
 Dim Shared NB%, nbrLines%, NM%, OX%, OY%, PB%, PT%, PZ%

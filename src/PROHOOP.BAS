@@ -1,11 +1,9 @@
 Sub PROHOOP
 
     _Title "Basketball: The Pro Game v" + GAME_VERSION$ + " - HOOPS!"
-    ''$ExeIcon:'./lhg_probb.ico'
-    '_Icon
-    '_AllowFullScreen
 
     'Open "pbplog" For Output As #7
+
     Shared scheduleFile$
     Shared tickerStart
 
@@ -17,9 +15,6 @@ Sub PROHOOP
 
     Randomize Timer
 
-    '----------------------------------------
-    '        INITIALIZE ALL VARIABLES
-    '----------------------------------------
     Call InitVar
 
     '----------------------------------------
@@ -55,7 +50,7 @@ Sub PROHOOP
     Open "DEFAULT" For Input As #1
     Input #1, U5
     Input #1, XY%
-    Input #1, SC
+    Input #1, sClockVal
     Input #1, N
     Input #1, PO
     Input #1, pbpDelay!
@@ -162,7 +157,7 @@ Sub PROHOOP
             Locate 5, 2: Color 14
             Print "(4) ";: Color 15: Print "3-POINT SHOT: "; TS$(XY%)
             Locate 6, 2: Color 14
-            Print "(5) ";: Color 15: Print sClockOpt$(SC)
+            Print "(5) ";: Color 15: Print sClockOpt$(sClockVal)
             Locate 7, 2: Color 14
             Print "(6) ";: Color 15: Print "LOCATION: "; location$(N)
             Locate 8, 2: Color 14
@@ -248,7 +243,7 @@ Sub PROHOOP
                         If XY% > 1 Then XY% = 0
 
                     Case 5:
-                        SC = 1 - SC
+                        sClockVal = 1 - sClockVal
 
                     Case 6:
                         N = N + 1
@@ -270,7 +265,7 @@ Sub PROHOOP
                         Open "DEFAULT" For Output As #1
                         Print #1, U5
                         Print #1, XY%
-                        Print #1, SC
+                        Print #1, sClockVal
                         Print #1, N
                         Print #1, PO
                         Print #1, pbpDelay!
@@ -328,12 +323,11 @@ Sub PROHOOP
            If L < 4 Then 
                 startTime$ = "1:00P"
             Else
-                10:00P
                 If L = 5 Then HR = Val(Left$(startTime$, 1)): MIN = Val(Mid$(startTime$, 3, 2))
                 If L = 6 Then HR = Val(Left$(startTime$, 2)): MIN = Val(Mid$(startTime$, 4, 2))
             End If
 
-            tickerMeridian$ = Right$(tickerStart, 1)
+            tickerMeridian$ = Right$(startTime$, 1)
 
             If UCase$(tickerMeridian$) = "P" And Left$(startTime$, 2) <> "12" Then HR = HR + 12
 
@@ -380,9 +374,12 @@ Sub PROHOOP
     '900
     If AP = 1 Then N = NG%(2)
 
-    X8 = SC(SC)
-    C7 = 1
     LS = 0
+
+    Select Case sClockVal
+        Case 0: shotClock = 24
+        Case 1: shotClock = 30
+    End Select
 
     If gameClock! < 6 And LT = 4 Then LS = 4
 
@@ -442,11 +439,10 @@ Sub PROHOOP
 
     Call LastShot
     Call CheckZeroTime
+
     If gameClock! = 0 Then 170
 
-    X8 = SC(SC)
-    LS = 4
-
+    Call ResetShotClock
     Call NEWSCREEN
 
     '----------------------------------------
@@ -640,13 +636,14 @@ Sub PROHOOP
 
     End If
 
-    If UCase$(I$) = "Y" Or AP = 1 Then
+    If UCase$(I$) = "Y" Or (AP = 1 and endAllGames <> 1) Then
 
         Cls
         Print "PLEASE WAIT ..."
         Call PROHOOP
 
     End If
+
     '--End "EndOfGame" routine
 
     Exit Sub
@@ -667,16 +664,22 @@ Sub PROHOOP
     LS = 0
     XS = 0
 
-    If X8 > 0 And X8 < SC(SC) Then
-        X8 = X8 - 5
+    If shotClock > 0 And shotClock < SC(sClockVal) Then
+        shotClock = shotClock - 5
 
     Else
-        X8 = SC(SC)
+
+        Select Case sClockVal
+            Case 0: shotClock = 24
+            Case 1: shotClock = 30
+        End Select
+
         LS = 0
 
         'GoSub 835
         If P = 0 Then D = 1
         If P = 1 Then D = 0
+
         If gameClock! < 6 And LT <> 4 Then LS = 4
 
     End If
@@ -715,7 +718,8 @@ Sub PROHOOP
     Call PBP
 
     If S <= F3S% Then
-        363 ' MADE 3-POINT FIELD GOAL
+
+        ' MADE 3-POINT FIELD GOAL
 
         If PB% = 1 And pbpDelay! <> 0 Then
             Call WINDEX
@@ -755,12 +759,12 @@ Sub PROHOOP
         Call PBP
     End If
 
-    X8 = SC(SC)
-    LS = 4
+    Call ResetShotClock
+
     gameClock! = gameClock! - 4
     timeElapsed! = 4
 
-    Call PlayingTime
+    Call AdjustPlayTime
     Call CheckZeroTime
     If gameClock! = 0 Then 170
 
@@ -784,40 +788,16 @@ Sub PROHOOP
 
     If U5 = 0 And CM% = 1 Or U5 = 1 And D = CT And CM% = 1 Or U5 = 1 And P = CT Or U5 = 2 Then
 
-        CNT% = 0
-
-        While (CNT% < 4)
-
-            CNT% = CNT% + 1
-
-            If CNT% <> 4 Then
-
-                M9 = 0
-                B = Int(Rnd(1) * 5)
-                X = Int(Rnd(1) * 100) + 1
-
-                If X > 30 Then
-
-                    For I = 0 To 4
-                        M8 = Int(B%(P, B1!(P, I), 2) / B%(P, B1!(P, I), 0) + .5) - A!(P, B1!(P, I), 7)
-                        If M8 <= 0 Then M8 = 0
-                        If M8 <= 0 And A!(P, B1!(P, I), 3) - A!(P, B1!(P, I), 7) - A!(P, B1!(P, I), 11) - A!(P, B1!(P, I), 12) > 0 Then M8 = A!(P, B1!(P, I), 3) - A!(P, B1!(P, I), 7) - A!(P, B1!(P, I), 11) - A!(P, B1!(P, I), 12)
-                        If M8 >= M9 Then B = I: M9 = M8
-                    Next I
-
-                End If
-
-            End If
-
-        Wend
+        Call WHOGETSBALL
 
     Else
 
         If R0 <= 40 Then
 
             Do
-                424 '
+
                 If pbpDelay! <> 0 Then
+
                     If PB% = 0 Then
                         U$ = "PASS TO CHOICE (0-4)": Call PBP
                     Else
@@ -853,7 +833,6 @@ Sub PROHOOP
 
     End If
 
-    '427 = Return
 
     If P1 <> 1 Then
 
@@ -863,159 +842,157 @@ Sub PROHOOP
         Select Case D2(D)
 
             Case 1, 4:
-                461 '*** SHOT VS REG/TIGHT M-M ***
+                ' *** SHOT VS REG/TIGHT M-M ***
+                Select Case R0
 
-                If R0 <= 2 Then
-                    X = 0
-                    GoTo 580
-                End If
+                    Case 1, 2
 
-                If R0 <= 30 Then
-                    Call LastShot
-                    X8 = SC(SC)
-                    LS = 4
-                    Call UPDATESCREEN
-                    X = 88
+                        X = 0
+                        GoTo 580
 
-                    GoTo 565
-                End If
+                    Case 3 to 30
+                        Call LastShot
+                        Call ResetShotClock
+                        Call UPDATESCREEN
+                        X = 88
+                        GoTo 565
 
-                If R0 <= 30 + F7%(P, 1) + F7%(D, 2) Then
-                    GoTo 515
-                End If
+                    Case 31 to 30 + F7%(P, 1) + F7%(D, 2)
+                        GoTo 515
 
-                '-----
+                    Case 30 + F7%(P, 1) + F7%(D, 2) to 1000
 
-                P9 = Int(Rnd(1) * 5)
+                        P9 = Int(Rnd(1) * 5)
 
-                If R0 <= 24 + F7%(P, 1) + F7%(D, 2) + A!(D, B1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
-                    GoTo 513
-                Else
+                        If R0 <= 24 + F7%(P, 1) + F7%(D, 2) + A!(D, B1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
+                            GoTo 513
+                        Else
+                            R0 = Int(Rnd(1) * 1000) + 1
 
-                    R0 = Int(Rnd(1) * 1000) + 1
+                            If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
+                            If PASS% = 4 Then 445
+                            GoTo 437
+                        End If
 
-                    If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
-                    If PASS% = 4 Then 445
-                    GoTo 437
-
-                End If
+                End Select
 
             Case 2, 5
-                477 '*** SHOT VS LOOSE/SAG M-M ***
+                ' *** SHOT VS LOOSE/SAG M-M ***
+                Select Case R0
 
-                If R0 <= 1 Then
-                    X = 0
-                    GoTo 580
-                End If
+                    Case 1
+                        X = 0
+                        GoTo 580
 
-                If R0 <= 10 Then
-                    Call LastShot
-                    X8 = SC(SC)
-                    LS = 4
-                    Call UPDATESCREEN
-                    X = 88
+                    Case 2 to 10
+                        Call LastShot
+                        Call ResetShotClock
+                        Call UPDATESCREEN
+                        X = 88
+                        GoTo 565
 
-                    GoTo 565
-                End If
+                    Case 10 to 10 + F7%(P, 1) + F7%(D, 2)
+                        GoTo 515
 
-                If R0 <= 10 + F7%(P, 1) + F7%(D, 2) Then
-                    GoTo 515
-                End If
+                    Case 10 + F7%(P, 1) + F7%(D, 2) to 1000
 
-                P9 = Int(Rnd(1) * 5)
+                        P9 = Int(Rnd(1) * 5)
 
-                If R0 <= 8 + F7%(P, 1) + F7%(D, 2) + A!(D, B1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
-                    GoTo 513
-                Else
-                    R0 = Int(Rnd(1) * 1000) + 1
+                        If R0 <= 8 + F7%(P, 1) + F7%(D, 2) + A!(D, B1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
+                            GoTo 513
+                        Else
+                            R0 = Int(Rnd(1) * 1000) + 1
 
-                    If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
-                    If PASS% = 4 Then 445
-                    GoTo 437
-                End If
+                            If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
+                            If PASS% = 4 Then 445
+                            GoTo 437
+                        End If
+
+                End Select
 
             Case 3
-                494 '*** SHOT VS TRAP M-M ***
+                ' *** SHOT VS TRAP M-M ***
+                Select Case R0
 
-                If R0 <= 3 Then
-                    X = 0
-                    GoTo 580
-                End If
+                    Case 1 to 3
+                        X = 0
+                        GoTo 580
 
-                If R0 <= 50 Then
-                    Call LastShot
-                    X8 = SC(SC)
-                    LS = 4
-                    Call UPDATESCREEN
-                    X = 88
+                    Case 4 to 50
+                        Call LastShot
+                        Call ResetShotClock
+                        Call UPDATESCREEN
+                        X = 88
 
-                    GoTo 565
-                End If
+                        GoTo 565
 
-                If R0 <= 50 + F7%(P, 1) + F7%(D, 2) Then
-                    GoTo 515
-                End If
+                    Case 50 to 50 + F7%(P, 1) + F7%(D, 2)
+                        GoTo 515
 
-                P9 = Int(Rnd(1) * 5)
+                    Case 50 + F7%(P, 1) + F7%(D, 2) to 1000
+                        P9 = Int(Rnd(1) * 5)
 
-                If R0 <= 40 + F7%(P, 1) + F7%(D, 2) + A!(D, B1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
-                    GoTo 513
-                Else
-                    R0 = Int(Rnd(1) * 1000) + 1
+                        If R0 <= 40 + F7%(P, 1) + F7%(D, 2) + A!(D, B1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
+                            GoTo 513
+                        Else
+                            R0 = Int(Rnd(1) * 1000) + 1
 
-                    If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
-                    If PASS% = 4 Then 445
-                    GoTo 437
-                End If
+                            If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
+                            If PASS% = 4 Then 445
+                            GoTo 437
+                        End If
+                        
+                End Select
 
         End Select
 
     Else
-        'P1 = 1
 
-        428 '
         P1 = 0
-
         R0 = Int(Rnd(1) * 1000) + 1
 
-        If R0 <= 3 Then
-            X = 0
-            GoTo 580
-        End If
+        Select Case R0
 
-        If R0 <= 50 Then
-            'GoTo 512
-            Call LastShot
-            X8 = SC(SC)
-            LS = 4
-            Call UPDATESCREEN
-            X = 88
-            GoTo 565
-        End If
+            Case 1 to 3
+                X = 0
+                GoTo 580
 
-        If R0 <= 50 + F7%(P, 1) + F7%(D, 2) Then
-            GoTo 515
-        End If
+            Case 4 to 50
+                Call LastShot
+                Call ResetShotClock
+                Call UPDATESCREEN
+                X = 88
+                GoTo 565
 
-        'How do we ever get here?
-        P9 = Int(Rnd(1) * 5)
+            Case 50 to 50 + F7%(P, 1) + F7%(D, 2)
+                GoTo 515
 
-        If R0 <= 40 + F7%(P, 1) + F7%(D, 2) + A!(D, B1!(D, P9), 5) + F7%(P, 0) Then
-            GoTo 513
-        Else
-            R0 = Int(Rnd(1) * 1000) + 1
+            Case 50 + F7%(P, 1) + F7%(D, 2) to 1000
 
-            If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
-            If PASS% = 4 Then 445
-            GoTo 437
-        End If
+                P9 = Int(Rnd(1) * 5)
+
+                If R0 <= 40 + F7%(P, 1) + F7%(D, 2) + A!(D, B1!(D, P9), 5) + F7%(P, 0) Then
+                    GoTo 513
+                Else
+                    R0 = Int(Rnd(1) * 1000) + 1
+
+                    If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
+                    If PASS% = 4 Then 445
+
+                    GoTo 437
+
+                End If
+        End Select
 
     End If
 
+
     '----- NOODLE -----
+
     ' ***BAD SHOT ***
 
-    437 A4 = 0
+    437 '
+    A4 = 0
 
     R0 = Int(Rnd(1) * 3) + 1
 
@@ -1038,7 +1015,8 @@ Sub PROHOOP
         If A!(P, B1!(P, B), 3) - A!(P, B1!(P, B), 7) - A!(P, B1!(P, B), 11) - A!(P, B1!(P, B), 12) <= 0 Then 437
     End If
 
-    446 '*** CHECKING 3-POINT SHOT ***
+    446 '
+    ' *** CHECKING 3-POINT SHOT ***
     If XY% <> 0 Then
 
         F3S% = 0
@@ -1074,9 +1052,10 @@ Sub PROHOOP
 
     End If
 
-    448 '*** CHECKING FOR ASSISTED SHOT ***
+    448 '
+    ' *** CHECKING FOR ASSISTED SHOT ***
 
-    '*** GET SHOT PCT ***
+    ' *** GET SHOT PCT ***
     F = A!(P, B1!(P, B), 0) + D1(D)
 
     If N = P Then 
@@ -1095,24 +1074,28 @@ Sub PROHOOP
         X = 0
     Else
 
-        '*** CHECK PENETRATION SHOT ***
+        ' *** CHECK PENETRATION SHOT ***
         RN = Int(Rnd(1) * 100) + 1
         A4 = Int(Rnd(1) * 50) + 1
 
         If RN <= (B%(P, B1!(P, B), 16) + OY%(O0%(P))) * 2 + 1 Then
+
             PZ% = 3
             F = F + A4
             X = 0
+
         Else
-            '*** CHECK AVERAGE SHOT ***
+
+            ' *** CHECK AVERAGE SHOT ***
             I2 = B%(P, B1!(P, B), 16)
             RN = Int(Rnd(1) * 2)
 
             If Left$(AA$(P, B1!(P, B), 1), 1) = "G" Or Left$(AA$(P, B1!(P, B), 1), 1) = "F" Then
 
-                RN = Int(Rnd(1) * 3)
+                'For a Guard or Forward
+                R2 = Int(Rnd(1) * 3)
 
-                Select Case RN
+                Select Case R2
                     Case 1: PZ% = 6
                     Case 2: PZ% = 7
                     Case 3: PZ% = 5
@@ -1143,8 +1126,7 @@ Sub PROHOOP
     '-- Perhaps it still could be if we add the GoTo 300 after each call
     513 '
     Call LastShot
-    X8 = SC(SC)
-    LS = 4
+    Call ResetShotClock
 
     A!(P, B1!(P, B), 23) = A!(P, B1!(P, B), 23) + 1
 
@@ -1231,8 +1213,7 @@ Sub PROHOOP
     '----- NOODLE -----
 
     515 Call LastShot
-    X8 = SC(SC)
-    LS = 4
+    Call ResetShotClock
 
     A!(P, B1!(P, B), 23) = A!(P, B1!(P, B), 23) + 1
     T0(P) = T0(P) + 1
@@ -1316,8 +1297,8 @@ Sub PROHOOP
                 PT% = 9: Call MAKEPBP: Call PBP
             End If
 
-            If X8 <= 0 Then U$ = "SHOT CLOCK HAS EXPIRED!": SV% = 1: GoTo 515
-            If X8 < 5 Then U$ = "SHOT CLOCK DOWN TO" + Str$(X8): Call PBP
+            If shotClock <= 0 Then U$ = "SHOT CLOCK HAS EXPIRED!": SV% = 1: GoTo 515
+            If shotClock < 5 Then U$ = "SHOT CLOCK DOWN TO" + Str$(shotClock): Call PBP
 
             PB$ = AA$(P, B1!(P, B), 0)
             Z3$ = Left$(AA$(P, B1!(P, B), 1), 1)
@@ -1501,7 +1482,7 @@ Sub PROHOOP
 
 
         951 '
-        If gameClock! <= 1 Or X8 <= 6 Then
+        If gameClock! <= 1 Or shotClock <= 6 Then
             P6 = 1
         Else
             If gameClock! <= 8 And S!(P, 0) - S!(D, 0) <= -3 And H >= 4 Then
@@ -1584,7 +1565,8 @@ Sub PROHOOP
 
     '--- technically this branch ends here ---
 
-    537 '*** SHOOT!!! ***
+    537 '
+    ' *** SHOOT!!! ***
     PT% = 3
     Call MAKEPBP
     Call PBP
@@ -1596,8 +1578,7 @@ Sub PROHOOP
 
     If R0 <= A!(P, B1!(P, B), 16) + F7%(D, 3) Then
         A!(P, B1!(P, B), 7) = A!(P, B1!(P, B), 7) - 1
-        X8 = SC(SC)
-        LS = 4
+        Call ResetShotClock
         GoTo 589
     End If
 
@@ -1607,14 +1588,14 @@ Sub PROHOOP
 
     '--- Shot Branch 1 ---
     If S <= R0 Then
-        X8 = SC(SC)
-        LS = 4
+
+        Call ResetShotClock
 
         gameClock! = gameClock! - 4
         timeElapsed! = 4
-        Call PlayingTime
-        Call UPDATESCREEN
 
+        Call AdjustPlayTime
+        Call UPDATESCREEN
 
         If DK% = 1 Then
             If PB% = 0 Then
@@ -1894,7 +1875,8 @@ Sub PROHOOP
         A!(P, B1!(P, B), 8) = A!(P, B1!(P, B), 8) + 1
 
         '---> possibly a new sub
-        562 U$ = B$(D) + " BALL AFTER SCORE"
+        562 '
+        U$ = B$(D) + " BALL AFTER SCORE"
 
         If PB% = 1 And pbpDelay! <> 0 Then
             Locate 9, 1
@@ -1903,13 +1885,16 @@ Sub PROHOOP
             Print " BALL AFTER SCORE"
             Call DELAY
         End If
+        
         If PB% = 0 Then Locate 8, 41: Print Space$(12): Call PBP
-        X8 = SC(SC): LS = 4
+
+        Call ResetShotClock
         gameClock! = gameClock! - 4
         timeElapsed! = 4
 
-        Call PlayingTime
+        Call AdjustPlayTime
         Call CheckZeroTime
+
         If gameClock! = 0 Then 170
 
         Call UPDATESCREEN
@@ -1969,8 +1954,7 @@ Sub PROHOOP
 
         If PB% = 0 Then PT% = 8: Call MAKEPBP: Call PBP
 
-        X8 = SC(SC)
-        LS = 4
+        Call ResetShotClock
 
     Else
         If pbpDelay! <> 0 Then
@@ -2012,7 +1996,7 @@ Sub PROHOOP
     gameClock! = gameClock! - 4
     timeElapsed! = 4
 
-    Call PlayingTime
+    Call AdjustPlayTime
     Call CheckZeroTime
     If gameClock! = 0 Then 170
 
@@ -2185,23 +2169,29 @@ Sub PROHOOP
     580 '
     Call LastShot
 
-    X8 = SC(SC)
-    LS = 4
+    Call ResetShotClock
 
-    'GoSub 3000
-    'AKA ChangePosession
+
     PB$ = ""
+
     If P = 1 Then
-        P = 0: D = 1: P9 = 0: C1 = 2
+        P = 0
+        D = 1
+        P9 = 0
+        C1 = 2
     Else
-        'P = 0;
-        P = 1: D = 0: P9 = 1: C1 = 2
+        'P = 0
+        P = 1
+        D = 0
+        P9 = 1
+        C1 = 2
     End If
 
     Call Fouls(0)
 
     P2(D) = P2(D) - 1
     B = W5
+
     If P2(D) > NB% And H <= 4 Or P2(D) > 3 And H > 4 Then 570
 
     Call CheckZeroTime
@@ -2287,7 +2277,10 @@ Sub PROHOOP
 
     Call Fouls(1)
 
-    X8 = SC(SC)
+    Select Case sClockVal
+        Case 0: shotClock = 24
+        Case 1: shotClock = 30
+    End Select
 
     GoTo 566
 
@@ -2296,7 +2289,7 @@ Sub PROHOOP
     gameClock! = gameClock! - 4
     timeElapsed! = 4
 
-    Call PlayingTime
+    Call AdjustPlayTime
     Call UPDATESCREEN
     Call Fouls(0)
 
@@ -2451,8 +2444,8 @@ Sub PROHOOP
         T1(P) = T1(P) - 1
         gameClock! = gameClock! + M5
         timeElapsed! = -M5
-        Call PlayingTime
-        X8 = X8 + M5
+        Call AdjustPlayTime
+        shotClock = shotClock + M5
         U$ = "TIMEOUT " + B$(P):
 
         Call PBP
@@ -2498,10 +2491,11 @@ Sub PROHOOP
     P6 = 0
     A4 = 0
     D6 = 0
-    X8 = SC(SC)
-    LS = 4
+
+    Call ResetShotClock
 
     S = 0
+
     R0 = Int(Rnd(1) * 100) + 1
 
     If H > 3 And gameClock! < 30 And S!(D, 0) - S!(P, 0) = 2 And R0 <= 12 Or H > 3 And gameClock! < 30 And S!(D, 0) - S!(P, 0) = 0 And R0 <= 12 Then
@@ -2512,10 +2506,21 @@ Sub PROHOOP
     R0 = Int(Rnd(1) * 100) + 1
 
     Select Case R0
-        Case 1 To 11: FF% = 1: GoTo 707
-        Case 12 To 19: Call ReboundRoutine1: GoTo 760
-        Case 20 To 110: Call ReboundRoutine2: GoTo 800
+
+        Case 1 To 11: 
+            FF% = 1
+            GoTo 770
+        
+        Case 12 To 19:
+            Call ReboundRoutine1
+            GoTo 760
+        
+        Case 20 To 100: 
+            Call ReboundRoutine2
+            GoTo 800
+
     End Select
+
 
     '----- NOODLE -----
 
@@ -2524,8 +2529,8 @@ Sub PROHOOP
     P6 = 0
     A4 = 0
     D6 = 0
-    X8 = SC(SC)
-    LS = 4
+
+    Call ResetShotClock
 
     '-- Start Loop
     700 '
@@ -2543,6 +2548,7 @@ Sub PROHOOP
     Select Case R0
 
         Case 1
+
             If X = 98 Then 700
 
             T0(P) = T0(P) + 1
@@ -2564,14 +2570,19 @@ Sub PROHOOP
 
             Call DELAY
 
-            'GoSub 3000
-            'AKA ChangePosession
             PB$ = ""
+
             If P = 1 Then
-                P = 0: D = 1: P9 = 0: C1 = 2
+                P = 0
+                D = 1
+                P9 = 0
+                C1 = 2
             Else
-                'P = 0;
-                P = 1: D = 0: P9 = 1: C1 = 2
+                'P = 0
+                P = 1
+                D = 0
+                P9 = 1
+                C1 = 2
             End If
 
             Call Substitutions
@@ -2580,13 +2591,33 @@ Sub PROHOOP
 
         Case 2 To 11
             FF% = 1
-            GoTo 707
+            GoTo 770
 
         Case 12 To 19
-            '750
+
             R0 = Int(Rnd(1) * 100) + 1
 
-            If R0 <= 32 Then 752
+            If R0 <= 32 Then 
+
+                R3(P) = R3(P) + 1
+
+                Call UPDATESCREEN
+
+                U$ = "RB KNOCKED O.B. TO " + B$(P)
+
+                If PB% = 0 Then
+                    Call PBP
+                Else
+                    'PB% = 1
+                    If pbpDelay! <> 0 Then Call WINDEX: Print U$: Call DELAY
+                End If
+
+                Call DELAY
+                Call Substitutions
+
+                GoTo 520
+            
+            End If
 
             R3(D) = R3(D) + 1
             Call UPDATESCREEN
@@ -2603,8 +2634,6 @@ Sub PROHOOP
 
             Call Substitutions
 
-            'GoSub 3000
-            'AKA ChangePosession
             PB$ = ""
 
             If P = 1 Then
@@ -2626,7 +2655,7 @@ Sub PROHOOP
             GoTo 300
 
         Case 20 To 22
-            '730
+
             If X = 99 Then 700
 
             Call ReboundRoutine1
@@ -2649,14 +2678,18 @@ Sub PROHOOP
 
             Call DELAY
 
-            'GoSub 3000
-            'AKA ChangePosession
             PB$ = ""
             If P = 1 Then
-                P = 0: D = 1: P9 = 0: C1 = 2
+                P = 0
+                D = 1
+                P9 = 0
+                C1 = 2
             Else
                 'P = 0;
-                P = 1: D = 0: P9 = 1: C1 = 2
+                P = 1
+                D = 0
+                P9 = 1
+                C1 = 2
             End If
 
             U$ = B$(P) + " BALL AFTER SCORE"
@@ -2703,6 +2736,7 @@ Sub PROHOOP
         Case 23:
 
             If P6 <> 4 Then
+
                 If X = 99 Then 700
 
                 U$ = "DEFENSIVE GOAL TENDING"
@@ -2719,31 +2753,45 @@ Sub PROHOOP
 
             GoTo 560
 
+
     End Select
 
-    707 'GoTo 770
+    ' Case 24 to 100
 
-    770 RB = 0
+    770 '
+    RB = 0
 
-    For I = 0 To 9: RB(I) = 0: Next
+    For I = 0 To 9: 
+        RB(I) = 0
+    Next
 
     For I = 0 To 4
+
         If H > 4 Or H = 4 And gameClock! <= 120 Then 773
+
         If A!(P, B1!(P, I), 3) - A!(P, B1!(P, I), 7) - A!(P, B1!(P, I), 11) - A!(P, B1!(P, I), 12) <= 0 Then
             RB(I) = RB(I) + A!(P, B1!(P, I), 21) * .65: RB = RB + A!(P, B1!(P, I), 21) * .65
         Else
             773 RB(I) = RB(I) + A!(P, B1!(P, I), 21): RB = RB + A!(P, B1!(P, I), 21)
         End If
+
     Next
 
     For I = 0 To 4
-        If H > 4 Or H = 4 And gameClock! <= 120 Then 778
 
-        If A!(1 - P, B1!(1 - P, I), 3) - A!(1 - P, B1!(1 - P, I), 7) - A!(1 - P, B1!(1 - P, I), 11) - A!(1 - P, B1!(1 - P, I), 12) <= 0 Then
-            RB(I + 5) = RB(I + 5) + A!(1 - P, B1!(1 - P, I), 2) * .5: RB = RB + A!(1 - P, B1!(1 - P, I), 2) * .5
+        If H > 4 Or H = 4 And gameClock! <= 120 Then 
+            RB(I + 5) = RB(I + 5) + A!(1 - P, B1!(1 - P, I), 2)
+            RB = RB + A!(1 - P, B1!(1 - P, I), 2)
         Else
-            778 RB(I + 5) = RB(I + 5) + A!(1 - P, B1!(1 - P, I), 2): RB = RB + A!(1 - P, B1!(1 - P, I), 2)
+            If A!(1 - P, B1!(1 - P, I), 3) - A!(1 - P, B1!(1 - P, I), 7) - A!(1 - P, B1!(1 - P, I), 11) - A!(1 - P, B1!(1 - P, I), 12) <= 0 Then
+                RB(I + 5) = RB(I + 5) + A!(1 - P, B1!(1 - P, I), 2) * .5
+                RB = RB + A!(1 - P, B1!(1 - P, I), 2) * .5
+            Else
+                RB(I + 5) = RB(I + 5) + A!(1 - P, B1!(1 - P, I), 2)
+                RB = RB + A!(1 - P, B1!(1 - P, I), 2)
+            End If
         End If
+
     Next
 
     RN = Rnd(1) * RB
@@ -2757,7 +2805,6 @@ Sub PROHOOP
         B = Int(Rnd(1) * 10)
     End If
 
-    786 '
     If B <= 4 Then 761
     B = B - 5
 
@@ -2765,103 +2812,88 @@ Sub PROHOOP
 
     '----- NOODLE -----
 
-    720 '
-    U$ = AA$(P, B1!(P, B), 0) + " HAS THE OFFENSIVE REBOUND"
-    If PB% = 0 Then
-        Call PBP
-    Else
-        'PB% = 1
-        If pbpDelay! <> 0 Then Call WINDEX: Print U$: Print "FOR "; B$(P): Call DELAY
-    End If
+    760 '
+    If FF% = 1 Then 
 
-    U$ = "HE'S FOULED !!!"
-    If PB% = 0 Then
-        Call PBP
-    Else
-        'PB% = 1
-        If pbpDelay! <> 0 Then Print U$: Call DELAY
-    End If
+        FF% = 0
 
-    Call DELAY
-    A!(P, B1!(P, B), 24) = A!(P, B1!(P, B), 24) + 1
-    A!(P, B1!(P, B), 11) = A!(P, B1!(P, B), 11) + 1
-    R3(P) = R3(P) + 1
-    Call UPDATESCREEN
+        U$ = AA$(P, B1!(P, B), 0) + " HAS THE OFFENSIVE REBOUND"
 
-    Call Fouls(0)
-
-    GoTo 570
-
-    '----- NOODLE -----
-
-    752 R3(P) = R3(P) + 1
-
-    Call UPDATESCREEN
-
-    U$ = "RB KNOCKED O.B. TO " + B$(P)
-
-    If PB% = 0 Then
-        Call PBP
-    Else
-        'PB% = 1
-        If pbpDelay! <> 0 Then Call WINDEX: Print U$: Call DELAY
-    End If
-
-    Call DELAY
-    Call Substitutions
-
-    GoTo 520
-
-    '----- NOODLE -----
-
-    760 If FF% = 1 Then FF% = 0: GoTo 720
-
-    761 '
-    A!(P, B1!(P, B), 24) = A!(P, B1!(P, B), 24) + 1
-    A!(P, B1!(P, B), 11) = A!(P, B1!(P, B), 11) + 1
-    R3(P) = R3(P) + 1
-    Call UPDATESCREEN
-    U$ = AA$(P, B1!(P, B), 0) + " HAS THE OFFENSIVE REBOUND"
-
-    If pbpDelay! <> 0 Then
         If PB% = 0 Then
             Call PBP
         Else
             'PB% = 1
-            Call WINDEX: Print U$: Print "FOR " + B$(P): Call DELAY
+            If pbpDelay! <> 0 Then Call WINDEX: Print U$: Print "FOR "; B$(P): Call DELAY
         End If
-    End If
 
-    Call CheckZeroTime
-    If gameClock! = 0 Then 170
+        U$ = "HE'S FOULED !!!"
+        If PB% = 0 Then
+            Call PBP
+        Else
+            'PB% = 1
+            If pbpDelay! <> 0 Then Print U$: Call DELAY
+        End If
 
-    PB$ = AA$(P, B1!(P, B), 0)
-    R0 = Int(Rnd(1) * 10) + 1
+        Call DELAY
 
-    ' *** GET SHOT PCT ***
-    F = A!(P, B1!(P, B), 0) + D1(D)
+        A!(P, B1!(P, B), 24) = A!(P, B1!(P, B), 24) + 1
+        A!(P, B1!(P, B), 11) = A!(P, B1!(P, B), 11) + 1
+        R3(P) = R3(P) + 1
 
-    If N = P Then
-        F = F + 2
+        Call UPDATESCREEN
+        Call Fouls(0)
+
+        GoTo 570
+
     Else
-        If N <> 2 Then F = F - 2
-    End If
 
-    If Not (H > 4 Or H = 4 And gameClock! <= 120) Then
-        If A!(P, B1!(P, B), 3) - A!(P, B1!(P, B), 7) - A!(P, B1!(P, B), 11) - A!(P, B1!(P, B), 12) <= 0 Then F = F * .6
-    End If
+        761 '
+        A!(P, B1!(P, B), 24) = A!(P, B1!(P, B), 24) + 1
+        A!(P, B1!(P, B), 11) = A!(P, B1!(P, B), 11) + 1
+        R3(P) = R3(P) + 1
+        Call UPDATESCREEN
+        U$ = AA$(P, B1!(P, B), 0) + " HAS THE OFFENSIVE REBOUND"
 
-    If R0 <= 8 Then
-        PZ% = 9
-        GoTo 537
-    Else
-        GoTo 520
+        If pbpDelay! <> 0 Then
+            If PB% = 0 Then
+                Call PBP
+            Else
+                'PB% = 1
+                Call WINDEX: Print U$: Print "FOR " + B$(P): Call DELAY
+            End If
+        End If
+
+        Call CheckZeroTime
+        If gameClock! = 0 Then 170
+
+        PB$ = AA$(P, B1!(P, B), 0)
+        R0 = Int(Rnd(1) * 10) + 1
+
+        ' *** GET SHOT PCT ***
+        F = A!(P, B1!(P, B), 0) + D1(D)
+
+        If N = P Then
+            F = F + 2
+        Else
+            If N <> 2 Then F = F - 2
+        End If
+
+        If Not (H > 4 Or H = 4 And gameClock! <= 120) Then
+            If A!(P, B1!(P, B), 3) - A!(P, B1!(P, B), 7) - A!(P, B1!(P, B), 11) - A!(P, B1!(P, B), 12) <= 0 Then F = F * .6
+        End If
+
+        If R0 <= 8 Then
+            PZ% = 9
+            GoTo 537
+        Else
+            GoTo 520
+        End If
+
     End If
 
     '----- NOODLE -----
 
     800 '
-
     If FF% = 1 Then
 
         FF% = 0
