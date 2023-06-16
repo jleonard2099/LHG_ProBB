@@ -26,7 +26,7 @@ Dim Shared teamIndex%(MAX_TEAMS)
 Dim Shared foulOption$(1), freeThrowOpt$(1)
 Dim Shared location$(2), playoffGame$(1), TS$(1)
 
-Dim coachOpt$(0 to 1)
+Dim coachOpt$(0 To 1)
 Dim modeAbbrev$(0 To 3), MO$(3)
 Dim sClockOpt$(0 To 1), teamEraOpt$(0 To 2)
 Dim yesNo$(0 To 1)
@@ -69,7 +69,7 @@ Dim AR$(62)
 ' Used across COMPARE routines
 '----------------------------------------
 Dim compareA$(15), compareAA$(15, 1), compareB$(14)
-Dim compareT$(0), comparePS$(15)
+Dim compareT$(0)
 
 Dim compareB%(15, 19), compareL%(6), compareT%(34)
 Dim compareW0!(15), compareW1!(15)
@@ -97,12 +97,12 @@ Dim adjustB%(0 To 14, 19), adjustL%(0 To 6), adjustT%(0 To 34)
 '----------------------------------------
 ' Used across HD2HD routines
 '----------------------------------------
-Dim Shared QQ$(1)
-'--> could be converted to Dim / Shared split
 Dim hd2hdT!(34)
 Dim hd2hdAL!(50), AW!(50), HL!(50), HW!(50), R1!(50), R2!(50), R3!(50), R4!(50)
 Dim TAL!(40), TAW!(40), THL!(40), THW!(40)
 Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
+
+Dim LG$, div1$, div2$, div3$, div4$
 
 '----------------------------------------
 ' Used across LOOKY,
@@ -110,7 +110,7 @@ Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
 '----------------------------------------
 Dim categories$(0 To 25), statsH$(0 To 100), lookyA$(0 To 14), O$(0 To 100)
 Dim values!(0 To 14, 0 To 24), statW0!(0 To 14), statW1!(0 To 14)
-Dim statO%(0 To 100), statsL%(0 to 100)
+Dim statO%(0 To 100), statsL%(0 To 100)
 
 '----------------------------------------
 ' Used across LEAGCMPL,
@@ -125,8 +125,7 @@ Dim H1$(40), OL$(40), leagT$(40)
 
 Dim DT!(21), OT!(21)
 
-Dim LG$, div1$, div2$, div3$, div4$
-Dim HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, Z%
+Dim AL%, AW%, HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, Z%
 
 '----------------------------------------
 ' Used across NEWLDR routines
@@ -158,7 +157,6 @@ Dim BRC!(25), TRC!(21), TRC1!(21)
 '----------------------------------------
 Dim indRecCategory$(50, 4), teamRecCategory$(125, 3)
 Dim allRecords!(50, 2), teamRecords!(125, 2)
-Dim HALF$(2), QTR$(4)
 
 '----------------------------------------
 ' Used across SCHEDULE routines
@@ -176,12 +174,15 @@ Dim scheduleYN$(MAX_GAMES, 1)
 '----------------------------------------
 ' Used across TRADE routines
 '----------------------------------------
-Dim tradeB1!(2, 14, 14), tradeT!(1)
-Dim tradeW0!(2, 14), tradeW1!(2, 14)
-Dim tradeAA$(1, 6), tradeB$(0 To 1, 0 To 14, 0 To 1)
-Dim SA$(1)
 Dim teamSettings%(1, 34)
 Dim tradeB%(0 To 1, 0 To 14, 0 To 19), tradeL%(0 To 1, 0 To 6)
+Dim tradeS(1), tradeZZ(2, 15), tradeZZ1(2, 15)
+
+Dim tradeB1!(2, 14, 14), tradeT!(1)
+Dim tradeW0!(2, 14), tradeW1!(2, 14)
+    
+Dim B1$(2, 14), tradeA1$(1), tradeAA$(1, 6)
+Dim tradeB$(0 To 1, 0 To 14, 0 To 1), SA$(1), statFiles$(1)
 
 '----------------------------------------
 ' Used across Game Routines

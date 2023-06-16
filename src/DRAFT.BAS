@@ -1,15 +1,17 @@
 Sub DRAFT ()
 
-    ReDim menuChoices$(1 To 3)
+    _Title "Basketball: The Pro Game - Team Draft"
+
+    Shared draftB%(), draftL%(), draftLT%(), draftT%()
+
+    Shared draftAA$(), draftB$(), draftYears$(), draftYN$()
 
     Dim TTL%(34)
 
-    Shared draftAA$(), draftB$(), draftYears$()
-    Shared draftB%(), draftL%(), draftLT%(), draftT%()
-
-    _Title "Basketball: The Pro Game - Team Draft"
+    ReDim menuChoices$(1 To 3)
 
     Do
+
         Selection% = 1
         Count% = 52
         Start% = 1
@@ -44,12 +46,13 @@ Sub DRAFT ()
                 Color 15, 4
 
                 Locate , 30: Print "ANY CHANGE (YN)";
-				
-				I$ = GetKeyPress$
+
+                I$ = GetKeyPress$
 
             Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
             YR% = Selection%
+
         End If
 
         If ExitCode% = 27 Then Exit Sub
@@ -59,8 +62,9 @@ Sub DRAFT ()
     If ExitCode% <> 27 Then
 
         Do
+
             Call TITLE
-            'Erase menuChoices$
+
             menuChoices$(1) = "DRAFT A NEW TEAM         "
             menuChoices$(2) = "DRAFT TO AN EXISTING TEAM"
             menuChoices$(3) = "EXIT TO MAIN MENU        "
@@ -75,6 +79,7 @@ Sub DRAFT ()
             Column% = 25
 
             Call box0(7, 24, 11, 50, 2, 15, 1)
+
             _MouseShow "DEFAULT"
             MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
             _MouseHide
@@ -86,10 +91,13 @@ Sub DRAFT ()
                 Select Case Selection%
 
                     Case 1
-                        DNT% = 0
-                        For I = 0 To 1: draftAA$(0, I) = "XXX": Next
+                        For I = 0 To 1:
+                            draftAA$(0, I) = "XXX"
+                        Next
 
-                        For I = 0 To 6: draftL%(0, I) = 0: Next
+                        For I = 0 To 6:
+                            draftL%(0, I) = 0
+                        Next
 
                         For I = 0 To 34
                             draftT%(0, I) = 0
@@ -102,7 +110,7 @@ Sub DRAFT ()
                             Next
                         Next
 
-                        For I = 0 To 14
+                        For I = 0 To 1
                             draftB$(0, I, 0) = "XXX"
                             draftB$(0, I, 1) = "X"
                             For I1 = 0 To 19
@@ -110,20 +118,19 @@ Sub DRAFT ()
                             Next
                         Next
 
-
-                        Call DraftNewTeam(TTL%())
+                        Call DraftNewTeam(draftYN$(0), draftAA$(0, 0), teamIdx)
+                        Call DraftChoices(1, doneDraft, teamIdx, TTL%())
 
                     Case 2
-                        DNT% = 1
-                        Call DraftExistingTeam(TTL%())
+                        Call DraftExistingTeam(draftYN$(0), draftAA$(0, 0), teamIdx)
+                        Call DraftChoices(0, doneDraft, teamIdx, TTL%())
+
                 End Select
 
-            Else
-                Selection% = 3
+                If doneDraft = 1 Then Selection% = 3
+
             End If
 
-            'WE SHOULD NEVER GET HERE
-            '1 Run "HELLO.EXE 2"
         Loop Until Selection% = 3 Or ExitCode% = 27
 
     End If 'Done checking for ESC
@@ -134,11 +141,12 @@ End Sub
 '       DraftNewTeam SubRoutine
 '----------------------------------------
 '...explanation...
-Sub DraftNewTeam (TTL%())
+Sub DraftNewTeam (teamYear$, teamName$, teamIdx)
 
     Shared draftAA$(), draftYN$()
     Shared draftL%(), draftLG%(), draftT%()
 
+    Color , 0
     Cls
 
     Color 14: Print "LEAGUE INFORMATION"
@@ -152,9 +160,9 @@ Sub DraftNewTeam (TTL%())
     draftL%(0, 5) = draftLG%(YR%, 5)
     draftL%(0, 6) = 0
 
-    130 Locate 2: Input "1. DISK ID "; draftYN$(0): If C1 = 1 Then 250
+    130 Locate 2: Input "1. DISK ID "; teamYear$: If C1 = 1 Then 250
 
-    205 Locate 3: Input "2. TEAM NAME "; draftAA$(0, 0): If C1 = 1 Then 250
+    205 Locate 3: Input "2. TEAM NAME "; teamName$: If C1 = 1 Then 250
 
     210 Locate 4: Input "3. TEAM NICKNAME "; draftAA$(0, 1): If C1 = 1 Then 250
 
@@ -169,30 +177,33 @@ Sub DraftNewTeam (TTL%())
     248 Locate 9: Input "8. ARENA NAME "; draftAA$(0, 4): If C1 = 1 Then 250
 
     250 Locate 10: Color draftT%(0, 33), draftT%(0, 34): Print "SAMPLE TEXT"
-    Color 7, 0
+    Color 15, 0
 
     255 C1 = 1: Locate 12: Input "# TO CHANGE (0 TO CONTINUE) "; B9: On B9 GOTO 130, 205, 210, 240, 245, 246, 247, 248
 
     258 C1 = 0
-
-    Call DoTheDraft(TTL%())
 
 End Sub
 
 '----------------------------------------
 '      DraftExistingTeam SubRoutine
 '----------------------------------------
-'...explanation...
-Sub DraftExistingTeam (TTL%())
+'Provides interface for choosing the
+'team to draft players to
+Sub DraftExistingTeam (teamYear$, teamName$, teamIdx)
 
     Shared draftAA$(), draftB$(), draftYears$(), draftYN$()
     Shared draftB%(), draftL%(), draftLT%(), draftT%()
 
     Do
 
-        Color 15, 0: Cls
+        Color 15, 0
+        Cls
+
         JJ = 7
+
         Locate 6, 8: Color 15, 4
+
         'Print box top
         Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
@@ -214,14 +225,14 @@ Sub DraftExistingTeam (TTL%())
         Locate 7, 27: Input NY$
 
         If NY$ = "" And draftYN$(0) <> "" Then
-            'NY$ = draftYN$(0)
             Call SelectTeam_Draft(NTMS)
         Else
-            draftYN$(0) = RTrim$(NY$)
+            teamYear$ = RTrim$(NY$)
             Erase teamNames$
+
             NTMS = 0
-			
-            Open diskPaths$(0) + "PROBBTMS." + draftYN$(0) For Random As #1 Len = 1031
+
+            Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
 
             fileLength& = LOF(1)
 
@@ -246,7 +257,7 @@ Sub DraftExistingTeam (TTL%())
 
             Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 
-            For I1 = 1 to fileLength& / 1031
+            For I1 = 1 To fileLength& / 1031
                 Get #1, I1
                 CK% = CVI(Q$(9))
                 If CK% = 999 Then
@@ -256,8 +267,6 @@ Sub DraftExistingTeam (TTL%())
                 End If
             Next
             Close 1
-
-            'TS% = Int((NTMS - 1) / 80)
 
             Selection% = 1
             Count% = NTMS
@@ -284,8 +293,8 @@ Sub DraftExistingTeam (TTL%())
 
             If ExitCode% <> 27 Then
 
-                T = teamIndex%(Selection%)
-				teamYear$ = RTrim$(draftYN$(0))
+                teamIdx = teamIndex%(Selection%)
+                teamYear$ = RTrim$(draftYN$(0))
 
                 Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
 
@@ -310,7 +319,7 @@ Sub DraftExistingTeam (TTL%())
 
                 Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 
-                Get #1, T
+                Get #1, teamIdx
 
                 draftAA$(0, 0) = RTrim$(Q$(0))
                 draftAA$(0, 1) = Q$(1)
@@ -362,8 +371,6 @@ Sub DraftExistingTeam (TTL%())
         End If
 
     Loop Until UCase$(I$) = "N"
-
-    Call DoTheDraft(TTL%())
 
 End Sub
 
@@ -460,10 +467,10 @@ Sub Draft_Unknown ()
 End Sub
 
 '----------------------------------------
-'       DoTheDraft SubRoutine
+'       DraftChoices SubRoutine
 '----------------------------------------
 '...explanation...
-Sub DoTheDraft (TTL%())
+Sub DraftChoices (draftNew, doneDrafting, teamIdx, TTL%())
 
     Dim NP
 
@@ -475,8 +482,9 @@ Sub DoTheDraft (TTL%())
         Color 0, 0
         Cls
         Color draftT%(0, 33), draftT%(0, 34): Print draftAA$(0, 0);
-        Color 14, 0: Print "     (DRAFTING)"
 
+        Color 14, 0
+        Print "     (DRAFTING)"
         Print
         Print "PLAYERS"
 
@@ -485,22 +493,32 @@ Sub DoTheDraft (TTL%())
             Color 15: Print draftB$(0, I, 0); " "; draftB$(0, I, 1)
         Next
 
-        Locate 21, 1
-        Color 14: Print "(1) ";: Color 15: Print "DRAFT PLAYER"
-        Color 14: Print "(2) ";: Color 15: Print "SAVE TEAM"
-        I$ = GetKeyPress$
+        Do
+            Locate 21, 1
+            Color 14: Print "(1) ";
+            Color 15: Print "DRAFT PLAYER"
+            Color 14: Print "(2) ";
+            Color 15: Print "SAVE TEAM"
 
-        Select Case (I$)
-            Case "1":
+            I$ = GetKeyPress$
+            I0 = Val(I$)
+        Loop Until I0 >= 1 And I0 <= 2
+
+        Select Case I0
+
+            Case 1
                 'Drafting
                 Do
                     Locate 21, 20: Print "SLOT # (0-14) ";
                     Input B
-                Loop Until B >= 1 And B <= 14
+                Loop Until B >= 0 And B <= 14
 
                 Do
-                    1440 Color 15, 0: Cls
+                    Color 15, 0
+                    Cls
+
                     JJ = 7
+
                     Locate 6, 8: Color 15, 4
                     Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
                     Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
@@ -515,11 +533,11 @@ Sub DoTheDraft (TTL%())
                     Locate 7, 27: Input NY$
 
                     If NY$ = "" And draftYN$(1) <> "" Then
-                        'NY$ = draftYN$(1)
                         Call SelectTeam_Draft(NTMS)
                     Else
                         draftYN$(1) = RTrim$(NY$)
                         Erase teamNames$
+
                         NTMS = 0
 
                         Open diskPaths$(0) + "PROBBTMS." + draftYN$(1) For Random As #1 Len = 1031
@@ -547,8 +565,7 @@ Sub DoTheDraft (TTL%())
 
                         Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 
-                        'Somehow this isn't populating all teams?
-                        For I1 = 1 to fileLength& / 1031
+                        For I1 = 1 To fileLength& / 1031
                             Get #1, I1
                             CK% = CVI(Q$(9))
                             If CK% = 999 Then
@@ -578,7 +595,8 @@ Sub DoTheDraft (TTL%())
 
                 Loop Until UCase$(I$) = "N"
 
-                Color , 0: Cls
+                Color , 0
+                Cls
                 Color draftT%(1, 33), draftT%(1, 34): Print draftAA$(1, 0)
                 Color 14, 0
 
@@ -610,29 +628,35 @@ Sub DoTheDraft (TTL%())
                 FG = FG * (draftLG%(YR%, 3) / draftL%(1, 3))
 
                 draftB%(0, B, 3) = FG / 100 * draftB%(0, B, 2)
+
                 draftLT%(B, 5) = (draftLG%(YR%, 1) / draftL%(1, 1)) * draftLT%(B, 5)
                 draftLT%(B, 19) = draftLT%(B, 19) * (draftLG%(YR%, 1) / draftL%(1, 1))
                 draftLT%(B, 9) = draftLT%(B, 9) * (draftLG%(YR%, 2) / draftL%(1, 2))
                 draftLT%(B, 10) = draftLT%(B, 10) * (draftLG%(YR%, 2) / draftL%(1, 2))
                 draftLT%(B, 23) = draftLT%(B, 23) * (draftLG%(YR%, 2) / draftL%(1, 2))
                 draftLT%(B, 24) = draftLT%(B, 24) * (draftLG%(YR%, 2) / draftL%(1, 2))
+
                 FG = Int(draftT%(1, 6) / draftT%(1, 5) * 100 + .5)
                 FG = FG * (draftLG%(YR%, 3) / draftL%(1, 3))
 
                 draftT%(0, 6) = FG / 100 * draftT%(0, 5)
+
                 FG = Int(draftT%(1, 20) / draftT%(1, 19) * 100 + .5)
                 FG = FG * (draftLG%(YR%, 3) / draftL%(1, 3))
 
                 draftT%(0, 20) = FG / 100 * draftT%(0, 19)
 
-            Case "2":
+            Case 2
+
                 ' Save Team
                 Cls
 
                 NP = 0
+
                 For I = 0 To 14
                     If draftB$(0, I, 0) <> "XXX" Then NP = NP + 1
                 Next
+
                 For I = 0 To 14
                     If draftB$(0, I, 0) <> "XXX" Then
                         For I1 = 0 To 32
@@ -646,56 +670,117 @@ Sub DoTheDraft (TTL%())
                     draftT%(0, I1) = TTL%(I1)
                 Next
 
-				teamYear$ = RTrim$(draftYN$(0))
-
-                Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
-
-                fileLength& = LOF(1)
-
-                If DNT% = 0 Then teamIdx = fileLength& / 1031 + 1
-                Field #1, 15 As Q$(0), 15 As Q$(1)
-
-                For I = 0 To 6
-                    Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-                Next
-
-                Field #1, 44 As X$, 2 As Q$(9)
-
-                For I = 0 To 34
-                    Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-                Next
-
-                For I = 0 To 14
-                    Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-                    For I1 = 0 To 19
-                        Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-                    Next
-                Next
-
-                Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-
-                LSet Q$(0) = draftAA$(0, 0): LSet Q$(1) = draftAA$(0, 1): For I = 0 To 6: LSet Q$(I + 2) = MKI$(draftL%(0, I)): Next
-                LSet Q$(9) = MKI$(999)
-
-                For I = 0 To 34: LSet Q$(I + 10) = MKI$(draftT%(0, I)): Next
-
-                For I = 0 To 14
-                    LSet Q$(22 * I + 45) = draftB$(0, I, 0)
-                    LSet Q$(22 * I + 46) = draftB$(0, I, 1)
-                    For I1 = 0 To 19
-                        LSet Q$(22 * I + 47 + I1) = MKI$(draftB%(0, I, I1))
-                    Next
-                Next
-
-                LSet Q$(375) = draftAA$(0, 2): LSet Q$(376) = draftAA$(0, 3): LSet Q$(377) = draftAA$(0, 4)
-                Put #1, teamIdx
-                Close 1
+                Call SaveTeamDraft(draftNew, draftYN$(0), teamIdx)
 
         End Select
 
-    Loop Until I$ = "2" 'Or I$ = "1"
+    Loop Until I0 = 2
+
+    Cls
+
+    JJ = 1
+
+    Locate 6, 8: Color 15, 1
+
+    Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
+
+    For II = 1 To JJ: Locate 6 + II, 8
+        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Next
+
+    Locate 7 + JJ, 8
+    Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
+
+    Locate 7
+
+    U$ = "DRAFT ANOTHER TEAM (YN)"
+
+    Do
+        Locate 7, (80 - Len(U$)) / 2
+        Print U$
+        I$ = GetKeyPress$
+    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+    If UCase$(I$) = "N" Then
+        doneDrafting = 1
+    End If
 
 End Sub
+
+
+'----------------------------------------
+'       SaveTeamDraft Subroutine
+'----------------------------------------
+'...explanation...
+Sub SaveTeamDraft (draftNew, yearNumber$, teamIdx)
+
+    Shared draftB%(), draftL%(), draftT%()
+
+    Shared draftAA$(), draftB$()
+
+    teamYear$ = RTrim$(yearNumber$)
+
+    Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
+
+    fileLength& = LOF(1)
+
+    If draftNew = 1 Then teamIdx = fileLength& / 1031 + 1
+
+    Field #1, 15 As Q$(0), 15 As Q$(1)
+
+    For I = 0 To 6
+        Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+    Next
+
+    Field #1, 44 As X$, 2 As Q$(9)
+
+    For I = 0 To 34
+        Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+    Next
+
+    For I = 0 To 14
+
+        Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+
+        For I1 = 0 To 19
+            Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+        Next
+
+    Next
+
+    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+
+    LSet Q$(0) = draftAA$(0, 0)
+    LSet Q$(1) = draftAA$(0, 1)
+
+    For I = 0 To 6: LSet Q$(I + 2) = MKI$(draftL%(0, I)): Next
+
+    LSet Q$(9) = MKI$(999)
+
+    For I = 0 To 34: LSet Q$(I + 10) = MKI$(draftT%(0, I)): Next
+
+    For I = 0 To 14
+
+        LSet Q$(22 * I + 45) = draftB$(0, I, 0)
+
+        LSet Q$(22 * I + 46) = draftB$(0, I, 1)
+
+        For I1 = 0 To 19
+            LSet Q$(22 * I + 47 + I1) = MKI$(draftB%(0, I, I1))
+        Next
+
+    Next
+
+    LSet Q$(375) = draftAA$(0, 2)
+    LSet Q$(376) = draftAA$(0, 3)
+    LSet Q$(377) = draftAA$(0, 4)
+
+    Put #1, teamIdx
+
+    Close 1
+
+End Sub
+
 
 '----------------------------------------
 '   SelectTeam_Draft SubRoutine
@@ -730,7 +815,7 @@ Sub SelectTeam_Draft (numberTeams)
 
         teamIdx = teamIndex%(Selection%)
 
-		teamYear$ = draftYN$(1)
+        teamYear$ = draftYN$(1)
 
         Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
 
@@ -785,3 +870,4 @@ Sub SelectTeam_Draft (numberTeams)
     End If
 
 End Sub
+

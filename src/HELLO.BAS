@@ -275,6 +275,8 @@ Sub Main_Menu (menuSelection%)
 
     Do
 
+        _Title "Basketball: The Pro Game - Menu"
+
         Cls
 
         Call TITLE
@@ -558,8 +560,8 @@ Sub Leaders_Menu ()
                 Case 1: Call CREATE
                 Case 2: Call LEAGCMPL
                 Case 3: Call SEELEAG
-                Case 4: Call HD2HD
-                Case 5: Call REC
+                Case 4: Call HD2HDPRO
+                Case 5: Call RecordsMenu
                 Case 6: Call NEWLDR
                 Case 7: Call BLANK
                 Case 8: Cls
@@ -587,7 +589,7 @@ End Sub
 '$INCLUDE: 'CREATE.BAS'
 '$INCLUDE: 'DRAFT.BAS'
 '$INCLUDE: 'GPMIN.BAS'
-'$INCLUDE: 'HD2HD.BAS'
+'$INCLUDE: 'HD2HDPRO.BAS'
 '$INCLUDE: 'LEAGCMPL.BAS'
 '$INCLUDE: 'LOOKY.BAS'
 '$INCLUDE: 'MERGE.BAS'

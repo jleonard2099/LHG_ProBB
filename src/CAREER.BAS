@@ -136,9 +136,11 @@ Sub CreateCareerFile ()
 
                     If Not _FileExists(diskPaths$(1) + Z1$) Then
                         Cls
-                        Color 7: Print "UNABLE TO LOCATE STAT FILE . . . PLEASE RE-ENTER"
-                        Print
-                        Line Input "HIT ENTER TO CONTINUE"; DUMMY$
+                        Locate 10, 18
+                        Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+                        I$ = GetKeyPress$
+                        Call CSMsgBox("", 0, Pass)
+                        Color , 0
                     Else
                         test$ = Z1$
                         'Read in the stat file Z1$ to arrays
@@ -384,9 +386,17 @@ Sub AddYear (selectedFile$, statFile$)
         Next N
         Close #2
 
-        Locate 20, 20: Color 15: Print "MERGING CAREER STATS . . . . PLEASE WAIT"
+        Locate 20, 20
+        Color 15: Print "MERGING CAREER STATS . . . . PLEASE WAIT"
 
-        If _FileExists(diskPaths$(1) + statFile$) Then
+        If Not (_FileExists(diskPaths$(1) + statFile$)) Then
+            Cls
+            Locate 10, 18
+            Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+            I$ = GetKeyPress$
+            Call CSMsgBox("", 0, Pass)
+            Color , 0
+        Else
 
             Open diskPaths$(1) + statFile$ For Input As #1
             Input #1, B$
@@ -475,12 +485,6 @@ Sub AddYear (selectedFile$, statFile$)
                 Next I
             Next N
             Close #2
-
-        Else
-            Cls
-            Color 7: Print "UNABLE TO LOCATE STAT FILE . . . PLEASE RE-ENTER"
-            Print
-            Line Input "HIT ENTER TO CONTINUE"; DUMMY$
 
         End If 'Done checking file exists
 
@@ -745,7 +749,9 @@ Sub ViewCareerRecords ()
                                 Color 3: Print "DEFENSIVE REBOUNDS";: Color 7: Print Tab(32); Using "#####"; BL!(12);: Print Tab(47); BL$(12);: Print Tab(66); BLYR!(12)
                                 Color 3: Print "TOTAL REBOUNDS";: Color 7: Print Tab(32); Using "#####"; BL!(13);: Print Tab(47); BL$(13);: Print Tab(66); BLYR!(13)
                                 Color 3: Print "REBOUNDS PER GAME";: Color 7: Print Tab(32); Using "###.#"; BL!(14);: Print Tab(47); BL$(14);: Print Tab(66); BLYR!(14)
-                                Color 15: Locate 22: Print "HIT ANY KEY TO CONTINUE"
+
+                                Color 15
+                                Locate 22: Print "HIT ANY KEY TO CONTINUE"
                                 A$ = GetKeyPress$
 
                                 Cls

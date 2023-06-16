@@ -1,6 +1,4 @@
 
-DefInt A-Z
-
 Declare Sub ADJFOUL ()
 Declare Sub BADFT ()
 Declare Sub BOGUS (X)

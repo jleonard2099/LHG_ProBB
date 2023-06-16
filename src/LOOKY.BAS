@@ -282,9 +282,9 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
     Color 14, 1
 
     Print Tab(80);
-    Ycoord = Len(teamName$)
-    Ycoord = Int((80 - Ycoord) / 2)
-    Locate , Ycoord
+    Xcoord = Len(teamName$)
+    Xcoord = Int((80 - Xcoord) / 2)
+    Locate , Xcoord
     Print teamName$
 
     Locate 25, 1: Print Tab(80);
@@ -408,9 +408,9 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%)
     Color 14, 1
 
     Print Tab(80);
-    Ycoord = Len(teamName$)
-    Ycoord = Int((80 - Ycoord) / 2)
-    Locate , Ycoord
+    Xcoord = Len(teamName$)
+    Xcoord = Int((80 - Xcoord) / 2)
+    Locate , Xcoord
     Print teamName$
 
     Locate 25, 1: Print Tab(80);
