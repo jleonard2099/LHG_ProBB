@@ -1,7 +1,8 @@
 Sub SEELEAG ()
 
-    Shared O1!(), O2!()
+    _Title "Basketball: The Pro Game - View League Stats"
 
+    Shared O1!(), O2!()
     Shared DL!(), OL!()
     Shared statZ!(), statZ1!()
 
@@ -10,9 +11,7 @@ Sub SEELEAG ()
 
     Shared LG$, div1$, div2$, div3$, div4$
 
-    _Title "Basketball: The Pro Game - View League"
-
-    H$ = " 1/2"
+    Cls
 
     Spec$ = diskPaths$(1) + "*.LDR"
     Count% = FCount%(Spec$)
@@ -23,11 +22,15 @@ Sub SEELEAG ()
         I$ = GetKeyPress$
         Call CSMsgBox("", 0, Pass)
     Else
+
         ReDim leagueLeaderFiles$(0 To Count%)
+
         For X = 1 To Count%
             leagueLeaderFiles$(X) = Space$(12)
         Next
+
         leagueLeaderFiles$(0) = Spec$
+
         Call ReadFile(leagueLeaderFiles$())
 
         Do
@@ -72,182 +75,235 @@ Sub SEELEAG ()
 
                 If UCase$(I$) = "N" Then
 
+                    targetFile$ = RTrim$(targetFile$)
                     WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-                    WE$ = Left$(WE$, 8)
+                    targetFile$ = Left$(WE$, 8)
 
-                    Open diskPaths$(1) + WE$ + ".TMS" For Input As #2
-                    Input #2, FF$, div1$, div2$, div3$, div4$
-                    Close 2
-
-                    div1$ = PadRight$(div1$, 8)
-                    div2$ = PadRight$(div2$, 8)
-                    div3$ = PadRight$(div3$, 8)
-                    div4$ = PadRight$(div4$, 8)
-
-                    Cls
-                    Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
-
-                    Open diskPaths$(1) + WE$ + ".LDR" For Input As #2
-
-                    For X = 1 To TEAMS_PER_CONFERENCE
-                        Input #2, leagT$(X), O1!(X), O2!(X)
-                    Next
-
-                    For X = 1 To 250
-                        Input #2, Z2$(X), Z3$(X), statZ!(X), statZ1!(X)
-                    Next
-
-                    For X = 1 To TEAMS_PER_CONFERENCE
-                        Input #2, OL$(X)
-                        For M = 1 To 20
-                            Input #2, OL!(X, M)
-                        Next
-                    Next
-
-                    For X = 1 To TEAMS_PER_CONFERENCE
-                        Input #2, DL$(X)
-                        For M = 1 To 20
-                            Input #2, DL!(X, M)
-                        Next
-                    Next
-                    Close #2
-
-                    Do
-                        Cls
-                        Call TITLE_STATS
-
-						Do
-							J = 5
-
-							Locate 8, 8
-
-							Color 15, 1
-							
-							Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-							For II = 1 To J
-								Locate 8 + II, 8
-								Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-							Next
-
-							Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-							
-							Locate 10
-							Color 7, 1
-							
-							Locate , 30: Print "STATS TO ";
-							Color 15: Print "S";: Color 7: Print "CREEN"
-
-							Locate , 30: Print "STATS TO ";
-							Color 15: Print "P";: Color 7: Print "RINTER"
-
-							Locate , 30: Print "STATS TO ";
-							Color 15: Print "F";: Color 7: Print "ILE"
-
-							I$ = GetKeyPress$
-							Color 14, 0
-
-						Loop Until UCase$(I$) = "S" Or UCase$(I$) = "P" Or UCase$(I$) = "F" Or I$ = Chr$(27)
-
-						If I$ <> Chr$(27) Then
-
-							Select Case UCase$(I$)
-								Case "P":
-									Call SavePrintLeagueStats(SF$, 0)
-
-								Case "F":
-									Do
-										Color 15, 0
-										Cls
-
-										JJ = 7
-
-										Locate 6, 8
-
-										Color 15, 1
-
-										Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-										
-										For II = 1 To JJ: 
-											Locate 6 + II, 8
-											Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-										Next
-
-										Locate 7 + JJ, 8
-										Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-										Locate 7, 32
-										Locate , 12: Print "ENTER NAME FOR FILE: ": Print
-										Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
-										Locate , 12: Print "SPACES. DO NOT ADD A FILE EXTENSION, THE PROGRAM"
-										Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
-										Locate 7, 37: Input SF$
-
-										If SF$ <> "" Then
-											Locate 13, 12: Print "ANY CHANGE (YN) "
-											I$ = GetKeyPress$
-										End If
-
-									Loop Until UCase$(I$) = "N" And SF$ <> ""
-
-									Color 15, 0
-									Call SavePrintLeagueStats(SF$, 1)
-
-								Case "S":
-
-									Call LeagueStatsToScreen
-
-									Color 15, 0
-									Cls
-
-									JJ = 4
-
-									Locate 6, 8
-
-									Color 15, 1
-
-									Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
-
-									For II = 1 To JJ: 
-										Locate 6 + II, 8
-										Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-									Next
-
-									Locate 7 + JJ, 8
-
-									Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
-
-									Do
-										Color 15, 1
-										Locate 8
-										U$ = "VIEW LEAGUE STATS AGAIN (YN)"
-										Locate , (80 - Len(U$)) / 2
-										Print U$
-										Color 15, 0
-										A$ = GetKeyPress$
-									Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
-
-							End Select
-
-						End If
-
-                    Loop Until UCase$(A$) = "N" Or A$ = Chr$(27) Or I$ = Chr$(27) 
+                    Call LoadLeaderFiles_Pro(targetFile$)
+                    Call StatOptions
 
                 End If 'End checking if we are viewing stats again
 
             End If 'Done checking for ESC
 
-        Loop Until UCase$(I$) = "N" Or ExitCode% = 27 Or I$ = Chr$(27) 
+        Loop Until UCase$(I$) = "N" Or ExitCode% = 27 Or I$ = Chr$(27)
 
-    End If 'End checking for files
+    End If 'Done checking file count
 
 End Sub
 
+
 '----------------------------------------
-'     LeagueStatsToScreen Subroutine
+'     LoadLeaderFiles_Pro Subroutine
+'----------------------------------------
+'...explanation...
+Sub LoadLeaderFiles_Pro (targetFile$)
+
+    Shared O1!(), O2!()
+    Shared DL!(), OL!()
+    Shared statZ!(), statZ1!()
+
+    Shared DL$(), OL$()
+    Shared leagT$(), Z2$(), Z3$()
+
+    Shared LG$, div1$, div2$, div3$, div4$
+
+    Open diskPaths$(1) + targetFile$ + ".TMS" For Input As #2
+
+    Input #2, LG$, div1$, div2$, div3$, div4$
+
+    Close 2
+
+    div1$ = PadRight$(div1$, 8)
+    div2$ = PadRight$(div2$, 8)
+    div3$ = PadRight$(div3$, 8)
+    div4$ = PadRight$(div4$, 8)
+
+    Cls
+    Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
+
+    Open diskPaths$(1) + targetFile$ + ".LDR" For Input As #2
+
+    For X = 1 To TEAMS_PER_CONFERENCE
+        Input #2, leagT$(X), O1!(X), O2!(X)
+    Next
+
+    For X = 1 To 250
+        Input #2, Z2$(X), Z3$(X), statZ!(X), statZ1!(X)
+    Next
+
+    For X = 1 To TEAMS_PER_CONFERENCE
+        Input #2, OL$(X)
+        For M = 1 To 20
+            Input #2, OL!(X, M)
+        Next
+    Next
+
+    For X = 1 To TEAMS_PER_CONFERENCE
+        Input #2, DL$(X)
+        For M = 1 To 20
+            Input #2, DL!(X, M)
+        Next
+    Next
+
+    Close #2
+
+
+End Sub
+
+
+'----------------------------------------
+'          StatOptions Subroutine
+'----------------------------------------
+'...explanation...
+Sub StatOptions ()
+
+    Do
+
+        Cls
+        Call TITLE_STATS
+
+        J = 5
+
+        Locate 8, 8: Color 15, 1
+
+        'Print box top
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+        'Print box sides
+        For II = 1 To J
+            Locate 8 + II, 8
+            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+        Next
+
+        'Print box bottom
+        Locate 9 + J, 8
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+        Locate 7, 32
+
+        Do
+
+            Locate 10, 15
+            Color 7, 1
+
+            Locate , 30: Print "STATS TO ";
+            Color 15: Print "S";: Color 7: Print "CREEN"
+
+            Locate , 30: Print "STATS TO ";
+            Color 15: Print "P";: Color 7: Print "RINTER"
+
+            Locate , 30: Print "STATS TO ";
+            Color 15: Print "F";: Color 7: Print "ILE"
+
+            I$ = GetKeyPress$
+            Color 14, 0
+
+        Loop Until UCase$(I$) = "S" Or UCase$(I$) = "P" Or UCase$(I$) = "F" Or I$ = Chr$(27)
+
+        If I$ <> Chr$(27) Then
+
+            Select Case UCase$(I$)
+
+                Case "F":
+                    Call ReportFilePrompt_League(SF$)
+                    Call SavePrintLeagueLeaders(SF$, 1)
+
+                Case "P":
+                    Call SavePrintLeagueLeaders(SF$, 0)
+
+                Case "S":
+                    Call LeaderStats_Screen
+
+            End Select
+
+            Color 15, 0
+            Cls
+
+            JJ = 4
+
+            Locate 6, 8
+            Color 15, 1
+
+            Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
+
+            For II = 1 To JJ:
+                Locate 6 + II, 8
+                Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+            Next
+
+            Locate 7 + JJ, 8
+
+            Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
+
+            Do
+                Color 15, 1
+                Locate 8
+                U$ = "VIEW LEAGUE STATS AGAIN (YN)"
+                Locate , (80 - Len(U$)) / 2
+                Print U$
+                Color 15, 0
+                A$ = GetKeyPress$
+            Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
+
+        End If
+
+    Loop Until UCase$(A$) = "N" Or A$ = Chr$(27)
+
+End Sub
+
+
+'----------------------------------------
+'   ReportFilePrompt_League Subroutine
+'----------------------------------------
+'...explanation...
+Sub ReportFilePrompt_League (reportFile$)
+
+    Do
+
+        Color 15, 0
+        Cls
+
+        JJ = 7
+
+        Locate 6, 8
+
+        Color 15, 1
+
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+        For II = 1 To JJ:
+            Locate 6 + II, 8
+            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+        Next
+
+        Locate 7 + JJ, 8
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+        Locate 7, 32
+        Locate , 12: Print "ENTER NAME FOR FILE: ": Print
+        Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
+        Locate , 12: Print "SPACES. DO NOT ADD A FILE EXTENSION, THE PROGRAM"
+        Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
+        Locate 7, 37: Input reportFile$
+
+        If reportFile$ <> "" Then
+            Locate 13, 12: Print "ANY CHANGE (YN) "
+            I$ = GetKeyPress$
+        End If
+
+    Loop Until UCase$(I$) = "N" And reportFile$ <> ""
+
+    Color 15, 0
+
+End Sub
+
+
+'----------------------------------------
+'     LeaderStats_Screen Subroutine
 '----------------------------------------
 '... explain here ...
-Sub LeagueStatsToScreen ()
+Sub LeaderStats_Screen ()
 
     Shared O1!(), O2!()
 
@@ -259,21 +315,25 @@ Sub LeagueStatsToScreen ()
 
     Shared LG$, div1$, div2$, div3$, div4$
 
+    Color 15, 0
     Cls
-    
-	Color 12
-	Print "                        "; LG$; " LEAGUE STANDINGS"
+
+    Color 12
+    Print "                        "; LG$; " LEAGUE STANDINGS"
     Print
+
     Color 14
-	Print "    "; div1$; " DIVISION"
+    Print "    "; div1$; " DIVISION"
     Print
+
     Color 2
-	Print "                   W    L     PCT   GB"
+    Print "                   W    L     PCT   GB"
     Color 15
 
     For P = 1 To 10
 
         If leagT$(P) <> "" And leagT$(P) <> "*" Then
+
             D1 = O1!(1) - O2!(1)
             D = O1!(P) - O2!(P)
             D = D1 - D
@@ -290,29 +350,36 @@ Sub LeagueStatsToScreen ()
 
             Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
             Print BK$
+
         End If
 
     Next P
 
-    HZ = 1
-    VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
     Cls
 
     Color 12
-	Print "                        "; LG$; " LEAGUE STANDINGS"
+    Print "                        "; LG$; " LEAGUE STANDINGS"
     Print
+
     Color 14
-	Print "    "; div2$; " DIVISION"
+    Print "    "; div2$; " DIVISION"
     Print
+
     Color 2
-	Print "                   W    L     PCT   GB"
+    Print "                   W    L     PCT   GB"
     Color 15
 
     For P = 11 To 20
+
         If leagT$(P) <> "" And leagT$(P) <> "*" Then
+
             D1 = O1!(11) - O2!(11)
             D = O1!(P) - O2!(P)
             D = D1 - D
@@ -329,24 +396,30 @@ Sub LeagueStatsToScreen ()
 
             Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
             Print BK$
+
         End If
+
     Next P
 
-    HZ = 1
-    VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
     Cls
 
     Color 12
-	Print "                        "; LG$; " LEAGUE STANDINGS"
+    Print "                        "; LG$; " LEAGUE STANDINGS"
     Print
+
     Color 14
-	Print "    "; div3$; " DIVISION"
+    Print "    "; div3$; " DIVISION"
     Print
+
     Color 2
-	Print "                   W    L     PCT   GB"
+    Print "                   W    L     PCT   GB"
     Color 15
 
     For P = 21 To 30
@@ -360,7 +433,6 @@ Sub LeagueStatsToScreen ()
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-
             'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
             PCT! = O1!(P) / (O1!(P) + O2!(P))
 
@@ -370,20 +442,25 @@ Sub LeagueStatsToScreen ()
         End If
     Next P
 
-    HZ = 1
-    VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
     Cls
+
     Color 12
-	Print "                        "; LG$; " LEAGUE STANDINGS"
+    Print "                        "; LG$; " LEAGUE STANDINGS"
     Print
+
     Color 14
-	Print "    "; div4$; " DIVISION"
+    Print "    "; div4$; " DIVISION"
     Print
+
     Color 2
-	Print "                   W    L     PCT   GB"
+    Print "                   W    L     PCT   GB"
     Color 15
 
     For P = 31 To 40
@@ -406,14 +483,16 @@ Sub LeagueStatsToScreen ()
         End If
     Next P
 
-    HZ = 1
-    VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
     Cls
-    
-	Color 14
+
+    Color 14
     Print "FIELD GOAL % (MIN 5 FGA/G)"
     Print "                            PCT   FGA"
     Color 15
@@ -421,36 +500,41 @@ Sub LeagueStatsToScreen ()
     For P = 41 To 60
         If Z2$(P) <> "*" And Z2$(P) <> "" Then
             Print Left$(Z2$(P), 10) + ", " + Z3$(P);
-			Locate , 28
+            Locate , 28
             Print Using "##.#  ####"; statZ!(P) * 100; statZ1!(P)
         End If
     Next
 
-	Color 14
+    Color 14
     Locate 1, 41
-	Print "FREE THROW % (MIN 2 FTA/G)"
-	Locate , 41
-	Print "                            PCT   FTA"
+    Print "FREE THROW % (MIN 2 FTA/G)"
+    Locate , 41
+    Print "                            PCT   FTA"
     Color 15
 
     For P = 61 To 80
+
         If Z2$(P) <> "*" And Z2$(P) <> "" Then
             Locate , 41
-			Print Left$(Z2$(P), 10) + ", " + Z3$(P);
-			Locate , 68
+            Print Left$(Z2$(P), 10) + ", " + Z3$(P);
+            Locate , 68
             Print Using "##.#  ####"; statZ!(P) * 100; statZ1!(P)
         End If
+
     Next
 
-    HZ = 1
-    VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
     Cls
 
-    Color 14: Print "SCORING"
-    Color 14: Print "                                PTS/G"
+    Color 14
+    Print "SCORING"
+    Print "                                PTS/G"
     Color 15
 
     For P = 1 To 20
@@ -462,9 +546,9 @@ Sub LeagueStatsToScreen ()
 
     Color 14
     Locate 1, 41
-	Print "TOTAL POINTS"
+    Print "TOTAL POINTS"
     Locate , 41
-	Print "                                  PTS"
+    Print "                                  PTS"
     Color 15
 
     For P = 21 To 40
@@ -474,15 +558,17 @@ Sub LeagueStatsToScreen ()
         End If
     Next
 
-    HZ = 1
-    VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
     Cls
 
     Color 14
-	Print "STEALS PER GAME"
+    Print "STEALS PER GAME"
     Color 15
 
     For P = 81 To 90
@@ -493,8 +579,8 @@ Sub LeagueStatsToScreen ()
     Next
 
     Locate 1, 41
-	Color 14
-	Print "STEALS"
+    Color 14
+    Print "STEALS"
     Color 15
 
     For P = 91 To 100
@@ -505,8 +591,8 @@ Sub LeagueStatsToScreen ()
     Next
 
     Locate 13
-	Color 14
-	Print "ASSISTS PER GAME"
+    Color 14
+    Print "ASSISTS PER GAME"
     Color 15
 
     For P = 101 To 110
@@ -517,8 +603,8 @@ Sub LeagueStatsToScreen ()
     Next
 
     Locate 13, 41
-	Color 14
-	Print "ASSISTS"
+    Color 14
+    Print "ASSISTS"
     Color 15
 
     For P = 111 To 120
@@ -528,16 +614,19 @@ Sub LeagueStatsToScreen ()
         End If
     Next
 
-    HZ = 1
-    VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
     Cls
 
     Color 14
-	Print "THREE FIELD GOAL%"
+    Print "THREE FIELD GOAL%"
     Color 15
+
     For P = 121 To 130
         If Z2$(P) <> "" Then
             Print Z2$(P) + ", " + Z3$(P);
@@ -547,7 +636,7 @@ Sub LeagueStatsToScreen ()
 
     Locate 1, 41
     Color 14
-	Print "MINUTES PER GAME"
+    Print "MINUTES PER GAME"
     Color 15
 
     For P = 141 To 150
@@ -559,7 +648,7 @@ Sub LeagueStatsToScreen ()
 
     Locate 13
     Color 14
-	Print "THREE POINT FIELD GOALS MADE"
+    Print "THREE POINT FIELD GOALS MADE"
     Color 15
 
     For P = 131 To 140
@@ -571,7 +660,7 @@ Sub LeagueStatsToScreen ()
 
     Locate 13, 41
     Color 14
-	Print "TOTAL MINUTES"
+    Print "TOTAL MINUTES"
     Color 15
 
     For P = 151 To 160
@@ -581,15 +670,17 @@ Sub LeagueStatsToScreen ()
         End If
     Next
 
-    HZ = 1
-    VT = 24
-    Locate VT, HZ: Print Space$(27);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
     Cls
 
     Color 14
-	Print "REBOUNDS PER GAME   "
+    Print "REBOUNDS PER GAME   "
     Color 15
 
     For P = 161 To 170
@@ -600,8 +691,8 @@ Sub LeagueStatsToScreen ()
     Next
 
     Locate 1, 41
-	Color 14
-	Print "REBOUNDS"
+    Color 14
+    Print "REBOUNDS"
     Color 15
 
     For P = 171 To 180
@@ -612,8 +703,8 @@ Sub LeagueStatsToScreen ()
     Next
 
     Locate 13
-	Color 14
-	Print "BLOCKS PER GAME"
+    Color 14
+    Print "BLOCKS PER GAME"
     Color 15
 
     For P = 181 To 190
@@ -624,8 +715,8 @@ Sub LeagueStatsToScreen ()
     Next
 
     Locate 13, 41
-	Color 14
-	Print "BLOCKS"
+    Color 14
+    Print "BLOCKS"
     Color 15
 
     For P = 191 To 200
@@ -635,14 +726,16 @@ Sub LeagueStatsToScreen ()
         End If
     Next
 
-    HZ = 1
-    VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
     Cls
     Color 14
-	Print "FIELD GOALS MADE "
+    Print "FIELD GOALS MADE "
     Color 15
 
     For P = 201 To 210
@@ -654,7 +747,7 @@ Sub LeagueStatsToScreen ()
 
     Locate 1, 41
     Color 14
-	Print "FREE THROWS MADE"
+    Print "FREE THROWS MADE"
     Color 15
 
     For P = 211 To 220
@@ -666,7 +759,7 @@ Sub LeagueStatsToScreen ()
 
     Locate 13
     Color 14
-	Print "FOULS PER GAME"
+    Print "FOULS PER GAME"
     Color 15
 
     For P = 221 To 230
@@ -677,8 +770,8 @@ Sub LeagueStatsToScreen ()
     Next
 
     Locate 13, 41
-	Color 14
-	Print "FOULS"
+    Color 14
+    Print "FOULS"
     Color 15
 
     For P = 231 To 240
@@ -688,15 +781,17 @@ Sub LeagueStatsToScreen ()
         End If
     Next
 
-    HZ = 1
-    VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
     Cls
 
     Color 14
-	Print "MOST VALUABLE PLAYER POINTS"
+    Print "MOST VALUABLE PLAYER POINTS"
     Color 15
 
     For P = 241 To 250
@@ -706,68 +801,72 @@ Sub LeagueStatsToScreen ()
         End If
     Next
 
-    HZ = 1
-    VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
     Cls
 
     Color 12
-	Print "                         OFFENSIVE TOTALS"
+    Print "                         OFFENSIVE TOTALS"
     Color 14
-	Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 1 To 20
 
         If Not (OL$(X) = "" Or OL$(X) = "*" Or OL$(X) = " ") Then
-			'Team
+            'Team
             Print Left$(OL$(X), 11); Tab(13);
-			'G
+            'G
             Print Using "##"; OL!(X, 16);: Print Tab(16);
-			'FGA
+            'FGA
             Print Using "####"; OL!(X, 2);: Print Tab(21);
-			'FGM
+            'FGM
             Print Using "####"; OL!(X, 3);: Print Tab(26);
-			'FG PCT
+            'FG PCT
             Print Using ".###"; OL!(X, 17);: Print Tab(31);
-			'FTA / FTM / FT PCT
+            'FTA / FTM / FT PCT
 
-			'FTA / FTM are currently swapped, making FT PCT inaccurate
-			'B/c calculations are on the fly, did we read into the wrong spots?
+            'FTA / FTM are currently swapped, making FT PCT inaccurate
+            'B/c calculations are on the fly, did we read into the wrong spots?
             Print Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);: Print Tab(46);
 
-			'REB
+            'REB
             Print Using "####"; OL!(X, 6);: Print Tab(51);
-			'AST
+            'AST
             Print Using "####"; OL!(X, 9);: Print Tab(56);
-			'PF
+            'PF
             Print Using "####"; OL!(X, 7);: Print Tab(61);
-			'STL
+            'STL
             Print Using "###"; OL!(X, 8);: Print Tab(65);
-			'BLK
+            'BLK
             Print Using "###"; OL!(X, 10);: Print Tab(69);
-			'PTS
+            'PTS
             Print Using "#####"; OL!(X, 20);: Print Tab(75);
-			'AVG
+            'AVG
             Print Using "###.#"; OL!(X, 19)
 
         End If
 
     Next
 
-    HZ = 1
-    VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
     Cls
 
     Color 12
-	Print "                      OFFENSIVE TOTALS (cont)"
+    Print "                      OFFENSIVE TOTALS (cont)"
     Color 14
-	Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 21 To 40
@@ -778,7 +877,6 @@ Sub LeagueStatsToScreen ()
             Print Using "####"; OL!(X, 3);: Print Tab(26);
             Print Using ".###"; OL!(X, 17);: Print Tab(31);
             Print Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);: Print Tab(46);
-            Print Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);: Print Tab(46);
             Print Using "####"; OL!(X, 6);: Print Tab(51);
             Print Using "####"; OL!(X, 9);: Print Tab(56);
             Print Using "####"; OL!(X, 7);: Print Tab(61);
@@ -789,62 +887,66 @@ Sub LeagueStatsToScreen ()
         End If
     Next
 
-    HZ = 1
-    VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
     Cls
 
     Color 12
-	Print "                         DEFENSIVE TOTALS"
+    Print "                         DEFENSIVE TOTALS"
     Color 14
-	Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 1 To 20
 
         If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
-			'Team
+            'Team
             Print Left$(DL$(X), 11); Tab(13);
-			'Games
+            'Games
             Print Using "##"; DL!(X, 16);: Print Tab(16);
-			'FGA
+            'FGA
             Print Using "####"; DL!(X, 2);: Print Tab(21);
-			'FGM
+            'FGM
             Print Using "####"; DL!(X, 3);: Print Tab(26);
-			'FG PCT
+            'FG PCT
             Print Using ".###"; DL!(X, 17);: Print Tab(31);
-			'FTA / FTM / FT PCT
+            'FTA / FTM / FT PCT
             Print Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);: Print Tab(46);
-			'REB / AST
+            'REB / AST
             Print Using "#### ####"; DL!(X, 6); DL!(X, 9);: Print Tab(56);
-			'PF
+            'PF
             Print Using "####"; DL!(X, 7);: Print Tab(61);
-			'STL
+            'STL
             Print Using "###"; DL!(X, 8);: Print Tab(65);
-			'BLK
+            'BLK
             Print Using "###"; DL!(X, 10);: Print Tab(69);
-			'PTS
+            'PTS
             Print Using "#####"; DL!(X, 20);: Print Tab(75);
-			'AVG
+            'AVG
             Print Using "###.#"; DL!(X, 19)
 
         End If
 
     Next
 
-    HZ = 1
-    VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
     Cls
 
     Color 12
-	Print "                      DEFENSIVE TOTALS (cont)"
+    Print "                      DEFENSIVE TOTALS (cont)"
     Color 14
-	Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 21 To 40
@@ -857,46 +959,49 @@ Sub LeagueStatsToScreen ()
         End If
     Next
 
-    HZ = 1
-    VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
 End Sub
 
 '----------------------------------------
-'     SavePrintLeagueStats Subroutine
+'    SavePrintLeagueLeaders Subroutine
 '----------------------------------------
 'Destination
 '   = 1 is File
 '   <> 1 is Printer (creates file and prints it)
-Sub SavePrintLeagueStats (statFile$, destination)
+Sub SavePrintLeagueLeaders (statFile$, destination)
 
     Shared O1!(), O2!()
     Shared DL!(), OL!()
     Shared statZ!(), statZ1!()
 
     Shared OL$(), DL$(), leagT$()
-	Shared Z2$(), Z3$()
+    Shared Z2$(), Z3$()
 
     Shared LG$, div1$, div2$, div3$, div4$
 
-    'Save Report File
-    Cls
-	
     If destination <> 1 Then
         Open "REPORT" For Output As #2
     Else
         Open statFile$ + ".RPT" For Output As #2
     End If
 
+    Color 0, 15
+    Cls
+
     Print #2, "                        "; LG$; " LEAGUE STANDINGS"
     Print #2,
     Print #2, "    "; div1$; " DIVISION"
     Print #2,
     Print #2, "                   W    L     PCT   GB"
-	
+
     For P = 1 To 10
+
         If leagT$(P) <> "" And leagT$(P) <> "*" Then
             D1 = O1!(1) - O2!(1)
             D = O1!(P) - O2!(P)
@@ -906,11 +1011,14 @@ Sub SavePrintLeagueStats (statFile$, destination)
             If D = 1 Then BK$ = "     "
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
+
             PCT! = O1!(P) / (O1!(P) + O2!(P))
+
             Print #2, "    "; leagT$(P); Tab(16);
-			Print #2, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+            Print #2, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
             Print #2, BK$
         End If
+
     Next P
 
     Print #2,
@@ -919,6 +1027,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
     Print #2, "                   W    L     PCT   GB"
 
     For P = 11 To 20
+
         If leagT$(P) <> "" And leagT$(P) <> "*" Then
             D1 = O1!(11) - O2!(11)
             D = O1!(P) - O2!(P)
@@ -928,18 +1037,23 @@ Sub SavePrintLeagueStats (statFile$, destination)
             If D = 1 Then BK$ = "     "
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
-            Print #2, "    "; leagT$(P); Tab(16);
+
             PCT! = O1!(P) / (O1!(P) + O2!(P))
+
+            Print #2, "    "; leagT$(P); Tab(16);
             Print #2, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
             Print #2, BK$
         End If
+
     Next P
 
     Print #2,
     Print #2, "    "; div3$; " DIVISION"
     Print #2,
     Print #2, "                   W    L     PCT   GB"
+
     For P = 21 To 30
+
         If leagT$(P) <> "" And leagT$(P) <> "*" Then
             D1 = O1!(21) - O2!(21)
             D = O1!(P) - O2!(P)
@@ -949,10 +1063,15 @@ Sub SavePrintLeagueStats (statFile$, destination)
             If D = 1 Then BK$ = "     "
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
+
             PCT! = O1!(P) / (O1!(P) + O2!(P))
-            Print #2, "    "; leagT$(P); Tab(16);: Print #2, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+
+            Print #2, "    "; leagT$(P); Tab(16);
+            Print #2, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
             Print #2, BK$
+
         End If
+
     Next P
 
     Print #2,
@@ -961,6 +1080,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
     Print #2, "                   W    L     PCT   GB"
 
     For P = 31 To 40
+
         If leagT$(P) <> "" And leagT$(P) <> "*" Then
             D1 = O1!(31) - O2!(31)
             D = O1!(P) - O2!(P)
@@ -970,11 +1090,14 @@ Sub SavePrintLeagueStats (statFile$, destination)
             If D = 1 Then BK$ = "     "
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
-            Print #2, "    "; leagT$(P); Tab(16);
+
             PCT! = O1!(P) / (O1!(P) + O2!(P))
+
+            Print #2, "    "; leagT$(P); Tab(16);
             Print #2, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
             Print #2, BK$
         End If
+
     Next P
 
     Print #2, Chr$(12)
@@ -983,6 +1106,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
     Print #2, "                            PCT   FGA"; Tab(41); "                            PCT   FTA"
 
     For P = 41 To 60
+
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -991,6 +1115,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Using "##.#  ####"; statZ!(P) * 100; statZ1!(P);
             Print #2, Tab(41);
         End If
+
         If Z2$(P + 20) = "" Then
             Print #2,
         Else
@@ -1005,6 +1130,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
     Print #2, "SCORING"; Tab(41); "TOTAL POINTS"
 
     For P = 1 To 20
+
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -1013,6 +1139,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Using "###.#"; statZ!(P);
             Print #2, Tab(41);
         End If
+
         If Z2$(P + 20) = "" Then
             Print #2,
         Else
@@ -1020,12 +1147,14 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Tab(74);
             Print #2, Using "####"; statZ!(P + 20)
         End If
+
     Next
 
     Print #2, Chr$(12)
     Print #2, "STEALS PER GAME"; Tab(41); "STEALS"
 
     For P = 81 To 90
+
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -1034,6 +1163,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Using "###.#"; statZ!(P);
             Print #2, Tab(41);
         End If
+
         If Z2$(P + 10) = "" Then
             Print #2,
         Else
@@ -1041,12 +1171,14 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Tab(74);
             Print #2, Using "####"; statZ!(P + 10)
         End If
+
     Next
 
     Print #2,
     Print #2, "ASSISTS PER GAME"; Tab(41); "ASSISTS"
 
     For P = 101 To 110
+
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -1055,6 +1187,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Using "###.#"; statZ!(P);
             Print #2, Tab(41);
         End If
+
         If Z2$(P + 10) = "" Then
             Print #2,
         Else
@@ -1062,12 +1195,14 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Tab(74);
             Print #2, Using "####"; statZ!(P + 10)
         End If
+
     Next
 
     Print #2,
     Print #2, "THREE FIELD GOAL %"; Tab(41); "MINUTES PER GAME"
 
     For P = 121 To 130
+
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -1076,6 +1211,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Using "###.#"; statZ!(P) * 100;
             Print #2, Tab(41);
         End If
+
         If Z2$(P + 20) = "" Then
             Print #2,
         Else
@@ -1083,12 +1219,14 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Tab(74);
             Print #2, Using "###.#"; statZ!(P + 20)
         End If
+
     Next
 
     Print #2,
     Print #2, "THREE POINT FIELD GOALS MADE"; Tab(41); "MINUTES"
 
     For P = 131 To 140
+
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -1097,6 +1235,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Using "####"; statZ!(P);
             Print #2, Tab(41);
         End If
+
         If Z2$(P + 20) = "" Then
             Print #2,
         Else
@@ -1104,12 +1243,15 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Tab(74);
             Print #2, Using "####"; statZ!(P + 20)
         End If
+
     Next
 
     Print #2,
     Print #2, Chr$(12)
     Print #2, "REBOUNDS PER GAME"; Tab(41); "REBOUNDS"
+
     For P = 161 To 170
+
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -1118,6 +1260,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Using "###.#"; statZ!(P);
             Print #2, Tab(41);
         End If
+
         If Z2$(P + 10) = "" Then
             Print #2,
         Else
@@ -1125,12 +1268,14 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Tab(74);
             Print #2, Using "####"; statZ!(P + 10)
         End If
+
     Next
 
     Print #2,
     Print #2, "BLOCKS PER GAME"; Tab(41); "BLOCKS"
 
     For P = 181 To 190
+
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -1139,6 +1284,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Using "###.#"; statZ!(P);
             Print #2, Tab(41);
         End If
+
         If Z2$(P + 10) = "" Then
             Print #2,
         Else
@@ -1146,12 +1292,14 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Tab(74);
             Print #2, Using "####"; statZ!(P + 20)
         End If
+
     Next
 
     Print #2,
     Print #2, "FIELD GOALS MADE"; Tab(41); "FREE THROWS MADE"
 
     For P = 201 To 210
+
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -1160,6 +1308,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Using "####"; statZ!(P);
             Print #2, Tab(41);
         End If
+
         If Z2$(P + 10) = "" Then
             Print #2,
         Else
@@ -1167,12 +1316,14 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Tab(74);
             Print #2, Using "####"; statZ!(P + 10)
         End If
+
     Next
 
     Print #2,
     Print #2, "FOULS PER GAME"; Tab(41); "FOULS"
 
     For P = 221 To 230
+
         If Z2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -1181,6 +1332,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Using "###.#"; statZ!(P);
             Print #2, Tab(41);
         End If
+
         If Z2$(P + 10) = "" Then
             Print #2,
         Else
@@ -1188,6 +1340,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Tab(74);
             Print #2, Using "####"; statZ!(P + 10)
         End If
+
     Next
 
     Print #2,
@@ -1207,6 +1360,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
     Print #2, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
 
     For X = 1 To TEAMS_PER_CONFERENCE
+
         If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
             Print #2, Left$(OL$(X), 11); Tab(13);
             Print #2, Using "##"; OL!(X, 16);: Print #2, Tab(16);
@@ -1223,6 +1377,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Using "#####"; OL!(X, 20);
             Print #2, Tab(75);: Print #2, Using "###.#"; OL!(X, 19)
         End If
+
     Next
 
     Print #2, Chr$(12)
@@ -1231,6 +1386,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
     Color 15
 
     For X = 1 To TEAMS_PER_CONFERENCE
+
         If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
             Print #2, Left$(DL$(X), 11); Tab(13);
             Print #2, Using "##"; DL!(X, 16);: Print #2, Tab(16);
@@ -1246,6 +1402,7 @@ Sub SavePrintLeagueStats (statFile$, destination)
             Print #2, Using "#####"; DL!(X, 20);
             Print #2, Tab(75);: Print #2, Using "###.#"; DL!(X, 19)
         End If
+
     Next
 
     Close 2
@@ -1262,8 +1419,9 @@ Sub SavePrintLeagueStats (statFile$, destination)
 
         Close 2
 
-		LPrint Chr$(12)
+        LPrint Chr$(12)
 
     End If
 
 End Sub
+

@@ -1,13 +1,13 @@
 Sub SINPUT ()
 
+    _Title "Basketball: The Pro Game - Stats Input"
+
     Dim Z2(14, 14)
     Dim inputA$(14)
 
 	Shared compareZ!(), compareZ1!()
 	Shared compareW0!(), compareW1!()
 	
-    _Title "Basketball: The Pro Game - Stats Input"
-
     Color 7, 0
     KEY Off
 

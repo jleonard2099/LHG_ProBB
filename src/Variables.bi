@@ -108,9 +108,12 @@ Dim LG$, div1$, div2$, div3$, div4$
 ' Used across LOOKY,
 '   LEAGCMPL routines
 '----------------------------------------
+Dim leagueT%(100), statO%(0 To 100), statsL%(0 To 100)
+
+Dim leagBRC!(32), statW0!(0 To 14), statW1!(0 To 14)
+Dim values!(0 To 14, 0 To 24)
+
 Dim categories$(0 To 25), statsH$(0 To 100), lookyA$(0 To 14), O$(0 To 100)
-Dim values!(0 To 14, 0 To 24), statW0!(0 To 14), statW1!(0 To 14)
-Dim statO%(0 To 100), statsL%(0 To 100)
 
 '----------------------------------------
 ' Used across LEAGCMPL,

@@ -558,7 +558,7 @@ Sub Leaders_Menu ()
         If ExitCode% <> 27 Then
             Select Case Selection%
                 Case 1: Call CREATE
-                Case 2: Call LEAGCMPL
+                Case 2: Call COMPLEAG
                 Case 3: Call SEELEAG
                 Case 4: Call HD2HDPRO
                 Case 5: Call RecordsMenu
@@ -586,11 +586,11 @@ End Sub
 '$INCLUDE: 'CAREER.BAS'
 '$INCLUDE: 'CARVIEW.BAS'
 '$INCLUDE: 'COMPARE.BAS'
+'$INCLUDE: 'COMPLEAG.BAS'
 '$INCLUDE: 'CREATE.BAS'
 '$INCLUDE: 'DRAFT.BAS'
 '$INCLUDE: 'GPMIN.BAS'
 '$INCLUDE: 'HD2HDPRO.BAS'
-'$INCLUDE: 'LEAGCMPL.BAS'
 '$INCLUDE: 'LOOKY.BAS'
 '$INCLUDE: 'MERGE.BAS'
 '$INCLUDE: 'NEWLDR.BAS'

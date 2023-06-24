@@ -111,11 +111,11 @@ Sub PROHOOP
 
         Get #1, AP%(0) + AP%(2)
 
-        For X = 0 To 18: 
+        For X = 0 To 18:
             NG%(X) = CVI(Q$(X + 1))
         Next
-        
-        For X = 0 To 1: 
+
+        For X = 0 To 1:
             YN$(X) = Q$(20 + X)
         Next
 
@@ -308,7 +308,7 @@ Sub PROHOOP
             Cls
             Color 3
 
-            Call TEAMBOX (7, 1)
+            Call TEAMBOX(7, 1)
 
             Locate 7, 11
 
@@ -320,7 +320,7 @@ Sub PROHOOP
 
             L = Len(startTime$)
 
-           If L < 4 Then 
+            If L < 4 Then
                 startTime$ = "1:00P"
             Else
                 If L = 5 Then HR = Val(Left$(startTime$, 1)): MIN = Val(Mid$(startTime$, 3, 2))
@@ -535,7 +535,7 @@ Sub PROHOOP
         For I = 0 To 1
 
             For I1 = 0 To 14
-                If A!(I, I1, 22) = 50 Then 
+                If A!(I, I1, 22) = 50 Then
                     A!(I, I1, 22) = 0
                     A!(I, I1, 17) = A!(I, I1, 17) * 3
                     D1(I) = D1(I) - 1
@@ -623,7 +623,7 @@ Sub PROHOOP
     If AP <> 1 Then
 
         'Using Home Team's color for the box
-        Call TEAMBOX (1, 1)
+        Call TEAMBOX(1, 1)
 
         Do
             U$ = "PLAY ANOTHER GAME (YN)"
@@ -636,7 +636,7 @@ Sub PROHOOP
 
     End If
 
-    If UCase$(I$) = "Y" Or (AP = 1 and endAllGames <> 1) Then
+    If UCase$(I$) = "Y" Or (AP = 1 And endAllGames <> 1) Then
 
         Cls
         Print "PLEASE WAIT ..."
@@ -850,17 +850,17 @@ Sub PROHOOP
                         X = 0
                         GoTo 580
 
-                    Case 3 to 30
+                    Case 3 To 30
                         Call LastShot
                         Call ResetShotClock
                         Call UPDATESCREEN
                         X = 88
                         GoTo 565
 
-                    Case 31 to 30 + F7%(P, 1) + F7%(D, 2)
+                    Case 31 To 30 + F7%(P, 1) + F7%(D, 2)
                         GoTo 515
 
-                    Case 30 + F7%(P, 1) + F7%(D, 2) to 1000
+                    Case 30 + F7%(P, 1) + F7%(D, 2) To 1000
 
                         P9 = Int(Rnd(1) * 5)
 
@@ -884,17 +884,17 @@ Sub PROHOOP
                         X = 0
                         GoTo 580
 
-                    Case 2 to 10
+                    Case 2 To 10
                         Call LastShot
                         Call ResetShotClock
                         Call UPDATESCREEN
                         X = 88
                         GoTo 565
 
-                    Case 10 to 10 + F7%(P, 1) + F7%(D, 2)
+                    Case 10 To 10 + F7%(P, 1) + F7%(D, 2)
                         GoTo 515
 
-                    Case 10 + F7%(P, 1) + F7%(D, 2) to 1000
+                    Case 10 + F7%(P, 1) + F7%(D, 2) To 1000
 
                         P9 = Int(Rnd(1) * 5)
 
@@ -914,11 +914,11 @@ Sub PROHOOP
                 ' *** SHOT VS TRAP M-M ***
                 Select Case R0
 
-                    Case 1 to 3
+                    Case 1 To 3
                         X = 0
                         GoTo 580
 
-                    Case 4 to 50
+                    Case 4 To 50
                         Call LastShot
                         Call ResetShotClock
                         Call UPDATESCREEN
@@ -926,10 +926,10 @@ Sub PROHOOP
 
                         GoTo 565
 
-                    Case 50 to 50 + F7%(P, 1) + F7%(D, 2)
+                    Case 50 To 50 + F7%(P, 1) + F7%(D, 2)
                         GoTo 515
 
-                    Case 50 + F7%(P, 1) + F7%(D, 2) to 1000
+                    Case 50 + F7%(P, 1) + F7%(D, 2) To 1000
                         P9 = Int(Rnd(1) * 5)
 
                         If R0 <= 40 + F7%(P, 1) + F7%(D, 2) + A!(D, B1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
@@ -941,7 +941,7 @@ Sub PROHOOP
                             If PASS% = 4 Then 445
                             GoTo 437
                         End If
-                        
+
                 End Select
 
         End Select
@@ -953,21 +953,21 @@ Sub PROHOOP
 
         Select Case R0
 
-            Case 1 to 3
+            Case 1 To 3
                 X = 0
                 GoTo 580
 
-            Case 4 to 50
+            Case 4 To 50
                 Call LastShot
                 Call ResetShotClock
                 Call UPDATESCREEN
                 X = 88
                 GoTo 565
 
-            Case 50 to 50 + F7%(P, 1) + F7%(D, 2)
+            Case 50 To 50 + F7%(P, 1) + F7%(D, 2)
                 GoTo 515
 
-            Case 50 + F7%(P, 1) + F7%(D, 2) to 1000
+            Case 50 + F7%(P, 1) + F7%(D, 2) To 1000
 
                 P9 = Int(Rnd(1) * 5)
 
@@ -1058,7 +1058,7 @@ Sub PROHOOP
     ' *** GET SHOT PCT ***
     F = A!(P, B1!(P, B), 0) + D1(D)
 
-    If N = P Then 
+    If N = P Then
         F = F + 2
     Else
         If N <> 2 Then F = F - 2
@@ -1885,7 +1885,7 @@ Sub PROHOOP
             Print " BALL AFTER SCORE"
             Call DELAY
         End If
-        
+
         If PB% = 0 Then Locate 8, 41: Print Space$(12): Call PBP
 
         Call ResetShotClock
@@ -2507,15 +2507,15 @@ Sub PROHOOP
 
     Select Case R0
 
-        Case 1 To 11: 
+        Case 1 To 11:
             FF% = 1
             GoTo 770
-        
+
         Case 12 To 19:
             Call ReboundRoutine1
             GoTo 760
-        
-        Case 20 To 100: 
+
+        Case 20 To 100:
             Call ReboundRoutine2
             GoTo 800
 
@@ -2597,7 +2597,7 @@ Sub PROHOOP
 
             R0 = Int(Rnd(1) * 100) + 1
 
-            If R0 <= 32 Then 
+            If R0 <= 32 Then
 
                 R3(P) = R3(P) + 1
 
@@ -2616,7 +2616,7 @@ Sub PROHOOP
                 Call Substitutions
 
                 GoTo 520
-            
+
             End If
 
             R3(D) = R3(D) + 1
@@ -2761,7 +2761,7 @@ Sub PROHOOP
     770 '
     RB = 0
 
-    For I = 0 To 9: 
+    For I = 0 To 9:
         RB(I) = 0
     Next
 
@@ -2779,7 +2779,7 @@ Sub PROHOOP
 
     For I = 0 To 4
 
-        If H > 4 Or H = 4 And gameClock! <= 120 Then 
+        If H > 4 Or H = 4 And gameClock! <= 120 Then
             RB(I + 5) = RB(I + 5) + A!(1 - P, B1!(1 - P, I), 2)
             RB = RB + A!(1 - P, B1!(1 - P, I), 2)
         Else
@@ -2813,7 +2813,7 @@ Sub PROHOOP
     '----- NOODLE -----
 
     760 '
-    If FF% = 1 Then 
+    If FF% = 1 Then
 
         FF% = 0
 
@@ -2979,3 +2979,4 @@ Sub PROHOOP
     End If
 
 End Sub
+

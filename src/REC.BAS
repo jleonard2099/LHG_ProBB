@@ -116,7 +116,8 @@ Sub ViewSeasonRecords ()
     For II = 1 To J
         Color 15, 4
         Locate 1 + II, 1
-        Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";: Color 7, 4: Print String$(2, 177)
+        Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";
+        Color 7, 4: Print String$(2, 177)
     Next
 
     Color 15, 4
@@ -124,7 +125,9 @@ Sub ViewSeasonRecords ()
     Color 7, 4: Print String$(2, 177)
     Locate , 3: Print String$(77, 177)
 
-    Color 15: Locate 2, 23: Print "******* INDIVIDUAL PLAYER RECORDS *******"
+    Color 15
+    Locate 2, 23
+    Print "******* INDIVIDUAL PLAYER RECORDS *******"
     Print
     Locate , 4: Print "CATEGORY                PLAYER           TEAM            RECORD"
 
@@ -157,21 +160,25 @@ Sub ViewSeasonRecords ()
     J = 20
 
     Locate 1, 1
-    
-    Color 15, 4: Print " " + Chr$(214); String$(73, 196); "· ";
+
+    Color 15, 4
+    Print " " + Chr$(214); String$(73, 196); "· ";
 
     For II = 1 To J
         Color 15, 4
         Locate 1 + II, 1
-        Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";: Color 7, 4: Print String$(2, 177)
+        Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";
+        Color 7, 4: Print String$(2, 177)
     Next
 
-    Color 15, 4: Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";
+    Color 15, 4
+    Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";
     Color 7, 4: Print String$(2, 177)
     Locate , 3: Print String$(77, 177)
 
     Color 15
-    Locate 2, 23: Print "******* INDIVIDUAL PLAYER RECORDS *******"
+    Locate 2, 23
+    Print "******* INDIVIDUAL PLAYER RECORDS *******"
     Print
     Locate , 4: Print "CATEGORY                PLAYER           TEAM            RECORD"
 
@@ -203,20 +210,26 @@ Sub ViewSeasonRecords ()
 
     J = 20
 
-    Locate 1, 1: Color 15, 1: Print " " + Chr$(214); String$(73, 196); "· ";
+    Locate 1, 1
+
+    Color 15, 1
+    Print " " + Chr$(214); String$(73, 196); "· ";
 
     For II = 1 To J
         Color 15, 1
         Locate 1 + II, 1
-        Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";: Color 7, 1: Print String$(2, 177)
+        Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";
+        Color 7, 1: Print String$(2, 177)
     Next
 
     Color 15, 1
-    Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";: Color 7, 1: Print String$(2, 177)
+    Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";
+    Color 7, 1: Print String$(2, 177)
     Locate , 3: Print String$(77, 177)
 
     Color 15
-    Locate 2, 23: Print "*******  OFFENSIVE TEAM RECORDS *******"
+    Locate 2, 23
+    Print "*******  OFFENSIVE TEAM RECORDS *******"
     Print
     Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 
@@ -253,7 +266,8 @@ Sub ViewSeasonRecords ()
 
     Locate 1, 1
 
-    Color 15, 1: Print " " + Chr$(214); String$(73, 196); "· ";
+    Color 15, 1
+    Print " " + Chr$(214); String$(73, 196); "· ";
 
     For II = 1 To J
         Color 15, 1
@@ -297,7 +311,8 @@ Sub ViewSeasonRecords ()
 
     Locate 1, 1
 
-    Color 15, 4: Print " " + Chr$(214); String$(73, 196); "· ";
+    Color 15, 4
+    Print " " + Chr$(214); String$(73, 196); "· ";
 
     For II = 1 To J
         Color 15, 4
@@ -312,7 +327,8 @@ Sub ViewSeasonRecords ()
     Locate , 3: Print String$(77, 177)
 
     Color 14
-    Locate 2, 23: Print "*******  DEFENSIVE TEAM RECORDS *******"
+    Locate 2, 23
+    Print "*******  DEFENSIVE TEAM RECORDS *******"
     Print
     Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 
@@ -348,8 +364,9 @@ Sub ViewSeasonRecords ()
 
     Locate 1, 1
 
-    Color 15, 4: Print " " + Chr$(214); String$(73, 196); "· ";
-    
+    Color 15, 4
+    Print " " + Chr$(214); String$(73, 196); "· ";
+
     For II = 1 To J
         Color 15, 4
         Locate 1 + II, 1

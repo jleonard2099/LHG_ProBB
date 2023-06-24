@@ -6777,6 +6777,7 @@ Sub COMPILESTATFILES (compileOpt)
             Z1!(10) = Z1!(10) + S!(1 - teamIdx, 0)
 
             Call TEAMBOX(1, teamIdx)
+
             U$ = "SAVING STATS FOR " + B$(teamIdx)
             Locate , (80 - Len(U$)) / 2
             Print U$
@@ -7004,7 +7005,9 @@ Sub TEAMMENU (BO%, YN$)
                 teamIndex%(NTMS) = I1
             End If
         Next
+
         Close 1
+
     End If
 
     SELECTION% = 1
