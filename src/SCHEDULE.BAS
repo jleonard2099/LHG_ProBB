@@ -516,7 +516,7 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
     Shared scheduleNG%()
     Shared scheduleT!()
 
-    Shared coachOpt$(), modeAbbrev$()
+    Shared coachOpt$(), MO$(), modeAbbrev$()
     Shared sClockOpt$(), teamEraOpt$()
     Shared yesNo$()
 
@@ -1237,7 +1237,7 @@ Sub ChangeGlobalSettings ()
 
     Shared scheduleAP%(), scheduleNG%()
 
-    Shared coachOpt$(), modeAbbrev$()
+    Shared coachOpt$(), MO$(), modeAbbrev$()
     Shared sClockOpt$()
     Shared yesNo$()
 

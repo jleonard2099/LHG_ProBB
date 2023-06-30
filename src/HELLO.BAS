@@ -530,15 +530,14 @@ Sub Leaders_Menu ()
 
         _Title "Basketball: The Pro Game - League Menu"
 
-        'Erase menuChoices$
-        menuChoices$(1) = "CREATE/ EDIT A LEAGUE         "
-        menuChoices$(2) = "UPDATE TOP 10'S/ STANDINGS    "
-        menuChoices$(3) = "VIEW/ PRINT TOP 10'S/STANDINGS"
-        menuChoices$(4) = "HEAD-TO-HEAD RESULTS AND STATS"
-        menuChoices$(5) = "LEAGUE RECORD BOOKS           "
-        menuChoices$(6) = "EXPANDED LEADERS/STANDINGS    "
-        menuChoices$(7) = "DELETE ALL STATS FOR A LEAGUE "
-        menuChoices$(8) = "RETURN TO MAIN MENU           "
+        menuChoices$(1) = "CREATE/ EDIT A LEAGUE               "
+        menuChoices$(2) = "UPDATE STATS/ STANDINGS FOR A LEAGUE"
+        menuChoices$(3) = "VIEW/PRINT RESULTS FOR A LEAGUE     "
+        menuChoices$(4) = "HEAD-TO-HEAD RESULTS AND STATS      "
+        menuChoices$(5) = "LEAGUE RECORD BOOKS                 "
+        menuChoices$(6) = "EXPANDED LEADERS/STANDINGS          "
+        menuChoices$(7) = "DELETE ALL STATS FOR A LEAGUE       "
+        menuChoices$(8) = "RETURN TO MAIN MENU                 "
         Selection% = 1
         Count% = 8
         Start% = 1
@@ -547,16 +546,19 @@ Sub Leaders_Menu ()
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
         Row% = 8
-        Column% = 26
-        Call box0(7, 25, 16, 56, 2, 15, 1)
+        Column% = 22
+        Call box0(7, 21, 16, 58, 2, 15, 1)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
+
         If ExitCode% <> 27 Then
+
             Select Case Selection%
+
                 Case 1: Call CREATE
                 Case 2: Call COMPLEAG
                 Case 3: Call SEELEAG
@@ -564,8 +566,9 @@ Sub Leaders_Menu ()
                 Case 5: Call RecordsMenu
                 Case 6: Call NEWLDR
                 Case 7: Call BLANK
-                Case 8: Cls
+
             End Select
+
         End If
 
     Loop Until Selection% = 8 Or ExitCode% = 27
