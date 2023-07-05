@@ -1035,13 +1035,17 @@ Sub SortLeaders ()
                 diffY = O1!(Y) - O2!(Y)
 
                 If diffX <= diffY Then
+
                     If diffX <> diffY Then
+
                         If Not (O1!(X) <= O1!(Y) And O1!(X) > O2!(X)) Or Not (O1!(X) >= O1!(Y) And O1!(X) < O2!(X)) Then
                             Swap Z1$(X), Z1$(Y)
                             Swap O1!(X), O1!(Y)
                             Swap O2!(X), O2!(Y)
                         End If
+
                     End If
+
                 End If
 
             Next Y

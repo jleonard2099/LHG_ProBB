@@ -17,7 +17,6 @@ Sub GPMIN ()
 
         Call TITLE
 
-        'Erase menuChoices$
         menuChoices$(1) = "ADJUST GAMES AND MINUTES PER GAME "
         menuChoices$(2) = "EXIT TO MAIN MENU                 "
         Count% = 2

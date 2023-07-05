@@ -6,9 +6,6 @@ Sub CARVIEW ()
 
     Shared ars!(), W0S!(), W1S!()
 
-    TMR% = 930
-
-
     Do
         'Display list of files...
         Color 0, 0
@@ -82,6 +79,8 @@ Sub CARVIEW ()
                 Color 15, 0
                 Cls
 
+				TMR% = 930
+
                 Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 
                 Open diskPaths$(1) + Z$ + ".CAR" For Input As #2
@@ -89,16 +88,22 @@ Sub CARVIEW ()
                 Input #2, NB, B$
 
                 For N = 1 To 15
+
                     For I = 0 To 61
+
                         Input #2, A$(I)
+
                         For J = 0 To 15
                             Input #2, ars!(N, I, J)
                         Next J
+
                         Input #2, W0S!(N, I)
                         Input #2, W1S!(N, I)
                         TMR% = TMR% - 1
                         Locate 12, 52: Color 5: Print Using "####"; TMR%
+
                     Next I
+
                 Next N
 
                 Close #2

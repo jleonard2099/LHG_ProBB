@@ -74,7 +74,6 @@ Sub CreateCareerFile ()
     Shared ars!(), compareZ!(), compareZ1!()
     Shared W0S!(), W1S!()
 
-    TMR% = 945
     NB = -1
 
     Do
@@ -139,6 +138,8 @@ Sub CreateCareerFile ()
                 Next XX
 
                 Z1$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
+
+				TMR% = 945
 
                 Do
                     Cls

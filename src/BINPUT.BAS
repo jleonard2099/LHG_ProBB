@@ -16,7 +16,6 @@ Sub BINPUT (menuShortcut%)
 
         Do
             Call TITLE
-            'Erase menuChoices$
             menuChoices$(1) = "ENTER A NEW TEAM               "
             menuChoices$(2) = "CHANGE OR EDIT AN EXISTING TEAM"
             menuChoices$(3) = "PRINT A TEAM ROSTER            "

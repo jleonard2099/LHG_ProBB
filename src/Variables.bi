@@ -1,8 +1,6 @@
 '----------------------------------------
 ' Used across more than one source file
 '----------------------------------------
-Dim statIdx
-
 Dim opSysType$
 
 Dim Shared BO%
@@ -133,11 +131,12 @@ Dim AL%, AW%, HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, Z%
 '----------------------------------------
 ' Used across NEWLDR routines
 '----------------------------------------
-Dim AL$(600)
+Dim HLL(TEAMS_PER_CONFERENCE), HWW(TEAMS_PER_CONFERENCE)
+Dim LL(TEAMS_PER_CONFERENCE), LLS(TEAMS_PER_CONFERENCE), LWS(TEAMS_PER_CONFERENCE)
+Dim LTL(TEAMS_PER_CONFERENCE), LTW(TEAMS_PER_CONFERENCE)
+Dim RLL(TEAMS_PER_CONFERENCE), RWW(TEAMS_PER_CONFERENCE)
+Dim TLS(TEAMS_PER_CONFERENCE), TWS(TEAMS_PER_CONFERENCE), WW(TEAMS_PER_CONFERENCE)
 
-Dim TMA$(600), TT$(40, 15), TT1$(40, 15)
-Dim TP$(0 To 31), TP1$(0 To 38)
-Dim TPP$(600), TMM$(600)
 
 Dim AL!(600, 14)
 Dim GM!(40), GM1!(40)
@@ -145,8 +144,14 @@ Dim GMA!(600), TYP!(600)
 Dim TT!(40, 15), TT1!(40, 15)
 Dim W0L!(600), W1L!(600)
 
+Dim AL$(600)
 
-Dim printOrView%
+Dim strZ1$(TEAMS_PER_CONFERENCE)
+Dim TMA$(600), TML$(TEAMS_PER_CONFERENCE)
+Dim TT$(40, 15), TT1$(40, 15)
+Dim TP$(0 To 31), TP1$(0 To 38)
+Dim TPP$(600), TMM$(600)
+
 
 '----------------------------------------
 ' Used across REC routines
@@ -183,7 +188,7 @@ Dim tradeS(1), tradeZZ(2, 15), tradeZZ1(2, 15)
 
 Dim tradeB1!(2, 14, 14), tradeT!(1)
 Dim tradeW0!(2, 14), tradeW1!(2, 14)
-    
+
 Dim B1$(2, 14), tradeA1$(1), tradeAA$(1, 6)
 Dim tradeB$(0 To 1, 0 To 14, 0 To 1), SA$(1), statFiles$(1)
 
@@ -220,7 +225,7 @@ Dim Shared TOA%(33), TOF%(1), W%(1, 14, 1)
 Dim Shared C1(1, 14)
 Dim Shared D1(1), D2(1), D8(6, 6), F1(14), G4(14), G5(14)
 Dim Shared P2(1), P4(5), P5(5), P7(1), QQ(1, 8, 14, 14), QR(1, 7, 14)
-Dim Shared R3(1), RB(0 To 10), S3(14), SC(0 to 1)
+Dim Shared R3(1), RB(0 To 10), S3(14), SC(0 To 1)
 Dim Shared T(1, 34), T0(1), T1(1), TF(1)
 Dim Shared V9(14), VG(9), VH(9), W2(1, 14), W3(1, 14)
 Dim Shared X$(4), X7(1), Z5(1), Z6(1), ZF(1), timePlayed(2, 14)
@@ -236,3 +241,4 @@ Dim Shared H$(100), HO$(100), offenseStyles$(2)
 Dim Shared PB$(1), PS$(4)
 Dim Shared R$(14), RC$(50, 4), SX$(32, 1)
 Dim Shared Y$(1), YN$(3)
+

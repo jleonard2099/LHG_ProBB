@@ -20,7 +20,6 @@ Sub SCHEDULE ()
         Cls
 
         Call TITLE_SCHEDULER
-        'Erase menuChoices$
         menuChoices$(1) = "ENTER A NEW SCHEDULE                             "
         menuChoices$(2) = "RETRIEVE/EDIT/PLAY AN EXISTING SCHEDULE          "
         menuChoices$(3) = "EXTRACT ONE TEAM'S SCHEDULE FROM LEAGUE SCHEDULE "

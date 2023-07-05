@@ -424,7 +424,6 @@ Sub TeamMgt_Menu ()
         Selection% = 1
 
         Call TITLE
-        'Erase menuChoices$
         menuChoices$(1) = "INPUT A NEW TEAM              "
         menuChoices$(2) = "EDIT AN EXISTING TEAM         "
         menuChoices$(3) = "PRINT TEAM ROSTER / REPORT    "
@@ -479,7 +478,6 @@ Sub Replay_Menu ()
     Do
         Call TITLE
         _Title "Basketball: The Pro Game - Stats Menu"
-        'Erase menuChoices$
         menuChoices$(1) = "VIEW / PRINT COMPILED STATISTICS "
         menuChoices$(2) = "ENCYCLOPEDIA/ TEAM REPLAY OPTIONS"
         menuChoices$(3) = "COMPARE REPLAY STATS TO ACTUAL   "
@@ -608,4 +606,3 @@ End Sub
 ' For Game
 '$INCLUDE: 'PROHOOP.BAS'
 '$INCLUDE: 'GameRoutines.bm'
-
