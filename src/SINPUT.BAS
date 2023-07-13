@@ -2,62 +2,85 @@ Sub SINPUT ()
 
     _Title "Basketball: The Pro Game - Stats Input"
 
-    Dim Z2(14, 14)
+    Shared compareZ!(), compareZ1!()
+    Shared compareW0!(), compareW1!()
+    
     Dim inputA$(14)
+    Dim Z2(14, 14)
 
-	Shared compareZ!(), compareZ1!()
-	Shared compareW0!(), compareW1!()
-	
-    Color 7, 0
-    KEY Off
+    Call GetTeam_SINPUT (T1$, YN$, D)
 
-    Cls
-    Call TITLE_EDITSTATS
+    statB$ = RTrim$(T1$)
 
-    Color 15: Print "C";
-	Color 3: Print "HANGE/INPUT COMPILED TEAM STATS"
-    Print
-    Color 15: Print "R";
-	Color 3: Print "ETURN TO MAIN MENU"
+    For XX = 4 To 11
+        If Mid$(statB$, XX, 1) = " " Or Mid$(statB$, XX, 1) = "." Then Mid$(statB$, XX, 1) = "_"
+    Next XX
 
-    Do
-        I$ = GetKeyPress$
-        If UCase$(I$) <> "R" Then 
-            Q = 1
+    For XX = 12 To 14
+        If Mid$(statB$, XX, 2) = "ST" Then Mid$(statB$, 9, 1) = "_": Mid$(statB$, 10, 2) = "ST"
+    Next XX
+
+    QQ = 8
+
+    For XX = 11 To 4 Step -1
+        If Mid$(statB$, XX, 1) = "_" Then
+            QQ = XX - 4
         Else
-            Q = 2
-        End if
+            Exit For
+        End If
+    Next XX
 
-    Loop Until UCase$(I$) = "C" Or UCase$(I$) = "R"
+    Z$ = Mid$(statB$, 4, QQ) + "." + Left$(statB$, 2)
 
-    If Q = 1 Then 
-        
-		Cls
-        X$ = "OFFENSIVE TEAM STATS"
-        Call TITLE_STAT_HEADER (X$)
+    If Not _FileExists(diskPaths$(1) + Z$) Then
 
-        Locate 3, 1
-        Input "1. STAT FILE NAME "; Z$
+        Locate 10, 8
+        Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+        I$ = GetKeyPress$
+        Call CSMsgBox("", 0, Pass)
+
+    Else
 
         Open diskPaths$(1) + Z$ For Input As #1
+
         Input #1, A$
-        For I = 0 To 14: Input #1, inputA$(I)
-        For J = 0 To 13: Input #1, Z2(I, J): Next J: Input #1, compareW0!(I): Input #1, compareW1!(I): Next I
-        For L = 0 To 15: Input #1, compareZ!(L): Next L
-        For L = 0 To 15: Input #1, compareZ1!(L): Next L
+
+        For I = 0 To 14: 
+            Input #1, inputA$(I)
+
+            For J = 0 To 13: 
+                Input #1, Z2(I, J)
+            Next J
+
+            Input #1, compareW0!(I)
+
+            Input #1, compareW1!(I)
+
+        Next I
+
+        For L = 0 To 15: 
+            Input #1, compareZ!(L)
+        Next L
+
+        For L = 0 To 15: 
+            Input #1, compareZ1!(L)
+        Next L
+
         Close 1
 
-        X% = 2
-
+        '---------------
+        ' Team Stats
+        '---------------
+        Color 15, 0
         Cls
+
         X$ = "OFFENSIVE TEAM STATS"
         Call TITLE_STAT_HEADER(X$)
 
-        X% = 2
-
         Locate 3, 1
         Print "1. STAT FILE NAME "; Z$
-        Print "2. TM MINUTES ";: Print Using "####"; Int(compareZ!(0) / 60)
+        Print "2. TM MINUTES ";
+        Print Using "####"; Int(compareZ!(0) / 60)
         Print "3. TM FGA "; compareZ!(1)
         Print "4. TM FGM "; compareZ!(2)
         Print "5. TM 3FGA "; compareZ!(14)
@@ -73,75 +96,74 @@ Sub SINPUT ()
         Print "15. TM TURNOVERS "; compareZ!(11)
         Print "16. TM POINTS  "; compareZ!(10)
 
-    Else
-    'Q = 2
-        Cls
-        Call TITLE_EDITSTATS
+        Do
 
-        Print
+            Do
+                Locate 22, 1
+                Input "# TO CHANGE (0 TO CONTINUE) "; B9
+            Loop Until B9 >= 0 And B9 <= 16
 
+            Select Case B9
+                
+                Case 1:
+                    Locate 3, 1: Input "1. STAT FILE NAME "; Z$
+                
+                Case 2:
+                    Locate 4, 1: Input "2. TM MINUTES "; compareZ!(0)
+                    compareZ!(0) = compareZ!(0) * 60
+                
+                Case 3:
+                    Locate 5, 1: Input "3. TM FGA "; compareZ!(1)
+                
+                Case 4:
+                    Locate 6, 1: Input "4. TM FGM "; compareZ!(2)
+                
+                Case 5:
+                    Locate 7, 1: Input "5. TM 3FGA "; compareZ!(14)
+                
+                Case 6:
+                    Locate 8, 1: Input "6. TM 3FGM "; compareZ!(13)
+            
+                Case 7:
+                    Locate 9, 1: Input "7. TM FTA "; compareZ!(3)
+
+                Case 8:
+                    Locate 10, 1: Input "8. TM FTM "; compareZ!(4)
+
+                Case 9:
+                    Locate 11, 1: Input "9. TM OFF RB  "; compareZ!(12)
+
+                Case 10:
+                    Locate 12, 1: Input "10. TM TOT RB "; compareZ!(5)
+
+                Case 11:
+                    Locate 13, 1: Input "11. TM FOULS "; compareZ!(6)
+
+                Case 12:
+                    Locate 14, 1: Input "12. TM STEALS "; compareZ!(7)
+
+                Case 13:
+                    Locate 15, 1: Input "13. TM ASSISTS "; compareZ!(8)
+
+                Case 14:
+                    Locate 16, 1: Input "14. TM BLOCKS "; compareZ!(9)
+
+                Case 15:
+                    Locate 17, 1: Input "15. TM TURNOVERS "; compareZ!(11)
+
+                Case 16:
+                    Locate 18, 1: Input "16. TM POINTS  "; compareZ!(10)
+
+            End Select
+
+        Loop Until B9 = 0
+
+        '---------------
+        ' Defense Stats
+        '---------------
         Cls
-        X$ = "OFFENSIVE TEAM STATS"
+        X$ = "DEFENSIVE TEAM STATS"
         Call TITLE_STAT_HEADER(X$)
-
-        175 Locate 3, 1: Input "1. STAT FILE NAME "; Z$: If C1 = 1 Then 210
-
-        177 Locate 4, 1: Input "2. TM MINUTES "; compareZ!(0): compareZ!(0) = compareZ!(0) * 60: If C1 = 1 Then 210
-
-        179 Locate 5, 1: Input "3. TM FGA "; compareZ!(1): If C1 = 1 Then 210
-
-        181 Locate 6, 1: Input "4. TM FGM "; compareZ!(2): If C1 = 1 Then 210
-
-        183 Locate 7, 1: Input "5. TM 3FGA "; compareZ!(14): If C1 = 1 Then 210
-
-        185 Locate 8, 1: Input "6. TM 3FGM "; compareZ!(13): If C1 = 1 Then 210
-
-        187 Locate 9, 1: Input "7. TM FTA "; compareZ!(3): If C1 = 1 Then 210
-
-        189 Locate 10, 1: Input "8. TM FTM "; compareZ!(4): If C1 = 1 Then 210
-
-        191 Locate 11, 1: Input "9. TM OFF RB  "; compareZ!(12): If C1 = 1 Then 210
-
-        193 Locate 12, 1: Input "10. TM TOT RB "; compareZ!(5): If C1 = 1 Then 210
-
-        195 Locate 13, 1: Input "11. TM FOULS "; compareZ!(6): If C1 = 1 Then 210
-
-        197 Locate 14, 1: Input "12. TM STEALS "; compareZ!(7): If C1 = 1 Then 210
-
-        199 Locate 15, 1: Input "13. TM ASSISTS "; compareZ!(8): If C1 = 1 Then 210
-
-        201 Locate 16, 1: Input "14. TM BLOCKS "; compareZ!(9): If C1 = 1 Then 210
-
-        203 Locate 17, 1: Input "15. TM TURNOVERS "; compareZ!(11): If C1 = 1 Then 210
-
-        205 Locate 18, 1: Input "16. TM POINTS  "; compareZ!(10): If C1 = 1 Then 210
-
-    End If  'Done checking value of Q
-            'I don't think this is setup right!
-            'Return to menu is still somehow
-            '   going to run code?
-
-    210 C1 = 1
-
-    Do
-        Locate 20, 1
-        Input "# TO CHANGE (0 TO CONTINUE) "; B9
-    Loop Until B9 >= 0 And B9 <= 16
-
-    213 On B9 GOTO 175, 177, 179, 181, 183, 185, 187, 189, 191, 193, 195, 197, 199, 201, 203, 205
-
-	'----------
-	'Defense Stats
-	'----------
-    215 C1 = 0
-
-    Cls
-    X$ = "DEFENSIVE TEAM STATS"
-    Call TITLE_STAT_HEADER(X$)
-
-	If X% > 0 Then 
-
-        X% = 2
 
         Locate 3, 1
         Print "1. OPP FGA "; compareZ1!(1)
@@ -159,178 +181,378 @@ Sub SINPUT ()
         Print "13. OPP TURNOVERS "; compareZ1!(11)
         Print "14. OPP POINTS  "; compareZ1!(10)
 
-    Else
-
-        379 Locate 3, 1: Input "1. OPP FGA "; compareZ1!(1): If C1 = 1 Then 410
-        381 Locate 4, 1: Input "2. OPP FGM "; compareZ1!(2): If C1 = 1 Then 410
-        383 Locate 5, 1: Input "3. OPP 3FGA "; compareZ1!(14): If C1 = 1 Then 410
-        385 Locate 6, 1: Input "4. OPP 3FGM "; compareZ1!(13): If C1 = 1 Then 410
-        387 Locate 7, 1: Input "5. OPP FTA "; compareZ1!(3): If C1 = 1 Then 410
-        389 Locate 8, 1: Input "6. OPP FTM "; compareZ1!(4): If C1 = 1 Then 410
-        391 Locate 9, 1: Input "7. OPP OFF RB  "; compareZ1!(12): If C1 = 1 Then 410
-        393 Locate 10, 1: Input "8. OPP TOT RB "; compareZ1!(5): If C1 = 1 Then 410
-        395 Locate 11, 1: Input "9. OPP FOULS "; compareZ1!(6): If C1 = 1 Then 410
-        397 Locate 12, 1: Input "10. OPP STEALS "; compareZ1!(7): If C1 = 1 Then 410
-        399 Locate 13, 1: Input "11. OPP ASSISTS "; compareZ1!(8): If C1 = 1 Then 410
-        401 Locate 14, 1: Input "12. OPP BLOCKS "; compareZ1!(9): If C1 = 1 Then 410
-        403 Locate 15, 1: Input "13. OPP TURNOVERS "; compareZ1!(11): If C1 = 1 Then 410
-        405 Locate 16, 1: Input "14. OPP POINTS  "; compareZ1!(10): If C1 = 1 Then 410
-
-    End If
-
-    410 C1 = 1
-
-    Do
-        Locate 20, 1
-        Input "# TO CHANGE (0 TO CONTINUE) "; B9
-    Loop Until B9 >= 0 And B9 <= 14
-
-    413 On B9 GOTO 379, 381, 383, 385, 387, 389, 391, 393, 395, 397, 399, 401, 403, 405
-
-	'----------
-	'Player Stats
-	'----------
-    C1 = 0
-
-     If X% <= 0 Then
-
-        For I = 0 To 14
-
-			Cls
-            X$ = "PLAYER -" + Str$(I + 1)
-            Call TITLE_STAT_HEADER(X$)
-
-            675 Locate 3, 1: Input "1. NAME "; inputA$(I): If C1 = 1 Then 1225
-            705 Locate 4, 1: Input "2. GAMES "; Z2(I, 0): If C1 = 1 Then 1225
-            745 Locate 5, 1: Input "3. MINUTES "; Z2(I, 10): Z2(I, 10) = Z2(I, 10) * 60: If C1 = 1 Then 1225
-            785 Locate 6, 1: Input "4. FGA "; Z2(I, 1): If C1 = 1 Then 1225
-            825 Locate 7, 1: Input "5. FGM "; Z2(I, 2): If C1 = 1 Then 1225
-            865 Locate 8, 1: Input "6. FTA "; Z2(I, 3): If C1 = 1 Then 1225
-            905 Locate 9, 1: Input "7. FTM "; Z2(I, 4): If C1 = 1 Then 1225
-            906 Locate 10, 1: Input "8. OFF REB "; Z2(I, 12): If C1 = 1 Then 1225
-            945 Locate 11, 1: Input "9. TOT REB  "; Z2(I, 5): If C1 = 1 Then 1225
-            985 Locate 12, 1: Input "10. FOULS "; Z2(I, 6): If C1 = 1 Then 1225
-            1025 Locate 13, 1: Input "11. STEALS "; Z2(I, 7): If C1 = 1 Then 1225
-            1065 Locate 14, 1: Input "12. ASSISTS "; Z2(I, 8): If C1 = 1 Then 1225
-            1105 Locate 15, 1: Input "13. BLOCKS "; Z2(I, 9): If C1 = 1 Then 1225
-            1106 Locate 16, 1: Input "14. TURNOVERS "; Z2(I, 11): If C1 = 1 Then 1225
-            1145 Locate 17, 1: Input "15. 3FGA "; compareW1!(I): If C1 = 1 Then 1225
-            1185 Locate 18, 1: Input "16. 3FGM "; compareW0!(I): If C1 = 1 Then 1225
-            1186 Locate 19, 1: Input "17. HI-GAME (PTS) "; Z2(I, 13): If C1 = 1 Then 1225
-
-            1225 C1 = 1
+        Do
 
             Do
-                Locate 21, 1
+                Locate 22, 1
                 Input "# TO CHANGE (0 TO CONTINUE) "; B9
-            Loop Until B9 >= 0 And B9 <= 17
+            Loop Until B9 >= 0 And B9 <= 14
 
-            On B9 GOTO 675, 705, 745, 785, 825, 865, 905, 906, 945, 985, 1025, 1065, 1105, 1106, 1145, 1185, 1186
+            Select Case B9
 
-            C1 = 0
+                Case 1
+                    Locate 3, 1: Input "1. OPP FGA "; compareZ1!(1)
 
-            If X% < 0 Then Exit For
+                Case 2
+                    Locate 4, 1: Input "2. OPP FGM "; compareZ1!(2)
+
+                Case 3
+                    Locate 5, 1: Input "3. OPP 3FGA "; compareZ1!(14)
+
+                Case 4
+                    Locate 6, 1: Input "4. OPP 3FGM "; compareZ1!(13)
+
+                Case 5
+                    Locate 7, 1: Input "5. OPP FTA "; compareZ1!(3)
+
+                Case 6
+                    Locate 8, 1: Input "6. OPP FTM "; compareZ1!(4)
+
+                Case 7
+                    Locate 9, 1: Input "7. OPP OFF RB  "; compareZ1!(12)
+
+                Case 8
+                    Locate 10, 1: Input "8. OPP TOT RB "; compareZ1!(5)
+
+                Case 9
+                    Locate 11, 1: Input "9. OPP FOULS "; compareZ1!(6)
+
+                Case 10
+                    Locate 12, 1: Input "10. OPP STEALS "; compareZ1!(7)
+
+                Case 11
+                    Locate 13, 1: Input "11. OPP ASSISTS "; compareZ1!(8)
+
+                Case 12
+                    Locate 14, 1: Input "12. OPP BLOCKS "; compareZ1!(9)
+
+                Case 13
+                    Locate 15, 1: Input "13. OPP TURNOVERS "; compareZ1!(11)
+
+                Case 14
+                    Locate 16, 1: Input "14. OPP POINTS  "; compareZ1!(10)
+            
+            End Select
+
+        Loop Until B9 = 0
+
+        
+        '---------------
+        ' Player Stats
+        '---------------
+        Do
+
+            Cls
+            X$ = "CHANGE PLAYERS"
+            Call TITLE_STAT_HEADER(X$)
+
+            For I = 0 To 13
+                Color 7
+                If I / 2 = Int(I / 2) Then Color 15
+                Print (I + 1);
+                Print " "; inputA$(I)
+            Next I
+ 
+            Print
+
+            Do
+                Input "# TO CHANGE (1-13) (0 TO CONTINUE) "; I
+            Loop Until I >= 0 And I <= 13
+
+            If I > 0 Then
+
+                I = I - 1
+
+                Cls
+
+                Locate 2, 1: PRINT "PLAYER - " + Str$(I + 1)
+                Locate 3, 1
+                Print "1. NAME "; inputA$(I)
+                Print "2. GAMES "; Z2(I, 0)
+                Print "3. MINUTES "; Int(Z2(I, 10) / 60 + .5)
+                Print "4. FGA "; Z2(I, 1)
+                Print "5. FGM "; Z2(I, 2); ""
+                Print "6. FTA "; Z2(I, 3)
+                Print "7. FTM "; Z2(I, 4)
+                Print "8. OFF REB "; Z2(I, 12)
+                Print "9. TOT REB  "; Z2(I, 5)
+                Print "10. FOULS "; Z2(I, 6)
+                Print "11. STEALS "; Z2(I, 7)
+                Print "12. ASSISTS "; Z2(I, 8)
+                Print "13. BLOCKS "; Z2(I, 9)
+                Print "14. TURNOVERS "; Z2(I, 11)
+                Print "15. 3FGA "; compareW1!(I)
+                Print "16. 3FGM "; compareW0!(I)
+                Print "17. HI-GAME (PTS) "; Z2(I, 13)
+
+                Do
+
+                    Do
+                        Locate 22, 1
+                        Input "# TO CHANGE (0 TO CONTINUE) "; B9
+                    Loop Until B9 >= 0 And B9 <= 17
+
+                    Select Case B9
+
+                        Case 1
+                            Locate 3, 1: Input "1. NAME "; inputA$(I)
+
+                        Case 2
+                            Locate 4, 1: Input "2. GAMES "; Z2(I, 0)
+
+                        Case 3
+                            Locate 5, 1: Input "3. MINUTES "; Z2(I, 10)
+                            Z2(I, 10) = Z2(I, 10) * 60
+
+                        Case 4
+                            Locate 6, 1: Input "4. FGA "; Z2(I, 1)
+
+                        Case 5
+                            Locate 7, 1: Input "5. FGM "; Z2(I, 2)
+
+                        Case 6
+                            Locate 8, 1: Input "6. FTA "; Z2(I, 3)
+
+                        Case 7
+                            Locate 9, 1: Input "7. FTM "; Z2(I, 4)
+
+                        Case 8
+                            Locate 10, 1: Input "8. OFF REB "; Z2(I, 12)
+
+                        Case 9
+                            Locate 11, 1: Input "9. TOT REB  "; Z2(I, 5)
+
+                        Case 10
+                            Locate 12, 1: Input "10. FOULS "; Z2(I, 6)
+
+                        Case 11
+                            Locate 13, 1: Input "11. STEALS "; Z2(I, 7)
+
+                        Case 12
+                            Locate 14, 1: Input "12. ASSISTS "; Z2(I, 8)
+
+                        Case 13
+                            Locate 15, 1: Input "13. BLOCKS "; Z2(I, 9)
+
+                        Case 14
+                            Locate 16, 1: Input "14. TURNOVERS "; Z2(I, 11)
+
+                        Case 15
+                            Locate 17, 1: Input "15. 3FGA "; compareW1!(I)
+
+                        Case 16
+                            Locate 18, 1: Input "16. 3FGM "; compareW0!(I)
+
+                        Case 17
+                            Locate 19, 1: Input "17. HI-GAME (PTS) "; Z2(I, 13)
+
+                    End Select
+
+                Loop Until B9 = 0
+
+            End If
+
+        Loop Until I = 0
+
+
+        '---------------
+        ' Save Edits
+        '---------------        
+        Open diskPaths$(1) + Z$ For Output As #1
+
+        Print #1, A$
+
+        For I = 0 To 14: 
+            Print #1, PrintA$(I)
+
+            For J = 0 To 13: 
+                Print #1, Z2(I, J)
+            Next J
+
+            Print #1, compareW0!(I)
+
+            Print #1, compareW1!(I)
 
         Next I
 
-	End If
+        For L = 0 To 15: 
+            Print #1, compareZ!(L)
+        Next L
 
-    Cls
-    Call TITLE_EDITSTATS
-    Locate 3, 1
-    Color 14: Print "CHANGE PLAYERS "
+        For L = 0 To 15: 
+            Print #1, compareZ1!(L)
+        Next L
 
-    Print
-
-    X% = 2
-
-    For I = 0 To 14
-        Color 7
-        If I / 2 = Int(I / 2) Then Color 15
-        Print (I + 1);
-		Print " "; inputA$(I)
-	Next I
-
-	Print
-
-	Print "# TO CHANGE (0 TO CONTINUE) ";
-
-	Input I
-	I = I - 1
-
-	If I > 14 Or I < 0 Then 
-
-        X% = 0
-
-    Else
-
-        Cls
-        X$ = "PLAYER -" + Str$(I + 1)
-        Call TITLE_STAT_HEADER(X$)
-
-        Locate 3, 1
-        Print "1. NAME "; inputA$(I)
-        Print "2. GAMES "; Z2(I, 0)
-        Print "3. MINUTES "; Int(Z2(I, 10) / 60 + .5)
-        Print "4. FGA "; Z2(I, 1)
-        Print "5. FGM "; Z2(I, 2); ""
-        Print "6. FTA "; Z2(I, 3)
-        Print "7. FTM "; Z2(I, 4)
-        Print "8. OFF REB "; Z2(I, 12)
-        Print "9. TOT REB  "; Z2(I, 5)
-        Print "10. FOULS "; Z2(I, 6)
-        Print "11. STEALS "; Z2(I, 7)
-        Print "12. ASSISTS "; Z2(I, 8)
-        Print "13. BLOCKS "; Z2(I, 9)
-        Print "14. TURNOVERS "; Z2(I, 11)
-        Print "15. 3FGA "; compareW1!(I)
-        Print "16. 3FGM "; compareW0!(I)
-        Print "17. HI-GAME (PTS) "; Z2(I, 13)
-
-        GoTo 1225
+        Close 1
 
     End If
 
 End Sub
 
+
 '----------------------------------------
-'     		NoWhere Subroutine
+'        GetTeam_SINPUT Subroutine
 '----------------------------------------
-'So called because I don't believe 
-'	it gets used whatsoever
+'...explanation...
+Sub GetTeam_SINPUT (T1$, YN$, D)
 
-Sub NoWhere ()
+    Shared compareT%()
 
-    '-- I don't think we ever get here???
-    '-- This is writing the stat file
-    Print
+    Do
 
-    Print "# TO CHANGE (1-12) (0 TO CONTINUE) ";
-
-    Input I
-
-    I = I - 1
-
-    If I > 10 Or I < 0 Then 
-        X% = 0
-    Else
+        Color 15, 0
         Cls
-        Call TITLE_EDITSTATS
+
+        JJ = 7
+
+        Locate 6, 8: Color 15, 4
+
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+        Locate 7 + JJ, 8
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+        Locate 7, 32
+
+        Locate , 12: Print "ENTER DISK ID: ": Print
+        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+        Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
+        Locate 7, 27: Input NY$
+
+        If NY$ = "" And YN$ <> "" Then
+            'YN$ = NY$
+            Call SelectTeam_SINPUT(YN$, NTMS, D)
+        Else
+            YN$ = RTrim$(NY$)
+            Erase teamNames$
+            NTMS = 0
+
+            Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
+            fileLength& = LOF(1)
+            Field #1, 15 As Q$(0), 15 As Q$(1)
+
+            For I = 0 To 6
+                Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+            Next
+
+            Field #1, 44 As X$, 2 As Q$(9)
+
+            For I = 0 To 34
+                Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+            Next
+
+            For I = 0 To 14
+                Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+                For I1 = 0 To 19
+                    Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+                Next
+            Next
+
+            Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+
+            For I1 = 1 To fileLength& / 1031
+                Get #1, I1
+                CK% = CVI(Q$(9))
+                If CK% = 999 Then
+                    NTMS = NTMS + 1
+                    teamNames$(NTMS) = Q$(0)
+                    teamIndex%(NTMS) = I1
+                End If
+            Next
+
+            Close 1
+
+            Call SelectTeam_SINPUT(YN$, NTMS, D)
+
+        End If
+
+        T1$ = RTrim$(Q$(0))
+
+        For I = 0 To 34:
+            compareT%(I) = CVI(Q$(I + 10))
+        Next
+
+        Close 1
+
+        Locate 2, 33: Color 31: Print "LOADING..."
+
+        If BO% = 1 Then
+            BO% = 0
+        Else
+            Locate 2, 33
+            Color compareT%(33), compareT%(34): Print T1$
+
+            Do
+                Color 15, 4
+                Locate 3, 33: Print "ANY CHANGE (YN)";
+                A$ = GetKeyPress$
+            Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
+
+        End If
+
+    Loop Until UCase$(A$) = "N"
+
+End Sub
+
+
+'----------------------------------------
+'      SelectTeam_SINPUT Subroutine
+'----------------------------------------
+'...explanation...
+Sub SelectTeam_SINPUT (yearNumber$, numberTeams, selectedIndex)
+
+    Selection% = 1
+    Count% = numberTeams
+    Start% = 1
+    FileFGColr% = 15: FileBGColr% = 4
+    HiLiteFGColr% = 0: HiLiteBGColr% = 7
+    Rows% = 20
+    Columns% = 4
+    Spacing% = 6
+    Row% = 4
+    Column% = 1
+    Color , 4: Cls: Locate , 33: Color 14
+    Print "TEAM SELECTION": Color 15
+    Locate 25, 1: Color 14: Print "ESC";: Color 15
+    Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
+    Print "ENTER";: Color 15: Print "-SELECTS TEAM";
+
+    _MouseShow "DEFAULT"
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    _MouseHide
+
+    If ExitCode% <> 27 Then
+
+        selectedIndex = teamIndex%(Selection%)
+
+        teamYear$ = RTrim$(yearNumber$)
+        Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
+
+        Field #1, 15 As Q$(0), 15 As Q$(1)
+
+        For I = 0 To 6
+            Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+        Next
+
+        Field #1, 44 As X$, 2 As Q$(9)
+
+        For I = 0 To 34
+            Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+        Next
+
+        For I = 0 To 14
+            Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+            For I1 = 0 To 19
+                Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+            Next
+        Next
+
+        Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+
+        Get #1, selectedIndex
+    Else
+        BO% = 1
     End If
-
-    Open diskPaths$(1) + Z$ For Output As #1
-    Print #1, A$
-
-    For I = 0 To 14: 
-		Print #1, inputA$(I)
-		For J = 0 To 13: Print #1, Z2(I, J): Next J
-		Print #1, compareW0!(I)
-		Print #1, compareW1!(I)
-	Next I
-
-    For L = 0 To 15: Print #1, compareZ!(L): Next L
-    For L = 0 To 15: Print #1, compareZ1!(L): Next L
-
-    Close 1
 
 End Sub

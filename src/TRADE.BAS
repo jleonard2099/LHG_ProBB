@@ -279,24 +279,25 @@ Sub TradePlayers ()
             Locate XY, 1: Print Tab(79);
         Next
 
-        Locate 3
-
-        Color 12: Print Tab(35); "TRADE MENU"
-        Print
-		Locate , 5
-        Color 15: Print "(1) ";
-        Color 3: Print "TRADE PLAYERS"
-        Print
-		Locate , 5
-        Color 15: Print "(2) ";
-        Color 3: Print "END AND SAVE TRADES"
-        Print
-		Locate , 5
-        Color 15: Print "(3) ";
-        Color 3: Print "END WITHOUT SAVING TRADES"
-
         Do
+            Locate 3
+
+            Color 12: Print Tab(35); "TRADE MENU"
+            Print
+            Locate , 5
+            Color 15: Print "(1) ";
+            Color 3: Print "TRADE PLAYERS"
+            Print
+            Locate , 5
+            Color 15: Print "(2) ";
+            Color 3: Print "END AND SAVE TRADES"
+            Print
+            Locate , 5
+            Color 15: Print "(3) ";
+            Color 3: Print "END WITHOUT SAVING TRADES"
+
             I$ = GetKeyPress$
+
         Loop Until Val(I$) > 0 And Val(I$) <= 3
 
         Select Case I$
@@ -305,23 +306,23 @@ Sub TradePlayers ()
 
                 If tradeS(0) <> 1 Or tradeS(1) <> 1 Then
 
-					Do
-						Call TITLE
+                    Do
+                        Call TITLE
 
-						For XY = 2 To 23:
-							Locate XY, 1: Print Tab(79);
-						Next
+                        For XY = 2 To 23:
+                            Locate XY, 1: Print Tab(79);
+                        Next
 
-						Locate 5, 5
-						Color 15: Print "T";: Color 3: Print "RADE PLAYERS' REPLAY STATS"
-						Locate , 5: Color 15: Print "Z";: Color 3: Print "ERO PLAYERS' STATS"
+                        Locate 5, 5
+                        Color 15: Print "T";: Color 3: Print "RADE PLAYERS' REPLAY STATS"
+                        Locate , 5: Color 15: Print "Z";: Color 3: Print "ERO PLAYERS' STATS"
 
-						J$ = GetKeyPress$
+                        J$ = GetKeyPress$
 
-					Loop Until UCase$(I$) = "T" Or UCase$(I$) = "Z"
+                    Loop Until UCase$(I$) = "T" Or UCase$(I$) = "Z"
 
-					If UCase$(J$) = "T" Then W1 = 1
-					If UCase$(J$) = "Z" Then W1 = 0
+                    If UCase$(J$) = "T" Then W1 = 1
+                    If UCase$(J$) = "Z" Then W1 = 0
 
                 End If
 

@@ -79,7 +79,7 @@ Sub CARVIEW ()
                 Color 15, 0
                 Cls
 
-				TMR% = 930
+                TMR% = 930
 
                 Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 
@@ -160,7 +160,7 @@ Sub CareerToScreen (A$(), Z$)
                 Call ViewPlayer(A$(), Z$)
 
             Case "R":
-                Call ViewRoster(A$(), Z$)
+                Call ViewRosterSequence(A$(), Z$)
 
         End Select
 
@@ -576,10 +576,10 @@ Sub ViewPlayer (A$(), Z$)
 End Sub
 
 '----------------------------------------
-'       ViewRoster Subroutine
+'       ViewRosterSequence Subroutine
 '----------------------------------------
 '...explanation...
-Sub ViewRoster (A$(), Z$)
+Sub ViewRosterSequence (A$(), Z$)
 
     Shared ars!(), W0S!(), W1S!()
 

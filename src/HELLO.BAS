@@ -450,10 +450,10 @@ Sub TeamMgt_Menu ()
 
         If ExitCode% <> 27 Then
             Select Case Selection%
-                Case 1: Call BINPUT(1)
-                Case 2: Call BINPUT(2)
-                Case 3: Call BINPUT(3)
-                Case 4: Call BINPUT(4)
+                Case 1: Call TINPUT(1)
+                Case 2: Call TINPUT(2)
+                Case 3: Call TINPUT(3)
+                Case 4: Call TINPUT(4)
                 Case 5: Call DRAFT
                 Case 6: Call TRADE
                 Case 7: Call GPMIN
@@ -583,7 +583,6 @@ End Sub
 '$INCLUDE: 'TITLE.bm'
 '$INCLUDE: 'ALIGN.BAS'
 '$INCLUDE: 'BLANK.BAS'
-'$INCLUDE: 'BINPUT.BAS'
 '$INCLUDE: 'CAREER.BAS'
 '$INCLUDE: 'CARVIEW.BAS'
 '$INCLUDE: 'COMPARE.BAS'
@@ -601,8 +600,10 @@ End Sub
 '$INCLUDE: 'SCHEDULE.BAS'
 '$INCLUDE: 'SEELEAG.BAS'
 '$INCLUDE: 'SINPUT.BAS'
+'$INCLUDE: 'TINPUT.BAS'
 '$INCLUDE: 'TRADE.BAS'
 
 ' For Game
 '$INCLUDE: 'PROHOOP.BAS'
 '$INCLUDE: 'GameRoutines.bm'
+

@@ -77,6 +77,8 @@ Dim compareZ!(0 To 15), compareZ1!(0 To 15)
 ' Used across CREATE routines
 '----------------------------------------
 Dim intZ1%(TEAMS_PER_CONFERENCE)
+Dim memberTeams$(TEAMS_PER_CONFERENCE)
+Dim memberYears$(TEAMS_PER_CONFERENCE)
 
 '----------------------------------------
 ' Used across DRAFT routines
