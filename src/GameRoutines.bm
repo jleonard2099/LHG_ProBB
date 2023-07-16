@@ -153,7 +153,7 @@ Sub AUTOSETUP
     PO = NG%(5)
     sClockVal = NG%(7)
     U5 = NG%(8)
-    CM% = NG%(9)
+    coachOpt = NG%(9)
     RT% = NG%(10)
     FR% = NG%(11)
     tickerStart = NG%(12)

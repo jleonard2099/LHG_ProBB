@@ -11,7 +11,7 @@ Const DIVS_PER_CONFERENCE = 4
 Const TEAMS_PER_CONFERENCE = 40
 Const TEAM_SIZE_BYTES = 1031
 
-'Const NUM_STATRECORDS = 162
+Const NUM_STATRECORDS = 100
 
 DefInt A-Z
 
@@ -20,6 +20,7 @@ DefInt A-Z
 '$INCLUDE: 'QPProEqu.bi'
 '$INCLUDE: 'PadRight.bi'
 '$INCLUDE: 'Variables.bi'
+
 
 ' For Utils
 '$INCLUDE: 'MainRoutines.bi'
@@ -183,8 +184,8 @@ modeAbbrev$(1) = "CV"
 modeAbbrev$(2) = "CH"
 modeAbbrev$(3) = "CC"
 
-coachOpt$(0) = "COACH AND SELECT SHOTS           "
-coachOpt$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
+coachMode$(0) = "COACH AND SELECT SHOTS           "
+coachMode$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
 
 foulOption$(0) = "ONLY IN BONUS OR ACT OF SHOOTING"
 foulOption$(1) = "SHOOT ON ALL FOULS              "
@@ -387,8 +388,8 @@ Sub ConfigureDrives ()
     diskPaths$(1) = _Trim$(diskPaths$(1))
 
     Done:
-    Locate 23, 1
     Color 14, 1
+    Locate 23, 1
     Print "Is this okay? (Yes/No) ";
     X$ = ""
     Call YesNoB(X$, XCode, FG, BG)

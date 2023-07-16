@@ -7,7 +7,7 @@ Sub PROHOOP
     Shared scheduleFile$
     Shared tickerStart
 
-    Shared coachOpt$(), MO$()
+    Shared coachMode$(), MO$()
     Shared sClockOpt$(), yesNo$()
 
     Color 7, 0
@@ -55,7 +55,7 @@ Sub PROHOOP
     Input #1, PO
     Input #1, pbpDelay!
     Input #1, X4%
-    Input #1, CM%
+    Input #1, coachOpt
     Input #1, NB%
     Input #1, RT%
     Input #1, FR%
@@ -171,7 +171,7 @@ Sub PROHOOP
             Locate 12, 2: Color 14
             Print "(A) ";: Color 15: Print "SHOW SHOT PERCENTAGES: "; TS$(X4%)
             Locate 13, 2: Color 14
-            Print "(B) ";: Color 15: Print "HUMAN COACHES WILL: "; coachOpt$(CM%);
+            Print "(B) ";: Color 15: Print "HUMAN COACHES WILL: "; coachMode$(coachOpt);
             Locate 1, 1
             Locate 14, 2: Color 14
             Print "(C) ";: Color 15: Print "BONUS AFTER FOUL # "; NB%
@@ -270,7 +270,7 @@ Sub PROHOOP
                         Print #1, PO
                         Print #1, pbpDelay!
                         Print #1, X4%
-                        Print #1, CM%
+                        Print #1, coachOpt
                         Print #1, NB%
                         Print #1, RT%
                         Print #1, FR%
@@ -281,7 +281,7 @@ Sub PROHOOP
                         X4% = 1 - X4%
 
                     Case 12:
-                        CM% = 1 - CM%
+                        coachOpt = 1 - coachOpt
 
                     Case 13:
                         NB% = NB% + 1
@@ -786,7 +786,7 @@ Sub PROHOOP
     405 '
     R0 = Int(Rnd(1) * 100) + 1
 
-    If U5 = 0 And CM% = 1 Or U5 = 1 And D = CT And CM% = 1 Or U5 = 1 And P = CT Or U5 = 2 Then
+    If U5 = 0 And coachOpt = 1 Or U5 = 1 And D = CT And coachOpt = 1 Or U5 = 1 And P = CT Or U5 = 2 Then
 
         Call WHOGETSBALL
 
@@ -1452,7 +1452,7 @@ Sub PROHOOP
 
     If PB% = 1 And pbpDelay! <> 0 Then Call DELAY
 
-    If U5 <> 0 Or CM% = 1 Then
+    If U5 <> 0 Or coachOpt = 1 Then
 
         If H >= 4 And gameClock! <= 240 And S!(P, 0) - S!(D, 0) > 0 And U5 = 1 And P = CT Then
 
@@ -1471,10 +1471,10 @@ Sub PROHOOP
 
                 '980
                 If gameClock! <= 240 And H >= 4 And S!(P, 0) - S!(D, 0) > 10 Then
-                    If (U5 = 1 Or U5 = 0) And CM% <> 1 Then 530
+                    If (U5 = 1 Or U5 = 0) And coachOpt <> 1 Then 530
                 Else
                     If gameClock! <= 30 And H >= 4 And S!(P, 0) - S!(D, 0) > 0 Then P6 = 3: GoTo 532
-                    If (U5 = 1 Or U5 = 0) And CM% <> 1 Then 530
+                    If (U5 = 1 Or U5 = 0) And coachOpt <> 1 Then 530
                 End If
 
             End If

@@ -159,6 +159,7 @@ Sub DefineLeaguePro (LG$, div1$, div2$, div3$, div4$)
     If XCode = 1 GoTo GetDiv3: 'can't back up any more, stay here
 
     Done:
+    Color 14, 1
     Locate 23, 1
     Print "Is this okay? (Yes/No) ";
     X$ = ""

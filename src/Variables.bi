@@ -3,31 +3,57 @@
 '----------------------------------------
 Dim opSysType$
 
-Dim Shared BO%
-Dim Shared TMR%, TMR1%
+Dim Shared diskPaths$(3), Q$(0 To 377)
 
+' *** Reading Team Data ***
+' -------------------------
+
+'-- transition away from this
 Dim Shared fileLength&
 
-Dim Shared A$, YN$, Z1$
-Dim Shared DT$, TM$
+Dim playerRatings%(0 To 14, 0 To 19), teamRatings%(35), leagueRatings%(0 To 6)
 
-Dim Shared compareA!(15, 14)
-Dim Shared scheduleT!(0 To 34)
+Dim playerNames$(15, 1), teamInfo$(4)
 
-Dim Shared Z1$(40)
-
-Dim Shared diskPaths$(3), Q$(0 To 377)
 Dim Shared teamNames$(MAX_TEAMS)
 Dim Shared teamIndex%(MAX_TEAMS)
 
-' Game options
+
+' *** Reading Stat Data ***
+' -------------------------
+'H$(), etc. are what goes here
+'it looks like they only max at 100 for this
+'if i'm right, college was 162
+'-- 
+
+Dim Shared Z1$(40)
+
+' *** Schedule Data ***
+' -------------------------
+Dim homeScores(MAX_GAMES), visitorScores(MAX_GAMES)
+
+' *** Game Options ***
+' -------------------------
+Dim Shared DT$, TM$
+
 Dim Shared foulOption$(1), freeThrowOpt$(1)
 Dim Shared location$(2), playoffGame$(1), TS$(1)
 
-Dim coachOpt$(0 To 1)
+Dim coachMode$(0 To 1)
 Dim modeAbbrev$(0 To 3), MO$(3)
 Dim sClockOpt$(0 To 1), teamEraOpt$(0 To 2)
 Dim yesNo$(0 To 1)
+
+
+' *** Miscellaneous Use ***
+' -------------------------
+Dim Shared BO%
+Dim Shared TMR%, TMR1%
+
+Dim Shared A$, YN$, Z1$
+
+Dim compareA!(15, 14)
+Dim scheduleT!(0 To 34)
 
 
 '----------------------------------------
@@ -50,12 +76,6 @@ Dim ZRD!(0 To 16), ZRD1!(0 To 16)
 
 Dim ORD%(0 To 100), mergeT%(0 To 100), TRD%(0 To 100)
 
-
-'----------------------------------------
-' Used across BINPUT routines
-'----------------------------------------
-Dim inputB%(0 To 14, 0 To 19), inputT%(35), inputL%(0 To 6)
-Dim inputB$(15, 1), inputT$(4)
 
 '----------------------------------------
 ' Used across CAREER routines
@@ -173,9 +193,9 @@ Dim allRecords!(50, 2), teamRecords!(125, 2)
 '----------------------------------------
 Dim BS%, NS%
 Dim N$
-Dim scheduleAP%(1), homeScores(MAX_GAMES), visitorScores(MAX_GAMES)
 
-'NG = Number of Games; not sure about the 18
+Dim scheduleAP%(1)
+
 Dim scheduleNG%(MAX_GAMES, 18)
 
 ReDim scheduleH$(0 To 20), scheduleV$(0 To 20)
@@ -205,7 +225,7 @@ Dim Shared AD, AP, B, CT, D, endGame, endAllGames, F3, H, halfTime, JY
 Dim Shared N, NTMS, P, P7, P9, PO, QQ, QR, sClockVal, shotClock
 Dim Shared T1, TMT, X, U5, VG, VH
 
-Dim Shared CF%, CM%, DK%, FB%, FR%, FT%, GF%, HH%
+Dim Shared CF%, coachOpt, DK%, FB%, FR%, FT%, GF%, HH%
 Dim Shared NB%, nbrLines%, NM%, OX%, OY%, PB%, PT%, PZ%
 Dim Shared RT%, X4%, XY%
 

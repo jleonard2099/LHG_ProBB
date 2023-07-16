@@ -515,7 +515,7 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
     Shared scheduleNG%()
     Shared scheduleT!()
 
-    Shared coachOpt$(), MO$(), modeAbbrev$()
+    Shared coachMode$(), MO$(), modeAbbrev$()
     Shared sClockOpt$(), teamEraOpt$()
     Shared yesNo$()
 
@@ -536,7 +536,7 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
         Locate 7, 2: Color 14: Print "(6) ";: Color 15: Print "HOME COURT ADVANTAGE: "; location$(scheduleNG%(gameIndex%, 2))
         Locate 8, 2: Color 14: Print "(7) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; scheduleNG%(gameIndex%, 4) / 10
         Locate 9, 2: Color 14: Print "(8) ";: Color 15: Print playoffGame$(scheduleNG%(gameIndex%, 5))
-        Locate 10, 2: Color 14: Print "(9) ";: Color 15: Print "HUMAN COACHES WILL: "; coachOpt$(scheduleNG%(gameIndex%, 9))
+        Locate 10, 2: Color 14: Print "(9) ";: Color 15: Print "HUMAN COACHES WILL: "; coachMode$(scheduleNG%(gameIndex%, 9))
         Locate 11, 2: Color 14: Print "(A) ";: Color 15: Print "GAME DATE (XX-XX-XX) "; DT$; "   "
         Locate 12, 2: Color 14: Print "(B) ";: Color 15: Print "GAME TIME (XX:XXP) "; TM$; "   "
         Locate 13, 2: Color 14: Print "(C) ";: Color 15: Print "PLAY IN ERA OF TEAM (IF DIFFERENT) "; teamEraOpt$(scheduleNG%(gameIndex%, 6))
@@ -737,7 +737,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
         U5% = 3
         LO% = 1
         SC% = 0
-        CM% = 1
+        coachOpt = 1
         RC% = 1
         PO% = 0
         NF% = 4
@@ -1236,7 +1236,7 @@ Sub ChangeGlobalSettings ()
 
     Shared scheduleAP%(), scheduleNG%()
 
-    Shared coachOpt$(), MO$(), modeAbbrev$()
+    Shared coachMode$(), MO$(), modeAbbrev$()
     Shared sClockOpt$()
     Shared yesNo$()
 
@@ -1254,7 +1254,7 @@ Sub ChangeGlobalSettings ()
         Locate 4, 2: Color 14: Print "(2) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; displayPause!
         Locate 5, 2: Color 14: Print "(3) ";: Color 15: Print "HOME COURT ADVANTAGE: "; location$(LO%)
         Locate 6, 2: Color 14: Print "(4) ";: Color 15: Print "SHOT CLOCK: "; sClockOpt$(SC%)
-        Locate 7, 2: Color 14: Print "(5) ";: Color 15: Print "HUMAN PLAYERS: "; coachOpt$(CM%)
+        Locate 7, 2: Color 14: Print "(5) ";: Color 15: Print "HUMAN PLAYERS: "; coachMode$(coachOpt)
         Locate 8, 2: Color 14: Print "(6) ";: Color 15: Print "3-POINT SHOT: "; yesNo$(RC%)
         Locate 9, 2: Color 14: Print "(7) ";: Color 15: Print "TYPE OF GAME: "; playoffGame$(PO%)
         Locate 10, 2: Color 14: Print "(8) ";: Color 15: Print Using "BONUS AFTER FOUL: ##"; NF%
@@ -1285,7 +1285,7 @@ Sub ChangeGlobalSettings ()
                 SC% = 1 - SC%
 
             Case 5:
-                CM% = 1 - CM%
+                coachOpt = 1 - coachOpt
 
             Case 6:
                 RC% = 1 - RC%
@@ -1312,7 +1312,7 @@ Sub ChangeGlobalSettings ()
         scheduleNG%(I, 4) = displayPause! * 10
         scheduleNG%(I, 2) = LO%
         scheduleNG%(I, 7) = SC%
-        scheduleNG%(I, 9) = CM%
+        scheduleNG%(I, 9) = coachOpt
         scheduleNG%(I, 3) = RC%
         scheduleNG%(I, 5) = PO%
         scheduleNG%(I, 10) = FT%

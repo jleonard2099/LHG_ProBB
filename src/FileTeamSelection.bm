@@ -1,10 +1,11 @@
-`'------------------------------
+'------------------------------
 '   ChooseTeam Subroutine
 '------------------------------
 '...explanation...
 Sub ChooseTeam (yearNumber$, numberTeams, teamIdx, teamName$)
 
-    Shared T%()
+    Shared teamRatings%()
+
     Shared teamNames$()
 
     Do
@@ -72,7 +73,7 @@ Sub ChooseTeam (yearNumber$, numberTeams, teamIdx, teamName$)
 
                     Else
 
-                        Open diskPaths$(0) + TEAM_FILE_NAME$ + "." yearNumber$ For Random As #1 Len = TEAM_SIZE_BYTES
+                        Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$ For Random As #1 Len = TEAM_SIZE_BYTES
 
                         fileLength& = LOF(1)
 
@@ -99,13 +100,17 @@ Sub ChooseTeam (yearNumber$, numberTeams, teamIdx, teamName$)
 
                             Call SelectTeam(numberTeams, yearNumber$, chosenIdx, teamName$)
 
-                            Locate 2, 33
-                            Color T%(0), T%(1): Print teamName$
+                            Do
 
-                            Color 15, 4
-                            Locate , 33: Print "ANY CHANGE? (YN)";
+                                Locate 2, 33
+                                Color teamRatings%(33), teamRatings%(34): Print teamName$
 
-                            I$ = GetKeyPress$
+                                Color 15, 4
+                                Locate 3, 33: Print "ANY CHANGE? (YN)";
+
+                                I$ = GetKeyPress$
+
+                            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
                         End If
 
@@ -177,37 +182,72 @@ End Sub
 '...explanation...
 Sub ReadTeam (teamYear$, targetTeam$, teamIdx)
 
-    Shared L%(), T%()
-    'Shared varB%()
+    Shared playerRatings%(), leagueRatings%(), teamRatings%()
+
+    Shared playerNames$(), teamInfo$()
 
     Open diskPaths$(0) +  TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
 
-    '--- This will vary from game / module
-    Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
-    For I = 0 To 13
-        Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
+    Field #1, 15 As Q$(0), 15 As Q$(1)
+
+    For I = 0 To 6
+        Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
     Next
 
-    '--- Done defining structure
+    Field #1, 44 As X$, 2 As Q$(9)
+
+    For I = 0 To 34
+        Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+    Next
+
+    For I = 0 To 14
+
+        Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+
+        For I1 = 0 To 19
+            Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+        Next
+
+    Next
+
+    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 
     Get #1, teamIdx
 
-    targetTeam$ = _Trim$(Q$(0))
+    'Name
+    teamInfo$(0) = RTrim$(Q$(0))
+    targetTeam$ = teamInfo$(0)
 
-    '--- This will vary from game / module
-    SP = CVI(Q$(1))
-    DA = CVI(Q$(2))
-    V1% = CVI(Q$(3))
-    V2% = CVI(Q$(4))
+    'Mascot
+    teamInfo$(1) = RTrim$(Q$(1))
 
-    For I = 0 To 4:
-        L%(I) = CVI(Q$(I + 5))
+    For I = 0 To 6
+        leagueRatings%(I) = CVI(Q$(I + 2))
     Next
 
-    For I = 0 To 9:
-        T%(I) = CVI(Q$(I + 10))
+    For I = 0 To 34
+        teamRatings%(I) = CVI(Q$(I + 10))
     Next
-    '--- Done reading data
+
+    For I = 0 To 14
+
+        playerNames$(I, 0) = Q$(22 * I + 45)
+        playerNames$(I, 1) = Q$(22 * I + 46)
+
+        For I1 = 0 To 19
+            playerRatings%(I, I1) = CVI(Q$(22 * I + 47 + I1))
+        Next
+
+    Next
+
+    'Abbreviation
+    teamInfo$(2) = RTrim$(Q$(375))
+    
+    'Coach
+    teamInfo$(3) = RTrim$(Q$(376))
+    
+    'Arena
+    teamInfo$(4) = RTrim$(Q$(377))
 
     'Close team file
     Close 1
@@ -228,9 +268,9 @@ Function nameStatFile$ (teamName$)
         If Mid$(teamName$, XX, 2) = "ST" Then Mid$(teamName$, 9, 1) = "_": Mid$(teamName$, 10, 2) = "ST"
     Next XX
 
+    'Length of 'converted' name for file
+    '-- update this if we want to support long files
     QQ = 8
-    'QQ - Length of teamName$ ???
-    '-- if we want to support long files
 
     For XX = 11 To 4 Step -1
         If Mid$(teamName$, XX, 1) = "_" Then
@@ -275,7 +315,7 @@ Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
             Call ReadFile(foundFiles$())
 
             Do
-                1310 Cls
+
                 Color , 1
                 Cls
                 Locate , 28

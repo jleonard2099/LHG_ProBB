@@ -605,7 +605,7 @@ Sub ViewPrintCareerRecords ()
                                 Color 3: Print "REBOUNDS PER GAME";: Color 7: Print Tab(32); Using "###.#"; BL!(14);: Print Tab(47); BL$(14);: Print Tab(66); BLYR!(14)
 
                                 Color 15
-                                Locate 22: Print "HIT ANY KEY TO CONTINUE"
+                                Locate 23, 5: Print "HIT ANY KEY TO CONTINUE"
                                 A$ = GetKeyPress$
 
                                 Cls
