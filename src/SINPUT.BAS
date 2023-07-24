@@ -1,4 +1,4 @@
-Sub SINPUT ()
+Sub EditStats ()
 
     _Title "Basketball: The Pro Game - Stats Input"
 
@@ -8,31 +8,10 @@ Sub SINPUT ()
     Dim inputA$(14)
     Dim Z2(14, 14)
 
-    Call GetTeam_SINPUT (T1$, YN$, D)
+    Call ChooseTeam (YN$, numberTeams, D, T1$)
+	statFile$ = nameStatFile$(T1$)
 
-    statB$ = RTrim$(T1$)
-
-    For XX = 4 To 11
-        If Mid$(statB$, XX, 1) = " " Or Mid$(statB$, XX, 1) = "." Then Mid$(statB$, XX, 1) = "_"
-    Next XX
-
-    For XX = 12 To 14
-        If Mid$(statB$, XX, 2) = "ST" Then Mid$(statB$, 9, 1) = "_": Mid$(statB$, 10, 2) = "ST"
-    Next XX
-
-    QQ = 8
-
-    For XX = 11 To 4 Step -1
-        If Mid$(statB$, XX, 1) = "_" Then
-            QQ = XX - 4
-        Else
-            Exit For
-        End If
-    Next XX
-
-    Z$ = Mid$(statB$, 4, QQ) + "." + Left$(statB$, 2)
-
-    If Not _FileExists(diskPaths$(1) + Z$) Then
+    If Not _FileExists(diskPaths$(1) + statFile$) Then
 
         Locate 10, 8
         Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
@@ -41,11 +20,12 @@ Sub SINPUT ()
 
     Else
 
-        Open diskPaths$(1) + Z$ For Input As #1
+        Open diskPaths$(1) + statFile$ For Input As #1
 
         Input #1, A$
 
         For I = 0 To 14: 
+
             Input #1, inputA$(I)
 
             For J = 0 To 13: 
@@ -78,7 +58,7 @@ Sub SINPUT ()
         Call TITLE_STAT_HEADER(X$)
 
         Locate 3, 1
-        Print "1. STAT FILE NAME "; Z$
+        Print "1. STAT FILE NAME "; statFile$
         Print "2. TM MINUTES ";
         Print Using "####"; Int(compareZ!(0) / 60)
         Print "3. TM FGA "; compareZ!(1)
@@ -106,7 +86,7 @@ Sub SINPUT ()
             Select Case B9
                 
                 Case 1:
-                    Locate 3, 1: Input "1. STAT FILE NAME "; Z$
+                    Locate 3, 1: Input "1. STAT FILE NAME "; statFile$
                 
                 Case 2:
                     Locate 4, 1: Input "2. TM MINUTES "; compareZ!(0)
@@ -358,7 +338,7 @@ Sub SINPUT ()
         '---------------
         ' Save Edits
         '---------------        
-        Open diskPaths$(1) + Z$ For Output As #1
+        Open diskPaths$(1) + statFile$ For Output As #1
 
         Print #1, A$
 
@@ -391,12 +371,12 @@ End Sub
 
 
 '----------------------------------------
-'        GetTeam_SINPUT Subroutine
+'        GetTeam_EditStats Subroutine
 '----------------------------------------
 '...explanation...
-Sub GetTeam_SINPUT (T1$, YN$, D)
+Sub GetTeam_EditStats (T1$, YN$, D)
 
-    Shared compareT%()
+    Shared teamRatings%()
 
     Do
 
@@ -422,7 +402,7 @@ Sub GetTeam_SINPUT (T1$, YN$, D)
 
         If NY$ = "" And YN$ <> "" Then
             'YN$ = NY$
-            Call SelectTeam_SINPUT(YN$, NTMS, D)
+            Call SelectTeam_EditStats(YN$, NTMS, D)
         Else
             YN$ = RTrim$(NY$)
             Erase teamNames$
@@ -463,14 +443,14 @@ Sub GetTeam_SINPUT (T1$, YN$, D)
 
             Close 1
 
-            Call SelectTeam_SINPUT(YN$, NTMS, D)
+            Call SelectTeam_EditStats(YN$, NTMS, D)
 
         End If
 
         T1$ = RTrim$(Q$(0))
 
         For I = 0 To 34:
-            compareT%(I) = CVI(Q$(I + 10))
+            teamRatings%(I) = CVI(Q$(I + 10))
         Next
 
         Close 1
@@ -481,7 +461,7 @@ Sub GetTeam_SINPUT (T1$, YN$, D)
             BO% = 0
         Else
             Locate 2, 33
-            Color compareT%(33), compareT%(34): Print T1$
+            Color teamRatings%(33), teamRatings%(34): Print T1$
 
             Do
                 Color 15, 4
@@ -497,10 +477,10 @@ End Sub
 
 
 '----------------------------------------
-'      SelectTeam_SINPUT Subroutine
+'      SelectTeam_EditStats Subroutine
 '----------------------------------------
 '...explanation...
-Sub SelectTeam_SINPUT (yearNumber$, numberTeams, selectedIndex)
+Sub SelectTeam_EditStats (yearNumber$, numberTeams, selectedIndex)
 
     Selection% = 1
     Count% = numberTeams

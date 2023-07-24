@@ -15,11 +15,13 @@ Const NUM_STATRECORDS = 100
 
 DefInt A-Z
 
-'INCLUDE: 'FileTeamSelection.bi'
+'$INCLUDE: 'FileTeamSelection.bi'
 '$INCLUDE: 'KeyInput.bi'
 '$INCLUDE: 'QPProEqu.bi'
 '$INCLUDE: 'PadRight.bi'
 '$INCLUDE: 'Variables.bi'
+
+Dim playerRatings%(0 To 14, 0 To 19), teamRatings%(0 To 34), leagueRatings%(0 To 6)
 
 
 ' For Utils
@@ -50,6 +52,7 @@ Next
 
 ' Stats / Year
 ' FG/RB/FG%/PF/3FG%
+'1954 is the 1st year below
 Data 75,47,37,25,0
 Data 86,52,39,25,0
 Data 91,55,39,26,0
@@ -101,10 +104,11 @@ Data 87,44,47,22,33
 Data 86,43,47,23,34
 Data 84,43,47,22,33
 Data 81,42,47,24,36
+'1996 values are below
 Data 80,41,46,23,37
 For I = 1 To 52
     For I1 = 1 To 5
-        Read draftLG%(I, I1)
+        Read leagueAverages%(I, I1)
     Next
 Next
 
@@ -559,7 +563,7 @@ Sub Leaders_Menu ()
             Select Case Selection%
 
                 Case 1: Call CREATE
-                Case 2: Call COMPLEAG
+                Case 2: Call CompileLeague
                 Case 3: Call SEELEAG
                 Case 4: Call HD2HDPRO
                 Case 5: Call RecordsMenu
@@ -575,7 +579,7 @@ Sub Leaders_Menu ()
 End Sub
 
 
-'INCLUDE: 'FileTeamSelection.bm'
+'$INCLUDE: 'FileTeamSelection.bm'
 '$INCLUDE: 'KeyInput.bm'
 '$INCLUDE: 'QPProEqu.bm'
 '$INCLUDE: 'PadRight.bm'

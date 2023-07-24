@@ -230,13 +230,15 @@ Sub PROHOOP
 
                     Case 2:
                         P9 = 0
-                        Call TeamSelect_PROHOOP(P9)
-                        Call DISABLEPLAYERS
+                        'Call ChooseGameTeam(P9)
+                        Call ChooseGameTeam(YN$, NTMS, teamNbr, B$(P9), P9)
+                        If teamNbr <> 0 Then Call DISABLEPLAYERS
 
                     Case 3:
                         P9 = 1
-                        Call TeamSelect_PROHOOP(P9)
-                        Call DISABLEPLAYERS
+                        'Call ChooseGameTeam(P9)
+                        Call ChooseGameTeam(YN$, NTMS, teamNbr, B$(P9), P9)
+                        If teamNbr <> 0 Then Call DISABLEPLAYERS
 
                     Case 4:
                         XY% = XY% + 1
@@ -358,16 +360,17 @@ Sub PROHOOP
     '----------------------------------------
 
     ' Determine computer team
-    If U5 = 1 Then
-        CT = 0
-    Else
-        If U5 = 2 Then
+    Select Case U5
+
+        Case 1: 
+            CT = 0
+        Case 2: 
             U5 = 1
             CT = 1
-        Else
-            If U5 = 3 Then U5 = 2
-        End If
-    End If
+        Case 3: 
+            U5 = 2
+    
+    End Select
 
     Call LOADSTATS
 

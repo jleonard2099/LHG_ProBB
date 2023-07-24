@@ -1,9 +1,9 @@
 '------------------------------
-'     COMPLEAG Subroutine
+'     CompileLeague Subroutine
 '------------------------------
 'This creates an .LDR file for your league
 'It also creates/updates RECORDS.PBB
-Sub COMPLEAG ()
+Sub CompileLeague ()
 
     _Title "Basketball: The Pro Game - Update League Stats"
 

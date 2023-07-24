@@ -17,28 +17,9 @@ Sub ALIGN ()
 
         If UCase$(I$) = "N" And I$ <> Chr$(27) Then
 
-            Call GetDiskID_ALIGN(A$)
-
-            B$ = A$
-
-            For XX = 4 To 11
-                If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
-            Next XX
-
-            For XX = 12 To 14:
-                If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
-            Next XX
-
-            QQ = 8
-            For XX = 11 To 4 Step -1
-                If Mid$(B$, XX, 1) = "_" Then
-                    QQ = XX - 4
-                Else
-                    Exit For
-                End If
-            Next XX
-
-            statFile$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
+            'Call GetDiskID_ALIGN(A$)
+            Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+            statFile$ = nameStatFile$(team$)
 
             Color 12, 0
             Cls
@@ -47,13 +28,18 @@ Sub ALIGN ()
             If _FileExists(pathRoadStats$ + statFile$) Then
 
                 Open pathRoadStats$ + statFile$ For Input As #1
+
                 Input #1, BR$
 
                 For I = 0 To 14:
+
                     Input #1, alignAR$(I)
+
                     For J = 0 To 13: Input #1, AR!(I, J): Next
+
                     Input #1, W0R!(I)
                     Input #1, WR1!(I)
+
                 Next
 
                 For L = 0 To 15: Input #1, ZR!(L): Next
@@ -62,14 +48,20 @@ Sub ALIGN ()
                 Close #1
 
                 If _FileExists(pathCurrentStats$ + statFile$) Then
+
                     Open pathCurrentStats$ + statFile$ For Input As #1
+
                     Input #1, B$
 
                     For I = 0 To 14:
+
                         Input #1, alignA$(I)
+
                         For J = 0 To 13: Input #1, compareA!(I, J): Next
+
                         Input #1, compareW0!(I)
                         Input #1, compareW1!(I)
+
                     Next
 
                     For L = 0 To 15: Input #1, alignZ!(L): Next
@@ -323,7 +315,7 @@ Sub GetDiskID_ALIGN (A$)
 
                     Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 
-                    For I1 = 1 to fileLength& / 1031
+                    For I1 = 1 To fileLength& / 1031
                         Get #1, I1
                         CK% = CVI(Q$(9))
                         If CK% = 999 Then
@@ -397,8 +389,8 @@ Sub SelectTeam_ALIGN (yearNumber$, numberTeams)
     If ExitCode% <> 27 Then
 
         T1 = teamIndex%(Selection%)
-		teamYear$ = RTrim$(yearNumber$)
-		
+        teamYear$ = RTrim$(yearNumber$)
+
         Locate 2, 33: Color 31: Print "LOADING..."
 
         If Not _FileExists(diskPaths$(0) + "PROBBTMS." + teamYear$) Then

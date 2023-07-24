@@ -342,7 +342,9 @@ Sub ReviewEditLeague (league$, div1$, div2$, div3$, div4$)
 
             If choice = 1 Then
                 'Add team
-                Call GetTeam_CREATE(memberTeams$(B), memberYears$(B), intZ1%(B))
+                'Call GetTeam_CREATE(memberTeams$(B), memberYears$(B), intZ1%(B))
+                Call ChooseTeam(memberYears$(B), NTMS, intZ1%(B), memberTeams$(B))
+
             Else
                 'Remove team
                 memberTeams$(B) = "XXX"
@@ -433,7 +435,7 @@ End Sub
 '...explanation...
 Sub GetTeam_CREATE (T1$, YN$, D)
 
-    Shared compareT%()
+    Shared teamRatings%()
 
     Do
 
@@ -507,7 +509,7 @@ Sub GetTeam_CREATE (T1$, YN$, D)
         T1$ = RTrim$(Q$(0))
 
         For I = 0 To 34:
-            compareT%(I) = CVI(Q$(I + 10))
+            teamRatings%(I) = CVI(Q$(I + 10))
         Next
 
         Close 1
@@ -518,7 +520,7 @@ Sub GetTeam_CREATE (T1$, YN$, D)
             BO% = 0
         Else
             Locate 2, 33
-            Color compareT%(33), compareT%(34): Print T1$
+            Color teamRatings%(33), teamRatings%(34): Print T1$
 
             Do
                 Color 15, 4

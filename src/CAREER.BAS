@@ -114,32 +114,18 @@ Sub CreateCareerFile ()
             Locate 15, 5
             Input "ENTER NAME OF CAREER STAT FILE (MAX. - 8 CHARACTERS)"; careerFile$
 
-            Call GetTeam_CAREER (ti, A$)
-            B$ = A$
+            'Call GetTeam_CAREER (ti, A$)
+            Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
             'ti = team index of chosen team
             '0 means no team was chosen
-            If ti <> 0 Then
+            If teamNbr <> 0 Then
 
-                For XX = 4 To 11
-                    If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
-                Next XX
+                statFile$ = nameStatFile$(team$)
 
-                For XX = 12 To 14
-                    If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
-                Next XX
+                TMR% = 945
 
-                QQ = 8
-
-                For XX = 11 To 4 Step -1
-                    If Not (Mid$(B$, XX, 1) = "_") Then
-                        Exit For
-                    End If
-                Next XX
-
-                Z1$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
-
-				TMR% = 945
+                Color 15, 0
 
                 Do
                     Cls
@@ -158,7 +144,7 @@ Sub CreateCareerFile ()
 
                     If UCase$(K$) = "Y" Then finalUpdate% = 1 Else finalUpdate% = 0
 
-                    If Not _FileExists(diskPaths$(1) + Z1$) Then
+                    If Not _FileExists(diskPaths$(1) + statFile$) Then
                         Locate 10, 18
                         Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
                         I$ = GetKeyPress$
@@ -169,7 +155,7 @@ Sub CreateCareerFile ()
                         Color 15
                         Print "MERGING CAREER STATS AND UPDATING CAREER LEADER FILE . . . . PLEASE WAIT"
 
-                        Open diskPaths$(1) + Z1$ For Input As #1
+                        Open diskPaths$(1) + statFile$ For Input As #1
 
                         Input #1, B$
 
@@ -526,9 +512,9 @@ Sub ViewPrintCareerRecords ()
                 Cls
 
                 targetFile$ = RTrim$(targetFile$)
-                ZZ$ = Left$(targetFile$, Len(targetFile$) - 4)
+                leaderFile$ = Left$(targetFile$, Len(targetFile$) - 4)
 
-                Open diskPaths$(1) + ZZ$ + ".CLD" For Input As #1
+                Open diskPaths$(1) + leaderFile$ + ".CLD" For Input As #1
 
                 For I = 0 To 20
                     Input #1, BLYR!(I), BL$(I), BL!(I)
@@ -583,7 +569,7 @@ Sub ViewPrintCareerRecords ()
 
                             Do
                                 Cls
-                                Color 0, 15
+                                Color 15, 0
 
                                 Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
                                 Print
@@ -745,30 +731,11 @@ Sub MergeCareerFiles ()
 
                 careerFile$ = Left$(targetFile$, Len(targetFile$) - 4)
 
-                Call GetTeam_CAREER(ti, A$)
-                B$ = A$
+                'Call GetTeam_CAREER(ti, A$)
+                Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+                statFile$ = nameStatFile$(team$)
 
-                For XX = 4 To 11:
-                    If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
-                Next XX
-
-                For XX = 12 To 14:
-                    If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
-                Next XX
-
-                QQ = 8
-
-                For XX = 11 To 4 Step -1
-                    If Not (Mid$(B$, XX, 1) = "_") Then
-                        Exit For
-                    Else
-                        QQ = XX - 4
-                    End If
-                Next XX
-
-                Z1$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
-
-                Call AddYear(careerFile$, Z1$)
+                Call AddYear(careerFile$, statFile$)
 
             End If 'Done checking for ESC
 
@@ -791,7 +758,6 @@ Sub AddYear (selectedFile$, statFile$)
 
     Shared AR$()
 
-    Shared AL!()
     Shared ars!(), compareZ!(), compareZ1!()
     Shared W0S!(), W1S!()
 
@@ -817,7 +783,7 @@ Sub AddYear (selectedFile$, statFile$)
 
         If UCase$(I$) = "Y" Then finalUpdate% = 1 Else finalUpdate% = 0
 
-        If Not _FileExists(diskPaths$(1) + Z1$) Then
+        If Not _FileExists(diskPaths$(1) + statFile$) Then
             Locate 10, 18
             Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
             I$ = GetKeyPress$
@@ -873,8 +839,10 @@ Sub AddYear (selectedFile$, statFile$)
 
                     Input #1, initA$(I)
 
-                    For J = 0 To 13: Input #1, mergeA!(I, J): Next
-
+                    For J = 0 To 13: 
+                        Input #1, mergeA!(I, J)
+                    Next
+                    
                     Input #1, careerW0!(I)
                     Input #1, careerW1!(I)
 

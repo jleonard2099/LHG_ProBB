@@ -74,7 +74,9 @@ Sub DoTheInput (action%)
         Case 1:
 
             Do
+
                 Cls
+
                 Print
                 Color 12: Print "DO YOU HAVE THE FOLLOWING INFORMATION :"
 
@@ -91,7 +93,7 @@ Sub DoTheInput (action%)
 
                 If I$ <> Chr$(27) Then
 
-                    Print I$
+                    Print UCase$(I$)
 
                     ST = I
                     Print
@@ -102,13 +104,15 @@ Sub DoTheInput (action%)
                         I$ = GetKeyPress$
                     Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = Chr$(27)
 
-                    If UCase$(I$) = "Y" Then I = 1
-                    If UCase$(I$) = "N" Then I = 0
-
                     If I$ <> Chr$(27) Then
 
-                        Print I$
+                        If UCase$(I$) = "Y" Then I = 1
+                        If UCase$(I$) = "N" Then I = 0
+
+                        Print UCase$(I$)
+
                         BK = I
+
                         Print
                         Color 14: Print "(3) ";
                         Color 15: Print "TEAM/INDIVID OFF/DEF REB (Y/N): ";
@@ -122,8 +126,10 @@ Sub DoTheInput (action%)
 
                         If I$ <> Chr$(27) Then
 
-                            Print I$
+                            Print UCase$(I$)
+
                             RB = I
+
                             Print
                             Color 14: Print "(4) ";
                             Color 15: Print "TEAM TURNOVERS (Y/N): ";
@@ -137,17 +143,18 @@ Sub DoTheInput (action%)
 
                             If I$ <> Chr$(27) Then
 
-                                Print I$
+                                Print UCase$(I$)
 
+                                'We never do anything with this???
                                 T0 = I
                                 Print
 
-                                'Do
+                                Do
 
-                                Print "ANY CHANGE (Y/N)";
-                                I$ = GetKeyPress$
+                                    Print "ANY CHANGE (Y/N)";
+                                    I$ = GetKeyPress$
 
-                                'Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or I$ = Chr$(27)
+                                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or I$ = Chr$(27)
 
                                 If UCase$(I$) = "Y" Then I = 1
                                 If UCase$(I$) = "N" Then I = 0
@@ -169,19 +176,25 @@ Sub DoTheInput (action%)
 
             '2 = CHANGE OR EDIT AN EXISTING TEAM
         Case 2:
-            Call GetTeam_CNGTM(A$, year$, teamNbr)
-            Call InputEditTeam(2, year$, teamNbr)
-            Call SaveTeamFile(year$, teamNbr, action%)
+            Call ChooseTeam (year$, numberTeams, teamNbr, A$)
+            If teamNbr <> 0 Then
+                Call InputEditTeam(2, year$, teamNbr)
+                Call SaveTeamFile(year$, teamNbr, action%)
+            End If
 
             '3 = PRINT A TEAM ROSTER
         Case 3:
-            Call GetTeam_CNGTM(A$, year$, teamNbr)
-            Call PrintRoster(year$)
+            Call ChooseTeam (year$, numberTeams, teamNbr, A$)
+            If teamNbr <> 0 Then
+                Call PrintRoster(year$)
+            End If
 
             '4 = VIEW A TEAM ROSTER
         Case 4:
-            Call GetTeam_CNGTM(A$, year$, teamNbr)
-            Call ViewRoster(A$, teamNbr)
+            Call ChooseTeam (year$, numberTeams, teamNbr, A$)
+            If teamNbr <> 0 Then
+                Call ViewRoster(A$, teamNbr)
+            End If
 
     End Select
 
@@ -511,7 +524,7 @@ End Sub
 
 
 '----------------------------------------
-'        InputEditTeam Subroutine               s
+'        InputEditTeam Subroutine
 '----------------------------------------
 'Steps user through screens for adjusting
 'team data and players
@@ -752,7 +765,9 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
         Locate 7: Input " 5. OFF REB "; teamRatings%(9)
         Locate 8: Input " 6. DEF REB "; teamRatings%(10)
 
+        'Calculate Rebounds if missing
         If teamRatings%(9) = 0 And RB = 0 Then
+            'Off Rebounds = ~ Def Rebounds / 3
             teamRatings%(9) = .32 * teamRatings%(10)
             teamRatings%(10) = teamRatings%(10) - teamRatings%(9)
             Locate 7: Print " 5. OFF REB "; teamRatings%(9)
@@ -763,6 +778,7 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
         Locate 10: Input " 8. FOULS "; teamRatings%(12)
         Locate 11: Input " 9. DISQ "; teamRatings%(13)
         Locate 12: Input "10. STEALS "; teamRatings%(14)
+        '-- We currently don't have a a calculation for if this data is missing
         Locate 13: Input "11. TURNOVERS "; teamRatings%(15)
         Locate 14: Input "12. BLK SHOTS "; teamRatings%(16)
         Locate 15: Input "13. 3-FGM "; teamRatings%(18)
@@ -822,7 +838,9 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
                 Case 6
                     Locate 8: Input " 6. DEF REB "; teamRatings%(10)
 
+                    'Calculate Rebounds if missing
                     If teamRatings%(9) = 0 And RB = 0 Then
+                        'Off Rebounds = ~ Def Rebounds / 3
                         teamRatings%(9) = .32 * teamRatings%(10)
                         teamRatings%(10) = teamRatings%(10) - teamRatings%(9)
                         Locate 7: Print " 5. OFF REB "; teamRatings%(9)
@@ -878,8 +896,11 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
         Locate 7: Input " 5. OFF REB "; teamRatings%(23)
         Locate 8: Input " 6. DEF REB "; teamRatings%(24)
 
+        'Calculate Rebounds if missing
         If teamRatings%(23) = 0 And RB = 0 Then
-            teamRatings%(23) = .35 * teamRatings%(24): teamRatings%(24) = teamRatings%(24) - teamRatings%(23)
+            'Off Rebounds = ~ Def Rebounds / 3
+            teamRatings%(23) = .35 * teamRatings%(24)
+            teamRatings%(24) = teamRatings%(24) - teamRatings%(23)
             Locate 6: Print " 5. OFF REB "; teamRatings%(23)
             Locate 7: Print " 6. DEF REB "; teamRatings%(24)
         End If
@@ -888,6 +909,7 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
         Locate 10: Input " 8. FOULS "; teamRatings%(26)
         Locate 11: Input " 9. DISQ "; teamRatings%(27)
         Locate 12: Input "10. STEALS "; teamRatings%(28)
+        '-- We currently don't have a a calculation for if this data is missing
         Locate 13: Input "11. TURNOVERS "; teamRatings%(29)
         Locate 14: Input "12. BLK SHOTS "; teamRatings%(30)
         Locate 15: Input "13. 3-FGM "; teamRatings%(32)
@@ -947,8 +969,11 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
                 Case 6
                     Locate 8: Input " 6. DEF REB "; teamRatings%(24)
 
+                    'Calculate Rebounds if missing
                     If teamRatings%(23) = 0 And RB = 0 Then
-                        teamRatings%(23) = .35 * teamRatings%(24): teamRatings%(24) = teamRatings%(24) - teamRatings%(23)
+                        'Off Rebounds = ~ Def Rebounds / 3
+                        teamRatings%(23) = .35 * teamRatings%(24)
+                        teamRatings%(24) = teamRatings%(24) - teamRatings%(23)
                         Locate 7: Print " 5. OFF REB "; teamRatings%(23)
                         Locate 8: Print " 6. DEF REB "; teamRatings%(24)
                     End If
@@ -1021,12 +1046,17 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
 
     Else
 
-        'Input team
-        If teamRatings%(28) = 0 And ST = 0 Then teamRatings%(28) = teamRatings%(5) * .1
-        If teamRatings%(14) = 0 And ST = 0 Then teamRatings%(14) = teamRatings%(19) * .1
-        If teamRatings%(16) = 0 And BK = 0 Then teamRatings%(16) = teamRatings%(19) * .06
-        If teamRatings%(30) = 0 And BK = 0 Then teamRatings%(30) = teamRatings%(5) * .06
+        'Calculate Steals/Blocks if missing
+        'Def Steals
+        If teamRatings%(28) = 0 And ST = 0 Then teamRatings%(28) = teamRatings%(5) * .1     'Off FGA / 10
+        'Off Steals
+        If teamRatings%(14) = 0 And ST = 0 Then teamRatings%(14) = teamRatings%(19) * .1    'Def FGA / 10
+        'Def Blocks
+        If teamRatings%(30) = 0 And BK = 0 Then teamRatings%(30) = teamRatings%(5) * .06    'Off FGA / ~16
+        'Off Blocks
+        If teamRatings%(16) = 0 And BK = 0 Then teamRatings%(16) = teamRatings%(19) * .06   'Def FGA / ~16
 
+        'Input team
         For I = 0 To 14
 
             Cls
@@ -1051,7 +1081,9 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
                 Locate 10: Input " 9. OFF REB "; playerRatings%(I, 6)
                 Locate 11: Input "10. DEF REB "; playerRatings%(I, 7)
 
+                'Calculate Rebounds if missing
                 If playerRatings%(I, 6) = 0 And RB = 0 Then
+                    'Off Rebounds = ~ Def Rebounds / 3
                     playerRatings%(I, 6) = .32 * playerRatings%(I, 7)
                     playerRatings%(I, 7) = playerRatings%(I, 7) - playerRatings%(I, 6)
                     Locate 10: Print " 9. OFF REB "; playerRatings%(I, 6)
@@ -1132,7 +1164,9 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
     For J = I To 14
         playerNames$(J, 0) = "XXX"
         playerNames$(J, 1) = "X"
-        For I1 = 0 To 19: playerRatings%(J, I1) = -1: Next
+        For I1 = 0 To 19: 
+            playerRatings%(J, I1) = -1
+        Next
     Next
 
 End Sub
@@ -1218,8 +1252,11 @@ Sub EditPlayer (J, action)
             Case 10
                 Locate 11: Input "10. DEF REB "; playerRatings%(I, 7)
 
+                'Calculate Rebounds if missing
                 If playerRatings%(I, 6) = 0 And RB = 0 Then
-                    playerRatings%(I, 6) = .32 * playerRatings%(I, 7): playerRatings%(I, 7) = playerRatings%(I, 7) - playerRatings%(I, 6)
+                    'Off Rebounds = ~ Def Rebounds / 3
+                    playerRatings%(I, 6) = .32 * playerRatings%(I, 7)
+                    playerRatings%(I, 7) = playerRatings%(I, 7) - playerRatings%(I, 6)
                     Locate 10: Print " 9. OFF REB "; playerRatings%(I, 6)
                     Locate 11: Print "10. DEF REB "; playerRatings%(I, 7)
                 End If
@@ -1507,11 +1544,14 @@ Sub SaveTeamFile (yearNumber$, teamIdx, action%)
     Next
 
     For I = 0 To 14
+
         LSet Q$(22 * I + 45) = playerNames$(I, 0)
         LSet Q$(22 * I + 46) = playerNames$(I, 1)
+
         For I1 = 0 To 19
             LSet Q$(22 * I + 47 + I1) = MKI$(playerRatings%(I, I1))
         Next
+
     Next
 
     LSet Q$(375) = teamInfo$(2)

@@ -64,7 +64,6 @@ Sub InitVar ()
     F3 = 0
     halfTime = 0
     JY = 0
-    NTMS = 0
     P = 0
     P7 = 0
     P9 = 0
@@ -162,7 +161,7 @@ Sub AUTOSETUP
     For P9 = 0 To 1
         I1 = NG%(P9)
         YN$ = YN$(P9)
-        Call GETATEAM(I1, YN$)
+        Call ReadGameTeam(YN$, B$(P9), I1, P9)
     Next P9
 
 End Sub
@@ -257,7 +256,7 @@ Sub ResetShotClock ()
         Case 1: shotClock = 30
     End Select
 
-	LS = 4
+    LS = 4
 
 End Sub
 
@@ -780,7 +779,7 @@ Sub SomeCalcs ()
             End If
         Next I1
 
-        If M3 >= 1 And 5 - M3 < 15 - M1 Or H = 4 And gameClock! < 120 Or H > 4 Or M4 >= 1 And M2 < 14 Then 
+        If M3 >= 1 And 5 - M3 < 15 - M1 Or H = 4 And gameClock! < 120 Or H > 4 Or M4 >= 1 And M2 < 14 Then
             Call COMPUTERSUBS
         End If
 
@@ -951,7 +950,7 @@ Sub Choices ()
         P9 = P
         C1 = 2
         Call CheckZeroTime
-       
+
     Else
 
         If pbpDelay! <> 0 Then
@@ -1261,32 +1260,6 @@ End Sub
 
 
 '------------------------------
-'    STATCONVERT Subroutine
-'------------------------------
-' ...explanation...
-Sub STATCONVERT (Q, QQ)
-
-    For XX = 4 To 11
-        If Mid$(B$(Q), XX, 1) = " " Or Mid$(B$(Q), XX, 1) = "." Then Mid$(B$(Q), XX, 1) = "_"
-    Next XX
-
-    For XX = 12 To 14
-        If Mid$(B$(Q), XX, 2) = "ST" Then Mid$(B$(Q), 9, 1) = "_": Mid$(B$(Q), 10, 2) = "ST"
-    Next XX
-
-    QQ = 8
-
-    For XX = 11 To 4 Step -1
-        If Mid$(B$(Q), XX, 1) = "_" Then
-            QQ = XX - 4
-        Else
-            Exit For
-        End If
-    Next XX
-
-End Sub
-
-'------------------------------
 '    LOADSTATS Subroutine
 '------------------------------
 ' ...explanation...
@@ -1298,18 +1271,11 @@ Sub LOADSTATS ()
 
         Cls
 
-        Y$(I) = B$(I)
-        Q = I
+        statFile$ = nameStatFile$(B$(I))
 
-        Call STATCONVERT(Q, QQ)
+        If _FileExists(diskPaths$(1) + statFile$ + "S") Then
 
-        M$ = Mid$(B$(I), 4, QQ)
-        R$ = M$ + "." + Left$(B$(I), 2)
-        R$ = R$ + "S"
-
-        If _FileExists(diskPaths$(1) + R$) Then
-
-            Open diskPaths$(1) + R$ For Input As #2
+            Open diskPaths$(1) + statFile$ + "S" For Input As #2
             Input #2, nbrStats
             For I1 = 1 To 100: Input #2, O%(I1): Next
             For I1 = 1 To 100: Input #2, HO$(I1): Next
@@ -1324,15 +1290,13 @@ Sub LOADSTATS ()
 
         End If
 
-        B$(I) = Y$(I)
-
     Next
 
 End Sub
 
 
 '------------------------------
-'   DISABLEPLAYERS Subroutine  
+'   DISABLEPLAYERS Subroutine
 '------------------------------
 ' ...explanation...
 Sub DISABLEPLAYERS ()
@@ -1430,15 +1394,13 @@ End Sub
 
 
 '------------------------------
-'      GETATEAM Subroutine
+'   ReadGameTeam Subroutine
 '------------------------------
 ' ...explanation...
-Sub GETATEAM (I1, YN$)
+Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, P9)
 
     'Games Played, Minutes Per Game
     Dim GP!, MPG!
-
-    teamYear$ = RTrim$(YN$)
 
     Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
 
@@ -1463,9 +1425,9 @@ Sub GETATEAM (I1, YN$)
 
     Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
 
-    Get #1, I1
+    Get #1, teamIdx
 
-    B$(P9) = RTrim$(Q$(0))
+    targetTeam$ = RTrim$(Q$(0))
 
     'Mascot / Alt Name
     A1$(P9) = Q$(1)
@@ -1479,11 +1441,14 @@ Sub GETATEAM (I1, YN$)
     Next
 
     For I = 0 To 14
+
         AA$(P9, I, 0) = RTrim$(Q$(22 * I + 45))
         AA$(P9, I, 1) = RTrim$(Q$(22 * I + 46))
+
         For I1 = 0 To 19
             B%(P9, I, I1) = CVI(Q$(22 * I + 47 + I1))
         Next
+
     Next
 
     'Team Abbreviation
@@ -1525,7 +1490,7 @@ Sub GETATEAM (I1, YN$)
                 RN = Int(Rnd(1) * 100) + 1
 
                 'Auto disable specific players
-                If UCase$(AA$(P9, I, 0)) = "XXX" Or (B%(P9, I, 18) = 0 And RN > Int(B%(P9, I, 0) / L%(P9, 0) * 100 + .5)) Then 
+                If UCase$(AA$(P9, I, 0)) = "XXX" Or (B%(P9, I, 18) = 0 And RN > Int(B%(P9, I, 0) / L%(P9, 0) * 100 + .5)) Then
                     B%(P9, I, 18) = -1
                 End If
 
@@ -1652,6 +1617,7 @@ Sub NEWSCREEN ()
     Locate 17, 1
     Color T(0, 33), T(0, 34): Print B$(0);
 
+    'Win/Loss record from current stats files
     Print Using " [##"; Z5(0);: Print "-";: Print Using "##]"; Z6(0)
 
     Color 14, 0: Print "# NAME         FG FT RB CX PA DF PT  F"
@@ -1692,8 +1658,12 @@ Sub NEWSCREEN ()
     Next I1
 
     Locate 17, 40
+
     Color T(1, 33), T(1, 34): Print B$(1);
+
+    'Win/Loss record from current stats files
     Print Using " [##"; Z5(1);: Print "-";: Print Using "##]"; Z6(1)
+
     Color 14, 0
     Locate , 40: Print "# NAME          FG FT RB CX PA DF PT  F"
 
@@ -2461,7 +2431,7 @@ Sub COMPUTERSUBS ()
 
         If B1!(P9, I2) = -1 And FS% <> 1 Then
 
-            If P$ = "G" Then 
+            If P$ = "G" Then
                 P$ = "F"
             Else
                 If P$ = "F" Then
@@ -2474,7 +2444,7 @@ Sub COMPUTERSUBS ()
             End If
 
             GoTo 8781
-        
+
         Else
             FS% = 0
         End If
@@ -6562,7 +6532,7 @@ Sub SAVESTATS ()
         If _FileExists("GAME82") Then
 
             Call TickerSchedule
-            
+
             If AP%(1) < AP%(0) + AP%(2) Then
                 Kill "GAME82"
                 endAllGames = 1
@@ -6571,7 +6541,7 @@ Sub SAVESTATS ()
 
                 Print #2, scheduleFile$
 
-                For I = 0 To 2: 
+                For I = 0 To 2:
                     Print #2, AP%(I)
                 Next
 
@@ -6601,10 +6571,15 @@ Sub TickerSchedule
         For X = 0 To 1: SX$(AP%(2) + 1, X) = B$(X): Next
 
         Open "TICKER" For Output As #2
+
         For I = 1 To 32: For I1 = 0 To 1: For I2 = 1 To 14
+
         Print #2, SX%(I, I1, I2): Next: Next: Next
+
         For I = 1 To 32: For I1 = 0 To 1: Print #2, SX$(I, I1): Next: Next
+
         For I = 1 To 32: Print #2, ST%(I): Next
+
         Close 2
 
     End If
@@ -6619,12 +6594,19 @@ Sub TickerSchedule
 
     NG%(13) = 1
 
-    For X = 0 To 18: LSet Q$(X + 1) = MKI$(NG%(X)): Next
-    For X = 0 To 1: LSet Q$(20 + X) = YN$(X): Next
+    For X = 0 To 18:
+        LSet Q$(X + 1) = MKI$(NG%(X))
+    Next
+
+    For X = 0 To 1:
+        LSet Q$(20 + X) = YN$(X)
+    Next
 
     LSet Q$(22) = MKI$(S!(0, 0))
     LSet Q$(23) = MKI$(S!(1, 0))
+
     Put #1, AP%(0) + AP%(2)
+
     Close 1
 
     AP%(2) = AP%(2) + 1
@@ -6646,22 +6628,28 @@ Sub COMPILESTATFILES (compileOpt)
     HH% = N
 
     For PX = 0 To 1
+
         For J = 0 To 14
             A!(PX, J, 16) = timePlayed(PX, J)
             A!(PX, J, 17) = A!(PX, J, 23)
             A!(PX, J, 18) = A!(PX, J, 24)
         Next
+
     Next
 
     For PX = 0 To 1
+
         For I = 0 To 14
+
             For J = 1 To 12
                 A!(PX, I, J) = A!(PX, I, J + 6)
             Next
+
             W0!(PX, I) = W%(PX, I, 0)
             W1!(PX, I) = W%(PX, I, 1)
+
         Next
-        Y$(PX) = B$(PX)
+
     Next
 
     teamIdx = 0
@@ -6683,37 +6671,25 @@ Sub COMPILESTATFILES (compileOpt)
 
         If C% <> 1 Then
 
-            For XX = 4 To 11
-                If Mid$(B$(teamIdx), XX, 1) = " " Or Mid$(B$(teamIdx), XX, 1) = "." Then Mid$(B$(teamIdx), XX, 1) = "_"
-            Next XX
+            statFile$ = nameStatFile$(B$(teamIdx))
 
-            For XX = 12 To 14
-                If Mid$(B$(teamIdx), XX, 2) = "ST" Then Mid$(B$(teamIdx), 9, 1) = "_": Mid$(B$(teamIdx), 10, 2) = "ST"
-            Next XX
+            If _FileExists(diskPaths$(1) + statFile$) Then
 
-            QQ = 8
+                Open diskPaths$(1) + statFile$ For Input As #2
 
-            For XX = 11 To 4 Step -1
-                If Mid$(B$(teamIdx), XX, 1) = "_" Then
-                    QQ = XX - 4
-                Else
-                    Exit For
-                End If
-            Next XX
-
-            F$ = Mid$(B$(teamIdx), 4, QQ)
-            R$ = F$ + "." + Left$(B$(teamIdx), 2)
-
-            If _FileExists(diskPaths$(1) + R$) Then
-
-                Open diskPaths$(1) + R$ For Input As #2
                 Input #2, B$(teamIdx)
 
                 For I = 0 To 14:
+
                     Input #2, AA$(teamIdx, I, 0)
-                    For J = 0 To 13: Input #2, Z2!(I, J): Next J
+
+                    For J = 0 To 13:
+                        Input #2, Z2!(I, J)
+                    Next J
+
                     Input #2, W2(teamIdx, I)
                     Input #2, W3(teamIdx, I)
+
                 Next I
 
                 For L = 0 To 15: Input #2, Z!(L): Next L
@@ -6783,15 +6759,21 @@ Sub COMPILESTATFILES (compileOpt)
             Print U$
             Color 15, 0
 
-            Open diskPaths$(1) + R$ For Output As #1
+            Open diskPaths$(1) + statFile$ For Output As #1
 
-            Print #1, Y$(teamIdx)
+            Print #1, B$(teamIdx)
 
             For I = 0 To 14:
+
                 Print #1, AA$(teamIdx, I, 0)
-                For J = 0 To 13: Print #1, Z2!(I, J): Next J
+
+                For J = 0 To 13:
+                    Print #1, Z2!(I, J)
+                Next J
+
                 Print #1, W2(teamIdx, I)
                 Print #1, W3(teamIdx, I)
+
             Next I
 
             For L = 0 To 15
@@ -6805,10 +6787,9 @@ Sub COMPILESTATFILES (compileOpt)
             Close #1
 
             Y% = 0
-            R$ = R$ + "S"
 
-            If _FileExists(diskPaths$(1) + R$) Then
-                Open diskPaths$(1) + R$ For Input As #1
+            If _FileExists(diskPaths$(1) + statFile$ + "S") Then
+                Open diskPaths$(1) + statFile$ + "S" For Input As #1
                 Input #1, Y%
                 For I = 1 To 100: Input #1, O%(I): Next I
                 For I = 1 To 100: Input #1, HO$(I): Next I
@@ -6868,16 +6849,19 @@ Sub COMPILESTATFILES (compileOpt)
             HO$(Y%) = B$(1 - teamIdx)
             HT%(Y%) = S!(1 - teamIdx, 0)
 
-            Open diskPaths$(1) + R$ For Output As #1
+            Open diskPaths$(1) + statFile$ + "S" For Output As #1
+
             Print #1, Y%
+
             For I = 1 To 100: Print #1, O%(I): Next I
             For I = 1 To 100: Print #1, HO$(I): Next I
             For I = 1 To 100: Print #1, HT%(I): Next I
             For I = 1 To 100: Print #1, H$(I): Next I
+
             Close #1
 
             'Reset arrays for next iteration
-            For I = 1 To 100: 
+            For I = 1 To 100:
                 O%(I) = 0
                 HT%(I) = 0
                 HO$(I) = ""
@@ -6906,10 +6890,12 @@ End Sub
 
 
 '----------------------------------------
-'    TeamSelect_PROHOOP Subroutine
+'    ChooseGameTeam Subroutine
 '----------------------------------------
 '...explanation...
-Sub TeamSelect_PROHOOP (teamIndicator)
+Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, P9)
+
+    Shared previousYear$
 
     Do
         Color 15, 0
@@ -6940,34 +6926,94 @@ Sub TeamSelect_PROHOOP (teamIndicator)
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
         Locate , 12: Print "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
         Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
-        Locate 7, 27: Input NY$
 
-        If NY$ = "" And YN$ <> "" Then
-            Call TEAMMENU(2, YN$)
-        Else
-            YN$ = NY$
-            Erase teamNames$
-            For I = 1 To 500: teamIndex%(I) = 1: Next
-            Call TEAMMENU(BO%, YN$)
-        End If
+        I$ = GetKeyPress$
 
-        If BO% = 1 Then
-            BO% = 0
-            '56
-        Else
-            Locate 2, 33
-            Color T(P9, 33), T(P9, 34): Print B$(P9)
+        If I$ <> Chr$(27) Then
 
-            Color 15, 4
+            If I$ <> Chr$(13) Then
+
+                Locate 7, 27: Print I$
+                Locate 7, 28: Line Input NY$
+                NY$ = I$ + NY$
+                Color 15, 0
+
+                If Not (NY$ = "" And yearNumber$ <> "") Then
+
+                    yearNumber$ = RTrim$(NY$)
+                    Erase teamNames$
+                    numberTeams = 0
+
+                    Cls
+
+                    If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
+
+                        Locate 10, 8
+
+                        Call CSMsgBox("NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID", 20, Pass)
+                        I$ = GetKeyPress$
+                        Call CSMsgBox("", 0, Pass)
+
+                    Else
+
+                        Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$ For Random As #1 Len = TEAM_SIZE_BYTES
+
+                        fileLength& = LOF(1)
+
+                        Field #1, 15 As Q$(0)
+
+                        numberTeams = fileLength& / TEAM_SIZE_BYTES
+
+                        For teamIdx = 1 To numberTeams
+                            Get #1, teamIdx
+                            'numberTeams = numberTeams + 1
+                            teamNames$(teamIdx) = Q$(0)
+                            teamIndex%(teamIdx) = teamIdx
+                        Next teamIdx
+
+                        Close 1
+
+                    End If 'Done checking if file exists
+
+                End If 'Done checking for blank year number
+
+                previousYear$ = yearNumber$
+
+            Else
+
+                yearNumber$ = previousYear$
+
+            End If 'Done checking for ENTER key
+
+            'Locate 2, 33
+            'Color 31: Print "LOADING..."
 
             Do
-                Locate 3, 33
-                Print "ANY CHANGE (YN)";
-                I$ = GetKeyPress$
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-        End If
 
-    Loop Until UCase$(I$) = "N"
+                Call SelectGameTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%, P9)
+
+                If ExitCode% <> 27 Then
+
+                    Do
+                        Locate 2, 33
+                        Color T(P9, 33), T(P9, 34): Print B$(P9)
+
+                        Color 15, 4
+                        Locate 3, 33: Print "ANY CHANGE? (YN)";
+
+                        J$ = GetKeyPress$
+
+                    Loop Until J$ = Chr$(27) Or UCase$(J$) = "Y" Or UCase$(J$) = "N"
+
+                End If
+
+            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N"
+
+        End If 'Done checking for ESC
+
+    Loop Until UCase$(J$) = "N" Or I$ = Chr$(27) 'Or J$ = Chr$(27)
+
+    If I$ = Chr$(27) Or J$ = Chr$(27) Then chosenIdx = 0
 
     Color 15, 0
 
@@ -6975,66 +7021,43 @@ End Sub
 
 
 '------------------------------
-'      TEAMMENU Subroutine
+'      SelectGameTeam Subroutine
 '------------------------------
 ' ...explanation...
-Sub TEAMMENU (BO%, YN$)
+Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%, P9)
 
     Dim fileLength&
 
-    If BO% = 2 Then
-        BO% = 0
-    Else
-        NTMS = 0
+    If numberTeams > 0 Then
 
-        teamYear$ = RTrim$(YN$)
+        SELECTION% = 1
+        Count% = numberTeams
+        Start% = 1
+        FileFGColr% = 15: FileBGColr% = 4
+        HiLiteFGColr% = 0: HiLiteBGColr% = 7
+        Rows% = 20
+        Columns% = 4
+        Spacing% = 6
+        Row% = 4
+        Column% = 1
 
-        Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
+        Color , 4
+        Cls
+        Color 14
+        Locate , 33: Print "TEAM SELECTION"
+        Locate 25, 1
+        Color 14: Print "ESC";: Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";
+        Color 14: Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
-        fileLength& = LOF(1)
+        _MouseShow "DEFAULT"
+        MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+        _MouseHide
 
-        Field #1, 15 As Q$(0), 15 As Q$(1)
-        Field #1, 44 As X$, 2 As Q$(9)
+        If ExitCode% <> 27 Then
+            selectedIdx = teamIndex%(SELECTION%)
+            Call ReadGameTeam(yearNumber$, teamName$, selectedIdx, P9)
+        End If
 
-        For I1 = 1 To fileLength& / 1031
-            Get #1, I1
-            CK% = CVI(Q$(9))
-            If CK% = 999 Then
-                NTMS = NTMS + 1
-                teamNames$(NTMS) = Q$(0)
-                teamIndex%(NTMS) = I1
-            End If
-        Next
-
-        Close 1
-
-    End If
-
-    SELECTION% = 1
-    Count% = NTMS
-    START% = 1
-    FileFGColr% = 15: FileBGColr% = 4
-    HiLiteFGColr% = 0: HiLiteBGColr% = 7
-    ROWS% = 20
-    COLUMNS% = 4
-    SPACING% = 6
-    ROW% = 4
-    COLUMN% = 1
-    Color , 4: Cls: Locate , 33: Color 14
-    Print "TEAM SELECTION": Color 15
-    Locate 25, 1: Color 14: Print "ESC";: Color 15
-    Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
-    Print "ENTER";: Color 15: Print "-SELECTS TEAM";
-
-    _MouseShow "DEFAULT"
-    MAMenu teamNames$(), SELECTION%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, ROWS%, COLUMNS%, SPACING%, ROW%, COLUMN%
-    _MouseHide
-
-    If ExitCode% = 27 Then
-        BO% = 1
-    Else
-        I1 = teamIndex%(SELECTION%)
-        Call GETATEAM(I1, YN$)
     End If
 
 End Sub
@@ -7332,7 +7355,7 @@ Sub BOX2FILE (printChoice, NM$)
     Print #2,
     Print #2, "BENCH WARMERS"
 
-    For I = 0 to 1
+    For I = 0 To 1
 
         For I1 = 0 To 13
 
@@ -7445,7 +7468,7 @@ Sub ScoreSummary ()
         Print B$(I);
 
         Color 15, 0
-        
+
         If halfTime = 1 Then
             Print Tab(16); Str$(S!(I, 1)); Tab(20); Str$(S!(I, 2)); Tab(32); " - "; Str$(S!(I, 0))
 
@@ -7480,7 +7503,7 @@ End Sub
 '   STATS2SCREEN Subroutine
 '------------------------------
 ' ...explanation...
-SUB STATS2SCREEN
+Sub STATS2SCREEN
 
     For I = 0 To 1:
 
@@ -7632,7 +7655,7 @@ Sub BOX2SPC (NM$)
         Next
     Next
 
-    Print #2, 
+    Print #2,
 
     Close #2
 
@@ -7655,7 +7678,7 @@ Function TickerTime% (timeInterval, X)
 
     TickerTime% = tickerIdx
 
-End Sub
+End Function
 
 
 '------------------------------
@@ -7668,3 +7691,4 @@ Sub pbplog (lineNumber)
     Print #7,
 
 End Sub
+

@@ -1,5 +1,5 @@
 '----------------------------------------
-' Used across more than one source file
+' Used in more than one source file
 '----------------------------------------
 Dim opSysType$
 
@@ -11,9 +11,9 @@ Dim Shared diskPaths$(3), Q$(0 To 377)
 '-- transition away from this
 Dim Shared fileLength&
 
-Dim playerRatings%(0 To 14, 0 To 19), teamRatings%(35), leagueRatings%(0 To 6)
+'Dim playerRatings%(0 To 14, 0 To 19), teamRatings%(0 To 34), leagueRatings%(0 To 6)
 
-Dim playerNames$(15, 1), teamInfo$(4)
+Dim playerNames$(0 To 14, 0 To 1), teamInfo$(4)
 
 Dim Shared teamNames$(MAX_TEAMS)
 Dim Shared teamIndex%(MAX_TEAMS)
@@ -24,7 +24,7 @@ Dim Shared teamIndex%(MAX_TEAMS)
 'H$(), etc. are what goes here
 'it looks like they only max at 100 for this
 'if i'm right, college was 162
-'-- 
+'--
 
 Dim Shared Z1$(40)
 
@@ -53,11 +53,9 @@ Dim Shared TMR%, TMR1%
 Dim Shared A$, YN$, Z1$
 
 Dim compareA!(15, 14)
-Dim scheduleT!(0 To 34)
-
 
 '----------------------------------------
-' Used across ALIGN, MERGE routines
+' Used in ALIGN / MERGE routines
 '----------------------------------------
 Dim Ycurr%, Yroad%
 
@@ -78,55 +76,76 @@ Dim ORD%(0 To 100), mergeT%(0 To 100), TRD%(0 To 100)
 
 
 '----------------------------------------
-' Used across CAREER routines
+' Used in CAREER routines
 '----------------------------------------
+'---> should we need these ?!?!
 Dim ars!(15, 62, 15), W0S!(15, 62), W1S!(15, 62)
 Dim AR$(62)
 
 '----------------------------------------
-' Used across COMPARE routines
+' Used in COMPARE routines
 '----------------------------------------
-Dim compareA$(15), compareAA$(15, 1), compareB$(14)
-Dim compareT$(0)
+Dim compareA$(15), compareT$(0)
 
-Dim compareB%(15, 19), compareL%(6), compareT%(34)
 Dim compareW0!(15), compareW1!(15)
 Dim compareZ!(0 To 15), compareZ1!(0 To 15)
 
+
 '----------------------------------------
-' Used across CREATE routines
+' Used in CREATE routines
 '----------------------------------------
 Dim intZ1%(TEAMS_PER_CONFERENCE)
 Dim memberTeams$(TEAMS_PER_CONFERENCE)
 Dim memberYears$(TEAMS_PER_CONFERENCE)
 
-'----------------------------------------
-' Used across DRAFT routines
-'----------------------------------------
-Dim draftB%(0 To 1, 0 To 14, 0 To 19), draftL%(0 To 1, 0 To 6)
-Dim draftLG%(0 To 52, 0 To 5), draftLT%(0 To 14, 0 To 34)
-Dim draftT%(0 To 1, 0 To 34)
-Dim draftAA$(1, 4), draftB$(1, 14, 1), draftYears$(1 To 52), draftYN$(0 To 1)
 
 '----------------------------------------
-' Used across GPMIN routines
+' Used in DRAFT routines
 '----------------------------------------
-Dim adjustB$(15, 1), adjustT$(0 To 4)
-Dim adjustB%(0 To 14, 19), adjustL%(0 To 6), adjustT%(0 To 34)
+Dim leagRat_DRAFT%(0 To 1, 0 To 6), leagTot_DRAFT(0 To 14, 0 To 34)
+Dim plyrRat_DRAFT%(0 To 1, 0 To 14, 0 To 19), tmRat_DRAFT%(0 To 1, 0 To 34)
+
+Dim players_DRAFT$(1, 14, 1), tmInfo_DRAFT$(1, 4)
+
+Dim draftYears$(1 To 52)
+Dim leagueAverages%(0 To 52, 0 To 5)
+Dim teamYears$(0 To 1)
 
 '----------------------------------------
-' Used across HD2HD routines
+' Used in TRADE routines
 '----------------------------------------
-Dim hd2hdT!(34)
-Dim hd2hdAL!(50), AW!(50), HL!(50), HW!(50), R1!(50), R2!(50), R3!(50), R4!(50)
+Dim haveStats(1)
+
+' ** Team File **
+Dim leagRat_TRADE(0 To 1, 0 To 6)
+Dim plyrRat_TRADE(0 To 1, 0 To 14, 0 To 19)
+Dim teamSettings%(1, 34)
+
+Dim players_TRADE$(0 To 1, 0 To 14, 0 To 1)
+Dim tmInfo_TRADE$(1, 6)
+
+' ** Stat File **
+
+Dim tradeZZ(2, 15), tradeZZ1(2, 15)
+
+Dim tradeB1!(2, 14, 14), tradeT!(1)
+Dim tradeW0!(2, 14), tradeW1!(2, 14)
+
+Dim B1$(2, 14), tradeA1$(1)
+Dim statFiles$(1), statTeam$(1)
+
+
+'----------------------------------------
+'   Used in Head-To-Head routines
+'----------------------------------------
+Dim AL!(50), AW!(50), HL!(50), HW!(50), R1!(50), R2!(50), R3!(50), R4!(50)
 Dim TAL!(40), TAW!(40), THL!(40), THW!(40)
 Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
 
 Dim LG$, div1$, div2$, div3$, div4$
 
 '----------------------------------------
-' Used across LOOKY,
-'   LEAGCMPL routines
+' Used in STAT / INPUT routines
 '----------------------------------------
 Dim leagueT%(100), statO%(0 To 100), statsL%(0 To 100)
 
@@ -135,10 +154,6 @@ Dim values!(0 To 14, 0 To 24)
 
 Dim categories$(0 To 25), statsH$(0 To 100), lookyA$(0 To 14), O$(0 To 100)
 
-'----------------------------------------
-' Used across LEAGCMPL,
-'   SEELEAG routines
-'----------------------------------------
 Dim DL!(40, 20), LD!(250, 2), leagS!(14, 26)
 Dim O1!(40), O2!(40), OL!(40, 20)
 Dim P!(40), statZ!(260), statZ1!(260)
@@ -151,7 +166,7 @@ Dim DT!(21), OT!(21)
 Dim AL%, AW%, HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, Z%
 
 '----------------------------------------
-' Used across NEWLDR routines
+' Used in LEADER routines
 '----------------------------------------
 Dim HLL(TEAMS_PER_CONFERENCE), HWW(TEAMS_PER_CONFERENCE)
 Dim LL(TEAMS_PER_CONFERENCE), LLS(TEAMS_PER_CONFERENCE), LWS(TEAMS_PER_CONFERENCE)
@@ -159,8 +174,7 @@ Dim LTL(TEAMS_PER_CONFERENCE), LTW(TEAMS_PER_CONFERENCE)
 Dim RLL(TEAMS_PER_CONFERENCE), RWW(TEAMS_PER_CONFERENCE)
 Dim TLS(TEAMS_PER_CONFERENCE), TWS(TEAMS_PER_CONFERENCE), WW(TEAMS_PER_CONFERENCE)
 
-
-Dim AL!(600, 14)
+Dim plyrStatLeaders!(600, 14)
 Dim GM!(40), GM1!(40)
 Dim GMA!(600), TYP!(600)
 Dim TT!(40, 15), TT1!(40, 15)
@@ -176,20 +190,18 @@ Dim TPP$(600), TMM$(600)
 
 
 '----------------------------------------
-' Used across REC routines
+' Used in RECORD routines
 '----------------------------------------
 Dim teamRecords$(20), indRecords$(25)
 Dim BRC$(25, 1), TRC$(21), TRC1$(21)
 Dim BRC!(25), TRC!(21), TRC1!(21)
 
-'----------------------------------------
-' Used across RECORDS routines
-'----------------------------------------
 Dim indRecCategory$(50, 4), teamRecCategory$(125, 3)
 Dim allRecords!(50, 2), teamRecords!(125, 2)
 
+
 '----------------------------------------
-' Used across SCHEDULE routines
+' Used in SCHEDULE routines
 '----------------------------------------
 Dim BS%, NS%
 Dim N$
@@ -201,28 +213,16 @@ Dim scheduleNG%(MAX_GAMES, 18)
 ReDim scheduleH$(0 To 20), scheduleV$(0 To 20)
 Dim scheduleYN$(MAX_GAMES, 1)
 
-'----------------------------------------
-' Used across TRADE routines
-'----------------------------------------
-Dim teamSettings%(1, 34)
-Dim tradeB%(0 To 1, 0 To 14, 0 To 19), tradeL%(0 To 1, 0 To 6)
-Dim tradeS(1), tradeZZ(2, 15), tradeZZ1(2, 15)
-
-Dim tradeB1!(2, 14, 14), tradeT!(1)
-Dim tradeW0!(2, 14), tradeW1!(2, 14)
-
-Dim B1$(2, 14), tradeA1$(1), tradeAA$(1, 6)
-Dim tradeB$(0 To 1, 0 To 14, 0 To 1), SA$(1), statFiles$(1)
 
 '----------------------------------------
-' Used across Game Routines
+' Used in Game Routines
 '----------------------------------------
 Dim scheduleFile$
 
 Dim tickerStart
 
 Dim Shared AD, AP, B, CT, D, endGame, endAllGames, F3, H, halfTime, JY
-Dim Shared N, NTMS, P, P7, P9, PO, QQ, QR, sClockVal, shotClock
+Dim Shared N, P, P7, P9, PO, QQ, QR, sClockVal, shotClock
 Dim Shared T1, TMT, X, U5, VG, VH
 
 Dim Shared CF%, coachOpt, DK%, FB%, FR%, FT%, GF%, HH%
@@ -262,5 +262,5 @@ Dim Shared gameCoach$(3), gameStadium$(3)
 Dim Shared H$(100), HO$(100), offenseStyles$(2)
 Dim Shared PB$(1), PS$(4)
 Dim Shared R$(14), RC$(50, 4), SX$(32, 1)
-Dim Shared Y$(1), YN$(3)
+Dim Shared Y$(1), YN$(0 to 1)
 

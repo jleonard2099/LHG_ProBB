@@ -198,7 +198,7 @@ End Sub
 '... explain here ...
 Sub ViewIndividualLeaders (JB, printOrView%)
 
-    Shared AL!()
+    Shared plyrStatLeaders!()
     Shared GM!(), GM1!()
 
     Shared GMA!()
@@ -304,39 +304,46 @@ Sub ViewIndividualLeaders (JB, printOrView%)
                 Case 0, 2 To 3, 8 To 9, 13 To 14, 16, 18 To 22:
 
                     For I = 1 To JB
-                        If AL!(I, X) <> 0 Then
+
+                        If plyrStatLeaders!(I, X) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = AL!(I, X)
+                            TYP!(PPP) = plyrStatLeaders!(I, X)
                         End If
+
                     Next I
 
                     Call SortPlayer(PPP, stpl, sortType%)
                     TVN = 1
 
                 Case 1:
+
                     For I = 1 To JB
-                        If AL!(I, X) <> 0 Then
+
+                        If plyrStatLeaders!(I, X) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (AL!(I, X) + 30) / 60
+                            TYP!(PPP) = (plyrStatLeaders!(I, X) + 30) / 60
                         End If
+
                     Next I
 
                     Call SortPlayer(PPP, stpl, sortType%)
                     TVN = 1
 
                 Case 4:
+
                     For I = 1 To JB
-                        If AL!(I, X) >= GMA!(I) * 3.65 Then
+
+                        If plyrStatLeaders!(I, X) >= GMA!(I) * 3.65 Then
                             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = AL!(I, X) / AL!(I, X1)
+                            TYP!(PPP) = plyrStatLeaders!(I, X) / plyrStatLeaders!(I, X1)
                         End If
 
                     Next I
@@ -346,53 +353,63 @@ Sub ViewIndividualLeaders (JB, printOrView%)
                     Call DisplayLeaders(TVN, QW, B9)
 
                 Case 5:
+
                     For I = 1 To JB
+
                         If W0L!(I) <> 0 Then
                             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
                             TYP!(PPP) = W0L!(I)
                         End If
+
                     Next I
 
                     Call SortPlayer(PPP, stpl, sortType%)
                     TVN = 1
 
                 Case 6:
+
                     For I = 1 To JB
+
                         If W1L!(I) <> 0 Then
                             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
                             TYP!(PPP) = W1L!(I)
                         End If
+
                     Next I
 
                     Call SortPlayer(PPP, stpl, sortType%)
                     TVN = 1
 
                 Case 7:
+
                     For I = 1 To JB
+
                         If W0L!(I) >= GMA!(I) * .3 Then
                             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
                             TYP!(PPP) = W0L!(I) / W1L!(I)
                         End If
+
                     Next I
 
                     Call SortPlayer(PPP, stpl, sortType%)
                     TVN = 2
 
                 Case 10
+
                     For I = 1 To JB
 
-                        If AL!(I, X) >= GMA!(I) * 1.52 Then
+                        If plyrStatLeaders!(I, X) >= GMA!(I) * 1.52 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = AL!(I, X) / AL!(I, X1)
+                            TYP!(PPP) = plyrStatLeaders!(I, X) / plyrStatLeaders!(I, X1)
                         End If
 
                     Next I
@@ -402,11 +419,11 @@ Sub ViewIndividualLeaders (JB, printOrView%)
 
                 Case 11:
                     For I = 1 To JB
-                        If (AL!(I, X) * 2) + AL!(I, X1) + W0L!(I) <> 0 Then
+                        If (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I) <> 0 Then
                             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (AL!(I, X) * 2) + AL!(I, X1) + W0L!(I)
+                            TYP!(PPP) = (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I)
                         End If
                     Next I
 
@@ -416,25 +433,30 @@ Sub ViewIndividualLeaders (JB, printOrView%)
                 Case 12:
 
                     For I = 1 To JB
-                        If Not ((AL!(I, X) * 2) + AL!(I, X1) + W0L!(I) = 0 Or AL!(I, X2) = 0) Then
+
+                        If Not ((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I) = 0 Or plyrStatLeaders!(I, X2) = 0) Then
                             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = ((AL!(I, X) * 2) + AL!(I, X1) + W0L!(I)) / AL!(I, X2)
+                            TYP!(PPP) = ((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I)) / plyrStatLeaders!(I, X2)
                         End If
+
                     Next I
 
                     Call SortPlayer(PPP, stpl, sortType%)
                     TVN = 3
 
                 Case 15:
+
                     For I = 1 To JB
-                        If AL!(I, X) - AL!(I, X1) <> 0 Then
+
+                        If plyrStatLeaders!(I, X) - plyrStatLeaders!(I, X1) <> 0 Then
                             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = AL!(I, X) - AL!(I, X1)
+                            TYP!(PPP) = plyrStatLeaders!(I, X) - plyrStatLeaders!(I, X1)
                         End If
+
                     Next I
 
                     Call SortPlayer(PPP, stpl, sortType%)
@@ -443,51 +465,62 @@ Sub ViewIndividualLeaders (JB, printOrView%)
                 Case 17:
 
                     For I = 1 To JB
-                        If AL!(I, X) <> 0 Then
+
+                        If plyrStatLeaders!(I, X) <> 0 Then
                             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = AL!(I, X) / AL!(I, X1)
+                            TYP!(PPP) = plyrStatLeaders!(I, X) / plyrStatLeaders!(I, X1)
                         End If
+
                     Next I
 
                     Call SortPlayer(PPP, stpl, sortType%)
                     TVN = 3
 
                 Case 23:
+
                     For I = 1 To JB
-                        If Not ((AL!(I, X) * 2) + AL!(I, X1) + W0L!(I) = 0 Or AL!(I, X2) = 0) Then
+
+                        If Not ((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I) = 0 Or plyrStatLeaders!(I, X2) = 0) Then
                             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (((AL!(I, X) * 2) + AL!(I, X1) + W0L!(I))) * 48 / ((AL!(I, X2) + 30) / 60)
+                            TYP!(PPP) = (((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I))) * 48 / ((plyrStatLeaders!(I, X2) + 30) / 60)
                         End If
+
                     Next I
 
                     Call SortPlayer(PPP, stpl, sortType%)
                     TVN = 3
 
                 Case 24 To 29:
+
                     For I = 1 To JB
-                        If Not (AL!(I, X) = 0 Or AL!(I, X1) = 0) Then
+
+                        If Not (plyrStatLeaders!(I, X) = 0 Or plyrStatLeaders!(I, X1) = 0) Then
                             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (AL!(I, X)) * 48 / ((AL!(I, X1) + 30) / 60)
+                            TYP!(PPP) = (plyrStatLeaders!(I, X)) * 48 / ((plyrStatLeaders!(I, X1) + 30) / 60)
                         End If
+
                     Next I
 
                     Call SortPlayer(PPP, stpl, sortType%)
                     TVN = 3
 
                 Case 30:
+
                     For I = 1 To JB
-                        If Not (AL!(I, X) = 0 Or AL!(I, X1) = 0) Then
+
+                        If Not (plyrStatLeaders!(I, X) = 0 Or plyrStatLeaders!(I, X1) = 0) Then
                             PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = ((AL!(I, X) + 30) / 60) / AL!(I, X1)
+                            TYP!(PPP) = ((plyrStatLeaders!(I, X) + 30) / 60) / plyrStatLeaders!(I, X1)
                         End If
+
                     Next I
 
                     Call SortPlayer(PPP, stpl, sortType%)
@@ -1190,7 +1223,7 @@ Sub UpdateExpandedLeaders (JB, statFile$, TS, TTS)
     Shared AL$(), lookyA$()
     Shared TMA$(), TT$(), TT1$()
 
-    Shared AL!(), GM!(), GM1!()
+    Shared plyrStatLeaders!(), GM!(), GM1!()
     Shared TT!(), TT1!()
 
     Shared compareW0!(), compareW1!()
@@ -1217,14 +1250,20 @@ Sub UpdateExpandedLeaders (JB, statFile$, TS, TTS)
             If _FileExists(diskPaths$(1) + Z1$(KK)) Then
 
                 Open diskPaths$(1) + Z1$(KK) For Input As #1
+
                 Input #1, B$
+
                 For I = 0 To 14
+
                     Input #1, lookyA$(I)
+
                     For J = 0 To 13
                         Input #1, compareA!(I, J)
                     Next
+
                     Input #1, compareW0!(I)
                     Input #1, compareW1!(I)
+
                 Next
 
                 For L = 0 To 15:
@@ -1272,10 +1311,11 @@ Sub UpdateExpandedLeaders (JB, statFile$, TS, TTS)
 
                         For I1 = 0 To 13
                             K1 = K1 + 1
-                            AL!(JB, K1) = compareA!(I, I1)
+                            plyrStatLeaders!(JB, K1) = compareA!(I, I1)
                         Next I1
 
-                        W0L!(JB) = compareW0!(I): W1L!(JB) = compareW1!(I)
+                        W0L!(JB) = compareW0!(I)
+                        W1L!(JB) = compareW1!(I)
 
                     End If
 
@@ -1339,7 +1379,7 @@ Sub SAVELEADER (statFile$, JB, TS, TTS)
     Shared AL$()
     Shared TMA$(), TT$(), TT1$()
 
-    Shared AL!()
+    Shared plyrStatLeaders!()
     Shared GM!(), GM1!(), GMA!()
     Shared TT!(), TT1!()
     Shared W0L!(), W1L!()
@@ -1362,7 +1402,7 @@ Sub SAVELEADER (statFile$, JB, TS, TTS)
         Print Using "#####"; TMR%
 
         For I1 = 1 To 14:
-            Write #1, AL!(I, I1)
+            Write #1, plyrStatLeaders!(I, I1)
         Next I1
 
         Write #1, W0L!(I)

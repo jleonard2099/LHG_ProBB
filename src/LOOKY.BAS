@@ -4,170 +4,23 @@ Sub LOOKY ()
 
     Shared categories$(), lookyA$()
 
-    Shared statsL%()
-
     menuExit = 0
 
-    Do
+    Call ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
+    statFile$ = nameStatFile$(teamName$)
 
-        Color 15, 0
-        Cls
-
-        JJ = 6
-
-        Locate 6, 8: Color 15, 4
-
-        'Print box top
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        'Print box sides
-        For II = 1 To JJ
-            Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        'Print box bottom
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-        Locate 7, 32
-
-        Locate , 12: Print "ENTER DISK ID: ": Print
-        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-        Print
-        Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
-
+    If Not _FileExists(diskPaths$(1) + statFile$) Then
+        Call CSMsgBox("UNABLE TO LOCATE COMPILED STATS FILE PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
         I$ = GetKeyPress$
+        Call CSMsgBox("", 0, Pass)
+    Else
+        Color 15, 0
+        Call LoadTeamStats(statFile$, totalGames%)
+        Call ViewStatSummary(statFile$, A$, totalGames%, menuExit)
 
-        If I$ <> Chr$(27) Then
-
-            If I$ = Chr$(13) Then
-                Call SelectTeam_LOOKY(YN$, numberTeams)
-            Else
-                Locate 7, 27: Print I$
-                Locate 7, 28: Line Input NY$
-                NY$ = I$ + NY$
-                Color 15, 0
-
-                If NY$ = "" And YN$ <> "" Then
-                    Call SelectTeam_LOOKY(YN$, numberTeams)
-                Else
-                    YN$ = RTrim$(NY$)
-                    Erase teamNames$
-                    numberTeams = 0
-
-                    If Not _FileExists(diskPaths$(0) + "PROBBTMS." + YN$) Then
-                        BO% = 1
-                        Locate 10, 8
-                        Call CSMsgBox("NO TEAM FILES WERE FOUND MATCHING THIS ID.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-                        I$ = GetKeyPress$
-                        Call CSMsgBox("", 0, Pass)
-                    Else
-
-                        Open diskPaths$(0) + "PROBBTMS." + YN$ For Random As #1 Len = 1031
-
-                        fileLength& = LOF(1)
-
-                        Field #1, 15 As Q$(0), 15 As Q$(1)
-
-                        For I = 0 To 6
-                            Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-                        Next
-
-                        Field #1, 44 As X$, 2 As Q$(9)
-
-                        For I = 0 To 34
-                            Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-                        Next
-
-                        For I = 0 To 14
-                            Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-                            For I1 = 0 To 19
-                                Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-                            Next
-                        Next
-
-                        Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-
-                        For I1 = 1 To fileLength& / 1031
-                            Get #1, I1
-                            CK% = CVI(Q$(9))
-                            If CK% = 999 Then
-                                numberTeams = numberTeams + 1
-                                teamNames$(numberTeams) = Q$(0)
-                                teamIndex%(numberTeams) = I1
-                            End If
-                        Next
-                        Close 1
-
-                        'This is where most calls to the function will happen
-                        Call SelectTeam_LOOKY(YN$, numberTeams)
-
-                    End If
-
-                End If
-
-            End If
-
-            If BO% = 1 Then
-                BO% = 0
-            Else
-                A$ = RTrim$(Q$(0))
-                B$ = A$
-
-                Locate 2, 33
-                Color statsL%(33), statsL%(34): Print B$
-
-                Do
-                    Color 15, 4
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
-                    J$ = GetKeyPress$
-                Loop Until UCase$(J$) = "Y" Or UCase$(J$) = "N"
-
-                If UCase$(J$) = "N" Then
-
-                    Color 15, 0
-
-                    'Look for special char's in team name
-                    For XX = 4 To 11:
-                        If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
-                    Next XX
-
-                    For XX = 12 To 14:
-                        If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
-                    Next XX
-
-                    QQ = 8
-
-                    For XX = 11 To 4 Step -1
-                        If Not (Mid$(B$, XX, 1) = "_") Then
-                            Exit For
-                        End If
-                    Next XX
-
-                    'Determine stats file name
-                    Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
-
-                    If Not _FileExists(diskPaths$(1) + Z$) Then
-                        Call CSMsgBox("UNABLE TO LOCATE COMPILED STATS FILE PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-                        I$ = GetKeyPress$
-                        Call CSMsgBox("", 0, Pass)
-                    Else
-                        Call LoadTeamStats(Z$, totalGames%)
-                        Call ViewStatSummary(Z$, A$, totalGames%, menuExit)
-
-                        'We want to choose another team
-                        If menuExit = 1 Then I$ = "Y"
-                    End If
-
-                End If 'Done checking if user wants to continue
-
-            End If 'Done checking BO%
-
-        End If 'Done checking for ESC
-
-    Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
+        'We want to choose another team
+        If menuExit = 1 Then I$ = "Y"
+    End If
 
 End Sub
 
@@ -205,11 +58,25 @@ Sub LoadTeamStats (statFile$, totalGames%)
     NL% = 0
 
     Open diskPaths$(1) + statFile$ + "S" For Input As #2
+
     Input #2, totalGames%
-    For I = 1 To 100: Input #2, statO%(I): Next I
-    For I = 1 To 100: Input #2, O$(I): Next I
-    For I = 1 To 100: Input #2, statsL%(I): Next I
-    For I = 1 To 100: Input #2, statsH$(I): Next I
+
+    For I = 1 To 100: 
+        Input #2, statO%(I)
+    Next I
+
+    For I = 1 To 100: 
+        Input #2, O$(I)
+    Next I
+
+    For I = 1 To 100: 
+        Input #2, statsL%(I)
+    Next I
+
+    For I = 1 To 100: 
+        Input #2, statsH$(I)
+    Next I
+
     Close #2
 
     For I = 1 To totalGames%
@@ -231,29 +98,44 @@ Sub LoadTeamStats (statFile$, totalGames%)
     Input #1, B$
 
     For I = 0 To 14
+
         Input #1, lookyA$(I)
+
         For J = 0 To 13
             Input #1, values!(I, J)
         Next
+
         Input #1, statW0!(I)
+
         Input #1, statW1!(I)
+
     Next
 
-    For K = 0 To 15: Input #1, compareZ!(K): Next
-    For K = 0 To 15: Input #1, compareZ1!(K): Next
+    For K = 0 To 15: 
+        Input #1, compareZ!(K)
+    Next
+
+    For K = 0 To 15: 
+        Input #1, compareZ1!(K)
+    Next
 
     Close #1
 
     For I = 0 To 14
 
-        If values!(I, 0) <> 0 Then values!(I, 14) = values!(I, 10) / values!(I, 0): values!(I, 20) = (values!(I, 2) * 2 + values!(I, 4) + statW0!(I)) / values!(I, 0): values!(I, 21) = values!(I, 5) / values!(I, 0)
+        If values!(I, 0) <> 0 Then 
+            values!(I, 14) = values!(I, 10) / values!(I, 0)
+            values!(I, 20) = (values!(I, 2) * 2 + values!(I, 4) + statW0!(I)) / values!(I, 0)
+            values!(I, 21) = values!(I, 5) / values!(I, 0)
+        End If
 
         values!(I, 22) = values!(I, 2) * 2 + values!(I, 4) + statW0!(I)
         values!(I, 23) = values!(I, 5) - values!(I, 12)
 
         If values!(I, 1) <> 0 Then values!(I, 15) = values!(I, 2) / values!(I, 1)
 
-        values!(I, 18) = statW0!(I): values!(I, 19) = statW1!(I)
+        values!(I, 18) = statW0!(I)
+        values!(I, 19) = statW1!(I)
 
         If values!(I, 19) <> 0 Then values!(I, 16) = values!(I, 18) / values!(I, 19)
         If values!(I, 3) <> 0 Then values!(I, 17) = values!(I, 4) / values!(I, 3)
@@ -509,7 +391,6 @@ Sub PlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
 
     Shared compareZ!(), compareZ1!()
     Shared values!(), statW0!(), statW1!()
-
 
     CP% = 1
 
@@ -941,76 +822,6 @@ End Sub
 
 
 '----------------------------------------
-'       SelectTeam_LOOKY Subroutine
-'----------------------------------------
-'...explanation...
-Sub SelectTeam_LOOKY (yearNumber$, numberTeams)
-
-    Shared statsL%()
-
-    Selection% = 1
-    Count% = numberTeams
-    Start% = 1
-    FileFGColr% = 15: FileBGColr% = 4
-    HiLiteFGColr% = 0: HiLiteBGColr% = 7
-    Rows% = 20
-    Columns% = 4
-    Spacing% = 6
-    Row% = 4
-    Column% = 1
-    Color , 4: Cls: Locate , 33: Color 14
-    Print "TEAM SELECTION": Color 15
-    Locate 25, 1: Color 14: Print "ESC";: Color 15
-    Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
-    Print "ENTER";: Color 15: Print "-SELECTS TEAM";
-
-    _MouseShow "DEFAULT"
-    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-    _MouseHide
-
-    If ExitCode% <> 27 Then
-
-        T1 = teamIndex%(Selection%)
-        teamYear$ = RTrim$(yearNumber$)
-
-        Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
-
-        Field #1, 15 As Q$(0), 15 As Q$(1)
-
-        For I = 0 To 6
-            Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-        Next
-
-        Field #1, 44 As X$, 2 As Q$(9)
-
-        For I = 0 To 34
-            Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-        Next
-
-        For I = 0 To 14
-            Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-            For I1 = 0 To 19
-                Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-            Next
-        Next
-
-        Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-
-        Get #1, T1
-
-        For I = 0 To 34:
-            statsL%(I) = CVI(Q$(I + 10))
-        Next
-
-        Close 1
-
-    Else
-        BO% = 1
-    End If
-
-End Sub
-
-'----------------------------------------
 '    PrintStatsSchedule Subroutine
 '----------------------------------------
 '...explanation...
@@ -1313,3 +1124,73 @@ Sub ResetStatPrompt (statFile$)
 
 End Sub
 
+
+'----------------------------------------
+'       SelectTeam_LOOKY Subroutine
+'----------------------------------------
+'...explanation...
+Sub SelectTeam_LOOKY (yearNumber$, numberTeams)
+
+    Shared statsL%()
+
+    Selection% = 1
+    Count% = numberTeams
+    Start% = 1
+    FileFGColr% = 15: FileBGColr% = 4
+    HiLiteFGColr% = 0: HiLiteBGColr% = 7
+    Rows% = 20
+    Columns% = 4
+    Spacing% = 6
+    Row% = 4
+    Column% = 1
+    Color , 4: Cls: Locate , 33: Color 14
+    Print "TEAM SELECTION": Color 15
+    Locate 25, 1: Color 14: Print "ESC";: Color 15
+    Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
+    Print "ENTER";: Color 15: Print "-SELECTS TEAM";
+
+    _MouseShow "DEFAULT"
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    _MouseHide
+
+    If ExitCode% <> 27 Then
+
+        T1 = teamIndex%(Selection%)
+        teamYear$ = RTrim$(yearNumber$)
+
+        Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
+
+        Field #1, 15 As Q$(0), 15 As Q$(1)
+
+        For I = 0 To 6
+            Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+        Next
+
+        Field #1, 44 As X$, 2 As Q$(9)
+
+        For I = 0 To 34
+            Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+        Next
+
+        For I = 0 To 14
+            Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+            For I1 = 0 To 19
+                Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+            Next
+        Next
+
+        Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+
+        Get #1, T1
+
+        For I = 0 To 34:
+            statsL%(I) = CVI(Q$(I + 10))
+        Next
+
+        Close 1
+
+    Else
+        BO% = 1
+    End If
+
+End Sub
