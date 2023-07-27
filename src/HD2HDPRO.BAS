@@ -20,9 +20,8 @@ Sub HD2HDPRO ()
     Dim DV$(4)
     Dim Z2$(TEAMS_PER_CONFERENCE)
 
-    'Call GetTeam_HD2HD(TM$)
-    Call ChooseTeam(yearNumber$, numberTeams, chosenIdx, teamName$)
-    statFile$ = nameStatFile$(teamName$)
+    Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+    statFile$ = nameStatFile$(team$)
 
     If Not _FileExists(diskPaths$(1) + statFile$ + "S") Then
         Cls
@@ -167,9 +166,9 @@ Sub HD2HDPRO ()
             Next K
 
             If VPP <> 1 Then
-                Call Hd2HdPro_Printer(TM$)
+                Call Hd2HdPro_Printer(team$)
             Else
-                Call Hd2HdPro_Screen(TM$)
+                Call Hd2HdPro_Screen(team$)
             End If
 
         End If 'Done checking league file

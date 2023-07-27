@@ -140,10 +140,11 @@ Sub PROHOOP
         N = 1
 
         Do
+
             Color 15, 0
             Cls
-            Color 2
 
+            Color 2
             Print Tab(29); "SELECT OPENING OPTIONS"
             Print
             Locate 2, 2: Color 14

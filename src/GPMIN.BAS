@@ -14,9 +14,9 @@ Sub GPMIN ()
     P$(1) = "F"
     P$(2) = "C"
 
-    Call ChooseTeam(yearNumber$, numberTeams, chosenIdx, teamName$)
+    Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
-    If chosenIdx <> 0 Then
+    If teamNbr <> 0 Then
 
         Color 15, 0
 
@@ -136,7 +136,7 @@ Sub GPMIN ()
                     LSet Q$(376) = teamInfo$(3)
                     LSet Q$(377) = teamInfo$(4)
 
-                    Put #1, selectedIndex
+                    Put #1, teamNbr
 
                     Close 1
 

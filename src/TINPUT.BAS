@@ -176,24 +176,30 @@ Sub DoTheInput (action%)
 
             '2 = CHANGE OR EDIT AN EXISTING TEAM
         Case 2:
-            Call ChooseTeam (year$, numberTeams, teamNbr, A$)
+
+            Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+            
             If teamNbr <> 0 Then
-                Call InputEditTeam(2, year$, teamNbr)
-                Call SaveTeamFile(year$, teamNbr, action%)
+                Call InputEditTeam(2, YN$, teamNbr)
+                Call SaveTeamFile(YN$, teamNbr, action%)
             End If
 
             '3 = PRINT A TEAM ROSTER
         Case 3:
-            Call ChooseTeam (year$, numberTeams, teamNbr, A$)
+
+            Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+
             If teamNbr <> 0 Then
-                Call PrintRoster(year$)
+                Call PrintRoster(YN$)
             End If
 
             '4 = VIEW A TEAM ROSTER
         Case 4:
-            Call ChooseTeam (year$, numberTeams, teamNbr, A$)
+
+            Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+
             If teamNbr <> 0 Then
-                Call ViewRoster(A$, teamNbr)
+                Call ViewRoster(team$, teamNbr)
             End If
 
     End Select

@@ -17,7 +17,6 @@ Sub ALIGN ()
 
         If UCase$(I$) = "N" And I$ <> Chr$(27) Then
 
-            'Call GetDiskID_ALIGN(A$)
             Call ChooseTeam(YN$, NTMS, teamNbr, team$)
             statFile$ = nameStatFile$(team$)
 

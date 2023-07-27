@@ -10,6 +10,7 @@ Sub CREATE ()
 
     Do
 
+        Color 15, 0
         Cls
 
         Call TITLE
@@ -42,6 +43,11 @@ Sub CREATE ()
                 memberTeams$(X) = "XXX"
                 memberYears$(X) = "XXX"
             Next
+            
+            div1$ = ""
+            div2$ = ""
+            div3$ = ""
+            div4$ = ""
 
             Select Case Selection%
 
@@ -342,7 +348,6 @@ Sub ReviewEditLeague (league$, div1$, div2$, div3$, div4$)
 
             If choice = 1 Then
                 'Add team
-                'Call GetTeam_CREATE(memberTeams$(B), memberYears$(B), intZ1%(B))
                 Call ChooseTeam(memberYears$(B), NTMS, intZ1%(B), memberTeams$(B))
 
             Else

@@ -697,7 +697,7 @@ Sub ReadTradeTeam (teamYear$, targetTeam$, teamIdx, tradeIdx)
     tmInfo_TRADE$(tradeIdx, 0) = RTrim$(Q$(0))
     statTeam$(tradeIdx) = tmInfo_TRADE$(tradeIdx, 0)
 
-    tmInfo_TRADE$(tradeIdx, 1) = Q$(1)
+    tmInfo_TRADE$(tradeIdx, 1) = RTrim$(Q$(1))
 
     For I = 0 To 6
         leagRat_TRADE(tradeIdx, I) = CVI(Q$(I + 2))

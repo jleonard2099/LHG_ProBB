@@ -85,11 +85,11 @@ Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
 
                         Close 1
 
+                        previousYear$ = yearNumber$
+                        
                     End If 'Done checking if file exists
 
                 End If 'Done checking for blank year number
-
-                previousYear$ = yearNumber$
 
             Else
 
@@ -104,7 +104,7 @@ Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
 
                 Call SelectTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%)
 
-                If ExitCode% <> 27 Then
+                If ExitCode% <> 27 And numberTeams <> 0 Then
 
                     Do
                         Locate 2, 33

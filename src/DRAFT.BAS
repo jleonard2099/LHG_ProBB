@@ -917,7 +917,7 @@ Sub ReadDraftTeam (teamYear$, targetTeam$, teamIdx, draftIdx)
     Get #1, teamIdx
 
     tmInfo_DRAFT$(draftIdx, 0) = RTrim$(Q$(0))
-    tmInfo_DRAFT$(draftIdx, 1) = Q$(1)
+    tmInfo_DRAFT$(draftIdx, 1) = RTrim$(Q$(1))
 
     For I = 0 To 6:
         leagRat_DRAFT%(draftIdx, I) = CVI(Q$(I + 2))
