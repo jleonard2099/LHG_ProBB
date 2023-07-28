@@ -9,9 +9,9 @@ Const MAX_CONFERENCES = 40
 Const TEAMS_PER_DIV = 10
 Const DIVS_PER_CONFERENCE = 4
 Const TEAMS_PER_CONFERENCE = 40
-Const TEAM_SIZE_BYTES = 1031
 
 Const NUM_STATRECORDS = 100
+Const SCHEDULE_SIZE_BYTES = 48
 
 DefInt A-Z
 
@@ -20,8 +20,6 @@ DefInt A-Z
 '$INCLUDE: 'QPProEqu.bi'
 '$INCLUDE: 'PadRight.bi'
 '$INCLUDE: 'Variables.bi'
-
-Dim playerRatings%(0 To 14, 0 To 19), teamRatings%(0 To 34), leagueRatings%(0 To 6)
 
 
 ' For Utils

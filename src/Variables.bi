@@ -3,28 +3,15 @@
 '----------------------------------------
 Dim opSysType$
 
-Dim Shared diskPaths$(3), Q$(0 To 377)
-
-' *** Reading Team Data ***
-' -------------------------
-
-'-- transition away from this
-Dim Shared fileLength&
-
-'Dim playerRatings%(0 To 14, 0 To 19), teamRatings%(0 To 34), leagueRatings%(0 To 6)
-
-Dim playerNames$(0 To 14, 0 To 1), teamInfo$(4)
-
+Dim Shared diskPaths$(0 to 3), Q$(0 To 377)
 Dim Shared teamNames$(MAX_TEAMS)
 Dim Shared teamIndex%(MAX_TEAMS)
 
-
 ' *** Reading Stat Data ***
 ' -------------------------
-'H$(), etc. are what goes here
-'it looks like they only max at 100 for this
-'if i'm right, college was 162
-'--
+Dim HRD$(0 To 100), ORD$(0 To 100)
+
+Dim ORD%(0 To 100), mergeT%(0 To 100), TRD%(0 To 100)
 
 Dim Shared Z1$(40)
 
@@ -61,8 +48,6 @@ Dim Ycurr%, Yroad%
 
 Dim alignA$(15), alignAR$(15)
 Dim AN$(0 To 14)
-Dim ORD$(0 To 100)
-Dim HRD$(0 To 100)
 
 Dim AN!(15, 14), AR!(15, 14), ARD!(0 To 15, 0 To 14)
 Dim alignZ!(0 To 15), alignZ1!(0 To 15)
@@ -71,8 +56,6 @@ Dim W0RD!(0 To 15), W1RD!(0 To 15)
 Dim W0R!(15), WR1!(15)
 Dim ZR!(15), ZR1!(15)
 Dim ZRD!(0 To 16), ZRD1!(0 To 16)
-
-Dim ORD%(0 To 100), mergeT%(0 To 100), TRD%(0 To 100)
 
 
 '----------------------------------------

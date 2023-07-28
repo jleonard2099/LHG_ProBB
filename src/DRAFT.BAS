@@ -639,11 +639,11 @@ Sub SaveTeamDraft (draftNew, yearNumber$, teamIdx)
 
     teamYear$ = RTrim$(yearNumber$)
 
-    Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
+    Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
 
     fileLength& = LOF(1)
 
-    If draftNew = 1 Then teamIdx = fileLength& / 1031 + 1
+    If draftNew = 1 Then teamIdx = fileLength& / TEAM_SIZE_BYTES + 1
 
     Field #1, 15 As Q$(0), 15 As Q$(1)
 
@@ -891,7 +891,7 @@ Sub ReadDraftTeam (teamYear$, targetTeam$, teamIdx, draftIdx)
     Shared tmInfo_DRAFT$(), players_DRAFT$(), draftYears$(), teamYears$()
     Shared plyrRat_DRAFT%(), leagRat_DRAFT%(), tmRat_DRAFT%()
 
-    Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
+    Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
 
     Field #1, 15 As Q$(0), 15 As Q$(1)
 

@@ -312,7 +312,7 @@ Sub SaveTrades ()
 
         teamYear$ = RTrim$(teamYears$(J))
 
-        Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
+        Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
 
         Field #1, 15 As Q$(0), 15 As Q$(1)
 
@@ -669,7 +669,7 @@ Sub ReadTradeTeam (teamYear$, targetTeam$, teamIdx, tradeIdx)
 
     Shared statTeam$(), tmInfo_TRADE$(), players_TRADE$()
 
-    Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
+    Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
 
     Field #1, 15 As Q$(0), 15 As Q$(1)
 

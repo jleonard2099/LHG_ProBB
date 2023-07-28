@@ -88,7 +88,7 @@ Sub GPMIN ()
 
                 Else
 
-                    Open diskPaths$(0) + "PROBBTMS." + yearNumber$ For Random As #1 Len = 1031
+                    Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$ For Random As #1 Len = TEAM_SIZE_BYTES
 
                     Field #1, 15 As Q$(0), 15 As Q$(1)
 
@@ -149,88 +149,3 @@ Sub GPMIN ()
     End If 'Done checking for ESC
 
 End Sub
-
-'----------------------------------------
-'        SelectTeam_GPMIN subroutine
-'----------------------------------------
-'...explanation...
-Sub SelectTeam_GPMIN (yearNumber$, numberTeams, selectedIndex)
-
-    Shared playerNames$(), teamInfo$()
-    Shared playerRatings%(), leagueRatings%(), teamRatings%()
-
-    Selection% = 1
-    Count% = numberTeams
-    Start% = 1
-    FileFGColr% = 15: FileBGColr% = 4
-    HiLiteFGColr% = 0: HiLiteBGColr% = 7
-    Rows% = 20
-    Columns% = 4
-    Spacing% = 6
-    Row% = 4
-    Column% = 1
-    Color , 4: Cls: Locate , 33: Color 14
-    Print "TEAM SELECTION": Color 15
-    Locate 25, 1: Color 14: Print "ESC";: Color 15
-    Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
-    Print "ENTER";: Color 15: Print "-SELECTS TEAM";
-
-    _MouseShow "DEFAULT"
-    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-    _MouseHide
-
-    If ExitCode% <> 27 Then
-
-        selectedIndex = teamIndex%(Selection%)
-        teamYear$ = RTrim$(yearNumber$)
-
-        Open diskPaths$(0) + "PROBBTMS." + teamYear$ For Random As #1 Len = 1031
-
-        Field #1, 15 As Q$(0), 15 As Q$(1)
-
-        For I = 0 To 6
-            Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-        Next
-
-        Field #1, 44 As X$, 2 As Q$(9)
-
-        For I = 0 To 34
-            Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-        Next
-
-        For I = 0 To 14
-            Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-            For I1 = 0 To 19
-                Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-            Next
-        Next
-
-        Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
-
-        Get #1, selectedIndex
-
-        teamInfo$(0) = RTrim$(Q$(0))
-        teamInfo$(1) = RTrim$(Q$(1))
-
-        For I = 0 To 6: leagueRatings%(I) = CVI(Q$(I + 2)): Next
-        For I = 0 To 34: teamRatings%(I) = CVI(Q$(I + 10)): Next
-        For I = 0 To 14
-            playerNames$(I, 0) = Q$(22 * I + 45)
-            playerNames$(I, 1) = Q$(22 * I + 46)
-            For I1 = 0 To 19
-                playerRatings%(I, I1) = CVI(Q$(22 * I + 47 + I1))
-            Next
-        Next
-
-        teamInfo$(2) = RTrim$(Q$(375))
-        teamInfo$(3) = RTrim$(Q$(376))
-        teamInfo$(4) = RTrim$(Q$(377))
-
-        Close
-
-    Else
-        BO% = 1
-    End If
-
-End Sub
-
