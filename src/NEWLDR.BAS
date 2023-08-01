@@ -65,130 +65,66 @@ Sub ViewExpandedStats
         Z1$(X) = "XXX"
     Next
 
-    Spec$ = diskPaths$(1) + "*.TMS"
-    Count% = FCount%(Spec$)
+    leagStatFile$ = ChooseFile$ (diskPaths$(1) + "*.TMS", "LEAGUE STATS", ExitCode%)
 
-    If Count% = 0 Then
-        Locate 10, 8
-        Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
-    Else
+    If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        ReDim leagueFiles$(0 To Count%)
+        Open diskPaths$(1) + leagStatFile$ + ".TMS" For Input As #2
 
-        For X = 1 To Count%
-            leagueFiles$(X) = Space$(12)
+        Input #2, LG$, div1$, div2$, div3$, div4$
+
+        For X = 1 To TEAMS_PER_CONFERENCE
+            Input #2, Z1$(X)
         Next
 
-        leagueFiles$(0) = Spec$
-        Call ReadFile(leagueFiles$())
+        Close 2
+
+        Call UpdateExpandedLeaders(JB, leagStatFile$, TS, TTS)
+
+        ReDim menuChoices$(1 To 3)
 
         Do
-
-            Color , 1
             Cls
-            Locate , 28
-            Color 14
-            Print "SELECT LEAGUE": Color 15
+
+            Call TITLE
+            menuChoices$(1) = "VIEW INDIVIDUAL PLAYER LEADERS  "
+            menuChoices$(2) = "VIEW TEAM TOTALS                "
+            menuChoices$(3) = "RETURN TO LEAGUE LEADER MENU    "
             Selection% = 1
+            Count% = 3
             Start% = 1
+            ExitCode% = 3
             FileFGColr% = 15: FileBGColr% = 1
             HiLiteFGColr% = 0: HiLiteBGColr% = 7
-            Rows% = 20
-            Columns% = 4
-            Spacing% = 6
-            Row% = 4
-            Column% = 1
-            Locate 25, 1
-            Color 14
-            Print "ENTER";: Color 15
-            Print "-SELECTS LEAGUE";
+            Spacing% = 1
+            Row% = 8
+            Column% = 25
 
+            Call box0(7, 24, 11, 57, 2, 15, 1)
+            
             _MouseShow "DEFAULT"
-            MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
             _MouseHide
+
+            Color , 0
 
             If ExitCode% <> 27 Then
 
-                Color 15, 1
-                targetFile$ = RTrim$(leagueFiles$(Selection%))
-                Locate 2, 33: Print targetFile$
+                Select Case Selection%
 
-                Do
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
-                    I$ = GetKeyPress$
-                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                    Case 1:
+                        Call ViewIndividualLeaders(JB, printOrView%)
 
-                Color 15, 0
+                    Case 2:
+                        Call ViewTeamLeaders(printOrView%, TS, TTS)
 
-                If UCase$(I$) = "N" Then
+                End Select
 
-                    targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
-                    LG$ = targetFile$
+            End If
 
-                    Open diskPaths$(1) + targetFile$ + ".TMS" For Input As #2
+        Loop Until Selection% = 3
 
-                    Input #2, LG$, div1$, div2$, div3$, div4$
-
-                    For X = 1 To TEAMS_PER_CONFERENCE
-                        Input #2, Z1$(X)
-                    Next
-
-                    Close 2
-
-                    Call UpdateExpandedLeaders(JB, targetFile$, TS, TTS)
-
-                    ReDim menuChoices$(1 To 3)
-
-                    Do
-                        Cls
-
-                        Call TITLE
-                        menuChoices$(1) = "VIEW INDIVIDUAL PLAYER LEADERS  "
-                        menuChoices$(2) = "VIEW TEAM TOTALS                "
-                        menuChoices$(3) = "RETURN TO LEAGUE LEADER MENU    "
-                        Selection% = 1
-                        Count% = 3
-                        Start% = 1
-                        ExitCode% = 3
-                        FileFGColr% = 15: FileBGColr% = 1
-                        HiLiteFGColr% = 0: HiLiteBGColr% = 7
-                        Spacing% = 1
-                        Row% = 8
-                        Column% = 25
-
-                        Call box0(7, 24, 11, 57, 2, 15, 1)
-                        
-                        _MouseShow "DEFAULT"
-                        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
-                        _MouseHide
-
-                        Color , 0
-
-                        If ExitCode% <> 27 Then
-
-                            Select Case Selection%
-
-                                Case 1:
-                                    Call ViewIndividualLeaders(JB, printOrView%)
-
-                                Case 2:
-                                    Call ViewTeamLeaders(printOrView%, TS, TTS)
-
-                            End Select
-
-                        End If
-
-                    Loop Until Selection% = 3
-
-                End If ' End of checking if Any Change Y/N
-
-            End If 'End of checking return code from menu
-
-        Loop Until UCase$(I$) = "N" Or ExitCode% = 27
-
-    End If 'Done checking file count
+    End If 'Done checking for ESC
 
 End Sub
 
@@ -212,12 +148,14 @@ Sub ViewIndividualLeaders (JB, printOrView%)
 
     Do
 
-        Color , 0
+        Color 15, 0
         Cls
-        Print
-        Print
-        Print
-        Print
+        'Print
+        'Print
+        'Print
+        'Print
+
+        Color 15, 12
 
         J = 20
         ZZ = 1
@@ -226,7 +164,7 @@ Sub ViewIndividualLeaders (JB, printOrView%)
         Print " " + Chr$(214); String$(66, 196); Chr$(183) + " ";
 
         For II = 1 To J: 
-            Locate 1 + II, 4
+            Locate 2 + II, 4
             Print " " + Chr$(186); String$(66, 32); Chr$(186) + " ";
         Next
 
@@ -571,7 +509,7 @@ Sub DisplayLeaders (TVN, maxRecords, categoryId)
 
                 Color 14
                 Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
-				Color 15
+                Color 15
 
                 I$ = GetKeyPress$
 
@@ -613,9 +551,9 @@ Sub DisplayLeaders (TVN, maxRecords, categoryId)
 
         If userExit% <> 1 Then
 
-			Color 14
-			Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
-			Color 15
+            Color 14
+            Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+            Color 15
 
             I$ = GetKeyPress$
 
@@ -940,9 +878,9 @@ Sub DisplayTeamView (printOrView%, TVN, maxRecords, categoryId)
 
                     If (W Mod 20 = 0) Then
 
-						Color 14
-						Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
-						Color 15
+                        Color 14
+                        Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+                        Color 15
 
                         I$ = GetKeyPress$
                         If I$ = Chr$(27) Then userExit% = 1
@@ -976,9 +914,9 @@ Sub DisplayTeamView (printOrView%, TVN, maxRecords, categoryId)
 
                 If userExit% <> 1 Then
 
-					Color 14
-					Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
-					Color 15
+                    Color 14
+                    Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+                    Color 15
 
                     I$ = GetKeyPress$
 
@@ -1384,7 +1322,7 @@ Sub SAVELEADER (statFile$, JB, TS, TTS)
     Shared TT!(), TT1!()
     Shared W0L!(), W1L!()
 
-    TMR% = 1280
+    TMR = 1280
 
     Print "SAVING LEADER FILES . . . . PLEASE WAIT"
 
@@ -1398,8 +1336,8 @@ Sub SAVELEADER (statFile$, JB, TS, TTS)
 
         Color 14
         Locate 18, 45
-        TMR% = TMR% - 1
-        Print Using "#####"; TMR%
+        TMR = TMR - 1
+        Print Using "#####"; TMR
 
         For I1 = 1 To 14:
             Write #1, plyrStatLeaders!(I, I1)
@@ -1409,8 +1347,8 @@ Sub SAVELEADER (statFile$, JB, TS, TTS)
         Write #1, W1L!(I)
         Color 14
         Locate 18, 45
-        TMR% = TMR% - 1
-        Print Using "#####"; TMR%:
+        TMR = TMR - 1
+        Print Using "#####"; TMR:
 
     Next I
 
@@ -1421,8 +1359,8 @@ Sub SAVELEADER (statFile$, JB, TS, TTS)
         Next
 
         Color 14: Locate 18, 45
-        TMR% = TMR% - 1
-        Print Using "#####"; TMR%
+        TMR = TMR - 1
+        Print Using "#####"; TMR
         Write #1, GM!(I)
 
     Next
@@ -1434,8 +1372,8 @@ Sub SAVELEADER (statFile$, JB, TS, TTS)
         Next
 
         Color 14: Locate 18, 45
-        TMR% = TMR% - 1
-        Print Using "#####"; TMR%
+        TMR = TMR - 1
+        Print Using "#####"; TMR
         Write #1, GM1!(I)
 
     Next

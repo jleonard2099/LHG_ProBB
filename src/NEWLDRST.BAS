@@ -12,117 +12,46 @@ Sub NewStandingOptions ()
 
     ReDim menuChoices$(1 To 2)
 
-    Do
+    leagStatFile$ = ChooseFile$ (diskPaths$(1) + "*.TMS", "LEAGUE STATS", ExitCode%)
+
+    If ExitCode% <> 27 And ExitCode% <> 0 Then
+
+        Open diskPaths$(1) + leagStatFile$ + ".TMS" For Input As #2
+
+        Input #2, LG$, div1$, div2$, div3$, div4$
+
+        For X = 1 To TEAMS_PER_CONFERENCE
+            Input #2, strZ1$(X)
+            TML$(X) = strZ1$(X)
+        Next
+
+        Close 2
+
+        Color 15, 0
+        Cls
+
+        Call UpdateLeagueStandings(LG$)
 
         Cls
-        Color , 0
 
-        Spec$ = diskPaths$(1) + "*.TMS"
-        Count% = FCount%(Spec$)
-
-        If Count% = 0 Then
-            Locate 10, 8
-            Call CSMsgBox("NO LEAGUE STANDINGS HAVE BEEN COMPILED PRESS ANY KEY TO RETURN TO MAIN MENU", 40, Pass)
+        Do
+            Locate 15, 10
+            Color 12: Print "V";: Color 7: Print "iew or ";
+            Color 12: Print "P";: Color 7: Print "rint"
             I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
-        Else
-            ReDim leagueFiles$(0 To Count%)
+        Loop Until UCase$(I$) = "P" Or UCase$(I$) = "V"
 
-            For X = 1 To Count%
-                leagueFiles$(X) = Space$(12)
-            Next
+        Select Case UCase$(I$)
 
-            leagueFiles$(0) = Spec$
+            Case "V":
+                Call ViewNewStandings(LG$)
 
-            Call ReadFile(leagueFiles$())
+            Case "P"
+                Call PrintNewStandings(LG$)
 
-            Do
-                Color , 1
-                Cls
+        End Select
 
-                Locate , 28
-                Color 14
-                Print "SELECT LEAGUE": Color 15
-                Selection% = 1
-                Start% = 1
-                FileFGColr% = 15: FileBGColr% = 1
-                HiLiteFGColr% = 0: HiLiteBGColr% = 7
-                Rows% = 20
-                Columns% = 4
-                Spacing% = 6
-                Row% = 4
-                Column% = 1
-                Locate 25, 1
-                Color 14
-                Print "ENTER";: Color 15
-                Print "-SELECTS LEAGUE";
-
-                _MouseShow "DEFAULT"
-                MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-                _MouseHide
-
-                If ExitCode% <> 27 Then
-
-                    Color 15, 1
-                    targetFile$ = RTrim$(leagueFiles$(Selection%))
-                    Locate 2, 33: Print targetFile$
-
-                    Do
-                        Locate 3, 33: Print "ANY CHANGE (YN)";
-                        I$ = GetKeyPress$
-                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                    Color 15, 0
-
-                End If
-
-            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
-
-            If ExitCode% <> 27 Then
-
-                targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
-                LG$ = targetFile$
-
-                Open diskPaths$(1) + targetFile$ + ".TMS" For Input As #2
-
-                Input #2, LG$, div1$, div2$, div3$, div4$
-
-                For X = 1 To TEAMS_PER_CONFERENCE
-                    Input #2, strZ1$(X)
-                    TML$(X) = strZ1$(X)
-                Next
-
-                Close 2
-
-                Color 15, 0
-                Cls
-
-                Call UpdateLeagueStandings(LG$)
-
-                Cls
-
-                Do
-                    Locate 15, 10
-                    Color 12: Print "V";: Color 7: Print "iew or ";
-                    Color 12: Print "P";: Color 7: Print "rint"
-                    I$ = GetKeyPress$
-                Loop Until UCase$(I$) = "P" Or UCase$(I$) = "V"
-
-                Select Case UCase$(I$)
-
-                    Case "V":
-                        Call ViewNewStandings(LG$)
-
-                    Case "P"
-                        Call PrintNewStandings(LG$)
-
-                End Select
-
-            End If 'Done checking if ESC from league select
-
-        End If 'Done checking count of files
-
-    Loop Until Selection = 2 Or ExitCode% = 27
+    End If 'Done checking if ESC from league select
 
 End Sub
 
@@ -156,7 +85,7 @@ Sub UpdateLeagueStandings (LG$)
         YY = YY + 1
         Color 14
         Locate 7, 20
-        TMR% = TMR% - 1: Print Using "##"; TMR%
+        TMR = TMR - 1: Print Using "##"; TMR
 
         If strZ1$(KK) <> "*" Then
 

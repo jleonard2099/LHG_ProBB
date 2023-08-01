@@ -2,93 +2,15 @@ Sub SEELEAG ()
 
     _Title "Basketball: The Pro Game - View League Stats"
 
-    Shared O1!(), O2!()
-    Shared DL!(), OL!()
-    Shared statZ!(), statZ1!()
+    leaderFile$ = ChooseFile$ (diskPaths$(1) + "*.LDR", "LEADER", ExitCode%)
 
-    Shared DL$(), OL$()
-    Shared leagT$(), Z2$(), Z3$()
+    If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-    Shared LG$, div1$, div2$, div3$, div4$
+        Call LoadLeaderFiles_Pro(leaderFile$)
+        Call StatOptions
 
-    Cls
+    End If
 
-    Spec$ = diskPaths$(1) + "*.LDR"
-    Count% = FCount%(Spec$)
-
-    If Count% = 0 Then
-        Locate , 12
-        Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
-    Else
-
-        ReDim leagueLeaderFiles$(0 To Count%)
-
-        For X = 1 To Count%
-            leagueLeaderFiles$(X) = Space$(12)
-        Next
-
-        leagueLeaderFiles$(0) = Spec$
-
-        Call ReadFile(leagueLeaderFiles$())
-
-        Do
-            Cls
-            Color , 1
-            Cls
-            Locate , 28
-            Color 14
-            Print "SELECT LEAGUE TO VIEW"
-            Color 15
-            Selection% = 1
-            START% = 1
-            FileFGColr% = 15: FileBGColr% = 1
-            HiLiteFGColr% = 0: HiLiteBGColr% = 7
-            Rows% = 20
-            Columns% = 4
-            Spacing% = 6
-            Row% = 4
-            Column% = 1
-            Locate 25, 1
-            Color 14
-            Print "ENTER";
-            Color 15
-            Print "-SELECTS LEAGUE";
-
-            _MouseShow "DEFAULT"
-            MAMenu leagueLeaderFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-            _MouseHide
-
-            If ExitCode% <> 27 Then
-
-                Color 15, 1
-                targetFile$ = RTrim$(leagueLeaderFiles$(Selection%))
-                Locate 2, 33: Print targetFile$
-
-                Do
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
-                    I$ = GetKeyPress$
-                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                Color 15, 0
-
-                If UCase$(I$) = "N" Then
-
-                    targetFile$ = RTrim$(targetFile$)
-                    WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-                    targetFile$ = Left$(WE$, 8)
-
-                    Call LoadLeaderFiles_Pro(targetFile$)
-                    Call StatOptions
-
-                End If 'End checking if we are viewing stats again
-
-            End If 'Done checking for ESC
-
-        Loop Until UCase$(I$) = "N" Or ExitCode% = 27 Or I$ = Chr$(27)
-
-    End If 'Done checking file count
 
 End Sub
 
@@ -120,6 +42,7 @@ Sub LoadLeaderFiles_Pro (targetFile$)
     div4$ = PadRight$(div4$, 8)
 
     Cls
+
     Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
 
     Open diskPaths$(1) + targetFile$ + ".LDR" For Input As #2
@@ -282,7 +205,7 @@ Sub ReportFilePrompt_League (reportFile$)
 
         Locate 7, 32
         Locate , 12: Print "ENTER NAME FOR FILE: ": Print
-        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPACES"
+        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
         Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
         Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
         Locate 7, 37: Input reportFile$
@@ -319,14 +242,15 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Print "                        "; LG$; " LEAGUE STANDINGS"
-    Print
-
-    Color 14
-    Print "    "; div1$; " DIVISION"
+    Locate , Int((80 - Len(LG$) - 17) / 2)
+    Print LG$; " LEAGUE STANDINGS"
     Print
 
     Color 2
+    If div1$ <> "" Then Print "    " + RTrim$(div1$) + " DIVISION"
+    Print
+
+    Color 14
     Print "                   W    L     PCT   GB"
     Color 15
 
@@ -365,14 +289,15 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Print "                        "; LG$; " LEAGUE STANDINGS"
-    Print
-
-    Color 14
-    Print "    "; div2$; " DIVISION"
+    Locate , Int((80 - Len(LG$) - 17) / 2)
+    Print LG$; " LEAGUE STANDINGS"
     Print
 
     Color 2
+    If div2$ <> "" Then Print "    " + RTrim$(div2$) + " DIVISION"
+    Print
+
+    Color 14
     Print "                   W    L     PCT   GB"
     Color 15
 
@@ -411,18 +336,20 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Print "                        "; LG$; " LEAGUE STANDINGS"
-    Print
-
-    Color 14
-    Print "    "; div3$; " DIVISION"
+    Locate , Int((80 - Len(LG$) - 17) / 2)
+    Print LG$; " LEAGUE STANDINGS"
     Print
 
     Color 2
+    If div3$ <> "" Then Print "    " + RTrim$(div3$) + " DIVISION"
+    Print
+
+    Color 14
     Print "                   W    L     PCT   GB"
     Color 15
 
     For P = 21 To 30
+
         If leagT$(P) <> "" And leagT$(P) <> "*" Then
             D1 = O1!(21) - O2!(21)
             D = O1!(P) - O2!(P)
@@ -439,7 +366,9 @@ Sub LeaderStats_Screen ()
             Print "    "; leagT$(P); Tab(16);
             Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
             Print BK$
+
         End If
+
     Next P
 
     '-----
@@ -452,14 +381,15 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Print "                        "; LG$; " LEAGUE STANDINGS"
-    Print
-
-    Color 14
-    Print "    "; div4$; " DIVISION"
+    Locate , Int((80 - Len(LG$) - 17) / 2)
+    Print LG$; " LEAGUE STANDINGS"
     Print
 
     Color 2
+    If div4$ <> "" Then Print "    " + RTrim$(div4$) + " DIVISION"
+    Print
+
+    Color 14
     Print "                   W    L     PCT   GB"
     Color 15
 

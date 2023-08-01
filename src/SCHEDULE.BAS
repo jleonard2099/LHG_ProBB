@@ -78,7 +78,7 @@ Sub SCHEDULE ()
 
                         Locate 7, 32
                         Locate , 12: Print "ENTER NAME FOR SCHEDULE: ": Print
-                        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPACES"
+                        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
                         Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
                         Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
                         Locate , 12: Print "SAMPLE NAMES ARE ABA73-74, BOS93, NBA83-84, ETC"
@@ -101,10 +101,11 @@ Sub SCHEDULE ()
 
                 Case 2 To 5:
                     'Have the user pick a schedule
-                    Call LoadSchedule(scheduleFile$)
+                    scheduleFile$ = ChooseFile$ (diskPaths$(0) + "*.SCD", "SCHEDULE", ExitCode%)
 
-                    If scheduleFile$ <> "" Then
-                        Cls
+                    If ExitCode% <> 27 And ExitCode% <> 0 Then
+
+                        Call LoadScheduleInfo (scheduleFile$)
 
                         'Edit / Extract / Change
                         If Selection% >= 3 And Selection% <= 5 Then
@@ -718,7 +719,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                 Do
                     Locate 7, 32
                     Locate , 12: Print "ENTER NAME FOR SUB-SCHEDULE: ": Print
-                    Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPACES"
+                    Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
                     Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
                     Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
                     Locate , 12: Print "SAMPLE NAMES ARE INDIANA, BOS68, CHI-76, ETC      "
@@ -890,6 +891,7 @@ Sub EditParameters ()
 
 End Sub
 
+
 '----------------------------------------
 '    BoxscoreMaintenance SubRoutine
 '----------------------------------------
@@ -916,9 +918,11 @@ Sub BoxscoreMaintenance ()
 
     Do
 
+        Color 15, 0
+
         Call TITLE_SCHEDULER
 
-        Call box0(6, 15, 13, 65, 2, 15, 1)
+        Call box0(7, 15, 14, 65, 2, 15, 1)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -927,72 +931,16 @@ Sub BoxscoreMaintenance ()
         If ExitCode% <> 27 Then
 
             Select Case Selection%
+
                 Case 1:
                     Call EditParameters
 
                 Case 2
-                    Spec$ = diskPaths$(1) + "*.SPC"
-                    Count% = FCount%(Spec$)
-
-                    If Count% = 0 Then
-                        Locate 10, 8
-                        Call CSMsgBox("NO SPECIAL EVENTS BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 26, Pass)
-                        I$ = GetKeyPress$
-                        Call CSMsgBox("", 0, Pass)
-                    Else
-                        ReDim boxFiles$(0 To Count%)
-                        For X = 1 To Count%
-                            boxFiles$(X) = Space$(12)
-                        Next
-                        
-                        boxFiles$(0) = Spec$
-                        Call ReadFile(boxFiles$())
-
-                        Do
-                            Cls
-                            Color , 1
-                            Cls
-                            Locate , 28
-                            Color 14
-                            Print "SELECT BOXSCORE TO VIEW": Color 15
-                            Selection% = 1
-                            Start% = 1
-                            FileFGColr% = 15: FileBGColr% = 1
-                            HiLiteFGColr% = 0: HiLiteBGColr% = 7
-                            Rows% = 20
-                            Columns% = 4
-                            Spacing% = 6
-                            Row% = 4
-                            Column% = 1
-                            Locate 25, 1
-                            Color 14
-                            Print "ENTER";: Color 15
-                            Print "-SELECTS BOXSCORE";
-
-                            _MouseShow "DEFAULT"
-                            MAMenu boxFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-                            _MouseHide
-
-                            If ExitCode% <> 27 Then
-                                Color 15, 1
-                                targetFile$ = boxFiles$(Selection%)
-                                Locate 2, 33: Print targetFile$
-
-                                Do
-                                    Locate 3, 33: Print "ANY CHANGE (YN)";
-                                    I$ = GetKeyPress$
-                                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                                Color 15, 0
-
-                                If UCase$(I$) = "N" Then
-                                    boxName$ = diskPaths$(1) + targetFile$
-                                    'ReDim array$(500) 'holds the main editor string array
-                                End If
-                            End If
-
-                        Loop Until UCase$(I$) = "N" Or ExitCode% = 27
-
+                    boxscoreFile$ = ChooseFile$ (diskPaths$(1) + "*.SPC", "BOXSCORE", ExitCode%)
+                    
+                    If ExitCode% <> 27 And ExitCode% <> 0 Then
+                        boxName$ = diskPaths$(1) + boxscoreFile$
+                        'ReDim array$(500) 'holds the main editor string array
                     End If
 
                 Case 3
@@ -1212,39 +1160,6 @@ Sub ChangeGlobalSettings ()
 
 End Sub
 
-'----------------------------------------
-'       LoadSchedule SubRoutine
-'----------------------------------------
-'...explanation...
-Sub LoadSchedule (targetFile$)
-
-    Do
-        'Display list of files...
-        Spec$ = diskPaths$(0) + "*.SCD"
-        Count% = FCount%(Spec$)
-
-        If Count% = 0 Then
-            Locate 10, 8
-            Call CSMsgBox("NO SCHEDULE FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-            I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
-        Else
-            ReDim scheduleFiles$(0 To Count%)
-
-            For X = 1 To Count%
-                scheduleFiles$(X) = Space$(12)
-            Next
-
-            scheduleFiles$(0) = Spec$
-            Call ReadFile(scheduleFiles$())
-            Call SelectScheduleFile(targetFile$, scheduleFiles$(), Count%, menuExit%)
-
-        End If
-
-    Loop Until Count% = 0 Or targetFile$ <> "" Or menuExit% = 27
-
-End Sub
-
 
 '----------------------------------------
 '       DeleteSchedules Subroutine       
@@ -1291,73 +1206,6 @@ Sub DeleteSchedules (fileChoice%, fileSpec$)
             Kill (diskPaths$(1) + boxFiles$(X))
             Locate 12, 34: Print "DELETING "; boxFiles$(X)
         Next
-
-    End If
-
-End Sub
-
-
-'----------------------------------------
-'     SelectScheduleFile SubRoutine
-'----------------------------------------
-'...explanation...
-Sub SelectScheduleFile (targetFile$, scheduleFiles$(), FileCount%, ExitCode%)
-
-    Do
-        Cls
-        Color , 1
-        Cls
-        Locate , 28
-        Color 14
-        Print "SELECT SCHEDULE TO VIEW"
-        Color 15
-        Selection% = 1
-        Start% = 1
-        FileFGColr% = 15: FileBGColr% = 1
-        HiLiteFGColr% = 0: HiLiteBGColr% = 7
-        Rows% = 20
-        Columns% = 4
-        Spacing% = 6
-        Row% = 4
-        Column% = 1
-        Locate 25, 1
-        Color 14
-        Print "ESC";: Color 15
-        Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
-        Print "ENTER";: Color 15
-        Print "-SELECTS SCHEDULE";
-
-        _MouseShow "DEFAULT"
-        MAMenu scheduleFiles$(), Selection%, Start%, FileCount%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-        _MouseHide
-
-        If ExitCode% <> 27 Then
-            Color 15, 1
-            targetFile$ = RTrim$(scheduleFiles$(Selection%))
-            Locate 2, 33: Print targetFile$
-
-            Do
-                Locate 3, 33: Print "ANY CHANGE (YN)";
-                I$ = GetKeyPress$
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-            Color 15, 0
-
-        End If
-
-    Loop Until ExitCode% = 27 Or UCase$(I$) = "N"
-
-    If ExitCode% <> 27 Then
-
-        targetFile$ = RTrim$(targetFile$)
-
-        '-- This is where we strip the file extension
-        '-- If we remove this, we can drop the .SCD in the rest of the code
-        fileNoExt$ = Left$(targetFile$, Len(targetFile$) - 4)
-        targetFile$ = fileNoExt$
-        Color 15, 0
-        
-        Call LoadScheduleInfo (targetFile$)
 
     End If
 

@@ -35,7 +35,7 @@ Dim yesNo$(0 To 1)
 ' *** Miscellaneous Use ***
 ' -------------------------
 Dim Shared BO%
-Dim Shared TMR%, TMR1%
+Dim Shared TMR, TMR1%
 
 Dim Shared A$, YN$, Z1$
 

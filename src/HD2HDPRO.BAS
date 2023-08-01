@@ -54,9 +54,9 @@ Sub HD2HDPRO ()
 
         Close #4
 
-        Call SelectLeague_HD2HD(LG$)
+        LG$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "LEAGUE", ExitCode%)
 
-        If LG$ <> "" Then
+        If ExitCode% <> 27 And ExitCode% <> 0 Then
 
             Cls
 
@@ -725,84 +725,5 @@ Sub Hd2HdPro_Screen (teamName$)
     If TR22 + TR44 = 0 Then Locate , 75: Print "  0.0"
     If TR22 + TR44 > 0 Then Locate , 75: Print Using "###.#"; (TR22 + TR44) / (THWW + THLL + TAWW + TALL)
     I$ = GetKeyPress$
-
-End Sub
-
-
-'----------------------------------------
-'     SelectLeague_HD2HD Subroutine
-'----------------------------------------
-'... explain here ...
-Sub SelectLeague_HD2HD (targetFile$)
-
-    Do
-
-        Spec$ = diskPaths$(1) + "*.LIB"
-        Count% = FCount%(Spec$)
-
-        If Count% = 0 Then
-            Locate 10, 8
-            Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-            I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
-        Else
-            ReDim leagueFiles$(0 To Count%)
-            For X = 1 To Count%
-                leagueFiles$(X) = Space$(12)
-            Next
-
-            leagueFiles$(0) = Spec$
-            Call ReadFile(leagueFiles$())
-
-            Do
-                Cls
-                Color , 1
-                Cls
-                Locate , 28
-                Color 14
-                Print "SELECT LEAGUE": Color 15
-                Selection% = 1
-                Start% = 1
-                FileFGColr% = 15: FileBGColr% = 1
-                HiLiteFGColr% = 0: HiLiteBGColr% = 7
-                Rows% = 20
-                Columns% = 4
-                Spacing% = 6
-                Row% = 4
-                Column% = 1
-                Locate 25, 1
-                Color 14
-                Print "ENTER";: Color 15
-                Print "-SELECTS LEAGUE";
-
-                _MouseShow "DEFAULT"
-                MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-                _MouseHide
-
-                If ExitCode% <> 27 Then
-
-                    Color 15, 1
-
-                    targetFile$ = RTrim$(leagueFiles$(Selection%))
-                    Locate 2, 33: Print targetFile$
-
-                    Do
-                        Locate 3, 33: Print "ANY CHANGE (YN)";
-                        I$ = GetKeyPress$
-                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                    Color 15, 0
-
-                End If
-
-            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
-
-            If ExitCode% <> 27 Then
-                targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
-            End If
-
-        End If
-
-    Loop Until ExitCode% = 27 Or Count% = 0 Or UCase$(I$) = "N"
 
 End Sub

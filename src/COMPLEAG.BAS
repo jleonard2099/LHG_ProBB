@@ -54,167 +54,91 @@ Sub CompileLeague ()
 
     End If
 
-    Cls
+    leagueFile$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "LEAGUE", ExitCode%)
 
-    Do
-        'Display list of files...
-        Spec$ = diskPaths$(1) + "*.LIB"
-        Count% = FCount%(Spec$)
+    If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        If Count% = 0 Then
-
-            Locate 10, 8
-            Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+        Do
+            Color 15, 0
+            Cls
+            Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
             I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
+            finalUpdate$ = UCase$(I$)
+        Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
 
-        Else
+        Open diskPaths$(1) + leagueFile$ + ".TMS" For Input As #2
 
-            ReDim leagueFiles$(0 To Count%)
+        Input #2, LG$, D1$, D2$, D3$, D4$
 
-            For X = 1 To Count%
-                leagueFiles$(X) = Space$(12)
-            Next
+        For XW = 1 To TEAMS_PER_CONFERENCE
+            Input #2, H1$(XW)
+            Z1$(XW) = H1$(XW)
+        Next
 
-            leagueFiles$(0) = Spec$
+        Close 2
 
-            Call ReadFile(leagueFiles$())
+        For X = 1 To TEAMS_PER_CONFERENCE: DL!(X, 19) = 9999: Next
 
-            Do
-                Cls
-                Color , 1
-                Cls
-                Locate , 28
-                Color 14
-                Print "SELECT LEAGUE TO UPDATE": Color 15
-                Selection% = 1
-                START% = 1
-                FileFGColr% = 15: FileBGColr% = 1
-                HiLiteFGColr% = 0: HiLiteBGColr% = 7
-                Rows% = 20
-                Columns% = 4
-                Spacing% = 6
-                Row% = 4
-                Column% = 1
-                Locate 25, 1
-                Color 14
-                Print "ENTER";: Color 15
-                Print "-SELECTS LEAGUE";
+        For XW = 1 To TEAMS_PER_CONFERENCE
 
-                _MouseShow "DEFAULT"
-                MAMenu leagueFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-                _MouseHide
+            'Look for * as terminating char
+            If H1$(XW) <> Chr$(42) Then
 
-                If ExitCode% <> 27 Then
+                haveStats = FindStatsLeague%(H1$(XW), numberGames%, fullWins, fullLosses)
 
-                    Color 15, 1
-                    targetFile$ = RTrim$(leagueFiles$(Selection%))
-                    Locate 2, 33: Print targetFile$
+                If (haveStats) Then
 
-                    Do
-                        Locate 3, 33: Print "ANY CHANGE (YN)";
-                        I$ = GetKeyPress$
-                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                    L = Len(H1$(XW))
+                    WT$ = ""
 
-                    Color 15, 0
+                    For X = 1 To L
+                        A = Asc(Mid$(H1$(XW), X, 1))
+                        WT$ = WT$ + Chr$(A)
+                    Next X
 
-                Else
-                    BO% = 1
-                End If
+                    confGame = 0
 
-            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
+                    For X = 1 To TEAMS_PER_CONFERENCE
 
-            If ExitCode% <> 27 Then
+                        If Z1$(X) = WT$ Then
 
-                targetFile$ = RTrim$(targetFile$)
-                WE$ = Left$(targetFile$, Len(targetFile$) - 4)
+                            If O1!(X) = fullWins And O2!(X) = fullLosses Then
+                                confGame = 1
+                            Else
+                                O1!(X) = fullWins
+                                O2!(X) = fullLosses
+                            End If
 
-                Do
-                    Cls
-                    Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
-                    Color 15, 0
-                    I$ = GetKeyPress$
-                    finalUpdate$ = UCase$(I$)
-                Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
+                        End If
 
-                Open diskPaths$(1) + WE$ + ".TMS" For Input As #2
+                        If (confGame) Then Exit For
 
-                Input #2, LG$, D1$, D2$, D3$, D4$
+                    Next X
 
-                For XW = 1 To TEAMS_PER_CONFERENCE
-                    Input #2, H1$(XW)
-                    Z1$(XW) = H1$(XW)
-                Next
+                    If confGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
 
-                Close 2
+                        For I = 0 To 14
+                            For J = 0 To 22
+                                leagS!(I, J) = 0
+                            Next
+                        Next
 
-                For X = 1 To TEAMS_PER_CONFERENCE: DL!(X, 19) = 9999: Next
+                        Call ReadStatsPro(H1$(XW), TN$)
+                        Call StatsByCategoryPro(numberGames%, TN$, finalUpdate$, fullWins, fullLosses)
+                        Call CheckStatsPro(TN$)
 
-                For XW = 1 To TEAMS_PER_CONFERENCE
+                    End If 'Done checking for stat file
 
-                    'Look for * as terminating char
-                    If H1$(XW) <> Chr$(42) Then
+                End If ' Done checking if we have stats
 
-                        haveStats = FindStatsLeague%(H1$(XW), numberGames%, fullWins, fullLosses)
+            End If 'Done checking H1$(XW)
 
-                        If (haveStats) Then
+        Next XW
 
-                            L = Len(H1$(XW))
-                            WT$ = ""
+        Call SortLeaders
+        Call PostLeaders(leagueFile$)
 
-                            For X = 1 To L
-                                A = Asc(Mid$(H1$(XW), X, 1))
-                                WT$ = WT$ + Chr$(A)
-                            Next X
-
-                            confGame = 0
-
-                            For X = 1 To TEAMS_PER_CONFERENCE
-
-                                If Z1$(X) = WT$ Then
-
-                                    If O1!(X) = fullWins And O2!(X) = fullLosses Then
-                                        confGame = 1
-                                    Else
-                                        O1!(X) = fullWins
-                                        O2!(X) = fullLosses
-                                    End If
-
-                                End If
-
-                                If (confGame) Then Exit For
-
-                            Next X
-
-                            If confGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
-    
-                                For I = 0 To 14
-                                    For J = 0 To 22
-                                        leagS!(I, J) = 0
-                                    Next
-                                Next
-
-                                Call ReadStatsPro(H1$(XW), TN$)
-                                Call StatsByCategoryPro(numberGames%, TN$, finalUpdate$, fullWins, fullLosses)
-                                Call CheckStatsPro(TN$)
-
-                            End If 'Done checking for stat file
-
-                        End If ' Done checking if we have stats
-
-                    End If 'Done checking H1$(XW)
-
-                Next XW
-
-                Call SortLeaders
-                Call PostLeaders(WE$)
-
-            End If 'Done checking for ESC
-
-        End If 'Done checking file count
-
-        '...Until we press ESC
-    Loop Until ExitCode% = 27 Or Count% = 0 Or I$ = "N"
+    End If
 
 End Sub
 

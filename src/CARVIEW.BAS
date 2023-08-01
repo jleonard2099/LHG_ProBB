@@ -6,134 +6,66 @@ Sub CARVIEW ()
 
     Shared ars!(), W0S!(), W1S!()
 
-    Do
-        'Display list of files...
-        Color 0, 0
+    careerFile$ = ChooseFile$ (diskPaths$(1) + "*.CAR", "CAREER", ExitCode%)
+
+    If ExitCode% <> 27 And ExitCode% <> 0 Then
+
+        Color 15, 0
         Cls
 
-        Spec$ = diskPaths$(1) + "*.CAR"
-        Count% = FCount%(Spec$)
+        TMR = 930
 
-        If Count% = 0 Then
-            Locate 10, 8
-            Call CSMsgBox("NO CAREER FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+        Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
+
+        Open diskPaths$(1) + careerFile$ + ".CAR" For Input As #2
+
+        Input #2, NB, B$
+
+        For N = 1 To 15
+
+            For I = 0 To 61
+
+                Input #2, A$(I)
+
+                For J = 0 To 15
+                    Input #2, ars!(N, I, J)
+                Next J
+
+                Input #2, W0S!(N, I)
+                Input #2, W1S!(N, I)
+
+                TMR = TMR - 1
+
+                Locate 12, 52
+                Color 5: Print Using "####"; TMR
+
+            Next I
+
+        Next N
+
+        Close #2
+
+        Color 15, 0
+        Cls
+
+        Do
+            Locate 15, 10
+            Color 12: Print "V";: Color 7: Print "iew or ";
+            Color 12: Print "P";: Color 7: Print "rint"
             I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
-        Else
-            ReDim careerFiles$(0 To Count%)
+        Loop Until UCase$(I$) = "P" Or UCase$(I$) = "V"
 
-            For X = 1 To Count%
-                careerFiles$(X) = Space$(12)
-            Next
+        Select Case UCase$(I$)
 
-            careerFiles$(0) = Spec$
-            Call ReadFile(careerFiles$())
+            Case "P":
+                Call CareerToPrinter(A$(), Z$)
 
-            Do
-                Color , 1
-                Cls
+            Case "V":
+                Call CareerToScreen(A$(), Z$)
 
-                Locate , 28
-                Color 14
-                Print "SELECT FILE TO VIEW": Color 15
-                Selection% = 1
-                START% = 1
-                FileFGColr% = 15: FileBGColr% = 1
-                HiLiteFGColr% = 0: HiLiteBGColr% = 7
-                Rows% = 20
-                Columns% = 4
-                Spacing% = 6
-                Row% = 4
-                Column% = 1
-                Locate 25, 1
-                Color 14
-                Print "ENTER";: Color 15
-                Print "-SELECTS FILE";
+        End Select
 
-                _MouseShow "DEFAULT"
-                MAMenu careerFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-                _MouseHide
-
-                If ExitCode% <> 27 Then
-
-                    Color 15, 1
-                    targetFile$ = careerFiles$(Selection%)
-                    Locate 2, 33: Print targetFile$
-
-                    Do
-                        Locate 3, 33: Print "ANY CHANGE (YN)";
-                        I$ = GetKeyPress$
-                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                    Color 15, 0
-
-                End If
-
-            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
-
-            If ExitCode% <> 27 Then
-
-                targetFile$ = RTrim$(targetFile$)
-                careerFile$ = Left$(targetFile$, Len(targetFile$) - 4)
-
-                Color 15, 0
-                Cls
-
-                TMR% = 930
-
-                Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
-
-                Open diskPaths$(1) + careerFile$ + ".CAR" For Input As #2
-
-                Input #2, NB, B$
-
-                For N = 1 To 15
-
-                    For I = 0 To 61
-
-                        Input #2, A$(I)
-
-                        For J = 0 To 15
-                            Input #2, ars!(N, I, J)
-                        Next J
-
-                        Input #2, W0S!(N, I)
-                        Input #2, W1S!(N, I)
-                        TMR% = TMR% - 1
-                        Locate 12, 52: Color 5: Print Using "####"; TMR%
-
-                    Next I
-
-                Next N
-
-                Close #2
-
-                Color 15, 0
-                Cls
-
-                Do
-                    Locate 15, 10
-                    Color 12: Print "V";: Color 7: Print "iew or ";
-                    Color 12: Print "P";: Color 7: Print "rint"
-                    I$ = GetKeyPress$
-                Loop Until UCase$(I$) = "P" Or UCase$(I$) = "V"
-
-                Select Case UCase$(I$)
-
-                    Case "P":
-                        Call CareerToPrinter(A$(), Z$)
-
-                    Case "V":
-                        Call CareerToScreen(A$(), Z$)
-
-                End Select
-
-            End If 'Done checking for ESC
-
-        End If 'Done checking for files
-
-        '...Until we press ESC
-    Loop Until ExitCode% = 27 Or Count% = 0
+    End If 'Done checking for ESC
 
 End Sub
 
