@@ -1,3 +1,9 @@
+'----------------------------------------
+'            LOOKY Subroutine
+'----------------------------------------
+'This subroutine guides the user through
+'choosing a team file and then calls other
+'routines to load and view the stats
 Sub LOOKY ()
 
     _Title "Basketball: The Pro Game - View Stats"
@@ -10,16 +16,20 @@ Sub LOOKY ()
     statFile$ = nameStatFile$(team$)
 
     If Not _FileExists(diskPaths$(1) + statFile$) Then
-        Call CSMsgBox("UNABLE TO LOCATE COMPILED STATS FILE PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
+
+		MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
+		BoxWidth = 24
+		BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+		Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+		Call CSMsgBox(MsgText$, BoxWidth, Pass)
+		I$ = GetKeyPress$
+		Call CSMsgBox("", 0, Pass)
+
     Else
-        Color 15, 0
+
         Call LoadTeamStats(statFile$, totalGames%)
         Call ViewStatSummary(statFile$, team$, totalGames%, menuExit)
 
-        'We want to choose another team
-        'If menuExit = 1 Then I$ = "Y"
     End If
 
 End Sub
@@ -27,7 +37,8 @@ End Sub
 '----------------------------------------
 '        LoadTeamStats Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine loads the selected team's 
+'stats into arrays
 Sub LoadTeamStats (statFile$, totalGames%)
 
     Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, Z%
@@ -147,7 +158,10 @@ End Sub
 '----------------------------------------
 '       ViewStatSummary Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine formats and outputs the 
+'selected team's record to the display,
+'then provides routines for output of
+'the other stat categories
 Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
     Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%
@@ -273,7 +287,8 @@ End Sub
 '----------------------------------------
 '     ExtendedStatSummary Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine formats and outputs the 
+'team's schedule stats to the  user's display
 Sub ExtendedStatSummary (statFile$, teamName$, totalGames%)
 
     Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%
@@ -343,7 +358,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%)
             Case Chr$(0) + "Q":
                 Color , 0
                 Cls
-                Call PlayerStats(statFile$, teamName$, CP%, totalGames%, menuExit)
+                Call ViewPlayerStats(statFile$, teamName$, CP%, totalGames%, menuExit)
 
                 'Pg Up
             Case Chr$(0) + "I":
@@ -380,10 +395,11 @@ End Sub
 
 
 '----------------------------------------
-'       PlayerStats Subroutine
+'       ViewPlayerStats Subroutine
 '----------------------------------------
-'...explanation...
-Sub PlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
+'This subroutine formats and outputs the 
+'team's player stats to the user display
+Sub ViewPlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
 
     Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%
 
@@ -548,7 +564,7 @@ Sub PlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
             'Pg Down
             Case Chr$(0) + "Q"
                 CP% = 14
-                Call TeamStats(statFile$, teamName$, CP%, totalGames%, menuExit)
+                Call ViewTeamStats(statFile$, teamName$, CP%, totalGames%, menuExit)
 
                 'Pg Up
             Case Chr$(0) + "I"
@@ -604,10 +620,11 @@ End Sub
 
 
 '----------------------------------------
-'       TeamStats Subroutine
+'     ViewTeamStats Subroutine
 '----------------------------------------
-'...explanation...
-Sub TeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
+'This subroutine formats and outputs the 
+'team's OFF/DEF stats to the user display
+Sub ViewTeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
 
     Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%
 
@@ -720,7 +737,7 @@ Sub TeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
                 Case Chr$(0) + "I":
                     Cls
                     CP% = 1
-                    Call PlayerStats(statFile$, teamName$, CP%, totalGames%, menuExit)
+                    Call ViewPlayerStats(statFile$, teamName$, CP%, totalGames%, menuExit)
 
                     'Right Arrow
                 Case Chr$(0) + "M":
@@ -766,65 +783,10 @@ End Sub
 
 
 '----------------------------------------
-'       SortStats Subroutine
-'----------------------------------------
-'...explanation...
-Sub SortStats (CP%)
-
-    Shared values!(), statW0!(), statW1!()
-    Shared lookyA$()
-
-    'SORT BASED ON CATEGORY
-    If CP% = 1 Then SG% = 0
-    If CP% = 2 Then SG% = 10
-    If CP% = 3 Then SG% = 14
-    If CP% = 4 Then SG% = 2
-    If CP% = 5 Then SG% = 1
-    If CP% = 6 Then SG% = 15
-    If CP% = 7 Then SG% = 18
-    If CP% = 8 Then SG% = 19
-    If CP% = 9 Then SG% = 16
-    If CP% = 10 Then SG% = 4
-    If CP% = 11 Then SG% = 3
-    If CP% = 12 Then SG% = 17
-    If CP% = 14 Then SG% = 22
-    If CP% = 15 Then SG% = 20
-    If CP% = 17 Then SG% = 12
-    If CP% = 16 Then SG% = 13
-    If CP% = 18 Then SG% = 23
-    If CP% = 19 Then SG% = 5
-    If CP% = 20 Then SG% = 21
-    If CP% = 21 Then SG% = 6
-    If CP% = 22 Then SG% = 8
-    If CP% = 23 Then SG% = 9
-    If CP% = 24 Then SG% = 7
-    If CP% = 25 Then SG% = 11
-
-    For Z = 0 To 12
-
-        For Z1 = Z + 1 To 14
-
-            If values!(Z, SG%) < values!(Z1, SG%) Then
-
-                For I = 0 To 24: Swap values!(Z, I), values!(Z1, I): Next
-
-                Swap statW0!(Z), statW0!(Z1)
-                Swap statW1!(Z), statW1!(Z1)
-                Swap lookyA$(Z), lookyA$(Z1)
-
-            End If
-
-        Next Z1
-
-    Next Z
-
-End Sub
-
-
-'----------------------------------------
 '    PrintStatsSchedule Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine formats and outputs the 
+'team's schedule results to the default printer
 Sub PrintStatsSchedule (teamName$, totalGames%)
 
     Shared O%(), statsL%()
@@ -867,7 +829,8 @@ End Sub
 '----------------------------------------
 '      PrintStatsSummary Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine formats and outputs the 
+'team's stats to the default printer
 Sub PrintStatsSummary (teamName$, totalGames%)
 
     Shared compareZ!(), compareZ1!()
@@ -1048,11 +1011,69 @@ End Sub
 
 
 '----------------------------------------
+'       SortStats Subroutine
+'----------------------------------------
+'This subroutine sorts the associate stats
+'based on the chosen category
+Sub SortStats (CP%)
+
+    Shared values!(), statW0!(), statW1!()
+    Shared lookyA$()
+
+    'SORT BASED ON CATEGORY
+    If CP% = 1 Then SG% = 0
+    If CP% = 2 Then SG% = 10
+    If CP% = 3 Then SG% = 14
+    If CP% = 4 Then SG% = 2
+    If CP% = 5 Then SG% = 1
+    If CP% = 6 Then SG% = 15
+    If CP% = 7 Then SG% = 18
+    If CP% = 8 Then SG% = 19
+    If CP% = 9 Then SG% = 16
+    If CP% = 10 Then SG% = 4
+    If CP% = 11 Then SG% = 3
+    If CP% = 12 Then SG% = 17
+    If CP% = 14 Then SG% = 22
+    If CP% = 15 Then SG% = 20
+    If CP% = 17 Then SG% = 12
+    If CP% = 16 Then SG% = 13
+    If CP% = 18 Then SG% = 23
+    If CP% = 19 Then SG% = 5
+    If CP% = 20 Then SG% = 21
+    If CP% = 21 Then SG% = 6
+    If CP% = 22 Then SG% = 8
+    If CP% = 23 Then SG% = 9
+    If CP% = 24 Then SG% = 7
+    If CP% = 25 Then SG% = 11
+
+    For Z = 0 To 12
+
+        For Z1 = Z + 1 To 14
+
+            If values!(Z, SG%) < values!(Z1, SG%) Then
+
+                For I = 0 To 24: Swap values!(Z, I), values!(Z1, I): Next
+
+                Swap statW0!(Z), statW0!(Z1)
+                Swap statW1!(Z), statW1!(Z1)
+                Swap lookyA$(Z), lookyA$(Z1)
+
+            End If
+
+        Next Z1
+
+    Next Z
+
+End Sub
+
+
+'----------------------------------------
 '       ResetStatPrompt Subroutine
 '----------------------------------------
-' Prompts user with choice to reset stats
-' If they chose so, and confirm, then
-' it will proceed to delete the files.
+'This subroutine prompts the user with 
+'a choice to reset stats. If they chose, 
+'and confirm, it will then proceed to 
+'delete the files.
 Sub ResetStatPrompt (statFile$)
 
     Cls
@@ -1076,7 +1097,7 @@ Sub ResetStatPrompt (statFile$)
     Locate 7
 
     Do
-        U$ = "RESET COMPILED STATS TO 0 (YN)"
+        U$ = "RESET COMPILED STATS TO 0? (Y/N)"
         Locate , (80 - Len(U$)) / 2
         Print U$
         I$ = GetKeyPress$
@@ -1106,7 +1127,7 @@ Sub ResetStatPrompt (statFile$)
         Locate 7
 
         Do
-            U$ = "ARE YOU SURE (YN)"
+            U$ = "ARE YOU SURE? (Y/N)"
             Locate , (80 - Len(U$)) / 2
             Print U$
             I$ = GetKeyPress$

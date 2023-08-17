@@ -1,3 +1,9 @@
+'----------------------------------------
+'           CREATE Subroutine
+'----------------------------------------
+'This subroutine provides a menu for the
+'user to choose options related to the
+'creation and editing of leagues
 Sub CREATE ()
 
     _Title "Basketball: The Pro Game - Manage Leagues"
@@ -52,14 +58,14 @@ Sub CREATE ()
             Select Case Selection%
 
                 Case 1:
-                    Call DefineLeaguePro(LG$, div1$, div2$, div3$, div4$)
-                    Call ReviewEditLeague(LG$, div1$, div2$, div3$, div4$)
+                    Call DefineLeaguePro(league$, div1$, div2$, div3$, div4$)
+                    Call ReviewEditLeague(league$, div1$, div2$, div3$, div4$)
 
                 Case 2:
-                    LG$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "LEAGUE", ExitCode%)
+                    league$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "LEAGUE", ExitCode%)
 
                     If ExitCode% <> 27 And ExitCode% <> 0 Then
-                        Call ReviewEditLeague(LG$, div1$, div2$, div3$, div4$)
+                        Call ReviewEditLeague(league$, div1$, div2$, div3$, div4$)
                     End If
 
             End Select
@@ -76,8 +82,10 @@ End Sub
 '----------------------------------------
 '       DefineLeaguePro Subroutine
 '----------------------------------------
-'...explanation...
-Sub DefineLeaguePro (LG$, div1$, div2$, div3$, div4$)
+'This subroutine assists the user with the
+'input of paramters related to the league's
+'general naming and setup
+Sub DefineLeaguePro (league$, div1$, div2$, div3$, div4$)
 
     Do
 
@@ -109,12 +117,12 @@ Sub DefineLeaguePro (LG$, div1$, div2$, div3$, div4$)
             Print
             Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
             Locate , 12: Print "SAMPLE NAMES ARE NBA WBA NBA94-95"
-            Locate 7, 33: Input LG$
+            Locate 7, 33: Input league$
 
-            If LG$ <> "" Then
+            If league$ <> "" Then
 
                 Do
-                    Locate 13, 12: Print "ANY CHANGE (YN) "
+                    Locate 13, 12: Print "ANY CHANGE? (Y/N) "
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -184,9 +192,11 @@ End Sub
 
 
 '----------------------------------------
-'       ReviewEditLeague Subroutine
+'      ReviewEditLeague Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine provides an interface to
+'the user allowing them to choose / clear
+'teams from the league definition.
 Sub ReviewEditLeague (league$, div1$, div2$, div3$, div4$)
 
     Shared intZ1%()
@@ -269,7 +279,6 @@ Sub ReviewEditLeague (league$, div1$, div2$, div3$, div4$)
             If choice = 1 Then
                 'Add team
                 Call ChooseTeam(memberYears$(B), NTMS, intZ1%(B), memberTeams$(B))
-
             Else
                 'Remove team
                 memberTeams$(B) = "XXX"
@@ -287,7 +296,9 @@ End Sub
 '----------------------------------------
 '        SaveLeague Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine writes the league team
+'memberships and definition to each of
+'the corresponding files (.LIB, .TMS)
 Sub SaveLeague (league$, div1$, div2$, div3$, div4$)
 
     Shared intZ1%()

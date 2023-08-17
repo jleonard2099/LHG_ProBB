@@ -1,3 +1,7 @@
+'----------------------------------------
+'
+'----------------------------------------
+'
 Sub RecordsMenu ()
 
     _Title "Basketball: The Pro Game - Analyze Records"
@@ -10,7 +14,11 @@ Sub RecordsMenu ()
 
     If Not _FileExists(diskPaths$(1) + "RECORDS.PBB") Then
 
-        Call CSMsgBox("UNABLE TO LOCATE RECORDS PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+        MsgText$ = "UNABLE TO LOCATE RECORDS PRESS ANY KEY TO RETURN TO MAIN MENU"
+        BoxWidth = 24
+        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+        Call CSMsgBox(MsgText$, BoxWidth, Pass)
         I$ = GetKeyPress$
         Call CSMsgBox("", 0, Pass)
 
@@ -62,25 +70,25 @@ Sub RecordsMenu ()
             _MouseHide
 
             If ExitCode% <> 27 Then
-            
+
                 Select Case Selection%
 
-                    Case 1: 
+                    Case 1:
                         Call ViewSeasonRecords
 
-                    Case 2: 
+                    Case 2:
                         Call PrintSeasonRecords
 
-                    Case 3: 
+                    Case 3:
                         If _FileExists(diskPaths$(1) + "RECORDS.PBB") Then Kill diskPaths$(1) + "RECORDS.PBB"
 
-                    Case 4: 
+                    Case 4:
                         Call GameRecords(1)
 
-                    Case 5: 
+                    Case 5:
                         Call GameRecords(2)
 
-                    Case 6: 
+                    Case 6:
                         If _FileExists(diskPaths$(1) + "RECORDS.GAM") Then Kill diskPaths$(1) + "RECORDS.GAM"
 
                 End Select
@@ -132,18 +140,31 @@ Sub ViewSeasonRecords ()
     Locate , 4: Print "CATEGORY                PLAYER           TEAM            RECORD"
 
     Color 7
+    'Games Played
     Locate , 4: Print indRecords$(1); Tab(28); Left$(BRC$(1, 0), 14); Tab(42); BRC$(1, 1); Tab(62); Using "####"; BRC!(1)
+    'Field Goal Attempts
     Locate , 4: Print indRecords$(2); Tab(28); Left$(BRC$(2, 0), 14); Tab(42); BRC$(2, 1); Tab(62); Using "####"; BRC!(2)
+    'Field Goals Made
     Locate , 4: Print indRecords$(3); Tab(28); Left$(BRC$(3, 0), 14); Tab(42); BRC$(3, 1); Tab(62); Using "####"; BRC!(3)
+    'Field Goal %
     Locate , 4: Print indRecords$(4); Tab(28); Left$(BRC$(4, 0), 14); Tab(42); BRC$(4, 1); Tab(62); Using "##.#"; BRC!(4) * 100
+    '3 Field Goal Attempts
     Locate , 4: Print indRecords$(5); Tab(28); Left$(BRC$(5, 0), 14); Tab(42); BRC$(5, 1); Tab(62); Using "####"; BRC!(5)
+    '3 Field Goal Made
     Locate , 4: Print indRecords$(6); Tab(28); Left$(BRC$(6, 0), 14); Tab(42); BRC$(6, 1); Tab(62); Using "####"; BRC!(6)
+    '3 Field Goal %
     Locate , 4: Print indRecords$(7); Tab(28); Left$(BRC$(7, 0), 14); Tab(42); BRC$(7, 1); Tab(62); Using "##.#"; BRC!(7) * 100
+    'Free Throw Attempts
     Locate , 4: Print indRecords$(8); Tab(28); Left$(BRC$(8, 0), 14); Tab(42); BRC$(8, 1); Tab(62); Using "####"; BRC!(8)
+    'Free Throws Made
     Locate , 4: Print indRecords$(9); Tab(28); Left$(BRC$(9, 0), 14); Tab(42); BRC$(9, 1); Tab(62); Using "####"; BRC!(9)
+    'Free Throw %
     Locate , 4: Print indRecords$(10); Tab(28); Left$(BRC$(10, 0), 14); Tab(42); BRC$(10, 1); Tab(62); Using "##.#"; BRC!(10) * 100
+    'Minutes Played
     Locate , 4: Print indRecords$(11); Tab(28); Left$(BRC$(11, 0), 14); Tab(42); BRC$(11, 1); Tab(62); Using "####"; BRC!(11)
+    'Points
     Locate , 4: Print indRecords$(12); Tab(28); Left$(BRC$(12, 0), 14); Tab(42); BRC$(12, 1); Tab(62); Using "####"; BRC!(12)
+    'Scoring Average
     Locate , 4: Print indRecords$(13); Tab(28); Left$(BRC$(13, 0), 14); Tab(42); BRC$(13, 1); Tab(62); Using "####"; BRC!(13)
 
     Color 15
@@ -234,15 +255,25 @@ Sub ViewSeasonRecords ()
     Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 
     Color 14
+    'Field Goal Attempts
     Locate , 4: Print teamRecords$(1); Tab(33); TRC$(1); Tab(53); Using "####"; TRC!(1)
+    'Field Goals Made
     Locate , 4: Print teamRecords$(2); Tab(33); TRC$(2); Tab(53); Using "####"; TRC!(2)
+    'Field Goal %
     Locate , 4: Print teamRecords$(3); Tab(33); TRC$(3); Tab(53); Using "##.#"; TRC!(3) * 100
+    '3 Field Goal Attempts
     Locate , 4: Print teamRecords$(4); Tab(33); TRC$(4); Tab(53); Using "####"; TRC!(4)
+    '3 Field Goals Made
     Locate , 4: Print teamRecords$(5); Tab(33); TRC$(5); Tab(53); Using "####"; TRC!(5)
+    '3 Field Goal %
     Locate , 4: Print teamRecords$(6); Tab(33); TRC$(6); Tab(53); Using "##.#"; TRC!(6) * 100
+    'Free Throw Attempts
     Locate , 4: Print teamRecords$(7); Tab(33); TRC$(7); Tab(53); Using "####"; TRC!(7)
+    'Free Throws Made
     Locate , 4: Print teamRecords$(8); Tab(33); TRC$(8); Tab(53); Using "####"; TRC!(8)
+    'Free Throw %
     Locate , 4: Print teamRecords$(9); Tab(33); TRC$(9); Tab(53); Using "##.#"; TRC!(9) * 100
+
     Locate , 4: Print teamRecords$(10); Tab(33); TRC$(10); Tab(53); Using "####"; TRC!(10)
     Locate , 4: Print teamRecords$(11); Tab(33); TRC$(11); Tab(53); Using "####"; TRC!(11)
     Locate , 4: Print teamRecords$(12); Tab(33); TRC$(12); Tab(53); Using "####"; TRC!(12)
@@ -333,15 +364,25 @@ Sub ViewSeasonRecords ()
     Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 
     Color 15
+    'Field Goal Attempts
     Locate , 4: Print teamRecords$(1); Tab(33); TRC1$(1); Tab(53); Using "####"; TRC1!(1)
+    'Field Goals Made
     Locate , 4: Print teamRecords$(2); Tab(33); TRC1$(2); Tab(53); Using "####"; TRC1!(2)
+    'Field Goal %
     Locate , 4: Print teamRecords$(3); Tab(33); TRC1$(3); Tab(53); Using "##.#"; TRC1!(3) * 100
+    '3 Field Goal Attempts
     Locate , 4: Print teamRecords$(4); Tab(33); TRC1$(4); Tab(53); Using "####"; TRC1!(4)
+    '3 Field Goals Made
     Locate , 4: Print teamRecords$(5); Tab(33); TRC1$(5); Tab(53); Using "####"; TRC1!(5)
+    '3 Field Goal %
     Locate , 4: Print teamRecords$(6); Tab(33); TRC1$(6); Tab(53); Using "##.#"; TRC1!(6) * 100
+    'Free Throw Attempts
     Locate , 4: Print teamRecords$(7); Tab(33); TRC1$(7); Tab(53); Using "####"; TRC1!(7)
+    'Free Throws Made
     Locate , 4: Print teamRecords$(8); Tab(33); TRC1$(8); Tab(53); Using "####"; TRC1!(8)
+    'Free Throw %
     Locate , 4: Print teamRecords$(9); Tab(33); TRC1$(9); Tab(53); Using "##.#"; TRC1!(9) * 100
+
     Locate , 4: Print teamRecords$(10); Tab(33); TRC1$(10); Tab(53); Using "####"; TRC1!(10)
     Locate , 4: Print teamRecords$(11); Tab(33); TRC1$(11); Tab(53); Using "####"; TRC1!(11)
     Locate , 4: Print teamRecords$(12); Tab(33); TRC1$(12); Tab(53); Using "####"; TRC1!(12)
@@ -497,3 +538,4 @@ Sub PrintSeasonRecords ()
     LPrint Chr$(12)
 
 End Sub
+

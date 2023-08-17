@@ -1,3 +1,13 @@
+'----------------------------------------
+'            TRADE Subroutine
+'----------------------------------------
+'This subroutine relies on several other
+'routines to proceed through the general 
+'steps for trading players.
+'First, 2 teams are chosen and their Stats
+'are loaded.
+'Then, the player choices are made and the
+'corresponding team files are updated.
 Sub TRADE ()
 
     _Title "Basketball: The Pro Game - Trade Players"
@@ -25,9 +35,12 @@ End Sub
 
 
 '----------------------------------------
-'         LoadStatsForTrade Subroutine
+'      LoadStatsForTrade Subroutine
 '----------------------------------------
-'... explain here ...
+'This subroutine prompts the user in reg-
+'ards to the trading of stats associated
+'with the players. If chosen to trade them,
+'the stats are loaded from the team stats.
 Sub LoadStatsForTrade (tradeTeam)
 
     Shared statFiles$()
@@ -62,7 +75,7 @@ Sub LoadStatsForTrade (tradeTeam)
 
     Do
         Locate 7
-        U$ = "DOES THIS TEAM HAVE SAVED STATS (YN)"
+        U$ = "DOES THIS TEAM HAVE SAVED STATS? (Y/N)"
         Locate , (80 - Len(U$)) / 2
         Print U$
         Color 15, 0
@@ -77,7 +90,18 @@ Sub LoadStatsForTrade (tradeTeam)
 
         statFiles$(tradeTeam) = nameStatFile$(statTeam$(tradeTeam))
 
-        If _FileExists(diskPaths$(1) + statFiles$(tradeTeam)) Then
+        If Not _FileExists(diskPaths$(1) + statFiles$(tradeTeam)) Then
+
+            haveStats(tradeTeam) = 1
+            MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
+            BoxWidth = 24
+            BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+            Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+            Call CSMsgBox(MsgText$, BoxWidth, Pass)
+            I$ = GetKeyPress$
+            Call CSMsgBox("", 0, Pass)
+
+        Else
 
             Open diskPaths$(1) + statFiles$(tradeTeam) For Input As #1
 
@@ -106,12 +130,6 @@ Sub LoadStatsForTrade (tradeTeam)
 
             Close 1
 
-        Else
-            haveStats(tradeTeam) = 1
-            Locate 10, 8
-            Call CSMsgBox("NO COMPILED STATS FOR TEAM WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-            I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
         End If
 
     End If
@@ -122,7 +140,10 @@ End Sub
 '----------------------------------------
 '         ContinueTrade Subroutine
 '----------------------------------------
-'... explain here ...
+'This subroutine actually presents the user
+'a menu for choosing players to trade. It
+'relies on separate routines to summarize
+'the trade and then save the changes.
 Sub ContinueTrade ()
 
     Shared teamSettings%(), plyrRat_TRADE(), leagRat_TRADE()
@@ -232,7 +253,7 @@ Sub ContinueTrade ()
                     Color 15, 0
 
                     Do
-                        Locate 23, 1: Print "ANY CHANGE (YN) ";
+                        Locate 23, 1: Print "ANY CHANGE? (Y/N) ";
                         J$ = GetKeyPress$
                     Loop Until UCase$(J$) = "Y" Or UCase$(J$) = "N"
 
@@ -296,7 +317,8 @@ End Sub
 '----------------------------------------
 '           SaveTrades Subroutine
 '----------------------------------------
-'... explain here ...
+'This subroutine saves the modified team
+'data from the trade to the team files.
 Sub SaveTrades ()
 
     Shared teamSettings%(), plyrRat_TRADE(), leagRat_TRADE()
@@ -410,9 +432,9 @@ End Sub
 '----------------------------------------
 '      PrintTradeSummary Subroutine
 '----------------------------------------
-'Prints a summary of stats and players
-'that will be swapped as a result of
-'the trade that is being proposed
+'This subroutine prints a summary of stats 
+'and players that will be swapped as a 
+'result of the trade being proposed
 Sub PrintTradeSummary (p1Idx, p2Idx)
 
     Shared tradeB1!(), tradeW0!(), tradeW1!()
@@ -475,9 +497,10 @@ End Sub
 
 
 '----------------------------------------
-'         ChooseTradeTeam Subroutine
+'       ChooseTradeTeam Subroutine
 '----------------------------------------
-'... explain here ...
+'This subroutine provides an interface for 
+'choosing the team to trade players from
 Sub ChooseTradeTeam (yearNumber$, numberTeams, chosenIdx, teamName$, tradeIdx)
 
     Shared teamSettings%()
@@ -539,11 +562,14 @@ Sub ChooseTradeTeam (yearNumber$, numberTeams, chosenIdx, teamName$, tradeIdx)
 
                     If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
 
-                        Locate 10, 8
-
-                        Call CSMsgBox("NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID", 20, Pass)
+                        MsgText$ = "NO TEAM FILES WERE FOUND MATCHING THIS ID. PRESS ANY KEY TO RETURN TO MAIN MENU"
+                        BoxWidth = 20
+                        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+                        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                        Call CSMsgBox(MsgText$, BoxWidth, Pass)
                         I$ = GetKeyPress$
                         Call CSMsgBox("", 0, Pass)
+                        Exit Sub
 
                     Else
 
@@ -590,7 +616,7 @@ Sub ChooseTradeTeam (yearNumber$, numberTeams, chosenIdx, teamName$, tradeIdx)
                         Color teamSettings%(tradeIdx, 33), teamSettings%(tradeIdx, 34): Print teamName$
 
                         Color 15, 4
-                        Locate 3, 33: Print "ANY CHANGE? (YN)";
+                        Locate 3, 32: Print "ANY CHANGE? (Y/N)";
 
                         J$ = GetKeyPress$
 
@@ -612,7 +638,8 @@ End Sub
 '----------------------------------------
 '     SelectTradeTeam Subroutine
 '----------------------------------------
-'... explain here ...
+'This subroutine provides an interface for 
+'selecting the team to trade players from
 Sub SelectTradeTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%, tradeIdx)
 
     If numberTeams > 0 Then
@@ -656,10 +683,11 @@ Sub SelectTradeTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%
 End Sub
 
 
-'------------------------------
-'   ReadTradeTeam Subroutine
-'------------------------------
-'...explanation...
+'----------------------------------------
+'        ReadTradeTeam Subroutine
+'----------------------------------------
+'This subroutine reads team data into 
+'arrays for the selected team
 Sub ReadTradeTeam (teamYear$, targetTeam$, teamIdx, tradeIdx)
 
     Shared teamSettings%()

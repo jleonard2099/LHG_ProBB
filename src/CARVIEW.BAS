@@ -1,3 +1,9 @@
+'----------------------------------------
+'           CARVIEW Subroutine
+'----------------------------------------
+'This routine loads in an existing career 
+'file (.CAR) and gives the user options
+'for viewing / printing the results
 Sub CARVIEW ()
 
     _Title "Basketball: The Pro Game - View Careers"
@@ -36,8 +42,9 @@ Sub CARVIEW ()
 
                 TMR = TMR - 1
 
-                Locate 12, 52
-                Color 5: Print Using "####"; TMR
+                Color 5
+                Locate 12, 38
+                Print Using "####"; TMR
 
             Next I
 
@@ -71,9 +78,13 @@ End Sub
 
 
 '----------------------------------------
-'       CareerToScreen subroutine
+'        CareerToScreen Subroutine
 '----------------------------------------
-'...explanation...
+'This routine gives the user different 
+'categories of stats related to the roster.
+'It then calls a supplemental routine for 
+'each  that will format those stats and 
+'send them to the display screen
 Sub CareerToScreen (A$(), Z$)
 
     Do
@@ -102,9 +113,10 @@ End Sub
 
 
 '----------------------------------------
-'       CareerToPrinter subroutine
+'       CareerToPrinter Subroutine
 '----------------------------------------
-'...explanation...
+'Formats results of Career stats and sends
+'to the user's default printer
 Sub CareerToPrinter (A$(), Z$)
 
     Color 0, 15
@@ -270,14 +282,16 @@ Sub CareerToPrinter (A$(), Z$)
 End Sub
 
 '----------------------------------------
-'       ViewPlayer Subroutine
+'          ViewPlayer Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine will display player stats
+'from the team's career file
 Sub ViewPlayer (A$(), Z$)
 
     Shared ars!(), W0S!(), W1S!()
 
     Cls
+    
     Color 12: Print Z$
 
     For I = 0 To 15:
@@ -510,7 +524,8 @@ End Sub
 '----------------------------------------
 '       ViewRosterSequence Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine will display player stats
+'from the team's career file, in sequence
 Sub ViewRosterSequence (A$(), Z$)
 
     Shared ars!(), W0S!(), W1S!()
@@ -759,11 +774,10 @@ Sub ViewRosterSequence (A$(), Z$)
 
         Do
             Locate 5, 20
-            Print "VIEW AGAIN (Y/N)"
+            Print "VIEW AGAIN? (Y/N)"
             I$ = GetKeyPress$
         Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
     Loop Until UCase$(I$) = "N"
 
 End Sub
-

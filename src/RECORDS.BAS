@@ -1,3 +1,7 @@
+'----------------------------------------
+'
+'----------------------------------------
+'
 Sub GameRecords (menuChoice)
 
     _Title "Basketball: The Pro Game - Game Records"

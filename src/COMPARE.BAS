@@ -1,3 +1,9 @@
+'----------------------------------------
+'           COMPARE Subroutine
+'----------------------------------------
+'This subroutine loads in existing stats
+'for a team and provides different options 
+'to the end user for formatting stats 
 Sub COMPARE ()
 
     _Title "Basketball: The Pro Game - Stats Comparison"
@@ -23,16 +29,21 @@ Sub COMPARE ()
 
         If teamNbr <> 0 Then
 
-            noStats = 0
+            haveStats = 1
 
             statFile$ = nameStatFile$(team$)
 
             If Not _FileExists(diskPaths$(1) + statFile$) Then
-                Locate 10, 8
-                Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+
+                haveStats = 0
+
+                MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
+                BoxWidth = 24
+                BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+                Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                Call CSMsgBox(MsgText$, BoxWidth, Pass)
                 I$ = GetKeyPress$
                 Call CSMsgBox("", 0, Pass)
-                noStats = 1
             Else
 
                 Open diskPaths$(1) + statFile$ For Input As #1
@@ -146,15 +157,16 @@ Sub COMPARE ()
 
         End If 'Done checking for ESC
 
-    Loop Until (UCase$(I$) = "N" And backToMenu = 0) Or I$ = Chr$(27) Or teamNbr = 0 Or noStats = 1
+    Loop Until backToMenu = 0 Or J$ = Chr$(27) Or teamNbr = 0 Or haveStats = 0
 
 End Sub
 
 
 '----------------------------------------
-'   Comparisons_Printer Subroutine
+'     Comparisons_Printer Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine formats team stats for
+'output to the default printer
 Sub Comparisons_Printer (teamName$)
 
 End Sub
@@ -163,7 +175,10 @@ End Sub
 '----------------------------------------
 '     Comparisons_Screen Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine provides a brief menu of
+'player comparisons that can be done, and 
+'then formats stats for those options for
+'use with the user display
 Sub Comparisons_Screen (teamName$, backToMenu, posn$())
 
     Shared playerRatings%(), teamRatings%()
@@ -288,7 +303,9 @@ End Sub
 '----------------------------------------
 '   TeamComparisons_Screen Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine focuses on the formatting
+'of team stats for comparison. The stats
+'are output to the end user display
 Sub TeamComparisons_Screen (T$)
 
     Shared AL%, AW%, HL%, HW%
@@ -502,9 +519,11 @@ End Sub
 
 
 '----------------------------------------
-'   PlayerComparisons_Screen Subroutine
+'  PlayerComparisons_Screen Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine focuses on the formatting
+'of team stats for comparison. The stats
+'are output to the end user display
 Sub PlayerComparisons_Screen (idx, position$)
 
     Shared playerRatings%(), teamRatings%()

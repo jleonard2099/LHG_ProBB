@@ -3,7 +3,7 @@
 '----------------------------------------
 Dim opSysType$
 
-Dim Shared diskPaths$(0 to 3), Q$(0 To 377)
+Dim Shared diskPaths$(0 To 3), Q$(0 To 377)
 Dim Shared teamNames$(MAX_TEAMS)
 Dim Shared teamIndex%(MAX_TEAMS)
 
@@ -125,7 +125,7 @@ Dim AL!(50), AW!(50), HL!(50), HW!(50), R1!(50), R2!(50), R3!(50), R4!(50)
 Dim TAL!(40), TAW!(40), THL!(40), THW!(40)
 Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
 
-Dim LG$, div1$, div2$, div3$, div4$
+Dim league$, div1$, div2$, div3$, div4$
 
 '----------------------------------------
 ' Used in STAT / INPUT routines

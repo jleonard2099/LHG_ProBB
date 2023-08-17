@@ -1,3 +1,12 @@
+'----------------------------------------
+'             ALIGN Subroutine
+'----------------------------------------
+'This routine presents a menu / interface
+'that assists the user with aligning 
+'player names in separate stat files. 
+'(ie, Road Vs. Local) This should be done 
+'before merging stats, since player name 
+'entry may not be consistent.
 Sub ALIGN ()
 
     _Title "Basketball: The Pro Game - Align Stats"
@@ -22,7 +31,8 @@ Sub ALIGN ()
 
             Color 12, 0
             Cls
-            Locate 18, 5: Color 12: Print "SEARCHING FOR FILES . . ."
+
+            Locate 18, 5: Print "SEARCHING FOR FILES . . ."
 
             If _FileExists(pathRoadStats$ + statFile$) Then
 
@@ -42,6 +52,7 @@ Sub ALIGN ()
                 Next
 
                 For L = 0 To 15: Input #1, ZR!(L): Next
+
                 For L = 0 To 15: Input #1, ZR1!(L): Next
 
                 Close #1
@@ -64,6 +75,7 @@ Sub ALIGN ()
                     Next
 
                     For L = 0 To 15: Input #1, alignZ!(L): Next
+
                     For L = 0 To 15: Input #1, alignZ1!(L): Next
 
                     Close #1
@@ -98,10 +110,15 @@ Sub ALIGN ()
 End Sub
 
 
+
 '----------------------------------------
-'       AlignStats Subroutine
+'         AlignStats Subroutine
 '----------------------------------------
-'...explanation...
+'This routine presents the user with a 
+'summary of the statistics in each file.
+'It then performs the alignment before 
+'presenting the user a chance to review 
+'the results.
 Sub AlignStats (pathRoadStats$, statFile$)
 
     Shared alignA$(), alignAR$()
@@ -123,29 +140,35 @@ Sub AlignStats (pathRoadStats$, statFile$)
 
     For I = 0 To 14
         Locate I + 4, 22
-        Color 12: Print Using "##"; I;: Print " ";
+        Color 12: Print Using "##"; I;
+        Print " ";
         Color 15: Print alignA$(I);
-        Color 12: Print Tab(44); Using "##"; I;: Print " ";
+        Color 12: Print Tab(44); Using "##"; I;
+        Print " ";
         Color 7: Print alignAR$(I)
     Next
 
     Color 11
     Locate 22: Line Input "HIT ENTER TO ALIGN"; DUMMY$
-    Color 11
     Locate 22: Print "ALIGNING FILES . . .             "
 
     N = 0
 
     Do
         For J = 0 To 14
+
             If alignA$(N) = alignAR$(J) Then
+
                 AN$(N) = alignAR$(J)
+
                 For K = 0 To 13
                     AN!(N, K) = AR!(J, K)
                     W0N!(N) = W0R!(J)
                     WN1!(N) = WR1!(J)
                 Next K
+
             End If
+
         Next J
 
         N = N + 1
@@ -184,7 +207,9 @@ End Sub
 '----------------------------------------
 '    ReviewAndSaveAlignment Subroutine
 '----------------------------------------
-'...explanation...
+'This routine displays the results of the 
+'player name alignment, then gives the end
+'user a chance to actually save the results 
 Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
 
     Shared alignA$(), AN$()
@@ -202,31 +227,39 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
     Color 7: Print "             ROAD"
 
     For I = 0 To 14:
-        Locate I + 4, 22: Color 12: Print Using "##"; I;: Print " ";
+        Color 12
+        Locate I + 4, 22: Print Using "##"; I;
+        Print " ";
         Color 15: Print alignA$(I);
-        Color 12: Print Tab(44); Using "##"; I;: Print " ";
+        Color 12: Print Tab(44); Using "##"; I;
+        Print " ";
         Color 7: Print AN$(I)
     Next
 
     Color 11
     Locate 22: Line Input "HIT ENTER TO ALIGN"; DUMMY$
-    Color 11
     Locate 22: Print "ALIGNING FILES . . .             "
 
     Open pathRoadStats$ + statFile$ For Output As #1
+
     Write #1, BR$
+
     For I = 0 To 14: Write #1, AN$(I)
+
     For J = 0 To 13: Write #1, AN!(I, J): Next: Write #1, W0N!(I): Write #1, WN1!(I): Next
+
     For L = 0 To 15: Write #1, ZR!(L): Next
+
     For L = 0 To 15: Write #1, ZR1!(L): Next
+
     Close #1
 
     Cls
 
     Locate 8, 20: Print "RE-ALIGNMENT COMPLETED"
-    Print
+    Color 12
     Locate 12, 20
-    Color 12: Line Input "HIT ENTER TO CONTINUE"; DUMMY$
+    Line Input "HIT ENTER TO CONTINUE"; DUMMY$
 
     Cls
 

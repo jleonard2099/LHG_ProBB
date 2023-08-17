@@ -1,3 +1,9 @@
+'----------------------------------------
+'           TINPUT Subroutine
+'----------------------------------------
+'This subroutine provodes the user with
+'several options for managing a team and
+'it's roster.
 Sub TINPUT (menuShortcut%)
 
     _Title "Basketball: The Pro Game - Team Input"
@@ -49,7 +55,9 @@ End Sub
 '----------------------------------------
 '         DoTheInput Subroutine
 '----------------------------------------
-'... explain here ...
+'This subroutine assists the user with
+'processing the chosen action from the
+'menu 
 Sub DoTheInput (action%)
 
     Shared playerRatings%(), leagueRatings%(), teamRatings%()
@@ -82,7 +90,7 @@ Sub DoTheInput (action%)
 
                 Print
                 Color 14: Print "(1) ";
-                Color 15: Print "TEAM/INDIVID STEALS (Y/N): ";
+                Color 15: Print "TEAM/INDIVID STEALS? (Y/N): ";
 
                 Do
                     I$ = GetKeyPress$
@@ -98,7 +106,7 @@ Sub DoTheInput (action%)
                     ST = I
                     Print
                     Color 14: Print "(2) ";
-                    Color 15: Print "TEAM/INDIVID BLOCKS (Y/N): ";
+                    Color 15: Print "TEAM/INDIVID BLOCKS? (Y/N): ";
 
                     Do
                         I$ = GetKeyPress$
@@ -115,7 +123,7 @@ Sub DoTheInput (action%)
 
                         Print
                         Color 14: Print "(3) ";
-                        Color 15: Print "TEAM/INDIVID OFF/DEF REB (Y/N): ";
+                        Color 15: Print "TEAM/INDIVID OFF/DEF REB? (Y/N): ";
 
                         Do
                             I$ = GetKeyPress$
@@ -132,7 +140,7 @@ Sub DoTheInput (action%)
 
                             Print
                             Color 14: Print "(4) ";
-                            Color 15: Print "TEAM TURNOVERS (Y/N): ";
+                            Color 15: Print "TEAM TURNOVERS? (Y/N): ";
 
                             Do
                                 I$ = GetKeyPress$
@@ -151,7 +159,7 @@ Sub DoTheInput (action%)
 
                                 Do
 
-                                    Print "ANY CHANGE (Y/N)";
+                                    Print "ANY CHANGE?? (Y/N)";
                                     I$ = GetKeyPress$
 
                                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or I$ = Chr$(27)
@@ -210,7 +218,8 @@ End Sub
 '----------------------------------------
 '       PrintRoster Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine sends the selected
+'team's roster to the default printer
 Sub PrintRoster (YN$)
 
     Shared playerRatings%(), leagueRatings%(), teamRatings%()
@@ -269,7 +278,8 @@ End Sub
 '----------------------------------------
 '       ViewRoster Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine displays the selected
+'team's roster on the end user display
 Sub ViewRoster (A$, T1)
 
     Shared playerRatings%(), leagueRatings%(), teamRatings%()
@@ -518,7 +528,7 @@ Sub ViewRoster (A$, T1)
 
         Color 15
         Print
-        Print "VIEW AGAIN (Y/N)"
+        Print "VIEW AGAIN?? (Y/N)"
 
         Do
             I$ = GetKeyPress$
@@ -532,16 +542,17 @@ End Sub
 '----------------------------------------
 '        InputEditTeam Subroutine
 '----------------------------------------
-'Steps user through screens for adjusting
-'team data and players
-'
+'This subroutine assists the user with the
+'steps for entering or editing a team.
+
+'inputAction%
+'   1 = New Team
+'   2 = Edit Team
+
 'NOTE: <ENTER> key is valued as 0 for when
 'a user is prompted to press keys to CONTINUE
 'This improvement over the original makes it
 'faster and easier to proceed through screens
-
-'inputAction% = 1: New Team
-'inputAction% = 2: Edit Team
 Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
 
     Shared playerRatings%(), leagueRatings%(), teamRatings%()
@@ -1181,7 +1192,8 @@ End Sub
 '----------------------------------------
 '         EditPlayer Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine gives thet user an inter-
+'face for editing stats for a single player
 Sub EditPlayer (J, action)
 
     Shared playerRatings%()
@@ -1312,7 +1324,9 @@ End Sub
 '----------------------------------------
 '     SaveTeamFile Subroutine
 '----------------------------------------
-'... explain here ...
+'This subroutine saves the modifed team
+'data (from corresponding arrays) to an
+'appropriate spot in the select team file
 Sub SaveTeamFile (yearNumber$, teamIdx, action%)
 
     Shared playerRatings%(), leagueRatings%(), teamRatings%()

@@ -1,14 +1,19 @@
 '----------------------------------------
 '     NewStandingOptions Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine lets the user choose a
+'league for viewing "Expanded" standings,
+'then reads in the data from the League 
+'stats file (.TMS). It then presents the 
+'display options and calls separate routines 
+'for handling each choice.
 Sub NewStandingOptions ()
 
     _Title "Basketball: The Pro Game - League Standings"
 
     Shared TML$(), strZ1$()
 
-    Shared div1$, div2$, div3$, div4$, LG$
+    Shared div1$, div2$, div3$, div4$, league$
 
     ReDim menuChoices$(1 To 2)
 
@@ -18,7 +23,7 @@ Sub NewStandingOptions ()
 
         Open diskPaths$(1) + leagStatFile$ + ".TMS" For Input As #2
 
-        Input #2, LG$, div1$, div2$, div3$, div4$
+        Input #2, league$, div1$, div2$, div3$, div4$
 
         For X = 1 To TEAMS_PER_CONFERENCE
             Input #2, strZ1$(X)
@@ -30,7 +35,7 @@ Sub NewStandingOptions ()
         Color 15, 0
         Cls
 
-        Call UpdateLeagueStandings(LG$)
+        Call UpdateLeagueStandings(league$)
 
         Cls
 
@@ -41,13 +46,18 @@ Sub NewStandingOptions ()
             I$ = GetKeyPress$
         Loop Until UCase$(I$) = "P" Or UCase$(I$) = "V"
 
+        'I started passing league$ as a parameter
+        'To start working towards removing the need
+        'for Dim Shared in so many places. However
+        'it has not been consistently done, so I
+        'realize it's currently awkward there.
         Select Case UCase$(I$)
 
             Case "V":
-                Call ViewNewStandings(LG$)
+                Call ViewNewStandings(league$)
 
             Case "P"
-                Call PrintNewStandings(LG$)
+                Call PrintNewStandings(league$)
 
         End Select
 
@@ -57,10 +67,13 @@ End Sub
 
 
 '----------------------------------------
-'   UpdateLeagueStandings Subroutine
+'    UpdateLeagueStandings Subroutine
 '----------------------------------------
-'...explanation...
-Sub UpdateLeagueStandings (LG$)
+'This subroutine takes the stats read in
+'for a league, then calculates the standings 
+'for that league and writes a  corresponding 
+'.STD file.
+Sub UpdateLeagueStandings (league$)
 
     Shared HLL(), HWW()
     Shared LL(), LLS()
@@ -75,7 +88,7 @@ Sub UpdateLeagueStandings (LG$)
 
     Dim statsT%(100)
 
-    Shared div1$, div2$, div3$, div4$, LG$
+    Shared div1$, div2$, div3$, div4$, league$
 
     TMR = 40
     YY = 0
@@ -84,7 +97,7 @@ Sub UpdateLeagueStandings (LG$)
 
         YY = YY + 1
         Color 14
-        Locate 7, 20
+        Locate 7, 39
         TMR = TMR - 1: Print Using "##"; TMR
 
         If strZ1$(KK) <> "*" Then
@@ -152,9 +165,9 @@ Sub UpdateLeagueStandings (LG$)
 
     Next KK
 
-    Open diskPaths$(1) + LG$ + ".STD" For Output As #1
+    Open diskPaths$(1) + league$ + ".STD" For Output As #1
 
-    Write #1, LG$, div1$, div2$, div3$, div4$
+    Write #1, league$, div1$, div2$, div3$, div4$
 
     For I = 1 To TEAMS_PER_CONFERENCE
         Write #1, WW(I), HWW(I), RWW(I), LL(I), HLL(I), RLL(I), LTW(I), LTL(I), TML$(I)
@@ -167,8 +180,10 @@ End Sub
 '----------------------------------------
 '       ViewNewStandings Subroutine
 '----------------------------------------
-'...explanation...
-Sub ViewNewStandings (LG$)
+'This subroutine sorts the expanded league
+'standings and outputs them to the user
+'display in a formatted view
+Sub ViewNewStandings (league$)
 
     ReDim menuChoices$(1 To 2)
 
@@ -197,7 +212,7 @@ Sub ViewNewStandings (LG$)
         Cls
 
         Color 11
-        Locate 1, 35: Print LG$
+        Locate 1, 35: Print league$
         Color 14
         Locate 2: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
         Locate 3
@@ -271,8 +286,11 @@ End Sub
 '----------------------------------------
 '       PrintNewStandings Subroutine
 '----------------------------------------
+'This subroutine sorts the expanded league
+'standings and outputs them to the default
+'printer in a formatted view
 '...explanation...
-Sub PrintNewStandings (LG$)
+Sub PrintNewStandings (league$)
 
     Shared HLL(), HWW()
     Shared LL(), LLS()
@@ -298,7 +316,7 @@ Sub PrintNewStandings (LG$)
 
         Call SortStandings(AA, ZZ)
 
-        LPrint LG$
+        LPrint league$
         LPrint Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
 
         If NT = 1 Then LPrint div1$;
@@ -365,7 +383,12 @@ End Sub
 '----------------------------------------
 '         SortStandings Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine simply sorts the league
+'standings records so that teams that are
+'leading can be displayed first.
+'This sorting is only done on the arrays
+'holding the standing data, so no changes
+'are permanent to the underlying files.
 Sub SortStandings (AA, ZZ)
 
     Shared HLL(), HWW()

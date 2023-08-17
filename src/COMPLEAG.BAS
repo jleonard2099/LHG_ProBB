@@ -1,8 +1,11 @@
-'------------------------------
-'     CompileLeague Subroutine
-'------------------------------
-'This creates an .LDR file for your league
-'It also creates/updates RECORDS.PBB
+'----------------------------------------
+'        CompileLeague SubRoutine
+'----------------------------------------
+'This subroutine reads in existing records,
+'looks for stats matching each team in the
+'league, and then relies on subroutines to
+'read stats and compare to any existing
+'leaders and records
 Sub CompileLeague ()
 
     _Title "Basketball: The Pro Game - Update League Stats"
@@ -26,6 +29,10 @@ Sub CompileLeague ()
     TRC!(14) = 19999
     TRC!(18) = 19999
 
+    'These are defensive record values, so they should be really high
+    'To determine if a "record" was broken, the stat values will be
+    'compared to see if they are lower than this.
+    'If we initialized to 0, the "record" would always be 0
     For I = 1 To 13: TRC1!(I) = 19999: Next
     For I = 15 To 17: TRC1!(I) = 19999: Next
     For I = 19 To 20: TRC1!(I) = 19999: Next
@@ -54,21 +61,21 @@ Sub CompileLeague ()
 
     End If
 
-    leagueFile$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "LEAGUE", ExitCode%)
+    leagueFile$ = ChooseFile$(diskPaths$(1) + "*.LIB", "LEAGUE", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
         Do
             Color 15, 0
             Cls
-            Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
+            Print "IS THIS THE FINAL UPDATE FOR THE SEASON? (Y/N)";
             I$ = GetKeyPress$
             finalUpdate$ = UCase$(I$)
         Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
 
         Open diskPaths$(1) + leagueFile$ + ".TMS" For Input As #2
 
-        Input #2, LG$, D1$, D2$, D3$, D4$
+        Input #2, league$, D1$, D2$, D3$, D4$
 
         For XW = 1 To TEAMS_PER_CONFERENCE
             Input #2, H1$(XW)
@@ -135,8 +142,8 @@ Sub CompileLeague ()
 
         Next XW
 
-        Call SortLeaders
-        Call PostLeaders(leagueFile$)
+        Call SortLeadersPro
+        Call PostLeadersPro(leagueFile$)
 
     End If
 
@@ -153,7 +160,12 @@ Function FindStatsLeague% (statFile$, numberGames%, fullWins, fullLosses)
 
     Shared H1$(), O$()
 
-    If _FileExists(diskPaths$(1) + statFile$ + "S") Then
+    If Not _FileExists(diskPaths$(1) + statFile$ + "S") Then
+
+        Print "NO STATS FOUND FOR "; statFile$
+        FindStatsLeague% = 0
+
+    Else
 
         Open diskPaths$(1) + statFile$ + "S" For Input As #3
 
@@ -230,11 +242,6 @@ Function FindStatsLeague% (statFile$, numberGames%, fullWins, fullLosses)
 
         FindStatsLeague% = 1
 
-    Else
-
-        Print "NO STATS FOUND FOR "; statFile$
-        FindStatsLeague% = 0
-
     End If
 
 End Function
@@ -243,7 +250,8 @@ End Function
 '----------------------------------------
 '       ReadStatsPro Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine reads stats in for a
+'single team in the league
 Sub ReadStatsPro (statFile$, TN$)
 
     Shared DT!(), leagS!(), OT!()
@@ -273,158 +281,10 @@ End Sub
 
 
 '----------------------------------------
-'     StatsByCategoryColl Subroutine
-'----------------------------------------
-'...explanation...
-Sub StatsByCategoryPro (numberGames%, TN$, finalUpdate$, fullWins, fullLosses)
-
-    Shared DT!(), leagBRC!(), leagS!(), OT!()
-    Shared statW0!(), statW1!(), TRC!(), TRC1!()
-
-    Shared BRC$(), N$(), TRC$(), TRC1$()
-
-    For I = 0 To 14
-
-        leagS!(I, 25) = leagS!(I, 13)
-        leagS!(I, 26) = leagS!(I, 12)
-        leagS!(I, 12) = leagS!(I, 2) * 2 + statW0!(I) + leagS!(I, 4): ' *** PTS ***
-
-        If leagS!(I, 0) <> 0 Then
-            leagS!(I, 13) = leagS!(I, 5) / leagS!(I, 0): ' *** RB/G ***
-            leagS!(I, 14) = leagS!(I, 6) / leagS!(I, 0): ' *** FOULS/G ***
-            leagS!(I, 15) = leagS!(I, 7) / leagS!(I, 0): ' *** STEALS/G ***
-            leagS!(I, 16) = leagS!(I, 8) / leagS!(I, 0): ' *** ASSISTS/G ***
-            leagS!(I, 17) = leagS!(I, 9) / leagS!(I, 0): ' *** BLOCKS/G ***
-            leagS!(I, 24) = leagS!(I, 5) + leagS!(I, 12) - leagS!(I, 6) + leagS!(I, 8) + leagS!(I, 9) + leagS!(I, 7) - 2 * leagS!(I, 11)
-            leagS!(I, 18) = leagS!(I, 10) / 60 / leagS!(I, 0): ' *** MIN/G ***
-
-            If Not (leagS!(I, 1) = 0 Or (leagS!(I, 2) / leagS!(I, 0)) < 3.65) Then
-                leagS!(I, 19) = leagS!(I, 2) / leagS!(I, 1): ' *** FG% ***
-            End If
-
-            If Not (leagS!(I, 3) = 0 Or (leagS!(I, 4) / leagS!(I, 0)) < 1.52) Then
-                leagS!(I, 20) = leagS!(I, 4) / leagS!(I, 3): ' *** FT% ***
-            End If
-
-            If Not (statW1!(I) = 0 Or statW0!(I) / leagS!(I, 0) < .3) Then
-                leagS!(I, 21) = statW0!(I) / statW1!(I): ' *** 3FG% ***
-            End If
-
-            leagS!(I, 22) = leagS!(I, 12) / leagS!(I, 0): ' *** PTS/G ***
-            If leagS!(I, 0) > leagBRC!(1) Then leagBRC!(1) = leagS!(I, 0): BRC$(1, 0) = N$(I): BRC$(1, 1) = TN$
-            If leagS!(I, 1) > leagBRC!(2) Then leagBRC!(2) = leagS!(I, 1): BRC$(2, 0) = N$(I): BRC$(2, 1) = TN$
-            If leagS!(I, 2) > leagBRC!(3) Then leagBRC!(3) = leagS!(I, 2): BRC$(3, 0) = N$(I): BRC$(3, 1) = TN$
-            If leagS!(I, 19) > leagBRC!(4) And UCase$(finalUpdate$) = "Y" And leagS!(I, 2) / leagS!(I, 0) >= 3.65 Then leagBRC!(4) = leagS!(I, 19): BRC$(4, 0) = N$(I): BRC$(4, 1) = TN$
-
-            If statW1!(I) > leagBRC!(5) Then leagBRC!(5) = statW1!(I): BRC$(5, 0) = N$(I): BRC$(5, 1) = TN$
-            If statW0!(I) > leagBRC!(6) Then leagBRC!(6) = statW0!(I): BRC$(6, 0) = N$(I): BRC$(6, 1) = TN$
-            If leagS!(I, 21) > leagBRC!(7) And UCase$(finalUpdate$) = "Y" And statW0!(I) / leagS!(I, 0) >= .3 Then leagBRC!(7) = leagS!(I, 21): BRC$(7, 0) = N$(I): BRC$(7, 1) = TN$
-
-            If leagS!(I, 3) > leagBRC!(8) Then leagBRC!(8) = leagS!(I, 3): BRC$(8, 0) = N$(I): BRC$(8, 1) = TN$
-            If leagS!(I, 4) > leagBRC!(9) Then leagBRC!(9) = leagS!(I, 4): BRC$(9, 0) = N$(I): BRC$(9, 1) = TN$
-            If leagS!(I, 20) > leagBRC!(10) And UCase$(finalUpdate$) = "Y" And leagS!(I, 4) / leagS!(I, 0) >= 1.52 Then leagBRC!(10) = leagS!(I, 20): BRC$(10, 0) = N$(I): BRC$(10, 1) = TN$
-
-            If leagS!(I, 10) / 60 > leagBRC!(11) Then leagBRC!(11) = leagS!(I, 10) / 60: BRC$(11, 0) = N$(I): BRC$(11, 1) = TN$
-            If leagS!(I, 12) > leagBRC!(12) Then leagBRC!(12) = leagS!(I, 12): BRC$(12, 0) = N$(I): BRC$(12, 1) = TN$
-            If leagS!(I, 22) > leagBRC!(13) And UCase$(finalUpdate$) = "Y" Then leagBRC!(13) = leagS!(I, 22): BRC$(13, 0) = N$(I): BRC$(13, 1) = TN$
-
-            If leagS!(I, 25) > leagBRC!(14) Then leagBRC!(14) = leagS!(I, 25): BRC$(14, 0) = N$(I): BRC$(14, 1) = TN$
-            If leagS!(I, 26) > leagBRC!(15) Then leagBRC!(15) = leagS!(I, 26): BRC$(15, 0) = N$(I): BRC$(15, 1) = TN$
-            If leagS!(I, 5) - leagS!(I, 26) > leagBRC!(16) Then leagBRC!(16) = leagS!(I, 5) - leagS!(I, 26): BRC$(16, 0) = N$(I): BRC$(16, 1) = TN$
-            If leagS!(I, 5) > leagBRC!(17) Then leagBRC!(17) = leagS!(I, 5): BRC$(17, 0) = N$(I): BRC$(17, 1) = TN$
-            If leagS!(I, 13) > leagBRC!(18) And UCase$(finalUpdate$) = "Y" Then leagBRC!(18) = leagS!(I, 13): BRC$(18, 0) = N$(I): BRC$(18, 1) = TN$
-
-            If leagS!(I, 6) > leagBRC!(19) Then leagBRC!(19) = leagS!(I, 6): BRC$(19, 0) = N$(I): BRC$(19, 1) = TN$
-            If leagS!(I, 7) > leagBRC!(20) Then leagBRC!(20) = leagS!(I, 7): BRC$(20, 0) = N$(I): BRC$(20, 1) = TN$
-            If leagS!(I, 8) > leagBRC!(21) Then leagBRC!(21) = leagS!(I, 8): BRC$(21, 0) = N$(I): BRC$(21, 1) = TN$
-            If leagS!(I, 9) > leagBRC!(22) Then leagBRC!(22) = leagS!(I, 9): BRC$(22, 0) = N$(I): BRC$(22, 1) = TN$
-            If leagS!(I, 11) > leagBRC!(23) Then leagBRC!(23) = leagS!(I, 11): BRC$(23, 0) = N$(I): BRC$(23, 1) = TN$
-            If leagS!(I, 18) > leagBRC!(24) And UCase$(finalUpdate$) = "Y" Then leagBRC!(24) = leagS!(I, 18): BRC$(24, 0) = N$(I): BRC$(24, 1) = TN$
-
-            If leagS!(I, 24) > leagBRC!(25) Then leagBRC!(25) = leagS!(I, 24): BRC$(25, 0) = N$(I): BRC$(25, 1) = TN$
-
-        End If 'Done checking leagS!(I, 0)
-
-    Next
-
-    OT!(16) = numberGames%
-    DT!(16) = numberGames%
-
-    OT!(17) = OT!(3) / OT!(2)
-    DT!(17) = DT!(3) / DT!(2)
-    OT!(18) = OT!(5) / OT!(4)
-    DT!(18) = DT!(5) / DT!(4)
-    OT!(20) = OT!(11)
-    DT!(20) = DT!(11)
-
-    If OT!(15) <> 0 Then OT!(21) = OT!(14) / OT!(15) Else OT!(21) = 0
-    If DT!(15) <> 0 Then DT!(21) = DT!(14) / DT!(15) Else DT!(21) = 999
-
-    OT!(19) = OT!(20) / numberGames%
-    DT!(19) = DT!(20) / numberGames%
-
-    If OT!(2) > TRC!(1) Then TRC!(1) = OT!(2): TRC$(1) = TN$
-    If OT!(3) > TRC!(2) Then TRC!(2) = OT!(3): TRC$(2) = TN$
-    If OT!(17) > TRC!(3) And UCase$(finalUpdate$) = "Y" Then TRC!(3) = OT!(17): TRC$(3) = TN$
-
-    If OT!(15) > TRC!(4) Then TRC!(4) = OT!(15): TRC$(4) = TN$
-    If OT!(14) > TRC!(5) Then TRC!(5) = OT!(14): TRC$(5) = TN$
-    If OT!(21) > TRC!(6) And UCase$(finalUpdate$) = "Y" Then TRC!(6) = OT!(21): TRC$(6) = TN$
-
-    If OT!(4) > TRC!(7) Then TRC!(7) = OT!(4): TRC$(7) = TN$
-    If OT!(5) > TRC!(8) Then TRC!(8) = OT!(5): TRC$(8) = TN$
-    If OT!(18) > TRC!(9) And UCase$(finalUpdate$) = "Y" Then TRC!(9) = OT!(18): TRC$(9) = TN$
-
-    If OT!(13) > TRC!(10) Then TRC!(10) = OT!(13): TRC$(10) = TN$
-    If OT!(6) - OT!(13) > TRC!(11) Then TRC!(11) = OT!(6) - OT!(13): TRC$(11) = TN$
-    If OT!(6) > TRC!(12) Then TRC!(12) = OT!(6): TRC$(12) = TN$
-    If OT!(6) / numberGames% > TRC!(13) And UCase$(finalUpdate$) = "Y" Then TRC!(13) = OT!(6) / numberGames%: TRC$(13) = TN$
-
-    If OT!(7) < TRC!(14) And UCase$(finalUpdate$) = "Y" Then TRC!(14) = OT!(7): TRC$(14) = TN$
-
-    If OT!(8) > TRC!(15) Then TRC!(15) = OT!(8): TRC$(15) = TN$
-    If OT!(9) > TRC!(16) Then TRC!(16) = OT!(9): TRC$(16) = TN$
-    If OT!(10) > TRC!(17) Then TRC!(17) = OT!(10): TRC$(17) = TN$
-    If OT!(12) < TRC!(18) And UCase$(finalUpdate$) = "Y" Then TRC!(18) = OT!(12): TRC$(18) = TN$
-
-    If OT!(11) > TRC!(19) Then TRC!(19) = OT!(11): TRC$(19) = TN$
-    If OT!(11) / numberGames% > TRC!(20) And UCase$(finalUpdate$) = "Y" Then TRC!(20) = OT!(11) / numberGames%: TRC$(20) = TN$
-
-    If fullWins > TRC!(21) Then TRC!(21) = fullWins: TRC$(21) = TN$
-    If DT!(2) < TRC1!(1) Then TRC1!(1) = DT!(2): TRC1$(1) = TN$
-    If DT!(3) < TRC1!(2) Then TRC1!(2) = DT!(3): TRC1$(2) = TN$
-    If DT!(17) < TRC1!(3) And UCase$(finalUpdate$) = "Y" Then TRC1!(3) = DT!(17): TRC1$(3) = TN$
-
-    If DT!(15) < TRC1!(4) Then TRC1!(4) = DT!(15): TRC1$(4) = TN$
-    If DT!(14) < TRC1!(5) Then TRC1!(5) = DT!(14): TRC1$(5) = TN$
-    If DT!(21) < TRC1!(6) And DT!(15) <> 0 And UCase$(finalUpdate$) = "Y" Then TRC1!(6) = DT!(21): TRC1$(6) = TN$
-
-    If DT!(4) < TRC1!(7) Then TRC1!(7) = DT!(4): TRC1$(7) = TN$
-    If DT!(5) < TRC1!(8) Then TRC1!(8) = DT!(5): TRC1$(8) = TN$
-    If DT!(18) < TRC1!(9) And UCase$(finalUpdate$) = "Y" Then TRC1!(9) = DT!(18): TRC1$(9) = TN$
-
-    If DT!(13) < TRC1!(10) Then TRC1!(10) = DT!(13): TRC1$(10) = TN$
-    If DT!(6) - DT!(13) < TRC1!(11) Then TRC1!(11) = DT!(6) - DT!(13): TRC1$(11) = TN$
-    If DT!(6) < TRC1!(12) Then TRC1!(12) = DT!(6): TRC1$(12) = TN$
-    If DT!(6) / numberGames% < TRC1!(13) And UCase$(finalUpdate$) = "Y" Then TRC1!(13) = DT!(6) / numberGames%: TRC1$(13) = TN$
-
-    If DT!(7) > TRC1!(14) And UCase$(finalUpdate$) = "Y" Then TRC1!(14) = DT!(7): TRC1$(14) = TN$
-
-    If DT!(8) < TRC1!(15) Then TRC1!(15) = DT!(8): TRC1$(15) = TN$
-    If DT!(9) < TRC1!(16) Then TRC1!(16) = DT!(9): TRC1$(16) = TN$
-    If DT!(10) < TRC1!(17) Then TRC1!(17) = DT!(10): TRC1$(17) = TN$
-    If DT!(12) > TRC1!(18) And UCase$(finalUpdate$) = "Y" Then TRC1!(18) = DT!(12): TRC1$(18) = TN$
-
-    If DT!(11) < TRC1!(19) Then TRC1!(19) = DT!(11): TRC1$(19) = TN$
-    If DT!(11) / numberGames% < TRC1!(20) And UCase$(finalUpdate$) = "Y" Then TRC1!(20) = DT!(11) / numberGames%: TRC1$(20) = TN$
-
-    If fullLosses > TRC1!(21) Then TRC1!(21) = fullLosses: TRC1$(21) = TN$
-
-End Sub
-
-'----------------------------------------
 '     CheckStatsPro Subroutine
 '----------------------------------------
+'This subroutine compares pre-loaded stats
+'to existing leaders and updates as needed
 Sub CheckStatsPro (TN$)
 
     Shared DT!(), OT!()
@@ -939,9 +799,166 @@ End Sub
 
 
 '----------------------------------------
-'       SortLeaders Subroutine
+'     StatsByCategoryPro Subroutine
 '----------------------------------------
-Sub SortLeaders ()
+'This subroutine compares all pre-loaded
+'stats to each of the record categories to
+'see if any should be updated
+Sub StatsByCategoryPro (numberGames%, TN$, finalUpdate$, fullWins, fullLosses)
+
+    Shared DT!(), leagBRC!(), leagS!(), OT!()
+    Shared statW0!(), statW1!(), TRC!(), TRC1!()
+
+    Shared BRC$(), N$(), TRC$(), TRC1$()
+
+    For I = 0 To 14
+
+        leagS!(I, 25) = leagS!(I, 13)
+        leagS!(I, 26) = leagS!(I, 12)
+        leagS!(I, 12) = leagS!(I, 2) * 2 + statW0!(I) + leagS!(I, 4): ' *** PTS ***
+
+        If leagS!(I, 0) <> 0 Then
+            leagS!(I, 13) = leagS!(I, 5) / leagS!(I, 0): ' *** RB/G ***
+            leagS!(I, 14) = leagS!(I, 6) / leagS!(I, 0): ' *** FOULS/G ***
+            leagS!(I, 15) = leagS!(I, 7) / leagS!(I, 0): ' *** STEALS/G ***
+            leagS!(I, 16) = leagS!(I, 8) / leagS!(I, 0): ' *** ASSISTS/G ***
+            leagS!(I, 17) = leagS!(I, 9) / leagS!(I, 0): ' *** BLOCKS/G ***
+            leagS!(I, 24) = leagS!(I, 5) + leagS!(I, 12) - leagS!(I, 6) + leagS!(I, 8) + leagS!(I, 9) + leagS!(I, 7) - 2 * leagS!(I, 11)
+            leagS!(I, 18) = leagS!(I, 10) / 60 / leagS!(I, 0): ' *** MIN/G ***
+
+            If Not (leagS!(I, 1) = 0 Or (leagS!(I, 2) / leagS!(I, 0)) < 3.65) Then
+                leagS!(I, 19) = leagS!(I, 2) / leagS!(I, 1): ' *** FG% ***
+            End If
+
+            If Not (leagS!(I, 3) = 0 Or (leagS!(I, 4) / leagS!(I, 0)) < 1.52) Then
+                leagS!(I, 20) = leagS!(I, 4) / leagS!(I, 3): ' *** FT% ***
+            End If
+
+            If Not (statW1!(I) = 0 Or statW0!(I) / leagS!(I, 0) < .3) Then
+                leagS!(I, 21) = statW0!(I) / statW1!(I): ' *** 3FG% ***
+            End If
+
+            leagS!(I, 22) = leagS!(I, 12) / leagS!(I, 0): ' *** PTS/G ***
+            If leagS!(I, 0) > leagBRC!(1) Then leagBRC!(1) = leagS!(I, 0): BRC$(1, 0) = N$(I): BRC$(1, 1) = TN$
+            If leagS!(I, 1) > leagBRC!(2) Then leagBRC!(2) = leagS!(I, 1): BRC$(2, 0) = N$(I): BRC$(2, 1) = TN$
+            If leagS!(I, 2) > leagBRC!(3) Then leagBRC!(3) = leagS!(I, 2): BRC$(3, 0) = N$(I): BRC$(3, 1) = TN$
+            If leagS!(I, 19) > leagBRC!(4) And UCase$(finalUpdate$) = "Y" And leagS!(I, 2) / leagS!(I, 0) >= 3.65 Then leagBRC!(4) = leagS!(I, 19): BRC$(4, 0) = N$(I): BRC$(4, 1) = TN$
+
+            If statW1!(I) > leagBRC!(5) Then leagBRC!(5) = statW1!(I): BRC$(5, 0) = N$(I): BRC$(5, 1) = TN$
+            If statW0!(I) > leagBRC!(6) Then leagBRC!(6) = statW0!(I): BRC$(6, 0) = N$(I): BRC$(6, 1) = TN$
+            If leagS!(I, 21) > leagBRC!(7) And UCase$(finalUpdate$) = "Y" And statW0!(I) / leagS!(I, 0) >= .3 Then leagBRC!(7) = leagS!(I, 21): BRC$(7, 0) = N$(I): BRC$(7, 1) = TN$
+
+            If leagS!(I, 3) > leagBRC!(8) Then leagBRC!(8) = leagS!(I, 3): BRC$(8, 0) = N$(I): BRC$(8, 1) = TN$
+            If leagS!(I, 4) > leagBRC!(9) Then leagBRC!(9) = leagS!(I, 4): BRC$(9, 0) = N$(I): BRC$(9, 1) = TN$
+            If leagS!(I, 20) > leagBRC!(10) And UCase$(finalUpdate$) = "Y" And leagS!(I, 4) / leagS!(I, 0) >= 1.52 Then leagBRC!(10) = leagS!(I, 20): BRC$(10, 0) = N$(I): BRC$(10, 1) = TN$
+
+            If leagS!(I, 10) / 60 > leagBRC!(11) Then leagBRC!(11) = leagS!(I, 10) / 60: BRC$(11, 0) = N$(I): BRC$(11, 1) = TN$
+            If leagS!(I, 12) > leagBRC!(12) Then leagBRC!(12) = leagS!(I, 12): BRC$(12, 0) = N$(I): BRC$(12, 1) = TN$
+            If leagS!(I, 22) > leagBRC!(13) And UCase$(finalUpdate$) = "Y" Then leagBRC!(13) = leagS!(I, 22): BRC$(13, 0) = N$(I): BRC$(13, 1) = TN$
+
+            If leagS!(I, 25) > leagBRC!(14) Then leagBRC!(14) = leagS!(I, 25): BRC$(14, 0) = N$(I): BRC$(14, 1) = TN$
+            If leagS!(I, 26) > leagBRC!(15) Then leagBRC!(15) = leagS!(I, 26): BRC$(15, 0) = N$(I): BRC$(15, 1) = TN$
+            If leagS!(I, 5) - leagS!(I, 26) > leagBRC!(16) Then leagBRC!(16) = leagS!(I, 5) - leagS!(I, 26): BRC$(16, 0) = N$(I): BRC$(16, 1) = TN$
+            If leagS!(I, 5) > leagBRC!(17) Then leagBRC!(17) = leagS!(I, 5): BRC$(17, 0) = N$(I): BRC$(17, 1) = TN$
+            If leagS!(I, 13) > leagBRC!(18) And UCase$(finalUpdate$) = "Y" Then leagBRC!(18) = leagS!(I, 13): BRC$(18, 0) = N$(I): BRC$(18, 1) = TN$
+
+            If leagS!(I, 6) > leagBRC!(19) Then leagBRC!(19) = leagS!(I, 6): BRC$(19, 0) = N$(I): BRC$(19, 1) = TN$
+            If leagS!(I, 7) > leagBRC!(20) Then leagBRC!(20) = leagS!(I, 7): BRC$(20, 0) = N$(I): BRC$(20, 1) = TN$
+            If leagS!(I, 8) > leagBRC!(21) Then leagBRC!(21) = leagS!(I, 8): BRC$(21, 0) = N$(I): BRC$(21, 1) = TN$
+            If leagS!(I, 9) > leagBRC!(22) Then leagBRC!(22) = leagS!(I, 9): BRC$(22, 0) = N$(I): BRC$(22, 1) = TN$
+            If leagS!(I, 11) > leagBRC!(23) Then leagBRC!(23) = leagS!(I, 11): BRC$(23, 0) = N$(I): BRC$(23, 1) = TN$
+            If leagS!(I, 18) > leagBRC!(24) And UCase$(finalUpdate$) = "Y" Then leagBRC!(24) = leagS!(I, 18): BRC$(24, 0) = N$(I): BRC$(24, 1) = TN$
+
+            If leagS!(I, 24) > leagBRC!(25) Then leagBRC!(25) = leagS!(I, 24): BRC$(25, 0) = N$(I): BRC$(25, 1) = TN$
+
+        End If 'Done checking leagS!(I, 0)
+
+    Next
+
+    OT!(16) = numberGames%
+    DT!(16) = numberGames%
+
+    OT!(17) = OT!(3) / OT!(2)
+    DT!(17) = DT!(3) / DT!(2)
+    OT!(18) = OT!(5) / OT!(4)
+    DT!(18) = DT!(5) / DT!(4)
+    OT!(20) = OT!(11)
+    DT!(20) = DT!(11)
+
+    If OT!(15) <> 0 Then OT!(21) = OT!(14) / OT!(15) Else OT!(21) = 0
+    If DT!(15) <> 0 Then DT!(21) = DT!(14) / DT!(15) Else DT!(21) = 999
+
+    OT!(19) = OT!(20) / numberGames%
+    DT!(19) = DT!(20) / numberGames%
+
+    If OT!(2) > TRC!(1) Then TRC!(1) = OT!(2): TRC$(1) = TN$
+    If OT!(3) > TRC!(2) Then TRC!(2) = OT!(3): TRC$(2) = TN$
+    If OT!(17) > TRC!(3) And UCase$(finalUpdate$) = "Y" Then TRC!(3) = OT!(17): TRC$(3) = TN$
+
+    If OT!(15) > TRC!(4) Then TRC!(4) = OT!(15): TRC$(4) = TN$
+    If OT!(14) > TRC!(5) Then TRC!(5) = OT!(14): TRC$(5) = TN$
+    If OT!(21) > TRC!(6) And UCase$(finalUpdate$) = "Y" Then TRC!(6) = OT!(21): TRC$(6) = TN$
+
+    If OT!(4) > TRC!(7) Then TRC!(7) = OT!(4): TRC$(7) = TN$
+    If OT!(5) > TRC!(8) Then TRC!(8) = OT!(5): TRC$(8) = TN$
+    If OT!(18) > TRC!(9) And UCase$(finalUpdate$) = "Y" Then TRC!(9) = OT!(18): TRC$(9) = TN$
+
+    If OT!(13) > TRC!(10) Then TRC!(10) = OT!(13): TRC$(10) = TN$
+    If OT!(6) - OT!(13) > TRC!(11) Then TRC!(11) = OT!(6) - OT!(13): TRC$(11) = TN$
+    If OT!(6) > TRC!(12) Then TRC!(12) = OT!(6): TRC$(12) = TN$
+    If OT!(6) / numberGames% > TRC!(13) And UCase$(finalUpdate$) = "Y" Then TRC!(13) = OT!(6) / numberGames%: TRC$(13) = TN$
+
+    If OT!(7) < TRC!(14) And UCase$(finalUpdate$) = "Y" Then TRC!(14) = OT!(7): TRC$(14) = TN$
+
+    If OT!(8) > TRC!(15) Then TRC!(15) = OT!(8): TRC$(15) = TN$
+    If OT!(9) > TRC!(16) Then TRC!(16) = OT!(9): TRC$(16) = TN$
+    If OT!(10) > TRC!(17) Then TRC!(17) = OT!(10): TRC$(17) = TN$
+    If OT!(12) < TRC!(18) And UCase$(finalUpdate$) = "Y" Then TRC!(18) = OT!(12): TRC$(18) = TN$
+
+    If OT!(11) > TRC!(19) Then TRC!(19) = OT!(11): TRC$(19) = TN$
+    If OT!(11) / numberGames% > TRC!(20) And UCase$(finalUpdate$) = "Y" Then TRC!(20) = OT!(11) / numberGames%: TRC$(20) = TN$
+    If fullWins > TRC!(21) Then TRC!(21) = fullWins: TRC$(21) = TN$
+
+    'FG's
+    If DT!(2) < TRC1!(1) Then TRC1!(1) = DT!(2): TRC1$(1) = TN$
+    If DT!(3) < TRC1!(2) Then TRC1!(2) = DT!(3): TRC1$(2) = TN$
+    If DT!(17) < TRC1!(3) And UCase$(finalUpdate$) = "Y" Then TRC1!(3) = DT!(17): TRC1$(3) = TN$
+
+    '3 FGs
+    If DT!(15) < TRC1!(4) Then TRC1!(4) = DT!(15): TRC1$(4) = TN$
+    If DT!(14) < TRC1!(5) Then TRC1!(5) = DT!(14): TRC1$(5) = TN$
+    If DT!(21) < TRC1!(6) And DT!(15) <> 0 And UCase$(finalUpdate$) = "Y" Then TRC1!(6) = DT!(21): TRC1$(6) = TN$
+
+    If DT!(4) < TRC1!(7) Then TRC1!(7) = DT!(4): TRC1$(7) = TN$
+    If DT!(5) < TRC1!(8) Then TRC1!(8) = DT!(5): TRC1$(8) = TN$
+    If DT!(18) < TRC1!(9) And UCase$(finalUpdate$) = "Y" Then TRC1!(9) = DT!(18): TRC1$(9) = TN$
+
+    If DT!(13) < TRC1!(10) Then TRC1!(10) = DT!(13): TRC1$(10) = TN$
+    If DT!(6) - DT!(13) < TRC1!(11) Then TRC1!(11) = DT!(6) - DT!(13): TRC1$(11) = TN$
+    If DT!(6) < TRC1!(12) Then TRC1!(12) = DT!(6): TRC1$(12) = TN$
+    If DT!(6) / numberGames% < TRC1!(13) And UCase$(finalUpdate$) = "Y" Then TRC1!(13) = DT!(6) / numberGames%: TRC1$(13) = TN$
+
+    If DT!(7) > TRC1!(14) And UCase$(finalUpdate$) = "Y" Then TRC1!(14) = DT!(7): TRC1$(14) = TN$
+
+    If DT!(8) < TRC1!(15) Then TRC1!(15) = DT!(8): TRC1$(15) = TN$
+    If DT!(9) < TRC1!(16) Then TRC1!(16) = DT!(9): TRC1$(16) = TN$
+    If DT!(10) < TRC1!(17) Then TRC1!(17) = DT!(10): TRC1$(17) = TN$
+    If DT!(12) > TRC1!(18) And UCase$(finalUpdate$) = "Y" Then TRC1!(18) = DT!(12): TRC1$(18) = TN$
+
+    If DT!(11) < TRC1!(19) Then TRC1!(19) = DT!(11): TRC1$(19) = TN$
+    If DT!(11) / numberGames% < TRC1!(20) And UCase$(finalUpdate$) = "Y" Then TRC1!(20) = DT!(11) / numberGames%: TRC1$(20) = TN$
+
+    If fullLosses > TRC1!(21) Then TRC1!(21) = fullLosses: TRC1$(21) = TN$
+
+End Sub
+
+
+'----------------------------------------
+'      SortLeadersPro Subroutine
+'----------------------------------------
+'This subroutine sorts the leaders in the
+'target league
+Sub SortLeadersPro ()
 
     Shared O1!(), O2!()
     'Shared Z1$()
@@ -982,9 +999,12 @@ End Sub
 
 
 '----------------------------------------
-'       PostLeaders Subroutine
+'       PostLeadersPro Subroutine
 '----------------------------------------
-Sub PostLeaders (leaderFile$)
+'This subroutine opens the existing leader
+'and record files for the league, and
+'writes the updated stats to the file
+Sub PostLeadersPro (leaderFile$)
 
     Shared DL!(), LD!(), leagBRC!()
     Shared O1!(), O2!(), OL!()

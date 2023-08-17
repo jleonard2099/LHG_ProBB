@@ -1,3 +1,8 @@
+'----------------------------------------
+'            DRAFT Subroutine
+'----------------------------------------
+'This subroutine presents a menu to the
+'user with choices for drafting players.
 Sub DRAFT ()
 
     _Title "Basketball: The Pro Game - Team Draft"
@@ -6,7 +11,7 @@ Sub DRAFT ()
 
     Shared draftYears$(), teamYears$(), players_DRAFT$(), tmInfo_DRAFT$()
 
-    Dim TTL%(34)
+    Dim tmTotal_DRAFT(34)
 
     ReDim menuChoices$(1 To 3)
 
@@ -45,7 +50,7 @@ Sub DRAFT ()
 
                 Color 15, 4
 
-                Locate , 30: Print "ANY CHANGE (YN)";
+                Locate , 30: Print "ANY CHANGE? (Y/N)";
 
                 I$ = GetKeyPress$
 
@@ -102,7 +107,7 @@ Sub DRAFT ()
 
                         For I = 0 To 34
                             tmRat_DRAFT%(0, I) = 0
-                            TTL%(I) = 0
+                            tmTotal_DRAFT(I) = 0
                         Next
 
                         For I = 0 To 14
@@ -119,13 +124,13 @@ Sub DRAFT ()
                             Next
                         Next
 
-                        Call DraftNewTeam(teamYears$(0), tmInfo_DRAFT$(0, 0), teamIdx)
-                        Call DraftChoices(1, doneDraft, teamIdx, TTL%())
+                        Call NewTeamParameters(teamYears$(0), tmInfo_DRAFT$(0, 0), teamIdx)
+                        Call DraftChoices(1, doneDraft, teamIdx, tmTotal_DRAFT())
 
                     Case 2
                         draftIdx = 0
                         Call ChooseDraftTeam(teamYears$(draftIdx), NTMS, teamIdx, tmInfo_DRAFT$(draftIdx, 0), draftIdx)
-                        Call DraftChoices(0, doneDraft, teamIdx, TTL%())
+                        Call DraftChoices(0, doneDraft, teamIdx, tmTotal_DRAFT())
 
                 End Select
 
@@ -139,11 +144,14 @@ Sub DRAFT ()
 
 End Sub
 
+
 '----------------------------------------
-'       DraftNewTeam SubRoutine
+'      NewTeamParameters Subroutine
 '----------------------------------------
-'...explanation...
-Sub DraftNewTeam (teamYear$, teamName$, teamIdx)
+'This subroutine prompts the user for the
+'minimum required parameters to create a 
+'new team that players will be drafted to.
+Sub NewTeamParameters (teamYear$, teamName$, teamIdx)
 
     Shared tmInfo_DRAFT$(), teamYears$()
     Shared leagRat_DRAFT%(), leagueAverages%(), tmRat_DRAFT%()
@@ -238,14 +246,14 @@ End Sub
 
 
 '----------------------------------------
-'     DraftNewTeam_OffDef SubRoutine
+'   NewTeamParameters_OffDef SubRoutine
 '----------------------------------------
-' There original code does not access
-' this, nor does the original game.
-' However, it clearly was written to
-' help finish the new team creation
-' process by finishing the ratings.
-Sub DraftNewTeam_OffDef ()
+' There original code does not access this, 
+' nor does the original game. However, it 
+' was clearly written to help finish the 
+' new team creation process by allowing
+' users to complete input of all ratings.
+Sub NewTeamParameters_OffDef ()
 
     Cls
 
@@ -455,14 +463,19 @@ Sub DraftNewTeam_OffDef ()
 End Sub
 
 
-
 '----------------------------------------
 '       DraftChoices SubRoutine
 '----------------------------------------
-'...explanation...
-Sub DraftChoices (draftNew, doneDrafting, teamIdx, TTL%())
+'This subroutine provides an interface the 
+'user can operate to choose their draft
+'selections.
+'
+'draftNew
+'  0 = Existing Team
+'  1 = New Team
+Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT())
 
-    Dim NP
+    Dim nbrPlayers
 
     Shared tmInfo_DRAFT$(), players_DRAFT$(), draftYears$(), teamYears$()
     Shared plyrRat_DRAFT%(), leagRat_DRAFT%(), leagueAverages%(), leagTot_DRAFT(), tmRat_DRAFT%()
@@ -570,23 +583,23 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, TTL%())
                 ' Save Team
                 Cls
 
-                NP = 0
+                nbrPlayers = 0
 
                 For I = 0 To 14
-                    If players_DRAFT$(0, I, 0) <> "XXX" Then NP = NP + 1
+                    If players_DRAFT$(0, I, 0) <> "XXX" Then nbrPlayers = nbrPlayers + 1
                 Next
 
                 For I = 0 To 14
                     If players_DRAFT$(0, I, 0) <> "XXX" Then
                         For I1 = 0 To 32
-                            TTL%(I1) = TTL%(I1) + leagTot_DRAFT(I, I1)
+                            tmTotal_DRAFT(I1) = tmTotal_DRAFT(I1) + leagTot_DRAFT(I, I1)
                         Next I1
                     End If
                 Next I
 
                 For I1 = 0 To 32
-                    TTL%(I1) = TTL%(I1) / NP
-                    tmRat_DRAFT%(0, I1) = TTL%(I1)
+                    tmTotal_DRAFT(I1) = tmTotal_DRAFT(I1) / nbrPlayers
+                    tmRat_DRAFT%(0, I1) = tmTotal_DRAFT(I1)
                 Next
 
                 Call SaveTeamDraft(draftNew, teamYears$(0), teamIdx)
@@ -612,7 +625,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, TTL%())
 
     Locate 7
 
-    U$ = "DRAFT ANOTHER TEAM (YN)"
+    U$ = "DRAFT ANOTHER TEAM? (Y/N)"
 
     Do
         Locate 7, (80 - Len(U$)) / 2
@@ -630,7 +643,13 @@ End Sub
 '----------------------------------------
 '       SaveTeamDraft Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine updates the source team
+'with the newly assigned player / stat 
+'values after the draft.
+'
+'draftNew
+'  0 = Existing Team
+'  1 = New Team
 Sub SaveTeamDraft (draftNew, yearNumber$, teamIdx)
 
     Shared plyrRat_DRAFT%(), leagRat_DRAFT%(), tmRat_DRAFT%()
@@ -704,8 +723,8 @@ End Sub
 '----------------------------------------
 '       ChooseDraftTeam SubRoutine
 '----------------------------------------
-'Provides interface for choosing the
-'team to draft players from
+'This subroutine provides an interface for 
+'choosing the team to draft players from
 Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
 
     Shared tmRat_DRAFT%()
@@ -762,11 +781,14 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
 
                     If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
 
-                        Locate 10, 8
-
-                        Call CSMsgBox("NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID", 20, Pass)
+                        MsgText$ = "NO TEAM FILES WERE FOUND MATCHING THIS ID. PRESS ANY KEY TO RETURN TO MAIN MENU"
+                        BoxWidth = 20
+                        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+                        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                        Call CSMsgBox(MsgText$, BoxWidth, Pass)
                         I$ = GetKeyPress$
                         Call CSMsgBox("", 0, Pass)
+                        Exit Sub
 
                     Else
 
@@ -813,7 +835,7 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
                         Color tmRat_DRAFT%(draftIdx, 33), tmRat_DRAFT%(draftIdx, 34): Print teamName$
 
                         Color 15, 4
-                        Locate 3, 33: Print "ANY CHANGE? (YN)";
+                        Locate 3, 32: Print "ANY CHANGE? (Y/N)";
 
                         J$ = GetKeyPress$
 
@@ -835,8 +857,8 @@ End Sub
 '----------------------------------------
 '       SelectDraftTeam SubRoutine
 '----------------------------------------
-'Provides interface for selecting the
-'team to draft players from
+'This subroutine provides an interface for 
+'selecting the team to draft players from
 Sub SelectDraftTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%, draftIdx)
 
     If numberTeams > 0 Then
@@ -884,8 +906,8 @@ End Sub
 '----------------------------------------
 '       ReadDraftTeam SubRoutine
 '----------------------------------------
-'Reads team data into arrays for the
-'selected team
+'This subroutine reads team data into 
+'arrays for the selected team
 Sub ReadDraftTeam (teamYear$, targetTeam$, teamIdx, draftIdx)
 
     Shared tmInfo_DRAFT$(), players_DRAFT$(), draftYears$(), teamYears$()

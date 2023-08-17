@@ -1,3 +1,10 @@
+'----------------------------------------
+'          HD2HDPRO Subroutine
+'----------------------------------------
+'This subroutine reads in stats from the
+'selected team and then presents the user 
+'a menu of options for viewing Head-to-Head 
+'team comparisons.
 Sub HD2HDPRO ()
 
     _Title "Basketball: The Pro Game - Head-to-Head Stats"
@@ -24,12 +31,15 @@ Sub HD2HDPRO ()
     statFile$ = nameStatFile$(team$)
 
     If Not _FileExists(diskPaths$(1) + statFile$ + "S") Then
-        Cls
-        Locate 10, 18
-        Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
-        Color , 0
+
+		MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
+		BoxWidth = 24
+		BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+		Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+		Call CSMsgBox(MsgText$, BoxWidth, Pass)
+		J$ = GetKeyPress$
+		Call CSMsgBox("", 0, Pass)
+
     Else
 
         Open diskPaths$(1) + statFile$ + "S" For Input As #4
@@ -54,7 +64,7 @@ Sub HD2HDPRO ()
 
         Close #4
 
-        LG$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "LEAGUE", ExitCode%)
+        leagueFile$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "LEAGUE", ExitCode%)
 
         If ExitCode% <> 27 And ExitCode% <> 0 Then
 
@@ -101,9 +111,9 @@ Sub HD2HDPRO ()
                 VPP = 1
             End If
 
-            Open diskPaths$(1) + LG$ + ".LIB" For Input As #1
+            Open diskPaths$(1) + leagueFile$ + ".LIB" For Input As #1
 
-            Input #1, LG$
+            Input #1, league$
             Input #1, div1$
             Input #1, div2$
             Input #1, div3$
@@ -181,7 +191,8 @@ End Sub
 '----------------------------------------
 '     Hd2HdPro_Printer Subroutine
 '----------------------------------------
-'... explain here ...
+'This subroutine outputs the calculated 
+'comparison values to the default printer
 Sub Hd2HdPro_Printer (teamName$)
 
     Shared AL!(), AW!(), HL!(), HW!()
@@ -421,10 +432,11 @@ Sub Hd2HdPro_Printer (teamName$)
 End Sub
 
 
-'------------------------------
-'  Hd2HdPro_Screen Subroutine
-'------------------------------
-' ...explanation...
+'----------------------------------------
+'      Hd2HdPro_Screen Subroutine
+'----------------------------------------
+'This subroutine outputs the calculated 
+'comparison values to the end user display
 Sub Hd2HdPro_Screen (teamName$)
 
     Shared AL!(), teamRatings%()

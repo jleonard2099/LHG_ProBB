@@ -1,3 +1,9 @@
+'----------------------------------------
+'           NEWLDR Subroutine
+'----------------------------------------
+'This subroutine provides the user a menu 
+'for viewing stats compiled for the new
+'"Expanded" Stats/Standings screens
 Sub NEWLDR ()
 
     _Title "Basketball: The Pro Game - Stats / Standings"
@@ -50,14 +56,20 @@ Sub NEWLDR ()
 
 End Sub
 
+
 '----------------------------------------
-'       ViewExpandedStats Subroutine
+'      ViewExpandedStats Subroutine
 '----------------------------------------
-'... explain here ...
-Sub ViewExpandedStats
+'This subroutine reads in the league stats
+'from the .TMS file. It then relies on other
+'routines to calculate the expanded stats, 
+'write them to a file and present a categ-
+'orized menu to use for reviewing them
+Sub ViewExpandedStats ()
 
     Dim printOrView%
-    Shared div1$, div2$, div3$, div4$, LG$
+
+    Shared div1$, div2$, div3$, div4$, league$
 
     printOrView% = 0
 
@@ -65,13 +77,13 @@ Sub ViewExpandedStats
         Z1$(X) = "XXX"
     Next
 
-    leagStatFile$ = ChooseFile$ (diskPaths$(1) + "*.TMS", "LEAGUE STATS", ExitCode%)
+    leagStatFile$ = ChooseFile$(diskPaths$(1) + "*.TMS", "LEAGUE STATS", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
         Open diskPaths$(1) + leagStatFile$ + ".TMS" For Input As #2
 
-        Input #2, LG$, div1$, div2$, div3$, div4$
+        Input #2, league$, div1$, div2$, div3$, div4$
 
         For X = 1 To TEAMS_PER_CONFERENCE
             Input #2, Z1$(X)
@@ -79,60 +91,274 @@ Sub ViewExpandedStats
 
         Close 2
 
-        Call UpdateExpandedLeaders(JB, leagStatFile$, TS, TTS)
+        Call UpdateExpandedLeaders(leagStatFile$, JB, TS, TTS)
 
-        ReDim menuChoices$(1 To 3)
+        Call SAVELEADER(leagStatFile$, JB, TS, TTS)
 
-        Do
-            Cls
-
-            Call TITLE
-            menuChoices$(1) = "VIEW INDIVIDUAL PLAYER LEADERS  "
-            menuChoices$(2) = "VIEW TEAM TOTALS                "
-            menuChoices$(3) = "RETURN TO LEAGUE LEADER MENU    "
-            Selection% = 1
-            Count% = 3
-            Start% = 1
-            ExitCode% = 3
-            FileFGColr% = 15: FileBGColr% = 1
-            HiLiteFGColr% = 0: HiLiteBGColr% = 7
-            Spacing% = 1
-            Row% = 8
-            Column% = 25
-
-            Call box0(7, 24, 11, 57, 2, 15, 1)
-            
-            _MouseShow "DEFAULT"
-            MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
-            _MouseHide
-
-            Color , 0
-
-            If ExitCode% <> 27 Then
-
-                Select Case Selection%
-
-                    Case 1:
-                        Call ViewIndividualLeaders(JB, printOrView%)
-
-                    Case 2:
-                        Call ViewTeamLeaders(printOrView%, TS, TTS)
-
-                End Select
-
-            End If
-
-        Loop Until Selection% = 3
+        Call ExpandedLeaders_Menu (JB, TS, TTS)
 
     End If 'Done checking for ESC
 
 End Sub
 
+
+'----------------------------------------
+'     UpdateExpandedLeaders Subroutine
+'----------------------------------------
+'This subroutine calculates the expanded 
+'stats from those previously read in to
+'a variety of arrays.
+Sub UpdateExpandedLeaders (statFile$, JB, TS, TTS)
+
+    Shared AL$(), lookyA$()
+    Shared TMA$(), TT$(), TT1$()
+
+    Shared plyrStatLeaders!(), GM!(), GM1!()
+    Shared TT!(), TT1!()
+
+    Shared compareW0!(), compareW1!()
+    Shared compareZ!(), compareZ1!()
+    Shared GMA!(), TYP!()
+    Shared W0L!(), W1L!()
+
+    Dim TBN
+
+    Shared compareA!()
+
+    Color 15, 0
+    Cls
+
+    Print
+
+    For KK = 1 To 40:
+
+        YY = YY + 1
+
+        If Z1$(KK) <> "*" And Z1$(KK) <> "XXX" And Z1$(KK) <> "" Then
+
+            Print "CONVERTING STAT FILE OF "; Z1$(KK)
+
+            If _FileExists(diskPaths$(1) + Z1$(KK)) Then
+
+                Open diskPaths$(1) + Z1$(KK) For Input As #1
+
+                Input #1, B$
+
+                For I = 0 To 14
+
+                    Input #1, lookyA$(I)
+
+                    For J = 0 To 13
+                        Input #1, compareA!(I, J)
+                    Next
+
+                    Input #1, compareW0!(I)
+                    Input #1, compareW1!(I)
+
+                Next
+
+                For L = 0 To 15:
+                    Input #1, compareZ!(L)
+                Next
+
+                For L = 0 To 15:
+                    Input #1, compareZ1!(L)
+                Next
+
+                Close #1
+
+                Open diskPaths$(1) + Z1$(KK) + "S" For Input As #1
+
+                Input #1, year
+
+                Close #1
+
+                TS = TS + 1
+
+                For I = 0 To 14:
+                    TT!(TS, I) = compareZ!(I)
+                    TT$(TS, I) = B$
+                    GM!(TS) = year
+                Next
+
+                TTS = TTS + 1
+
+                For I = 0 To 14:
+                    TT1!(TTS, I) = compareZ1!(I)
+                    TT1$(TTS, I) = B$
+                    GM1!(TTS) = year
+                Next
+
+                For I = 0 To 14
+
+                    If lookyA$(I) <> "XXX" Then
+
+                        JB = JB + 1
+                        AL$(JB) = lookyA$(I)
+                        TBN = TBN + 1
+                        TMA$(TBN) = B$
+                        GMA!(JB) = year
+                        K1 = 0
+
+                        For I1 = 0 To 13
+                            K1 = K1 + 1
+                            plyrStatLeaders!(JB, K1) = compareA!(I, I1)
+                        Next I1
+
+                        W0L!(JB) = compareW0!(I)
+                        W1L!(JB) = compareW1!(I)
+
+                    End If
+
+                Next I
+
+            End If
+
+        End If
+
+    Next KK
+
+End Sub
+
+
+'----------------------------------------
+'        SAVELEADER Subroutine
+'----------------------------------------
+'This subroutine compiles the leader files 
+'(.LDS) for the exapnded standings modules 
+Sub SAVELEADER (statFile$, JB, TS, TTS)
+
+    Shared AL$()
+    Shared TMA$(), TT$(), TT1$()
+
+    Shared plyrStatLeaders!()
+    Shared GM!(), GM1!(), GMA!()
+    Shared TT!(), TT1!()
+    Shared W0L!(), W1L!()
+
+    TMR = 1280
+
+    Print "SAVING LEADER FILES . . . . PLEASE WAIT"
+
+    Open diskPaths$(1) + statFile$ + ".LDS" For Output As #1
+
+    Write #1, JB, TS, TTS
+
+    For I = 1 To 600:
+
+        Write #1, AL$(I), TMA$(I), GMA!(I)
+
+        Color 14
+        Locate 18, 38
+        TMR = TMR - 1
+        Print Using "#####"; TMR
+
+        For I1 = 1 To 14:
+            Write #1, plyrStatLeaders!(I, I1)
+        Next I1
+
+        Write #1, W0L!(I)
+        Write #1, W1L!(I)
+        Color 14
+        Locate 18, 38
+        TMR = TMR - 1
+        Print Using "#####"; TMR:
+
+    Next I
+
+    For I = 1 To 40:
+
+        For I1 = 0 To 14:
+            Write #1, TT!(I, I1), TT$(I, I1)
+        Next
+
+        Color 14
+        Locate 18, 38
+        TMR = TMR - 1
+        Print Using "#####"; TMR
+        Write #1, GM!(I)
+
+    Next
+
+    For I = 1 To 40:
+
+        For I1 = 0 To 14:
+            Write #1, TT1!(I, I1), TT1$(I, I1)
+        Next
+
+        Color 14
+        Locate 18, 38
+        TMR = TMR - 1
+        Print Using "#####"; TMR
+        Write #1, GM1!(I)
+
+    Next
+
+    Close #1
+
+End Sub
+
+
+'----------------------------------------
+'    ExpandedLeaders_Menu Subroutine
+'----------------------------------------
+'This subroutine presents a categorized
+'menu for viewing expanded leaders. It then
+'relies on various subroutines for the end
+'user display of those statistics.
+Sub ExpandedLeaders_Menu  (JB, TS, TTS)
+
+    ReDim menuChoices$(1 To 3)
+
+    Do
+        Cls
+
+        Call TITLE
+        menuChoices$(1) = "VIEW INDIVIDUAL PLAYER LEADERS  "
+        menuChoices$(2) = "VIEW TEAM TOTALS                "
+        menuChoices$(3) = "RETURN TO LEAGUE LEADER MENU    "
+        Selection% = 1
+        Count% = 3
+        Start% = 1
+        ExitCode% = 3
+        FileFGColr% = 15: FileBGColr% = 1
+        HiLiteFGColr% = 0: HiLiteBGColr% = 7
+        Spacing% = 1
+        Row% = 8
+        Column% = 25
+
+        Call box0(7, 24, 11, 57, 2, 15, 1)
+
+        _MouseShow "DEFAULT"
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        _MouseHide
+
+        Color , 0
+
+        If ExitCode% <> 27 Then
+
+            Select Case Selection%
+
+                Case 1:
+                    Call ViewIndividualLeaders(printOrView%, JB)
+
+                Case 2:
+                    Call ViewTeamLeaders(printOrView%, TS, TTS)
+
+            End Select
+
+        End If
+
+    Loop Until Selection% = 3
+
+End Sub
+
+
 '----------------------------------------
 '    ViewIndividualLeaders Subroutine
 '----------------------------------------
 '... explain here ...
-Sub ViewIndividualLeaders (JB, printOrView%)
+Sub ViewIndividualLeaders (printOrView%, JB)
 
     Shared plyrStatLeaders!()
     Shared GM!(), GM1!()
@@ -163,7 +389,7 @@ Sub ViewIndividualLeaders (JB, printOrView%)
         Locate 2, 4
         Print " " + Chr$(214); String$(66, 196); Chr$(183) + " ";
 
-        For II = 1 To J: 
+        For II = 1 To J:
             Locate 2 + II, 4
             Print " " + Chr$(186); String$(66, 32); Chr$(186) + " ";
         Next
@@ -219,7 +445,7 @@ Sub ViewIndividualLeaders (JB, printOrView%)
                 Case 24: X = 6: X1 = 11
                 Case 25: X = 7: X1 = 11
                 Case 26: X = 9: X1 = 11
-                    Case 27: X = 10: X1 = 11
+                Case 27: X = 10: X1 = 11
                 Case 28: X = 8: X1 = 11
                 Case 29: X = 12: X1 = 11
                 Case 30: X = 11: X1 = 1
@@ -228,7 +454,7 @@ Sub ViewIndividualLeaders (JB, printOrView%)
             End Select
 
         Loop Until B9 >= 0 And B9 <= 31
-        
+
         If B9 <> 31 Then
 
             Call SortOptions(JB, ZZ, printOrView%, sortType%)
@@ -487,144 +713,11 @@ End Sub
 
 
 '----------------------------------------
-'       DisplayLeaders Subroutine
-'----------------------------------------
-'... explain here ...
-Sub DisplayLeaders (TVN, maxRecords, categoryId)
-
-    Shared TYP!()
-    Shared TMM$(), TPP$(), TP$()
-
-    userExit% = 0
-
-    Do
-
-        Color 14, 0
-        Cls
-        Print "     PLAYER                  TEAM                     "; TP$(categoryId)
-
-        For W = 1 To maxRecords
-
-            If W <> 0 And (W Mod 20 = 0) Then
-
-                Color 14
-                Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
-                Color 15
-
-                I$ = GetKeyPress$
-
-                If I$ <> Chr$(27) Then
-                    Cls
-                    Color 14: Print "     PLAYER                  TEAM                     "; TP$(categoryId)
-                Else
-                    userExit% = 1
-                End If
-            End If
-
-            If userExit% <> 1 Then
-
-                Color 12
-                Print Using "###"; W;
-                Print " ";
-                Color 3: Print TPP$(W);
-                Color 15
-                Print Tab(25); TMM$(W);
-
-                Select Case TVN
-
-                    Case 1:
-                        Print Tab(58); Using "#####"; TYP!(W)
-
-                    Case 2:
-                        Print Tab(58); Using ".###"; TYP!(W)
-
-                    Case 3:
-                        Print Tab(58); Using "###.#"; TYP!(W)
-
-                End Select
-
-            Else
-                Exit Do
-            End If
-
-        Next W
-
-        If userExit% <> 1 Then
-
-            Color 14
-            Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
-            Color 15
-
-            I$ = GetKeyPress$
-
-            If I$ <> Chr$(27) Then
-
-                Locate 22: Print Space$(64)
-                Color 14
-
-                Do
-                    Locate 22
-                    Print "VIEW AGAIN (Y/N)"
-                    I$ = GetKeyPress$
-                Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
-
-            End If
-
-        End If
-
-    Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
-
-End Sub
-
-'----------------------------------------
-'         PrintLeaders Subroutine
-'----------------------------------------
-'... explain here ...
-Sub PrintLeaders (TVN, maxRecords, categoryId)
-
-    Shared TYP!()
-    Shared TMM$(), TP$(), TPP$()
-
-    Color 0, 15
-    Cls
-
-    LPrint "     PLAYER                  TEAM                     "; TP$(categoryId)
-
-    For W = 1 To maxRecords
-
-        If (W <> 0 And W Mod 50 = 0) Then
-            LPrint Chr$(12)
-            LPrint "     PLAYER                  TEAM                     "; TP$(categoryId)
-        End If
-
-        LPrint Using "###"; W;
-        LPrint " ";
-        LPrint TPP$(W);
-        LPrint Tab(25); TMM$(W);
-
-        Select Case TVN
-
-            Case 1: 
-                LPrint Tab(58); Using "#####"; TYP!(W)
-
-            Case 2: 
-                LPrint Tab(58); Using ".###"; TYP!(W)
-
-            Case 3: 
-                LPrint Tab(58); Using "###.#"; TYP!(W)
-
-        End Select
-
-    Next W
-
-    LPrint Chr$(12)
-
-End Sub
-
-'----------------------------------------
 '       ViewTeamLeaders Subroutine
 '----------------------------------------
-'... explain here ...
+'This subroutine lets the user choose a
+'team stats category and relies on other
+'routines to sort and display the results.
 Sub ViewTeamLeaders (printOrView%, TS, TTS)
 
     Shared GM!(), GM1!()
@@ -647,7 +740,7 @@ Sub ViewTeamLeaders (printOrView%, TS, TTS)
         Color 15, 6
         Print " " + Chr$(214); String$(66, 196); Chr$(183) + " ";
 
-        For II = 1 To J: 
+        For II = 1 To J:
             Locate 1 + II, 4
             Print " " + Chr$(186); String$(66, 32); Chr$(186) + " ";
         Next
@@ -853,131 +946,18 @@ Sub ViewTeamLeaders (printOrView%, TS, TTS)
 
 End Sub
 
-'----------------------------------------
-'       DisplayTeamView Subroutine
-'----------------------------------------
-'...explanation...
-Sub DisplayTeamView (printOrView%, TVN, maxRecords, categoryId)
-
-    Shared TYP!()
-    Shared TMM$(), TP1$()
-
-    userExit% = 0
-
-    Select Case printOrView%
-
-        Case 1:
-
-            Do
-
-                Color 14, 0
-                Cls
-                Print "     TEAM                     "; TP1$(categoryId)
-
-                For W = 1 To maxRecords
-
-                    If (W Mod 20 = 0) Then
-
-                        Color 14
-                        Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
-                        Color 15
-
-                        I$ = GetKeyPress$
-                        If I$ = Chr$(27) Then userExit% = 1
-
-                    End If
-
-                    If userExit% <> 1 Then
-
-                        Color 12
-                        Print Using "###"; W;
-                        Print " ";
-                        Color 3: Print TMM$(W);
-                        Color 15
-
-                        Select Case TVN
-
-                            Case 1: 
-                                Print Tab(32); Using "#####"; TYP!(W)
-
-                            Case 2: 
-                                Print Tab(33); Using ".###"; TYP!(W)
-
-                            Case 3: 
-                                Print Tab(33); Using "###.#"; TYP!(W)
-
-                        End Select
-
-                    End If
-
-                Next W
-
-                If userExit% <> 1 Then
-
-                    Color 14
-                    Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
-                    Color 15
-
-                    I$ = GetKeyPress$
-
-                    If I$ <> Chr$(27) Then
-
-                        Do
-                            Locate 22: Print Space$(64)
-                            Color 14
-                            Locate 22: Print "VIEW AGAIN (Y/N)"
-                            A$ = GetKeyPress$
-                        Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
-
-                    Else
-                        I$ = "N"
-                    End If
-
-                End If
-
-            Loop Until UCase$(I$) = "N" Or I$ = Chr$(27) Or UCase$(A$) = "N"
-
-        Case 2:
-
-            Color 0, 15
-
-            LPrint "     TEAM                     "; TP1$(categoryId)
-
-            For W = 1 To maxRecords
-
-                LPrint Using "###"; W;
-                LPrint " "; TMM$(W);
-                Color 15
-
-                Select Case TVN
-
-                    Case 1: 
-                        LPrint Tab(32); Using "#####"; TYP!(W)
-
-                    Case 2: 
-                        LPrint Tab(33); Using ".###"; TYP!(W)
-                    
-                    Case 3: 
-                        LPrint Tab(33); Using "###.#"; TYP!(W)
-
-                End Select
-
-            Next W
-
-            LPrint Chr$(12)
-
-    End Select
-
-End Sub
 
 '----------------------------------------
 '         SortOptions Subroutine
 '----------------------------------------
-'... explain here ...
-Sub SortOptions (JB, ZZ, printOrView%, sortType%)
+'This subroutine prompts the users for the
+'different sort options available in the
+'"expanded" stats menus.
 
-    'sortType% = 1: Sort HIGH to LOW
-    'sortType% = 2: Sort LOW to HIGH
+'sortType%
+'   1: Sort HIGH to LOW
+'   2: Sort LOW to HIGH
+Sub SortOptions (JB, ZZ, printOrView%, sortType%)
 
     Do
 
@@ -1038,17 +1018,20 @@ Sub SortOptions (JB, ZZ, printOrView%, sortType%)
 
 End Sub
 
+
 '----------------------------------------
 '     PrintViewReselect Subroutine
 '----------------------------------------
-'... explain here ...
+'This subroutine presents the end user
+'with a choice to Print or View the exist-
+'ing category, or select a new category
 Sub PrintViewReselect (userOpt$)
 
     J = 4
 
     Locate 9, 15
     Color 15, 0
-    
+
     Print " " + Chr$(214); String$(40, 196); Chr$(183) + " ";
 
     For II = 1 To J
@@ -1071,10 +1054,12 @@ Sub PrintViewReselect (userOpt$)
 
 End Sub
 
+
 '----------------------------------------
 '       SortPlayer Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine sorts the players involved
+'in the chosen stat category
 Sub SortPlayer (PPP, stpl, sortType%)
 
     Shared TYP!()
@@ -1109,170 +1094,12 @@ Sub SortPlayer (PPP, stpl, sortType%)
 
 End Sub
 
-'----------------------------------------
-'         GetListLength Subroutine
-'----------------------------------------
-'... explain here ...
-Sub GetListLength (printOrView%, listLength, maxItems)
-
-    If printOrView% <> 1 Then
-        'If printing...
-
-        Do
-            Color , 0
-            Cls
-
-            Print
-            Print
-            Print
-            Print
-            Print
-            J = 2
-
-            Locate 10, 20
-            Color 4, 15
-            Print " " + Chr$(214); String$(30, 196); Chr$(183) + " ";
-
-            For II = 1 To J
-                Locate 10 + II, 20: Print " " + Chr$(186); String$(30, 32); Chr$(186) + " ";
-            Next
-
-            Locate 11 + J, 20
-            Print " " + Chr$(211); String$(30, 196); Chr$(189) + " "
-            Locate 11
-
-            Color 1
-            Locate , 25: Print "MAXIMUM = "; maxItems
-            Locate , 25: Input "ENTER LENGTH OF LIST"; listLength
-
-        Loop Until listLength <= maxItems
-
-    End If
-
-End Sub
-
-
-'----------------------------------------
-'     UpdateExpandedLeaders Subroutine
-'----------------------------------------
-' This creates an .LDS file for your league
-Sub UpdateExpandedLeaders (JB, statFile$, TS, TTS)
-
-    Shared AL$(), lookyA$()
-    Shared TMA$(), TT$(), TT1$()
-
-    Shared plyrStatLeaders!(), GM!(), GM1!()
-    Shared TT!(), TT1!()
-
-    Shared compareW0!(), compareW1!()
-    Shared compareZ!(), compareZ1!()
-    Shared GMA!(), TYP!()
-    Shared W0L!(), W1L!()
-
-    Dim TBN
-
-    Shared compareA!()
-
-    Color 15, 0
-    Cls
-    Print
-
-    For KK = 1 To 40:
-
-        YY = YY + 1
-
-        If Z1$(KK) <> "*" And Z1$(KK) <> "XXX" And Z1$(KK) <> "" Then
-
-            Print "CONVERTING STAT FILE OF "; Z1$(KK)
-
-            If _FileExists(diskPaths$(1) + Z1$(KK)) Then
-
-                Open diskPaths$(1) + Z1$(KK) For Input As #1
-
-                Input #1, B$
-
-                For I = 0 To 14
-
-                    Input #1, lookyA$(I)
-
-                    For J = 0 To 13
-                        Input #1, compareA!(I, J)
-                    Next
-
-                    Input #1, compareW0!(I)
-                    Input #1, compareW1!(I)
-
-                Next
-
-                For L = 0 To 15:
-                    Input #1, compareZ!(L)
-                Next
-
-                For L = 0 To 15:
-                    Input #1, compareZ1!(L)
-                Next
-
-                Close #1
-
-                Open diskPaths$(1) + Z1$(KK) + "S" For Input As #1
-
-                Input #1, year
-
-                Close #1
-
-                TS = TS + 1
-
-                For I = 0 To 14:
-                    TT!(TS, I) = compareZ!(I)
-                    TT$(TS, I) = B$
-                    GM!(TS) = year
-                Next
-
-                TTS = TTS + 1
-
-                For I = 0 To 14:
-                    TT1!(TTS, I) = compareZ1!(I)
-                    TT1$(TTS, I) = B$
-                    GM1!(TTS) = year
-                Next
-
-                For I = 0 To 14
-
-                    If lookyA$(I) <> "XXX" Then
-
-                        JB = JB + 1
-                        AL$(JB) = lookyA$(I)
-                        TBN = TBN + 1
-                        TMA$(TBN) = B$
-                        GMA!(JB) = year
-                        K1 = 0
-
-                        For I1 = 0 To 13
-                            K1 = K1 + 1
-                            plyrStatLeaders!(JB, K1) = compareA!(I, I1)
-                        Next I1
-
-                        W0L!(JB) = compareW0!(I)
-                        W1L!(JB) = compareW1!(I)
-
-                    End If
-
-                Next I
-
-            End If
-
-        End If
-
-    Next KK
-
-    Call SAVELEADER(statFile$, JB, TS, TTS)
-
-End Sub
 
 '----------------------------------------
 '           SortTeam Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine sorts the teams involved
+'in the chosen stat category
 Sub SortTeam (sortMax, stpl, sortType%)
 
     Shared TYP!()
@@ -1308,76 +1135,319 @@ End Sub
 
 
 '----------------------------------------
-'        SAVELEADER Subroutine
+'       DisplayLeaders Subroutine
 '----------------------------------------
-' Compiles leader files for the expanded
-' standings modules (.LDS)
-Sub SAVELEADER (statFile$, JB, TS, TTS)
+'This subroutine displays individual player
+'stat categories to the user display
+Sub DisplayLeaders (TVN, maxRecords, categoryId)
 
-    Shared AL$()
-    Shared TMA$(), TT$(), TT1$()
+    Shared TYP!()
+    Shared TMM$(), TPP$(), TP$()
 
-    Shared plyrStatLeaders!()
-    Shared GM!(), GM1!(), GMA!()
-    Shared TT!(), TT1!()
-    Shared W0L!(), W1L!()
+    userExit% = 0
 
-    TMR = 1280
+    Do
 
-    Print "SAVING LEADER FILES . . . . PLEASE WAIT"
+        Color 14, 0
+        Cls
+        Print "     PLAYER                  TEAM                     "; TP$(categoryId)
 
-    Open diskPaths$(1) + statFile$ + ".LDS" For Output As #1
+        For W = 1 To maxRecords
 
-    Write #1, JB, TS, TTS
+            If W <> 1 And (W Mod 20 = 1) Then
 
-    For I = 1 To 600:
+                Color 14
+                Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+                Color 15
 
-        Write #1, AL$(I), TMA$(I), GMA!(I)
+                I$ = GetKeyPress$
 
-        Color 14
-        Locate 18, 45
-        TMR = TMR - 1
-        Print Using "#####"; TMR
+                If I$ = Chr$(27) Then
+                    userExit% = 1
+                Else
+                    Color 14, 0
+                    Cls
+                    Print "     PLAYER                  TEAM                     "; TP$(categoryId)
+                End If
 
-        For I1 = 1 To 14:
-            Write #1, plyrStatLeaders!(I, I1)
-        Next I1
+            End If
 
-        Write #1, W0L!(I)
-        Write #1, W1L!(I)
-        Color 14
-        Locate 18, 45
-        TMR = TMR - 1
-        Print Using "#####"; TMR:
+            If userExit% <> 1 Then
 
-    Next I
+                Color 12
+                Print Using "###"; W;
+                Print " ";
+                Color 3: Print TPP$(W);
+                Color 15
+                Print Tab(25); TMM$(W);
 
-    For I = 1 To 40:
+                Select Case TVN
 
-        For I1 = 0 To 14:
-            Write #1, TT!(I, I1), TT$(I, I1)
-        Next
+                    Case 1:
+                        Print Tab(58); Using "#####"; TYP!(W)
 
-        Color 14: Locate 18, 45
-        TMR = TMR - 1
-        Print Using "#####"; TMR
-        Write #1, GM!(I)
+                    Case 2:
+                        Print Tab(58); Using ".###"; TYP!(W)
 
-    Next
+                    Case 3:
+                        Print Tab(58); Using "###.#"; TYP!(W)
 
-    For I = 1 To 40:
+                End Select
 
-        For I1 = 0 To 14:
-            Write #1, TT1!(I, I1), TT1$(I, I1)
-        Next
+            Else
+                Exit Do
+            End If
 
-        Color 14: Locate 18, 45
-        TMR = TMR - 1
-        Print Using "#####"; TMR
-        Write #1, GM1!(I)
+        Next W
 
-    Next
+        If userExit% <> 1 Then
 
-    Close #1
+            Color 14
+            Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+            Color 15
+
+            I$ = GetKeyPress$
+
+            If I$ <> Chr$(27) Then
+
+                Locate 22: Print Space$(64)
+                Color 14
+
+                Do
+                    Locate 22
+                    Print "VIEW AGAIN? (Y/N)"
+                    I$ = GetKeyPress$
+                Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
+
+            End If
+
+        End If
+
+    Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
+
+End Sub
+
+
+'----------------------------------------
+'       DisplayTeamView Subroutine
+'----------------------------------------
+'This subroutine displays the chosen team
+'stat category to the user display
+Sub DisplayTeamView (printOrView%, TVN, maxRecords, categoryId)
+
+    Shared TYP!()
+    Shared TMM$(), TP1$()
+
+    userExit% = 0
+
+    Select Case printOrView%
+
+        Case 1:
+
+            Do
+
+                Color 14, 0
+                Cls
+
+                Print "     TEAM                     "; TP1$(categoryId)
+
+                For W = 1 To maxRecords
+
+                    If W <> 1 And (W Mod 20 = 1) Then
+
+                        Color 14
+                        Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+                        Color 15
+
+                        I$ = GetKeyPress$
+
+                        If I$ = Chr$(27) Then
+                            userExit% = 1
+                        Else
+
+                            Color 14, 0
+                            Cls
+
+                            Print "     TEAM                     "; TP1$(categoryId)
+
+                        End If
+
+                    End If
+
+                    If userExit% <> 1 Then
+
+                        Color 12
+                        Print Using "###"; W;
+                        Print " ";
+                        Color 3: Print TMM$(W);
+                        Color 15
+
+                        Select Case TVN
+
+                            Case 1:
+                                Print Tab(32); Using "#####"; TYP!(W)
+
+                            Case 2:
+                                Print Tab(33); Using ".###"; TYP!(W)
+
+                            Case 3:
+                                Print Tab(33); Using "###.#"; TYP!(W)
+
+                        End Select
+
+                    End If
+
+                Next W
+
+                If userExit% <> 1 Then
+
+                    Color 14
+                    Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+                    Color 15
+
+                    I$ = GetKeyPress$
+
+                    If I$ <> Chr$(27) Then
+
+                        Do
+                            Locate 22: Print Space$(64)
+                            Color 14
+                            Locate 22: Print "VIEW AGAIN? (Y/N)"
+                            A$ = GetKeyPress$
+                        Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
+
+                    Else
+                        I$ = "N"
+                    End If
+
+                End If
+
+            Loop Until UCase$(I$) = "N" Or I$ = Chr$(27) Or UCase$(A$) = "N"
+
+        Case 2:
+
+            Color 0, 15
+
+            LPrint "     TEAM                     "; TP1$(categoryId)
+
+            For W = 1 To maxRecords
+
+                LPrint Using "###"; W;
+                LPrint " "; TMM$(W);
+                Color 15
+
+                Select Case TVN
+
+                    Case 1:
+                        LPrint Tab(32); Using "#####"; TYP!(W)
+
+                    Case 2:
+                        LPrint Tab(33); Using ".###"; TYP!(W)
+
+                    Case 3:
+                        LPrint Tab(33); Using "###.#"; TYP!(W)
+
+                End Select
+
+            Next W
+
+            LPrint Chr$(12)
+
+    End Select
+
+End Sub
+
+
+'----------------------------------------
+'         PrintLeaders Subroutine
+'----------------------------------------
+'This subroutine displays individual player
+'stat categories to the default printer
+Sub PrintLeaders (TVN, maxRecords, categoryId)
+
+    Shared TYP!()
+    Shared TMM$(), TP$(), TPP$()
+
+    Color 0, 15
+    Cls
+
+    LPrint "     PLAYER                  TEAM                     "; TP$(categoryId)
+
+    For W = 1 To maxRecords
+
+        If (W <> 1 And W Mod 50 = 1) Then
+            LPrint Chr$(12)
+            LPrint "     PLAYER                  TEAM                     "; TP$(categoryId)
+        End If
+
+        LPrint Using "###"; W;
+        LPrint " ";
+        LPrint TPP$(W);
+        LPrint Tab(25); TMM$(W);
+
+        Select Case TVN
+
+            Case 1:
+                LPrint Tab(58); Using "#####"; TYP!(W)
+
+            Case 2:
+                LPrint Tab(58); Using ".###"; TYP!(W)
+
+            Case 3:
+                LPrint Tab(58); Using "###.#"; TYP!(W)
+
+        End Select
+
+    Next W
+
+    LPrint Chr$(12)
+
+End Sub
+
+
+'----------------------------------------
+'        GetListLength Subroutine
+'----------------------------------------
+'This subroutine prompts the user for the
+'maximum number of items to be displayed
+'or returned by the standings view. This
+'helps the user have a custom view of the
+'categories without needing to page through
+'every result.
+Sub GetListLength (printOrView%, listLength, maxItems)
+
+    If printOrView% <> 1 Then
+        'If printing...
+
+        Do
+            Color , 0
+            Cls
+
+            Print
+            Print
+            Print
+            Print
+            Print
+            J = 2
+
+            Locate 10, 20
+            Color 4, 15
+            Print " " + Chr$(214); String$(30, 196); Chr$(183) + " ";
+
+            For II = 1 To J
+                Locate 10 + II, 20: Print " " + Chr$(186); String$(30, 32); Chr$(186) + " ";
+            Next
+
+            Locate 11 + J, 20
+            Print " " + Chr$(211); String$(30, 196); Chr$(189) + " "
+            Locate 11
+
+            Color 1
+            Locate , 25: Print "MAXIMUM = "; maxItems
+            Locate , 25: Input "ENTER LENGTH OF LIST"; listLength
+
+        Loop Until listLength <= maxItems
+
+    End If
 
 End Sub

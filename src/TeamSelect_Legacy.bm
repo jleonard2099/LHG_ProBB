@@ -107,7 +107,7 @@ Sub GetDiskID_ALIGN (A$)
 
                 Do
                     Color 15, 4
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
+                    Locate 3, 33: Print "ANY CHANGE? (Y/N)";
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -314,7 +314,7 @@ Sub GetDiskID_MERGE (A$)
 
                 Do
                     Color 15, 4
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
+                    Locate 3, 33: Print "ANY CHANGE? (Y/N)";
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -521,7 +521,7 @@ Sub GetTeam_CAREER (teamIDX, A$)
 
                 Do
                     Color 15, 4
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
+                    Locate 3, 33: Print "ANY CHANGE? (Y/N)";
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
             
@@ -698,7 +698,7 @@ Sub GetTeam_CREATE (T1$, YN$, D)
 
             Do
                 Color 15, 4
-                Locate 3, 33: Print "ANY CHANGE (YN)";
+                Locate 3, 33: Print "ANY CHANGE? (Y/N)";
                 A$ = GetKeyPress$
             Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
 
@@ -839,7 +839,7 @@ Sub GetTeam_HD2HD (TM$)
 
                 Do
                     Color 15, 4
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
+                    Locate 3, 33: Print "ANY CHANGE? (Y/N)";
                     A$ = GetKeyPress$
                 Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
 
@@ -1105,7 +1105,7 @@ Sub GetTeam_EditStats (T1$, YN$, D)
 
             Do
                 Color 15, 4
-                Locate 3, 33: Print "ANY CHANGE (YN)";
+                Locate 3, 33: Print "ANY CHANGE? (Y/N)";
                 A$ = GetKeyPress$
             Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
 
@@ -1267,7 +1267,7 @@ Sub GetTeam_CNGTM (A$, yearNumber$, teamIdx)
 
             Do
                 Locate 3, 33
-                Print "ANY CHANGE (YN)";
+                Print "ANY CHANGE? (Y/N)";
                 I$ = GetKeyPress$
             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
         End If
