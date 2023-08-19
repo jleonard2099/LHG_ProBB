@@ -175,10 +175,10 @@ For I = 0 To 2
 Next I
 
 ' Game options
-MO$(0) = "HUMAN OPPONENT           "
-MO$(1) = "COMPUTER IS VISITING TEAM"
-MO$(2) = "COMPUTER IS HOME TEAM    "
-MO$(3) = "COMPUTER VS COMPUTER     "
+playMode$(0) = "HUMAN OPPONENT           "
+playMode$(1) = "COMPUTER IS VISITING TEAM"
+playMode$(2) = "COMPUTER IS HOME TEAM    "
+playMode$(3) = "COMPUTER VS COMPUTER     "
 
 modeAbbrev$(0) = "HH"
 modeAbbrev$(1) = "CV"
@@ -204,8 +204,8 @@ teamEraOpt$(0) = "VISITING     "
 teamEraOpt$(1) = "HOME         "
 teamEraOpt$(2) = "NO ADJUSTMENT"
 
-TS$(0) = "NO "
-TS$(1) = "YES"
+yesNoText$(0) = "NO "
+yesNoText$(1) = "YES"
 
 yesNo$(0) = "N"
 yesNo$(1) = "Y"
