@@ -80,7 +80,7 @@ Sub InitVar ()
 
     gameClock! = 720
 
-    AP = 0
+    autoPlay = 0
     B = 0
     compTeam = 0
     D = 0
@@ -1467,7 +1467,7 @@ End Sub
 'matches the current game time / period.
 Sub TICKER ()
 
-    If AP <> 1 Or playerOpt <> 2 Then
+    If autoPlay <> 1 Or playerOpt <> 2 Then
 
         Color 14, 0
         Cls
@@ -2010,7 +2010,7 @@ End Function
 'scores for the ticker games.
 Sub TICKERUPDATE ()
 
-    If AP = 1 And schedGame(2) <= 31 Then
+    If autoPlay = 1 And schedGame(2) <= 31 Then
 
         If H = 1 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 1) = -1 Then SX%(1 + schedGame(2), 0, 1) = score(0, 0): SX%(1 + schedGame(2), 1, 1) = score(1, 0): GoTo 2580
         If H = 1 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 2) = -1 Then SX%(1 + schedGame(2), 0, 2) = score(0, 0): SX%(1 + schedGame(2), 1, 2) = score(1, 0): GoTo 2580
@@ -2093,7 +2093,7 @@ Sub TickerSchedule
     Close 1
 
     schedGame(2) = schedGame(2) + 1
-    AP = 1
+    autoPlay = 1
 
 End Sub
 
@@ -3583,7 +3583,7 @@ Sub SETUPRATINGS ()
     'Handle game play for different eras
     If Left$(gameTeams$(1), 2) <> Left$(gameTeams$(0), 2) Then
 
-        If AP = 1 Then
+        If autoPlay = 1 Then
             I = NG%(6)
         Else
             Color 15, 0
@@ -3773,7 +3773,7 @@ Sub SETUPRATINGS ()
     Do
 
         '--- this is the SETUPRATINGS routine in College BB
-        If Not (AP = 1 And playerOpt >= 2) Then
+        If Not (autoPlay = 1 And playerOpt >= 2) Then
 
             Color 15, 0
             Cls
@@ -4753,7 +4753,7 @@ Sub POSTGAME ()
         Color 14: Print "(2) ";
         Color 15: Print "STATS TO TEXT FILE"
 
-        If AP = 1 And playerOpt = 2 Then
+        If autoPlay = 1 And playerOpt = 2 Then
             X = 2
         Else
             Do
@@ -4772,7 +4772,7 @@ Sub POSTGAME ()
         Color 15, 0
         Cls
 
-        If Not (AP = 1 And playerOpt = 2) Then
+        If Not (autoPlay = 1 And playerOpt = 2) Then
 
             Do
                 'Using Home Team's color for the box
@@ -4786,7 +4786,7 @@ Sub POSTGAME ()
 
         End If
 
-    Loop Until UCase$(I$) = "N" Or (AP = 1 And playerOpt = 2)
+    Loop Until UCase$(I$) = "N" Or (autoPlay = 1 And playerOpt = 2)
 
     'If we had special events
     If specialStat = 1 Then
@@ -4839,7 +4839,7 @@ Sub BOXOPTIONS (outputChoice)
                 NM$ = "TEMPBOX"
             Else
                 'File = prompt | auto-create
-                If AP <> 1 Then
+                If autoPlay <> 1 Then
                     Cls
                     Print "ENTER 8-CHARACTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";: Input NM$
                     NM$ = NM$ + ".SPC"
@@ -5084,7 +5084,7 @@ Sub BOX2SCREEN ()
 
     Call ScoreSummary
 
-    If Not (AP = 1 And playerOpt = 2) Then
+    If Not (autoPlay = 1 And playerOpt = 2) Then
         Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
         I$ = GetKeyPress$
     End If
@@ -5283,7 +5283,7 @@ Sub STATS2SCREEN
         Color 14: Print "TOTAL REBOUNDS  -";
         Color 15: Print R3(I)
 
-        If Not (AP = 1 And playerOpt = 2) Then
+        If Not (autoPlay = 1 And playerOpt = 2) Then
             Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
             I$ = GetKeyPress$
         End If
@@ -5347,7 +5347,7 @@ Sub SAVESTATS ()
 
     Cls
 
-    If AP <> 1 Then
+    If autoPlay <> 1 Then
 
         Call TEAMBOX(1, 1)
 
@@ -5380,7 +5380,7 @@ Sub SAVESTATS ()
     End If
 
     ' Update schedule, ticker, etc.
-    If UCase$(I$) = "Y" Or AP = 1 Then
+    If UCase$(I$) = "Y" Or autoPlay = 1 Then
 
         If _FileExists("GAME82") Then
 
@@ -5455,7 +5455,7 @@ Sub COMPILESTATFILES (compileOpt)
     Do
         C% = 0
 
-        If AP <> 1 Then
+        If autoPlay <> 1 Then
             I$ = "Y"
 
             If compileOpt = 1 And teamIdx = 1 Or compileOpt = 2 And teamIdx = 0 Then I$ = "N"
@@ -5970,7 +5970,7 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, P9)
 
     Next I
 
-    If Not (playerOpt = 0 Or playerOpt = 1 And P9 <> compTeam Or AP = 1 And playerOpt = 0 Or AP = 1 And playerOpt = 1 And P9 <> compTeam) Then
+    If Not (playerOpt = 0 Or playerOpt = 1 And P9 <> compTeam Or autoPlay = 1 And playerOpt = 0 Or autoPlay = 1 And playerOpt = 1 And P9 <> compTeam) Then
 
         While (CNT% < 10)
 

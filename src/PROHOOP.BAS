@@ -147,11 +147,11 @@ Sub PROHOOP
 
         Close 1
 
-        AP = 1
+        autoPlay = 1
 
     End If
 
-    If AP = 1 Then
+    If autoPlay = 1 Then
 
         Call AUTOSETUP
         Call SETUPRATINGS
@@ -400,7 +400,7 @@ Sub PROHOOP
 
     Call LOADSTATS
 
-    If AP = 1 Then gameLoc = NG%(2)
+    If autoPlay = 1 Then gameLoc = NG%(2)
 
     LS = 0
 
@@ -544,7 +544,7 @@ Sub PROHOOP
             Case 1: Call WINDEX: Print U$: Call DELAY
         End Select
 
-        If Not (AP = 1 And playerOpt = 2) Then
+        If Not (autoPlay = 1 And playerOpt = 2) Then
             I$ = GetKeyPress$
         End If
 
@@ -631,7 +631,7 @@ Sub PROHOOP
 
     End If
 
-    If Not (AP = 1 And playerOpt = 2) Then
+    If Not (autoPlay = 1 And playerOpt = 2) Then
         I$ = GetKeyPress
     End If
 
@@ -641,7 +641,7 @@ Sub PROHOOP
     ' Prompt to play another game
     Cls
 
-    If AP <> 1 Then
+    If autoPlay <> 1 Then
 
         'Using Home Team's color for the box
         Call TEAMBOX(1, 1)
@@ -657,7 +657,7 @@ Sub PROHOOP
 
     End If
 
-    If UCase$(I$) = "Y" Or (AP = 1 And endAllGames <> 1) Then
+    If UCase$(I$) = "Y" Or (autoPlay = 1 And endAllGames <> 1) Then
 
         Cls
         Print "PLEASE WAIT ..."
@@ -755,7 +755,7 @@ Sub PROHOOP
                     Else
                         pbpOpt = 1
 
-                        If Not (AP = 1 And playerOpt = 2 Or pbpDelay! = 0) Then
+                        If Not (autoPlay = 1 And playerOpt = 2 Or pbpDelay! = 0) Then
                             Call WINDEX
                             Print "PASS TO CHOICE (0-4)"
                             Call PBP

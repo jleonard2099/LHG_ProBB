@@ -204,7 +204,7 @@ Dim scheduleFile$
 
 Dim tickerStart
 
-Dim Shared AD, AP, B, bonusFoulNum, coachOpt, compTeam
+Dim Shared AD, autoPlay, B, bonusFoulNum, coachOpt, compTeam
 Dim Shared D, endGame, endAllGames, ftRulesOpt, F3
 Dim Shared freeThrowVal
 Dim Shared H, halfTime, JY, N, nbrLines
@@ -254,4 +254,3 @@ Dim Shared pbpType$(1), players_GAME$(1, 14, 1), PS$(4)
 Dim Shared R$(14), RC$(50, 4), SX$(32, 1)
 Dim Shared teamAbbrev$(3)
 Dim Shared Y$(1), YN$(0 to 1)
-
