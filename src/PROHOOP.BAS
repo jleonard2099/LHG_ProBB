@@ -37,74 +37,74 @@ Sub PROHOOP
             Print #1, _CWD$ + "\"
         Next
 
-        Close 1
+        Close #1
 
     End If
 
-    Open "DEV.BAS" For Input As #1
+    Open "DEV.BAS" For Input As #2
 
     For I = 0 To 1
-        Input #1, diskPaths$(I)
+        Input #2, diskPaths$(I)
     Next
 
-    Close 1
+    Close #2
 
     If Not _FileExists("DEFAULT") Then
 
-        Open "DEFAULT" For Output As #1
+        Open "DEFAULT" For Output As #3
 
         For I = 1 To 8:
-            Print #1, 0
+            Print #3, 0
         Next
 
-        Print #1, 4
+        Print #3, 4
 
         For I = 10 To 12:
-            Print #1, 0
+            Print #3, 0
         Next
 
-        Close 1
+        Close #3
 
     End If
 
-    Open "DEFAULT" For Input As #1
-    Input #1, playerOpt
-    Input #1, threePtOpt
-    Input #1, sClockVal
-    Input #1, gameLoc
-    Input #1, playoffOpt
-    Input #1, pbpDelay!
-    Input #1, shotPctOpt
-    Input #1, coachOpt
-    Input #1, bonusFoulNum
-    Input #1, freeThrowVal
-    Input #1, ftRulesOpt
-    Input #1, pbpOpt
-    Close 1
+    Open "DEFAULT" For Input As #4
+    Input #4, playerOpt
+    Input #4, threePtOpt
+    Input #4, sClockVal
+    Input #4, gameLoc
+    Input #4, playoffOpt
+    Input #4, pbpDelay!
+    Input #4, shotPctOpt
+    Input #4, coachOpt
+    Input #4, bonusFoulNum
+    Input #4, freeThrowVal
+    Input #4, ftRulesOpt
+    Input #4, pbpOpt
+    Close #4
 
     If _FileExists("TICKER") Then
 
-        Open "TICKER" For Input As #2
+        Open "TICKER" For Input As #5
 
         For I = 1 To 32
             For I1 = 0 To 1
                 For I2 = 1 To 14
-                    Input #2, SX%(I, I1, I2)
+                    Input #5, SX%(I, I1, I2)
                 Next
             Next
         Next
 
         For I = 1 To 32
             For I1 = 0 To 1
-                Input #2, SX$(I, I1)
+                Input #5, SX$(I, I1)
             Next
         Next
 
         For I = 1 To 32
-            Input #2, ST%(I)
+            Input #5, ST%(I)
         Next
 
-        Close 2
+        Close #5
 
         TMT = 1
     Else
@@ -114,25 +114,25 @@ Sub PROHOOP
     'Load game in-progress, if there is one
     If _FileExists("GAME82") Then
 
-        Open "GAME82" For Input As #2
+        Open "GAME82" For Input As #6
 
-        Input #2, scheduleFile$
+        Input #6, scheduleFile$
 
         For I = 0 To 2:
-            Input #2, schedGame(I)
+            Input #6, schedGame(I)
         Next
 
-        Close 2
+        Close #6
 
-        Open diskPaths$(0) + scheduleFile$ For Random As #1 Len = 48
+        Open diskPaths$(0) + scheduleFile$ For Random As #7 Len = 48
 
         For X = 0 To 18
-            Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
+            Field #7, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
         Next
 
-        Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+        Field #7, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
 
-        Get #1, schedGame(0) + schedGame(2)
+        Get #7, schedGame(0) + schedGame(2)
 
         For X = 0 To 18:
             NG%(X) = CVI(Q$(X + 1))
@@ -145,7 +145,7 @@ Sub PROHOOP
         VS% = CVI(Q$(22))
         HS% = CVI(Q$(23))
 
-        Close 1
+        Close #7
 
         autoPlay = 1
 
@@ -290,20 +290,20 @@ Sub PROHOOP
                         playoffOpt = 1 - playoffOpt
 
                     Case 10:
-                        Open "DEFAULT" For Output As #1
-                        Print #1, playerOpt
-                        Print #1, threePtOpt
-                        Print #1, sClockVal
-                        Print #1, gameLoc
-                        Print #1, playoffOpt
-                        Print #1, pbpDelay!
-                        Print #1, shotPctOpt
-                        Print #1, coachOpt
-                        Print #1, bonusFoulNum
-                        Print #1, freeThrowVal
-                        Print #1, ftRulesOpt
-                        Print #1, pbpOpt
-                        Close 1
+                        Open "DEFAULT" For Output As #8
+                        Print #8, playerOpt
+                        Print #8, threePtOpt
+                        Print #8, sClockVal
+                        Print #8, gameLoc
+                        Print #8, playoffOpt
+                        Print #8, pbpDelay!
+                        Print #8, shotPctOpt
+                        Print #8, coachOpt
+                        Print #8, bonusFoulNum
+                        Print #8, freeThrowVal
+                        Print #8, ftRulesOpt
+                        Print #8, pbpOpt
+                        Close #8
 
                     Case 11:
                         shotPctOpt = 1 - shotPctOpt

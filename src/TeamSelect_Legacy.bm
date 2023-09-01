@@ -89,7 +89,7 @@ Sub GetDiskID_ALIGN (A$)
                         End If
                     Next
 
-                    Close 1
+                    Close #1
 
                     Call SelectTeam_MERGE(yearNumber$, numberTeams)
 
@@ -194,7 +194,7 @@ Sub SelectTeam_ALIGN (yearNumber$, numberTeams)
                 mergeT%(I) = CVI(Q$(I + 10))
             Next
 
-            Close 1
+            Close #1
 
         End If
 
@@ -296,7 +296,7 @@ Sub GetDiskID_MERGE (A$)
                         End If
                     Next
 
-                    Close 1
+                    Close #1
 
                     Call SelectTeam_MERGE(yearNumber$, numberTeams)
 
@@ -402,7 +402,7 @@ Sub SelectTeam_MERGE (yearNumber$, numberTeams)
                 mergeT%(I) = CVI(Q$(I + 10))
             Next
 
-            Close 1
+            Close #1
 
         End If
 
@@ -503,7 +503,7 @@ Sub GetTeam_CAREER (teamIDX, A$)
                         End If
                     Next
 
-                    Close 1
+                    Close #1
 
                     Call SelectTeam_CAREER(YN$, NTMS, teamIDX)
 
@@ -595,7 +595,7 @@ Sub SelectTeam_CAREER (yearNumber$, numberTeams, teamNumber)
             careerT%(I) = CVI(Q$(I + 10))
         Next
         
-        Close 1
+        Close #1
     Else
         BO% = 1
     End If
@@ -674,7 +674,7 @@ Sub GetTeam_CREATE (T1$, YN$, D)
                 End If
             Next
 
-            Close 1
+            Close #1
 
             Call SelectTeam_CREATE(YN$, NTMS, D)
 
@@ -686,7 +686,7 @@ Sub GetTeam_CREATE (T1$, YN$, D)
             teamRatings%(I) = CVI(Q$(I + 10))
         Next
 
-        Close 1
+        Close #1
 
         Locate 2, 33: Color 31: Print "LOADING..."
 
@@ -897,7 +897,7 @@ Sub ReadTeamData_HD2HD (yearNumber$, numberTeams)
         End If
 
     Next
-    Close 1
+    Close #1
 
 End Sub
 
@@ -965,7 +965,7 @@ Sub SelectTeam_HD2HD (yearNumber$, numberTeams, TM$)
             teamRatings%(I) = CVI(Q$(I + 10))
         Next
 
-        Close 1
+        Close #1
 
     Else
         BO% = 1
@@ -1081,7 +1081,7 @@ Sub GetTeam_EditStats (T1$, YN$, D)
                 End If
             Next
 
-            Close 1
+            Close #1
 
             Call SelectTeam_EditStats(YN$, NTMS, D)
 
@@ -1093,7 +1093,7 @@ Sub GetTeam_EditStats (T1$, YN$, D)
             teamRatings%(I) = CVI(Q$(I + 10))
         Next
 
-        Close 1
+        Close #1
 
         Locate 2, 33: Color 31: Print "LOADING..."
 
@@ -1250,7 +1250,7 @@ Sub GetTeam_CNGTM (A$, yearNumber$, teamIdx)
                     teamIndex%(NTMS) = I1
                 End If
             Next
-            Close 1
+            Close #1
 
             TS% = Int((NTMS - 1) / 80)
 
@@ -1361,7 +1361,7 @@ Sub SelectTeam_CNGTM (yearNumber$, numberTeams, teamIdx)
         teamInfo$(3) = RTrim$(Q$(376))
         teamInfo$(4) = RTrim$(Q$(377))
 
-        Close 1
+        Close #1
 
     Else
         BO% = 1
@@ -1421,7 +1421,7 @@ Sub ReadTeamData_COMPARE (yearNumber$, numberTeams)
 
     Next
 
-    Close 1
+    Close #1
 
 End Sub
 
@@ -1515,7 +1515,7 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams, teamName$)
         teamInfo$(3) = RTrim$(Q$(376))
         teamInfo$(4) = RTrim$(Q$(377))
 
-        Close 1
+        Close #1
 
     Else
         BO% = 1
@@ -1671,7 +1671,7 @@ Sub SelectTeam_LOOKY (yearNumber$, numberTeams)
             statsL%(I) = CVI(Q$(I + 10))
         Next
 
-        Close 1
+        Close #1
 
     Else
         BO% = 1
@@ -1717,7 +1717,7 @@ Sub SelectTeam_Schedule (yearNumber$, numberTeams)
 
         Next
 
-        Close 1
+        Close #1
 
     End If
 

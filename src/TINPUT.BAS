@@ -1390,7 +1390,7 @@ Sub SaveTeamFile (yearNumber$, teamIdx, action%)
 
     Put #1, teamIdx
 
-    Close 1
+    Close #1
 
 End Sub
 

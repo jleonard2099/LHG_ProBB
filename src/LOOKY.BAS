@@ -68,27 +68,27 @@ Sub LoadTeamStats (statFile$, totalGames%)
     VL% = 0
     NL% = 0
 
-    Open diskPaths$(1) + statFile$ + "S" For Input As #2
+    Open diskPaths$(1) + statFile$ + "S" For Input As #1
 
-    Input #2, totalGames%
+    Input #1, totalGames%
 
     For I = 1 To 100: 
-        Input #2, statO%(I)
+        Input #1, statO%(I)
     Next I
 
     For I = 1 To 100: 
-        Input #2, O$(I)
+        Input #1, O$(I)
     Next I
 
     For I = 1 To 100: 
-        Input #2, statsL%(I)
+        Input #1, statsL%(I)
     Next I
 
     For I = 1 To 100: 
-        Input #2, statsH$(I)
+        Input #1, statsH$(I)
     Next I
 
-    Close #2
+    Close #1
 
     For I = 1 To totalGames%
         If statO%(I) > statsL%(I) Then W% = W% + 1
@@ -104,33 +104,33 @@ Sub LoadTeamStats (statFile$, totalGames%)
         P%(1) = P%(1) + statsL%(I)
     Next
 
-    Open diskPaths$(1) + statFile$ For Input As #1
+    Open diskPaths$(1) + statFile$ For Input As #2
 
-    Input #1, B$
+    Input #2, B$
 
     For I = 0 To 14
 
-        Input #1, lookyA$(I)
+        Input #2, lookyA$(I)
 
         For J = 0 To 13
-            Input #1, values!(I, J)
+            Input #2, values!(I, J)
         Next
 
-        Input #1, statW0!(I)
+        Input #2, statW0!(I)
 
-        Input #1, statW1!(I)
+        Input #2, statW1!(I)
 
     Next
 
     For K = 0 To 15: 
-        Input #1, compareZ!(K)
+        Input #2, compareZ!(K)
     Next
 
     For K = 0 To 15: 
-        Input #1, compareZ1!(K)
+        Input #2, compareZ1!(K)
     Next
 
-    Close #1
+    Close #2
 
     For I = 0 To 14
 
@@ -1078,25 +1078,10 @@ Sub ResetStatPrompt (statFile$)
 
     Cls
 
-    JJ = 1
-    Locate 6, 8
-
-    'Print box top
-    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-    'Print box sides
-    For II = 1 To JJ
-        Locate 6 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-    Next
-
-    'Print box bottom
-    Locate 7 + JJ, 8
-    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-    Locate 7
+    Call MenuBox (6, 8, 61, 1, 15, 1)
 
     Do
+        Locate 7
         U$ = "RESET COMPILED STATS TO 0? (Y/N)"
         Locate , (80 - Len(U$)) / 2
         Print U$
@@ -1107,22 +1092,7 @@ Sub ResetStatPrompt (statFile$)
 
     If UCase$(I$) = "Y" Then
 
-        'Do
-        JJ = 1
-        Locate 6, 8
-
-        'Print box top
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        'Print box sides
-        For II = 1 To JJ
-            Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        'Print box bottom
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+		Call MenuBox (6, 8, 61, 1, 15, 1)
 
         Locate 7
 

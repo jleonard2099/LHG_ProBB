@@ -55,7 +55,7 @@ Sub EditStats ()
             Input #1, compareZ1!(L)
         Next L
 
-        Close 1
+        Close #1
 
         '---------------
         ' Team Stats
@@ -347,32 +347,32 @@ Sub EditStats ()
         '---------------
         ' Save Edits
         '---------------        
-        Open diskPaths$(1) + statFile$ For Output As #1
+        Open diskPaths$(1) + statFile$ For Output As #2
 
-        Print #1, A$
+        Print #2, A$
 
         For I = 0 To 14: 
-            Print #1, PrintA$(I)
+            Print #2, PrintA$(I)
 
             For J = 0 To 13: 
-                Print #1, Z2(I, J)
+                Print #2, Z2(I, J)
             Next J
 
-            Print #1, compareW0!(I)
+            Print #2, compareW0!(I)
 
-            Print #1, compareW1!(I)
+            Print #2, compareW1!(I)
 
         Next I
 
         For L = 0 To 15: 
-            Print #1, compareZ!(L)
+            Print #2, compareZ!(L)
         Next L
 
         For L = 0 To 15: 
-            Print #1, compareZ1!(L)
+            Print #2, compareZ1!(L)
         Next L
 
-        Close 1
+        Close #2
 
     End If
 

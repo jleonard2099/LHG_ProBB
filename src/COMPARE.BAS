@@ -84,16 +84,16 @@ Sub COMPARE ()
                     If playerNames$(I, 1) = "CF" Then comparePS$(I) = "CENTER/FORWARD"
                 Next
 
-                Open diskPaths$(1) + statFile$ + "S" For Input As #1
+                Open diskPaths$(1) + statFile$ + "S" For Input As #2
 
-                Input #1, Y
+                Input #2, Y
 
-                For J = 1 To 100: Input #1, OP%(J): Next
-                For J = 1 To 100: Input #1, OP$(J): Next
-                For J = 1 To 100: Input #1, HP%(J): Next
-                For J = 1 To 100: Input #1, HP$(J): Next
+                For J = 1 To 100: Input #2, OP%(J): Next
+                For J = 1 To 100: Input #2, OP$(J): Next
+                For J = 1 To 100: Input #2, HP%(J): Next
+                For J = 1 To 100: Input #2, HP$(J): Next
 
-                Close #1
+                Close #2
 
                 HW% = 0
                 HL% = 0

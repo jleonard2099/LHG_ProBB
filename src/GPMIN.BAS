@@ -138,7 +138,7 @@ Sub GPMIN ()
 
                     Put #1, teamNbr
 
-                    Close 1
+                    Close #1
 
                 End If
 

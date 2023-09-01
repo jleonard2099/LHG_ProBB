@@ -42,27 +42,27 @@ Sub HD2HDPRO ()
 
     Else
 
-        Open diskPaths$(1) + statFile$ + "S" For Input As #4
+        Open diskPaths$(1) + statFile$ + "S" For Input As #1
 
-        Input #4, Y
+        Input #1, Y
 
         For J = 1 To 100:
-            Input #4, statO%(J)
+            Input #1, statO%(J)
         Next
 
         For J = 1 To 100:
-            Input #4, O$(J)
+            Input #1, O$(J)
         Next
 
         For J = 1 To 100:
-            Input #4, intT%(J)
+            Input #1, intT%(J)
         Next
 
         For J = 1 To 100:
-            Input #4, statsH$(J)
+            Input #1, statsH$(J)
         Next
 
-        Close #4
+        Close #1
 
         leagueFile$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "LEAGUE", ExitCode%)
 
@@ -70,23 +70,10 @@ Sub HD2HDPRO ()
 
             Cls
 
-            J = 5
-
-            Locate 8, 8
-
-            Color 15, 1
-
-            Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-            For II = 1 To J
-                Locate 8 + II, 8: Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-            Next
-
-            Locate 9 + J, 8
-
-            Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+            Call MenuBox (8, 8, 61, 5, 15, 1)
 
             Do
+
                 Locate 10
                 Color 7, 1
 
@@ -111,23 +98,23 @@ Sub HD2HDPRO ()
                 VPP = 1
             End If
 
-            Open diskPaths$(1) + leagueFile$ + ".LIB" For Input As #1
+            Open diskPaths$(1) + leagueFile$ + ".LIB" For Input As #2
 
-            Input #1, league$
-            Input #1, div1$
-            Input #1, div2$
-            Input #1, div3$
-            Input #1, div4$
+            Input #2, league$
+            Input #2, div1$
+            Input #2, div2$
+            Input #2, div3$
+            Input #2, div4$
 
             For X = 1 To TEAMS_PER_CONFERENCE
-                Input #1, Z1$(X)
-                Input #1, intZ1%(X)
-                Input #1, Z2$(X)
+                Input #2, Z1$(X)
+                Input #2, intZ1%(X)
+                Input #2, Z2$(X)
             Next
 
             NTMS = TEAMS_PER_CONFERENCE
 
-            Close 1
+            Close #2
 
             Cls
             Color 15

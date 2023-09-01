@@ -92,7 +92,7 @@ Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
                             teamIndex%(teamIdx) = teamIdx
                         Next teamIdx
 
-                        Close 1
+                        Close #1
 
                         previousYear$ = yearNumber$
                         
@@ -272,7 +272,7 @@ Sub ReadTeam (teamYear$, targetTeam$, teamIdx)
     teamInfo$(4) = RTrim$(Q$(377))
 
     'Close team file
-    Close 1
+    Close #1
 
 End Sub
 

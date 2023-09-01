@@ -81,15 +81,15 @@ Sub ViewExpandedStats ()
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        Open diskPaths$(1) + leagStatFile$ + ".TMS" For Input As #2
+        Open diskPaths$(1) + leagStatFile$ + ".TMS" For Input As #1
 
-        Input #2, league$, div1$, div2$, div3$, div4$
+        Input #1, league$, div1$, div2$, div3$, div4$
 
         For X = 1 To TEAMS_PER_CONFERENCE
-            Input #2, Z1$(X)
+            Input #1, Z1$(X)
         Next
 
-        Close 2
+        Close #1
 
         Call UpdateExpandedLeaders(leagStatFile$, JB, TS, TTS)
 
@@ -167,11 +167,11 @@ Sub UpdateExpandedLeaders (statFile$, JB, TS, TTS)
 
                 Close #1
 
-                Open diskPaths$(1) + Z1$(KK) + "S" For Input As #1
+                Open diskPaths$(1) + Z1$(KK) + "S" For Input As #2
 
-                Input #1, year
+                Input #2, year
 
-                Close #1
+                Close #2
 
                 TS = TS + 1
 

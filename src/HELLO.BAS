@@ -15,6 +15,7 @@ Const SCHEDULE_SIZE_BYTES = 48
 
 DefInt A-Z
 
+'$INCLUDE: 'BoxRoutines.bi'
 '$INCLUDE: 'FileTeamSelection.bi'
 '$INCLUDE: 'KeyInput.bi'
 '$INCLUDE: 'QPProEqu.bi'
@@ -226,21 +227,29 @@ _AllowFullScreen
 opSysType$ = Left$(_OS$, InStr(2, _OS$, "[") - 1)
 
 If Not _FileExists("DEV.BAS") Then
+
     Open "DEV.BAS" For Output As #1
+
     For I = 0 To 1
+
         Select Case opSysType$
             Case "[WINDOWS]": Print #1, _CWD$ + "\"
             Case "[MAC]", "[MACOSX]", "[LINUX]": Print #1, _CWD$ + "/"
         End Select
+
     Next
-    Close 1
+
+    Close #1
+
 End If
 
-Open "DEV.BAS" For Input As #1
+Open "DEV.BAS" For Input As #2
+
 For I = 0 To 1
-    Input #1, diskPaths$(I)
+    Input #2, diskPaths$(I)
 Next
-Close 1
+
+Close #2
 
 Selection% = 1
 
@@ -401,13 +410,18 @@ Sub ConfigureDrives ()
     If X$ <> "Y" GoTo Done 'insist on either Y or N or up-arrow
 
     Open "DEV.BAS" For Output As #1
+
     For R = 0 To 1:
+
         Select Case opSysType$
             Case "[WINDOWS]": diskPaths$(R) = diskPaths$(R) + "\"
             Case "[MAC]", "[MACOSX]", "[LINUX]": diskPaths$(R) = diskPaths$(R) + "/"
         End Select
+
         Print #1, diskPaths$(R)
+
     Next R
+
     Close #1
 
 End Sub
@@ -576,6 +590,7 @@ Sub Leaders_Menu ()
 End Sub
 
 
+'$INCLUDE: 'BoxRoutines.bm'
 '$INCLUDE: 'FileTeamSelection.bm'
 '$INCLUDE: 'KeyInput.bm'
 '$INCLUDE: 'QPProEqu.bm'

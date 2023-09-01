@@ -57,7 +57,7 @@ Sub CompileLeague ()
             Input #1, TRC1$(I)
         Next
 
-        Close 1
+        Close #1
 
     End If
 
@@ -82,7 +82,7 @@ Sub CompileLeague ()
             Z1$(XW) = H1$(XW)
         Next
 
-        Close 2
+        Close #2
 
         For X = 1 To TEAMS_PER_CONFERENCE: DL!(X, 19) = 9999: Next
 
@@ -167,15 +167,15 @@ Function FindStatsLeague% (statFile$, numberGames%, fullWins, fullLosses)
 
     Else
 
-        Open diskPaths$(1) + statFile$ + "S" For Input As #3
+        Open diskPaths$(1) + statFile$ + "S" For Input As #1
 
-        Input #3, numberGames%
+        Input #1, numberGames%
 
-        For I = 1 To 100: Input #3, O%(I): Next I
-        For I = 1 To 100: Input #3, O$(I): Next I
-        For I = 1 To 100: Input #3, leagueT%(I): Next I
+        For I = 1 To 100: Input #1, O%(I): Next I
+        For I = 1 To 100: Input #1, O$(I): Next I
+        For I = 1 To 100: Input #1, leagueT%(I): Next I
 
-        Close 3
+        Close #1
 
         fullWins = 0
         fullLosses = 0
@@ -258,24 +258,24 @@ Sub ReadStatsPro (statFile$, TN$)
     Shared statW0!(), statW1!()
     Shared N$()
 
-    Open diskPaths$(1) + statFile$ For Input As #2
+    Open diskPaths$(1) + statFile$ For Input As #1
 
-    Input #2, TN$
+    Input #1, TN$
 
     For I = 0 To 14
-        Input #2, N$(I)
+        Input #1, N$(I)
         For J = 0 To 13:
-            Input #2, leagS!(I, J)
+            Input #1, leagS!(I, J)
         Next
-        Input #2, statW0!(I)
-        Input #2, statW1!(I)
+        Input #1, statW0!(I)
+        Input #1, statW1!(I)
     Next I
 
-    For L = 1 To 16: Input #2, OT!(L): Next
+    For L = 1 To 16: Input #1, OT!(L): Next
 
-    For L = 1 To 16: Input #2, DT!(L): Next
+    For L = 1 To 16: Input #1, DT!(L): Next
 
-    Close 2
+    Close #1
 
 End Sub
 
@@ -1018,53 +1018,53 @@ Sub PostLeadersPro (leaderFile$)
 
     Print
 
-    Open diskPaths$(1) + leaderFile$ + ".LDR" For Output As #2
+    Open diskPaths$(1) + leaderFile$ + ".LDR" For Output As #1
 
     Print "    POSTING NEW "; leaderFile$; " LEADERS"
 
     For X = 1 To TEAMS_PER_CONFERENCE
-        Write #2, Z1$(X), O1!(X), O2!(X)
+        Write #1, Z1$(X), O1!(X), O2!(X)
     Next
 
     For X = 1 To 250
-        Write #2, Z2$(X), Z3$(X), LD!(X, 1), LD!(X, 2)
+        Write #1, Z2$(X), Z3$(X), LD!(X, 1), LD!(X, 2)
     Next X
 
     For X = 1 To TEAMS_PER_CONFERENCE:
-        Write #2, OL$(X)
+        Write #1, OL$(X)
         For Y = 1 To 20:
-            Write #2, OL!(X, Y)
+            Write #1, OL!(X, Y)
         Next
     Next
 
     For X = 1 To TEAMS_PER_CONFERENCE:
-        Write #2, DL$(X)
+        Write #1, DL$(X)
         For Y = 1 To 20:
-            Write #2, DL!(X, Y)
+            Write #1, DL!(X, Y)
         Next
     Next
 
-    Close 2
+    Close #1
 
-    Open diskPaths$(1) + "RECORDS.PBB" For Output As #1
+    Open diskPaths$(1) + "RECORDS.PBB" For Output As #2
 
     For I = 1 To 25
-        Print #1, leagBRC!(I)
-        Print #1, BRC$(I, 0)
-        Print #1, BRC$(I, 1)
+        Print #2, leagBRC!(I)
+        Print #2, BRC$(I, 0)
+        Print #2, BRC$(I, 1)
     Next
 
     For I = 1 To 21
-        Print #1, TRC!(I)
-        Print #1, TRC$(I)
+        Print #2, TRC!(I)
+        Print #2, TRC$(I)
     Next
 
     For I = 1 To 21
-        Print #1, TRC1!(I)
-        Print #1, TRC1$(I)
+        Print #2, TRC1!(I)
+        Print #2, TRC1$(I)
     Next
 
-    Close 1
+    Close #2
 
 End Sub
 

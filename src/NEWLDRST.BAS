@@ -21,16 +21,16 @@ Sub NewStandingOptions ()
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        Open diskPaths$(1) + leagStatFile$ + ".TMS" For Input As #2
+        Open diskPaths$(1) + leagStatFile$ + ".TMS" For Input As #1
 
-        Input #2, league$, div1$, div2$, div3$, div4$
+        Input #1, league$, div1$, div2$, div3$, div4$
 
         For X = 1 To TEAMS_PER_CONFERENCE
-            Input #2, strZ1$(X)
+            Input #1, strZ1$(X)
             TML$(X) = strZ1$(X)
         Next
 
-        Close 2
+        Close #1
 
         Color 15, 0
         Cls
@@ -111,16 +111,16 @@ Sub UpdateLeagueStandings (league$)
 
             If _FileExists(diskPaths$(1) + strZ1$(KK) + "S") Then
 
-                Open diskPaths$(1) + strZ1$(KK) + "S" For Input As #1
+                Open diskPaths$(1) + strZ1$(KK) + "S" For Input As #2
 
-                Input #1, XX%
+                Input #2, XX%
 
-                For J = 1 To 100: Input #1, statO%(J): Next
-                For J = 1 To 100: Input #1, O$(J): Next
-                For J = 1 To 100: Input #1, statsT%(J): Next
-                For J = 1 To 100: Input #1, statsH$(J): Next
+                For J = 1 To 100: Input #2, statO%(J): Next
+                For J = 1 To 100: Input #2, O$(J): Next
+                For J = 1 To 100: Input #2, statsT%(J): Next
+                For J = 1 To 100: Input #2, statsH$(J): Next
 
-                Close 1
+                Close #2
 
                 LWS(YY) = 0
                 LLS(YY) = 0
@@ -165,15 +165,15 @@ Sub UpdateLeagueStandings (league$)
 
     Next KK
 
-    Open diskPaths$(1) + league$ + ".STD" For Output As #1
+    Open diskPaths$(1) + league$ + ".STD" For Output As #3
 
-    Write #1, league$, div1$, div2$, div3$, div4$
+    Write #3, league$, div1$, div2$, div3$, div4$
 
     For I = 1 To TEAMS_PER_CONFERENCE
-        Write #1, WW(I), HWW(I), RWW(I), LL(I), HLL(I), RLL(I), LTW(I), LTL(I), TML$(I)
+        Write #3, WW(I), HWW(I), RWW(I), LL(I), HLL(I), RLL(I), LTW(I), LTL(I), TML$(I)
     Next
 
-    Close #1
+    Close #3
 
 End Sub
 

@@ -41,7 +41,7 @@ Sub RecordsMenu ()
             Input #1, TRC1$(I)
             If TRC1!(I) = 19999 Then TRC1!(I) = 0: TRC1$(I) = ""
         Next
-        Close 1
+        Close #1
 
         Do
 

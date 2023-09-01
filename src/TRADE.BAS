@@ -2,7 +2,7 @@
 '            TRADE Subroutine
 '----------------------------------------
 'This subroutine relies on several other
-'routines to proceed through the general 
+'routines to proceed through the general
 'steps for trading players.
 'First, 2 teams are chosen and their Stats
 'are loaded.
@@ -21,15 +21,20 @@ Sub TRADE ()
     tradeIdx = 0
     Call ChooseTradeTeam(teamYears$(tradeIdx), NTMS, teamNbr, tmInfo_TRADE$(tradeIdx, 0), tradeIdx)
     tradeT!(tradeIdx) = teamNbr
-    Call LoadStatsForTrade(tradeIdx)
 
-    tradeIdx = 1
-    Call ChooseTradeTeam(teamYears$(tradeIdx), NTMS, teamNbr, tmInfo_TRADE$(tradeIdx, 0), tradeIdx)
-    tradeT!(tradeIdx) = teamNbr
-    Call LoadStatsForTrade(tradeIdx)
+    If teamNbr > 0 Then
 
-    'Teams / Stats are loaded
-    Call ContinueTrade
+        Call LoadStatsForTrade(tradeIdx)
+
+        tradeIdx = 1
+        Call ChooseTradeTeam(teamYears$(tradeIdx), NTMS, teamNbr, tmInfo_TRADE$(tradeIdx, 0), tradeIdx)
+        tradeT!(tradeIdx) = teamNbr
+        Call LoadStatsForTrade(tradeIdx)
+
+        'Teams / Stats are loaded
+        Call ContinueTrade
+
+    End If
 
 End Sub
 
@@ -128,7 +133,7 @@ Sub LoadStatsForTrade (tradeTeam)
                 Input #1, tradeZZ1(tradeTeam, L)
             Next L
 
-            Close 1
+            Close #1
 
         End If
 
@@ -387,7 +392,7 @@ Sub SaveTrades ()
 
         Put #1, tradeT!(J)
 
-        Close 1
+        Close #1
 
     Next J
 
@@ -395,32 +400,32 @@ Sub SaveTrades ()
 
         If haveStats(J) <> 1 Then
 
-            Open diskPaths$(1) + RTrim$(statFiles$(J)) For Output As #1
+            Open diskPaths$(1) + RTrim$(statFiles$(J)) For Output As #2
 
-            Print #1, tradeA1$(J)
+            Print #2, tradeA1$(J)
 
             For I = 0 To 14:
 
-                Print #1, B1$(J, I)
+                Print #2, B1$(J, I)
 
                 For I1 = 0 To 13:
-                    Print #1, tradeB1!(J, I, I1)
+                    Print #2, tradeB1!(J, I, I1)
                 Next I1
 
-                Print #1, tradeW0!(J, I)
-                Print #1, tradeW1!(J, I)
+                Print #2, tradeW0!(J, I)
+                Print #2, tradeW1!(J, I)
 
             Next I
 
             For L = 0 To 15:
-                Print #1, tradeZZ(J, L)
+                Print #2, tradeZZ(J, L)
             Next L
 
             For L = 0 To 15:
-                Print #1, tradeZZ1(J, L)
+                Print #2, tradeZZ1(J, L)
             Next L
 
-            Close 1
+            Close #2
 
         End If
 
@@ -512,22 +517,9 @@ Sub ChooseTradeTeam (yearNumber$, numberTeams, chosenIdx, teamName$, tradeIdx)
         Color 15, 0
         Cls
 
-        JJ = 7
+        Call MenuBox (6, 8, 61, 7, 15, 4)
 
-        Locate 6, 8
-        Color 15, 4
-
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        For II = 1 To JJ: Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-        Locate 7, 32
-        Locate , 12
+        Locate 7, 12
 
         If tradeIdx = 0 Then
             Print "ENTER DISK ID FOR TEAM 1: "
@@ -588,7 +580,7 @@ Sub ChooseTradeTeam (yearNumber$, numberTeams, chosenIdx, teamName$, tradeIdx)
                             teamIndex%(teamIdx) = teamIdx
                         Next teamIdx
 
-                        Close 1
+                        Close #1
 
                     End If 'Done checking if file exists
 
@@ -748,7 +740,7 @@ Sub ReadTradeTeam (teamYear$, targetTeam$, teamIdx, tradeIdx)
     tmInfo_TRADE$(tradeIdx, 3) = RTrim$(Q$(376))
     tmInfo_TRADE$(tradeIdx, 4) = RTrim$(Q$(377))
 
-    Close 1
+    Close #1
 
 End Sub
 

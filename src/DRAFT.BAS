@@ -130,7 +130,7 @@ Sub DRAFT ()
                     Case 2
                         draftIdx = 0
                         Call ChooseDraftTeam(teamYears$(draftIdx), NTMS, teamIdx, tmInfo_DRAFT$(draftIdx, 0), draftIdx)
-                        Call DraftChoices(0, doneDraft, teamIdx, tmTotal_DRAFT())
+                        If teamIdx > 0 Then Call DraftChoices(0, doneDraft, teamIdx, tmTotal_DRAFT())
 
                 End Select
 
@@ -715,7 +715,7 @@ Sub SaveTeamDraft (draftNew, yearNumber$, teamIdx)
 
     Put #1, teamIdx
 
-    Close 1
+    Close #1
 
 End Sub
 
@@ -736,20 +736,7 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
         Color 15, 0
         Cls
 
-        JJ = 7
-
-        Locate 6, 8
-        Color 15, 4
-
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        For II = 1 To JJ
-            Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+		Call MenuBox (6, 8, 61, 7, 15, 4)
 
         Locate 7, 32
 
@@ -807,7 +794,7 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
                             teamIndex%(teamIdx) = teamIdx
                         Next teamIdx
 
-                        Close 1
+                        Close #1
 
                     End If 'Done checking if file exists
 
@@ -964,7 +951,7 @@ Sub ReadDraftTeam (teamYear$, targetTeam$, teamIdx, draftIdx)
     tmInfo_DRAFT$(draftIdx, 3) = RTrim$(Q$(376))
     tmInfo_DRAFT$(draftIdx, 4) = RTrim$(Q$(377))
 
-    Close 1
+    Close #1
 
 End Sub
 

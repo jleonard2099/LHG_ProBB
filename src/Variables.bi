@@ -224,7 +224,7 @@ Dim Shared avgAttendance&(1)
 Dim Shared A1$, B1$, C1$, D$, D1$, E1$, F1$, G1$, H1$, O$
 Dim Shared P7$, prevBall$, PS$, TS$, U$, Y2$, Z3$
 
-Dim Shared CF%(1, 9), E%(13)
+Dim Shared CF%(1, 9), eventSettings(13)
 Dim Shared F%(1, 9), F5%(1, 4), F7%(1, 9), G9%(1), GF%(2, 9)
 Dim Shared HT%(100), NG%(18), N0%(2, 2, 4)
 Dim Shared OX%(2), OY%(2), O%(100), O0%(1)

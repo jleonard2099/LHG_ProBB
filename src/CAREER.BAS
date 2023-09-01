@@ -525,22 +525,22 @@ Sub MergeAddYear (selectedFile$, statFile$)
         Locate 20, 5
         Print "LOADING CAREER STATS AND LEADER FILE . . . . PLEASE WAIT"
 
-        Open diskPaths$(1) + selectedFile$ + ".CAR" For Input As #2
+        Open diskPaths$(1) + selectedFile$ + ".CAR" For Input As #1
 
-        Input #2, NB, B$
+        Input #1, NB, B$
 
         For N = 1 To 15
 
             For I = 0 To 61
 
-                Input #2, AR$(I)
+                Input #1, AR$(I)
 
                 For J = 0 To 15: 
-                    Input #2, ars!(N, I, J)
+                    Input #1, ars!(N, I, J)
                 Next J
 
-                Input #2, W0S!(N, I)
-                Input #2, W1S!(N, I)
+                Input #1, W0S!(N, I)
+                Input #1, W1S!(N, I)
 
                 Color 5
                 Locate 21, 38
@@ -551,25 +551,25 @@ Sub MergeAddYear (selectedFile$, statFile$)
 
         Next N
 
-        Close #2
+        Close #1
 
         Locate 20, 5
         Print "LOADING STATS FILE . . . . PLEASE WAIT"
 
-        Open diskPaths$(1) + statFile$ For Input As #1
+        Open diskPaths$(1) + statFile$ For Input As #2
 
-        Input #1, B$
+        Input #2, B$
 
         For I = 0 To 14
 
-            Input #1, initA$(I)
+            Input #2, initA$(I)
 
             For J = 0 To 13: 
-                Input #1, mergeA!(I, J)
+                Input #2, mergeA!(I, J)
             Next
             
-            Input #1, careerW0!(I)
-            Input #1, careerW1!(I)
+            Input #2, careerW0!(I)
+            Input #2, careerW1!(I)
 
             Color 5
             Locate 21, 38
@@ -578,11 +578,11 @@ Sub MergeAddYear (selectedFile$, statFile$)
 
         Next
 
-        For L = 0 To 15: Input #1, compareZ!(L): Next
+        For L = 0 To 15: Input #2, compareZ!(L): Next
 
-        For L = 0 To 15: Input #1, compareZ1!(L): Next
+        For L = 0 To 15: Input #2, compareZ1!(L): Next
 
-        Close #1
+        Close #2
 
         For I = 0 To 14
             RR = 0
@@ -863,12 +863,12 @@ Sub UpdateCareerLeaders (careerFile$)
 
     Next I
 
-    Open diskPaths$(1) + careerFile$ + ".CLD" For Output As #1
+    Open diskPaths$(1) + careerFile$ + ".CLD" For Output As #2
 
     For I = 0 To 20
-        Write #1, BLYR!(I), BL$(I), BL!(I)
+        Write #2, BLYR!(I), BL$(I), BL!(I)
     Next
 
-    Close #1
+    Close #2
 
 End Sub

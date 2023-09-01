@@ -62,9 +62,9 @@ Sub CREATE ()
                     Call ReviewEditLeague(league$, div1$, div2$, div3$, div4$)
 
                 Case 2:
-                    league$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "LEAGUE", ExitCode%)
+                    league$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "LEAGUE", FileExit%)
 
-                    If ExitCode% <> 27 And ExitCode% <> 0 Then
+                    If FileExit% <> 27 And FileExit% <> 0 Then
                         Call ReviewEditLeague(league$, div1$, div2$, div3$, div4$)
                     End If
 
@@ -92,31 +92,17 @@ Sub DefineLeaguePro (league$, div1$, div2$, div3$, div4$)
         Color 15, 0
         Cls
 
-        JJ = 7
-
-        Locate 6, 8: Color 15, 1
-
-        'Print box top
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        'Print box sides
-        For II = 1 To JJ
-            Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        'Print box bottom
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+        Call MenuBox (6, 8, 61, 7, 15, 1)
 
         Do
 
-            Locate 7,
+            Locate 7
 
             Locate , 12: Print "ENTER NAME FOR LEAGUE: "
             Print
             Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
             Locate , 12: Print "SAMPLE NAMES ARE NBA WBA NBA94-95"
+
             Locate 7, 33: Input league$
 
             If league$ <> "" Then
@@ -205,17 +191,17 @@ Sub ReviewEditLeague (league$, div1$, div2$, div3$, div4$)
 
     If _FileExists(diskPaths$(1) + league$ + ".LIB") Then
 
-        Open diskPaths$(1) + league$ + ".LIB" For Input As #2
+        Open diskPaths$(1) + league$ + ".LIB" For Input As #1
 
-        Input #2, league$, div1$, div2$, div3$, div4$
+        Input #1, league$, div1$, div2$, div3$, div4$
 
         For X = 1 To TEAMS_PER_CONFERENCE
-            Input #2, memberTeams$(X)
-            Input #2, intZ1%(X)
-            Input #2, memberYears$(X)
+            Input #1, memberTeams$(X)
+            Input #1, intZ1%(X)
+            Input #1, memberYears$(X)
         Next
 
-        Close 2
+        Close #1
 
     End If
 
@@ -305,21 +291,21 @@ Sub SaveLeague (league$, div1$, div2$, div3$, div4$)
 
     Shared memberTeams$(), memberYears$()
 
-    Open diskPaths$(1) + league$ + ".LIB" For Output As #2
+    Open diskPaths$(1) + league$ + ".LIB" For Output As #1
 
-    Print #2, league$
-    Print #2, div1$
-    Print #2, div2$
-    Print #2, div3$
-    Print #2, div4$
+    Print #1, league$
+    Print #1, div1$
+    Print #1, div2$
+    Print #1, div3$
+    Print #1, div4$
 
     For X = 1 To TEAMS_PER_CONFERENCE
-        Print #2, memberTeams$(X)
-        Print #2, intZ1%(X)
-        Print #2, memberYears$(X)
+        Print #1, memberTeams$(X)
+        Print #1, intZ1%(X)
+        Print #1, memberYears$(X)
     Next
 
-    Close 2
+    Close #1
 
     For X = 1 To TEAMS_PER_CONFERENCE
 
@@ -360,6 +346,6 @@ Sub SaveLeague (league$, div1$, div2$, div3$, div4$)
         Write #2, memberTeams$(X)
     Next
 
-    Close 2
+    Close #2
 
 End Sub

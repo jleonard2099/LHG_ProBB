@@ -65,36 +65,24 @@ Sub SCHEDULE ()
                         Color 15, 0
                         Cls
 
-                        JJ = 7
-
-                        Locate 6, 8
-                        Color 15, 1
-
-                        'Print box top
-                        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-                        'Print box sides
-                        For II = 1 To JJ
-                            Locate 6 + II, 8
-                            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-                        Next
-
-                        'Print box bottom
-                        Locate 7 + JJ, 8
-                        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+                        Call MenuBox (6, 8, 61, 8, 15, 1)
 
                         Locate 7, 32
-                        Locate , 12: Print "ENTER NAME FOR SCHEDULE: ": Print
+
+                        Locate , 12: Print "ENTER NAME FOR SCHEDULE: "
+                        Print
                         Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
                         Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
                         Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
-                        Locate , 12: Print "SAMPLE NAMES ARE ABA73-74, BOS93, NBA83-84, ETC"
+                        Locate , 12: Print "SAMPLE NAMES ARE ABA73-74, BOS93, NBA83-84, ETC."
+
                         Locate 7, 37: Input scheduleFile$
 
                         If scheduleFile$ <> "" Then
 
                             Do
-                                Locate 13, 12: Print "ANY CHANGE? (Y/N) "
+                                Locate 14, 12
+                                Print "ANY CHANGE? (Y/N) "
                                 I$ = GetKeyPress$
                             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -108,9 +96,9 @@ Sub SCHEDULE ()
 
                 Case 2 To 5:
                     'Have the user pick a schedule
-                    scheduleFile$ = ChooseFile$ (diskPaths$(0) + "*.SCD", "SCHEDULE", ExitCode%)
+                    scheduleFile$ = ChooseFile$ (diskPaths$(0) + "*.SCD", "SCHEDULE", FileExit%)
 
-                    If ExitCode% <> 27 And ExitCode% <> 0 Then
+                    If FileExit% <> 27 And FileExit% <> 0 Then
 
                         Call LoadScheduleInfo (scheduleFile$)
 
@@ -350,25 +338,9 @@ Sub NewSchedule (scheduleFile$)
                 Color , 0
                 Cls
 
-                JJ = 8
-
-                Locate 6, 8: Color 15, 4
-
-                'Print box top
-                Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-                'Print box sides
-                For II = 1 To JJ
-                    Locate 6 + II, 8
-                    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-                Next
-
-                'Print box bottom
-                Locate 7 + JJ, 8
-                Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+                Call MenuBox (6, 8, 61, 8, 15, 4)
 
                 Do
-                    'Locate 7, 32
 
                     Locate 8, 12: Print "TOTAL GAMES ="; scheduleAP%(0)
                     Locate 9, 12: Print "SELECT GAME # TO START AND END WITH": Print
@@ -378,19 +350,19 @@ Sub NewSchedule (scheduleFile$)
                     Do
                         Locate 13, 12: Print "ANY CHANGE? (Y/N)"
                         I$ = GetKeyPress$
-                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                    Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
                 Loop Until UCase$(I$) = "N"
 
                 If SG% <= 0 Then SG% = 1
                 If EG% > scheduleAP%(0) Then EG% = scheduleAP%(0)
 
-                Open "GAME82" For Output As #2
-                Print #2, scheduleFile$ + ".SCD"
-                Print #2, SG% 'Start Game
-                Print #2, EG% 'End Game
-                Print #2, 0
-                Close 2
+                Open "GAME82" For Output As #1
+                Print #1, scheduleFile$ + ".SCD"
+                Print #1, SG% 'Start Game
+                Print #1, EG% 'End Game
+                Print #1, 0
+                Close #1
 
                 For I = 1 To scheduleAP%(0)
                     HR% = Int(scheduleNG%(I, 15) / 100)
@@ -400,6 +372,7 @@ Sub NewSchedule (scheduleFile$)
                 Next
 
                 Open "TICKER" For Output As #2
+
                 For I = 1 To 32
                     For I1 = 0 To 1
                         For I2 = 1 To 14
@@ -418,7 +391,7 @@ Sub NewSchedule (scheduleFile$)
                     Print #2, scheduleNG%(I, 12)
                 Next
 
-                Close 2
+                Close #2
 
                 Call PROHOOP
 
@@ -720,37 +693,30 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                 Color 15, 0
                 Cls
 
-                JJ = 7
-
-                Locate 6, 8: Color 15, 1
-
-                'Print box top
-                Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-                'Print box sides
-                For II = 1 To JJ
-                    Locate 6 + II, 8
-                    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-                Next
-
-                'Print box bottom
-                Locate 7 + JJ, 8
-                Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+                Call MenuBox (6, 8, 61, 8, 15, 1)
 
                 Do
+
                     Locate 7, 32
+
                     Locate , 12: Print "ENTER NAME FOR SUB-SCHEDULE: ": Print
                     Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
                     Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
                     Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
                     Locate , 12: Print "SAMPLE NAMES ARE INDIANA, BOS68, CHI-76, ETC      "
+
                     Locate 7, 37: Input subSchedFile$
 
                     If subSchedFile$ <> "" Then
+
                         Do
-                            Locate 13, 12: Print "ANY CHANGE? (Y/N) "
+
+                            Locate 14, 12
+                            Print "ANY CHANGE? (Y/N) "
                             I$ = GetKeyPress$
+
                         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or I$ = Chr$(27)
+
                     End If
 
                 Loop Until (UCase$(I$) = "N" And subSchedFile$ <> "") Or I$ = Chr$(27)
@@ -768,17 +734,20 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
 
                     'Change mode of play
                     If scheduleAction% = 4 Then
+
                         Color teamRatings%(33), teamRatings%(34): Print N$;
-                        Color 15, 0: Print " IS TO BE:"
+                        Color 15, 0
+                        Print " IS TO BE:"
                         Print
                         Print "(0) MANUALLY CONTROLLED": Print
                         Print "(1) COMPUTER CONTROLLED"
 
                         Do
-                            I$ = GetKeyPress$
+                            C$ = GetKeyPress$
                             I1 = Val(I$)
-                        Loop Until I1 = 0 Or I1 = 1
+                        Loop Until C$ = "0" Or C$ = "1"
 
+                        Print
                         Input "ENTER DISPLAY PAUSE FOR THESE GAMES "; displayPause!
 
                     End If
@@ -802,6 +771,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                                 Locate 1, 1: Print numberGames% + 1; " MATCHES"
 
                                 Open diskPaths$(0) + subSchedFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
+
                                 fileLength& = LOF(1)
 
                                 numberGames% = fileLength& / SCHEDULE_SIZE_BYTES
@@ -824,7 +794,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
 
                                 Put #1, numberGames% + 1
 
-                                Close 1
+                                Close #1
 
                             End If 'Done checking schedule action
 
@@ -849,15 +819,19 @@ End Sub
 '"Special" boxscores are created / saved.
 Sub EditParameters ()
 
-    Dim E%(13)
+    Dim eventSettings(13)
 
     'Read in existing parameters if there are any
     If _FileExists("EVENTS.BOX") Then
+
         Open "EVENTS.BOX" For Input As #1
+
         For X = 1 To 13
-            Input #1, E%(X)
+            Input #1, eventSettings(X)
         Next
-        Close 1
+
+        Close #1
+
     End If
 
     Cls
@@ -867,17 +841,17 @@ Sub EditParameters ()
     X% = 2
     Color 15
 
-    Print " 1. QUARTERS ARE OVER "; E%(1)
-    Print " 2. TOTAL POINTS GREATER THAN "; E%(2)
-    Print " 3. TOTAL REBOUNDS GREATER THAN "; E%(3)
-    Print " 4. TEAM POINTS GREATER THAN "; E%(4)
-    Print " 5. TEAM REBOUNDS GREATER THAN "; E%(5)
-    Print " 6. PLAYER'S POINTS MORE THAN "; E%(6)
-    Print " 7. PLAYER'S REBOUNDS MORE THAN "; E%(7)
-    Print " 8. PLAYER'S ASSISTS MORE THAN "; E%(8)
-    Print " 9. PLAYER'S BLOCKS MORE THAN "; E%(9)
-    Print "10. PLAYER'S STEALS MORE THAN "; E%(10)
-    Print "11. PLAYER'S 3-FGM MORE THAN "; E%(11)
+    Print " 1. QUARTERS ARE OVER "; eventSettings(1)
+    Print " 2. TOTAL POINTS GREATER THAN "; eventSettings(2)
+    Print " 3. TOTAL REBOUNDS GREATER THAN "; eventSettings(3)
+    Print " 4. TEAM POINTS GREATER THAN "; eventSettings(4)
+    Print " 5. TEAM REBOUNDS GREATER THAN "; eventSettings(5)
+    Print " 6. PLAYER'S POINTS MORE THAN "; eventSettings(6)
+    Print " 7. PLAYER'S REBOUNDS MORE THAN "; eventSettings(7)
+    Print " 8. PLAYER'S ASSISTS MORE THAN "; eventSettings(8)
+    Print " 9. PLAYER'S BLOCKS MORE THAN "; eventSettings(9)
+    Print "10. PLAYER'S STEALS MORE THAN "; eventSettings(10)
+    Print "11. PLAYER'S 3-FGM MORE THAN "; eventSettings(11)
 
     C1 = 1
 
@@ -888,30 +862,30 @@ Sub EditParameters ()
 
         Select Case B9
 
-            Case 1: Locate 2: Input " 1. QUARTERS ARE OVER "; E%(1)
-            Case 2: Locate 3: Input " 2. TOTAL POINTS GREATER THAN "; E%(2)
-            Case 3: Locate 4: Input " 3. TOTAL REBOUNDS GREATER THAN "; E%(3)
-            Case 4: Locate 5: Input " 4. TEAM POINTS GREATER THAN "; E%(4)
-            Case 5: Locate 6: Input " 5. TEAM REBOUNDS GREATER THAN "; E%(5)
-            Case 6: Locate 7: Input " 6. PLAYER'S POINTS MORE THAN "; E%(6)
-            Case 7: Locate 8: Input " 7. PLAYER'S REBOUNDS MORE THAN "; E%(7)
-            Case 8: Locate 9: Input " 8. PLAYER'S ASSISTS MORE THAN "; E%(8)
-            Case 9: Locate 10: Input " 9. PLAYER'S BLOCKS MORE THAN "; E%(9)
-            Case 10: Locate 11: Input "10. PLAYER'S STEALS MORE THAN "; E%(10)
-            Case 11: Locate 12: Input "11. PLAYER'S 3-FGM MORE THAN "; E%(11)
+            Case 1: Locate 2: Input " 1. QUARTERS ARE OVER "; eventSettings(1)
+            Case 2: Locate 3: Input " 2. TOTAL POINTS GREATER THAN "; eventSettings(2)
+            Case 3: Locate 4: Input " 3. TOTAL REBOUNDS GREATER THAN "; eventSettings(3)
+            Case 4: Locate 5: Input " 4. TEAM POINTS GREATER THAN "; eventSettings(4)
+            Case 5: Locate 6: Input " 5. TEAM REBOUNDS GREATER THAN "; eventSettings(5)
+            Case 6: Locate 7: Input " 6. PLAYER'S POINTS MORE THAN "; eventSettings(6)
+            Case 7: Locate 8: Input " 7. PLAYER'S REBOUNDS MORE THAN "; eventSettings(7)
+            Case 8: Locate 9: Input " 8. PLAYER'S ASSISTS MORE THAN "; eventSettings(8)
+            Case 9: Locate 10: Input " 9. PLAYER'S BLOCKS MORE THAN "; eventSettings(9)
+            Case 10: Locate 11: Input "10. PLAYER'S STEALS MORE THAN "; eventSettings(10)
+            Case 11: Locate 12: Input "11. PLAYER'S 3-FGM MORE THAN "; eventSettings(11)
 
         End Select
 
     Loop Until B9 = 0 'ENTER also counts as 0
 
     'Save all changes
-    Open "EVENTS.BOX" For Output As #1
+    Open "EVENTS.BOX" For Output As #2
 
     For X = 1 To 13
-        Print #1, E%(X)
+        Print #2, eventSettings(X)
     Next
 
-    Close 1
+    Close #2
 
 End Sub
 
@@ -1037,7 +1011,7 @@ Sub SaveScheduleFile (saveFile$)
         Put #1, I
     Next
 
-    Close 1
+    Close #1
 
 End Sub
 
@@ -1274,6 +1248,7 @@ Sub LoadScheduleInfo (targetFile$)
     Shared scheduleYN$()
 
     Open diskPaths$(0) + targetFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
+
     fileLength& = LOF(1)
 
     scheduleAP%(0) = fileLength& / SCHEDULE_SIZE_BYTES
@@ -1301,7 +1276,7 @@ Sub LoadScheduleInfo (targetFile$)
 
     Next
 
-    Close 1
+    Close #1
 
     NS% = 0
 
@@ -1338,11 +1313,14 @@ Sub EditBoxscore (boxName$)
     Else
 
         Open boxName$ For Input As #1
+
         CURLINE = 1
+
         While Not EOF(1)
             Line Input #1, array$(CURLINE)
             CURLINE = CURLINE + 1
         Wend
+
         Close #1
 
         Cls '  show how QEdit saves the screen
@@ -1374,11 +1352,13 @@ Sub EditBoxscore (boxName$)
             '----- F2 function key pressed? - change margin
             If Ky$ = F2$ Then: For I = 1 To CURLINE - 1: LPrint array$(I): Next
             If Ky$ = F3$ Then
-                Open BN$ For Output As #1
+                Open BN$ For Output As #2
+
                 For I = 1 To CURLINE - 1
-                    Print #1, array$(I)
+                    Print #2, array$(I)
                 Next
-                Close 1
+
+                Close #2
 
                 MsgText$ = "REVISED BOXSCORE HAS BEEN SAVED... PRESS ANY KEY TO CONTINUE"
                 BoxWidth = 18

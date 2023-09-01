@@ -127,16 +127,16 @@ Sub MergeStats ()
 
                     Close #1
 
-                    Open pathRoadStats$ + statFile$ + "S" For Input As #1
+                    Open pathRoadStats$ + statFile$ + "S" For Input As #2
 
-                    Input #1, Yroad%
+                    Input #2, Yroad%
 
-                    For I = 1 To 100: Input #1, ORD%(I): Next I
-                    For I = 1 To 100: Input #1, ORD$(I): Next I
-                    For I = 1 To 100: Input #1, TRD%(I): Next I
-                    For I = 1 To 100: Input #1, HRD$(I): Next I
+                    For I = 1 To 100: Input #2, ORD%(I): Next I
+                    For I = 1 To 100: Input #2, ORD$(I): Next I
+                    For I = 1 To 100: Input #2, TRD%(I): Next I
+                    For I = 1 To 100: Input #2, HRD$(I): Next I
 
-                    Close #1
+                    Close #2
 
                     For J = 21 To 23
                         Locate J
@@ -145,36 +145,36 @@ Sub MergeStats ()
 
                     If _FileExists(pathCurrentStats$ + statFile$) Then
 
-                        Open pathCurrentStats$ + statFile$ For Input As #1
+                        Open pathCurrentStats$ + statFile$ For Input As #3
 
-                        Input #1, B$
+                        Input #3, B$
 
                         For I = 0 To 14:
 
-                            Input #1, alignA$(I)
+                            Input #3, alignA$(I)
 
-                            For J = 0 To 13: Input #1, compareA!(I, J): Next
+                            For J = 0 To 13: Input #3, compareA!(I, J): Next
 
-                            Input #1, compareW0!(I)
-                            Input #1, compareW1!(I)
+                            Input #3, compareW0!(I)
+                            Input #3, compareW1!(I)
 
                         Next
 
-                        For L = 0 To 15: Input #1, alignZ!(L): Next
-                        For L = 0 To 15: Input #1, alignZ1!(L): Next
+                        For L = 0 To 15: Input #3, alignZ!(L): Next
+                        For L = 0 To 15: Input #3, alignZ1!(L): Next
 
-                        Close #1
+                        Close #3
 
-                        Open pathCurrentStats$ + statFile$ + "S" For Input As #1
+                        Open pathCurrentStats$ + statFile$ + "S" For Input As #4
 
-                        Input #1, Ycurr%
+                        Input #4, Ycurr%
 
-                        For I = 1 To 100: Input #1, statO%(I): Next I
-                        For I = 1 To 100: Input #1, O$(I): Next I
-                        For I = 1 To 100: Input #1, mergeT%(I): Next I
-                        For I = 1 To 100: Input #1, statsH$(I): Next I
+                        For I = 1 To 100: Input #4, statO%(I): Next I
+                        For I = 1 To 100: Input #4, O$(I): Next I
+                        For I = 1 To 100: Input #4, mergeT%(I): Next I
+                        For I = 1 To 100: Input #4, statsH$(I): Next I
 
-                        Close #1
+                        Close #4
 
                         SEQ = 0
 
@@ -316,6 +316,7 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
     Next
 
     Open pathCurrentStats$ + statFile$ For Output As #1
+
     Write #1, B$
 
     For I = 0 To 14:
@@ -330,13 +331,15 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
 
     Close #1
 
-    Open pathCurrentStats$ + statFile$ + "S" For Output As #1
-    Write #1, Ycurr%
-    For I = 1 To 100: Write #1, statO%(I): Next I
-    For I = 1 To 100: Write #1, O$(I): Next I
-    For I = 1 To 100: Write #1, mergeT%(I): Next I
-    For I = 1 To 100: Write #1, statsH$(I): Next I
-    Close #1
+    Open pathCurrentStats$ + statFile$ + "S" For Output As #2
+
+    Write #2, Ycurr%
+    For I = 1 To 100: Write #2, statO%(I): Next I
+    For I = 1 To 100: Write #2, O$(I): Next I
+    For I = 1 To 100: Write #2, mergeT%(I): Next I
+    For I = 1 To 100: Write #2, statsH$(I): Next I
+
+    Close #2
 
     Y = 0
 
