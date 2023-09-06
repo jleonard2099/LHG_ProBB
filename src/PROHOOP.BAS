@@ -160,7 +160,8 @@ Sub PROHOOP
 
         ' USER SELECTION OF OPTIONS
         'gameLoc = 1 is neutral site
-        gameLoc = 1
+        'gameLoc = 0 is not used
+        If gameLoc = 0 Then gameLoc = 1
 
         Do
 

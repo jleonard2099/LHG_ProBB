@@ -627,7 +627,7 @@
  83 
  83 
  98 
- 117 
+ 101 
  13 
  24 
  33 
@@ -641,7 +641,7 @@
  91 
  91 
  99 
- 115 
+ 84 
  12 
  18 
  29 
@@ -655,7 +655,7 @@
  69 
  69 
  87 
- 96 
+ 94 
  6 
  16 
  20 
@@ -669,7 +669,7 @@
  77 
  77 
  89 
- 97 
+ 100 
  5 
  14 
  29 
@@ -683,7 +683,7 @@
  92 
  92 
  110 
- 122 
+ 114 
  9 
  14 
  21 
@@ -697,7 +697,7 @@
  74 
  74 
  84 
- 94 
+ 108 
  4 
  18 
  35 
@@ -711,7 +711,7 @@
  85 
  85 
  95 
- 96 
+ 102 
  10 
  20 
  26 
@@ -725,7 +725,7 @@
  92 
  92 
  109 
- 120 
+ 110 
  9 
  15 
  23 
@@ -739,7 +739,7 @@
  54 
  54 
  62 
- 84 
+ 86 
  4 
  15 
  26 
@@ -753,7 +753,7 @@
  77 
  77 
  88 
- 97 
+ 118 
  5 
  10 
  14 
@@ -767,7 +767,7 @@
  63 
  63 
  75 
- 83 
+ 81 
  11 
  15 
  23 
@@ -781,7 +781,7 @@
  82 
  82 
  104 
- 115 
+ 123 
  15 
  25 
  36 
@@ -795,7 +795,7 @@
  91 
  91 
  101 
- 105 
+ 134 
  8 
  20 
  32 
@@ -809,7 +809,7 @@
  95 
  95 
  113 
- 121 
+ 111 
  7 
  17 
  26 
@@ -823,7 +823,7 @@
  64 
  64 
  76 
- 85 
+ 81 
  8 
  20 
  29 
@@ -837,7 +837,7 @@
  86 
  86 
  98 
- 106 
+ 97 
  16 
  24 
  39 
@@ -851,7 +851,7 @@
  103 
  103 
  121 
- 129 
+ 101 
  11 
  17 
  23 
@@ -865,7 +865,7 @@
  71 
  71 
  81 
- 93 
+ 111 
  10 
  19 
  29 
@@ -879,7 +879,7 @@
  73 
  73 
  93 
- 99 
+ 124 
  6 
  14 
  20 
@@ -893,7 +893,7 @@
  62 
  62 
  69 
- 77 
+ 104 
 91 ORLANDO
 91 ATLANTA
 91 CLEVELAND
@@ -938,26 +938,26 @@
 91 SACRAMENTO
 91 LA LAKERS
 91 SAN ANTONIO
-91 HOUSTON
-91 SEATTLE
-91 CHICAGO
-91 WASHINGTON
-91 GOLDEN STATE
-91 LA CLIPPERS
-91 NEW JERSEY
-91 CHARLOTTE
-91 BOSTON
-91 CHICAGO
-91 LA CLIPPERS
-91 GOLDEN STATE
-91 DENVER
-91 HOUSTON
-91 MINNESOTA
-91 INDIANA
-91 PORTLAND
-91 LA LAKERS
-91 MILWAUKEE
-91 MIAMI
+21 ORLANDO
+21 WASHINGTON
+21 PHILADELPHIA
+21 NEW YORK
+21 INDIANA
+21 CHICAGO
+21 TORONTO
+21 SAN ANTONIO
+21 MINNESOTA
+21 UTAH
+21 HOUSTON
+21 PORTLAND
+21 PHOENIX
+21 SACRAMENTO
+21 DALLAS
+21 LA CLIPPERS
+21 SAN ANTONIO
+21 NEW ORLEANS
+21 ORLANDO
+21 WASHINGTON
  8 
  8 
  8 
