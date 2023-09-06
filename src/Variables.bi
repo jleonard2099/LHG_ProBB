@@ -205,9 +205,8 @@ Dim scheduleFile$
 Dim tickerStart
 
 Dim Shared AD, autoPlay, B, bonusFoulNum, coachOpt, compTeam
-Dim Shared D, endGame, endAllGames, ftRulesOpt, F3
-Dim Shared freeThrowVal
-Dim Shared H, halfTime, JY, N, nbrLines
+Dim Shared D, endGame, endAllGames, ftRulesOpt, F3, freeThrowVal
+Dim Shared gameLoc, H, halfTime, JY, nbrLines
 Dim Shared P, P7, P9, playerOpt, playoffOpt, pbpOpt
 Dim Shared QQ, QR
 Dim Shared sClockVal, shotClock, shotPctOpt

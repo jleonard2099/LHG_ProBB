@@ -257,13 +257,11 @@ Sub PROHOOP
 
                     Case 2:
                         P9 = 0
-                        'Call ChooseGameTeam(P9)
                         Call ChooseGameTeam(YN$, NTMS, teamNbr, gameTeams$(P9), P9)
                         If teamNbr <> 0 Then Call DISABLEPLAYERS
 
                     Case 3:
                         P9 = 1
-                        'Call ChooseGameTeam(P9)
                         Call ChooseGameTeam(YN$, NTMS, teamNbr, gameTeams$(P9), P9)
                         If teamNbr <> 0 Then Call DISABLEPLAYERS
 
@@ -613,9 +611,9 @@ Sub PROHOOP
     If score(0, 0) = score(1, 0) Then
         U$ = "OVERTIME !!!"
         Select Case pbpOpt
-            Case 0: 
+            Case 0:
                 Color 7, 0: Call WINDEX: Print U$
-            Case 1: 
+            Case 1:
                 Call WINDEX: Print U$: Call DELAY
         End Select
 
@@ -934,7 +932,7 @@ Sub PROHOOP
                     GoTo 437
 
                 End If
-                
+
         End Select
 
     End If
@@ -1248,7 +1246,7 @@ Sub PROHOOP
                 PT% = 9
                 Call MAKEPBP
             End If
-            
+
             Call PBP
 
             If shotClock <= 0 Then U$ = "SHOT CLOCK HAS EXPIRED!": SV% = 1: GoTo 515
@@ -1663,7 +1661,7 @@ Sub PROHOOP
 
             A!(P, B1!(P, B), 7) = A!(P, B1!(P, B), 7) - 1
             Call ResetShotClock
-            
+
             589 '
             gameClock! = gameClock! - 4
             timeElapsed! = 4
@@ -2029,7 +2027,7 @@ Sub PROHOOP
         Call Choices
 
         If pbpDelay! <> 0 Then
-        
+
             For I = 8 To 15
                 Locate I, 1
                 Print Space$(38)
@@ -2154,8 +2152,8 @@ Sub PROHOOP
     Call UPDATESCREEN
 
     If pbpDelay! <> 0 Then
-       
-       If pbpOpt = 0 Then
+
+        If pbpOpt = 0 Then
             U$ = "1 FT: " + players_GAME$(P, B1!(P, B), 0) + Str$(A!(P, B1!(P, B), 1)) + " %"
             Call PBP
         Else
@@ -2980,4 +2978,5 @@ Sub PROHOOP
     End If
 
 End Sub
+
 

@@ -139,7 +139,7 @@ Sub InitVar ()
     Erase D1, D8, F1, G4, G5
     Erase P2, P4, P5, P7, QQ, QR
     Erase R3, RB, score, statTotals, S3
-    Erase tmRAT_GAME, turnovers, TF
+    Erase tmRat_GAME, turnovers, TF
     Erase VG, VH, W2, W3
     Erase X7, Z5, Z6, timePlayed
 
@@ -195,7 +195,7 @@ End Sub
 '          LetterToNumber Subroutine
 '----------------------------------------
 'This subroutine converts an alphabetic
-'character to a numeric equivalent, 
+'character to a numeric equivalent,
 'where A = 10, B = 11, etc.
 'This is useful for long menus that have
 'more than 10 options (0 - 9) and a single
@@ -205,13 +205,13 @@ Sub LetterToNumber (promptVal$, J)
     J = Val(promptVal$)
 
     Select Case UCase$(promptVal$)
-        
+
         Case "A": J = 10
         Case "B": J = 11
         Case "C": J = 12
         Case "D": J = 13
         Case "E": J = 14
-        
+
     End Select
 
 End Sub
@@ -220,9 +220,9 @@ End Sub
 '----------------------------------------
 '           TEAMBOX Subroutine
 '----------------------------------------
-'This subroutine draws an ASCII box using 
-'team colors. The box starts at row 6 and 
-'is approx. 60 char's wide. When done, the 
+'This subroutine draws an ASCII box using
+'team colors. The box starts at row 6 and
+'is approx. 60 char's wide. When done, the
 'cursor is set at the first printable row
 'and column inside the box.
 Sub TEAMBOX (boxHeight, teamIdx)
@@ -251,9 +251,9 @@ End Sub
 '----------------------------------------
 '         FRAMEOPTION Subroutine
 '----------------------------------------
-'This subroutine draws an ASCII box using 
-'team colors. The box starts at row 8 and 
-'is approx. 60 char's wide. When done, the 
+'This subroutine draws an ASCII box using
+'team colors. The box starts at row 8 and
+'is approx. 60 char's wide. When done, the
 'cursor is set at the first printable row
 'and column inside the box.
 Sub FRAMEOPTION (boxHeight, teamIdx)
@@ -667,31 +667,31 @@ Sub MAKEPBP ()
 
                             Select Case RN
 
-                                Case 1 To 15: 
+                                Case 1 To 15:
                                     U$ = "HE PUTS IT OFF THE GLASS"
 
-                                Case 16 To 25: 
+                                Case 16 To 25:
                                     U$ = "HE PIVOTS TO THE BASKET"
 
-                                Case 26 To 40: 
+                                Case 26 To 40:
                                     U$ = "HE POWERS IT UP"
 
-                                Case 41 To 58: 
+                                Case 41 To 58:
                                     U$ = "HE TAKES IT TO THE HOOP"
                                     Call d100(RN0)
                                     If RN0 <= 15 Then DK% = 1
 
-                                Case 59 To 70: 
+                                Case 59 To 70:
                                     U$ = "HE TAKES THE SHOT"
 
-                                Case 71 To 72: 
+                                Case 71 To 72:
                                     U$ = "HE CURLS OFF A PICK IN THE PAINT"
                                     Call PBP
                                     U$ = "TAKES IT UP"
                                     Call d100(RN0)
                                     If RN0 <= 15 Then DK% = 1
 
-                                Case 73 To 74: 
+                                Case 73 To 74:
                                     U$ = "HE MAKES A NICE SPIN MOVE"
                                     Call PBP
                                     U$ = "AND SOARS TO THE HOOP"
@@ -711,65 +711,65 @@ Sub MAKEPBP ()
 
                             Select Case RN
 
-                                Case 1 To 16: 
+                                Case 1 To 16:
                                     U$ = "HE TAKES IT UP"
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
 
-                                Case 17 To 32: 
+                                Case 17 To 32:
                                     U$ = "HE SPINS FREE"
                                     Call PBP
                                     U$ = "SHOOTS"
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
-                                    
-                                Case 33 To 48: 
+
+                                Case 33 To 48:
                                     U$ = "HE GETS LOOSE IN THE PAINT"
                                     Call PBP
                                     U$ = "TAKES IT UP"
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
 
-                                Case 49 To 64: 
+                                Case 49 To 64:
                                     U$ = "HE PUTS IT UP"
 
-                                Case 65 To 67: 
+                                Case 65 To 67:
                                     U$ = "HE CURLS OFF A PICK IN THE PAINT"
                                     Call PBP
                                     U$ = "TAKES IT UP"
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
 
-                                Case 68 To 69: 
+                                Case 68 To 69:
                                     U$ = "HE MAKES A NICE SPIN MOVE"
                                     Call PBP
                                     U$ = "AND SOARS TO THE HOOP"
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
 
-                                Case 70 To 71: 
+                                Case 70 To 71:
                                     U$ = "HE DRIVES THE BASELINE"
                                     Call PBP
                                     U$ = "SPINS RIGHT AND GOES UP"
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
 
-                                Case 72: 
+                                Case 72:
                                     U$ = "HE SLICES IN THE HOLE"
                                     Call PBP
                                     U$ = "UNDERHAND SCOOP SHOT"
 
-                                Case 73: 
+                                Case 73:
                                     U$ = "STRONG CUT ALONG THE BASELINE"
                                     Call PBP
                                     U$ = "DOUBLE PUMP REVERSE LAYUP"
 
-                                Case 74: 
+                                Case 74:
                                     U$ = "HE PENETRATES"
                                     Call PBP
                                     U$ = "GORGEOUS FINGER ROLL!"
 
-                                Case 75 To 80: 
+                                Case 75 To 80:
                                     U$ = "HE SHOOTS"
 
                                 Case 81 To 100:
@@ -781,55 +781,55 @@ Sub MAKEPBP ()
 
                             Select Case RN
 
-                                Case 1 To 25: 
+                                Case 1 To 25:
                                     U$ = "HE SPINS FREE": Call PBP: U$ = "SHOOTS"
 
-                                Case 26 To 50: 
+                                Case 26 To 50:
                                     U$ = "HE TAKES IT UP UNDER THE BASKET"
                                     Call d100(RN0)
                                     If RN0 <= 2 Then DK% = 1
 
-                                Case 51 To 52: 
+                                Case 51 To 52:
                                     U$ = "HE MAKES A NICE SPIN MOVE"
                                     Call PBP
                                     U$ = "AND SOARS TO THE HOOP"
                                     Call d100(RN0)
                                     If RN0 <= 2 Then DK% = 1
 
-                                Case 53 To 54: 
+                                Case 53 To 54:
                                     U$ = "HE BLOWS PAST TWO DEFENDERS"
 
-                                Case 55 To 56: 
+                                Case 55 To 56:
                                     U$ = "HE DRIVES THE BASELINE"
                                     Call PBP
                                     U$ = "SPINS RIGHT AND GOES UP"
                                     Call d100(RN0)
                                     If RN0 <= 2 Then DK% = 1
 
-                                Case 57: 
+                                Case 57:
                                     U$ = "HE SLICES IN THE HOLE"
                                     Call PBP
                                     U$ = "UNDERHAND SCOOP SHOT"
 
-                                Case 58: 
+                                Case 58:
                                     U$ = "STRONG CUT ALONG THE BASELINE"
                                     Call PBP
                                     U$ = "DOUBLE PUMP REVERSE LAYUP"
 
-                                Case 59: 
+                                Case 59:
                                     U$ = "HE PENETRATES"
                                     Call PBP
                                     U$ = "GORGEOUS FINGER ROLL!"
 
-                                Case 60 To 75: 
+                                Case 60 To 75:
                                     U$ = "HE TAKES THE JUMPER"
 
-                                Case 76 To 90: 
+                                Case 76 To 90:
                                     U$ = "HE STOPS"
                                     Call PBP
                                     U$ = "SHOOTS"
 
-                                Case 91: 
+                                Case 91:
                                     U$ = "HE LOOKS TO PASS"
                                     Call PBP
                                     U$ = "NO ONE IS OPEN"
@@ -1461,7 +1461,7 @@ End Sub
 '----------------------------------------
 '           TICKER Subroutine
 '----------------------------------------
-'This subroutine displays the score of all 
+'This subroutine displays the score of all
 'current games being tracked by the ticker.
 'For each game it will find the score that
 'matches the current game time / period.
@@ -2596,7 +2596,7 @@ Sub PlayerCalcs ()
 End Sub
 
 
-'----------------------------------------   
+'----------------------------------------
 '        CreditAssists Subroutine
 '----------------------------------------
 'This subroutine almost certainly does
@@ -2787,7 +2787,7 @@ Sub Choices ()
                 C1 = 2
                 Call CheckGameClock
             Else
-                If Not (timeouts(P) <= 0 Or P3 = 1 And P = compTeam And playerOpt = 1) Then 
+                If Not (timeouts(P) <= 0 Or P3 = 1 And P = compTeam And playerOpt = 1) Then
                     timeouts(P) = timeouts(P) - 1
                     Color 15, 0: Call Substitutions
                 End If
@@ -2839,7 +2839,7 @@ Sub Substitutions ()
         FO = 0
 
         Call CLEARPBPBOX
-        
+
         If playerOpt = 2 Then
 
             S2 = 0
@@ -2917,7 +2917,7 @@ End Sub
 'This subroutine handles calculations and
 'Play-by-Play for fouls. It also tries to
 'determine if players have fouled out.
-'Finally, it handles the aftermath of a 
+'Finally, it handles the aftermath of a
 'foul / posession change.
 Sub Fouls (skipRandom%)
 
@@ -3023,7 +3023,7 @@ End Sub
 '          LOADSTATS Subroutine
 '----------------------------------------
 'This subroutine loads team schedule stats
-'data into arrays for each team from their 
+'data into arrays for each team from their
 'corresponding stat file.
 Sub LOADSTATS ()
 
@@ -3136,13 +3136,13 @@ Sub SCOREBOARD ()
     Print Using "##"; P2(1);
 
     'Bonus
-    If P2(0) > bonusFoulNum - 1 And H <= 4 Or P2(0) > 2 And H > 4 Then 
+    If P2(0) > bonusFoulNum - 1 And H <= 4 Or P2(0) > 2 And H > 4 Then
         Color 0, 2
         Locate , 46: Print "BONUS";
         Color 7, 0
     End If
 
-    If P2(1) > bonusFoulNum - 1 And H <= 4 Or P2(1) > 2 And H > 4 Then 
+    If P2(1) > bonusFoulNum - 1 And H <= 4 Or P2(1) > 2 And H > 4 Then
         Color 0, 2
         Locate , 29: Print "BONUS"
         Color 7, 0
@@ -3278,7 +3278,7 @@ Sub SCOREBOARD ()
     Next I1
 
     Color 9, 0
-    For I = 1 To 9: 
+    For I = 1 To 9:
         Locate 14 + I, 39: Print Chr$(186)
     Next
 
@@ -4253,7 +4253,7 @@ Sub LINEUPS ()
 
     Color 14
     Print "# NAME         PS GP MG FG 3FG %3A FT  ORB  DRB  A  S  B CX CN PT F  FC  PPG"
-    
+
     Locate 3, 1
 
     For R1 = 0 To 14
@@ -4402,13 +4402,13 @@ End Sub
 '----------------------------------------
 '     CheckGameShotClock Subroutine
 '----------------------------------------
-'This subroutine checks if either the game 
+'This subroutine checks if either the game
 'clock and shot clock have expired, and
 'zeros them out if so. UPDATESCREEN is
 'called to update the clock on the board.
 Sub CheckGameShotClock ()
 
-    If gameClock! <= .001 Then 
+    If gameClock! <= .001 Then
         timeElapsed! = gameClock!
         Call AdjustPlayTime
         gameClock! = 0
@@ -4562,7 +4562,7 @@ End Sub
 '        UPDATESCREEN Subroutine
 '----------------------------------------
 'This subroutine refreshes all the values
-'for the main screen, including the 
+'for the main screen, including the
 'scoreboard, team options and rosters.
 'The frame will have already been drawn
 'by the SCOREBOARD routine.
@@ -4588,10 +4588,10 @@ Sub UPDATESCREEN ()
     If H > 4 Then Locate , 35: Print Using "OVERTIME #"; H - 4
 
     'Color 14, 0
-    
+
     'Score Team 1
     Locate 4, 60: Print Using "###"; score(1, 0)
-    
+
     'TO / RB / TF
     Color 7
     Locate 3, 35: Print Using "##  "; turnovers(0);
@@ -4602,13 +4602,13 @@ Sub UPDATESCREEN ()
     Color 12: Print "TF  ";: Color 7: Print Using "##"; P2(1);
 
     'Bonus
-    If P2(0) > bonusFoulNum - 1 And H <= 4 Or P2(0) > 2 And H > 4 Then 
+    If P2(0) > bonusFoulNum - 1 And H <= 4 Or P2(0) > 2 And H > 4 Then
         Color 0, 2
         Locate , 46: Print "BONUS";
         Color 7, 0
     End If
 
-    If P2(1) > bonusFoulNum - 1 And H <= 4 Or P2(1) > 2 And H > 4 Then 
+    If P2(1) > bonusFoulNum - 1 And H <= 4 Or P2(1) > 2 And H > 4 Then
         Color 0, 2
         Locate , 29: Print "BONUS";
         Color 7, 0
@@ -4624,7 +4624,7 @@ Sub UPDATESCREEN ()
     Locate 6, 37: Print Using " :##"; shotClock
 
     'If no shot clock, or shot clock expired
-    If gameClock! < 25 And shotClock >= gameClock! Or H > 4 And gameClock! = 300 Then 
+    If gameClock! < 25 And shotClock >= gameClock! Or H > 4 And gameClock! = 300 Then
         Locate 6, 37: Print " :  "
     End If
 
@@ -5338,9 +5338,9 @@ End Sub
 '----------------------------------------
 'This subroutine prompts the user in ORDER
 'to determine which teams to save satts For
-'(autoplay will always save both teams). 
-'It also updates the GAME82 progress file, 
-'since at this point only can the game be 
+'(autoplay will always save both teams).
+'It also updates the GAME82 progress file,
+'since at this point only can the game be
 'considered fully complete.
 Sub SAVESTATS ()
 
@@ -5415,8 +5415,8 @@ End Sub
 '----------------------------------------
 '      COMPILESTATFILES Subroutine
 '----------------------------------------
-'This subroutine updates the various stat 
-'files for the corresponding team based on 
+'This subroutine updates the various stat
+'files for the corresponding team based on
 'the stats generated for a completed game.
 Sub COMPILESTATFILES (compileOpt)
 
@@ -5713,7 +5713,7 @@ End Sub
 '----------------------------------------
 '       ChooseGameTeam Subroutine
 '----------------------------------------
-'This subroutine provides interface for 
+'This subroutine provides interface for
 'choosing a team for the game
 Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, P9)
 
@@ -5783,7 +5783,7 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, P9)
 
                         Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$ For Random As #5 Len = TEAM_SIZE_BYTES
 
-                        fileLength& = LOF(1)
+                        fileLength& = LOF(5)
 
                         Field #5, 15 As Q$(0)
 
@@ -5853,8 +5853,6 @@ End Sub
 'the disk ID.
 Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%, P9)
 
-    Dim fileLength&
-
     If numberTeams > 0 Then
 
         SELECTION% = 1
@@ -5882,7 +5880,12 @@ Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%,
 
         If ExitCode% <> 27 Then
             selectedIdx = teamIndex%(SELECTION%)
+
+            'Locate 2, 33
+            'Color 31: Print "LOADING..."
+
             Call ReadGameTeam(yearNumber$, teamName$, selectedIdx, P9)
+
         End If
 
     End If
@@ -5963,7 +5966,7 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, P9)
     For I = 0 To 14
 
         If plyrRat_GAME(P9, I, 16) < 0 And plyrRat_GAME(P9, I, 17) < 0 Then
-        
+
             gamesPlayed = plyrRat_GAME(P9, I, 16) / plyrRat_GAME(P9, I, 0)
             minsPerGame! = plyrRat_GAME(P9, I, 17) / plyrRat_GAME(P9, I, 1)
 
@@ -8165,3 +8168,4 @@ Sub CheckRecords ()
     Close #3
 
 End Sub
+
