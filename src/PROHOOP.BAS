@@ -188,7 +188,7 @@ Sub PROHOOP
             Locate 7, 2: Color 14
             Print "(6) ";: Color 15: Print "LOCATION: "; location$(gameLoc)
             Locate 8, 2: Color 14
-            Print "(7) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#"; pbpDelay!
+            Print "(7) ";: Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#"; pbpDelay!
             Locate 9, 2: Color 14
             Print "(8) ";: Color 15: Print "START GAME"
             Locate 10, 2: Color 14
@@ -529,9 +529,14 @@ Sub PROHOOP
     X = 0
 
     U$ = "END OF QUARTER!"
+
     Select Case pbpOpt
-        Case 0: Color 7, 0: Call WINDEX: Print U$
-        Case 1: If pbpDelay! > 0 Then Call WINDEX: Print U$ ': Call DELAY
+        Case 0:
+            Color 7, 0
+            Call WINDEX
+            Print U$
+        Case 1:
+            If pbpDelay! > 0 Then Call WINDEX: Print U$ ': Call DELAY
     End Select
 
     If H = 3 Then
@@ -539,8 +544,14 @@ Sub PROHOOP
         U$ = "HALFTIME!"
 
         Select Case pbpOpt
-            Case 0: Color 7, 0: Call WINDEX: Print U$
-            Case 1: Call WINDEX: Print U$: Call DELAY
+            Case 0:
+                Color 7, 0
+                Call WINDEX
+                Print U$
+            Case 1:
+                Call WINDEX
+                Print U$
+                Call DELAY
         End Select
 
         If Not (autoPlay = 1 And playerOpt = 2) Then
@@ -599,22 +610,32 @@ Sub PROHOOP
     Call SCOREBOARD
 
     If H = 5 Then
+
         U$ = "END OF REGULATION"
         Select Case pbpOpt
-            Case 0: Color 7, 0: Call WINDEX: Print U$
-            Case 1: If pbpDelay! > 0 Then Call WINDEX: Print U$ ': Call DELAY
+            Case 0:
+                Color 7, 0
+                Call WINDEX
+                Print U$
+            Case 1:
+                If pbpDelay! > 0 Then Call WINDEX: Print U$ ': Call DELAY
         End Select
+
     End If
 
     Locate 2, 31: Print "END OF REGULATION"
 
     If score(0, 0) = score(1, 0) Then
+
         U$ = "OVERTIME !!!"
+
         Select Case pbpOpt
             Case 0:
-                Color 7, 0: Call WINDEX: Print U$
+                Color 7, 0
+                Call WINDEX: Print U$
             Case 1:
-                Call WINDEX: Print U$: Call DELAY
+                Call WINDEX: Print U$
+                Call DELAY
         End Select
 
         timeouts(0) = timeouts(0) + 1
@@ -731,10 +752,8 @@ Sub PROHOOP
     D6 = 0
     P3 = 0
 
+    'Random ball carrier
     B = Int(Rnd(1) * 5)
-
-    '--- comparing here
-
     Call d100(R0)
 
     If playerOpt = 0 And coachOpt = 1 Or playerOpt = 1 And D = compTeam And coachOpt = 1 Or playerOpt = 1 And P = compTeam Or playerOpt = 2 Then
@@ -743,43 +762,43 @@ Sub PROHOOP
 
     Else
 
-        If R0 <= 40 Then
+        If R0 > 40 Then
+            'random ball carrier
+            B = Int(Rnd(1) * 5)
+        Else
 
             Do
 
                 If pbpDelay! <> 0 Then
 
                     If pbpOpt = 0 Then
-                        U$ = "PASS TO CHOICE (0-4)": Call PBP
+                        U$ = "PASS TO CHOICE (0-4)"
+                        Call PBP
                     Else
-                        pbpOpt = 1
-
+                        'pbpOpt = 1
                         If Not (autoPlay = 1 And playerOpt = 2 Or pbpDelay! = 0) Then
                             Call WINDEX
                             Print "PASS TO CHOICE (0-4)"
                             Call PBP
                         End If
-
-                        Do
-                            I$ = GetKeyPress$
-
-                            If UCase$(I$) = "T" Then Call TICKER
-                            If UCase$(I$) = "S" Then Call SCOUTREPORT
-                            If UCase$(I$) = "Q" Then Run "HELLO.EXE"
-                            If UCase$(I$) = "Z" Or I$ = "/" Then Call CHANGESTRATEGY(I$)
-
-                        Loop Until UCase$(I$) <> "T" And UCase$(I$) <> "S" And UCase$(I$) <> "Q" And UCase$(I$) <> "Z" And UCase$(I$) <> "/"
-
-                        B = Val(I$)
-
                     End If
+
+                    Do
+                        I$ = GetKeyPress$
+
+                        If UCase$(I$) = "T" Then Call TICKER
+                        If UCase$(I$) = "S" Then Call SCOUTREPORT
+                        If UCase$(I$) = "Q" Then Run "HELLO.EXE"
+                        If UCase$(I$) = "Z" Or I$ = "/" Then Call CHANGESTRATEGY(I$)
+
+                    Loop Until UCase$(I$) <> "T" And UCase$(I$) <> "S" And UCase$(I$) <> "Q" And UCase$(I$) <> "Z" And UCase$(I$) <> "/"
+
+                    B = Val(I$)
 
                 End If
 
             Loop Until B >= 0 And B <= 4
 
-        Else
-            B = Int(Rnd(1) * 5)
         End If
 
     End If
@@ -2978,5 +2997,4 @@ Sub PROHOOP
     End If
 
 End Sub
-
 

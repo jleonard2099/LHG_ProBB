@@ -18,7 +18,8 @@ Sub INFO ()
     Print Tab(80);
     Locate , 1
     Print "(C) LANCE HAFFNER 1986-2000"; Tab(70); Left$(Time$, 5);
-    Locate 3, 1: Color , 0
+    Locate 3, 1
+    Color , 0
 
 End Sub
 
@@ -420,7 +421,7 @@ Sub PBP ()
 
     If UCase$(i$) = "Q" Then End
 
-    'Positive delay or Verbose
+    'Positive delay or Verbose PBP
     If pbpDelay! > 0 And pbpOpt = 0 Then
 
         U$ = PadRight$(U$, 38)
@@ -435,7 +436,9 @@ Sub PBP ()
         If nbrLines = 6 Then F1$ = U$: VG(6) = tmRat_GAME(P, 33): VH(6) = tmRat_GAME(P, 34)
         If nbrLines = 7 Then G1$ = U$: VG(7) = tmRat_GAME(P, 33): VH(7) = tmRat_GAME(P, 34)
         If nbrLines = 8 Then H1$ = U$: VG(8) = tmRat_GAME(P, 33): VH(8) = tmRat_GAME(P, 34)
+
         If nbrLines > 8 Then
+
             A1$ = B1$
             B1$ = C1$
             C1$ = D1$
@@ -444,12 +447,15 @@ Sub PBP ()
             F1$ = G1$
             G1$ = H1$
             H1$ = U$
+
             For I = 1 To 7
                 VG(I) = VG(I + 1)
                 VH(I) = VH(I + 1)
             Next
+
             VG(8) = tmRat_GAME(P, 33)
             VH(8) = tmRat_GAME(P, 34)
+
         End If
 
         nbrLines = nbrLines + 1
@@ -464,8 +470,7 @@ Sub PBP ()
         Color VG(8), VH(8): Print Left$(H1$, 38)
 
         Color 15, 0
-
-        _Delay pbpDelay!
+        Call DELAY
 
     End If
 
@@ -6025,7 +6030,31 @@ Sub CheckRecords ()
     SITE$(0) = "AT"
     SITE$(1) = "VS."
 
-    If Not _FileExists(diskPaths$(1) + "RECORDS.GAM") Then
+    If  _FileExists(diskPaths$(1) + "RECORDS.GAM") Then
+
+        Open diskPaths$(1) + "RECORDS.GAM" For Input As #2
+
+        For I = 0 To 48
+            For I1 = 0 To 2
+                Input #2, indRecords!(I, I1)
+            Next
+            For I1 = 0 To 4
+                Input #2, RC$(I, I1)
+            Next
+        Next
+
+        For I = 0 To 125
+            For I1 = 0 To 2
+                Input #2, TREC(I, I1)
+            Next
+            For I1 = 0 To 3
+                Input #2, TRC$(I, I1)
+            Next
+        Next
+
+        Close #2
+    Else
+
         TREC(2, 0) = 999
         TREC(4, 0) = 999
         TREC(7, 0) = 999
@@ -6067,30 +6096,6 @@ Sub CheckRecords ()
         TREC(120, 0) = 999
         TREC(123, 0) = 999
         TREC(125, 0) = 999
-
-    Else
-
-        Open diskPaths$(1) + "RECORDS.GAM" For Input As #2
-
-        For I = 0 To 48
-            For I1 = 0 To 2
-                Input #2, indRecords!(I, I1)
-            Next
-            For I1 = 0 To 4
-                Input #2, RC$(I, I1)
-            Next
-        Next
-
-        For I = 0 To 125
-            For I1 = 0 To 2
-                Input #2, TREC(I, I1)
-            Next
-            For I1 = 0 To 3
-                Input #2, TRC$(I, I1)
-            Next
-        Next
-
-        Close #2
 
     End If
 

@@ -522,7 +522,7 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
         Locate 5, 2: Color 14: Print "(4) ";: Color 15: Print "3-POINT SHOT: "; yesNo$(scheduleNG%(gameIndex%, 3))
         Locate 6, 2: Color 14: Print "(5) ";: Color 15: Print "SHOT CLOCK "; sClockOpt$(scheduleNG%(gameIndex%, 7))
         Locate 7, 2: Color 14: Print "(6) ";: Color 15: Print "HOME COURT ADVANTAGE: "; location$(scheduleNG%(gameIndex%, 2))
-        Locate 8, 2: Color 14: Print "(7) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; scheduleNG%(gameIndex%, 4) / 10
+        Locate 8, 2: Color 14: Print "(7) ";: Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; scheduleNG%(gameIndex%, 4) / 10
         Locate 9, 2: Color 14: Print "(8) ";: Color 15: Print playoffGame$(scheduleNG%(gameIndex%, 5))
         Locate 10, 2: Color 14: Print "(9) ";: Color 15: Print "HUMAN COACHES WILL: "; coachMode$(scheduleNG%(gameIndex%, 9))
         Locate 11, 2: Color 14: Print "(A) ";: Color 15: Print "GAME DATE (XX-XX-XX) "; DT$; "   "
@@ -750,7 +750,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                         Loop Until C$ = "0" Or C$ = "1"
 
                         Print
-                        Input "ENTER DISPLAY PAUSE FOR THESE GAMES "; displayPause!
+                        Input "ENTER PLAY-BY-PLAY DELAY FOR THESE GAMES "; displayPause!
 
                     End If
 
@@ -1101,7 +1101,7 @@ Sub ChangeGlobalSettings ()
         Print Tab(30); "GLOBAL SETTINGS FOR SCHEDULE"
 
         Locate 3, 2: Color 14: Print "(1) ";: Color 15: Print "TYPE OF GAME: "; playMode$(U5%)
-        Locate 4, 2: Color 14: Print "(2) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; displayPause!
+        Locate 4, 2: Color 14: Print "(2) ";: Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; displayPause!
         Locate 5, 2: Color 14: Print "(3) ";: Color 15: Print "HOME COURT ADVANTAGE: "; location$(LO%)
         Locate 6, 2: Color 14: Print "(4) ";: Color 15: Print "SHOT CLOCK: "; sClockOpt$(SC%)
         Locate 7, 2: Color 14: Print "(5) ";: Color 15: Print "HUMAN PLAYERS: "; coachMode$(coachOpt)

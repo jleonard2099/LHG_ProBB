@@ -12,37 +12,51 @@ Sub GameRecords (menuChoice)
 
     Shared indRecCategory$(), teamRecCategory$()
 
-    Open diskPaths$(1) + "RECORDS.GAM" For Input As #1
+    If Not _FileExists (diskPaths$(1) + "RECORDS.GAM") Then
 
-    For I = 0 To 48
-        For I1 = 0 To 2
-            Input #1, allRecords!(I, I1)
+        MsgText$ = "UNABLE TO LOCATE RECORDS PRESS ANY KEY TO RETURN TO MAIN MENU"
+        BoxWidth = 24
+        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+        I$ = GetKeyPress$
+        Call CSMsgBox("", 0, Pass)
+    
+    Else
+
+        Open diskPaths$(1) + "RECORDS.GAM" For Input As #1
+
+        For I = 0 To 48
+            For I1 = 0 To 2
+                Input #1, allRecords!(I, I1)
+            Next
+            For I1 = 0 To 4
+                Input #1, indRecCategory$(I, I1)
+            Next
         Next
-        For I1 = 0 To 4
-            Input #1, indRecCategory$(I, I1)
+
+        For I = 0 To 125
+            For I1 = 0 To 2
+                Input #1, teamRecords!(I, I1)
+            Next
+            For I1 = 0 To 3
+                Input #1, teamRecCategory$(I, I1)
+            Next
         Next
-    Next
+        Close #1
 
-    For I = 0 To 125
-        For I1 = 0 To 2
-            Input #1, teamRecords!(I, I1)
-        Next
-        For I1 = 0 To 3
-            Input #1, teamRecCategory$(I, I1)
-        Next
-    Next
-    Close #1
+        Select Case menuChoice
 
-    Select Case menuChoice
+            Case 1:
+                Call ViewGameRecords
 
-        Case 1:
-            Call ViewGameRecords
+            Case 2:
+                Call PrintGameRecords
 
-        Case 2:
-            Call PrintGameRecords
+        End Select
 
-    End Select
-
+    End If
+    
 End Sub
 
 

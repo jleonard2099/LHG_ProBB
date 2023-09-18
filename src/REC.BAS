@@ -106,7 +106,8 @@ End Sub
 '----------------------------------------
 '     ViewSeasonRecords Subroutine
 '----------------------------------------
-'... explain here ...
+'This subroutine assists the usere with
+'viewing the records on the default display
 Sub ViewSeasonRecords ()
 
     Shared teamRecords$(), indRecords$()
@@ -449,7 +450,8 @@ End Sub
 '----------------------------------------
 '     PrintSeasonRecords Subroutine
 '----------------------------------------
-'... explain here ...
+'This subroutine assists the usere with
+'viewing the records on the default printer
 Sub PrintSeasonRecords ()
 
     Shared teamRecords$(), indRecords$()
