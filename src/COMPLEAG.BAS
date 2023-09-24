@@ -171,9 +171,9 @@ Function FindStatsLeague% (statFile$, numberGames%, fullWins, fullLosses)
 
         Input #1, numberGames%
 
-        For I = 1 To 100: Input #1, O%(I): Next I
-        For I = 1 To 100: Input #1, O$(I): Next I
-        For I = 1 To 100: Input #1, leagueT%(I): Next I
+        For I = 1 to NUM_STATRECORDS: Input #1, O%(I): Next I
+        For I = 1 to NUM_STATRECORDS: Input #1, O$(I): Next I
+        For I = 1 to NUM_STATRECORDS: Input #1, leagueT%(I): Next I
 
         Close #1
 
@@ -403,12 +403,12 @@ Sub CheckStatsPro (TN$)
         End If
 
         'Steals
-        If leagS!(X, 7) > LD!(100, 1) Then
+        If leagS!(X, 7) > LD!(NUM_STATRECORDS, 1) Then
 
-            LD!(100, 1) = leagS!(X, 7)
-            LD!(100, 2) = 0
-            Z2$(100) = N$(X)
-            Z3$(100) = TN$
+            LD!(NUM_STATRECORDS, 1) = leagS!(X, 7)
+            LD!(NUM_STATRECORDS, 2) = 0
+            Z2$(NUM_STATRECORDS) = N$(X)
+            Z3$(NUM_STATRECORDS) = TN$
 
             For Z = 91 To 99
                 For Z1 = Z + 1 To 100

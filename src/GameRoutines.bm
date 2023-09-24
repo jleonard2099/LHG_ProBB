@@ -88,6 +88,7 @@ Sub InitVar ()
     endAllGames = 0
     endGame = 0
     F3 = 0
+    gameLoc = 0
     halfTime = 0
     JY = 0
     P = 0
@@ -108,7 +109,6 @@ Sub InitVar ()
     FB% = 0
     FT% = 0
     GF% = 0
-    HH% = 0
     NM% = 0
     OX% = 0
     OY% = 0
@@ -2432,6 +2432,8 @@ Sub PlayItSafe ()
 
             End If
 
+            'Call pbplog(6469)
+
         Loop Until P6 <> P5(6) Or UCase$(I$) = "Z"
 
     End If
@@ -2570,6 +2572,8 @@ Sub PlayerCalcs ()
     M3 = 0
     M4 = 0
 
+    'This translates close to, but not exactly:
+    'If human player on offense and X = 50
     If Not (playerOpt = 1 And P9 = compTeam And X = 50 Or playerOpt = 2 And P9 = P And X = 50) Then
 
         For I1 = 0 To 14
@@ -2612,29 +2616,53 @@ Sub CreditAssists ()
 
     Call d100(R0)
 
-    If R0 > F7%(P, 7) Then
+    If R0 <= F7%(P, 7) Then
 
-        1055 '
-        R0 = Int(Rnd(1) * F5%(P, 2)) + 1
+        iterations = 0
 
-        W5 = 0
+        Do
+            skipM8% = 0
 
-        For M8 = 0 To 4
-            W5 = W5 + A!(P, B1!(P, M8), 25)
-            If R0 <= W5 Then 1059
-        Next M8
+            'W5 = total player assists
+            W5 = 0
 
-        M8 = Int(Rnd(1) * 5)
+            R1 = Int(Rnd(1) * F5%(P, 2)) + 1
 
-        1059 '
-        W5 = M8
-        Locate 7, 25
+            For M8 = 0 To 4
 
-        If players_GAME$(P, B1!(P, B), 0) <> players_GAME$(P, B1!(P, M8), 0) Then
-            A!(P, B1!(P, M8), 14) = A!(P, B1!(P, M8), 14) + 1
-        Else
-            GoTo 1055
-        End If
+                W5 = W5 + A!(P, B1!(P, M8), 25)
+
+                If R1 <= W5 Then
+                    skipM8% = 1
+                    Exit For
+                End If
+
+            Next M8
+
+            If skipM8% = 0 Then M8 = Int(Rnd(1) * 5)
+
+            W5 = M8
+            Locate 7, 25
+
+            If players_GAME$(P, B1!(P, B), 0) <> players_GAME$(P, B1!(P, M8), 0) Then
+                A!(P, B1!(P, M8), 14) = A!(P, B1!(P, M8), 14) + 1
+            Else
+                'Call pbplog(6739)
+            End If
+
+            iterations = iterations + 1
+
+            '-- Currently I'm preventing an infinite loop by counting iterations
+            '-- Infinite loops happen very rarely: about 0.5% of games. However,
+            '-- regardless of what causes the issue, there's no reason it should
+            '-- take more than 5 passes through this. (there are 5 ball carriers)
+
+            '-- In the future I hope to find the root cause of the loops.
+            '-- Currently I know it's because this loop condition below is not met.
+            '-- That is, M8 stays as value 0 when the ball carrier is 0, so the
+            '-- player names are never different.
+
+        Loop Until players_GAME$(P, B1!(P, B), 0) <> players_GAME$(P, B1!(P, M8), 0) Or iterations = 5
 
     End If
 
@@ -2799,6 +2827,8 @@ Sub Choices ()
                 'Exit Do
             End If
 
+            'Call pbplog(6840)
+
         Loop Until Not (P3 = 1 And timeouts(P) <= 0 Or P3 = 1 And P = compTeam And playerOpt = 1)
 
         Call CLEARPBPBOX
@@ -2830,6 +2860,7 @@ Sub Substitutions ()
         H1$ = ""
 
         If playerOpt = 2 Then
+            'Computer vs. Computer
             P9 = 0
             Call PlayerCalcs
             P9 = 1
@@ -2837,6 +2868,7 @@ Sub Substitutions ()
         End If
 
         If playerOpt = 1 Then
+            'Computer vs. Human
             P9 = compTeam
             Call PlayerCalcs
         End If
@@ -2846,7 +2878,7 @@ Sub Substitutions ()
         Call CLEARPBPBOX
 
         If playerOpt = 2 Then
-
+            'Computer vs. Computer
             S2 = 0
             P9 = P
             C1 = 2
@@ -2856,6 +2888,7 @@ Sub Substitutions ()
 
         Else
 
+            'At least 1 human
             Call SCOREBOARD
             Locate 10, 1
             Color 15, 0
@@ -3046,10 +3079,10 @@ Sub LOADSTATS ()
 
             Input #1, nbrStats
 
-            For I1 = 1 To 100: Input #1, O%(I1): Next
-            For I1 = 1 To 100: Input #1, HO$(I1): Next
-            For I1 = 1 To 100: Input #1, HT%(I1): Next
-            For I1 = 1 To 100: Input #1, HO$(I1): Next
+            For I1 = 1 to NUM_STATRECORDS: Input #1, O%(I1): Next
+            For I1 = 1 to NUM_STATRECORDS: Input #1, HO$(I1): Next
+            For I1 = 1 to NUM_STATRECORDS: Input #1, HT%(I1): Next
+            For I1 = 1 to NUM_STATRECORDS: Input #1, HO$(I1): Next
 
             Close #1
 
@@ -3831,7 +3864,9 @@ Sub SETUPRATINGS ()
 
                 Loop Until I1 < 0
 
-                For I1 = 0 To 14: A!(I, I1, 3) = A!(I, I1, 3) / 100 * TX: Next
+                For I1 = 0 To 14:
+                    A!(I, I1, 3) = A!(I, I1, 3) / 100 * TX
+                Next
 
             End If
 
@@ -4300,7 +4335,9 @@ Sub LINEUPS ()
     Color 9, 0
     Print String$(27, 205); Chr$(203); String$(51, 205)
 
-    For R1 = 1 To 7: Locate R1 + 18, 28: Print Chr$(186);: Next
+    For R1 = 1 To 7:
+        Locate R1 + 18, 28: Print Chr$(186);
+    Next
 
 End Sub
 
@@ -5429,8 +5466,6 @@ Sub COMPILESTATFILES (compileOpt)
 
     Cls
 
-    HH% = gameLoc
-
     For PX = 0 To 1
 
         For J = 0 To 14
@@ -5590,87 +5625,88 @@ Sub COMPILESTATFILES (compileOpt)
 
             Close #2
 
-            Y% = 0
+            numberGames = 0
 
             If _FileExists(diskPaths$(1) + statFile$ + "S") Then
 
                 Open diskPaths$(1) + statFile$ + "S" For Input As #3
 
-                Input #3, Y%
+                Input #3, numberGames
 
-                For I = 1 To 100: Input #3, O%(I): Next I
-                For I = 1 To 100: Input #3, HO$(I): Next I
-                For I = 1 To 100: Input #3, HT%(I): Next I
-                For I = 1 To 100: Input #3, H$(I): Next I
+                For I = 1 to NUM_STATRECORDS: Input #3, O%(I): Next I
+                For I = 1 to NUM_STATRECORDS: Input #3, HO$(I): Next I
+                For I = 1 to NUM_STATRECORDS: Input #3, HT%(I): Next I
+                For I = 1 to NUM_STATRECORDS: Input #3, H$(I): Next I
 
                 Close #3
 
             End If
 
-            If Y% < 100 Then Y% = Y% + 1
+            If numberGames < NUM_STATRECORDS Then numberGames = numberGames + 1
 
-            Select Case HH%
+            Select Case gameLoc
+
                 Case 2
                     Select Case TG!
                         Case Is < 14500
-                            H$(Y%) = "N"
+                            H$(numberGames) = "N"
                         Case 14501 To 16000
-                            H$(Y%) = "N1"
+                            H$(numberGames) = "N1"
                         Case 16001 To 17500
-                            H$(Y%) = "N2"
+                            H$(numberGames) = "N2"
                         Case 17501 To 19000
-                            H$(Y%) = "N3"
+                            H$(numberGames) = "N3"
                         Case 19001 To 20500
-                            H$(Y%) = "N4"
+                            H$(numberGames) = "N4"
                     End Select
 
                 Case Is = teamIdx
                     Select Case TG!
                         Case Is < 14500
-                            H$(Y%) = "H"
+                            H$(numberGames) = "H"
                         Case 14501 To 16000
-                            H$(Y%) = "H1"
+                            H$(numberGames) = "H1"
                         Case 16001 To 17500
-                            H$(Y%) = "H2"
+                            H$(numberGames) = "H2"
                         Case 17501 To 19000
-                            H$(Y%) = "H3"
+                            H$(numberGames) = "H3"
                         Case 19001 To 20500
-                            H$(Y%) = "H4"
+                            H$(numberGames) = "H4"
                     End Select
 
                 Case Is <> teamIdx
                     Select Case TG!
                         Case Is < 14500
-                            H$(Y%) = "V"
+                            H$(numberGames) = "V"
                         Case 14501 To 16000
-                            H$(Y%) = "V1"
+                            H$(numberGames) = "V1"
                         Case 16001 To 17500
-                            H$(Y%) = "V2"
+                            H$(numberGames) = "V2"
                         Case 17501 To 19000
-                            H$(Y%) = "V3"
+                            H$(numberGames) = "V3"
                         Case 19001 To 20500
-                            H$(Y%) = "V4"
+                            H$(numberGames) = "V4"
                     End Select
 
             End Select
 
-            O%(Y%) = score(teamIdx, 0)
-            HO$(Y%) = gameTeams$(1 - teamIdx)
-            HT%(Y%) = score(1 - teamIdx, 0)
+            O%(numberGames) = score(teamIdx, 0)
+            HO$(numberGames) = gameTeams$(1 - teamIdx)
+            HT%(numberGames) = score(1 - teamIdx, 0)
 
             Open diskPaths$(1) + statFile$ + "S" For Output As #4
 
-            Print #4, Y%
+            Print #4, numberGames
 
-            For I = 1 To 100: Print #4, O%(I): Next I
-            For I = 1 To 100: Print #4, HO$(I): Next I
-            For I = 1 To 100: Print #4, HT%(I): Next I
-            For I = 1 To 100: Print #4, H$(I): Next I
+            For I = 1 to NUM_STATRECORDS: Print #4, O%(I): Next I
+            For I = 1 to NUM_STATRECORDS: Print #4, HO$(I): Next I
+            For I = 1 to NUM_STATRECORDS: Print #4, HT%(I): Next I
+            For I = 1 to NUM_STATRECORDS: Print #4, H$(I): Next I
 
             Close #4
 
             'Reset arrays for next iteration
-            For I = 1 To 100:
+            For I = 1 to NUM_STATRECORDS:
                 O%(I) = 0
                 HT%(I) = 0
                 HO$(I) = ""
@@ -5709,8 +5745,16 @@ End Sub
 'issues are happening in a game.
 Sub pbplog (lineNumber)
 
-    Print #7, "Called from line "; lineNumber
-    Print #7,
+    Print #11, "Called from line "; lineNumber
+
+    If _FileExists("GAME82") Then
+        Print #11, gameTeams$(0) + " vs. " + gameTeams$(1)
+    End If
+
+    Print #11, "P     B           = "; P; B
+    Print #11, "players (X, B, 0) = "; players_GAME$(P, B1!(P, B), 0)
+    Print #11, "players (X, M8, 0) = "; players_GAME$(P, B1!(P, M8), 0)
+    Print #11,
 
 End Sub
 
@@ -6030,7 +6074,7 @@ Sub CheckRecords ()
     SITE$(0) = "AT"
     SITE$(1) = "VS."
 
-    If  _FileExists(diskPaths$(1) + "RECORDS.GAM") Then
+    If _FileExists(diskPaths$(1) + "RECORDS.GAM") Then
 
         Open diskPaths$(1) + "RECORDS.GAM" For Input As #2
 

@@ -18,10 +18,10 @@ Sub COMPARE ()
     Shared compareA$(), compareT$()
     Shared playerNames$()
 
-    Dim HP%(100), OP%(100)
+    Dim HP%(NUM_STATRECORDS), OP%(NUM_STATRECORDS)
 
     Dim comparePS$(15)
-    Dim HP$(100), OP$(100)
+    Dim HP$(NUM_STATRECORDS), OP$(NUM_STATRECORDS)
 
     Do
 
@@ -88,10 +88,10 @@ Sub COMPARE ()
 
                 Input #2, Y
 
-                For J = 1 To 100: Input #2, OP%(J): Next
-                For J = 1 To 100: Input #2, OP$(J): Next
-                For J = 1 To 100: Input #2, HP%(J): Next
-                For J = 1 To 100: Input #2, HP$(J): Next
+                For J = 1 to NUM_STATRECORDS: Input #2, OP%(J): Next
+                For J = 1 to NUM_STATRECORDS: Input #2, OP$(J): Next
+                For J = 1 to NUM_STATRECORDS: Input #2, HP%(J): Next
+                For J = 1 to NUM_STATRECORDS: Input #2, HP$(J): Next
 
                 Close #2
 

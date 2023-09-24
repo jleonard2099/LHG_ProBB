@@ -48,7 +48,7 @@ Sub LoadTeamStats (statFile$, totalGames%)
 
     Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, Z%
 
-    Dim P%(0 To 100)
+    Dim P%(0 to NUM_STATRECORDS)
 
     Shared statO%(), statsL%()
 
@@ -59,7 +59,6 @@ Sub LoadTeamStats (statFile$, totalGames%)
     Shared values!(), statW0!(), statW1!()
 
     ' *** READ IN TEAM STATS ***
-
     P%(0) = 0
     P%(1) = 0
 
@@ -77,19 +76,19 @@ Sub LoadTeamStats (statFile$, totalGames%)
 
     Input #1, totalGames%
 
-    For I = 1 To 100: 
+    For I = 1 to NUM_STATRECORDS: 
         Input #1, statO%(I)
     Next I
 
-    For I = 1 To 100: 
+    For I = 1 to NUM_STATRECORDS: 
         Input #1, O$(I)
     Next I
 
-    For I = 1 To 100: 
+    For I = 1 to NUM_STATRECORDS: 
         Input #1, statsL%(I)
     Next I
 
-    For I = 1 To 100: 
+    For I = 1 to NUM_STATRECORDS: 
         Input #1, statsH$(I)
     Next I
 

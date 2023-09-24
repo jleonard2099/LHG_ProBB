@@ -86,7 +86,7 @@ Sub UpdateLeagueStandings (league$)
     Shared O$(), statsH$()
     Shared TML$(), strZ1$()
 
-    Dim statsT%(100)
+    Dim statsT%(NUM_STATRECORDS)
 
     Shared div1$, div2$, div3$, div4$, league$
 
@@ -115,10 +115,10 @@ Sub UpdateLeagueStandings (league$)
 
                 Input #2, XX%
 
-                For J = 1 To 100: Input #2, statO%(J): Next
-                For J = 1 To 100: Input #2, O$(J): Next
-                For J = 1 To 100: Input #2, statsT%(J): Next
-                For J = 1 To 100: Input #2, statsH$(J): Next
+                For J = 1 to NUM_STATRECORDS: Input #2, statO%(J): Next
+                For J = 1 to NUM_STATRECORDS: Input #2, O$(J): Next
+                For J = 1 to NUM_STATRECORDS: Input #2, statsT%(J): Next
+                For J = 1 to NUM_STATRECORDS: Input #2, statsH$(J): Next
 
                 Close #2
 

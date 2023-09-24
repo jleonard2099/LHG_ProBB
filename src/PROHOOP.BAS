@@ -10,8 +10,6 @@ Sub PROHOOP
 
     _Title "Basketball: The Pro Game v" + GAME_VERSION$ + " - HOOPS!"
 
-    'Open "pbplog" For Output As #7
-
     Shared scheduleFile$
     Shared tickerStart
 
@@ -124,6 +122,10 @@ Sub PROHOOP
 
         Close #6
 
+        currGame = schedGame(0) + schedGame(2)
+
+        'Open "pbplog" + Str$(currGame) For Append As #11
+
         Open diskPaths$(0) + scheduleFile$ For Random As #7 Len = 48
 
         For X = 0 To 18
@@ -231,6 +233,7 @@ Sub PROHOOP
             'Locate , 2: Color 15: Print "       ABA USED A 30-SEC SHOT CLOCK THROUGH 1973-74";
 
             Do
+
                 Color 7
 
                 I$ = GetKeyPress$
@@ -389,13 +392,21 @@ Sub PROHOOP
 
         Case 1:
             compTeam = 0
+
         Case 2:
             playerOpt = 1
             compTeam = 1
+
         Case 3:
             playerOpt = 2
 
     End Select
+
+    'At this point, the value of playerOpt has been changed.
+    'It now represents the following values:
+    '   0 = Human
+    '   1 = Computer Team
+    '   2 = PC vs. PC
 
     Call LOADSTATS
 
@@ -424,7 +435,10 @@ Sub PROHOOP
     Call CheckGameClock
     Call RATINGTABLES
 
+
     250 '
+    'Call pbplog(1372)
+
     If H = 2 Then
         If JB = 0 Then
             JB = 1
@@ -453,10 +467,16 @@ Sub PROHOOP
 
     prevBall$ = ""
     If P = 1 Then
-        P = 0: D = 1: P9 = 0: C1 = 2
+        P = 0
+        D = 1
+        P9 = 0
+        C1 = 2
     Else
         'P = 0
-        P = 1: D = 0: P9 = 1: C1 = 2
+        P = 1
+        D = 0
+        P9 = 1
+        C1 = 2
     End If
 
     Call LastShot
@@ -501,14 +521,16 @@ Sub PROHOOP
         End If
     End If
 
-
     P9 = JB
     P = JB
 
     GoTo 300
 
     '----- NOODLE -----
+
     170 '
+    'Call pbplog(1464)
+
     gameClock! = 0
     TF(0) = TF(0) + P2(0)
     TF(1) = TF(1) + P2(1)
@@ -517,10 +539,12 @@ Sub PROHOOP
 
     ' *** ADJUST TIMEOUTS ***
     If H >= 4 Then
+
         For PG = 0 To 1
             If timeouts(PG) > 4 Then timeouts(PG) = 4
             If H > 4 Then timeouts(PG) = 3
         Next
+
     End If
 
     XS = 1
@@ -578,7 +602,9 @@ Sub PROHOOP
             If MJ = 50 Then
                 MJ = 0
                 F5%(I, 0) = 0
-                For I1 = 0 To 4: F5%(I, 0) = F5%(I, 0) + A!(I, B1!(I, I1), 17): Next I1
+                For I1 = 0 To 4:
+                    F5%(I, 0) = F5%(I, 0) + A!(I, B1!(I, I1), 17)
+                Next I1
             End If
 
         Next I
@@ -586,6 +612,7 @@ Sub PROHOOP
     End If
 
     If H < 5 And playerOpt <> 0 Then
+        'Call pbplog(1545)
         If playerOpt = 1 Then P9 = compTeam: Call COMPUTERSUBS
         If playerOpt = 2 Then P9 = 0: Call COMPUTERSUBS: P9 = 1: Call COMPUTERSUBS
     End If
@@ -597,10 +624,13 @@ Sub PROHOOP
         Call SCOREBOARD
 
         B = -1
+        'Call pbplog(1557)
         Call Substitutions
         gameClock! = 720
+
         Call UPDATESCREEN
 
+        'Call pbplog(1563)
         GoTo 250
 
     End If
@@ -611,7 +641,9 @@ Sub PROHOOP
 
     If H = 5 Then
 
+        'Call pbplog(1574)
         U$ = "END OF REGULATION"
+
         Select Case pbpOpt
             Case 0:
                 Color 7, 0
@@ -627,6 +659,7 @@ Sub PROHOOP
 
     If score(0, 0) = score(1, 0) Then
 
+        'Call pbplog(1592)
         U$ = "OVERTIME !!!"
 
         Select Case pbpOpt
@@ -645,12 +678,14 @@ Sub PROHOOP
         Call UPDATESCREEN
         B = -1
 
+        'Call pbplog(1611)
         Call Substitutions
 
         GoTo 250
 
     End If
 
+    'Call pbplog(1618)
     If Not (autoPlay = 1 And playerOpt = 2) Then
         I$ = GetKeyPress
     End If
@@ -676,6 +711,8 @@ Sub PROHOOP
         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
     End If
+
+    'Close #11
 
     If UCase$(I$) = "Y" Or (autoPlay = 1 And endAllGames <> 1) Then
 
@@ -707,7 +744,6 @@ Sub PROHOOP
 
     If shotClock > 0 And shotClock < SC(sClockVal) Then
         shotClock = shotClock - 5
-
     Else
 
         Select Case sClockVal
@@ -739,6 +775,8 @@ Sub PROHOOP
     '----- NOODLE -----
 
     350 '
+    'Call pbplog(1708)
+
     PASS% = PASS% + 1
     P6 = 0
     A4 = 0
@@ -753,8 +791,10 @@ Sub PROHOOP
     P3 = 0
 
     'Random ball carrier
-    B = Int(Rnd(1) * 5)
+    'B = Int(Rnd(1) * 5)
     Call d100(R0)
+
+    'Call pbplog(1727)
 
     If playerOpt = 0 And coachOpt = 1 Or playerOpt = 1 And D = compTeam And coachOpt = 1 Or playerOpt = 1 And P = compTeam Or playerOpt = 2 Then
 
@@ -812,12 +852,13 @@ Sub PROHOOP
         Select Case D2(D)
 
             Case 1, 4:
+
                 ' *** SHOT VS REG/TIGHT M-M ***
                 Select Case R0
 
                     Case 1, 2
-
                         X = 0
+                        'Call pbplog(1791)
                         GoTo 580
 
                     Case 3 To 30
@@ -825,21 +866,22 @@ Sub PROHOOP
                         Call ResetShotClock
                         Call UPDATESCREEN
                         X = 88
+                        'Call pbplog(1798)
                         GoTo 565
 
                     Case 31 To 30 + F7%(P, 1) + F7%(D, 2)
+                        'Call pbplog(1801)
                         GoTo 515
 
                     Case 30 + F7%(P, 1) + F7%(D, 2) To 1000
-
                         P9 = Int(Rnd(1) * 5)
 
                         If R0 <= 24 + F7%(P, 1) + F7%(D, 2) + A!(D, B1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
                             GoTo 513
                         Else
-                            R0 = Int(Rnd(1) * 1000) + 1
-
-                            If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
+                            R1 = Int(Rnd(1) * 1000) + 1
+                            'Call pbplog(1809)
+                            If (PASS% <= 3 Or PASS% > 4) And R1 <= 320 + ((JY - 89) * 10) Then 445
                             If PASS% = 4 Then 445
                             GoTo 437
                         End If
@@ -852,6 +894,7 @@ Sub PROHOOP
 
                     Case 1
                         X = 0
+                        'Call pbplog(1827)
                         GoTo 580
 
                     Case 2 To 10
@@ -859,9 +902,11 @@ Sub PROHOOP
                         Call ResetShotClock
                         Call UPDATESCREEN
                         X = 88
+                        'Call pbplog(1835)
                         GoTo 565
 
                     Case 10 To 10 + F7%(P, 1) + F7%(D, 2)
+                        'Call pbplog(1839)
                         GoTo 515
 
                     Case 10 + F7%(P, 1) + F7%(D, 2) To 1000
@@ -869,10 +914,11 @@ Sub PROHOOP
                         P9 = Int(Rnd(1) * 5)
 
                         If R0 <= 8 + F7%(P, 1) + F7%(D, 2) + A!(D, B1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
+                            'Call pbplog(1847)
                             GoTo 513
                         Else
                             R0 = Int(Rnd(1) * 1000) + 1
-
+                            'Call pbplog(1844)
                             If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
                             If PASS% = 4 Then 445
                             GoTo 437
@@ -881,6 +927,7 @@ Sub PROHOOP
                 End Select
 
             Case 3
+                'Call pbplog(1853)
                 ' *** SHOT VS TRAP M-M ***
                 Select Case R0
 
@@ -906,7 +953,7 @@ Sub PROHOOP
                             GoTo 513
                         Else
                             R0 = Int(Rnd(1) * 1000) + 1
-
+                            'Call pbplog(1878)
                             If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
                             If PASS% = 4 Then 445
                             GoTo 437
@@ -920,6 +967,7 @@ Sub PROHOOP
 
         P1 = 0
         R0 = Int(Rnd(1) * 1000) + 1
+        'Call pbplog(1893)
 
         Select Case R0
 
@@ -944,7 +992,7 @@ Sub PROHOOP
                     GoTo 513
                 Else
                     R0 = Int(Rnd(1) * 1000) + 1
-
+                    'Call pbplog(1916)
                     If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
                     If PASS% = 4 Then 445
 
@@ -962,6 +1010,8 @@ Sub PROHOOP
     ' ***BAD SHOT ***
 
     437 '
+    'Call pbplog(1934)
+
     A4 = 0
 
     R0 = Int(Rnd(1) * 3) + 1
@@ -981,6 +1031,8 @@ Sub PROHOOP
     '----- NOODLE -----
 
     445 '
+    'Call pbplog(1955)
+
     If Not (H = 4 And gameClock! <= 120 Or H > 4) Then
         If A!(P, B1!(P, B), 3) - A!(P, B1!(P, B), 7) - A!(P, B1!(P, B), 11) - A!(P, B1!(P, B), 12) <= 0 Then 437
     End If
@@ -995,12 +1047,17 @@ Sub PROHOOP
         If RN <= A!(P, B1!(P, B), 19) Then
             PZ% = 4
             F3S% = A!(P, B1!(P, B), 20) + F7%(D, 4)
+            'Adjust shot chance by -3 to 3
             F3S% = F3S% + Int(Rnd(1) * 7) - 3
             X = 0
+
+            'Call pbplog(1984)
             GoTo 520
+
         End If
 
         If P6 = 4 Then
+
             Call d100(RN0)
 
             If RN0 <= 20 Then
@@ -1011,7 +1068,9 @@ Sub PROHOOP
                 F3S% = .4 * A!(P, B1!(P, B), 20) + F7%(D, 4)
                 GoTo 520
             End If
+
         Else
+
             If H >= 4 And gameClock! < 30 And score(D, 0) - score(P, 0) > 3 And A!(P, B1!(P, B), 19) >= 3 Then
                 PZ% = 4
                 X = 0
@@ -1094,7 +1153,10 @@ Sub PROHOOP
 
     '-- Without the GoTo 300, this could be a subroutine
     '-- Perhaps it still could be if we add the GoTo 300 after each call
+
     513 '
+    'Call pbplog(2075)
+
     Call LastShot
     Call ResetShotClock
 
@@ -1180,6 +1242,8 @@ Sub PROHOOP
     '----- NOODLE -----
 
     515 '
+    'Call pbplog(2162)
+
     Call LastShot
     Call ResetShotClock
 
@@ -1238,6 +1302,8 @@ Sub PROHOOP
     '----- NOODLE -----
 
     520 '
+    'Call pbplog(2222)
+
     Call LastShot
     Call CheckGameClock
     If gameClock! = 0 Then 170
@@ -1466,6 +1532,7 @@ Sub PROHOOP
 
         End If
 
+        'Call pbplog(2454)
         GoTo 532
 
     End If
@@ -1507,12 +1574,15 @@ Sub PROHOOP
     caseVar = P6 + 1
 
     Select Case caseVar
+
         Case 1
             'Pass!
+            'Call pbplog(2497)
             GoTo 350
 
         Case 2
             'Shoot!
+            'Call pbplog(2501)
             GoTo 537
 
         Case 3
@@ -1553,10 +1623,12 @@ Sub PROHOOP
                     P1 = 1
                 End If
 
+                'Call pbplog(2545)
                 GoTo 300
 
             Else
 
+                'Call pbplog(2545)
                 GoTo 350
 
             End If
@@ -1593,8 +1665,8 @@ Sub PROHOOP
                 Case 1: shotClock = 30
             End Select
 
+            'Call pbplog(2582)
             GoTo 566
-
 
         Case 5
             359 '
@@ -1632,6 +1704,7 @@ Sub PROHOOP
                 Call CreditAssists
                 Call UPDATESCREEN
 
+                'Call pbplog(2623)
                 GoTo 562
 
             End If
@@ -1648,6 +1721,7 @@ Sub PROHOOP
                 Call PBP
             End If
 
+            'Call pbplog(2640)
             Call ResetShotClock
 
             gameClock! = gameClock! - 4
@@ -1659,6 +1733,7 @@ Sub PROHOOP
 
             Call UPDATESCREEN
 
+            'Call pbplog(2649)
             GoTo 670
 
     End Select
@@ -1667,9 +1742,12 @@ Sub PROHOOP
 
     537 '
     ' *** SHOOT!!! ***
+    'Call pbplog(2675)
+
     PT% = 3
     Call MAKEPBP
     Call PBP
+
     S = 0
     Call d100(R0)
     A!(P, B1!(P, B), 7) = A!(P, B1!(P, B), 7) + 1
@@ -1713,6 +1791,7 @@ Sub PROHOOP
 
             End If
 
+            'Call pbplog(2707)
             GoTo 591
 
         End If
@@ -1720,6 +1799,7 @@ Sub PROHOOP
     End If
 
     '540
+    'Call pbplog(2732)
     Call d100(S)
     R0 = (F - 2) * .1
 
@@ -1762,9 +1842,9 @@ Sub PROHOOP
             If pbpDelay! <> 0 Then Print U$: Call DELAY
         End If
 
-
         F3 = 1
 
+        'Call pbplog(2775)
         Call DELAY
         Call CreditAssists
 
@@ -1773,9 +1853,11 @@ Sub PROHOOP
         score(P, 0) = score(P, 0) + 2
         A!(P, B1!(P, B), 8) = A!(P, B1!(P, B), 8) + 1
 
+        'Call pbplog(2786)
         Call UPDATESCREEN
         Call Fouls(0)
 
+        'Call pbplog(2789)
         If pbpDelay! <> 0 Then
 
             If pbpOpt = 0 Then
@@ -1805,6 +1887,7 @@ Sub PROHOOP
 
         '620
         X = 50
+        'Call pbplog(2819)
         Call Substitutions
         X = 0
 
@@ -1835,6 +1918,7 @@ Sub PROHOOP
 
         NM% = 0
 
+        'Call pbplog(2850)
         'Two FT Attempts
         For F3 = 1 To 2
 
@@ -1877,6 +1961,7 @@ Sub PROHOOP
 
         X = 99
 
+        'Call pbplog(2890)
         If S > FX% Then 670
 
         'GoSub 3000
@@ -1912,6 +1997,7 @@ Sub PROHOOP
             Next I
         End If
 
+        'Call pbplog(2929)
         Locate 8, 1
 
         'PRESSING
@@ -1928,11 +2014,13 @@ Sub PROHOOP
             P1 = 1
         End If
 
+        'Call pbplog(2939)
         GoTo 300
 
     End If
 
     '--- Shot Branch 2 ---
+    'Call pbplog(2947)
     If S <= F - 2 Then
 
         If DK% = 1 Then
@@ -1946,7 +2034,11 @@ Sub PROHOOP
             End If
         Else
             If pbpOpt = 0 And PZ% = 8 Then
-                PT% = 7: Call MAKEPBP: Call PBP: PZ% = 0: skipShotPBP% = 1
+                PT% = 7
+                Call MAKEPBP
+                Call PBP
+                PZ% = 0
+                skipShotPBP% = 1
             Else
                 U$ = "BASKET BY "
                 U$ = U$ + players_GAME$(P, B1!(P, B), 0) + " !!!"
@@ -2037,10 +2129,16 @@ Sub PROHOOP
         'AKA ChangePosession
         prevBall$ = ""
         If P = 1 Then
-            P = 0: D = 1: P9 = 0: C1 = 2
+            P = 0
+            D = 1
+            P9 = 0
+            C1 = 2
         Else
             'P = 0;
-            P = 1: D = 0: P9 = 1: C1 = 2
+            P = 1
+            D = 0
+            P9 = 1
+            C1 = 2
         End If
 
         Call Choices
@@ -2070,11 +2168,13 @@ Sub PROHOOP
             P1 = 1
         End If
 
+        'Call pbplog(3068)
         GoTo 300
 
     End If
 
     '--- Shot Branch 3 ---
+    'Call pbplog(3097)
     Call d100(R0)
     Call d100(I5)
     I3 = Int(Rnd(1) * 5)
@@ -2135,11 +2235,14 @@ Sub PROHOOP
 
     Call UPDATESCREEN
 
+    'Call pbplog(3134)
     GoTo 670
 
     '----- NOODLE -----
 
     565 '
+    'Call pbplog(3131)
+
     Call Fouls(0)
 
     566 '
@@ -2164,6 +2267,8 @@ Sub PROHOOP
         Call PBP
 
         Locate 8, 41: Print Space$(12)
+
+        'Call pbplog(3180)
         GoTo 350
 
     End If
@@ -2242,10 +2347,16 @@ Sub PROHOOP
     'AKA ChangePosession
     prevBall$ = ""
     If P = 1 Then
-        P = 0: D = 1: P9 = 0: C1 = 2
+        P = 0
+        D = 1
+        P9 = 0
+        C1 = 2
     Else
-        'P = 0;
-        P = 1: D = 0: P9 = 1: C1 = 2
+        'P = 0
+        P = 1
+        D = 0
+        P9 = 1
+        C1 = 2
     End If
 
     U$ = gameTeams$(P) + " BALL AFTER SCORE"
@@ -2298,6 +2409,8 @@ Sub PROHOOP
     '----- NOODLE -----
 
     580 '
+    'Call pbplog(3291)
+
     Call LastShot
 
     Call ResetShotClock
@@ -2384,6 +2497,7 @@ Sub PROHOOP
     '----- NOODLE -----
 
     591 '
+
     X = 50
     Call Substitutions
     X = 0
@@ -2462,18 +2576,27 @@ Sub PROHOOP
     Next F3
 
     Call CheckGameClock
+
     If gameClock! = 0 Then 170
 
     If S > A!(P, B1!(P, B), 1) Then 650
 
     'GoSub 3000
     'AKA ChangePosession
+    'Call pbplog(3465)
+
     prevBall$ = ""
     If P = 1 Then
-        P = 0: D = 1: P9 = 0: C1 = 2
+        P = 0
+        D = 1
+        P9 = 0
+        C1 = 2
     Else
         'P = 0;
-        P = 1: D = 0: P9 = 1: C1 = 2
+        P = 1
+        D = 0
+        P9 = 1
+        C1 = 2
     End If
 
     U$ = gameTeams$(P) + " BALL AFTER SCORE"
@@ -2503,7 +2626,10 @@ Sub PROHOOP
 
 
     '----- NOODLE -----
+
     650 '
+    'Call pbplog(3510)
+
     A6 = 1
     P6 = 0
     A4 = 0
@@ -2542,6 +2668,8 @@ Sub PROHOOP
     '----- NOODLE -----
 
     670 '
+    'Call pbplog(3550)
+
     A6 = 1
     P6 = 0
     A4 = 0
@@ -2568,6 +2696,7 @@ Sub PROHOOP
 
             If X = 98 Then 700
 
+            'Call pbplog(3578)
             turnovers(P) = turnovers(P) + 1
             U$ = "OFFENSIVE GOAL TENDING"
             If pbpOpt = 0 Then
@@ -2602,12 +2731,14 @@ Sub PROHOOP
                 C1 = 2
             End If
 
+            'Call pbplog(3613)
             Call Substitutions
 
             GoTo 300
 
         Case 2 To 11
             FF% = 1
+            'Call pbplog(3620)
             GoTo 770
 
         Case 12 To 19
@@ -2631,6 +2762,7 @@ Sub PROHOOP
 
                 Call DELAY
                 Call Substitutions
+                'Call pbplog(3644)
 
                 GoTo 520
 
@@ -2674,6 +2806,8 @@ Sub PROHOOP
         Case 20 To 22
 
             If X = 99 Then 700
+
+            'Call pbplog(3689)
 
             Call ReboundRoutine1
 
@@ -2756,6 +2890,8 @@ Sub PROHOOP
 
                 If X = 99 Then 700
 
+                'Call pbplog(3772)
+
                 U$ = "DEFENSIVE GOAL TENDING"
 
                 If pbpOpt = 0 Then
@@ -2774,8 +2910,9 @@ Sub PROHOOP
     End Select
 
     ' Case 24 to 100
-
+    '
     770 '
+    'Call pbplog(3796)
     RB = 0
 
     For I = 0 To 9:
@@ -2784,13 +2921,17 @@ Sub PROHOOP
 
     For I = 0 To 4
 
-        If H > 4 Or H = 4 And gameClock! <= 120 Then 773
-
-        If A!(P, B1!(P, I), 3) - A!(P, B1!(P, I), 7) - A!(P, B1!(P, I), 11) - A!(P, B1!(P, I), 12) <= 0 Then
-            RB(I) = RB(I) + A!(P, B1!(P, I), 21) * .65: RB = RB + A!(P, B1!(P, I), 21) * .65
+        If H > 4 Or H = 4 And gameClock! <= 120 Then
+            RB(I) = RB(I) + A!(P, B1!(P, I), 21)
+            RB = RB + A!(P, B1!(P, I), 21)
         Else
-            773 '
-            RB(I) = RB(I) + A!(P, B1!(P, I), 21): RB = RB + A!(P, B1!(P, I), 21)
+            If A!(P, B1!(P, I), 3) - A!(P, B1!(P, I), 7) - A!(P, B1!(P, I), 11) - A!(P, B1!(P, I), 12) <= 0 Then
+                RB(I) = RB(I) + A!(P, B1!(P, I), 21) * .65
+                RB = RB + A!(P, B1!(P, I), 21) * .65
+            Else
+                RB(I) = RB(I) + A!(P, B1!(P, I), 21)
+                RB = RB + A!(P, B1!(P, I), 21)
+            End If
         End If
 
     Next
@@ -2814,23 +2955,28 @@ Sub PROHOOP
 
     RN = Rnd(1) * RB
 
-    For B = 0 To 9
-        If RN <= RB(B) Then skipRandom% = 1: Exit For
-        RB(B + 1) = RB(B + 1) + RB(B)
+    For N = 0 To 9
+        If RN <= RB(N) Then skipRandom% = 1: Exit For
+        RB(N + 1) = RB(N + 1) + RB(N)
     Next
 
     If skipRandom% = 0 Then
-        B = Int(Rnd(1) * 10)
+        RN1 = Int(Rnd(1) * 10)
     End If
 
-    If B <= 4 Then 761
-    B = B - 5
+    If RN1 <= 4 Then 761
+    B = RN1 - 5
+
+    'Call pbplog(3851)
 
     GoTo 800
 
     '----- NOODLE -----
 
+
     760 '
+    'Call pbplog(3859)
+
     If FF% = 1 Then
 
         FF% = 0
@@ -2912,6 +3058,8 @@ Sub PROHOOP
     '----- NOODLE -----
 
     800 '
+    'Call pbplog(3943)
+
     If FF% = 1 Then
 
         FF% = 0
@@ -2951,6 +3099,7 @@ Sub PROHOOP
         End If
 
         GoTo 565
+
     Else
 
         A!(D, B1!(D, B), 11) = A!(D, B1!(D, B), 11) + 1

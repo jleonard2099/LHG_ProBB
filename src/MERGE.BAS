@@ -132,10 +132,10 @@ Sub MergeStats ()
 
                     Input #2, Yroad%
 
-                    For I = 1 To 100: Input #2, ORD%(I): Next I
-                    For I = 1 To 100: Input #2, ORD$(I): Next I
-                    For I = 1 To 100: Input #2, TRD%(I): Next I
-                    For I = 1 To 100: Input #2, HRD$(I): Next I
+                    For I = 1 to NUM_STATRECORDS: Input #2, ORD%(I): Next I
+                    For I = 1 to NUM_STATRECORDS: Input #2, ORD$(I): Next I
+                    For I = 1 to NUM_STATRECORDS: Input #2, TRD%(I): Next I
+                    For I = 1 to NUM_STATRECORDS: Input #2, HRD$(I): Next I
 
                     Close #2
 
@@ -170,10 +170,10 @@ Sub MergeStats ()
 
                         Input #4, Ycurr%
 
-                        For I = 1 To 100: Input #4, statO%(I): Next I
-                        For I = 1 To 100: Input #4, O$(I): Next I
-                        For I = 1 To 100: Input #4, mergeT%(I): Next I
-                        For I = 1 To 100: Input #4, statsH$(I): Next I
+                        For I = 1 to NUM_STATRECORDS: Input #4, statO%(I): Next I
+                        For I = 1 to NUM_STATRECORDS: Input #4, O$(I): Next I
+                        For I = 1 to NUM_STATRECORDS: Input #4, mergeT%(I): Next I
+                        For I = 1 to NUM_STATRECORDS: Input #4, statsH$(I): Next I
 
                         Close #4
 
@@ -335,10 +335,10 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
     Open pathCurrentStats$ + statFile$ + "S" For Output As #2
 
     Write #2, Ycurr%
-    For I = 1 To 100: Write #2, statO%(I): Next I
-    For I = 1 To 100: Write #2, O$(I): Next I
-    For I = 1 To 100: Write #2, mergeT%(I): Next I
-    For I = 1 To 100: Write #2, statsH$(I): Next I
+    For I = 1 to NUM_STATRECORDS: Write #2, statO%(I): Next I
+    For I = 1 to NUM_STATRECORDS: Write #2, O$(I): Next I
+    For I = 1 to NUM_STATRECORDS: Write #2, mergeT%(I): Next I
+    For I = 1 to NUM_STATRECORDS: Write #2, statsH$(I): Next I
 
     Close #2
 

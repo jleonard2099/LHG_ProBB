@@ -22,7 +22,7 @@ Sub HD2HDPRO ()
 
     Shared div1$, div2$, div3$, div4$
 
-    Dim intT%(100)
+    Dim intT%(NUM_STATRECORDS)
 
     Dim DV$(4)
     Dim Z2$(TEAMS_PER_CONFERENCE)
@@ -46,19 +46,19 @@ Sub HD2HDPRO ()
 
         Input #1, Y
 
-        For J = 1 To 100:
+        For J = 1 to NUM_STATRECORDS:
             Input #1, statO%(J)
         Next
 
-        For J = 1 To 100:
+        For J = 1 to NUM_STATRECORDS:
             Input #1, O$(J)
         Next
 
-        For J = 1 To 100:
+        For J = 1 to NUM_STATRECORDS:
             Input #1, intT%(J)
         Next
 
-        For J = 1 To 100:
+        For J = 1 to NUM_STATRECORDS:
             Input #1, statsH$(J)
         Next
 
