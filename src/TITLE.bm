@@ -17,7 +17,7 @@ Sub TITLE_CAREER ()
     Print Tab(80);
     Locate , 1
 
-    Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+    Print "LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
 
     Locate 4, 1
 
@@ -44,7 +44,7 @@ Sub TITLE_EDITSTATS ()
     Print Tab(80);
     Locate , 1
 
-    Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+    Print "LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
     Locate 4, 1
 
     Color 15, 0
@@ -94,7 +94,7 @@ Sub TITLE_LEADERS
     Print Tab(80);
     Locate , 1
 
-    Print "(C) ROD DAHLBERG/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+    Print "ROD DAHLBERG/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
     Locate 4, 1
 
     Color 2, 0
@@ -120,7 +120,7 @@ Sub TITLE_MERGE ()
     Print Tab(80);
     Locate , 1
 
-    Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+    Print "LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
 
     Locate 4, 1
 
@@ -150,7 +150,7 @@ Sub TITLE_SCHEDULER ()
     Print Tab(80);
     Locate , 1
 
-    Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1997";
+    Print "LANCE HAFFNER/SHANNON LYNN 1987-1997";
     
     Locate 5, 1
 
@@ -177,7 +177,7 @@ Sub TITLE_STATS ()
     Print Tab(80);
     Locate , 1
 
-    Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+    Print "LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
 
     Locate 4, 1
 
@@ -204,7 +204,7 @@ Sub TITLE_STAT_HEADER (header$)
     Print Tab(80);
     Locate , 1
     
-    Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+    Print "LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
     
     Locate 4, 1
     
@@ -234,14 +234,14 @@ Sub TITLE_TOURN ()
     Print Tab(80);
     Locate , 1
     
-    Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994";
+    Print "LANCE HAFFNER/SHANNON LYNN 1987-1994";
     
     Locate 3, 1
     Color 2, 0
 
     Color 15
-    Print "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
-    Print "              FOR TECHNICAL SUPPORT, CALL (615) 366-8088"
+    Print "        PROGRAMMED BY LANCE HAFFNER, SHANNON LYNN AND JASON LEONARD"
+    Print "            FOR TECHNICAL SUPPORT, CONTACT SUPPORT@LHGAMES.NET"
 
     Color 10
 
@@ -266,7 +266,7 @@ Sub TITLE_UTILS ()
     Print Tab(80);
     Locate , 1
 
-    Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+    Print "LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
 
     Locate 4, 1
 
@@ -300,21 +300,14 @@ Sub TITLE ()
     Locate , 1
 
     Color 12, 1
-    Print "(C) LANCE HAFFNER/SHANNON LYNN 1984-1999"; Tab(75); Left$(Time$, 5);
+    Print "LANCE HAFFNER/SHANNON LYNN 1984-1999"; Tab(75); Left$(Time$, 5);
 
     'Contact
     Locate 3, 1
     Color 15, 0
-    Print "           PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
-    Print "         FOR TECHNICAL SUPPORT, CALL (800) 477-7032 OR LANCE@LHGAMES.COM"
-    Print "          LANCE HAFFNER GAMES ON THE INTERNET AT HTTP://WWW.LHGAMES.COM"
-
-    Locate 12, 1
-
-    Print "LANCE HAFFNER GAMES"
-    Print "P.O. BOX 100594"
-    Print "NASHVILLE, TN 37224"
-    'Print "LANCE@LHGAMES.COM"
+    Print "           PROGRAMMED BY LANCE HAFFNER, SHANNON LYNN AND JASON LEONARD"
+    Print "               FOR TECHNICAL SUPPORT, CONTACT SUPPORT@LHGAMES.NET"
+    Print "          LANCE HAFFNER GAMES ON THE INTERNET AT HTTP://WWW.LHGAMES.NET"
 
     Color 10
 

@@ -9,9 +9,9 @@ Dim Shared teamIndex%(MAX_TEAMS)
 
 ' *** Reading Stat Data ***
 ' -------------------------
-Dim HRD$(0 to NUM_STATRECORDS), ORD$(0 to NUM_STATRECORDS)
+Dim HRD$(0 To NUM_STATRECORDS), ORD$(0 To NUM_STATRECORDS)
 
-Dim ORD%(0 to NUM_STATRECORDS), mergeT%(0 to NUM_STATRECORDS), TRD%(0 to NUM_STATRECORDS)
+Dim ORD%(0 To NUM_STATRECORDS), mergeT%(0 To NUM_STATRECORDS), TRD%(0 To NUM_STATRECORDS)
 
 Dim Shared Z1$(40)
 
@@ -130,12 +130,12 @@ Dim league$, div1$, div2$, div3$, div4$
 '----------------------------------------
 ' Used in STAT / INPUT routines
 '----------------------------------------
-Dim leagueT%(NUM_STATRECORDS), statO%(0 to NUM_STATRECORDS), statsL%(0 to NUM_STATRECORDS)
+Dim leagueT%(100), statO%(0 To NUM_STATRECORDS), statsL%(0 To NUM_STATRECORDS)
 
 Dim leagBRC!(32), statW0!(0 To 14), statW1!(0 To 14)
 Dim values!(0 To 14, 0 To 24)
 
-Dim categories$(0 To 25), statsH$(0 to NUM_STATRECORDS), lookyA$(0 To 14), O$(0 to NUM_STATRECORDS)
+Dim categories$(0 To 25), statsH$(0 To NUM_STATRECORDS), lookyA$(0 To 14), O$(0 To NUM_STATRECORDS)
 
 Dim DL!(40, 20), LD!(250, 2), leagS!(14, 26)
 Dim O1!(40), O2!(40), OL!(40, 20)
@@ -212,7 +212,7 @@ Dim Shared QQ, QR
 Dim Shared sClockVal, shotClock, shotPctOpt
 Dim Shared threePtOpt, T1, TMT, X, VG, VH
 
-Dim Shared CF%, DK%, FB%, FT%, GF%
+Dim Shared CF%, DK%, FB%, FT%, GF%, HH%
 Dim Shared NM%, OX%, OY%, PT%, PZ%
 
 Dim Shared gameClock!, pbpDelay!, timeElapsed!
@@ -225,8 +225,8 @@ Dim Shared P7$, prevBall$, PS$, TS$, U$, Y2$, Z3$
 
 Dim Shared CF%(1, 9), eventSettings(13)
 Dim Shared F%(1, 9), F5%(1, 4), F7%(1, 9), G9%(1), GF%(2, 9)
-Dim Shared HT%(NUM_STATRECORDS), NG%(18), N0%(2, 2, 4)
-Dim Shared OX%(2), OY%(2), O%(NUM_STATRECORDS), O0%(1)
+Dim Shared HT%(100), NG%(18), N0%(2, 2, 4)
+Dim Shared OX%(2), OY%(2), O%(100), O0%(1)
 Dim Shared PF%(1), PFA%(33), ST%(32), SX%(32, 1, 14)
 Dim Shared TOA%(33), TOF%(1), W%(1, 14, 1)
 
@@ -242,14 +242,15 @@ Dim Shared turnovers(1), TF(1)
 Dim Shared statTotals(14), VG(9), VH(9), W2(1, 14), W3(1, 14)
 Dim Shared X$(4), X7(1), Z5(1), Z6(1)
 
-Dim Shared A!(1, 14, 25), B1!(0 to 1, 0 to 4), M9!(1), indRecords!(50, 2)
+Dim Shared A!(1, 14, 25), B1!(0 To 1, 0 To 4), M9!(1), indRecords!(50, 2)
 Dim Shared W0!(1, 14), W1!(1, 14)
 Dim Shared Z!(15), Z1!(15), Z2!(14, 14)
 
 Dim Shared defenseStyles$(5)
 Dim Shared gameCoach$(3), gameMascots$(3), gameStadium$(3), gameTeams$(3)
-Dim Shared H$(NUM_STATRECORDS), HO$(NUM_STATRECORDS), offenseStyles$(2)
+Dim Shared H$(100), HO$(100), offenseStyles$(2)
 Dim Shared pbpType$(1), players_GAME$(1, 14, 1), PS$(4)
 Dim Shared R$(14), RC$(50, 4), SX$(32, 1)
 Dim Shared teamAbbrev$(3)
-Dim Shared Y$(1), YN$(0 to 1)
+Dim Shared Y$(1), YN$(0 To 1)
+

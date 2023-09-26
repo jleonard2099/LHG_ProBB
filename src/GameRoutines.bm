@@ -88,7 +88,6 @@ Sub InitVar ()
     endAllGames = 0
     endGame = 0
     F3 = 0
-    gameLoc = 0
     halfTime = 0
     JY = 0
     P = 0
@@ -109,6 +108,7 @@ Sub InitVar ()
     FB% = 0
     FT% = 0
     GF% = 0
+    HH% = 0
     NM% = 0
     OX% = 0
     OY% = 0
@@ -2616,6 +2616,8 @@ Sub CreditAssists ()
 
     Call d100(R0)
 
+    test1 = F7%(P, 7)
+
     If R0 <= F7%(P, 7) Then
 
         iterations = 0
@@ -2626,6 +2628,7 @@ Sub CreditAssists ()
             'W5 = total player assists
             W5 = 0
 
+            test2 = F5%(P, 2)
             R1 = Int(Rnd(1) * F5%(P, 2)) + 1
 
             For M8 = 0 To 4
@@ -3079,10 +3082,10 @@ Sub LOADSTATS ()
 
             Input #1, nbrStats
 
-            For I1 = 1 to NUM_STATRECORDS: Input #1, O%(I1): Next
-            For I1 = 1 to NUM_STATRECORDS: Input #1, HO$(I1): Next
-            For I1 = 1 to NUM_STATRECORDS: Input #1, HT%(I1): Next
-            For I1 = 1 to NUM_STATRECORDS: Input #1, HO$(I1): Next
+            For I1 = 1 To NUM_STATRECORDS: Input #1, O%(I1): Next
+            For I1 = 1 To NUM_STATRECORDS: Input #1, HO$(I1): Next
+            For I1 = 1 To NUM_STATRECORDS: Input #1, HT%(I1): Next
+            For I1 = 1 To NUM_STATRECORDS: Input #1, HO$(I1): Next
 
             Close #1
 
@@ -5466,6 +5469,8 @@ Sub COMPILESTATFILES (compileOpt)
 
     Cls
 
+    HH% = gameLoc
+
     For PX = 0 To 1
 
         For J = 0 To 14
@@ -5625,88 +5630,87 @@ Sub COMPILESTATFILES (compileOpt)
 
             Close #2
 
-            numberGames = 0
+            Y% = 0
 
             If _FileExists(diskPaths$(1) + statFile$ + "S") Then
 
                 Open diskPaths$(1) + statFile$ + "S" For Input As #3
 
-                Input #3, numberGames
+                Input #3, Y%
 
-                For I = 1 to NUM_STATRECORDS: Input #3, O%(I): Next I
-                For I = 1 to NUM_STATRECORDS: Input #3, HO$(I): Next I
-                For I = 1 to NUM_STATRECORDS: Input #3, HT%(I): Next I
-                For I = 1 to NUM_STATRECORDS: Input #3, H$(I): Next I
+                For I = 1 To NUM_STATRECORDS: Input #3, O%(I): Next I
+                For I = 1 To NUM_STATRECORDS: Input #3, HO$(I): Next I
+                For I = 1 To NUM_STATRECORDS: Input #3, HT%(I): Next I
+                For I = 1 To NUM_STATRECORDS: Input #3, H$(I): Next I
 
                 Close #3
 
             End If
 
-            If numberGames < NUM_STATRECORDS Then numberGames = numberGames + 1
+            If Y% < 100 Then Y% = Y% + 1
 
-            Select Case gameLoc
-
+            Select Case HH%
                 Case 2
                     Select Case TG!
                         Case Is < 14500
-                            H$(numberGames) = "N"
+                            H$(Y%) = "N"
                         Case 14501 To 16000
-                            H$(numberGames) = "N1"
+                            H$(Y%) = "N1"
                         Case 16001 To 17500
-                            H$(numberGames) = "N2"
+                            H$(Y%) = "N2"
                         Case 17501 To 19000
-                            H$(numberGames) = "N3"
+                            H$(Y%) = "N3"
                         Case 19001 To 20500
-                            H$(numberGames) = "N4"
+                            H$(Y%) = "N4"
                     End Select
 
                 Case Is = teamIdx
                     Select Case TG!
                         Case Is < 14500
-                            H$(numberGames) = "H"
+                            H$(Y%) = "H"
                         Case 14501 To 16000
-                            H$(numberGames) = "H1"
+                            H$(Y%) = "H1"
                         Case 16001 To 17500
-                            H$(numberGames) = "H2"
+                            H$(Y%) = "H2"
                         Case 17501 To 19000
-                            H$(numberGames) = "H3"
+                            H$(Y%) = "H3"
                         Case 19001 To 20500
-                            H$(numberGames) = "H4"
+                            H$(Y%) = "H4"
                     End Select
 
                 Case Is <> teamIdx
                     Select Case TG!
                         Case Is < 14500
-                            H$(numberGames) = "V"
+                            H$(Y%) = "V"
                         Case 14501 To 16000
-                            H$(numberGames) = "V1"
+                            H$(Y%) = "V1"
                         Case 16001 To 17500
-                            H$(numberGames) = "V2"
+                            H$(Y%) = "V2"
                         Case 17501 To 19000
-                            H$(numberGames) = "V3"
+                            H$(Y%) = "V3"
                         Case 19001 To 20500
-                            H$(numberGames) = "V4"
+                            H$(Y%) = "V4"
                     End Select
 
             End Select
 
-            O%(numberGames) = score(teamIdx, 0)
-            HO$(numberGames) = gameTeams$(1 - teamIdx)
-            HT%(numberGames) = score(1 - teamIdx, 0)
+            O%(Y%) = score(teamIdx, 0)
+            HO$(Y%) = gameTeams$(1 - teamIdx)
+            HT%(Y%) = score(1 - teamIdx, 0)
 
             Open diskPaths$(1) + statFile$ + "S" For Output As #4
 
-            Print #4, numberGames
+            Print #4, Y%
 
-            For I = 1 to NUM_STATRECORDS: Print #4, O%(I): Next I
-            For I = 1 to NUM_STATRECORDS: Print #4, HO$(I): Next I
-            For I = 1 to NUM_STATRECORDS: Print #4, HT%(I): Next I
-            For I = 1 to NUM_STATRECORDS: Print #4, H$(I): Next I
+            For I = 1 To NUM_STATRECORDS: Print #4, O%(I): Next I
+            For I = 1 To NUM_STATRECORDS: Print #4, HO$(I): Next I
+            For I = 1 To NUM_STATRECORDS: Print #4, HT%(I): Next I
+            For I = 1 To NUM_STATRECORDS: Print #4, H$(I): Next I
 
             Close #4
 
             'Reset arrays for next iteration
-            For I = 1 to NUM_STATRECORDS:
+            For I = 1 To NUM_STATRECORDS:
                 O%(I) = 0
                 HT%(I) = 0
                 HO$(I) = ""

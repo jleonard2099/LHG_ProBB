@@ -398,7 +398,7 @@ Sub ViewPlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
 
     Do
 
-        Call TITLE_HEADER
+        Call TITLE_STATS
 
         Color , 1
         Locate 23, 1
@@ -616,7 +616,7 @@ Sub ViewTeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
 
         Cls
 
-        Call TITLE_HEADER
+        Call TITLE_STATS
 
         Color , 1
 

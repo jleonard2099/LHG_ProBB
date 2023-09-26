@@ -179,7 +179,7 @@ Sub DoTheInput (action%)
 
             Loop Until I = 0 'User wants no change
 
-            Call InputEditTeam(1, year$, teamNbr)
+            Call InputEditTeam(1, year$, teamNbr, ST, BK)
             Call SaveTeamFile(year$, teamNbr, action%)
 
             '2 = CHANGE OR EDIT AN EXISTING TEAM
@@ -188,7 +188,7 @@ Sub DoTheInput (action%)
             Call ChooseTeam(YN$, NTMS, teamNbr, team$)
             
             If teamNbr <> 0 Then
-                Call InputEditTeam(2, YN$, teamNbr)
+                Call InputEditTeam(2, YN$, teamNbr, ST, BK)
                 Call SaveTeamFile(YN$, teamNbr, action%)
             End If
 
@@ -553,7 +553,7 @@ End Sub
 'a user is prompted to press keys to CONTINUE
 'This improvement over the original makes it
 'faster and easier to proceed through screens
-Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
+Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBkocks)
 
     Shared playerRatings%(), leagueRatings%(), teamRatings%()
     Shared playerNames$(), teamInfo$()
@@ -771,65 +771,108 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
         Cls
 
         Color 14
-        Print "TEAM OFFENSIVE INFORMATION"
+        Print "TEAM STATISTICS"
+        Locate 3,15: Print "OFFENSE"; Tab (30); "DEFENSE"
         Color 15
-
-        Locate 3: Input " 1. FGM "; teamRatings%(6)
-        Locate 4: Input " 2. FGA "; teamRatings%(5)
-        Locate 5: Input " 3. FTM "; teamRatings%(8)
-        Locate 6: Input " 4. FTA "; teamRatings%(7)
-
-        Locate 7: Input " 5. OFF REB "; teamRatings%(9)
-        Locate 8: Input " 6. DEF REB "; teamRatings%(10)
+        Locate 4: Print " 1. FGM ";
+        Locate 4, 14: Input teamRatings%(6)
+        Locate 4, 29: Input teamRatings%(20)
+        Locate 5: Print " 2. FGA ";
+        Locate 5, 14: Input teamRatings%(5)
+        Locate 5, 29: Input teamRatings%(19)
+        Locate 6: Print " 3. FTM ";
+        Locate 6, 14: Input teamRatings%(8)
+        Locate 6, 29: Input teamRatings%(22)
+        Locate 7: Print " 4. FTA ";
+        Locate 7, 14: Input teamRatings%(7)
+        Locate 7, 29: Input teamRatings%(21)
+        Locate 8: Print " 5. OFF REB ";
+        Locate 8, 14: Input teamRatings%(9)
+        Locate 8, 29: Input teamRatings%(23)
+        Locate 9: Print " 6. DEF REB ";
+        Locate 9, 14: Input teamRatings%(10)
+        Locate 9, 29: Input teamRatings%(24)
 
         'Calculate Rebounds if missing
         If teamRatings%(9) = 0 And RB = 0 Then
             'Off Rebounds = ~ Def Rebounds / 3
             teamRatings%(9) = .32 * teamRatings%(10)
             teamRatings%(10) = teamRatings%(10) - teamRatings%(9)
-            Locate 7: Print " 5. OFF REB "; teamRatings%(9)
-            Locate 8: Print " 6. DEF REB "; teamRatings%(10)
+
+            Locate 8: Print " 5. OFF REB ";
+            Locate 8, 14: Input teamRatings%(9)
+            Locate 8, 29: Input teamRatings%(23)
+
+            Locate 9: Print " 6. DEF REB ";
+            Locate 9, 14: Input teamRatings%(10)
+            Locate 9, 29: Input teamRatings%(24)
+
         End If
 
-        Locate 9: Input " 7. ASSISTS "; teamRatings%(11)
-        Locate 10: Input " 8. FOULS "; teamRatings%(12)
-        Locate 11: Input " 9. DISQ "; teamRatings%(13)
-        Locate 12: Input "10. STEALS "; teamRatings%(14)
+        Locate 10: Print " 7. ASSISTS ";
+        Locate 10, 14: Input teamRatings%(11)
+        Locate 10, 29: Input teamRatings%(25)
+
+        Locate 11: Print " 8. FOULS ";
+        Locate 11, 14: Input teamRatings%(12)
+        Locate 11, 29: Input teamRatings%(26)
+
+        Locate 12: Print " 9. DISQ ";
+        Locate 12, 14: Input teamRatings%(13)
+        Locate 12, 29: Input teamRatings%(27)
+
+        Locate 13: Print "10. STEALS ";
+        Locate 13, 14: Input teamRatings%(14)
+        Locate 13, 29: Input teamRatings%(28)
+
         '-- We currently don't have a a calculation for if this data is missing
-        Locate 13: Input "11. TURNOVERS "; teamRatings%(15)
-        Locate 14: Input "12. BLK SHOTS "; teamRatings%(16)
-        Locate 15: Input "13. 3-FGM "; teamRatings%(18)
-        Locate 16: Input "14. 3-FGA "; teamRatings%(17)
+
+        Locate 14: Print "11. TURNOVERS ";
+        Locate 14, 14: Input teamRatings%(15)
+        Locate 14, 29: Input teamRatings%(29)
+
+        Locate 15: Print "12. BLK SHOTS ";
+        Locate 15, 14: Input teamRatings%(16)
+        Locate 15, 29: Input teamRatings%(30)
+
+        Locate 16: Print "13. 3-FGM ";
+        Locate 16, 14: Input teamRatings%(18)
+        Locate 16, 29: Input teamRatings%(32)
+
+        Locate 17: Print "14. 3-FGA ";
+        Locate 17, 14: Input teamRatings%(17)
+        Locate 17, 29: Input teamRatings%(31)
 
     Else
 
         Cls
 
         Color 14
-        Print "CHANGE TEAM OFFENSIVE INFORMATION"
+        Print "CHANGE TEAM STATISTICS"
+        Locate 3,15: Print "OFFENSE"; Tab (30); "DEFENSE"
         Color 15
-        Print
-        Print " 1. FGM "; teamRatings%(6)
-        Print " 2. FGA "; teamRatings%(5)
-        Print " 3. FTM "; teamRatings%(8)
-        Print " 4. FTA "; teamRatings%(7)
-        Print " 5. OFF REB "; teamRatings%(9)
-        Print " 6. DEF REB "; teamRatings%(10)
-        Print " 7. ASSISTS "; teamRatings%(11)
-        Print " 8. FOULS "; teamRatings%(12)
-        Print " 9. DISQ "; teamRatings%(13)
-        Print "10. STEALS "; teamRatings%(14)
-        Print "11. TURNOVERS "; teamRatings%(15)
-        Print "12. BLK SHOTS "; teamRatings%(16)
-        Print "13. 3-FGM "; teamRatings%(18)
-        Print "14. 3-FGA "; teamRatings%(17)
+
+        Print " 1. FGM "; Tab(15); teamRatings%(6); Tab(30); teamRatings%(20)
+        Print " 2. FGA "; Tab(15); teamRatings%(5); Tab(30); teamRatings%(19)
+        Print " 3. FTM "; Tab(15); teamRatings%(8); Tab(30); teamRatings%(22)
+        Print " 4. FTA "; Tab(15); teamRatings%(7); Tab(30); teamRatings%(21)
+        Print " 5. OFF REB "; Tab(15); teamRatings%(9); Tab(30); teamRatings%(23)
+        Print " 6. DEF REB "; Tab(15); teamRatings%(10); Tab(30); teamRatings%(24)
+        Print " 7. ASSISTS "; Tab(15); teamRatings%(11); Tab(30); teamRatings%(25)
+        Print " 8. FOULS "; Tab(15); teamRatings%(12); Tab(30); teamRatings%(26)
+        Print " 9. DISQ "; Tab(15); teamRatings%(13); Tab(30); teamRatings%(27)
+        Print "10. STEALS "; Tab(15); teamRatings%(14); Tab(30); teamRatings%(28)
+        Print "11. TURNOVERS "; Tab(15); teamRatings%(15); Tab(30); teamRatings%(29)
+        Print "12. BLK SHOTS "; Tab(15); teamRatings%(16); Tab(30); teamRatings%(30)
+        Print "13. 3-FGM "; Tab(15); teamRatings%(18); Tab(30); teamRatings%(32)
+        Print "14. 3-FGA "; Tab(15); teamRatings%(17); Tab(30); teamRatings%(31)
 
     End If
 
     Do
 
         Do
-            Locate 18
+            Locate 19
             Input "# TO CHANGE (0 TO CONTINUE) "; B9
         Loop Until B9 >= 0 And B9 <= 14
 
@@ -838,193 +881,94 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
             Select Case B9
 
                 Case 1
-                    Locate 3: Input " 1. FGM "; teamRatings%(6)
+                    Locate 4: Print " 1. FGM ";
+                    Locate 4, 14: Input teamRatings%(6)
+                    Locate 4, 29: Input teamRatings%(20)
 
                 Case 2
-                    Locate 4: Input " 2. FGA "; teamRatings%(5)
+                    Locate 5: Print " 2. FGA ";
+                    Locate 5, 14: Input teamRatings%(5)
+                    Locate 5, 29: Input teamRatings%(19)
 
                 Case 3
-                    Locate 5: Input " 3. FTM "; teamRatings%(8)
+                    Locate 6: Print " 3. FTM ";
+                    Locate 6, 14: Input teamRatings%(8)
+                    Locate 6, 29: Input teamRatings%(22)
 
                 Case 4
-                    Locate 6: Input " 4. FTA "; teamRatings%(7)
+                    Locate 7: Print " 4. FTA ";
+                    Locate 7, 14: Input teamRatings%(7)
+                    Locate 7, 29: Input teamRatings%(21)
 
                 Case 5
-                    Locate 7: Input " 5. OFF REB "; teamRatings%(9)
+                    Locate 8: Print " 5. OFF REB ";
+                    Locate 8, 14: Input teamRatings%(9)
+                    Locate 8, 29: Input teamRatings%(23)
 
                 Case 6
-                    Locate 8: Input " 6. DEF REB "; teamRatings%(10)
+                    Locate 9: Print " 6. DEF REB ";
+                    Locate 9, 14: Input teamRatings%(10)
+                    Locate 9, 29: Input teamRatings%(24)
 
                     'Calculate Rebounds if missing
                     If teamRatings%(9) = 0 And RB = 0 Then
                         'Off Rebounds = ~ Def Rebounds / 3
                         teamRatings%(9) = .32 * teamRatings%(10)
                         teamRatings%(10) = teamRatings%(10) - teamRatings%(9)
-                        Locate 7: Print " 5. OFF REB "; teamRatings%(9)
-                        Locate 8: Print " 6. DEF REB "; teamRatings%(10)
+                        Locate 7: Print " 5. OFF REB ";
+                        Locate 7, 14: Input teamRatings%(9)
+                        Locate 7, 29: Input teamRatings%(23)
+                        Locate 8: Print " 6. DEF REB ";
+                        Locate 8, 14: Input teamRatings%(10)
+                        Locate 8, 29: Input teamRatings%(24)
+
                     End If
 
                 Case 7
-                    Locate 9: Input " 7. ASSISTS "; teamRatings%(11)
+                    Locate 10: Print " 7. ASSISTS ";
+                    Locate 10, 14: Input teamRatings%(11)
+                    Locate 10, 29: Input teamRatings%(25)
 
                 Case 8
-                    Locate 10: Input " 8. FOULS "; teamRatings%(12)
+                    Locate 11: Print " 8. FOULS ";
+                    Locate 11, 14: Input teamRatings%(12)
+                    Locate 11, 29: Input teamRatings%(26)
 
                 Case 9
-                    Locate 11: Input " 9. DISQ "; teamRatings%(13)
+                    Locate 12: Print " 9. DISQ ";
+                    Locate 12, 14: Input teamRatings%(13)
+                    Locate 12, 29: Input teamRatings%(27)
 
                 Case 10
-                    Locate 12: Input "10. STEALS "; teamRatings%(14)
+                    Locate 13: Print "10. STEALS ";
+                    Locate 13, 14: Input teamRatings%(14)
+                    Locate 13, 29: Input teamRatings%(28)
 
                 Case 11
-                    Locate 13: Input "11. TURNOVERS "; teamRatings%(15)
+                    Locate 14: Print "11. TURNOVERS ";
+                    Locate 14, 14: Input teamRatings%(15)
+                    Locate 14, 29: Input teamRatings%(29)
 
                 Case 12
-                    Locate 14: Input "12. BLK SHOTS "; teamRatings%(16)
+                    Locate 15: Print "12. BLK SHOTS ";
+                    Locate 15, 14: Input teamRatings%(16)
+                    Locate 15, 29: Input teamRatings%(30)
 
                 Case 13
-                    Locate 15: Input "13. 3-FGM "; teamRatings%(18)
+                    Locate 16: Print "13. 3-FGM ";
+                    Locate 16, 14: Input teamRatings%(18)
+                    Locate 16, 29: Input teamRatings%(32)
 
                 Case 14
-                    Locate 16: Input "14. 3-FGA "; teamRatings%(17)
+                    Locate 17: Print "14. 3-FGA ";
+                    Locate 17, 14: Input teamRatings%(17)
+                    Locate 17, 29: Input teamRatings%(31)
 
             End Select
 
         End If
 
     Loop Until B9 = 0
-
-
-    '---------------
-    ' Team Defense
-    '---------------
-    If inputAction% = 1 Then
-
-        Cls
-
-        Color 14
-        Print "TEAM DEFENSIVE INFORMATION"
-        Color 15
-
-        Locate 3: Input " 1. FGM "; teamRatings%(20)
-        Locate 4: Input " 2. FGA "; teamRatings%(19)
-        Locate 5: Input " 3. FTM "; teamRatings%(22)
-        Locate 6: Input " 4. FTA "; teamRatings%(21)
-        Locate 7: Input " 5. OFF REB "; teamRatings%(23)
-        Locate 8: Input " 6. DEF REB "; teamRatings%(24)
-
-        'Calculate Rebounds if missing
-        If teamRatings%(23) = 0 And RB = 0 Then
-            'Off Rebounds = ~ Def Rebounds / 3
-            teamRatings%(23) = .35 * teamRatings%(24)
-            teamRatings%(24) = teamRatings%(24) - teamRatings%(23)
-            Locate 6: Print " 5. OFF REB "; teamRatings%(23)
-            Locate 7: Print " 6. DEF REB "; teamRatings%(24)
-        End If
-
-        Locate 9: Input " 7. ASSISTS "; teamRatings%(25)
-        Locate 10: Input " 8. FOULS "; teamRatings%(26)
-        Locate 11: Input " 9. DISQ "; teamRatings%(27)
-        Locate 12: Input "10. STEALS "; teamRatings%(28)
-        '-- We currently don't have a a calculation for if this data is missing
-        Locate 13: Input "11. TURNOVERS "; teamRatings%(29)
-        Locate 14: Input "12. BLK SHOTS "; teamRatings%(30)
-        Locate 15: Input "13. 3-FGM "; teamRatings%(32)
-        Locate 16: Input "14. 3-FGA "; teamRatings%(31)
-
-    Else
-
-        Cls
-
-        Color 14
-        Print "CHANGE TEAM DEFENSIVE INFORMATION"
-        Color 15
-        Print
-        Print " 1. FGM "; teamRatings%(20)
-        Print " 2. FGA "; teamRatings%(19)
-        Print " 3. FTM "; teamRatings%(22)
-        Print " 4. FTA "; teamRatings%(21)
-        Print " 5. OFF REB "; teamRatings%(23)
-        Print " 6. DEF REB "; teamRatings%(24)
-        Print " 7. ASSISTS "; teamRatings%(25)
-        Print " 8. FOULS "; teamRatings%(26)
-        Print " 9. DISQ "; teamRatings%(27)
-        Print "10. STEALS "; teamRatings%(28)
-        Print "11. TURNOVERS "; teamRatings%(29)
-        Print "12. BLK SHOTS "; teamRatings%(30)
-        Print "13. 3-FGM "; teamRatings%(32)
-        Print "14. 3-FGA "; teamRatings%(31)
-
-    End If
-
-    Do
-
-        Do
-            Locate 18
-            Input "# TO CHANGE (0 TO CONTINUE) "; B9
-        Loop Until B9 >= 0 And B9 <= 14
-
-        If B9 <> 0 Then
-
-            Select Case B9
-
-                Case 1
-                    Locate 3: Input " 1. FGM "; teamRatings%(20)
-
-                Case 2
-                    Locate 4: Input " 2. FGA "; teamRatings%(19)
-
-                Case 3
-                    Locate 5: Input " 3. FTM "; teamRatings%(22)
-
-                Case 4
-                    Locate 6: Input " 4. FTA "; teamRatings%(21)
-
-                Case 5
-                    Locate 7: Input " 5. OFF REB "; teamRatings%(23)
-
-                Case 6
-                    Locate 8: Input " 6. DEF REB "; teamRatings%(24)
-
-                    'Calculate Rebounds if missing
-                    If teamRatings%(23) = 0 And RB = 0 Then
-                        'Off Rebounds = ~ Def Rebounds / 3
-                        teamRatings%(23) = .35 * teamRatings%(24)
-                        teamRatings%(24) = teamRatings%(24) - teamRatings%(23)
-                        Locate 7: Print " 5. OFF REB "; teamRatings%(23)
-                        Locate 8: Print " 6. DEF REB "; teamRatings%(24)
-                    End If
-
-                Case 7
-                    Locate 9: Input " 7. ASSISTS "; teamRatings%(25)
-
-                Case 8
-                    Locate 10: Input " 8. FOULS "; teamRatings%(26)
-
-                Case 9
-                    Locate 11: Input " 9. DISQ "; teamRatings%(27)
-
-                Case 10
-                    Locate 12: Input "10. STEALS "; teamRatings%(28)
-
-                Case 11
-                    Locate 13: Input "11. TURNOVERS "; teamRatings%(29)
-
-                Case 12
-                    Locate 14: Input "12. BLK SHOTS "; teamRatings%(30)
-
-                Case 13
-                    Locate 15: Input "13. 3-FGM "; teamRatings%(32)
-
-                Case 14
-                    Locate 16: Input "14. 3-FGA "; teamRatings%(31)
-
-            End Select
-
-        End If
-
-    Loop Until B9 = 0
-
 
 
     '---------------
@@ -1065,13 +1009,13 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
 
         'Calculate Steals/Blocks if missing
         'Def Steals
-        If teamRatings%(28) = 0 And ST = 0 Then teamRatings%(28) = teamRatings%(5) * .1     'Off FGA / 10
+        If teamRatings%(28) = 0 And haveSteals = 0 Then teamRatings%(28) = teamRatings%(5) * .1     'Off FGA / 10
         'Off Steals
-        If teamRatings%(14) = 0 And ST = 0 Then teamRatings%(14) = teamRatings%(19) * .1    'Def FGA / 10
+        If teamRatings%(14) = 0 And haveSteals = 0 Then teamRatings%(14) = teamRatings%(19) * .1    'Def FGA / 10
         'Def Blocks
-        If teamRatings%(30) = 0 And BK = 0 Then teamRatings%(30) = teamRatings%(5) * .06    'Off FGA / ~16
+        If teamRatings%(30) = 0 And haveBlocks = 0 Then teamRatings%(30) = teamRatings%(5) * .06    'Off FGA / ~16
         'Off Blocks
-        If teamRatings%(16) = 0 And BK = 0 Then teamRatings%(16) = teamRatings%(19) * .06   'Def FGA / ~16
+        If teamRatings%(16) = 0 And haveBlocks = 0 Then teamRatings%(16) = teamRatings%(19) * .06   'Def FGA / ~16
 
         'Input team
         For I = 0 To 14
@@ -1114,11 +1058,12 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
 
                 Locate 14: Input "13. DISQ "; playerRatings%(I, 10)
 
-                If ST = 1 Then
-
+                If haveSteals = 1 Then
+                    'Input steals
                     Locate 15: Input "14. STEALS   "; playerRatings%(I, 11)
 
                 Else
+                    'Calculate steals based on position
                     Select Case position$
 
                         Case "C":
@@ -1137,10 +1082,12 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
 
                 End If
 
-                If BK = 1 Then
+                If haveBlocks = 1 Then
+                    'Input blocks
                     Locate 16: Input "15. BLOCKS "; playerRatings%(I, 12)
-                Else
 
+                Else
+                    'Calculate blocks based on position
                     Select Case position$
 
                         Case "C":
@@ -1162,8 +1109,8 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx)
                 Locate 17: Input "16. 3-FGM "; playerRatings%(I, 14)
                 Locate 18: Input "17. 3-FGA "; playerRatings%(I, 13)
                 Locate 19: Input "18. HI-GAME "; playerRatings%(I, 15)
-                'LOCATE 20:INPUT "19. PENETRATION (1-9) ";playerRatings%(I,16)
-                'LOCATE 21:INPUT "20. DEF ADJ (-5 TO 5) ";playerRatings%(I,17)
+                LOCATE 20:INPUT "19. PENETRATION (1-9) ";playerRatings%(I,16)
+                LOCATE 21:INPUT "20. DEF ADJ (-5 TO 5) ";playerRatings%(I,17)
                 Locate 22: Input "21. ACTIVE FLAG (0-YES 1-NO) "; playerRatings%(I, 18)
 
                 Call EditPlayer(I, inputAction%)
@@ -1226,8 +1173,8 @@ Sub EditPlayer (J, action)
         Print "16. 3-FGM "; playerRatings%(J, 14)
         Print "17. 3-FGA "; playerRatings%(J, 13)
         Print "18. HI-GAME "; playerRatings%(J, 15)
-        Print 'PRINT "19. PENETRATION (1-9) ";playerRatings%(I,16)
-        Print 'PRINT "20. DEF ADJ (-5 TO 5) ";playerRatings%(I,17)
+        PRINT "19. PENETRATION (1-9) ";playerRatings%(I,16)
+        PRINT "20. DEF ADJ (-5 TO 5) ";playerRatings%(I,17)
         Print "21. ACTIVE FLAG (0-YES 1-NO) "; playerRatings%(J, 18)
     End If
 
@@ -1304,10 +1251,10 @@ Sub EditPlayer (J, action)
                 Locate 19: Input "18. HI-GAME "; playerRatings%(I, 15)
 
             Case 19:
-                'LOCATE 20:INPUT "19. PENETRATION (1-9) ";playerRatings%(I,16)
+                LOCATE 20:INPUT "19. PENETRATION (1-9) ";playerRatings%(I,16)
 
             Case 20:
-                'LOCATE 21:INPUT "20. DEF ADJ (-5 TO 5) ";playerRatings%(I,17)
+                LOCATE 21:INPUT "20. DEF ADJ (-5 TO 5) ";playerRatings%(I,17)
 
             Case 21:
                 Locate 22: Input "21. ACTIVE FLAG (0-YES 1-NO) "; playerRatings%(I, 18)
@@ -1331,6 +1278,8 @@ Sub SaveTeamFile (yearNumber$, teamIdx, action%)
 
     Shared playerRatings%(), leagueRatings%(), teamRatings%()
     Shared playerNames$(), teamInfo$()
+
+    Call CSMsgBox("SAVING TEAM FILES", 20, Pass)
 
     Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$ For Random As #1 Len = TEAM_SIZE_BYTES
 
@@ -1391,6 +1340,8 @@ Sub SaveTeamFile (yearNumber$, teamIdx, action%)
     Put #1, teamIdx
 
     Close #1
+
+    Call CSMsgBox("", 0, Pass)
 
 End Sub
 
