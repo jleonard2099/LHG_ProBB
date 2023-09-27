@@ -1,14 +1,29 @@
 '----------------------------------------
 '           NEWLDR Subroutine
 '----------------------------------------
-'This subroutine provides the user a menu 
+'This subroutine provides the user a menu
 'for viewing stats compiled for the new
 '"Expanded" Stats/Standings screens
 Sub NEWLDR ()
 
     _Title "Basketball: The Pro Game - Stats / Standings"
 
-    ReDim menuChoices$(1 To 3)
+    ReDim menuChoices$(1 To 5)
+
+    Dim printOrView%
+
+    Shared HLL(), HWW()
+    Shared LL(), LLS()
+    Shared LTL(), LTW(), LWS()
+    Shared RLL(), RWW()
+    Shared TLS(), TWS(), WW()
+
+    Shared statO%()
+
+    Shared div1$, div2$, div3$, div4$, league$
+
+    Shared O$(), statsH$()
+    Shared TML$(), strZ1$()
 
     Do
 
@@ -17,13 +32,15 @@ Sub NEWLDR ()
 
         Call TITLE
 
-        menuChoices$(1) = "VIEW EXPANDED LEAGUE STATISTICS"
-        menuChoices$(2) = "VIEW EXPANDED STANDINGS        "
-        menuChoices$(3) = "RETURN TO LEAGUE LEADER MENU   "
+        menuChoices$(1) = "UPDATE EXPANDED LEAGUE LEADERS        "
+        menuChoices$(2) = "VIEW EXPANDED LEAGUE LEADER FILES     "
+        menuChoices$(3) = "UPDATE EXPANDED LAGUE STANDINGS       "
+        menuChoices$(4) = "VIEW / PRINT EXPANDED LEAGUE STANDINGS"
+        menuChoices$(5) = "RETURN TO LEAGUE LEADER MAIN MENU     "
         Selection% = 1
-        Count% = 3
+        Count% = 5
         Start% = 1
-        ExitCode% = 3
+        ExitCode% = 5
         FileFGColor% = 15: FileBGColor% = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
@@ -41,19 +58,75 @@ Sub NEWLDR ()
 
         If ExitCode% <> 27 Then
 
+            printOrView% = 0
+
             Select Case Selection%
 
                 Case 1:
-                    Call ViewExpandedStats
+                    leagStatFile$ = ChooseFile$(diskPaths$(1) + "*.TMS", "LEAGUE STATS", FileExit%)
+
+                    If FileExit% <> 27 And FileExit% <> 0 Then
+
+                        For X = 1 To TEAMS_PER_CONFERENCE
+                            strZ1$(X) = "XXX"
+                        Next
+
+                        Open diskPaths$(1) + leagStatFile$ + ".TMS" For Input As #1
+
+                        Input #1, league$, div1$, div2$, div3$, div4$
+
+                        For X = 1 To TEAMS_PER_CONFERENCE
+                            Input #1, strZ1$(X)
+                        Next
+
+                        Close #1
+
+                        Call UpdateExpandedLeaders(leagStatFile$, JB, TS, TTS)
+                        Call SAVELEADER(leagStatFile$, JB, TS, TTS)
+
+                    End If
 
                 Case 2:
-                    Call NewStandingOptions
+                    leaderFile$ = ChooseFile$ (diskPaths$(1) + "*.LDS", "LEAGUE LEADERS", FileExit%)
+
+                    If FileExit% <> 27 And FileExit% <> 0 Then
+                        Call READLEADER(leaderFile$, JB, TS, TTS)
+                        Call ExpandedLeaders_Menu (printOrView%, JB, TS, TTS)
+                    End If
+
+                Case 3:
+                    leagStatFile$ = ChooseFile$(diskPaths$(1) + "*.TMS", "LEAGUE STATS", FileExit%)
+
+                    If FileExit% <> 27 And FileExit% <> 0 Then
+                        Color 15, 0
+                        Cls
+                        Call UpdateLeagueStandings(league$)
+                    End If
+
+                Case 4:
+                    standingsFile$ = ChooseFile$ (diskPaths$(1) + "*.STD", "LEAGUE STANDINGS", FileExit%)
+
+                    If FileExit% <> 27 And FileExit% <> 0 Then
+
+                        Open diskPaths$(1) + standingsFile$ + ".STD" For Input As #2
+
+                        Input #2, league$, div1$, div2$, div3$, div4$
+
+                        For I = 1 To TEAMS_PER_CONFERENCE
+                            Input #2, WW(I), HWW(I), RWW(I), LL(I), HLL(I), RLL(I), LTW(I), LTL(I), TML$(I)
+                        Next
+
+                        Close #2
+
+                        Call NewStandingOptions
+
+                    End If
 
             End Select
 
         End If
 
-    Loop Until Selection% = 3 Or ExitCode% = 27
+    Loop Until Selection% = 5 Or ExitCode% = 27
 
 End Sub
 
@@ -72,10 +145,12 @@ Sub ViewExpandedStats ()
 
     Shared div1$, div2$, div3$, div4$, league$
 
+    Shared strZ1$()
+
     printOrView% = 0
 
     For X = 1 To TEAMS_PER_CONFERENCE
-        Z1$(X) = "XXX"
+        strZ1$(X) = "XXX"
     Next
 
     leagStatFile$ = ChooseFile$(diskPaths$(1) + "*.TMS", "LEAGUE STATS", ExitCode%)
@@ -87,16 +162,14 @@ Sub ViewExpandedStats ()
         Input #1, league$, div1$, div2$, div3$, div4$
 
         For X = 1 To TEAMS_PER_CONFERENCE
-            Input #1, Z1$(X)
+            Input #1, strZ1$(X)
         Next
 
         Close #1
 
         Call UpdateExpandedLeaders(leagStatFile$, JB, TS, TTS)
-
         Call SAVELEADER(leagStatFile$, JB, TS, TTS)
-
-        Call ExpandedLeaders_Menu (JB, TS, TTS)
+        'Call ExpandedLeaders_Menu (JB, TS, TTS)
 
     End If 'Done checking for ESC
 
@@ -113,6 +186,7 @@ Sub UpdateExpandedLeaders (statFile$, JB, TS, TTS)
 
     Shared AL$(), lookyA$()
     Shared TMA$(), TT$(), TT1$()
+    Shared strZ1$()
 
     Shared plyrStatLeaders!(), GM!(), GM1!()
     Shared TT!(), TT1!()
@@ -135,13 +209,13 @@ Sub UpdateExpandedLeaders (statFile$, JB, TS, TTS)
 
         YY = YY + 1
 
-        If Z1$(KK) <> "*" And Z1$(KK) <> "XXX" And Z1$(KK) <> "" Then
+        If strZ1$(KK) <> "*" And strZ1$(KK) <> "XXX" And strZ1$(KK) <> "" Then
 
-            Print "CONVERTING STAT FILE OF "; Z1$(KK)
+            Print "CONVERTING STAT FILE OF "; strZ1$(KK)
 
-            If _FileExists(diskPaths$(1) + Z1$(KK)) Then
+            If _FileExists(diskPaths$(1) + strZ1$(KK)) Then
 
-                Open diskPaths$(1) + Z1$(KK) For Input As #1
+                Open diskPaths$(1) + strZ1$(KK) For Input As #1
 
                 Input #1, B$
 
@@ -168,7 +242,7 @@ Sub UpdateExpandedLeaders (statFile$, JB, TS, TTS)
 
                 Close #1
 
-                Open diskPaths$(1) + Z1$(KK) + "S" For Input As #2
+                Open diskPaths$(1) + strZ1$(KK) + "S" For Input As #2
 
                 Input #2, year
 
@@ -226,7 +300,7 @@ End Sub
 '        SAVELEADER Subroutine
 '----------------------------------------
 'This subroutine compiles the leader files 
-'(.LDS) for the exapnded standings modules 
+'(.LDS) for the expanded standings modules 
 Sub SAVELEADER (statFile$, JB, TS, TTS)
 
     Shared AL$()
@@ -301,13 +375,105 @@ End Sub
 
 
 '----------------------------------------
+'        READLEADER Subroutine
+'----------------------------------------
+'This subroutine reads in the leader files 
+'(.LDS) for the expanded standings modules 
+Sub READLEADER (statFile$, JB, TS, TTS)
+
+    Shared AL$()
+    Shared TMA$(), TT$(), TT1$()
+
+    Shared plyrStatLeaders!()
+    Shared GM!(), GM1!(), GMA!()
+    Shared TT!(), TT1!()
+    Shared W0L!(), W1L!()
+
+    TMR = 1280
+
+    'Print "READING LEADER FILES . . . . PLEASE WAIT"
+
+    If Not _FileExists (diskPaths$(1) + statFile$ + ".LDS") Then
+    
+        MsgText$ = "NO COMPILED LEADER FILES WERE FOUND. PRESS ANY KEY TO RETURN TO MAIN MENU"
+        BoxWidth = 20
+        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+        I$ = GetKeyPress$
+        Call CSMsgBox("", 0, Pass)
+
+    Else
+
+        Open diskPaths$(1) + statFile$ + ".LDS" For Input As #1
+
+        Input #1, JB, TS, TTS
+
+        For I = 1 To 600:
+
+            Input #1, AL$(I), TMA$(I), GMA!(I)
+
+            Color 14
+            Locate 18, 38
+            TMR = TMR - 1
+            Print Using "#####"; TMR
+
+            For I1 = 1 To 14:
+                Input #1, plyrStatLeaders!(I, I1)
+            Next I1
+
+            Input #1, W0L!(I)
+            Input #1, W1L!(I)
+            Color 14
+            Locate 18, 38
+            TMR = TMR - 1
+            Print Using "#####"; TMR:
+
+        Next I
+
+        For I = 1 To 40:
+
+            For I1 = 0 To 14:
+                Input #1, TT!(I, I1), TT$(I, I1)
+            Next
+
+            Color 14
+            Locate 18, 38
+            TMR = TMR - 1
+            Print Using "#####"; TMR
+            Input #1, GM!(I)
+
+        Next
+
+        For I = 1 To 40:
+
+            For I1 = 0 To 14:
+                Input #1, TT1!(I, I1), TT1$(I, I1)
+            Next
+
+            Color 14
+            Locate 18, 38
+            TMR = TMR - 1
+            Print Using "#####"; TMR
+            Input #1, GM1!(I)
+
+        Next
+
+        Close #1
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
 '    ExpandedLeaders_Menu Subroutine
 '----------------------------------------
 'This subroutine presents a categorized
 'menu for viewing expanded leaders. It then
 'relies on various subroutines for the end
 'user display of those statistics.
-Sub ExpandedLeaders_Menu  (JB, TS, TTS)
+Sub ExpandedLeaders_Menu  (printOrView%, JB, TS, TTS)
 
     ReDim menuChoices$(1 To 3)
 
@@ -1159,7 +1325,7 @@ Sub DisplayLeaders (TVN, maxRecords, categoryId)
             If W <> 1 And (W Mod 20 = 1) Then
 
                 Color 14
-                Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+                Locate 23: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
                 Color 15
 
                 I$ = GetKeyPress$
@@ -1205,7 +1371,7 @@ Sub DisplayLeaders (TVN, maxRecords, categoryId)
         If userExit% <> 1 Then
 
             Color 14
-            Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+            Locate 23: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
             Color 15
 
             I$ = GetKeyPress$
@@ -1258,7 +1424,7 @@ Sub DisplayTeamView (printOrView%, TVN, maxRecords, categoryId)
                     If W <> 1 And (W Mod 20 = 1) Then
 
                         Color 14
-                        Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+                        Locate 23: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
                         Color 15
 
                         I$ = GetKeyPress$
@@ -1304,7 +1470,7 @@ Sub DisplayTeamView (printOrView%, TVN, maxRecords, categoryId)
                 If userExit% <> 1 Then
 
                     Color 14
-                    Locate 22: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+                    Locate 23: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
                     Color 15
 
                     I$ = GetKeyPress$

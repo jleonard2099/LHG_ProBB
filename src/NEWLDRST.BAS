@@ -3,65 +3,37 @@
 '----------------------------------------
 'This subroutine lets the user choose a
 'league for viewing "Expanded" standings,
-'then reads in the data from the League 
-'stats file (.TMS). It then presents the 
-'display options and calls separate routines 
+'then reads in the data from the League
+'stats file (.TMS). It then presents the
+'display options and calls separate routines
 'for handling each choice.
 Sub NewStandingOptions ()
 
     _Title "Basketball: The Pro Game - League Standings"
 
-    Shared TML$(), strZ1$()
+    Cls
 
-    Shared div1$, div2$, div3$, div4$, league$
+    Do
+        Locate 15, 10
+        Color 12: Print "V";: Color 7: Print "iew or ";
+        Color 12: Print "P";: Color 7: Print "rint"
+        I$ = GetKeyPress$
+    Loop Until UCase$(I$) = "P" Or UCase$(I$) = "V"
 
-    ReDim menuChoices$(1 To 2)
+    'I started passing league$ as a parameter
+    'To start working towards removing the need
+    'for Dim Shared in so many places. However
+    'it has not been consistently done, so I
+    'realize it's currently awkward there.
+    Select Case UCase$(I$)
 
-    leagStatFile$ = ChooseFile$ (diskPaths$(1) + "*.TMS", "LEAGUE STATS", ExitCode%)
+        Case "V":
+            Call ViewNewStandings(league$)
 
-    If ExitCode% <> 27 And ExitCode% <> 0 Then
+        Case "P"
+            Call PrintNewStandings(league$)
 
-        Open diskPaths$(1) + leagStatFile$ + ".TMS" For Input As #1
-
-        Input #1, league$, div1$, div2$, div3$, div4$
-
-        For X = 1 To TEAMS_PER_CONFERENCE
-            Input #1, strZ1$(X)
-            TML$(X) = strZ1$(X)
-        Next
-
-        Close #1
-
-        Color 15, 0
-        Cls
-
-        Call UpdateLeagueStandings(league$)
-
-        Cls
-
-        Do
-            Locate 15, 10
-            Color 12: Print "V";: Color 7: Print "iew or ";
-            Color 12: Print "P";: Color 7: Print "rint"
-            I$ = GetKeyPress$
-        Loop Until UCase$(I$) = "P" Or UCase$(I$) = "V"
-
-        'I started passing league$ as a parameter
-        'To start working towards removing the need
-        'for Dim Shared in so many places. However
-        'it has not been consistently done, so I
-        'realize it's currently awkward there.
-        Select Case UCase$(I$)
-
-            Case "V":
-                Call ViewNewStandings(league$)
-
-            Case "P"
-                Call PrintNewStandings(league$)
-
-        End Select
-
-    End If 'Done checking if ESC from league select
+    End Select
 
 End Sub
 
@@ -70,8 +42,8 @@ End Sub
 '    UpdateLeagueStandings Subroutine
 '----------------------------------------
 'This subroutine takes the stats read in
-'for a league, then calculates the standings 
-'for that league and writes a  corresponding 
+'for a league, then calculates the standings
+'for that league and writes a  corresponding
 '.STD file.
 Sub UpdateLeagueStandings (league$)
 

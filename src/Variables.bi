@@ -13,7 +13,7 @@ Dim HRD$(0 To NUM_STATRECORDS), ORD$(0 To NUM_STATRECORDS)
 
 Dim ORD%(0 To NUM_STATRECORDS), mergeT%(0 To NUM_STATRECORDS), TRD%(0 To NUM_STATRECORDS)
 
-Dim Shared Z1$(40)
+Dim Shared Z1$(TEAMS_PER_CONFERENCE)
 
 ' *** Schedule Data ***
 ' -------------------------
