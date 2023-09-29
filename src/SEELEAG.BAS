@@ -232,6 +232,7 @@ Sub LeaderStats_Screen ()
     Print LG$; " LEAGUE STANDINGS"
     Print
 
+    ' Division 1 Standings
     Color 2
     If div1$ <> "" Then Print "    " + RTrim$(div1$) + " DIVISION"
     Print
@@ -278,6 +279,8 @@ Sub LeaderStats_Screen ()
     Locate , Int((80 - Len(LG$) - 17) / 2)
     Print LG$; " LEAGUE STANDINGS"
     Print
+
+    ' Division 2 Standings
 
     Color 2
     If div2$ <> "" Then Print "    " + RTrim$(div2$) + " DIVISION"
@@ -326,6 +329,8 @@ Sub LeaderStats_Screen ()
     Print LG$; " LEAGUE STANDINGS"
     Print
 
+    ' Division 3 Standings
+
     Color 2
     If div3$ <> "" Then Print "    " + RTrim$(div3$) + " DIVISION"
     Print
@@ -371,6 +376,8 @@ Sub LeaderStats_Screen ()
     Print LG$; " LEAGUE STANDINGS"
     Print
 
+    ' Division 4 Standings
+
     Color 2
     If div4$ <> "" Then Print "    " + RTrim$(div4$) + " DIVISION"
     Print
@@ -380,6 +387,7 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 31 To 40
+    
         If leagT$(P) <> "" And leagT$(P) <> "*" Then
             D1 = O1!(31) - O2!(31)
             D = O1!(P) - O2!(P)
@@ -414,11 +422,13 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 41 To 60
+
         If Z2$(P) <> "*" And Z2$(P) <> "" Then
             Print Left$(Z2$(P), 10) + ", " + Z3$(P);
             Locate , 28
             Print Using "##.#  ####"; statZ!(P) * 100; statZ1!(P)
         End If
+
     Next
 
     Color 14
@@ -454,10 +464,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 1 To 20
+
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
             Locate , 34: Print Using "###.#"; statZ!(P)
         End If
+
     Next
 
     Color 14
@@ -488,10 +500,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 81 To 90
+
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
             Locate , 34: Print Using "###.#"; statZ!(P)
         End If
+
     Next
 
     Locate 1, 41
@@ -500,10 +514,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 91 To 100
+
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
             Locate , 74: Print Using "####"; statZ!(P)
         End If
+
     Next
 
     Locate 13
@@ -512,10 +528,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 101 To 110
+
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
             Locate , 34: Print Using "###.#"; statZ!(P)
         End If
+
     Next
 
     Locate 13, 41
@@ -524,10 +542,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 111 To 120
+
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
             Locate , 74: Print Using "####"; statZ!(P)
         End If
+
     Next
 
     '-----
@@ -540,14 +560,16 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 14
-    Print "THREE FIELD GOAL%"
+    Print "THREE FIELD GOAL %"
     Color 15
 
     For P = 121 To 130
+
         If Z2$(P) <> "" Then
             Print Z2$(P) + ", " + Z3$(P);
             Locate , 34: Print Using "###.#"; statZ!(P) * 100
         End If
+
     Next P
 
     Locate 1, 41
@@ -556,10 +578,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 141 To 150
+
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
             Locate , 74: Print Using "###.#"; statZ!(P)
         End If
+
     Next P
 
     Locate 13
@@ -568,10 +592,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 131 To 140
+
         If Z2$(P) <> "" Then
             Print Z2$(P) + ", " + Z3$(P);
             Locate , 34: Print Using "####"; statZ!(P)
         End If
+
     Next
 
     Locate 13, 41
@@ -580,10 +606,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 151 To 160
+
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
             Locate , 74: Print Using "####"; statZ!(P)
         End If
+
     Next
 
     '-----
@@ -600,10 +628,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 161 To 170
+
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
             Locate , 34: Print Using "###.#"; statZ!(P)
         End If
+
     Next
 
     Locate 1, 41
@@ -612,10 +642,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 171 To 180
+
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
             Locate , 74: Print Using "####"; statZ!(P)
         End If
+
     Next
 
     Locate 13
@@ -624,10 +656,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 181 To 190
+
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
             Locate , 34: Print Using "###.#"; statZ!(P)
         End If
+
     Next
 
     Locate 13, 41
@@ -636,10 +670,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 191 To 200
+
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
             Locate , 74: Print Using "####"; statZ!(P)
         End If
+
     Next
 
     '-----
@@ -655,10 +691,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 201 To 210
+
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
             Locate , 34: Print Using "####"; statZ!(P)
         End If
+
     Next
 
     Locate 1, 41
@@ -667,10 +705,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 211 To 220
+
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
             Locate , 74: Print Using "####"; statZ!(P)
         End If
+
     Next
 
     Locate 13
@@ -679,10 +719,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 221 To 230
+
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
             Locate , 34: Print Using "###.#"; statZ!(P)
         End If
+
     Next
 
     Locate 13, 41
@@ -691,10 +733,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 231 To 240
+
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
             Locate , 74: Print Using "####"; statZ!(P)
         End If
+
     Next
 
     '-----
@@ -711,10 +755,12 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 241 To 250
+
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
             Locate , 34: Print Using "####"; statZ!(P)
         End If
+
     Next
 
     '-----
@@ -786,6 +832,7 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For X = 21 To 40
+
         If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
             Print Left$(OL$(X), 11); Tab(13);
             Print Using "##"; OL!(X, 16);: Print Tab(16);
@@ -801,6 +848,7 @@ Sub LeaderStats_Screen ()
             Print Using "#####"; OL!(X, 20);: Print Tab(75);
             Print Using "###.#"; OL!(X, 19)
         End If
+
     Next
 
     '-----
@@ -866,13 +914,21 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For X = 21 To 40
+
         If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
-            Print Left$(DL$(X), 11); Tab(13);: Print Using "##"; DL!(X, 16);: Print Tab(16);: Print Using "####"; DL!(X, 2);: Print Tab(21);: Print Using "####"; DL!(X, 3);: Print Tab(26);
-            Print Using ".###"; DL!(X, 17);: Print Tab(31);: Print Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);
-            Print Tab(46);: Print Using "#### ####"; DL!(X, 6); DL!(X, 9);: Print Tab(56);: Print Using "####"; DL!(X, 7);: Print Tab(61);
-            Print Using "###"; DL!(X, 8);: Print Tab(65);: Print Using "###"; DL!(X, 10);: Print Tab(69);: Print Using "#####"; DL!(X, 20);
+            Print Left$(DL$(X), 11); Tab(13);: Print Using "##"; DL!(X, 16);
+            Print Tab(16);: Print Using "####"; DL!(X, 2);
+            Print Tab(21);: Print Using "####"; DL!(X, 3);
+            Print Tab(26);: Print Using ".###"; DL!(X, 17);
+            Print Tab(31);: Print Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);
+            Print Tab(46);: Print Using "#### ####"; DL!(X, 6); DL!(X, 9);
+            Print Tab(56);: Print Using "####"; DL!(X, 7);
+            Print Tab(61);: Print Using "###"; DL!(X, 8);
+            Print Tab(65);: Print Using "###"; DL!(X, 10);
+            Print Tab(69);: Print Using "#####"; DL!(X, 20);
             Print Tab(75);: Print Using "###.#"; DL!(X, 19)
         End If
+
     Next
 
     '-----

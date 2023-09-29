@@ -241,7 +241,7 @@ Sub TITLE_TOURN ()
 
     Color 15
     Print "        PROGRAMMED BY LANCE HAFFNER, SHANNON LYNN AND JASON LEONARD"
-    Print "            FOR TECHNICAL SUPPORT, CONTACT SUPPORT@LHGAMES.NET"
+    Print "            FOR TECHNICAL SUPPORT, CONTACT support@LHGames.net"
 
     Color 10
 
@@ -306,8 +306,8 @@ Sub TITLE ()
     Locate 3, 1
     Color 15, 0
     Print "           PROGRAMMED BY LANCE HAFFNER, SHANNON LYNN AND JASON LEONARD"
-    Print "               FOR TECHNICAL SUPPORT, CONTACT SUPPORT@LHGAMES.NET"
-    Print "          LANCE HAFFNER GAMES ON THE INTERNET AT HTTP://WWW.LHGAMES.NET"
+    Print "               FOR TECHNICAL SUPPORT, CONTACT support@LHGames.net"
+    Print "          LANCE HAFFNER GAMES ON THE INTERNET AT https://www.LHGames.net"
 
     Color 10
 

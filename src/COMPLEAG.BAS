@@ -91,7 +91,7 @@ Sub CompileLeague ()
             'Look for * as terminating char
             If H1$(XW) <> Chr$(42) Then
 
-                haveStats = FindStatsLeague%(H1$(XW), numberGames%, fullWins, fullLosses)
+                haveStats = FindStatsLeague%(H1$(XW), totalGames, fullWins, fullLosses)
 
                 If (haveStats) Then
 
@@ -131,7 +131,7 @@ Sub CompileLeague ()
                         Next
 
                         Call ReadStatsPro(H1$(XW), TN$)
-                        Call StatsByCategoryPro(numberGames%, TN$, finalUpdate$, fullWins, fullLosses)
+                        Call StatsByCategoryPro(totalGames, TN$, finalUpdate$, fullWins, fullLosses)
                         Call CheckStatsPro(TN$)
 
                     End If 'Done checking for stat file
@@ -154,7 +154,7 @@ End Sub
 '       FindStatsLeague% Function
 '----------------------------------------
 '...explanation...
-Function FindStatsLeague% (statFile$, numberGames%, fullWins, fullLosses)
+Function FindStatsLeague% (statFile$, totalGames, fullWins, fullLosses)
 
     Shared leagueT%(), O%()
 
@@ -169,10 +169,12 @@ Function FindStatsLeague% (statFile$, numberGames%, fullWins, fullLosses)
 
         Open diskPaths$(1) + statFile$ + "S" For Input As #1
 
-        Input #1, numberGames%
+        Input #1, totalGames
 
         For I = 1 to NUM_STATRECORDS: Input #1, O%(I): Next I
+
         For I = 1 to NUM_STATRECORDS: Input #1, O$(I): Next I
+
         For I = 1 to NUM_STATRECORDS: Input #1, leagueT%(I): Next I
 
         Close #1
@@ -182,29 +184,10 @@ Function FindStatsLeague% (statFile$, numberGames%, fullWins, fullLosses)
         confWins = 0
         confLosses = 0
 
-        For I = 1 To numberGames%
+        For I = 1 To totalGames
 
-            For P = 4 To 11
-                If Mid$(O$(I), P, 1) = " " Or Mid$(O$(I), P, 1) = "." Then Mid$(O$(I), P, 1) = "_"
-            Next P
-
-            For P = 12 To 14
-                If Mid$(O$(I), P, 2) = "ST" Then Mid$(O$(I), 9, 1) = "_": Mid$(O$(I), 10, 2) = "ST"
-            Next P
-
-            QQ = 8
-
-            For P = 11 To 4 Step -1
-                If Mid$(O$(I), P, 1) = "_" Then
-                    QQ = P - 4
-                Else
-                    Exit For
-                End If
-            Next P
-
-            targetFile$ = Mid$(O$(I), 4, QQ)
-            R$ = targetFile$ + "." + Left$(O$(I), 2)
-            O$(I) = R$
+            targetFile$ = nameStatFile$(O$(I))
+            O$(I) = targetFile$
 
             confGame = 0
 
@@ -263,17 +246,25 @@ Sub ReadStatsPro (statFile$, TN$)
     Input #1, TN$
 
     For I = 0 To 14
+
         Input #1, N$(I)
+
         For J = 0 To 13:
             Input #1, leagS!(I, J)
         Next
+
         Input #1, statW0!(I)
         Input #1, statW1!(I)
+
     Next I
 
-    For L = 1 To 16: Input #1, OT!(L): Next
+    For L = 1 To 16: 
+        Input #1, OT!(L)
+    Next
 
-    For L = 1 To 16: Input #1, DT!(L): Next
+    For L = 1 To 16: 
+        Input #1, DT!(L)
+    Next
 
     Close #1
 
@@ -309,13 +300,16 @@ Sub CheckStatsPro (TN$)
 
             For Z = 1 To 19
                 For Z1 = Z + 1 To 20
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
                     End If
+
                 Next Z1
             Next Z
+
         End If
 
         'Division 3, 4 Record
@@ -328,6 +322,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 21 To 39
                 For Z1 = Z + 1 To TEAMS_PER_CONFERENCE
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -335,11 +330,14 @@ Sub CheckStatsPro (TN$)
                             Swap LD!(Z1, M), LD!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
+
         End If
 
         'Field Goal %
+        '--- Must have made 300 FGs
         If leagS!(X, 19) > LD!(60, 1) Then
 
             LD!(60, 1) = leagS!(X, 19)
@@ -349,6 +347,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 41 To 59
                 For Z1 = Z + 1 To 60
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -356,11 +355,14 @@ Sub CheckStatsPro (TN$)
                             Swap LD!(Z1, M), LD!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
+
         End If
 
         'FT Percent
+        '--- Must have made 125 FTs
         If leagS!(X, 20) > LD!(80, 1) Then
 
             LD!(80, 1) = leagS!(X, 20)
@@ -370,6 +372,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 61 To 79
                 For Z1 = Z + 1 To 80
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -377,11 +380,14 @@ Sub CheckStatsPro (TN$)
                             Swap LD!(Z1, M), LD!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
+
         End If
 
         'Steals Per Game
+        '--- Player must have played 70% of total games
         If leagS!(X, 15) > LD!(90, 1) Then
 
             LD!(90, 1) = leagS!(X, 15)
@@ -391,6 +397,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 81 To 89
                 For Z1 = Z + 1 To 90
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -398,17 +405,20 @@ Sub CheckStatsPro (TN$)
                             Swap LD!(Z1, M), LD!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
+
         End If
 
         'Steals
-        If leagS!(X, 7) > LD!(NUM_STATRECORDS, 1) Then
+        '--- Player must have played 70% of total games
+        If leagS!(X, 7) > LD!(100, 1) Then
 
-            LD!(NUM_STATRECORDS, 1) = leagS!(X, 7)
-            LD!(NUM_STATRECORDS, 2) = 0
-            Z2$(NUM_STATRECORDS) = N$(X)
-            Z3$(NUM_STATRECORDS) = TN$
+            LD!(100, 1) = leagS!(X, 7)
+            LD!(100, 2) = 0
+            Z2$(100) = N$(X)
+            Z3$(100) = TN$
 
             For Z = 91 To 99
                 For Z1 = Z + 1 To 100
@@ -422,9 +432,11 @@ Sub CheckStatsPro (TN$)
 
                 Next Z1
             Next Z
+
         End If
 
         'Assists Per Game
+        '--- Player must have played 70% of total games
         If leagS!(X, 16) > LD!(110, 1) Then
 
             LD!(110, 1) = leagS!(X, 16)
@@ -434,6 +446,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 101 To 109
                 For Z1 = Z + 1 To 110
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -444,9 +457,11 @@ Sub CheckStatsPro (TN$)
 
                 Next Z1
             Next Z
+
         End If
 
         'Assists
+        '--- Player must have played 70% of total games
         If leagS!(X, 8) > LD!(120, 1) Then
 
             LD!(120, 1) = leagS!(X, 8)
@@ -456,6 +471,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 111 To 119
                 For Z1 = Z + 1 To 120
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -466,9 +482,11 @@ Sub CheckStatsPro (TN$)
 
                 Next Z1
             Next Z
+
         End If
 
         '3 FG Percent
+        '--- Player must have made at least 1 3FG / Game
         If leagS!(X, 21) > LD!(130, 1) Then
 
             LD!(130, 1) = leagS!(X, 21)
@@ -488,6 +506,7 @@ Sub CheckStatsPro (TN$)
 
                 Next Z1
             Next Z
+
         End If
 
         '3 FG Made
@@ -500,6 +519,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 131 To 139
                 For Z1 = Z + 1 To 140
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -507,11 +527,14 @@ Sub CheckStatsPro (TN$)
                             Swap LD!(Z1, M), LD!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
+
         End If
 
         'Minutes Per Game
+        '--- Player must have played 70% of total games
         If leagS!(X, 18) > LD!(150, 1) Then
 
             LD!(150, 1) = leagS!(X, 18)
@@ -521,6 +544,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 141 To 149
                 For Z1 = Z + 1 To 150
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -531,9 +555,11 @@ Sub CheckStatsPro (TN$)
 
                 Next Z1
             Next Z
+
         End If
 
         'Total Minutes
+        '--- Player must have played 70% of total games
         If leagS!(X, 10) / 60 > LD!(160, 1) Then
 
             LD!(160, 1) = leagS!(X, 10) / 60
@@ -543,6 +569,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 151 To 159
                 For Z1 = Z + 1 To 160
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -553,9 +580,11 @@ Sub CheckStatsPro (TN$)
 
                 Next Z1
             Next Z
+
         End If
 
         'Rebounds Per Game
+        '--- Player must have played 70% of total games
         If leagS!(X, 13) > LD!(170, 1) Then
 
             LD!(170, 1) = leagS!(X, 13)
@@ -565,6 +594,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 161 To 169
                 For Z1 = Z + 1 To 170
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -575,9 +605,11 @@ Sub CheckStatsPro (TN$)
 
                 Next Z1
             Next Z
+
         End If
 
         'Rebounds
+        '--- Player must have played 70% of total games
         If leagS!(X, 5) > LD!(180, 1) Then
 
             LD!(180, 1) = leagS!(X, 5)
@@ -587,6 +619,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 171 To 179
                 For Z1 = Z + 1 To 180
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -597,9 +630,11 @@ Sub CheckStatsPro (TN$)
 
                 Next Z1
             Next Z
+
         End If
 
         'Blocks Per Game
+        '--- Player must have played 70% of total games
         If leagS!(X, 17) > LD!(190, 1) Then
 
             LD!(190, 1) = leagS!(X, 17)
@@ -609,6 +644,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 181 To 189
                 For Z1 = Z + 1 To 190
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -619,9 +655,11 @@ Sub CheckStatsPro (TN$)
 
                 Next Z1
             Next Z
+
         End If
 
         'Blocks
+        '--- Player must have played 70% of total games
         If leagS!(X, 9) > LD!(200, 1) Then
 
             LD!(200, 1) = leagS!(X, 9)
@@ -631,6 +669,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 191 To 199
                 For Z1 = Z + 1 To 200
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -653,6 +692,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 201 To 209
                 For Z1 = Z + 1 To 210
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -663,6 +703,7 @@ Sub CheckStatsPro (TN$)
 
                 Next Z1
             Next Z
+
         End If
 
         'Free Throws Made
@@ -675,6 +716,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 211 To 219
                 For Z1 = Z + 1 To 220
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -685,6 +727,7 @@ Sub CheckStatsPro (TN$)
 
                 Next Z1
             Next Z
+
         End If
 
         'Fouls Per Game
@@ -697,6 +740,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 221 To 229
                 For Z1 = Z + 1 To 230
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -707,6 +751,7 @@ Sub CheckStatsPro (TN$)
 
                 Next Z1
             Next Z
+
         End If
 
         'Fouls
@@ -719,6 +764,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 231 To 239
                 For Z1 = Z + 1 To 240
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -729,6 +775,7 @@ Sub CheckStatsPro (TN$)
 
                 Next Z1
             Next Z
+
         End If
 
         'MVP Points
@@ -741,6 +788,7 @@ Sub CheckStatsPro (TN$)
 
             For Z = 241 To 249
                 For Z1 = Z + 1 To 250
+
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -765,18 +813,22 @@ Sub CheckStatsPro (TN$)
 
         For X = 1 To 39
             For X1 = 1 + X To TEAMS_PER_CONFERENCE
+
                 If OL!(X, 19) < OL!(X1, 19) Then
                     Swap OL$(X1), OL$(X)
                     For M = 1 To 20
                         Swap OL!(X1, M), OL!(X, M)
                     Next
                 End If
+
             Next X1
         Next X
+
     End If
 
     'FOR X=1 TO 15
     If DT!(19) < DL!(40, 19) Then
+
         For M = 1 To 20
             DL!(40, M) = DT!(M)
         Next
@@ -785,14 +837,17 @@ Sub CheckStatsPro (TN$)
 
         For X = 1 To 39
             For X1 = 1 + X To TEAMS_PER_CONFERENCE
+
                 If DL!(X, 19) > DL!(X1, 19) Then
                     Swap DL$(X1), DL$(X)
                     For M = 1 To 20
                         Swap DL!(X1, M), DL!(X, M)
                     Next
                 End If
+
             Next X1
         Next X
+
     End If
 
 End Sub
@@ -804,7 +859,7 @@ End Sub
 'This subroutine compares all pre-loaded
 'stats to each of the record categories to
 'see if any should be updated
-Sub StatsByCategoryPro (numberGames%, TN$, finalUpdate$, fullWins, fullLosses)
+Sub StatsByCategoryPro (totalGames, TN$, finalUpdate$, fullWins, fullLosses)
 
     Shared DT!(), leagBRC!(), leagS!(), OT!()
     Shared statW0!(), statW1!(), TRC!(), TRC1!()
@@ -818,6 +873,7 @@ Sub StatsByCategoryPro (numberGames%, TN$, finalUpdate$, fullWins, fullLosses)
         leagS!(I, 12) = leagS!(I, 2) * 2 + statW0!(I) + leagS!(I, 4): ' *** PTS ***
 
         If leagS!(I, 0) <> 0 Then
+
             leagS!(I, 13) = leagS!(I, 5) / leagS!(I, 0): ' *** RB/G ***
             leagS!(I, 14) = leagS!(I, 6) / leagS!(I, 0): ' *** FOULS/G ***
             leagS!(I, 15) = leagS!(I, 7) / leagS!(I, 0): ' *** STEALS/G ***
@@ -875,8 +931,8 @@ Sub StatsByCategoryPro (numberGames%, TN$, finalUpdate$, fullWins, fullLosses)
 
     Next
 
-    OT!(16) = numberGames%
-    DT!(16) = numberGames%
+    OT!(16) = totalGames
+    DT!(16) = totalGames
 
     OT!(17) = OT!(3) / OT!(2)
     DT!(17) = DT!(3) / DT!(2)
@@ -888,8 +944,8 @@ Sub StatsByCategoryPro (numberGames%, TN$, finalUpdate$, fullWins, fullLosses)
     If OT!(15) <> 0 Then OT!(21) = OT!(14) / OT!(15) Else OT!(21) = 0
     If DT!(15) <> 0 Then DT!(21) = DT!(14) / DT!(15) Else DT!(21) = 999
 
-    OT!(19) = OT!(20) / numberGames%
-    DT!(19) = DT!(20) / numberGames%
+    OT!(19) = OT!(20) / totalGames
+    DT!(19) = DT!(20) / totalGames
 
     If OT!(2) > TRC!(1) Then TRC!(1) = OT!(2): TRC$(1) = TN$
     If OT!(3) > TRC!(2) Then TRC!(2) = OT!(3): TRC$(2) = TN$
@@ -906,7 +962,7 @@ Sub StatsByCategoryPro (numberGames%, TN$, finalUpdate$, fullWins, fullLosses)
     If OT!(13) > TRC!(10) Then TRC!(10) = OT!(13): TRC$(10) = TN$
     If OT!(6) - OT!(13) > TRC!(11) Then TRC!(11) = OT!(6) - OT!(13): TRC$(11) = TN$
     If OT!(6) > TRC!(12) Then TRC!(12) = OT!(6): TRC$(12) = TN$
-    If OT!(6) / numberGames% > TRC!(13) And UCase$(finalUpdate$) = "Y" Then TRC!(13) = OT!(6) / numberGames%: TRC$(13) = TN$
+    If OT!(6) / totalGames > TRC!(13) And UCase$(finalUpdate$) = "Y" Then TRC!(13) = OT!(6) / totalGames: TRC$(13) = TN$
 
     If OT!(7) < TRC!(14) And UCase$(finalUpdate$) = "Y" Then TRC!(14) = OT!(7): TRC$(14) = TN$
 
@@ -916,7 +972,7 @@ Sub StatsByCategoryPro (numberGames%, TN$, finalUpdate$, fullWins, fullLosses)
     If OT!(12) < TRC!(18) And UCase$(finalUpdate$) = "Y" Then TRC!(18) = OT!(12): TRC$(18) = TN$
 
     If OT!(11) > TRC!(19) Then TRC!(19) = OT!(11): TRC$(19) = TN$
-    If OT!(11) / numberGames% > TRC!(20) And UCase$(finalUpdate$) = "Y" Then TRC!(20) = OT!(11) / numberGames%: TRC$(20) = TN$
+    If OT!(11) / totalGames > TRC!(20) And UCase$(finalUpdate$) = "Y" Then TRC!(20) = OT!(11) / totalGames: TRC$(20) = TN$
     If fullWins > TRC!(21) Then TRC!(21) = fullWins: TRC$(21) = TN$
 
     'FG's
@@ -936,7 +992,7 @@ Sub StatsByCategoryPro (numberGames%, TN$, finalUpdate$, fullWins, fullLosses)
     If DT!(13) < TRC1!(10) Then TRC1!(10) = DT!(13): TRC1$(10) = TN$
     If DT!(6) - DT!(13) < TRC1!(11) Then TRC1!(11) = DT!(6) - DT!(13): TRC1$(11) = TN$
     If DT!(6) < TRC1!(12) Then TRC1!(12) = DT!(6): TRC1$(12) = TN$
-    If DT!(6) / numberGames% < TRC1!(13) And UCase$(finalUpdate$) = "Y" Then TRC1!(13) = DT!(6) / numberGames%: TRC1$(13) = TN$
+    If DT!(6) / totalGames < TRC1!(13) And UCase$(finalUpdate$) = "Y" Then TRC1!(13) = DT!(6) / totalGames: TRC1$(13) = TN$
 
     If DT!(7) > TRC1!(14) And UCase$(finalUpdate$) = "Y" Then TRC1!(14) = DT!(7): TRC1$(14) = TN$
 
@@ -946,7 +1002,7 @@ Sub StatsByCategoryPro (numberGames%, TN$, finalUpdate$, fullWins, fullLosses)
     If DT!(12) > TRC1!(18) And UCase$(finalUpdate$) = "Y" Then TRC1!(18) = DT!(12): TRC1$(18) = TN$
 
     If DT!(11) < TRC1!(19) Then TRC1!(19) = DT!(11): TRC1$(19) = TN$
-    If DT!(11) / numberGames% < TRC1!(20) And UCase$(finalUpdate$) = "Y" Then TRC1!(20) = DT!(11) / numberGames%: TRC1$(20) = TN$
+    If DT!(11) / totalGames < TRC1!(20) And UCase$(finalUpdate$) = "Y" Then TRC1!(20) = DT!(11) / totalGames: TRC1$(20) = TN$
 
     If fullLosses > TRC1!(21) Then TRC1!(21) = fullLosses: TRC1$(21) = TN$
 
