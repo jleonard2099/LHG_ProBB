@@ -3726,8 +3726,8 @@ Sub SETUPRATINGS ()
                     A!(I, I1, 0) = Int((plyrRat_GAME(I, I1, 3) - plyrRat_GAME(I, I1, 14)) / (plyrRat_GAME(I, I1, 2) - plyrRat_GAME(I, I1, 13)) * 100 + .5)
                 End If
 
-                If playoffOpt = 1 
-                    Then A!(I, I1, 0) = A!(I, I1, 0) - 2
+                If playoffOpt = 1  Then
+                    A!(I, I1, 0) = A!(I, I1, 0) - 2
                 End If
 
                 If plyrRat_GAME(I, I1, 4) > 0 Then 

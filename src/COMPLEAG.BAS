@@ -23,7 +23,7 @@ Sub CompileLeague ()
     Shared TRC$(), TRC1$(), Z2$(), Z3$()
 
     Shared DT!(), DL!()
-    Shared OT!(), OL!()
+    Shared OT!()
 
     'Initialize values first
     TRC!(14) = 19999
@@ -131,8 +131,9 @@ Sub CompileLeague ()
                         Next
 
                         Call ReadStatsPro(H1$(XW), TN$)
-                        Call StatsByCategoryPro(totalGames, TN$, finalUpdate$, fullWins, fullLosses)
-                        Call CheckStatsPro(TN$)
+                        Call StatsByCategoryPro(TN$, finalUpdate$, fullWins, fullLosses)
+                        totalGames = fullWins + fullLosses
+                        Call CheckStatsPro(TN$, totalGames)
 
                     End If 'Done checking for stat file
 
@@ -276,7 +277,7 @@ End Sub
 '----------------------------------------
 'This subroutine compares pre-loaded stats
 'to existing leaders and updates as needed
-Sub CheckStatsPro (TN$)
+Sub CheckStatsPro (TN$, totalGames)
 
     Shared DT!(), OT!()
     Shared DL!(), OL!()
@@ -290,8 +291,9 @@ Sub CheckStatsPro (TN$)
         Print "CHECKING STATS OF ";
         Print N$(X)
 
-        'Division 1, 2 Record
-        If leagS!(X, 22) > LD!(20, 1) Then
+        'Pts / Game
+        '--- Must have played 70% of team's games
+        If leagS!(X, 22) > LD!(20, 1) And (leagS!(X, 0) >= (totalGames * 0.7)) Then
 
             LD!(20, 1) = leagS!(X, 22)
             LD!(20, 2) = 0
@@ -312,8 +314,9 @@ Sub CheckStatsPro (TN$)
 
         End If
 
-        'Division 3, 4 Record
-        If leagS!(X, 12) > LD!(40, 1) Then
+        'Off Reb
+        '--- Must have played 70% of team's games
+        If leagS!(X, 12) > LD!(40, 1) And (leagS!(X, 0) >= (totalGames * 0.7)) Then
 
             LD!(40, 1) = leagS!(X, 12)
             LD!(40, 2) = 0
@@ -336,12 +339,12 @@ Sub CheckStatsPro (TN$)
 
         End If
 
-        'Field Goal %
-        '--- Must have made 300 FGs
-        If leagS!(X, 19) > LD!(60, 1) Then
+        'FG%
+        '-- Must have 300 FGM
+        If leagS!(X, 19) > LD!(60, 1) And leagS!(X, 2) >= 300 Then
 
-            LD!(60, 1) = leagS!(X, 19)
-            LD!(60, 2) = leagS!(X, 1)
+            LD!(60, 1) = leagS!(X, 19)     'FG%
+            LD!(60, 2) = leagS!(X, 1)      'FGA
             Z2$(60) = N$(X)
             Z3$(60) = TN$
 
@@ -361,12 +364,12 @@ Sub CheckStatsPro (TN$)
 
         End If
 
-        'FT Percent
-        '--- Must have made 125 FTs
-        If leagS!(X, 20) > LD!(80, 1) Then
+        'FT%
+        '-- Must mave 125 FTM
+        If leagS!(X, 20) > LD!(80, 1) And (leagS!(X, 4) >= 125) Then
 
-            LD!(80, 1) = leagS!(X, 20)
-            LD!(80, 2) = leagS!(X, 3)
+            LD!(80, 1) = leagS!(X, 20)  'FT%
+            LD!(80, 2) = leagS!(X, 3)   'FTA
             Z2$(80) = N$(X)
             Z3$(80) = TN$
 
@@ -386,9 +389,9 @@ Sub CheckStatsPro (TN$)
 
         End If
 
-        'Steals Per Game
-        '--- Player must have played 70% of total games
-        If leagS!(X, 15) > LD!(90, 1) Then
+        'Steals / Game
+        '--- Must have played 70% of team's games
+        If leagS!(X, 15) > LD!(90, 1) And (leagS!(X, 0) >= (totalGames * 0.7)) Then
 
             LD!(90, 1) = leagS!(X, 15)
             LD!(90, 2) = leagS!(X, 7)
@@ -412,8 +415,8 @@ Sub CheckStatsPro (TN$)
         End If
 
         'Steals
-        '--- Player must have played 70% of total games
-        If leagS!(X, 7) > LD!(100, 1) Then
+        '--- Must have played 70% of team's games
+        If leagS!(X, 7) > LD!(100, 1) And (leagS!(X, 0) >= (totalGames * 0.7)) Then
 
             LD!(100, 1) = leagS!(X, 7)
             LD!(100, 2) = 0
@@ -435,9 +438,9 @@ Sub CheckStatsPro (TN$)
 
         End If
 
-        'Assists Per Game
-        '--- Player must have played 70% of total games
-        If leagS!(X, 16) > LD!(110, 1) Then
+        'Assists / Game
+        '--- Must have played 70% of team's games
+        If leagS!(X, 16) > LD!(110, 1) And (leagS!(X, 0) >= (totalGames * 0.7)) Then
 
             LD!(110, 1) = leagS!(X, 16)
             LD!(110, 2) = leagS!(X, 8)
@@ -461,7 +464,7 @@ Sub CheckStatsPro (TN$)
         End If
 
         'Assists
-        '--- Player must have played 70% of total games
+        '--- Must have played 70% of team's games
         If leagS!(X, 8) > LD!(120, 1) Then
 
             LD!(120, 1) = leagS!(X, 8)
@@ -485,9 +488,9 @@ Sub CheckStatsPro (TN$)
 
         End If
 
-        '3 FG Percent
-        '--- Player must have made at least 1 3FG / Game
-        If leagS!(X, 21) > LD!(130, 1) Then
+        '3 FG %
+        '-- Must have 82 3FG's made; assumes 82 game schedule
+        If leagS!(X, 21) > LD!(130, 1) And statW0!(X) >= totalGames Then
 
             LD!(130, 1) = leagS!(X, 21)
             LD!(130, 2) = statW1!(X)
@@ -509,8 +512,9 @@ Sub CheckStatsPro (TN$)
 
         End If
 
-        '3 FG Made
-        If statW0!(X) > LD!(140, 1) Then
+        '3 FGM
+        '-- Must have 82 3FG's made; assumes 82 game schedule
+        If statW0!(X) > LD!(140, 1) And statW0!(X) >= totalGames Then
 
             LD!(140, 1) = statW0!(X)
             LD!(140, 2) = 0
@@ -533,9 +537,9 @@ Sub CheckStatsPro (TN$)
 
         End If
 
-        'Minutes Per Game
-        '--- Player must have played 70% of total games
-        If leagS!(X, 18) > LD!(150, 1) Then
+        'Minutes / Game
+        '--- Must have played 70% of team's games
+        If leagS!(X, 18) > LD!(150, 1) And (leagS!(X, 0) >= (totalGames * 0.7)) Then
 
             LD!(150, 1) = leagS!(X, 18)
             LD!(150, 2) = 0
@@ -559,8 +563,8 @@ Sub CheckStatsPro (TN$)
         End If
 
         'Total Minutes
-        '--- Player must have played 70% of total games
-        If leagS!(X, 10) / 60 > LD!(160, 1) Then
+        '--- Must have played 70% of team's games
+        If leagS!(X, 10) / 60 > LD!(160, 1) And (leagS!(X, 0) >= (totalGames * 0.7)) Then
 
             LD!(160, 1) = leagS!(X, 10) / 60
             LD!(160, 2) = 0
@@ -583,9 +587,9 @@ Sub CheckStatsPro (TN$)
 
         End If
 
-        'Rebounds Per Game
-        '--- Player must have played 70% of total games
-        If leagS!(X, 13) > LD!(170, 1) Then
+        'Rebounds / Game
+        '--- Must have played 70% of team's games
+        If leagS!(X, 13) > LD!(170, 1) And (leagS!(X, 0) >= (totalGames * 0.7)) Then
 
             LD!(170, 1) = leagS!(X, 13)
             LD!(170, 2) = leagS!(X, 5)
@@ -608,9 +612,9 @@ Sub CheckStatsPro (TN$)
 
         End If
 
-        'Rebounds
-        '--- Player must have played 70% of total games
-        If leagS!(X, 5) > LD!(180, 1) Then
+        'Avg Rebounds
+        '--- Must have played 70% of team's games
+        If leagS!(X, 5) > LD!(180, 1) And (leagS!(X, 0) >= (totalGames * 0.7)) Then
 
             LD!(180, 1) = leagS!(X, 5)
             LD!(18, 2) = 0
@@ -633,9 +637,9 @@ Sub CheckStatsPro (TN$)
 
         End If
 
-        'Blocks Per Game
-        '--- Player must have played 70% of total games
-        If leagS!(X, 17) > LD!(190, 1) Then
+        'Blocks / Game
+        '--- Must have played 70% of team's games
+        If leagS!(X, 17) > LD!(190, 1) And (leagS!(X, 0) >= (totalGames * 0.7)) Then
 
             LD!(190, 1) = leagS!(X, 17)
             LD!(190, 2) = 0
@@ -659,8 +663,8 @@ Sub CheckStatsPro (TN$)
         End If
 
         'Blocks
-        '--- Player must have played 70% of total games
-        If leagS!(X, 9) > LD!(200, 1) Then
+        '--- Must have played 70% of team's games
+        If leagS!(X, 9) > LD!(200, 1) And (leagS!(X, 0) >= (totalGames * 0.7)) Then
 
             LD!(200, 1) = leagS!(X, 9)
             LD!(200, 2) = 0
@@ -730,7 +734,7 @@ Sub CheckStatsPro (TN$)
 
         End If
 
-        'Fouls Per Game
+        'Fouls / Game
         If leagS!(X, 14) > LD!(230, 1) Then
 
             LD!(230, 1) = leagS!(X, 14)
@@ -803,8 +807,10 @@ Sub CheckStatsPro (TN$)
 
     Next X
 
+    'Offensive Totals
     'FOR X=1 TO TEAMS_PER_CONFERENCE
     If OT!(19) > OL!(40, 19) Then
+
         For M = 1 To 20
             OL!(40, M) = OT!(M)
         Next
@@ -826,6 +832,7 @@ Sub CheckStatsPro (TN$)
 
     End If
 
+    'Defensive Totals
     'FOR X=1 TO 15
     If DT!(19) < DL!(40, 19) Then
 
@@ -859,13 +866,15 @@ End Sub
 'This subroutine compares all pre-loaded
 'stats to each of the record categories to
 'see if any should be updated
-Sub StatsByCategoryPro (totalGames, TN$, finalUpdate$, fullWins, fullLosses)
+Sub StatsByCategoryPro (TN$, finalUpdate$, fullWins, fullLosses)
 
     Shared DT!(), leagBRC!(), leagS!(), OT!()
     Shared statW0!(), statW1!(), TRC!(), TRC1!()
 
     Shared BRC$(), N$(), TRC$(), TRC1$()
 
+    totalGames = fullWins + fullLosses
+    
     For I = 0 To 14
 
         leagS!(I, 25) = leagS!(I, 13)

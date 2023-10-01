@@ -262,7 +262,7 @@ Sub PrintRoster (YN$)
             If playerRatings%(I, 4) <> playerRatings%(I, 5) Then ftPCT! = playerRatings%(I, 5) / playerRatings%(I, 4): LPrint Using ".### "; ftPCT!;
 
             LPrint Tab(55);
-            'Rebounds / AST / PF / STL / BLK / PTS / AVG HI
+            'Rebounds / AST / Fouls / STL / BLK / PTS / AVG HI
             LPrint Using "### ### #### #### ### ### ### #### "; playerRatings%(I, 6); playerRatings%(I, 7); playerRatings%(I, 6) + playerRatings%(I, 7); playerRatings%(I, 8); playerRatings%(I, 9); playerRatings%(I, 11); playerRatings%(I, 12); playerRatings%(I, 3) * 2 + playerRatings%(I, 5) + playerRatings%(I, 14);
             LPrint Using "###.# ##"; (playerRatings%(I, 3) * 2 + playerRatings%(I, 5) + playerRatings%(I, 14)) / playerRatings%(I, 0); playerRatings%(I, 15)
 

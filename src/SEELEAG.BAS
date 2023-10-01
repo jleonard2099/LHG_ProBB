@@ -786,22 +786,18 @@ Sub LeaderStats_Screen ()
             'G
             Print Using "##"; OL!(X, 16);: Print Tab(16);
             'FGA
-            Print Using "####"; OL!(X, 2);: Print Tab(21);
+            Print Using "#####"; OL!(X, 2);: Print Tab(21);
             'FGM
-            Print Using "####"; OL!(X, 3);: Print Tab(26);
+            Print Using "#####"; OL!(X, 3);: Print Tab(26);
             'FG PCT
             Print Using ".###"; OL!(X, 17);: Print Tab(31);
             'FTA / FTM / FT PCT
-
-            'FTA / FTM are currently swapped, making FT PCT inaccurate
-            'B/c calculations are on the fly, did we read into the wrong spots?
             Print Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);: Print Tab(46);
-
             'REB
             Print Using "####"; OL!(X, 6);: Print Tab(51);
             'AST
             Print Using "####"; OL!(X, 9);: Print Tab(56);
-            'PF
+            'Personal Fouls
             Print Using "####"; OL!(X, 7);: Print Tab(61);
             'STL
             Print Using "###"; OL!(X, 8);: Print Tab(65);
@@ -835,17 +831,29 @@ Sub LeaderStats_Screen ()
 
         If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
             Print Left$(OL$(X), 11); Tab(13);
+            'G
             Print Using "##"; OL!(X, 16);: Print Tab(16);
-            Print Using "####"; OL!(X, 2);: Print Tab(21);
-            Print Using "####"; OL!(X, 3);: Print Tab(26);
+            'FGA
+            Print Using "#####"; OL!(X, 2);: Print Tab(21);
+            'FGM
+            Print Using "#####"; OL!(X, 3);: Print Tab(26);
+            'FG PCT
             Print Using ".###"; OL!(X, 17);: Print Tab(31);
+            'FTA / FTM / FT PCT
             Print Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);: Print Tab(46);
+            'REB
             Print Using "####"; OL!(X, 6);: Print Tab(51);
+            'AST
             Print Using "####"; OL!(X, 9);: Print Tab(56);
+            'Personal Fouls
             Print Using "####"; OL!(X, 7);: Print Tab(61);
+            'STL
             Print Using "###"; OL!(X, 8);: Print Tab(65);
+            'BLK
             Print Using "###"; OL!(X, 10);: Print Tab(69);
+            'PTS
             Print Using "#####"; OL!(X, 20);: Print Tab(75);
+            'AVG
             Print Using "###.#"; OL!(X, 19)
         End If
 
@@ -883,7 +891,7 @@ Sub LeaderStats_Screen ()
             Print Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);: Print Tab(46);
             'REB / AST
             Print Using "#### ####"; DL!(X, 6); DL!(X, 9);: Print Tab(56);
-            'PF
+            'Fouls
             Print Using "####"; DL!(X, 7);: Print Tab(61);
             'STL
             Print Using "###"; DL!(X, 8);: Print Tab(65);

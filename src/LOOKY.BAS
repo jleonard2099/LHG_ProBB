@@ -685,7 +685,7 @@ Sub ViewTeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
         If totalGames% > 0 Then rebCalc! = compareZ!(5) / totalGames% Else rebCalc! = 0
         Locate , 29: Print Using "#### #### ####  ##.#"; compareZ!(12); compareZ!(5) - compareZ!(12) - compareZ!(15); compareZ!(5); rebCalc!;
 
-        'PF  AST  BLK  STL  TO
+        'Fouls  AST  BLK  STL  TO
         Print Using " #### #### #### #### ####"; compareZ!(6); compareZ!(8); compareZ!(9); compareZ!(7); compareZ!(11)
 
         '2nd Row
@@ -699,7 +699,7 @@ Sub ViewTeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
         If totalGames% > 0 Then rebCalc! = compareZ1!(5) / totalGames% Else rebCalc! = 0
         Locate , 29: Print Using "#### #### ####  ##.#"; compareZ1!(12); compareZ1!(5) - compareZ1!(12) - compareZ1!(15); compareZ1!(5); rebCalc!;
 
-        'PF  AST  BLK  STL  TO
+        'Fouls  AST  BLK  STL  TO
         Print Using " #### #### #### #### ####"; compareZ1!(6); compareZ1!(8); compareZ1!(9); compareZ1!(7); compareZ1!(11)
 
         Do
@@ -946,7 +946,7 @@ Sub PrintStatsSummary (teamName$, totalGames%)
         'Average Rebounds
         If values!(I, 0) > 0 Then LPrint Tab(45); Using "##.#"; values!(I, 5) / values!(I, 0);
 
-        'PF / AST / BLK / STL / TO
+        'Fouls / AST / BLK / STL / TO
         LPrint Tab(51); Using "### ####  ###  ###  ###"; values!(I, 6); values!(I, 8); values!(I, 9); values!(I, 7); values!(I, 11)
     Next I
 
@@ -963,7 +963,7 @@ Sub PrintStatsSummary (teamName$, totalGames%)
     If totalGames% > 0 Then rebCalc! = compareZ!(5) / totalGames% Else rebCalc! = 0
     LPrint Tab(29); Using "#### #### ####  ##.#"; compareZ!(12); compareZ!(5) - compareZ!(12) - compareZ!(15); compareZ!(5); rebCalc!;
 
-    'PF  AST  BLK  STL  TO
+    'Fouls  AST  BLK  STL  TO
     LPrint Using " #### #### #### #### ####"; compareZ!(6); compareZ!(8); compareZ!(9); compareZ!(7); compareZ!(11)
 
     'Points
@@ -978,7 +978,7 @@ Sub PrintStatsSummary (teamName$, totalGames%)
     If totalGames% > 0 Then rebCalc! = compareZ1!(5) / totalGames% Else rebCalc! = 0
     LPrint Tab(29); Using "#### #### ####  ##.#"; compareZ1!(12); compareZ1!(5) - compareZ1!(12) - compareZ1!(15); compareZ1!(5); rebCalc!;
 
-    'PF  AST  BLK  STL  TO
+    'Fouls  AST  BLK  STL  TO
     LPrint Using " #### #### #### #### ####"; compareZ1!(6); compareZ1!(8); compareZ1!(9); compareZ1!(7); compareZ1!(11)
 
     LPrint Chr$(12)
