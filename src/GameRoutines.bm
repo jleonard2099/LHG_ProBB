@@ -140,7 +140,7 @@ Sub InitVar ()
     Erase D1, D8, F1, G4, G5
     Erase P2, P4, P5, P7, QQ, QR
     Erase R3, RB, score, statTotals, S3
-    Erase tmRat_GAME, turnovers, TF
+    Erase tmRat_GAME, turnovers, teamFouls
     Erase VG, VH, W2, W3
     Erase X7, Z5, Z6, timePlayed
 
@@ -3366,7 +3366,7 @@ Sub QUARTERTOTAL ()
             statTotals(5) = statTotals(5) + (A!(I, I1, 8) * 2) + A!(I, I1, 10) + W%(I, I1, 0)
             statTotals(13) = statTotals(13) + W%(I, I1, 0)
             statTotals(14) = statTotals(14) + W%(I, I1, 1)
-            statTotals(6) = TF(I)
+            statTotals(6) = teamFouls(I)
             statTotals(7) = statTotals(7) + A!(I, I1, 14)
             statTotals(8) = statTotals(8) + A!(I, I1, 15)
             statTotals(9) = statTotals(9) + A!(I, I1, 13)
@@ -5082,7 +5082,7 @@ Sub BOX2FILE (printChoice, NM$)
                 statTotals(5) = statTotals(5) + (A!(I, I1, 8) * 2) + A!(I, I1, 10) + W%(I, I1, 0)
                 statTotals(13) = statTotals(13) + W%(I, I1, 0)
                 statTotals(14) = statTotals(14) + W%(I, I1, 1)
-                statTotals(6) = TF(I)
+                statTotals(6) = teamFouls(I)
                 statTotals(7) = statTotals(7) + A!(I, I1, 14)
                 statTotals(8) = statTotals(8) + A!(I, I1, 15)
                 statTotals(9) = statTotals(9) + A!(I, I1, 13)
@@ -5344,7 +5344,7 @@ Sub STATS2SCREEN
                 statTotals(5) = statTotals(5) + (A!(I, I1, 8) * 2) + A!(I, I1, 10) + W%(I, I1, 0)
                 statTotals(13) = statTotals(13) + W%(I, I1, 0)
                 statTotals(14) = statTotals(14) + W%(I, I1, 1)
-                statTotals(6) = TF(I)
+                statTotals(6) = teamFouls(I)
                 statTotals(7) = statTotals(7) + A!(I, I1, 14)
                 statTotals(8) = statTotals(8) + A!(I, I1, 15)
                 statTotals(9) = statTotals(9) + A!(I, I1, 13)
@@ -5642,8 +5642,8 @@ Sub COMPILESTATFILES (compileOpt)
             Z!(15) = Z!(15) + R3(teamIdx) - statTotals(teamIdx)
             Z1!(15) = Z1!(15) + R3(1 - teamIdx) - statTotals(1 - teamIdx)
 
-            Z!(6) = Z!(6) + TF(teamIdx)
-            Z1!(6) = Z1!(6) + TF(1 - teamIdx)
+            Z!(6) = Z!(6) + teamFouls(teamIdx)
+            Z1!(6) = Z1!(6) + teamFouls(1 - teamIdx)
 
             Z!(5) = Z!(5) + R3(teamIdx)
             Z1!(5) = Z1!(5) + R3(1 - teamIdx)
@@ -7239,6 +7239,7 @@ Sub CheckRecords ()
 
         ' TEAM FIELD GOAL PERCENTAGES
         For I1 = 0 To 14: V8(I, I1) = 0: V8(1 - I, I1) = 0: Next
+
         For I2 = 0 To 1
             For I1 = 0 To 14
                 V8(I2, 0) = V8(I2, 0) + A!(I2, I1, 8)
@@ -7249,7 +7250,7 @@ Sub CheckRecords ()
                 V8(I2, 5) = V8(I2, 5) + (A!(I2, I1, 8) * 2) + A!(I2, I1, 10) + W%(I2, I1, 0)
                 V8(I2, 13) = V8(I2, 13) + W%(I2, I1, 0)
                 V8(I2, 14) = V8(I2, 14) + W%(I2, I1, 1)
-                V8(I2, 6) = TF(I2)
+                V8(I2, 6) = teamFouls(I2)
                 V8(I2, 7) = V8(I2, 7) + A!(I2, I1, 14)
                 V8(I2, 8) = V8(I2, 8) + A!(I2, I1, 15)
                 V8(I2, 9) = V8(I2, 9) + A!(I2, I1, 13)

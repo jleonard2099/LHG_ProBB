@@ -238,7 +238,7 @@ Dim Shared R3(1), RB(0 To 10), S3(14), SC(0 To 1)
 Dim Shared score(1, 14), schedGame(2)
 Dim Shared timePlayed(2, 14), timeouts(1), tmRat_GAME(1, 34)
 '                   teamFouls
-Dim Shared turnovers(1), TF(1)
+Dim Shared turnovers(1), teamFouls(1)
 Dim Shared statTotals(14), VG(9), VH(9), W2(1, 14), W3(1, 14)
 Dim Shared X$(4), X7(1), Z5(1), Z6(1)
 

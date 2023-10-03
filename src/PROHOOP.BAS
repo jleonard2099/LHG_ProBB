@@ -532,8 +532,8 @@ Sub PROHOOP
     'Call pbplog(1464)
 
     gameClock! = 0
-    TF(0) = TF(0) + P2(0)
-    TF(1) = TF(1) + P2(1)
+    teamFouls(0) = teamFouls(0) + P2(0)
+    teamFouls(1) = teamFouls(1) + P2(1)
     Call QUARTERTOTAL
     H = H + 1
 
