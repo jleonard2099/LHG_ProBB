@@ -7,9 +7,10 @@ Sub DRAFT ()
 
     _Title "Basketball: The Pro Game - Team Draft"
 
+
     Shared leagTot_DRAFT(), leagRat_DRAFT%(), plyrRat_DRAFT%(), tmRat_DRAFT%()
 
-    Shared draftYears$(), teamYears$(), players_DRAFT$(), tmInfo_DRAFT$()
+    Shared draftYears$(), players_DRAFT$(), teamYears$(), tmInfo_DRAFT$()
 
     Dim tmTotal_DRAFT(34)
 
@@ -18,14 +19,14 @@ Sub DRAFT ()
     Do
 
         Selection% = 1
-        Count% = 52
+        Count% = 79
         Start% = 1
         FileFGColor% = 15: FileBGColor% = 4
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
-        Rows% = 11
+        Rows% = 16
         Columns% = 5
-        Spacing% = 10
-        Row% = 6
+        Spacing% = 8
+        Row% = 5
         Column% = 1
         Color , 4
         Cls
@@ -56,7 +57,7 @@ Sub DRAFT ()
 
             Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
-            YR% = Selection%
+            yearIdx = Selection%
 
         End If
 
@@ -124,13 +125,13 @@ Sub DRAFT ()
                             Next
                         Next
 
-                        Call NewTeamParameters(teamYears$(0), tmInfo_DRAFT$(0, 0), teamIdx)
-                        Call DraftChoices(1, doneDraft, teamIdx, tmTotal_DRAFT())
+                        Call NewTeamParameters(teamYears$(0), tmInfo_DRAFT$(0, 0), teamIdx, yearIdx)
+                        Call DraftChoices(1, doneDraft, teamIdx, tmTotal_DRAFT(), yearIdx)
 
                     Case 2
                         draftIdx = 0
                         Call ChooseDraftTeam(teamYears$(draftIdx), NTMS, teamIdx, tmInfo_DRAFT$(draftIdx, 0), draftIdx)
-                        If teamIdx > 0 Then Call DraftChoices(0, doneDraft, teamIdx, tmTotal_DRAFT())
+                        If teamIdx > 0 Then Call DraftChoices(0, doneDraft, teamIdx, tmTotal_DRAFT(), yearIdx)
 
                 End Select
 
@@ -149,9 +150,9 @@ End Sub
 '      NewTeamParameters Subroutine
 '----------------------------------------
 'This subroutine prompts the user for the
-'minimum required parameters to create a 
+'minimum required parameters to create a
 'new team that players will be drafted to.
-Sub NewTeamParameters (teamYear$, teamName$, teamIdx)
+Sub NewTeamParameters (teamYear$, teamName$, teamIdx, normYrIdx)
 
     Shared tmInfo_DRAFT$(), teamYears$()
     Shared leagRat_DRAFT%(), leagueAverages%(), tmRat_DRAFT%()
@@ -164,17 +165,19 @@ Sub NewTeamParameters (teamYear$, teamName$, teamIdx)
     Color 15
 
     'Assign stats from year chosen to 'normalize' to
-    leagRat_DRAFT%(0, 0) = 80
-    ' FG
-    leagRat_DRAFT%(0, 1) = leagueAverages%(YR%, 1)
-    'RB
-    leagRat_DRAFT%(0, 2) = leagueAverages%(YR%, 2)
-    'FG%
-    leagRat_DRAFT%(0, 3) = leagueAverages%(YR%, 3)
-    'PF
-    leagRat_DRAFT%(0, 4) = leagueAverages%(YR%, 4)
-    '3FG%
-    leagRat_DRAFT%(0, 5) = leagueAverages%(YR%, 5)
+    '# of Games
+    leagRat_DRAFT%(0, 0) = 82
+    'AVG FGA/G
+    leagRat_DRAFT%(0, 1) = leagueAverages%(normYrIdx, 1)
+    'AVG RB/G
+    leagRat_DRAFT%(0, 2) = leagueAverages%(normYrIdx, 2)
+    'LEAGUE FG%
+    leagRat_DRAFT%(0, 3) = leagueAverages%(normYrIdx, 3)
+    'AVG PF/G
+    leagRat_DRAFT%(0, 4) = leagueAverages%(normYrIdx, 4)
+    'LEAGUE 3FG%
+    leagRat_DRAFT%(0, 5) = leagueAverages%(normYrIdx, 5)
+    'LEAGUE POWER ADJ
     leagRat_DRAFT%(0, 6) = 0
 
     Locate 3: Input "1. DISK ID "; teamYear$
@@ -248,9 +251,9 @@ End Sub
 '----------------------------------------
 '   NewTeamParameters_OffDef SubRoutine
 '----------------------------------------
-' There original code does not access this, 
-' nor does the original game. However, it 
-' was clearly written to help finish the 
+' There original code does not access this,
+' nor does the original game. However, it
+' was clearly written to help finish the
 ' new team creation process by allowing
 ' users to complete input of all ratings.
 Sub NewTeamParameters_OffDef ()
@@ -466,18 +469,18 @@ End Sub
 '----------------------------------------
 '       DraftChoices SubRoutine
 '----------------------------------------
-'This subroutine provides an interface the 
+'This subroutine provides an interface the
 'user can operate to choose their draft
 'selections.
 '
 'draftNew
 '  0 = Existing Team
 '  1 = New Team
-Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT())
+Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT(), normYrIdx)
 
     Dim nbrPlayers
 
-    Shared tmInfo_DRAFT$(), players_DRAFT$(), draftYears$(), teamYears$()
+    Shared tmInfo_DRAFT$(), players_DRAFT$(), teamYears$()
     Shared plyrRat_DRAFT%(), leagRat_DRAFT%(), leagueAverages%(), leagTot_DRAFT(), tmRat_DRAFT%()
 
     Do
@@ -552,29 +555,29 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT())
                     leagTot_DRAFT(B, I) = tmRat_DRAFT%(1, I)
                 Next
 
-                plyrRat_DRAFT%(0, B, 2) = plyrRat_DRAFT%(0, B, 2) * (leagueAverages%(YR%, 1) / leagRat_DRAFT%(1, 1))
-                plyrRat_DRAFT%(0, B, 6) = plyrRat_DRAFT%(0, B, 6) * (leagueAverages%(YR%, 2) / leagRat_DRAFT%(1, 2))
-                plyrRat_DRAFT%(0, B, 7) = plyrRat_DRAFT%(0, B, 7) * (leagueAverages%(YR%, 2) / leagRat_DRAFT%(1, 2))
+                plyrRat_DRAFT%(0, B, 2) = plyrRat_DRAFT%(0, B, 2) * (leagueAverages%(normYrIdx, 1) / leagRat_DRAFT%(1, 1))
+                plyrRat_DRAFT%(0, B, 6) = plyrRat_DRAFT%(0, B, 6) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT%(1, 2))
+                plyrRat_DRAFT%(0, B, 7) = plyrRat_DRAFT%(0, B, 7) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT%(1, 2))
 
                 FG = Int(plyrRat_DRAFT%(1, B1, 3) / plyrRat_DRAFT%(1, B1, 2) * 100 + .5)
-                FG = FG * (leagueAverages%(YR%, 3) / leagRat_DRAFT%(1, 3))
+                FG = FG * (leagueAverages%(normYrIdx, 3) / leagRat_DRAFT%(1, 3))
 
                 plyrRat_DRAFT%(0, B, 3) = FG / 100 * plyrRat_DRAFT%(0, B, 2)
 
-                leagTot_DRAFT(B, 5) = (leagueAverages%(YR%, 1) / leagRat_DRAFT%(1, 1)) * leagTot_DRAFT(B, 5)
-                leagTot_DRAFT(B, 19) = leagTot_DRAFT(B, 19) * (leagueAverages%(YR%, 1) / leagRat_DRAFT%(1, 1))
-                leagTot_DRAFT(B, 9) = leagTot_DRAFT(B, 9) * (leagueAverages%(YR%, 2) / leagRat_DRAFT%(1, 2))
-                leagTot_DRAFT(B, 10) = leagTot_DRAFT(B, 10) * (leagueAverages%(YR%, 2) / leagRat_DRAFT%(1, 2))
-                leagTot_DRAFT(B, 23) = leagTot_DRAFT(B, 23) * (leagueAverages%(YR%, 2) / leagRat_DRAFT%(1, 2))
-                leagTot_DRAFT(B, 24) = leagTot_DRAFT(B, 24) * (leagueAverages%(YR%, 2) / leagRat_DRAFT%(1, 2))
+                leagTot_DRAFT(B, 5) = (leagueAverages%(normYrIdx, 1) / leagRat_DRAFT%(1, 1)) * leagTot_DRAFT(B, 5)
+                leagTot_DRAFT(B, 19) = leagTot_DRAFT(B, 19) * (leagueAverages%(normYrIdx, 1) / leagRat_DRAFT%(1, 1))
+                leagTot_DRAFT(B, 9) = leagTot_DRAFT(B, 9) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT%(1, 2))
+                leagTot_DRAFT(B, 10) = leagTot_DRAFT(B, 10) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT%(1, 2))
+                leagTot_DRAFT(B, 23) = leagTot_DRAFT(B, 23) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT%(1, 2))
+                leagTot_DRAFT(B, 24) = leagTot_DRAFT(B, 24) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT%(1, 2))
 
                 FG = Int(tmRat_DRAFT%(1, 6) / tmRat_DRAFT%(1, 5) * 100 + .5)
-                FG = FG * (leagueAverages%(YR%, 3) / leagRat_DRAFT%(1, 3))
+                FG = FG * (leagueAverages%(normYrIdx, 3) / leagRat_DRAFT%(1, 3))
 
                 tmRat_DRAFT%(0, 6) = FG / 100 * tmRat_DRAFT%(0, 5)
 
                 FG = Int(tmRat_DRAFT%(1, 20) / tmRat_DRAFT%(1, 19) * 100 + .5)
-                FG = FG * (leagueAverages%(YR%, 3) / leagRat_DRAFT%(1, 3))
+                FG = FG * (leagueAverages%(normYrIdx, 3) / leagRat_DRAFT%(1, 3))
 
                 tmRat_DRAFT%(0, 20) = FG / 100 * tmRat_DRAFT%(0, 19)
 
@@ -644,7 +647,7 @@ End Sub
 '       SaveTeamDraft Subroutine
 '----------------------------------------
 'This subroutine updates the source team
-'with the newly assigned player / stat 
+'with the newly assigned player / stat
 'values after the draft.
 '
 'draftNew
@@ -723,7 +726,7 @@ End Sub
 '----------------------------------------
 '       ChooseDraftTeam SubRoutine
 '----------------------------------------
-'This subroutine provides an interface for 
+'This subroutine provides an interface for
 'choosing the team to draft players from
 Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
 
@@ -736,7 +739,7 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
         Color 15, 0
         Cls
 
-		Call MenuBox (6, 8, 61, 7, 15, 4)
+        Call MenuBox(6, 8, 61, 7, 15, 4)
 
         Locate 7, 32
 
@@ -844,7 +847,7 @@ End Sub
 '----------------------------------------
 '       SelectDraftTeam SubRoutine
 '----------------------------------------
-'This subroutine provides an interface for 
+'This subroutine provides an interface for
 'selecting the team to draft players from
 Sub SelectDraftTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%, draftIdx)
 
@@ -893,11 +896,11 @@ End Sub
 '----------------------------------------
 '       ReadDraftTeam SubRoutine
 '----------------------------------------
-'This subroutine reads team data into 
+'This subroutine reads team data into
 'arrays for the selected team
 Sub ReadDraftTeam (teamYear$, targetTeam$, teamIdx, draftIdx)
 
-    Shared tmInfo_DRAFT$(), players_DRAFT$(), draftYears$(), teamYears$()
+    Shared tmInfo_DRAFT$(), players_DRAFT$(), teamYears$()
     Shared plyrRat_DRAFT%(), leagRat_DRAFT%(), tmRat_DRAFT%()
 
     Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES

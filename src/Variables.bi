@@ -23,13 +23,12 @@ Dim homeScores(MAX_GAMES), visitorScores(MAX_GAMES)
 ' -------------------------
 Dim Shared DT$, TM$
 
-Dim Shared foulOption$(1), freeThrowOpt$(1)
-Dim Shared location$(2), playoffGame$(1), yesNoText$(1)
-
-Dim coachMode$(0 To 1)
-Dim modeAbbrev$(0 To 3), playMode$(3)
+Dim coachMode$(0 To 1), foulOption$(1), freeThrowOpt$(1)
+Dim location$(0 to 2), modeAbbrev$(0 To 3)
+Dim playoffGame$(1), playMode$(3)
 Dim sClockOpt$(0 To 1), teamEraOpt$(0 To 2)
-Dim yesNo$(0 To 1)
+Dim teamIndicator$(1)
+Dim yesNo$(0 To 1), yesNoText$(1)
 
 
 ' *** Miscellaneous Use ***
@@ -90,8 +89,8 @@ Dim plyrRat_DRAFT%(0 To 1, 0 To 14, 0 To 19), tmRat_DRAFT%(0 To 1, 0 To 34)
 
 Dim players_DRAFT$(1, 14, 1), tmInfo_DRAFT$(1, 4)
 
-Dim draftYears$(1 To 52)
-Dim leagueAverages%(0 To 52, 0 To 5)
+Dim draftYears$(1 to 79)
+Dim leagueAverages%(1 To 79, 0 To 5)
 Dim teamYears$(0 To 1)
 
 '----------------------------------------
@@ -201,13 +200,14 @@ Dim scheduleYN$(MAX_GAMES, 1)
 ' Used in Game Routines
 '----------------------------------------
 Dim scheduleFile$
-
 Dim tickerStart
+Dim actualAttendance&
+Dim avgAttendance&(1)
 
 Dim Shared AD, autoPlay, B, bonusFoulNum, coachOpt, compTeam
 Dim Shared D, endGame, endAllGames, ftRulesOpt, F3, freeThrowVal
 Dim Shared gameLoc, H, halfTime, JY, nbrLines
-Dim Shared P, P7, P9, playerOpt, playoffOpt, pbpOpt
+Dim Shared P, P7, P9, playerMode, playerOpt, playoffOpt, pbpOpt
 Dim Shared QQ, QR
 Dim Shared sClockVal, shotClock, shotPctOpt
 Dim Shared threePtOpt, T1, TMT, X, VG, VH
@@ -216,9 +216,6 @@ Dim Shared CF%, DK%, FB%, FT%, GF%, HH%
 Dim Shared NM%, OX%, OY%, PT%, PZ%
 
 Dim Shared gameClock!, pbpDelay!, timeElapsed!
-
-Dim Shared actualAttendance&
-Dim Shared avgAttendance&(1)
 
 Dim Shared A1$, B1$, C1$, D$, D1$, E1$, F1$, G1$, H1$, O$
 Dim Shared P7$, prevBall$, PS$, TS$, U$, Y2$, Z3$

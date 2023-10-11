@@ -1,6 +1,6 @@
 $Debug
 
-Const GAME_VERSION$ = "4.32"
+Const GAME_VERSION$ = "4.85"
 Const MAX_TEAMS = 1000
 Const MAX_GAMES = 1500
 Const MAX_FILES = 10240
@@ -38,21 +38,26 @@ On Error GoTo Errhandler
 '----------------------------------------
 '          READ IN ALL DATA
 '----------------------------------------
-Data 1954,1955,1956,1957,1958,1959,1960,1961,1962,1963
-Data 1964,1965,1966,1967,1968,"1968 A",1969,"1969 A",1970,"1970 A"
-Data 1971,"1971 A",1972,"1972 A",1973,"1973 A",1974,"1974 A",1975,"1975 A"
-Data 1976,"1976 A",1977,1978,1979,1980,1981,1982,1983,1984
-Data 1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996
-For I = 1 To 52
+Data 1954,1955,1956,1957,1958,1959
+Data 1960,1961,1962,1963,1964,1965,1966,1967,1968,"1968 ABA",1969,"1969 ABA"
+Data 1970,"1970 ABA",1971,"1971 ABA",1972,"1972 ABA",1973,"1973 ABA",1974,"1974 ABA"
+Data 1975,"1975 ABA",1976,"1976 ABA",1977,1978,1979
+Data 1980,1981,1982,1983,1984,1985,1986,1987,1988,1989
+Data 1990,1991,1992,1993,1994,1995,1996,1997,1998,1999
+Data 2000,2001,2002,2003,2004,2005,2006,2007,2008,2009
+Data 2010,2011,2012,2013,2014,2015,2016,2017,2018,2019
+Data 2020,2021,2022,2023
+
+For I = 1 To 79
     Read draftYears$(I)
-    While Len(draftYears$(I)) <> 6
+    While Len(draftYears$(I)) <= 8
         draftYears$(I) = draftYears$(I) + " "
     Wend
 Next
 
 ' Stats / Year
-' FG/RB/FG%/PF/3FG%
-'1954 is the 1st year below
+' -- FGA,TRB,FG%,PF,3FG%
+'1953-54 season is the start
 Data 75,47,37,25,0
 Data 86,52,39,25,0
 Data 91,55,39,26,0
@@ -67,7 +72,7 @@ Data 99,58,43,27,0
 Data 100,59,43,26,0
 Data 102,60,43,26,0
 Data 103,59,44,26,0
-Data 101,58,45,26,0
+Data 101,66,45,26,0
 Data 97,55,42,25,29
 Data 99,57,44,25,0
 Data 98,54,44,27,30
@@ -103,14 +108,42 @@ Data 87,43,47,23,32
 Data 87,44,47,22,33
 Data 86,43,47,23,34
 Data 84,43,47,22,33
-Data 81,42,47,24,36
-'1996 values are below
+Data 82,42,47,24,36
 Data 80,41,46,23,37
-For I = 1 To 52
+Data 79,41,46,22,36
+Data 80,42,45,22,35
+Data 78,42,44,22,34
+Data 82,43,45,23,35
+Data 81,43,44,22,35
+Data 81,42,45,21,35
+Data 81,42,44,22,35
+Data 80,42,44,21,35
+Data 80,42,45,23,36
+Data 79,41,45,23,36
+Data 80,41,46,22,36
+Data 82,42,46,21,36
+Data 81,41,46,21,37
+Data 82,42,46,21,36
+Data 81,41,46,21,36
+Data 81,42,45,20,35
+Data 82,42,45,20,36
+Data 83,43,45,21,36
+Data 84,43,45,20,35
+Data 85,44,45,20,35
+Data 85,44,46,20,36
+Data 86,44,46,20,36
+Data 89,45,46,21,36
+Data 89,45,46,21,36
+Data 88,44,47,19,37
+Data 88,45,46,20,35
+Data 88,43,48,20,36
+
+For I = 1 To 79
     For I1 = 1 To 5
         Read leagueAverages%(I, I1)
     Next
 Next
+
 
 Data NAME,G,MIN,MIN/G,FGM,FGA,FG PCT,3FGM,3FGA,3FG PCT,FTM,FTA,FT PCT
 Data NAME,PTS,PTG/G,HI,OFF REB,DEF REB,TOT REB,REB/G,PF,AST,BLK,STL,TO
@@ -178,16 +211,6 @@ For I = 0 To 2
 Next I
 
 ' Game options
-playMode$(0) = "HUMAN OPPONENT           "
-playMode$(1) = "COMPUTER IS VISITING TEAM"
-playMode$(2) = "COMPUTER IS HOME TEAM    "
-playMode$(3) = "COMPUTER VS COMPUTER     "
-
-modeAbbrev$(0) = "HH"
-modeAbbrev$(1) = "CV"
-modeAbbrev$(2) = "CH"
-modeAbbrev$(3) = "CC"
-
 coachMode$(0) = "COACH AND SELECT SHOTS           "
 coachMode$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
 
@@ -196,6 +219,20 @@ foulOption$(1) = "SHOOT ON ALL FOULS              "
 
 freeThrowOpt$(0) = "CURRENT RULES            "
 freeThrowOpt$(1) = "3 TO MAKE 2 / 2 TO MAKE 1"
+
+location$(0) = "@ TEAM 1            "
+location$(1) = "HOME COURT ADVANTAGE"
+location$(2) = "NEUTRAL SITE        "
+
+modeAbbrev$(0) = "HH"
+modeAbbrev$(1) = "CV"
+modeAbbrev$(2) = "CH"
+modeAbbrev$(3) = "CC"
+
+playMode$(0) = "HUMAN OPPONENT           "
+playMode$(1) = "COMPUTER IS VISITING TEAM"
+playMode$(2) = "COMPUTER IS HOME TEAM    "
+playMode$(3) = "COMPUTER VS COMPUTER     "
 
 playoffGame$(0) = "REGULAR SEASON"
 playoffGame$(1) = "PLAYOFF       "
@@ -212,10 +249,6 @@ yesNoText$(1) = "YES"
 
 yesNo$(0) = "N"
 yesNo$(1) = "Y"
-
-location$(0) = "@ TEAM 1            "
-location$(1) = "HOME COURT ADVANTAGE"
-location$(2) = "NEUTRAL SITE        "
 
 
 '----------------------------------------

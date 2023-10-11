@@ -11,7 +11,7 @@ Sub SCHEDULE ()
     ReDim menuChoices$(1 To 7)
 
     Shared NS%
-    
+
     Shared scheduleAP%(), scheduleNG%()
 
     _Title "Basketball: The Pro Game - Scheduler"
@@ -293,7 +293,8 @@ Sub NewSchedule (scheduleFile$)
                    Locate 23, 1: Input "ENTER GAME # TO GO TO "; targetGame%
                 Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
                 NS% = Int((targetGame%- 1) / 20)
-                boxName$ = diskPaths$(1) + "BOX" + Mid$( Str$(targetGame%), 2, Len(Str$(targetGame%)) )
+
+                boxName$ = diskPaths$(1) + scheduleFile$ + "_GAME" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%))) + ".BS"
                 Call EditBoxscore (boxName$)
                 Color 15, 0
 
@@ -508,34 +509,78 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
 
     Shared scheduleH$(), scheduleV$(), scheduleYN$()
     
-    Shared coachMode$(), playMode$(), modeAbbrev$()
+    Shared coachMode$(), foulOption$(), freeThrowOpt$()
+    Shared location$(), modeAbbrev$()
+    Shared playMode$(), playoffGame$()
     Shared sClockOpt$(), teamEraOpt$()
-    Shared yesNo$()
+    Shared yesNoText$()
 
 
     Do
 
         ' ** Enter New Game **
         Cls
-        Color 2: Print Tab(29); "SELECT GAME OPTIONS"
-        Print
 
-        Locate 2, 2: Color 14: Print "(1) ";: Color 15: Print playMode$(scheduleNG%(gameIndex%, 8))
-        Locate 3, 2: Color 14: Print "(2) ";: Color 15: Print "VISITING TEAM: "; visitor$
-        Locate 4, 2: Color 14: Print "(3) ";: Color 15: Print "HOME TEAM: "; home$
-        Locate 5, 2: Color 14: Print "(4) ";: Color 15: Print "3-POINT SHOT: "; yesNo$(scheduleNG%(gameIndex%, 3))
-        Locate 6, 2: Color 14: Print "(5) ";: Color 15: Print "SHOT CLOCK "; sClockOpt$(scheduleNG%(gameIndex%, 7))
-        Locate 7, 2: Color 14: Print "(6) ";: Color 15: Print "HOME COURT ADVANTAGE: "; location$(scheduleNG%(gameIndex%, 2))
-        Locate 8, 2: Color 14: Print "(7) ";: Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; scheduleNG%(gameIndex%, 4) / 10
-        Locate 9, 2: Color 14: Print "(8) ";: Color 15: Print playoffGame$(scheduleNG%(gameIndex%, 5))
-        Locate 10, 2: Color 14: Print "(9) ";: Color 15: Print "HUMAN COACHES WILL: "; coachMode$(scheduleNG%(gameIndex%, 9))
-        Locate 11, 2: Color 14: Print "(A) ";: Color 15: Print "GAME DATE (XX-XX-XX) "; DT$; "   "
-        Locate 12, 2: Color 14: Print "(B) ";: Color 15: Print "GAME TIME (XX:XXP) "; TM$; "   "
-        Locate 13, 2: Color 14: Print "(C) ";: Color 15: Print "PLAY IN ERA OF TEAM (IF DIFFERENT) "; teamEraOpt$(scheduleNG%(gameIndex%, 6))
-        Locate 14, 2: Color 14: Print "(D) ";: Color 15: Print "BONUS AFTER FOUL # "; scheduleNG%(gameIndex%, 14)
-        Locate 15, 2: Color 14: Print "(E) ";: Color 15: Print "NUMBER OF FREE THROWS "; freeThrowOpt$(scheduleNG%(gameIndex%, 10))
-        Locate 16, 2: Color 14: Print "(F) ";: Color 15: Print "FREE THROW RULES "; foulOption$(scheduleNG%(gameIndex%, 11))
-        Locate 17, 2: Color 14: Print "(0) ";: Color 15: Print "ACCEPT SETTINGS"
+        Color 2
+        Print Tab(29); "SELECT OPENING OPTIONS"
+
+        Locate 2, 2: Color 14
+        Print "(1) ";
+        Color 15: Print playMode$(scheduleNG%(gameIndex%, 8))
+        Locate 3, 2: Color 14
+        Print "(2) ";
+        Color 15: Print "VISITING TEAM: "; visitor$
+        Locate 4, 2: Color 14
+        Print "(3) ";
+        Color 15: Print "HOME TEAM: "; home$
+        Locate 5, 2: Color 14
+        Print "(4) ";
+        Color 15: Print "GAME DATE (XX-XX-XX)  "; DT$; "   "
+        Locate 6, 2: Color 14
+        Print "(5) ";
+        Color 15: Print "GAME TIME (XX:XXP)  "; TM$; "   "
+        Locate 7, 2: Color 14
+        Print "(6) ";
+        Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#"; scheduleNG%(gameIndex%, 4) / 10
+        Locate 8, 2: Color 14
+        Print "(7) ";
+        Color 15: Print "GAME LOCATION: "; location$(scheduleNG%(gameIndex%, 2))
+        Locate 9, 2: Color 14
+        Print "(8) ";
+        Color 15: Print "SHOT CLOCK: "; sClockOpt$(scheduleNG%(gameIndex%, 7))
+        Locate 10, 2: Color 14
+        Print "(9) ";
+        Color 15: Print "3-POINT SHOT: "; yesNoText$(scheduleNG%(gameIndex%, 3))
+        Locate 11, 2: Color 14
+        Print "(A) ";
+        Color 15: Print "GAME TYPE: "; playoffGame$(scheduleNG%(gameIndex%, 5))
+        Locate 12, 2: Color 14
+        Print "(B) ";
+        Color 15: Print "HUMAN COACHES WILL: "; coachMode$(scheduleNG%(gameIndex%, 9))
+        Locate 13, 2: Color 14
+        Print "(C) ";
+        Color 15: Print "PLAY IN ERA OF TEAM (IF DIFFERENT): "; teamEraOpt$(scheduleNG%(gameIndex%, 6))
+        Locate 14, 2: Color 14
+        Print "(D) ";
+        Color 15: Print "BONUS AFTER FOUL #: "; scheduleNG%(gameIndex%, 14)
+        Locate 15, 2: Color 14
+        Print "(E) ";
+        Color 15: Print "NUMBER OF FREE THROWS: "; freeThrowOpt$(scheduleNG%(gameIndex%, 10))
+        Locate 16, 2: Color 14
+        Print "(F) ";
+        Color 15: Print "FREE THROW RULES: "; foulOption$(scheduleNG%(gameIndex%, 11))
+        Locate 18, 2: Color 14
+        Print "(0) ";
+        Color 15: Print "ACCEPT SETTINGS"
+
+        'Locate 19, 2: Color 14
+        'Print "NOTE:: "
+        'Color 15
+        'Locate , 3: Print "* BONUS ON 7TH FOUL UNTIL 72-73, 6TH FOUL (72-73 SEASON), 5TH FOUL (73-74+)"
+        'Locate , 3: Print "* UNTIL 72-73, A TEAM IN BONUS CHOSE 3 FT TO MAKE 2 OR 2 FT TO MAKE 1"
+        'Locate , 3: Print "* UNTIL 72-73, ALL FOULS WERE SHOT"
+        'Locate , 3: Print "* 3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 79-80"
+        'Locate , 3: Print "* ABA USED A 30-SEC SHOT CLOCK THROUGH 73-74";
 
         Do
             I$ = GetKeyPress$
@@ -579,32 +624,33 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
                     End If
 
                 Case 4
-                    scheduleNG%(gameIndex%, 3) = 1 - scheduleNG%(gameIndex%, 3)
+                    Locate 5, 26: Input DT$
 
                 Case 5
-                    scheduleNG%(gameIndex%, 7) = 1 - scheduleNG%(gameIndex%, 7)
+                    Locate 6, 24: Input TM$
 
                 Case 6
-                    N = 1 - (scheduleNG%(gameIndex%, 2) - 1)
-                    scheduleNG%(gameIndex%, 2) = N + 1
-
-                Case 7
                     Locate 7, 32: Input displayPause!
                     scheduleNG%(gameIndex%, 4) = displayPause! * 10
 
+                Case 7
+                    N = 1 - (scheduleNG%(gameIndex%, 2) - 1)
+                    scheduleNG%(gameIndex%, 2) = N + 1
+
                 Case 8
-                    scheduleNG%(gameIndex%, 5) = 1 - scheduleNG%(gameIndex%, 5)
+                    scheduleNG%(gameIndex%, 7) = 1 - scheduleNG%(gameIndex%, 7)
 
                 Case 9
-                    scheduleNG%(gameIndex%, 9) = 1 - scheduleNG%(gameIndex%, 9)
+                    scheduleNG%(gameIndex%, 3) = 1 - scheduleNG%(gameIndex%, 3)
 
                 Case 10: ' Back to beginning of loop
 
                 Case 11
-                    Locate 11, 27: Input DT$
+                    scheduleNG%(gameIndex%, 5) = 1 - scheduleNG%(gameIndex%, 5)
 
                 Case 12
-                    Locate 12, 25: Input TM$
+
+                    scheduleNG%(gameIndex%, 9) = 1 - scheduleNG%(gameIndex%, 9)
 
                 Case 13
                     scheduleNG%(gameIndex%, 6) = scheduleNG%(gameIndex%, 6) + 1
@@ -930,7 +976,7 @@ Sub BoxscoreMaintenance ()
                     Call EditParameters
 
                 Case 2
-                    boxscoreFile$ = ChooseFile$ (diskPaths$(1) + "*.SPC", "BOXSCORE", ExitCode%)
+                    boxscoreFile$ = ChooseFile$ (diskPaths$(1) + "*.BSS", "BOXSCORE", ExitCode%)
                     
                     If ExitCode% <> 27 And ExitCode% <> 0 And boxscoreFile$ <> "" Then
                         boxName$ = diskPaths$(1) + boxscoreFile$
@@ -938,26 +984,25 @@ Sub BoxscoreMaintenance ()
                     End If
 
                 Case 3
-                    Spec$ = diskPaths$(1) + "BOX*."
+                    Spec$ = diskPaths$(1) + "*.BS"
                     Call DeleteBoxscores(Selection%, Spec$)
-                    '-- we should give the user a confirmation message
 
                 Case 4
+                    Spec$ = diskPaths$(1) + "*.BSS"
+                    Call DeleteBoxscores(Selection%, Spec$)
+
                     Spec$ = diskPaths$(1) + "*.SPC"
                     Call DeleteBoxscores(Selection%, Spec$)
-                    '-- we should give the user a confirmation message
 
                 Case 5
+                    Spec$ = diskPaths$(1) + "*.BSS"
+                    Call DeleteBoxscores(Selection%, Spec$)
+
                     Spec$ = diskPaths$(1) + "*.SPC"
                     Call DeleteBoxscores(Selection%, Spec$)
-                    '-- we should give the user a confirmation message
 
-                    Spec$ = diskPaths$(1) + "BOX*."
+                    Spec$ = diskPaths$(1) + "*.BS"
                     Call DeleteBoxscores(Selection%, Spec$)
-                    '-- we should give the user a confirmation message
-
-                Case 6:
-                    Cls
 
             End Select
 
@@ -1080,22 +1125,37 @@ Sub ChangeGlobalSettings ()
 
     Shared coachMode$(), playMode$(), modeAbbrev$()
     Shared sClockOpt$()
-    Shared yesNo$()
+    Shared yesNoText$()
 
     Dim displayPause!
 
     ' GLOBAL SETTINGS FOR A SCHEDULE
-    playerOpt = 3
-    gameLoc = 1
-    sClockVal = 0
-    coachOpt = 1
-    threePtOpt = 1
-    playoffOpt = 0
-    bonusFoulNum = 5
-    freeThrowVal = 0
-    ftRulesOpt = 1
+    
+    ' The code below would use default values based on the most recent rules
+    'playerOpt = 3
+    'gameLoc = 1
+    'sClockVal = 0
+    'coachOpt = 1
+    'threePtOpt = 1
+    'playoffOpt = 0
+    'bonusFoulNum = 5
+    'freeThrowVal = 0
+    'ftRulesOpt = 1
 
-    DT$ = "10-01-91"
+    'This code will assign defaults based on the first game in the schedule.
+    'Usually when I want to change global settings, I want to keep most
+    'settings in the schedule the same.
+    playerOpt = scheduleNG%(0, 8)
+    displayPause! = scheduleNG%(0, 4) / 10
+    gameLoc = scheduleNG%(0, 2)
+    sClockVal = scheduleNG%(0, 7)
+    coachOpt = scheduleNG%(0, 9)
+    threePtOpt = scheduleNG%(0, 3)
+    playoffOpt = scheduleNG%(0, 5)
+    freeThrowVal = scheduleNG%(0, 10)
+    ftRulesOpt = scheduleNG%(0, 11)
+
+    DT$ = "10-01-23"
     TM$ = "07:30P"        
 
     Do
@@ -1114,7 +1174,7 @@ Sub ChangeGlobalSettings ()
         Locate 7, 2: Color 14: Print "(5) ";
         Color 15: Print "HUMAN PLAYERS: "; coachMode$(coachOpt)
         Locate 8, 2: Color 14: Print "(6) ";
-        Color 15: Print "3-POINT SHOT: "; yesNo$(threePtOpt)
+        Color 15: Print "3-POINT SHOT: "; yesNoText$(threePtOpt)
         Locate 9, 2: Color 14: Print "(7) ";
         Color 15: Print "TYPE OF GAME: "; playoffGame$(playoffOpt)
         Locate 10, 2: Color 14: Print "(8) ";

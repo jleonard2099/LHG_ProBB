@@ -8,13 +8,19 @@
 'disable, etc.
 Sub PROHOOP
 
+    Shared actualAttendance&
+    Shared avgAttendance&()
+
     _Title "Basketball: The Pro Game v" + GAME_VERSION$ + " - HOOPS!"
 
     Shared scheduleFile$
     Shared tickerStart
 
-    Shared coachMode$(), playMode$()
-    Shared sClockOpt$(), yesNo$()
+    Shared coachMode$(), foulOption$(), freeThrowOpt$()
+    Shared location$()
+    Shared playMode$(), playoffGame$()
+    Shared sClockOpt$()
+    Shared yesNoText$()
 
     Color 7, 0
     Cls
@@ -172,65 +178,63 @@ Sub PROHOOP
 
             Color 2
             Print Tab(29); "SELECT OPENING OPTIONS"
-            Print
+
             Locate 2, 2: Color 14
             Print "(1) ";: Color 15: Print playMode$(playerOpt)
             Locate 3, 2: Color 14
             Print "(2) ";: Color 15: Print "VISITING TEAM: ";
             Color tmRat_GAME(0, 33), tmRat_GAME(0, 34): Print gameTeams$(0)
-            Color , 0
-            Locate 4, 2: Color 14
+            Locate 4, 2: Color 14, 0
             Print "(3) ";: Color 15: Print "HOME TEAM: ";
             Color tmRat_GAME(1, 33), tmRat_GAME(1, 34): Print gameTeams$(1)
-            Color , 0
-            Locate 5, 2: Color 14
-            Print "(4) ";: Color 15: Print "3-POINT SHOT: "; yesNoText$(threePtOpt)
+            Locate 5, 2: Color 14, 0
+            Print "(4) ";: Color 15: Print "GAME LOCATION: "; location$(gameLoc)
             Locate 6, 2: Color 14
-            Print "(5) ";: Color 15: Print sClockOpt$(sClockVal)
+            Print "(5) ";: Color 15: Print "SHOT CLOCK: "; sClockOpt$(sClockVal)
             Locate 7, 2: Color 14
-            Print "(6) ";: Color 15: Print "LOCATION: "; location$(gameLoc)
+            Print "(6) ";: Color 15: Print "3-POINT SHOT: "; yesNoText$(threePtOpt)
             Locate 8, 2: Color 14
-            Print "(7) ";: Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#"; pbpDelay!
+            Print "(7) ";: Color 15: Print "SHOW SHOT PERCENTAGES: "; yesNoText$(shotPctOpt)
             Locate 9, 2: Color 14
-            Print "(8) ";: Color 15: Print "START GAME"
+            Print "(8) ";: Color 15: Print "GAME TYPE: "; playoffGame$(playoffOpt)
             Locate 10, 2: Color 14
-            Print "(9) ";: Color 15: Print playoffGame$(playoffOpt)
+            Print "(9) ";: Color 15: Print "START GAME"
             Locate 11, 2: Color 14
             Print "(0) ";: Color 15: Print "SAVE SETTINGS"
             Locate 12, 2: Color 14
-            Print "(A) ";: Color 15: Print "SHOW SHOT PERCENTAGES: "; yesNoText$(shotPctOpt)
+            Print "(A) ";: Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#"; pbpDelay!
             Locate 13, 2: Color 14
             Print "(B) ";: Color 15: Print "HUMAN COACHES WILL: "; coachMode$(coachOpt);
-            Locate 1, 1
             Locate 14, 2: Color 14
-            Print "(C) ";: Color 15: Print "BONUS AFTER FOUL # "; bonusFoulNum
+            Print "(C) ";: Color 15: Print "BONUS AFTER FOUL #: "; bonusFoulNum
             Locate 15, 2: Color 14
-            Print "(D) ";: Color 15: Print "NUMBER OF FREE THROWS "; freeThrowOpt$(freeThrowVal)
+            Print "(D) ";: Color 15: Print "NUMBER OF FREE THROWS: "; freeThrowOpt$(freeThrowVal)
             Locate 16, 2: Color 14
-            Print "(E) ";: Color 15: Print "FREE THROW RULES "; foulOption$(ftRulesOpt)
+            Print "(E) ";: Color 15: Print "FREE THROW RULES: "; foulOption$(ftRulesOpt)
             Locate 17, 2: Color 14
-            Print "(F) ";: Color 15: Print "PLAY BY PLAY "; pbpType$(pbpOpt)
-            Locate 18, 2: Color 14
-            Print "NOTE:: ";: Color 15: Print "BONUS WAS ON 7TH FOUL (UNTIL 72-73), 6TH FOUL (72-73 SEASON)"
-            Locate , 2: Print "       5TH FOUL (1973-74 TO PRESENT)"
-            Locate , 2: Color 14
-            Print "NOTE:: ";: Color 15: Print "UP UNTIL 1972-73, WHEN A TEAM WAS IN THE BONUS, THEY HAD THE CHANCE"
-            Locate , 2: Print "       TO SHOOT 3 FT TO MAKE 2 OR 2 FT TO MAKE 1"
-            Locate , 2: Color 14
-            Print "NOTE:: ";: Color 15: Print "UP UNTIL 1972-73, ALL FOULS WERE SHOT...UNLIKE THE CURRENT RULES"
-            Locate , 2: Color 14
-            Print "NOTE:: ";: Color 15: Print "THE 3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 1979-80"
-            Locate , 2: Color 14
-            Print "NOTE:: ";: Color 15: Print "THE ABA USED A 30-SEC SHOT CLOCK THROUGH 1973-74";
+            Print "(F) ";: Color 15: Print "PLAY-BY-PLAY STYLE: "; pbpType$(pbpOpt)
 
             'Locate 18, 2: Color 14
-            'Print "NOTE:: "
-            'Locate , 2: Color 15: Print "       BONUS ON 7TH FOUL UNTIL 72-73, 6TH FOUL (72-73 SEASON), 5TH FOUL (1973-74 ON)"
-            'Locate , 2: Color 15: Print "       UNTIL 1972-73, WHEN A TEAM WAS IN BONUS, THEY HAD A CHOICE TO"
-            'Locate , 2: Color 15: Print "              SHOOT 3 FT TO MAKE 2, OR 2 FT TO MAKE 1"
-            'Locate , 2: Color 15: Print "       UNTIL 1972-73, ALL FOULS WERE SHOT"
-            'Locate , 2: Color 15: Print "       3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 1979-80"
-            'Locate , 2: Color 15: Print "       ABA USED A 30-SEC SHOT CLOCK THROUGH 1973-74";
+            'Print "NOTE:: ";: Color 15: Print "BONUS WAS ON 7TH FOUL (UNTIL 72-73), 6TH FOUL (72-73 SEASON)"
+            'Locate , 2: Print "       5TH FOUL (1973-74 TO PRESENT)"
+            'Locate , 2: Color 14
+            'Print "NOTE:: ";: Color 15: Print "UP UNTIL 1972-73, WHEN A TEAM WAS IN THE BONUS, THEY HAD THE CHANCE"
+            'Locate , 2: Print "       TO SHOOT 3 FT TO MAKE 2 OR 2 FT TO MAKE 1"
+            'Locate , 2: Color 14
+            'Print "NOTE:: ";: Color 15: Print "UP UNTIL 1972-73, ALL FOULS WERE SHOT...UNLIKE THE CURRENT RULES"
+            'Locate , 2: Color 14
+            'Print "NOTE:: ";: Color 15: Print "THE 3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 1979-80"
+            'Locate , 2: Color 14
+            'Print "NOTE:: ";: Color 15: Print "THE ABA USED A 30-SEC SHOT CLOCK THROUGH 1973-74";
+
+            Locate 19, 2: Color 14
+            Print "NOTE:: "
+            Color 15
+            Locate , 3: Print "* BONUS ON 7TH FOUL UNTIL 72-73, 6TH FOUL (72-73 SEASON), 5TH FOUL (73-74+)"
+            Locate , 3: Print "* UNTIL 72-73, A TEAM IN BONUS CHOSE 3 FT TO MAKE 2 OR 2 FT TO MAKE 1"
+            Locate , 3: Print "* UNTIL 72-73, ALL FOULS WERE SHOT"
+            Locate , 3: Print "* 3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 79-80"
+            Locate , 3: Print "* ABA USED A 30-SEC SHOT CLOCK THROUGH 73-74";
 
             Do
 
@@ -239,59 +243,22 @@ Sub PROHOOP
                 I$ = GetKeyPress$
 
                 If I$ <> Chr$(27) Then
-                    I = Val(I$)
-                    If UCase$(I$) = "A" Then I = 11
-                    If UCase$(I$) = "B" Then I = 12
-                    If UCase$(I$) = "C" Then I = 13
-                    If UCase$(I$) = "D" Then I = 14
-                    If UCase$(I$) = "E" Then I = 15
-                    If UCase$(I$) = "F" Then I = 16
-                    If I = 0 Then I = 10
+                    iVal = Val(I$)
+                    If UCase$(I$) = "A" Then iVal = 10
+                    If UCase$(I$) = "B" Then iVal = 11
+                    If UCase$(I$) = "C" Then iVal = 12
+                    If UCase$(I$) = "D" Then iVal = 13
+                    If UCase$(I$) = "E" Then iVal = 14
+                    If UCase$(I$) = "F" Then iVal = 15
                 End If
 
-            Loop Until I >= 0 And I <= 16 Or I$ = Chr$(27) Or UCase$(I$) = "Q"
+            Loop Until iVal >= 0 And iVal <= 15 Or I$ = Chr$(27) Or UCase$(I$) = "Q"
 
             If I$ <> Chr$(27) And UCase$(I$) <> "Q" Then
 
-                Select Case I
-                    Case 1:
-                        playerOpt = playerOpt + 1
-                        If playerOpt > 3 Then playerOpt = 0
+                Select Case iVal
 
-                    Case 2:
-                        P9 = 0
-                        Call ChooseGameTeam(YN$, NTMS, teamNbr, gameTeams$(P9), P9)
-                        If teamNbr <> 0 Then Call DISABLEPLAYERS
-
-                    Case 3:
-                        P9 = 1
-                        Call ChooseGameTeam(YN$, NTMS, teamNbr, gameTeams$(P9), P9)
-                        If teamNbr <> 0 Then Call DISABLEPLAYERS
-
-                    Case 4:
-                        threePtOpt = threePtOpt + 1
-                        If threePtOpt > 1 Then threePtOpt = 0
-
-                    Case 5:
-                        sClockVal = 1 - sClockVal
-
-                    Case 6:
-                        gameLoc = gameLoc + 1
-                        If gameLoc > 2 Then gameLoc = 1
-
-                    Case 7:
-                        Do
-                            Locate 8, 32
-                            Input pbpDelay!
-                        Loop Until pbpDelay! >= 0
-
-                    Case 8:
-                        If gameTeams$(0) <> "" And gameTeams$(1) <> "" Then Exit Do
-
-                    Case 9:
-                        playoffOpt = 1 - playoffOpt
-
-                    Case 10:
+                    Case 0:
                         Open "DEFAULT" For Output As #8
                         Print #8, playerOpt
                         Print #8, threePtOpt
@@ -306,31 +273,66 @@ Sub PROHOOP
                         Print #8, ftRulesOpt
                         Print #8, pbpOpt
                         Close #8
+                    
+                    Case 1:
+                        playerOpt = playerOpt + 1
+                        If playerOpt > 3 Then playerOpt = 0
 
-                    Case 11:
+                    Case 2:
+                        Call ChooseGameTeam(YN$, NTMS, teamNbr, gameTeams$(0), 0)
+                        If teamNbr <> 0 Then Call DISABLEPLAYERS(0)
+
+                    Case 3:
+                        Call ChooseGameTeam(YN$, NTMS, teamNbr, gameTeams$(1), 1)
+                        If teamNbr <> 0 Then Call DISABLEPLAYERS(1)
+
+                    Case 4:
+                        gameLoc = gameLoc + 1
+                        If gameLoc > 2 Then gameLoc = 1
+
+                    Case 5:
+                        sClockVal = 1 - sClockVal
+
+                    Case 6:
+                        threePtOpt = threePtOpt + 1
+                        If threePtOpt > 1 Then threePtOpt = 0
+
+                    Case 7:
                         shotPctOpt = 1 - shotPctOpt
 
-                    Case 12:
+                    Case 8:
+                        playoffOpt = 1 - playoffOpt
+
+                    Case 9:
+                        '
+
+                    Case 10:
+                        Do
+                            Locate 12, 32
+                            Input pbpDelay!
+                        Loop Until pbpDelay! >= 0
+
+                    Case 11:
                         coachOpt = 1 - coachOpt
 
-                    Case 13:
+                    Case 12:
                         bonusFoulNum = bonusFoulNum + 1
                         If bonusFoulNum > 6 Then bonusFoulNum = 4
 
-                    Case 14:
+                    Case 13:
                         freeThrowVal = 1 - freeThrowVal
 
-                    Case 15:
+                    Case 14:
                         ftRulesOpt = 1 - ftRulesOpt
 
-                    Case 16:
+                    Case 15:
                         pbpOpt = 1 - pbpOpt
 
                 End Select
 
             End If
 
-        Loop Until (I = 8 And gameTeams$(0) <> "" And gameTeams$(1) <> "") Or I$ = Chr$(27)
+        Loop Until (iVal = 9 And gameTeams$(0) <> "" And gameTeams$(1) <> "") Or I$ = Chr$(27)
 
         If I$ <> Chr$(27) And UCase$(I$) <> "Q" Then
 
@@ -377,11 +379,14 @@ Sub PROHOOP
     End If
 
     'Determine attendance
-    'If gameLoc = 2 Or avgAttendance&(1) = 0 Then
-    '    actualAttendance& = Int(Rnd(1) * 2000) + 9000
-    'Else
-    '    actualAttendance& = Int(Rnd(1) * 2000) + avgAttendance&(1) - 1000
-    'End If
+    If gameLoc = 2 Or avgAttendance&(1) = 0 Then
+        'Neutral Site
+        'Random # 12,000 - 22,000
+        actualAttendance& = Int(Rnd(1) * 10000) + 12000
+    Else
+        'Average attendance +/ 5,000
+        actualAttendance& = Int(Rnd(1) * 10000) + avgAttendance&(1) - 5000
+    End If
 
     '----------------------------------------
     '    AUTO-DETERMINE OTHER OPTIONS
@@ -391,19 +396,19 @@ Sub PROHOOP
     Select Case playerOpt
 
         Case 1:
+            playerMode = 1
             compTeam = 0
 
         Case 2:
-            playerOpt = 1
+            playerMode = 1
             compTeam = 1
 
         Case 3:
-            playerOpt = 2
+            playerMode = 2
 
     End Select
 
-    'At this point, the value of playerOpt has been changed.
-    'It now represents the following values:
+    'playerMode represents the following values:
     '   0 = Human
     '   1 = Computer Team
     '   2 = PC vs. PC
@@ -423,7 +428,7 @@ Sub PROHOOP
 
     'Determine subs / play parameters
     For P9 = 0 To 1
-        If playerOpt = 1 And P9 = compTeam Or playerOpt = 2 Then
+        If playerMode = 1 And P9 = compTeam Or playerMode = 2 Then
             Call COMPUTERSUBS
         Else
             Call PlayStyle
@@ -578,7 +583,7 @@ Sub PROHOOP
                 Call DELAY
         End Select
 
-        If Not (autoPlay = 1 And playerOpt = 2) Then
+        If Not (autoPlay = 1 And playerMode = 2) Then
             I$ = GetKeyPress$
         End If
 
@@ -611,10 +616,10 @@ Sub PROHOOP
 
     End If
 
-    If H < 5 And playerOpt <> 0 Then
+    If H < 5 And playerMode <> 0 Then
         'Call pbplog(1545)
-        If playerOpt = 1 Then P9 = compTeam: Call COMPUTERSUBS
-        If playerOpt = 2 Then P9 = 0: Call COMPUTERSUBS: P9 = 1: Call COMPUTERSUBS
+        If playerMode = 1 Then P9 = compTeam: Call COMPUTERSUBS
+        If playerMode = 2 Then P9 = 0: Call COMPUTERSUBS: P9 = 1: Call COMPUTERSUBS
     End If
 
     If H < 5 Then
@@ -686,7 +691,7 @@ Sub PROHOOP
     End If
 
     'Call pbplog(1618)
-    If Not (autoPlay = 1 And playerOpt = 2) Then
+    If Not (autoPlay = 1 And playerMode = 2) Then
         I$ = GetKeyPress
     End If
 
@@ -796,7 +801,7 @@ Sub PROHOOP
 
     'Call pbplog(1727)
 
-    If playerOpt = 0 And coachOpt = 1 Or playerOpt = 1 And D = compTeam And coachOpt = 1 Or playerOpt = 1 And P = compTeam Or playerOpt = 2 Then
+    If playerMode = 0 And coachOpt = 1 Or playerMode = 1 And D = compTeam And coachOpt = 1 Or playerMode = 1 And P = compTeam Or playerMode = 2 Then
 
         Call WHOGETSBALL
 
@@ -816,7 +821,7 @@ Sub PROHOOP
                         Call PBP
                     Else
                         'pbpOpt = 1
-                        If Not (autoPlay = 1 And playerOpt = 2 Or pbpDelay! = 0) Then
+                        If Not (autoPlay = 1 And playerMode = 2 Or pbpDelay! = 0) Then
                             Call WINDEX
                             Print "PASS TO CHOICE (0-4)"
                             Call PBP
@@ -826,14 +831,29 @@ Sub PROHOOP
                     Do
                         I$ = GetKeyPress$
 
-                        If UCase$(I$) = "T" Then Call TICKER
-                        If UCase$(I$) = "S" Then Call SCOUTREPORT
-                        If UCase$(I$) = "Q" Then Run "HELLO.EXE"
-                        If UCase$(I$) = "Z" Or I$ = "/" Then Call CHANGESTRATEGY(I$)
+                        Select Case UCase$(I$)
 
-                    Loop Until UCase$(I$) <> "T" And UCase$(I$) <> "S" And UCase$(I$) <> "Q" And UCase$(I$) <> "Z" And UCase$(I$) <> "/"
+                            Case "S"
+                                Call SCOUTREPORT
 
-                    B = Val(I$)
+                            Case "T"
+                                Call TICKER
+
+                            Case "Q"
+                                Exit Sub
+
+                            Case "O"
+                                Call OPTIONS 
+                            
+                            Case "Z","/"
+                                Call CHANGESTRATEGY(I$)
+
+                            Case Else
+                                B = Val(I$)
+                        
+                        End Select
+
+                    Loop Until B >= 0 And B <= 4
 
                 End If
 
@@ -1485,9 +1505,9 @@ Sub PROHOOP
 
     If pbpOpt = 1 And pbpDelay! <> 0 Then Call DELAY
 
-    If playerOpt <> 0 Or coachOpt = 1 Then
+    If playerMode <> 0 Or coachOpt = 1 Then
 
-        If H >= 4 And gameClock! <= 240 And score(P, 0) - score(D, 0) > 0 And playerOpt = 1 And P = compTeam Then
+        If H >= 4 And gameClock! <= 240 And score(P, 0) - score(D, 0) > 0 And playerMode = 1 And P = compTeam Then
 
             '985
             U$ = Str$(A!(P, B1!(P, B), 1)) + " FT%  INTENTIONAL FOUL? (Y/N)"
@@ -1500,14 +1520,14 @@ Sub PROHOOP
 
         Else
 
-            If playerOpt = 2 Or playerOpt = 1 And D = compTeam Then
+            If playerMode = 2 Or playerMode = 1 And D = compTeam Then
 
                 '980
                 If gameClock! <= 240 And H >= 4 And score(P, 0) - score(D, 0) > 10 Then
-                    If (playerOpt = 1 Or playerOpt = 0) And coachOpt <> 1 Then 530
+                    If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then 530
                 Else
                     If gameClock! <= 30 And H >= 4 And score(P, 0) - score(D, 0) > 0 Then P6 = 3: GoTo 532
-                    If (playerOpt = 1 Or playerOpt = 0) And coachOpt <> 1 Then 530
+                    If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then 530
                 End If
 
             End If
@@ -1539,13 +1559,36 @@ Sub PROHOOP
 
     530 '
     I$ = GetKeyPress$
-    If UCase$(I$) = "T" Then Call TICKER: GoTo 530
-    If UCase$(I$) = "S" Then Call SCOUTREPORT: GoTo 530
-    If UCase$(I$) = "Q" Then Run "HELLO.EXE"
-    If UCase$(I$) = "Z" Or I$ = "/" Then Call CHANGESTRATEGY(I$): GoTo 530
-    P6 = Val(I$)
-    If P6 < 1 Or P6 > 4 Then P6 = 0
 
+    Select Case UCase$(I$)
+
+        Case "S"
+            Call SCOUTREPORT
+            GoTo 530
+
+        Case "T"
+            Call TICKER
+            GoTo 530
+
+        Case "Q"
+            Exit Sub
+
+        Case "O"
+            Call OPTIONS 
+            GoTo 530
+        
+        Case "Z","/"
+            Call CHANGESTRATEGY(I$)
+            GoTo 530
+
+        Case Else
+            P6 = Val(I$)
+    
+    End Select
+
+    'Is this for choosing a designated fouler?
+    'If so then we need to update for looping logic
+    If P6 < 1 Or P6 > 4 Then P6 = 0
     If P6 = 4 Then FT% = 1
 
     '----------------------------------------------------
@@ -1557,17 +1600,32 @@ Sub PROHOOP
     532 '
     I$ = InKey$
 
-    If UCase$(I$) = "T" Then Call TICKER
-    If UCase$(I$) = "Z" Or I$ = "/" Then Call CHANGESTRATEGY(I$)
-    If UCase$(I$) = "S" Then Call SCOUTREPORT
-    If UCase$(I$) = "Q" Then Run "HELLO.EXE"
-    If Val(I$) = 3 And (playerOpt = 0 Or playerOpt = 1 And P = compTeam) And H >= 4 And gameClock! < 240 Then P6 = 3
-    If Val(I$) = 2 And (playerOpt = 0 Or playerOpt = 1 And D = compTeam) And timeouts(P) > 0 Then P6 = 2
+    Select Case UCase$(I$)
+
+        Case "S"
+            Call SCOUTREPORT
+
+        Case "T"
+            Call TICKER
+
+        Case "Q"
+            Exit Sub
+
+        Case "O"
+            Call OPTIONS 
+        
+        Case "Z","/"
+            Call CHANGESTRATEGY(I$)
+
+    End Select
+
+    If Val(I$) = 3 And (playerMode = 0 Or playerMode = 1 And P = compTeam) And H >= 4 And gameClock! < 240 Then P6 = 3
+    If Val(I$) = 2 And (playerMode = 0 Or playerMode = 1 And D = compTeam) And timeouts(P) > 0 Then P6 = 2
 
     P3 = P6
 
     If P6 = 2 And timeouts(P) = 0 Then 530
-    If P6 = 3 And H < 4 Or P6 = 3 And playerOpt = 1 And D = compTeam Then 530
+    If P6 = 3 And H < 4 Or P6 = 3 And playerMode = 1 And D = compTeam Then 530
     If P6 = 3 And H = 4 And gameClock! > 240 Then 530
     If (P6 = 1 Or P6 = 4) And PZ% = 4 Then P6 = 4
 
@@ -1648,7 +1706,7 @@ Sub PROHOOP
             U$ = "DESIGNATED FOULER (0-4)"
             Call SELECTPBP
 
-            If playerOpt = 1 And D = compTeam Or playerOpt = 2 Then
+            If playerMode = 1 And D = compTeam Or playerMode = 2 Then
                 W5 = Int(Rnd(1) * 5)
             Else
 
