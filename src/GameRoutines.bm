@@ -65,8 +65,9 @@ Sub InitVar ()
     PS$(3) = "F"
     PS$(4) = "C"
 
-    SC(0) = 24
-    SC(1) = 30
+    scSettings(0) = 24
+    scSettings(1) = 30
+    scSettings(2) = 0
 
     ' # of timeouts
     timeouts(1) = 7
@@ -496,7 +497,12 @@ End Sub
 Sub SELECTPBP ()
 
     If pbpOpt = 0 Then Call PBP
-    If pbpOpt = 1 And pbpDelay! <> 0 Then Call WINDEX: Print U$: Call DELAY
+
+    If pbpOpt = 1 And pbpDelay! <> 0 Then
+        Call WINDEX
+        Print U$
+        Call DELAY
+    End If
 
     Call DELAY
 
@@ -517,6 +523,7 @@ Sub MAKEPBP ()
         Call d100(RN)
 
         Select Case PT%
+
             Case 1
                 'TURNOVER
                 U$ = players_GAME$(P, B1!(P, B), 0)
@@ -571,7 +578,12 @@ Sub MAKEPBP ()
                     Case 25: U$ = players_GAME$(P, B1!(P, B), 0) + " PUNCHES IT HOME!!!"
                     Case 26: U$ = players_GAME$(P, B1!(P, B), 0) + "...DOUBLE PUMP SLAM!!!"
                     Case 27: U$ = players_GAME$(P, B1!(P, B), 0) + "...IN YOUR FACE SLAM!!!"
-                    Case 28: U$ = players_GAME$(P, B1!(P, B), 0) + " IS UP": Call PBP: U$ = "HE SPINS": Call PBP: U$ = "BEHIND THE BACK SLAM!!!"
+                    Case 28, 37:
+                        U$ = players_GAME$(P, B1!(P, B), 0) + " IS UP"
+                        Call PBP
+                        U$ = "HE SPINS"
+                        Call PBP
+                        U$ = "BEHIND THE BACK SLAM!!!"
                     Case 29: U$ = "HE SLAMS IT HOME!!"
                     Case 30: U$ = "HE LAYS IT UP AND IN!!"
                     Case 31: U$ = "HE BANGS IT IN!!"
@@ -580,13 +592,12 @@ Sub MAKEPBP ()
                     Case 34: U$ = "DIPSY-DOO DUNK-A-ROO!!!"
                     Case 35: U$ = "HE MAKES IT HAMMER TIME!!!"
                     Case 36: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
-                    Case 37: U$ = players_GAME$(P, B1!(P, B), 0) + " IS UP": Call PBP: U$ = "HE SPINS": Call PBP: U$ = "BEHIND THE BACK SLAM!!!"
                     Case 38: U$ = "HE JAMS IT HOME!!!"
                     Case 39: U$ = "HE HAMMERS IT HOME!"
                 End Select
 
             Case 3
-                'SHOOTS...PZ%567 SML
+                'SHOOTS...
                 U$ = players_GAME$(P, B1!(P, B), 0)
 
                 Select Case PZ%
@@ -615,6 +626,7 @@ Sub MAKEPBP ()
                                 U$ = "HE CUTS TO THE BASKET"
                                 Call PBP
                                 U$ = "TAKES IT UP"
+
                                 Call d100(RN0)
                                 If (B = 0 Or B = 1) And RN0 <= 1 Then DK% = 1
                                 If (B = 2 Or B = 3) And RN0 <= 5 Then DK% = 1
@@ -622,6 +634,7 @@ Sub MAKEPBP ()
 
                             Case 11 To 20
                                 U$ = "HE TAKES IT TO THE HOLE"
+
                                 Call d100(RN0)
                                 If (B = 0 Or B = 1) And RN0 <= 1 Then DK% = 1
                                 If (B = 2 Or B = 3) And RN0 <= 5 Then DK% = 1
@@ -629,6 +642,7 @@ Sub MAKEPBP ()
 
                             Case 21 To 30
                                 U$ = "HE TAKES IT TO THE HOOP"
+
                                 Call d100(RN0)
                                 If (B = 0 Or B = 1) And RN0 <= 1 Then DK% = 1
                                 If (B = 2 Or B = 3) And RN0 <= 5 Then DK% = 1
@@ -642,6 +656,7 @@ Sub MAKEPBP ()
 
                             Case 51 To 60
                                 U$ = "HE TAKES IT TO THE BOARD"
+
                                 Call d100(RN0)
                                 If (B = 0 Or B = 1) And RN0 <= 1 Then DK% = 1
                                 If (B = 2 Or B = 3) And RN0 <= 5 Then DK% = 1
@@ -659,6 +674,7 @@ Sub MAKEPBP ()
 
                             Case 81 To 90
                                 U$ = "HE TAKES IT UP STRONG"
+
                                 Call d100(RN0)
                                 If (B = 0 Or B = 1) And RN0 <= 1 Then DK% = 1
                                 If (B = 2 Or B = 3) And RN0 <= 5 Then DK% = 1
@@ -666,6 +682,7 @@ Sub MAKEPBP ()
 
                             Case 91 To 95
                                 U$ = "HE POWERS IT UP"
+
                                 Call d100(RN0)
                                 If (B = 0 Or B = 1) And RN0 <= 1 Then DK% = 1
                                 If (B = 2 Or B = 3) And RN0 <= 5 Then DK% = 1
@@ -701,6 +718,7 @@ Sub MAKEPBP ()
                                 Case 71 To 72:
                                     U$ = "HE CURLS OFF A PICK IN THE PAINT"
                                     Call PBP
+
                                     U$ = "TAKES IT UP"
                                     Call d100(RN0)
                                     If RN0 <= 15 Then DK% = 1
@@ -709,11 +727,13 @@ Sub MAKEPBP ()
                                     U$ = "HE MAKES A NICE SPIN MOVE"
                                     Call PBP
                                     U$ = "AND SOARS TO THE HOOP"
+
                                     Call d100(RN0)
                                     If RN0 <= 15 Then DK% = 1
 
                                 Case 75 To 100:
                                     U$ = "HE TAKES IT UP STRONG"
+
                                     Call d100(RN0)
                                     If RN0 <= 15 Then DK% = 1
 
@@ -734,6 +754,7 @@ Sub MAKEPBP ()
                                     U$ = "HE SPINS FREE"
                                     Call PBP
                                     U$ = "SHOOTS"
+
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
 
@@ -741,6 +762,7 @@ Sub MAKEPBP ()
                                     U$ = "HE GETS LOOSE IN THE PAINT"
                                     Call PBP
                                     U$ = "TAKES IT UP"
+
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
 
@@ -749,37 +771,46 @@ Sub MAKEPBP ()
 
                                 Case 65 To 67:
                                     U$ = "HE CURLS OFF A PICK IN THE PAINT"
+                                    
                                     Call PBP
                                     U$ = "TAKES IT UP"
+
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
 
                                 Case 68 To 69:
                                     U$ = "HE MAKES A NICE SPIN MOVE"
+                                    
                                     Call PBP
                                     U$ = "AND SOARS TO THE HOOP"
+
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
 
                                 Case 70 To 71:
                                     U$ = "HE DRIVES THE BASELINE"
+                                    
                                     Call PBP
                                     U$ = "SPINS RIGHT AND GOES UP"
+
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
 
                                 Case 72:
                                     U$ = "HE SLICES IN THE HOLE"
+                                    
                                     Call PBP
                                     U$ = "UNDERHAND SCOOP SHOT"
 
                                 Case 73:
                                     U$ = "STRONG CUT ALONG THE BASELINE"
+                                    
                                     Call PBP
                                     U$ = "DOUBLE PUMP REVERSE LAYUP"
 
                                 Case 74:
                                     U$ = "HE PENETRATES"
+                                    
                                     Call PBP
                                     U$ = "GORGEOUS FINGER ROLL!"
 
@@ -796,17 +827,23 @@ Sub MAKEPBP ()
                             Select Case RN
 
                                 Case 1 To 25:
-                                    U$ = "HE SPINS FREE": Call PBP: U$ = "SHOOTS"
+                                    U$ = "HE SPINS FREE"
+                                    
+                                    Call PBP
+                                    U$ = "SHOOTS"
 
                                 Case 26 To 50:
                                     U$ = "HE TAKES IT UP UNDER THE BASKET"
+
                                     Call d100(RN0)
                                     If RN0 <= 2 Then DK% = 1
 
                                 Case 51 To 52:
                                     U$ = "HE MAKES A NICE SPIN MOVE"
+                                    
                                     Call PBP
                                     U$ = "AND SOARS TO THE HOOP"
+
                                     Call d100(RN0)
                                     If RN0 <= 2 Then DK% = 1
 
@@ -815,23 +852,28 @@ Sub MAKEPBP ()
 
                                 Case 55 To 56:
                                     U$ = "HE DRIVES THE BASELINE"
+                                    
                                     Call PBP
                                     U$ = "SPINS RIGHT AND GOES UP"
+
                                     Call d100(RN0)
                                     If RN0 <= 2 Then DK% = 1
 
                                 Case 57:
                                     U$ = "HE SLICES IN THE HOLE"
+                                    
                                     Call PBP
                                     U$ = "UNDERHAND SCOOP SHOT"
 
                                 Case 58:
                                     U$ = "STRONG CUT ALONG THE BASELINE"
+                                    
                                     Call PBP
                                     U$ = "DOUBLE PUMP REVERSE LAYUP"
 
                                 Case 59:
                                     U$ = "HE PENETRATES"
+                                    
                                     Call PBP
                                     U$ = "GORGEOUS FINGER ROLL!"
 
@@ -840,14 +882,18 @@ Sub MAKEPBP ()
 
                                 Case 76 To 90:
                                     U$ = "HE STOPS"
+                                    
                                     Call PBP
                                     U$ = "SHOOTS"
 
                                 Case 91:
                                     U$ = "HE LOOKS TO PASS"
+                                    
                                     Call PBP
                                     U$ = "NO ONE IS OPEN"
-                                    Call PBP: U$ = "HE PUTS IT UP"
+                                    
+                                    Call PBP
+                                    U$ = "HE PUTS IT UP"
 
                                 Case 92 To 100:
                                     U$ = "HE TAKES THE SHOT"
@@ -886,7 +932,9 @@ Sub MAKEPBP ()
                         RN = Int(Rnd(1) * 59) + 1
 
                         Select Case RN
+
                             Case 1: U$ = U$ + " WITH A TWISTING JUMPER"
+
                             Case 2: U$ = U$ + " SHOOTS THE J"
 
                             Case 3:
@@ -897,6 +945,7 @@ Sub MAKEPBP ()
                                 End If
 
                             Case 4: U$ = U$ + " WITH A SHORT JUMPER"
+
                             Case 5: U$ = U$ + " WITH THE 10 FOOTER"
 
                             Case 6:
@@ -973,7 +1022,7 @@ Sub MAKEPBP ()
                             Case 59: U$ = U$ + " WITH THE FINGER ROLL"
                         End Select
 
-                    Case 6
+                    Case 6, 7
                         RN = Int(Rnd(1) * 59) + 1
 
                         Select Case RN
@@ -1038,7 +1087,7 @@ Sub MAKEPBP ()
                             Case 59: U$ = U$ + " WITH THE FINGER ROLL"
                         End Select
 
-                    Case 7
+                    Case 8
                         Select Case RN
                             Case 1 To 20: U$ = "HE SAILS TO THE HOOP"
                             Case 21 To 23: U$ = "HE TAKES IT TO THE BUCKET"
@@ -1054,7 +1103,7 @@ Sub MAKEPBP ()
                             Case 81 To 100: U$ = "HE GOES UP WITH IT"
                         End Select
 
-                    Case 8
+                    Case 9
                         'BACK AFTER REB
                         U$ = "HE "
                         RN = Int(Rnd(1) * 11) + 1
@@ -1188,7 +1237,12 @@ Sub MAKEPBP ()
                     Case 25: U$ = players_GAME$(P, B1!(P, B), 0) + " PUNCHES IT HOME!!!"
                     Case 26: U$ = players_GAME$(P, B1!(P, B), 0) + "...DOUBLE PUMP SLAM!!!"
                     Case 27: U$ = players_GAME$(P, B1!(P, B), 0) + "...IN YOUR FACE SLAM!!!"
-                    Case 28: U$ = players_GAME$(P, B1!(P, B), 0) + " IS UP": Call PBP: U$ = "HE SPINS": Call PBP: U$ = "BEHIND THE BACK SLAM!!!"
+                    Case 28, 37:
+                        U$ = players_GAME$(P, B1!(P, B), 0) + " IS UP"
+                        Call PBP
+                        U$ = "HE SPINS"
+                        Call PBP
+                        U$ = "BEHIND THE BACK SLAM!!!"
                     Case 29: U$ = "HE SLAMS IT HOME!!"
                     Case 30: U$ = "HE LAYS IT UP AND IN!!"
                     Case 31: U$ = "HE BANGS IT IN!!"
@@ -1197,7 +1251,6 @@ Sub MAKEPBP ()
                     Case 34: U$ = "DIPSY-DOO DUNK-A-ROO!!!"
                     Case 35: U$ = "HE MAKES IT HAMMER TIME!!!"
                     Case 36: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
-                    Case 37: U$ = players_GAME$(P, B1!(P, B), 0) + " IS UP": Call PBP: U$ = "HE SPINS": Call PBP: U$ = "BEHIND THE BACK SLAM!!!"
                     Case 38: U$ = "HE JAMS IT HOME!!!"
                     Case 39: U$ = "HE HAMMERS IT HOME!"
                 End Select
@@ -1326,15 +1379,33 @@ Sub MAKEPBP ()
                     Case 42: U$ = U$ + "CROSSES OVER...SPINS"
                     Case 43: U$ = U$ + "CUTS LEFT"
                     Case 44: U$ = U$ + "CUTS RIGHT"
-                    Case 45: U$ = U$ + "WITH THE HESITATION DRIBBLE": Call PBP: U$ = "HE SPINS LEFT"
-                    Case 46: U$ = U$ + "WITH THE HESITATION DRIBBLE": Call PBP: U$ = "HE SPINS RIGHT"
-                    Case 47: U$ = U$ + "WITH THE HESITATION DRIBBLE": Call PBP: U$ = "HE CUTS LEFT"
-                    Case 48: U$ = U$ + "WITH THE HESITATION DRIBBLE": Call PBP: U$ = "HE CUTS RIGHT"
-                    Case 49: U$ = U$ + "STUTTER STEPS": Call PBP: U$ = "HE MOVES LEFT"
+                    Case 45:
+                        U$ = U$ + "WITH THE HESITATION DRIBBLE"
+                        Call PBP
+                        U$ = "HE SPINS LEFT"
+                    Case 46:
+                        U$ = U$ + "WITH THE HESITATION DRIBBLE"
+                        Call PBP
+                        U$ = "HE SPINS RIGHT"
+                    Case 47:
+                        U$ = U$ + "WITH THE HESITATION DRIBBLE"
+                        Call PBP
+                        U$ = "HE CUTS LEFT"
+                    Case 48:
+                        U$ = U$ + "WITH THE HESITATION DRIBBLE"
+                        Call PBP
+                        U$ = "HE CUTS RIGHT"
+                    Case 49:
+                        U$ = U$ + "STUTTER STEPS"
+                        Call PBP
+                        U$ = "HE MOVES LEFT"
                     Case 50: U$ = U$ + "MAINTAINS HIS DRIBBLE"
                     Case 51: U$ = U$ + "FAKE SPINS LEFT...GOES RIGHT"
                     Case 52: U$ = U$ + "FAKE SPINS RIGHT...GOES LEFT"
-                    Case 53: U$ = U$ + "PALMS THE BALL": Call PBP: U$ = "HE TAKES IT AND SPINS"
+                    Case 53:
+                        U$ = U$ + "PALMS THE BALL"
+                        Call PBP
+                        U$ = "HE TAKES IT AND SPINS"
                     Case 54: U$ = U$ + "SHAKES AND BAKES"
                     Case 55: U$ = U$ + "DRIBBLES WITH THE LEFT HAND"
                     Case 56: U$ = U$ + "DRIBBLES WITH THE RIGHT HAND"
@@ -1348,13 +1419,19 @@ Sub MAKEPBP ()
 
                 Select Case RN
                     Case 1: U$ = prevBall$ + " TO " + V$
-                    Case 2: U$ = prevBall$ + " KICKS IT OUT": Call PBP: U$ = V$ + " TAKES THE PASS"
+                    Case 2:
+                        U$ = prevBall$ + " KICKS IT OUT"
+                        Call PBP
+                        U$ = V$ + " TAKES THE PASS"
                     Case 3: U$ = prevBall$ + " FEEDS " + V$
                     Case 4: U$ = prevBall$ + " PASSES TO " + V$
                     Case 4: U$ = prevBall$ + " DISHES TO " + V$
                     Case 5: U$ = prevBall$ + " GIVES IT TO " + V$
                     Case 6: U$ = prevBall$ + " WITH A NICE GIVE TO " + V$
-                    Case 7: U$ = prevBall$ + " LOOKS": Call PBP: U$ = "HE GETS IT TO " + V$
+                    Case 7:
+                        U$ = prevBall$ + " LOOKS"
+                        Call PBP
+                        U$ = "HE GETS IT TO " + V$
                     Case 8: U$ = prevBall$ + " SENDS IT TO " + V$
                     Case 9: U$ = prevBall$ + " TO " + V$
                     Case 10: U$ = prevBall$ + " GETS IT TO " + V$
@@ -1402,17 +1479,35 @@ Sub MAKEPBP ()
                     Case 51: U$ = prevBall$ + " WHIPS IT OVER TO " + V$
                     Case 52: U$ = prevBall$ + " SLINGS A BOUNCE PASS TO " + V$
                     Case 53: U$ = prevBall$ + " SHOVELS IT TO " + V$
-                    Case 54: U$ = prevBall$ + " PUMP FAKES A SHOT": Call PBP: U$ = "HE SWINGS IT TO " + V$
-                    Case 55: U$ = prevBall$ + " PUMP FAKES A SHOT": Call PBP: U$ = "HE BOUNCES IT TO " + V$
-                    Case 56: U$ = prevBall$ + " WITH A FOOT FAKE": Call PBP: U$ = "HE SPINS AND DUMPS IT TO " + V$
-                    Case 57: U$ = prevBall$ + " CUTS ACROSS THE LANE": Call PBP: U$ = "HE DISHES INSIDE TO " + V$
-                    Case 58: U$ = prevBall$ + " DRIVES THE BASELINE": Call PBP: U$ = "DISHES UNDERNEATH TO " + V$
-                    Case 59: U$ = prevBall$ + " FAKES RIGHT...CUTS LEFT": Call PBP: U$ = "SHUFFLES IT TO " + V$
-                    Case 60: U$ = prevBall$ + " HEAD FAKES": Call PBP: U$ = "HE PUSHES IT TO " + V$
+                    Case 54:
+                        U$ = prevBall$ + " PUMP FAKES A SHOT"
+                        Call PBP
+                        U$ = "HE SWINGS IT TO " + V$
+                    Case 55:
+                        U$ = prevBall$ + " PUMP FAKES A SHOT"
+                        Call PBP
+                        U$ = "HE BOUNCES IT TO " + V$
+                    Case 56:
+                        U$ = prevBall$ + " WITH A FOOT FAKE"
+                        Call PBP
+                        U$ = "HE SPINS AND DUMPS IT TO " + V$
+                    Case 57:
+                        U$ = prevBall$ + " CUTS ACROSS THE LANE"
+                        Call PBP
+                        U$ = "HE DISHES INSIDE TO " + V$
+                    Case 58:
+                        U$ = prevBall$ + " DRIVES THE BASELINE"
+                        Call PBP
+                        U$ = "DISHES UNDERNEATH TO " + V$
+                    Case 59:
+                        U$ = prevBall$ + " FAKES RIGHT...CUTS LEFT"
+                        Call PBP
+                        U$ = "SHUFFLES IT TO " + V$
+                    Case 60:
+                        U$ = prevBall$ + " HEAD FAKES"
+                        Call PBP
+                        U$ = "HE PUSHES IT TO " + V$
                 End Select
-
-            Case Else
-                U$ = players_GAME$(P, B1!(P, B), 0)
 
         End Select
 
@@ -2396,12 +2491,12 @@ Sub PlayItSafe ()
 
     For ZZ = 0 To 4
 
-        If A!(P9, B1!(P9, ZZ), 22) = 50 Then 
+        If A!(P9, B1!(P9, ZZ), 22) = 50 Then
             A = A + 1
             If SW = 0 Then Print: Print "THE FOLLOWING PLAYER(S) ARE PLAYING SAFE BUT CAN NOW PLAY NORMAL IF YOU WISH": SW = 1
         End If
 
-        If A!(P9, B1!(P9, ZZ), 22) = 50 And SW = 1 And S2 < 6 Then 
+        If A!(P9, B1!(P9, ZZ), 22) = 50 And SW = 1 And S2 < 6 Then
             Locate S2 + 3, 1: Print S2; "-"; players_GAME$(P9, B1!(P9, ZZ), 0)
             P5(A) = S2
             P4(A) = ZZ
@@ -2452,8 +2547,6 @@ Sub PlayItSafe ()
                 End If
 
             End If
-
-            'Call pbplog(6469)
 
         Loop Until P6 <> P5(6) Or UCase$(I$) = "Z"
 
@@ -2670,8 +2763,6 @@ Sub CreditAssists ()
 
             If players_GAME$(P, B1!(P, B), 0) <> players_GAME$(P, B1!(P, M8), 0) Then
                 A!(P, B1!(P, M8), 14) = A!(P, B1!(P, M8), 14) + 1
-            Else
-                'Call pbplog(6739)
             End If
 
             iterations = iterations + 1
@@ -2851,8 +2942,6 @@ Sub Choices ()
                 'Exit Do
             End If
 
-            'Call pbplog(6840)
-
         Loop Until Not (P3 = 1 And timeouts(P) <= 0 Or P3 = 1 And P = compTeam And playerMode = 1)
 
         Call CLEARPBPBOX
@@ -3010,7 +3099,8 @@ Sub Fouls (skipRandom%)
     If A!(D, B1!(D, W5), 12) < 6 Then
 
         If pbpOpt = 0 Then
-            U$ = "FOUL NUMBER" + Str$(A!(D, B1!(D, W5), 12)) + " CALLED ON " + players_GAME$(D, B1!(D, W5), 0): Call PBP
+            U$ = "FOUL NUMBER" + Str$(A!(D, B1!(D, W5), 12)) + " CALLED ON " + players_GAME$(D, B1!(D, W5), 0)
+            Call PBP
         Else
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
@@ -3041,10 +3131,15 @@ Sub Fouls (skipRandom%)
         Next I3
 
         If pbpOpt = 0 Then
-            U$ = "FOUL CALLED ON " + players_GAME$(D, B1!(D, W5), 0): Call PBP
+            U$ = "FOUL CALLED ON " + players_GAME$(D, B1!(D, W5), 0)
+            Call PBP
         Else
             'pbpOpt = 1
-            If pbpDelay! <> 0 Then Call WINDEX: Print "FOUL ON "; players_GAME$(D, B1!(D, W5), 0): Call DELAY
+            If pbpDelay! <> 0 Then
+                Call WINDEX
+                Print "FOUL ON "; players_GAME$(D, B1!(D, W5), 0)
+                Call DELAY
+            End If
         End If
 
         U$ = "HE HAS JUST FOULED OUT !!!"
@@ -3713,8 +3808,8 @@ Sub SETUPRATINGS ()
         X3! = (tmRat_GAME(I, 21) - tmRat_GAME(I, 20) * .1) - 7.9 * tmRat_GAME(I, 0)
         X3! = X3! / 2
 
-        'tmRat_GAME(...19) = OPP FGA 
-        F7%(I, 3) = Int(X3! / (tmRat_GAME(I, 19) + X3!) * 100 + .5) - PF%(I): ' WAS -7        
+        'tmRat_GAME(...19) = OPP FGA
+        F7%(I, 3) = Int(X3! / (tmRat_GAME(I, 19) + X3!) * 100 + .5) - PF%(I): ' WAS -7
 
         'OFF Assists / OFF FGM, as a %
         F7%(I, 7) = Int(tmRat_GAME(I, 11) / tmRat_GAME(I, 6) * 100 + .5)
@@ -3730,16 +3825,16 @@ Sub SETUPRATINGS ()
             If plyrRat_GAME(I, I1, 18) = 0 Then
 
                 'Start assignment of player ratings
-                If plyrRat_GAME(I, I1, 2) - plyrRat_GAME(I, I1, 13) > 0 Then 
+                If plyrRat_GAME(I, I1, 2) - plyrRat_GAME(I, I1, 13) > 0 Then
                     '(FGM - 3FGM) / (3FGA - 3FGM), as a %
                     A!(I, I1, 0) = Int((plyrRat_GAME(I, I1, 3) - plyrRat_GAME(I, I1, 14)) / (plyrRat_GAME(I, I1, 2) - plyrRat_GAME(I, I1, 13)) * 100 + .5)
                 End If
 
-                If playoffOpt = 1  Then
+                If playoffOpt = 1 Then
                     A!(I, I1, 0) = A!(I, I1, 0) - 2
                 End If
 
-                If plyrRat_GAME(I, I1, 4) > 0 Then 
+                If plyrRat_GAME(I, I1, 4) > 0 Then
                     'FT %
                     A!(I, I1, 1) = Int(plyrRat_GAME(I, I1, 5) / plyrRat_GAME(I, I1, 4) * 100 + .5)
                 End If
@@ -3908,7 +4003,7 @@ Sub SETUPRATINGS ()
                     Print
                     Print " #  PLAYER-POS         CX"
                     TY% = 0
-                    For I1 = 0 To 14: 
+                    For I1 = 0 To 14:
                         TY% = TY% + A!(I, I1, 3)
                         Print Using "## "; I1 + 1;
                         Print players_GAME$(I, I1, 0); "-"; players_GAME$(I, I1, 1);
@@ -4480,7 +4575,8 @@ Sub LastShot ()
     Call AdjustPlayTime
 
     gameClock! = gameClock! - M5
-    shotClock = shotClock - M5
+    If sClockVal < 2 Then shotClock = shotClock - M5
+
     IN = 0
 
     Call CheckGameShotClock
@@ -4564,12 +4660,16 @@ End Sub
 'invalid values that might get passed.
 Sub ResetShotClock ()
 
-    Select Case sClockVal
-        Case 0: shotClock = 24
-        Case 1: shotClock = 30
-    End Select
+    If sClockVal < 2 Then
 
-    LS = 4
+        Select Case sClockVal
+            Case 0: shotClock = 24
+            Case 1: shotClock = 30
+        End Select
+
+        LS = 4
+
+    End If
 
 End Sub
 
@@ -4609,7 +4709,7 @@ Sub OPTIONS ()
             I = Val(I$)
         Loop Until I >= 0 And I <= 2
 
-        Select Case I 
+        Select Case I
             Case 1
                 playerOpt = playerOpt + 1
                 If playerOpt > 3 Then playerOpt = 0
@@ -4799,11 +4899,11 @@ Sub UPDATESCREEN ()
     Color 15, 0
 
     'Shot Clock
-    Locate 6, 37: Print Using " :##"; shotClock
-
     'If no shot clock, or shot clock expired
-    If gameClock! < 25 And shotClock >= gameClock! Or H > 4 And gameClock! = 300 Then
+    If sClockVal = 2 Or gameClock! < 24 And shotClock >= gameClock! And sClockVal = 0 Or gameClock! < 30 And shotClock >= gameClock! And sClockVal = 1 Or H > 4 And gameClock! = 300 Then
         Locate 6, 37: Print " :  "
+    Else
+        Locate 6, 37: Print Using " :##"; shotClock
     End If
 
     If pbpDelay! <> 0 Then
@@ -5678,11 +5778,11 @@ Sub COMPILESTATFILES (compileOpt)
 
                 Next I
 
-                For L = 0 To 15: 
+                For L = 0 To 15:
                     Input #1, Z!(L)
                 Next L
-                
-                For L = 0 To 15: 
+
+                For L = 0 To 15:
                     Input #1, Z1!(L)
                 Next L
 
@@ -5901,14 +6001,8 @@ End Sub
 Sub pbplog (lineNumber)
 
     Print #11, "Called from line "; lineNumber
-
-    If _FileExists("GAME82") Then
-        Print #11, gameTeams$(0) + " vs. " + gameTeams$(1)
-    End If
-
-    Print #11, "P     B           = "; P; B
-    Print #11, "players (X, B, 0) = "; players_GAME$(P, B1!(P, B), 0)
-    Print #11, "players (X, M8, 0) = "; players_GAME$(P, B1!(P, M8), 0)
+    'Print #11, gameTeams$(0); " vs "; gameTeams$(1)
+    Print #11, U$
     Print #11,
 
 End Sub
@@ -6170,7 +6264,7 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx)
     'Arena
     gameStadium$(gameIdx) = RTrim$(Q$(377))
 
-    'Read in Avg Attendance 
+    'Read in Avg Attendance
     '-- For now, assign the NBA average from the last 2 decades
     '-- Then as team files are updated to include this, we can
     '-- uncomment the RTrim and be set

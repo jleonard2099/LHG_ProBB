@@ -128,7 +128,7 @@ Sub PROHOOP
 
         Close #6
 
-        currGame = schedGame(0) + schedGame(2)
+        'currGame = schedGame(0) + schedGame(2)
 
         'Open "pbplog" + Str$(currGame) For Append As #11
 
@@ -157,7 +157,12 @@ Sub PROHOOP
 
         autoPlay = 1
 
+    Else
+    
+        'Open "pbplog" For Append As #11
+
     End If
+
 
     If autoPlay = 1 Then
 
@@ -204,7 +209,7 @@ Sub PROHOOP
             Locate 12, 2: Color 14
             Print "(A) ";: Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#"; pbpDelay!
             Locate 13, 2: Color 14
-            Print "(B) ";: Color 15: Print "HUMAN COACHES WILL: "; coachMode$(coachOpt);
+            Print "(B) ";: Color 15: Print "HUMAN COACHES: "; coachMode$(coachOpt);
             Locate 14, 2: Color 14
             Print "(C) ";: Color 15: Print "BONUS AFTER FOUL #: "; bonusFoulNum
             Locate 15, 2: Color 14
@@ -230,11 +235,11 @@ Sub PROHOOP
             Locate 19, 2: Color 14
             Print "NOTE:: "
             Color 15
-            Locate , 3: Print "* BONUS ON 7TH FOUL UNTIL 72-73, 6TH FOUL (72-73 SEASON), 5TH FOUL (73-74+)"
-            Locate , 3: Print "* UNTIL 72-73, A TEAM IN BONUS CHOSE 3 FT TO MAKE 2 OR 2 FT TO MAKE 1"
-            Locate , 3: Print "* UNTIL 72-73, ALL FOULS WERE SHOT"
-            Locate , 3: Print "* 3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 79-80"
-            Locate , 3: Print "* ABA USED A 30-SEC SHOT CLOCK THROUGH 73-74";
+            Locate , 2: Print "* BONUS ON 7TH FOUL UNTIL 72-73, 6TH FOUL (72-73 SEASON), 5TH FOUL (73-74+)"
+            Locate , 2: Print "* UNTIL 72-73, A TEAM IN BONUS CHOSE 3 FT TO MAKE 2 OR 2 FT TO MAKE 1"
+            Locate , 2: Print "* UNTIL 72-73, ALL FOULS WERE SHOT"
+            Locate , 2: Print "* 3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 79-80"
+            Locate , 2: Print "* ABA HAD 30-SEC SHOT CLOCK THROUGH 73-74; NBA BEGAN 24-SEC SOT CLOCK IN 1954";
 
             Do
 
@@ -273,7 +278,7 @@ Sub PROHOOP
                         Print #8, ftRulesOpt
                         Print #8, pbpOpt
                         Close #8
-                    
+
                     Case 1:
                         playerOpt = playerOpt + 1
                         If playerOpt > 3 Then playerOpt = 0
@@ -291,7 +296,8 @@ Sub PROHOOP
                         If gameLoc > 2 Then gameLoc = 1
 
                     Case 5:
-                        sClockVal = 1 - sClockVal
+                        sClockVal = sClockVal + 1
+                        If sClockVal > 2 Then sClockVal = 0
 
                     Case 6:
                         threePtOpt = threePtOpt + 1
@@ -442,7 +448,6 @@ Sub PROHOOP
 
 
     250 '
-    'Call pbplog(1372)
 
     If H = 2 Then
         If JB = 0 Then
@@ -498,7 +503,8 @@ Sub PROHOOP
 
     If H = 1 Or H > 4 Then
         If pbpOpt = 0 Then
-            U$ = gameTeams$(JB) + " GETS THE JUMP": Call PBP
+            U$ = gameTeams$(JB) + " GETS THE JUMP"
+            Call PBP
         Else
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
@@ -512,7 +518,8 @@ Sub PROHOOP
         End If
     Else
         If pbpOpt = 0 Then
-            U$ = gameTeams$(JB) + " INBOUNDS THE BALL": Call PBP
+            U$ = gameTeams$(JB) + " INBOUNDS THE BALL"
+            Call PBP
         Else
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
@@ -534,8 +541,6 @@ Sub PROHOOP
     '----- NOODLE -----
 
     170 '
-    'Call pbplog(1464)
-
     gameClock! = 0
     teamFouls(0) = teamFouls(0) + P2(0)
     teamFouls(1) = teamFouls(1) + P2(1)
@@ -617,9 +622,17 @@ Sub PROHOOP
     End If
 
     If H < 5 And playerMode <> 0 Then
-        'Call pbplog(1545)
-        If playerMode = 1 Then P9 = compTeam: Call COMPUTERSUBS
-        If playerMode = 2 Then P9 = 0: Call COMPUTERSUBS: P9 = 1: Call COMPUTERSUBS
+        If playerMode = 1 Then
+            P9 = compTeam
+            Call COMPUTERSUBS
+        End If
+
+        If playerMode = 2 Then
+            P9 = 0
+            Call COMPUTERSUBS
+            P9 = 1
+            Call COMPUTERSUBS
+        End If
     End If
 
     If H < 5 Then
@@ -629,13 +642,11 @@ Sub PROHOOP
         Call SCOREBOARD
 
         B = -1
-        'Call pbplog(1557)
         Call Substitutions
         gameClock! = 720
 
         Call UPDATESCREEN
 
-        'Call pbplog(1563)
         GoTo 250
 
     End If
@@ -646,7 +657,6 @@ Sub PROHOOP
 
     If H = 5 Then
 
-        'Call pbplog(1574)
         U$ = "END OF REGULATION"
 
         Select Case pbpOpt
@@ -655,7 +665,10 @@ Sub PROHOOP
                 Call WINDEX
                 Print U$
             Case 1:
-                If pbpDelay! > 0 Then Call WINDEX: Print U$ ': Call DELAY
+                If pbpDelay! > 0 Then
+                    Call WINDEX
+                    Print U$ ': Call DELAY
+                End If
         End Select
 
     End If
@@ -664,7 +677,6 @@ Sub PROHOOP
 
     If score(0, 0) = score(1, 0) Then
 
-        'Call pbplog(1592)
         U$ = "OVERTIME !!!"
 
         Select Case pbpOpt
@@ -683,14 +695,12 @@ Sub PROHOOP
         Call UPDATESCREEN
         B = -1
 
-        'Call pbplog(1611)
         Call Substitutions
 
         GoTo 250
 
     End If
 
-    'Call pbplog(1618)
     If Not (autoPlay = 1 And playerMode = 2) Then
         I$ = GetKeyPress
     End If
@@ -747,7 +757,7 @@ Sub PROHOOP
     LS = 0
     XS = 0
 
-    If shotClock > 0 And shotClock < SC(sClockVal) Then
+    If shotClock > 0 And sClockVal < 2 And shotClock < scSettings(sClockVal) Then
         shotClock = shotClock - 5
     Else
 
@@ -780,7 +790,6 @@ Sub PROHOOP
     '----- NOODLE -----
 
     350 '
-    'Call pbplog(1708)
 
     PASS% = PASS% + 1
     P6 = 0
@@ -798,8 +807,6 @@ Sub PROHOOP
     'Random ball carrier
     'B = Int(Rnd(1) * 5)
     Call d100(R0)
-
-    'Call pbplog(1727)
 
     If playerMode = 0 And coachOpt = 1 Or playerMode = 1 And D = compTeam And coachOpt = 1 Or playerMode = 1 And P = compTeam Or playerMode = 2 Then
 
@@ -843,14 +850,14 @@ Sub PROHOOP
                                 Exit Sub
 
                             Case "O"
-                                Call OPTIONS 
-                            
-                            Case "Z","/"
+                                Call OPTIONS
+
+                            Case "Z", "/"
                                 Call CHANGESTRATEGY(I$)
 
                             Case Else
                                 B = Val(I$)
-                        
+
                         End Select
 
                     Loop Until B >= 0 And B <= 4
@@ -878,7 +885,6 @@ Sub PROHOOP
 
                     Case 1, 2
                         X = 0
-                        'Call pbplog(1791)
                         GoTo 580
 
                     Case 3 To 30
@@ -886,11 +892,9 @@ Sub PROHOOP
                         Call ResetShotClock
                         Call UPDATESCREEN
                         X = 88
-                        'Call pbplog(1798)
                         GoTo 565
 
                     Case 31 To 30 + F7%(P, 1) + F7%(D, 2)
-                        'Call pbplog(1801)
                         GoTo 515
 
                     Case 30 + F7%(P, 1) + F7%(D, 2) To 1000
@@ -900,7 +904,6 @@ Sub PROHOOP
                             GoTo 513
                         Else
                             R1 = Int(Rnd(1) * 1000) + 1
-                            'Call pbplog(1809)
                             If (PASS% <= 3 Or PASS% > 4) And R1 <= 320 + ((JY - 89) * 10) Then 445
                             If PASS% = 4 Then 445
                             GoTo 437
@@ -914,7 +917,6 @@ Sub PROHOOP
 
                     Case 1
                         X = 0
-                        'Call pbplog(1827)
                         GoTo 580
 
                     Case 2 To 10
@@ -922,11 +924,9 @@ Sub PROHOOP
                         Call ResetShotClock
                         Call UPDATESCREEN
                         X = 88
-                        'Call pbplog(1835)
                         GoTo 565
 
                     Case 10 To 10 + F7%(P, 1) + F7%(D, 2)
-                        'Call pbplog(1839)
                         GoTo 515
 
                     Case 10 + F7%(P, 1) + F7%(D, 2) To 1000
@@ -934,11 +934,9 @@ Sub PROHOOP
                         P9 = Int(Rnd(1) * 5)
 
                         If R0 <= 8 + F7%(P, 1) + F7%(D, 2) + A!(D, B1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
-                            'Call pbplog(1847)
                             GoTo 513
                         Else
                             R0 = Int(Rnd(1) * 1000) + 1
-                            'Call pbplog(1844)
                             If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
                             If PASS% = 4 Then 445
                             GoTo 437
@@ -947,7 +945,6 @@ Sub PROHOOP
                 End Select
 
             Case 3
-                'Call pbplog(1853)
                 ' *** SHOT VS TRAP M-M ***
                 Select Case R0
 
@@ -973,7 +970,6 @@ Sub PROHOOP
                             GoTo 513
                         Else
                             R0 = Int(Rnd(1) * 1000) + 1
-                            'Call pbplog(1878)
                             If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
                             If PASS% = 4 Then 445
                             GoTo 437
@@ -987,7 +983,6 @@ Sub PROHOOP
 
         P1 = 0
         R0 = Int(Rnd(1) * 1000) + 1
-        'Call pbplog(1893)
 
         Select Case R0
 
@@ -1012,7 +1007,6 @@ Sub PROHOOP
                     GoTo 513
                 Else
                     R0 = Int(Rnd(1) * 1000) + 1
-                    'Call pbplog(1916)
                     If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
                     If PASS% = 4 Then 445
 
@@ -1030,7 +1024,6 @@ Sub PROHOOP
     ' ***BAD SHOT ***
 
     437 '
-    'Call pbplog(1934)
 
     A4 = 0
 
@@ -1051,7 +1044,6 @@ Sub PROHOOP
     '----- NOODLE -----
 
     445 '
-    'Call pbplog(1955)
 
     If Not (H = 4 And gameClock! <= 120 Or H > 4) Then
         If A!(P, B1!(P, B), 3) - A!(P, B1!(P, B), 7) - A!(P, B1!(P, B), 11) - A!(P, B1!(P, B), 12) <= 0 Then 437
@@ -1071,7 +1063,6 @@ Sub PROHOOP
             F3S% = F3S% + Int(Rnd(1) * 7) - 3
             X = 0
 
-            'Call pbplog(1984)
             GoTo 520
 
         End If
@@ -1175,7 +1166,6 @@ Sub PROHOOP
     '-- Perhaps it still could be if we add the GoTo 300 after each call
 
     513 '
-    'Call pbplog(2075)
 
     Call LastShot
     Call ResetShotClock
@@ -1262,7 +1252,6 @@ Sub PROHOOP
     '----- NOODLE -----
 
     515 '
-    'Call pbplog(2162)
 
     Call LastShot
     Call ResetShotClock
@@ -1270,14 +1259,19 @@ Sub PROHOOP
     A!(P, B1!(P, B), 23) = A!(P, B1!(P, B), 23) + 1
     turnovers(P) = turnovers(P) + 1
 
-    If SV% <> 1 Then PT% = 1: Call MAKEPBP
+    If SV% <> 1 Then
+        PT% = 1
+        Call MAKEPBP
+    End If
 
     SV% = 0
 
     If pbpOpt = 1 And pbpDelay! <> 0 Then
         Call WINDEX
-        Print "TURNOVER BY ";: Color tmRat_GAME(P, 33), tmRat_GAME(P, 34): Print gameTeams$(P)
-        Color 15, 0: Call DELAY
+        Print "TURNOVER BY ";
+        Color tmRat_GAME(P, 33), tmRat_GAME(P, 34): Print gameTeams$(P)
+        Call DELAY
+        Color 15, 0
     End If
 
     If pbpOpt = 0 Then Call PBP
@@ -1322,7 +1316,6 @@ Sub PROHOOP
     '----- NOODLE -----
 
     520 '
-    'Call pbplog(2222)
 
     Call LastShot
     Call CheckGameClock
@@ -1354,8 +1347,16 @@ Sub PROHOOP
 
             Call PBP
 
-            If shotClock <= 0 Then U$ = "SHOT CLOCK HAS EXPIRED!": SV% = 1: GoTo 515
-            If shotClock < 5 Then U$ = "SHOT CLOCK DOWN TO" + Str$(shotClock): Call PBP
+            If shotClock <= 0 And sClockVal < 2 Then
+                U$ = "SHOT CLOCK HAS EXPIRED!"
+                SV% = 1
+                GoTo 515
+            End If
+
+            If shotClock < 5 And sClockVal < 2 Then
+                U$ = "SHOT CLOCK DOWN TO" + Str$(shotClock)
+                Call PBP
+            End If
 
             prevBall$ = players_GAME$(P, B1!(P, B), 0)
             Z3$ = Left$(players_GAME$(P, B1!(P, B), 1), 1)
@@ -1389,8 +1390,10 @@ Sub PROHOOP
                     Call PBP
 
                 Case 2:
-                    U$ = Y2$ + " WORKS FREE INSIDE": Call PBP
-                    U$ = "HE HAS AN OPEN SHOT": Call PBP
+                    U$ = Y2$ + " WORKS FREE INSIDE"
+                    Call PBP
+                    U$ = "HE HAS AN OPEN SHOT"
+                    Call PBP
 
                 Case 3:
                     If pbpDelay! <> 0 Then
@@ -1436,22 +1439,27 @@ Sub PROHOOP
 
                             Call PBP
                         Else
-                            U$ = Y2$ + " DRIVES THROUGH AN OPENING": Call PBP
+                            U$ = Y2$ + " DRIVES THROUGH AN OPENING"
+                            Call PBP
                         End If
 
                     End If
 
                 Case 4:
-                    U$ = "HE'S OPEN FROM 3-POINT RANGE!": Call PBP
+                    U$ = "HE'S OPEN FROM 3-POINT RANGE!"
+                    Call PBP
 
                 Case 5:
-                    U$ = "HE'S OPEN FROM CLOSE RANGE": Call PBP
+                    U$ = "HE'S OPEN FROM CLOSE RANGE"
+                    Call PBP
 
                 Case 6:
-                    U$ = "HE'S OPEN FROM MEDIUM RANGE": Call PBP
+                    U$ = "HE'S OPEN FROM MEDIUM RANGE"
+                    Call PBP
 
                 Case 7:
-                    U$ = "HE'S OPEN FROM LONG RANGE": Call PBP
+                    U$ = "HE'S OPEN FROM LONG RANGE"
+                    Call PBP
 
             End Select
 
@@ -1552,7 +1560,6 @@ Sub PROHOOP
 
         End If
 
-        'Call pbplog(2454)
         GoTo 532
 
     End If
@@ -1574,16 +1581,16 @@ Sub PROHOOP
             Exit Sub
 
         Case "O"
-            Call OPTIONS 
+            Call OPTIONS
             GoTo 530
-        
-        Case "Z","/"
+
+        Case "Z", "/"
             Call CHANGESTRATEGY(I$)
             GoTo 530
 
         Case Else
             P6 = Val(I$)
-    
+
     End Select
 
     'Is this for choosing a designated fouler?
@@ -1612,9 +1619,9 @@ Sub PROHOOP
             Exit Sub
 
         Case "O"
-            Call OPTIONS 
-        
-        Case "Z","/"
+            Call OPTIONS
+
+        Case "Z", "/"
             Call CHANGESTRATEGY(I$)
 
     End Select
@@ -1635,12 +1642,10 @@ Sub PROHOOP
 
         Case 1
             'Pass!
-            'Call pbplog(2497)
             GoTo 350
 
         Case 2
             'Shoot!
-            'Call pbplog(2501)
             GoTo 537
 
         Case 3
@@ -1676,17 +1681,21 @@ Sub PROHOOP
                         Call PBP
                     Else
                         'pbpOpt = 1
-                        If pbpDelay! <> 0 Then Call WINDEX: Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print gameTeams$(D);: Color 15, 0: Print " IS PRESSING": Call DELAY
+                        If pbpDelay! <> 0 Then
+                            Call WINDEX
+                            Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print gameTeams$(D);
+                            Color 15, 0
+                            Print " IS PRESSING"
+                            Call DELAY
+                        End If
                     End If
                     P1 = 1
                 End If
 
-                'Call pbplog(2545)
                 GoTo 300
 
             Else
 
-                'Call pbplog(2545)
                 GoTo 350
 
             End If
@@ -1723,7 +1732,6 @@ Sub PROHOOP
                 Case 1: shotClock = 30
             End Select
 
-            'Call pbplog(2582)
             GoTo 566
 
         Case 5
@@ -1762,7 +1770,6 @@ Sub PROHOOP
                 Call CreditAssists
                 Call UPDATESCREEN
 
-                'Call pbplog(2623)
                 GoTo 562
 
             End If
@@ -1779,7 +1786,6 @@ Sub PROHOOP
                 Call PBP
             End If
 
-            'Call pbplog(2640)
             Call ResetShotClock
 
             gameClock! = gameClock! - 4
@@ -1791,7 +1797,6 @@ Sub PROHOOP
 
             Call UPDATESCREEN
 
-            'Call pbplog(2649)
             GoTo 670
 
     End Select
@@ -1800,7 +1805,6 @@ Sub PROHOOP
 
     537 '
     ' *** SHOOT!!! ***
-    'Call pbplog(2675)
 
     PT% = 3
     Call MAKEPBP
@@ -1829,9 +1833,11 @@ Sub PROHOOP
 
                 If pbpOpt = 0 Then
                     If freeThrowVal = 1 And P2(D) > bonusFoulNum And H <= 4 Or P2(D) > 3 And H > 4 Then
-                        U$ = "3 TO MAKE 2 FT: " + players_GAME$(P, B1!(P, B), 0) + Str$(A!(P, B1!(P, B), 1)) + " %": Call PBP
+                        U$ = "3 TO MAKE 2 FT: " + players_GAME$(P, B1!(P, B), 0) + Str$(A!(P, B1!(P, B), 1)) + " %"
+                        Call PBP
                     Else
-                        U$ = "2 FT: " + players_GAME$(P, B1!(P, B), 0) + Str$(A!(P, B1!(P, B), 1)) + " %": Call PBP
+                        U$ = "2 FT: " + players_GAME$(P, B1!(P, B), 0) + Str$(A!(P, B1!(P, B), 1)) + " %"
+                        Call PBP
                     End If
                 Else
                     'pbpOpt = 1
@@ -1849,7 +1855,6 @@ Sub PROHOOP
 
             End If
 
-            'Call pbplog(2707)
             GoTo 591
 
         End If
@@ -1857,7 +1862,6 @@ Sub PROHOOP
     End If
 
     '540
-    'Call pbplog(2732)
     Call d100(S)
     R0 = (F - 2) * .1
 
@@ -1874,20 +1878,42 @@ Sub PROHOOP
 
         If DK% = 1 Then
             If pbpOpt = 0 Then
-                PT% = 2: Call MAKEPBP: U$ = "STUFF BY " + players_GAME$(P, B1!(P, B), 0): Call PBP: DK% = 0: GoTo 617
+                PT% = 2
+
+                Call MAKEPBP
+                U$ = "STUFF BY " + players_GAME$(P, B1!(P, B), 0)
+                Call PBP
+
+                DK% = 0
+                GoTo 617
             Else
                 'pbpOpt = 1
-                Call WINDEX: Print "STUFF BY " + players_GAME$(P, B1!(P, B), 0): Call DELAY: DK% = 0: GoTo 617
+                Call WINDEX
+                Print "STUFF BY " + players_GAME$(P, B1!(P, B), 0)
+                Call DELAY
+                DK% = 0
+                GoTo 617
             End If
         End If
 
-        If PZ% = 8 And pbpOpt = 0 Then PT% = 7: Call MAKEPBP: PZ% = 0: Call PBP: GoTo 617
+        If PZ% = 8 And pbpOpt = 0 Then
+            PT% = 7
+            Call MAKEPBP
+            PZ% = 0
+            Call PBP
+            GoTo 617
+        End If
 
         If pbpOpt = 0 Then
-            U$ = "BASKET GOOD BY " + players_GAME$(P, B1!(P, B), 0): Call PBP
+            U$ = "BASKET GOOD BY " + players_GAME$(P, B1!(P, B), 0)
+            Call PBP
         Else
             'pbpOpt = 1
-            If pbpDelay! <> 0 Then Call WINDEX: Print "BASKET GOOD BY " + players_GAME$(P, B1!(P, B), 0): Call DELAY
+            If pbpDelay! <> 0 Then
+                Call WINDEX
+                Print "BASKET GOOD BY " + players_GAME$(P, B1!(P, B), 0)
+                Call DELAY
+            End If
         End If
 
         617 '
@@ -1897,12 +1923,14 @@ Sub PROHOOP
             Call PBP
         Else
             'pbpOpt = 1
-            If pbpDelay! <> 0 Then Print U$: Call DELAY
+            If pbpDelay! <> 0 Then
+                Print U$
+                Call DELAY
+            End If
         End If
 
         F3 = 1
 
-        'Call pbplog(2775)
         Call DELAY
         Call CreditAssists
 
@@ -1911,11 +1939,9 @@ Sub PROHOOP
         score(P, 0) = score(P, 0) + 2
         A!(P, B1!(P, B), 8) = A!(P, B1!(P, B), 8) + 1
 
-        'Call pbplog(2786)
         Call UPDATESCREEN
         Call Fouls(0)
 
-        'Call pbplog(2789)
         If pbpDelay! <> 0 Then
 
             If pbpOpt = 0 Then
@@ -1945,7 +1971,6 @@ Sub PROHOOP
 
         '620
         X = 50
-        'Call pbplog(2819)
         Call Substitutions
         X = 0
 
@@ -1976,7 +2001,6 @@ Sub PROHOOP
 
         NM% = 0
 
-        'Call pbplog(2850)
         'Two FT Attempts
         For F3 = 1 To 2
 
@@ -2019,7 +2043,6 @@ Sub PROHOOP
 
         X = 99
 
-        'Call pbplog(2890)
         If S > FX% Then 670
 
         'GoSub 3000
@@ -2055,12 +2078,14 @@ Sub PROHOOP
             Next I
         End If
 
-        'Call pbplog(2929)
         Locate 8, 1
 
         'PRESSING
         If P7(D) = 1 Then
-            If pbpOpt = 0 Then U$ = gameTeams$(D) + " IS PRESSING": Call PBP
+            If pbpOpt = 0 Then
+                U$ = gameTeams$(D) + " IS PRESSING"
+                Call PBP
+            End If
 
             If pbpOpt = 1 And pbpDelay! <> 0 Then
                 Call WINDEX
@@ -2072,13 +2097,11 @@ Sub PROHOOP
             P1 = 1
         End If
 
-        'Call pbplog(2939)
         GoTo 300
 
     End If
 
     '--- Shot Branch 2 ---
-    'Call pbplog(2947)
     If S <= F - 2 Then
 
         If DK% = 1 Then
@@ -2170,7 +2193,10 @@ Sub PROHOOP
             Call DELAY
         End If
 
-        If pbpOpt = 0 Then Locate 8, 41: Print Space$(12): Call PBP
+        If pbpOpt = 0 Then
+            Locate 8, 41: Print Space$(12)
+            Call PBP
+        End If
 
         Call ResetShotClock
         gameClock! = gameClock! - 4
@@ -2214,25 +2240,26 @@ Sub PROHOOP
 
         If P7(D) = 1 Then
             If pbpOpt = 0 Then
-                U$ = gameTeams$(D) + " IS PRESSING": Call PBP
+                U$ = gameTeams$(D) + " IS PRESSING"
+                Call PBP
             Else
                 'pbpOpt = 1
                 If pbpDelay! <> 0 Then
                     Call WINDEX
                     Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print gameTeams$(D);
-                    Color 15, 0: Print " IS PRESSING": Call DELAY
+                    Color 15, 0
+                    Print " IS PRESSING"
+                    Call DELAY
                 End If
             End If
             P1 = 1
         End If
 
-        'Call pbplog(3068)
         GoTo 300
 
     End If
 
     '--- Shot Branch 3 ---
-    'Call pbplog(3097)
     Call d100(R0)
     Call d100(I5)
     I3 = Int(Rnd(1) * 5)
@@ -2245,7 +2272,11 @@ Sub PROHOOP
             Call DELAY
         End If
 
-        If pbpOpt = 0 Then PT% = 8: Call MAKEPBP: Call PBP
+        If pbpOpt = 0 Then
+            PT% = 8
+            Call MAKEPBP
+            Call PBP
+        End If
 
         Call ResetShotClock
 
@@ -2293,13 +2324,11 @@ Sub PROHOOP
 
     Call UPDATESCREEN
 
-    'Call pbplog(3134)
     GoTo 670
 
     '----- NOODLE -----
 
     565 '
-    'Call pbplog(3131)
 
     Call Fouls(0)
 
@@ -2326,7 +2355,6 @@ Sub PROHOOP
 
         Locate 8, 41: Print Space$(12)
 
-        'Call pbplog(3180)
         GoTo 350
 
     End If
@@ -2435,7 +2463,8 @@ Sub PROHOOP
 
     If P7(D) = 1 Then
         If pbpOpt = 0 Then
-            U$ = gameTeams$(D) + " IS PRESSING": Call PBP
+            U$ = gameTeams$(D) + " IS PRESSING"
+            Call PBP
         Else
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
@@ -2467,8 +2496,6 @@ Sub PROHOOP
     '----- NOODLE -----
 
     580 '
-    'Call pbplog(3291)
-
     Call LastShot
 
     Call ResetShotClock
@@ -2504,7 +2531,11 @@ Sub PROHOOP
         Call PBP
     Else
         'pbpOpt = 1
-        If pbpDelay! <> 0 Then Call WINDEX: Print U$: Call DELAY
+        If pbpDelay! <> 0 Then
+            Call WINDEX
+            Print U$
+            Call DELAY
+        End If
     End If
 
     U$ = gameTeams$(P) + " BALL AFTER FOUL"
@@ -2512,7 +2543,10 @@ Sub PROHOOP
         Call PBP
     Else
         'pbpOpt = 1
-        If pbpDelay! <> 0 Then Print U$: Call DELAY
+        If pbpDelay! <> 0 Then
+            Print U$
+            Call DELAY
+        End If
     End If
 
     Locate 8, 41: Print Space$(12)
@@ -2535,7 +2569,8 @@ Sub PROHOOP
     If P7(D) = 1 Then
 
         If pbpOpt = 0 Then
-            U$ = gameTeams$(D) + " IS PRESSING": Call PBP
+            U$ = gameTeams$(D) + " IS PRESSING"
+            Call PBP
         Else
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
@@ -2641,7 +2676,6 @@ Sub PROHOOP
 
     'GoSub 3000
     'AKA ChangePosession
-    'Call pbplog(3465)
 
     prevBall$ = ""
     If P = 1 Then
@@ -2675,9 +2709,22 @@ Sub PROHOOP
 
     Locate 8, 1
     If P7(D) = 1 Then
-        If pbpOpt = 0 Then U$ = gameTeams$(D) + " IS PRESSING": Call PBP
-        If pbpOpt = 1 And pbpDelay! <> 0 Then Call WINDEX: Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print gameTeams$(D);: Color 15, 0: Print " IS PRESSING": Call DELAY
+
+        If pbpOpt = 0 Then
+            U$ = gameTeams$(D) + " IS PRESSING"
+            Call PBP
+        End If
+
+        If pbpOpt = 1 And pbpDelay! <> 0 Then
+            Call WINDEX
+            Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print gameTeams$(D);
+            Color 15, 0
+            Print " IS PRESSING"
+            Call DELAY
+        End If
+
         P1 = 1
+
     End If
 
     GoTo 300
@@ -2686,7 +2733,6 @@ Sub PROHOOP
     '----- NOODLE -----
 
     650 '
-    'Call pbplog(3510)
 
     A6 = 1
     P6 = 0
@@ -2726,7 +2772,6 @@ Sub PROHOOP
     '----- NOODLE -----
 
     670 '
-    'Call pbplog(3550)
 
     A6 = 1
     P6 = 0
@@ -2754,14 +2799,17 @@ Sub PROHOOP
 
             If X = 98 Then 700
 
-            'Call pbplog(3578)
             turnovers(P) = turnovers(P) + 1
             U$ = "OFFENSIVE GOAL TENDING"
             If pbpOpt = 0 Then
                 Call PBP
             Else
                 'pbpOpt = 1
-                If pbpDelay! <> 0 Then Call WINDEX: Print U$: Call DELAY
+                If pbpDelay! <> 0 Then
+                    Call WINDEX
+                    Print U$
+                    Call DELAY
+                End If
             End If
 
             U$ = "BALL GOES TO " + gameTeams$(D)
@@ -2769,7 +2817,11 @@ Sub PROHOOP
                 Call PBP
             Else
                 'pbpOpt = 1
-                If pbpDelay! <> 0 Then Call WINDEX: Print U$: Call DELAY
+                If pbpDelay! <> 0 Then
+                    Call WINDEX
+                    Print U$
+                    Call DELAY
+                End If
             End If
 
             Call DELAY
@@ -2789,14 +2841,12 @@ Sub PROHOOP
                 C1 = 2
             End If
 
-            'Call pbplog(3613)
             Call Substitutions
 
             GoTo 300
 
         Case 2 To 11
             FF% = 1
-            'Call pbplog(3620)
             GoTo 770
 
         Case 12 To 19
@@ -2815,12 +2865,15 @@ Sub PROHOOP
                     Call PBP
                 Else
                     'pbpOpt = 1
-                    If pbpDelay! <> 0 Then Call WINDEX: Print U$: Call DELAY
+                    If pbpDelay! <> 0 Then
+                        Call WINDEX
+                        Print U$
+                        Call DELAY
+                    End If
                 End If
 
                 Call DELAY
                 Call Substitutions
-                'Call pbplog(3644)
 
                 GoTo 520
 
@@ -2834,7 +2887,11 @@ Sub PROHOOP
                 Call PBP
             Else
                 'pbpOpt = 1
-                If pbpDelay! <> 0 Then Call WINDEX: Print U$: Call DELAY
+                If pbpDelay! <> 0 Then
+                    Call WINDEX
+                    Print U$
+                    Call DELAY
+                End If
             End If
 
             Call DELAY
@@ -2865,8 +2922,6 @@ Sub PROHOOP
 
             If X = 99 Then 700
 
-            'Call pbplog(3689)
-
             Call ReboundRoutine1
 
             A!(P, B1!(P, B), 7) = A!(P, B1!(P, B), 7) + 1
@@ -2879,10 +2934,15 @@ Sub PROHOOP
             Call UPDATESCREEN
 
             If pbpOpt = 1 Then
-                If pbpDelay! <> 0 Then Call WINDEX: Print "TIPPED IN BY "; players_GAME$(P, B1!(P, B), 0); "!!!": Call DELAY
+                If pbpDelay! <> 0 Then
+                    Call WINDEX
+                    Print "TIPPED IN BY "; players_GAME$(P, B1!(P, B), 0); "!!!"
+                    Call DELAY
+                End If
             Else
                 'pbpOpt = 0
-                U$ = players_GAME$(P, B1!(P, B), 0) + " TIPS IT IN!!!": Call PBP
+                U$ = players_GAME$(P, B1!(P, B), 0) + " TIPS IT IN!!!"
+                Call PBP
             End If
 
             Call DELAY
@@ -2925,7 +2985,8 @@ Sub PROHOOP
             If P7(D) = 1 Then
 
                 If pbpOpt = 0 Then
-                    U$ = gameTeams$(D) + " IS PRESSING": Call PBP
+                    U$ = gameTeams$(D) + " IS PRESSING"
+                    Call PBP
                 Else
                     'pbpOpt = 1
                     If pbpDelay! <> 0 Then
@@ -2948,15 +3009,17 @@ Sub PROHOOP
 
                 If X = 99 Then 700
 
-                'Call pbplog(3772)
-
                 U$ = "DEFENSIVE GOAL TENDING"
 
                 If pbpOpt = 0 Then
                     Call PBP
                 Else
                     'pbpOpt = 1
-                    If pbpDelay! <> 0 Then Call WINDEX: Print U$: Call DELAY
+                    If pbpDelay! <> 0 Then
+                        Call WINDEX
+                        Print U$
+                        Call DELAY
+                    End If
                     Call DELAY
                 End If
 
@@ -2970,7 +3033,6 @@ Sub PROHOOP
     ' Case 24 to 100
     '
     770 '
-    'Call pbplog(3796)
     RB = 0
 
     For I = 0 To 9:
@@ -3025,15 +3087,12 @@ Sub PROHOOP
     If RN1 <= 4 Then 761
     B = RN1 - 5
 
-    'Call pbplog(3851)
-
     GoTo 800
 
     '----- NOODLE -----
 
 
     760 '
-    'Call pbplog(3859)
 
     If FF% = 1 Then
 
@@ -3045,7 +3104,12 @@ Sub PROHOOP
             Call PBP
         Else
             'pbpOpt = 1
-            If pbpDelay! <> 0 Then Call WINDEX: Print U$: Print "FOR "; gameTeams$(P): Call DELAY
+            If pbpDelay! <> 0 Then
+                Call WINDEX
+                Print U$
+                Print "FOR "; gameTeams$(P)
+                Call DELAY
+            End If
         End If
 
         U$ = "HE'S FOULED !!!"
@@ -3053,7 +3117,10 @@ Sub PROHOOP
             Call PBP
         Else
             'pbpOpt = 1
-            If pbpDelay! <> 0 Then Print U$: Call DELAY
+            If pbpDelay! <> 0 Then
+                Print U$
+                Call DELAY
+            End If
         End If
 
         Call DELAY
@@ -3081,7 +3148,10 @@ Sub PROHOOP
                 Call PBP
             Else
                 'pbpOpt = 1
-                Call WINDEX: Print U$: Print "FOR " + gameTeams$(P): Call DELAY
+                Call WINDEX
+                Print U$
+                Print "FOR " + gameTeams$(P)
+                Call DELAY
             End If
         End If
 
@@ -3116,7 +3186,6 @@ Sub PROHOOP
     '----- NOODLE -----
 
     800 '
-    'Call pbplog(3943)
 
     If FF% = 1 Then
 
@@ -3125,11 +3194,14 @@ Sub PROHOOP
         If pbpDelay! <> 0 Then
             If pbpOpt = 1 Then
                 Call WINDEX
-                Print players_GAME$(D, B1!(D, B), 0); " HAS THE DEF REBOUND FOR ": Print gameTeams$(D); " AND IS FOULED !!!"
+                Print players_GAME$(D, B1!(D, B), 0); " HAS THE DEF REBOUND FOR "
+                Print gameTeams$(D); " AND IS FOULED !!!"
                 Call DELAY
             Else
-                U$ = players_GAME$(D, B1!(D, B), 0) + " HAS THE DEFENSIVE REBOUND": Call PBP
-                U$ = "HE'S FOULED !!!": Call PBP
+                U$ = players_GAME$(D, B1!(D, B), 0) + " HAS THE DEFENSIVE REBOUND"
+                Call PBP
+                U$ = "HE'S FOULED !!!"
+                Call PBP
                 Call DELAY
             End If
         End If

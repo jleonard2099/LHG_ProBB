@@ -24,9 +24,9 @@ Dim homeScores(MAX_GAMES), visitorScores(MAX_GAMES)
 Dim Shared DT$, TM$
 
 Dim coachMode$(0 To 1), foulOption$(1), freeThrowOpt$(1)
-Dim location$(0 to 2), modeAbbrev$(0 To 3)
+Dim location$(0 To 2), modeAbbrev$(0 To 3)
 Dim playoffGame$(1), playMode$(3)
-Dim sClockOpt$(0 To 1), teamEraOpt$(0 To 2)
+Dim sClockOpt$(0 To 2), teamEraOpt$(0 To 2)
 Dim teamIndicator$(1)
 Dim yesNo$(0 To 1), yesNoText$(1)
 
@@ -89,7 +89,7 @@ Dim plyrRat_DRAFT%(0 To 1, 0 To 14, 0 To 19), tmRat_DRAFT%(0 To 1, 0 To 34)
 
 Dim players_DRAFT$(1, 14, 1), tmInfo_DRAFT$(1, 4)
 
-Dim draftYears$(1 to 79)
+Dim draftYears$(1 To 79)
 Dim leagueAverages%(1 To 79, 0 To 5)
 Dim teamYears$(0 To 1)
 
@@ -218,7 +218,7 @@ Dim Shared NM%, OX%, OY%, PT%, PZ%
 Dim Shared gameClock!, pbpDelay!, timeElapsed!
 
 Dim Shared A1$, B1$, C1$, D$, D1$, E1$, F1$, G1$, H1$, O$
-Dim Shared P7$, prevBall$, PS$, TS$, U$, Y2$, Z3$
+'Dim Shared P7$, prevBall$, PS$, TS$, U$, Y2$, Z3$
 
 Dim Shared CF%(1, 9), eventSettings(13)
 Dim Shared F%(1, 9), F5%(1, 4), F7%(1, 9), G9%(1), GF%(2, 9)
@@ -231,7 +231,7 @@ Dim Shared C1(1, 14)
 Dim Shared D1(1), D2(1), D8(6, 6), F1(14), G4(14), G5(14)
 Dim Shared leagRat_GAME(1, 6), plyrRat_GAME(1, 14, 19)
 Dim Shared P2(1), P4(5), P5(5), P7(1), QQ(1, 8, 14, 14), QR(1, 7, 14)
-Dim Shared R3(1), RB(0 To 10), S3(14), SC(0 To 1)
+Dim Shared R3(1), RB(0 To 10), S3(14), scSettings(0 To 2)
 Dim Shared score(1, 14), schedGame(2)
 Dim Shared timePlayed(2, 14), timeouts(1), tmRat_GAME(1, 34)
 '                   teamFouls

@@ -556,7 +556,7 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
         Color 15: Print "GAME TYPE: "; playoffGame$(scheduleNG%(gameIndex%, 5))
         Locate 12, 2: Color 14
         Print "(B) ";
-        Color 15: Print "HUMAN COACHES WILL: "; coachMode$(scheduleNG%(gameIndex%, 9))
+        Color 15: Print "HUMAN COACHES: "; coachMode$(scheduleNG%(gameIndex%, 9))
         Locate 13, 2: Color 14
         Print "(C) ";
         Color 15: Print "PLAY IN ERA OF TEAM (IF DIFFERENT): "; teamEraOpt$(scheduleNG%(gameIndex%, 6))
@@ -1123,9 +1123,10 @@ Sub ChangeGlobalSettings ()
 
     Shared scheduleAP%(), scheduleNG%()
 
-    Shared coachMode$(), playMode$(), modeAbbrev$()
-    Shared sClockOpt$()
-    Shared yesNoText$()
+    Shared coachMode$(), foulOption$(), freeThrowOpt$()
+    Shared location$(), modeAbbrev$()
+    Shared playMode$(), playoffGame$()
+    Shared sClockOpt$(), yesNoText$()
 
     Dim displayPause!
 
@@ -1146,12 +1147,13 @@ Sub ChangeGlobalSettings ()
     'Usually when I want to change global settings, I want to keep most
     'settings in the schedule the same.
     playerOpt = scheduleNG%(0, 8)
-    displayPause! = scheduleNG%(0, 4) / 10
     gameLoc = scheduleNG%(0, 2)
     sClockVal = scheduleNG%(0, 7)
-    coachOpt = scheduleNG%(0, 9)
     threePtOpt = scheduleNG%(0, 3)
     playoffOpt = scheduleNG%(0, 5)
+    displayPause! = scheduleNG%(0, 4) / 10
+    coachOpt = scheduleNG%(0, 9)
+    bonusFoulNum = scheduleNG%(0, 14)
     freeThrowVal = scheduleNG%(0, 10)
     ftRulesOpt = scheduleNG%(0, 11)
 
@@ -1164,26 +1166,26 @@ Sub ChangeGlobalSettings ()
         Print Tab(30); "GLOBAL SETTINGS FOR SCHEDULE"
 
         Locate 3, 2: Color 14: Print "(1) ";
-        Color 15: Print "TYPE OF GAME: "; playMode$(playerOpt)
+        Color 15: Print "GAME PLAY: "; playMode$(playerOpt)
         Locate 4, 2: Color 14: Print "(2) ";
-        Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; displayPause!
+        Color 15: Print "GAME LOCATION: "; location$(gameLoc)
         Locate 5, 2: Color 14: Print "(3) ";
-        Color 15: Print "HOME COURT ADVANTAGE: "; location$(gameLoc)
-        Locate 6, 2: Color 14: Print "(4) ";
         Color 15: Print "SHOT CLOCK: "; sClockOpt$(sClockVal)
-        Locate 7, 2: Color 14: Print "(5) ";
-        Color 15: Print "HUMAN PLAYERS: "; coachMode$(coachOpt)
-        Locate 8, 2: Color 14: Print "(6) ";
+        Locate 6, 2: Color 14: Print "(4) ";
         Color 15: Print "3-POINT SHOT: "; yesNoText$(threePtOpt)
+        Locate 7, 2: Color 14: Print "(5) ";
+        Color 15: Print "GAME TYPE: "; playoffGame$(playoffOpt)
+        Locate 8, 2: Color 14: Print "(6) ";
+        Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; displayPause!
         Locate 9, 2: Color 14: Print "(7) ";
-        Color 15: Print "TYPE OF GAME: "; playoffGame$(playoffOpt)
+        Color 15: Print "HUMAN COACHES: "; coachMode$(coachOpt)
         Locate 10, 2: Color 14: Print "(8) ";
         Color 15: Print Using "BONUS AFTER FOUL: ##"; bonusFoulNum
         Locate 11, 2: Color 14: Print "(9) ";
-        Color 15: Print "NUMBER OF FREE THROWS "; freeThrowOpt$(freeThrowVal)
+        Color 15: Print "NUMBER OF FREE THROWS: "; freeThrowOpt$(freeThrowVal)
         Locate 12, 2: Color 14: Print "(A) ";
-        Color 15: Print "FREE THROW RULES "; foulOption$(ftRulesOpt)
-        Locate 13, 2: Color 14: Print "(0) ";
+        Color 15: Print "FREE THROW RULES: "; foulOption$(ftRulesOpt)
+        Locate 14, 2: Color 14: Print "(0) ";
         Color 15: Print "ACCEPT GLOBAL SETTINGS"
 
         Do
@@ -1199,23 +1201,23 @@ Sub ChangeGlobalSettings ()
                 If playerOpt > 3 Then playerOpt = 0
 
             Case 2
-                Input "DISPLAY VARIABLE "; displayPause!
-
-            Case 3
                 gameLoc = 1 + gameLoc
                 If gameLoc > 2 Then gameLoc = 1
 
-            Case 4:
+            Case 3
                 sClockVal = 1 - sClockVal
 
-            Case 5:
-                coachOpt = 1 - coachOpt
-
-            Case 6:
+            Case 4:
                 threePtOpt = 1 - threePtOpt
 
-            Case 7:
+            Case 5:
                 playoffOpt = 1 - playoffOpt
+
+            Case 6:
+                Locate 8, 32: Input displayPause!
+
+            Case 7:
+                coachOpt = 1 - coachOpt
 
             Case 8
                 bonusFoulNum = bonusFoulNum + 1
@@ -1232,15 +1234,16 @@ Sub ChangeGlobalSettings ()
     Loop Until I = 0
 
     For I = 1 To scheduleAP%(0)
-        scheduleNG%(I, 8) = playerOpt
-        scheduleNG%(I, 4) = displayPause! * 10
         scheduleNG%(I, 2) = gameLoc
-        scheduleNG%(I, 7) = sClockVal
-        scheduleNG%(I, 9) = coachOpt
         scheduleNG%(I, 3) = threePtOpt
+        scheduleNG%(I, 4) = displayPause! * 10
         scheduleNG%(I, 5) = playoffOpt
+        scheduleNG%(I, 7) = sClockVal
+        scheduleNG%(I, 8) = playerOpt
+        scheduleNG%(I, 9) = coachOpt
         scheduleNG%(I, 10) = freeThrowVal
         scheduleNG%(I, 11) = ftRulesOpt
+        scheduleNG%(I, 14) = bonusFoulNum
     Next
 
 End Sub

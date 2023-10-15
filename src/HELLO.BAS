@@ -25,6 +25,9 @@ DefInt A-Z
 '$INCLUDE: 'BoxRoutines.bi'
 '$INCLUDE: 'FileTeamSelection.bi'
 '$INCLUDE: 'Variables.bi'
+
+Dim Shared P7$, prevBall$, PS$, TS$, U$, Y2$, Z3$
+
 '$INCLUDE: 'MainRoutines.bi'
 '$INCLUDE: 'TITLE.bi'
 
@@ -239,6 +242,7 @@ playoffGame$(1) = "PLAYOFF       "
 
 sClockOpt$(0) = "24 SEC SHOT CLOCK"
 sClockOpt$(1) = "30 SEC SHOT CLOCK"
+sClockOpt$(2) = "NO SHOT CLOCK    "
 
 teamEraOpt$(0) = "VISITING     "
 teamEraOpt$(1) = "HOME         "
