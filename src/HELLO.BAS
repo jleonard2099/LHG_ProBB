@@ -26,8 +26,6 @@ DefInt A-Z
 '$INCLUDE: 'FileTeamSelection.bi'
 '$INCLUDE: 'Variables.bi'
 
-Dim Shared P7$, prevBall$, PS$, TS$, U$, Y2$, Z3$
-
 '$INCLUDE: 'MainRoutines.bi'
 '$INCLUDE: 'TITLE.bi'
 
@@ -296,7 +294,7 @@ Do
 
     Call Main_Menu(Selection%)
 
-Loop Until Selection% = 8
+Loop Until Selection% = 7
 
 End
 
@@ -312,11 +310,7 @@ If _FileExists("GAME82") Then
     Print #9, "Schedule game # "; Using "###"; schedGame(0) + schedGame(2)
     Print #9, gameTeams$(0) + " vs. " + gameTeams$(1)
 End If
-Print #9, "Team # (D) = "; D
-Print #9, "Player (B) = "; B
-If B < 5 And B >= 0 Then Print #9, "Index Val  = "; B1!(D, B)
 Print #9,
-
 Close #9
 
 Resume Next ' moves program to code following the error.
@@ -334,21 +328,21 @@ Sub Main_Menu (menuSelection%)
 
         Call TITLE
 
-        ReDim menuChoices$(1 To 8)
+        ReDim menuChoices$(1 To 7)
 
         menuChoices$(1) = "PLAY SINGLE GAME                "
         menuChoices$(2) = "TEAM MANAGEMENT / ORGANIZATION  "
         menuChoices$(3) = "REPLAY STATISTICS AND REPORTS   "
         menuChoices$(4) = "LEADERS / STANDINGS / RECORDS   "
         menuChoices$(5) = "SCHEDULER / AUTOPLAY / BOXSCORES"
-        menuChoices$(6) = "HARD DRIVE INSTALLATION         "
-        menuChoices$(7) = "CONFIGURE DRIVES FOR TEAMS,STATS"
-        menuChoices$(8) = "EXIT TO DOS                     "
+        'menuChoices$(6) = "HARD DRIVE INSTALLATION         "
+        menuChoices$(6) = "CONFIGURE DRIVES FOR TEAMS,STATS"
+        menuChoices$(7) = "EXIT TO DOS                     "
 
         menuSelection% = 1
-        Count% = 8
+        Count% = 7
         Start% = 1
-        ExitCode% = 8
+        ExitCode% = 7
         FileFGColor% = 15: FileBGColor% = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
@@ -368,21 +362,31 @@ Sub Main_Menu (menuSelection%)
 
             Select Case menuSelection%
 
-                Case 1: Call PROHOOP
-                Case 2: Call TeamMgt_Menu
-                Case 3: Call Replay_Menu
-                Case 4: Call Leaders_Menu
-                Case 5: Call SCHEDULE
-                    'Case 6: Run "INSTALL.EXE"
-                Case 7: Call ConfigureDrives
+                Case 1:
+                    Call PROHOOP
+
+                Case 2:
+                    Call TeamMgt_Menu
+
+                Case 3:
+                    Call Replay_Menu
+
+                Case 4:
+                    Call Leaders_Menu
+
+                Case 5:
+                    Call SCHEDULE
+
+                Case 6:
+                    Call ConfigureDrives
 
             End Select
 
         End If
 
-    Loop Until menuSelection% = 8 Or ExitCode% = 27
+    Loop Until menuSelection% = 7 Or ExitCode% = 27
 
-    If ExitCode% = 27 Then menuSelection% = 8
+    If ExitCode% = 27 Then menuSelection% = 7
 
 End Sub
 
@@ -540,7 +544,10 @@ End Sub
 '----------------------------------------
 '         Replay_Menu Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine provodes the user with
+'several options for managing replay
+'data, from statistics to reports and
+'team careers
 Sub Replay_Menu ()
 
     Do
@@ -551,16 +558,18 @@ Sub Replay_Menu ()
 
         _Title "Basketball: The Pro Game - Stats Menu"
 
-        ReDim menuChoices$(1 To 5)
+        ReDim menuChoices$(1 To 6)
 
         menuChoices$(1) = "VIEW / PRINT COMPILED STATS       "
         menuChoices$(2) = "ENCYCLOPEDIA / TEAM REPLAY OPTIONS"
         menuChoices$(3) = "COMPARE REPLAY STATS TO ACTUAL    "
-        menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES  "
-        menuChoices$(5) = "RETURN TO MAIN MENU               "
-        Count% = 5
+        menuChoices$(4) = "MODIFY REPLAY STATS               "
+        menuChoices$(5) = "MERGE SEPARATE STATISTICAL FILES  "
+        menuChoices$(6) = "RETURN TO MAIN MENU               "
+        Selection% = 1
+        Count% = 6
         Start% = 1
-        ExitCode% = 5
+        ExitCode% = 6
         FileFGColor% = 15: FileBGColor% = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
@@ -590,13 +599,16 @@ Sub Replay_Menu ()
                     Call COMPARE
 
                 Case 4:
+                    Call EditStats
+
+                Case 5:
                     Call MERGE
 
             End Select
 
         End If
 
-    Loop Until Selection% = 5 Or ExitCode% = 27
+    Loop Until Selection% = 6 Or ExitCode% = 27
 
 End Sub
 
@@ -604,7 +616,9 @@ End Sub
 '----------------------------------------
 '        Leaders_Menu Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine provodes the user with
+'several options for managing team
+'leaders, stats and standings
 Sub Leaders_Menu ()
 
     Do
@@ -649,7 +663,7 @@ Sub Leaders_Menu ()
             Select Case Selection%
 
                 Case 1:
-                    Call CREATE
+                    Call CREATPRO
 
                 Case 2:
                     Call CompileLeague
@@ -661,7 +675,7 @@ Sub Leaders_Menu ()
                     Call HD2HDPRO
 
                 Case 5:
-                    Call RecordsMenu
+                    Call Records_Menu
 
                 Case 6:
                     Call NEWLDR
@@ -694,7 +708,7 @@ End Sub
 '$INCLUDE: 'CARVIEW.BAS'
 '$INCLUDE: 'COMPARE.BAS'
 '$INCLUDE: 'COMPLEAG.BAS'
-'$INCLUDE: 'CREATE.BAS'
+'$INCLUDE: 'CREATPRO.BAS'
 '$INCLUDE: 'DRAFT.BAS'
 '$INCLUDE: 'GPMIN.BAS'
 '$INCLUDE: 'HD2HDPRO.BAS'
@@ -713,4 +727,3 @@ End Sub
 ' For Game
 '$INCLUDE: 'PROHOOP.BAS'
 '$INCLUDE: 'GameRoutines.bm'
-

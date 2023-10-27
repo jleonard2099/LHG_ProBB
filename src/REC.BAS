@@ -1,10 +1,10 @@
 '----------------------------------------
-'         RecordsMenu Subroutine
+'         Records_Menu Subroutine
 '----------------------------------------
 'This subroutine gives the user a number of 
 'menu selections for viewing, updating and
 'printing records
-Sub RecordsMenu ()
+Sub Records_Menu ()
 
     _Title "Basketball: The Pro Game - Analyze Records"
 
@@ -33,16 +33,25 @@ Sub RecordsMenu ()
             Input #1, BRC$(I, 0)
             Input #1, BRC$(I, 1)
         Next
+
         For I = 1 To 21
             Input #1, TRC!(I)
             Input #1, TRC$(I)
-            If TRC!(I) = 19999 Then TRC!(I) = 0: TRC$(I) = ""
+            If TRC!(I) = 19999 Then 
+                TRC!(I) = 0
+                TRC$(I) = ""
+            End If
         Next
+
         For I = 1 To 21
             Input #1, TRC1!(I)
             Input #1, TRC1$(I)
-            If TRC1!(I) = 19999 Then TRC1!(I) = 0: TRC1$(I) = ""
+            If TRC!(I) = 19999 Then 
+                TRC!(I) = 0
+                TRC$(I) = ""
+            End If
         Next
+
         Close #1
 
         Do

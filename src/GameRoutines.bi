@@ -62,4 +62,5 @@ Declare Sub UPDATESCREEN ()
 Declare Sub WHOGETSBALL
 Declare Sub WINDEX ()
 
+Declare Function GetTeamYear% (yearFromName$)
 Declare Function TickerTime% (timeInterval, X)

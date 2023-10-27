@@ -1,10 +1,10 @@
 '----------------------------------------
-'           CREATE Subroutine
+'         CREATPRO Subroutine
 '----------------------------------------
 'This subroutine provides a menu for the
 'user to choose options related to the
 'creation and editing of leagues
-Sub CREATE ()
+Sub CREATPRO ()
 
     _Title "Basketball: The Pro Game - Manage Leagues"
 
@@ -118,47 +118,45 @@ Sub DefineLeaguePro (league$, div1$, div2$, div3$, div4$)
 
     Loop Until UCase$(I$) = "N"
 
-
     FG = 0
     BG = 7
 
     Cls
-
     Color 15, 1
 
     Locate 5, 1: QPrint "Name for Division 1 ", 14, 1, -1
-    Locate , 21: QPrint PadRight$(div1$, 20), FG, BG, -1
+    Locate , 21: QPrint PadRight$(div1$, 50), FG, BG, -1
     Locate 7, 1: QPrint "Name for Division 2 ", 14, 1, -1
-    Locate , 21: QPrint PadRight$(div2$, 20), FG, BG, -1
+    Locate , 21: QPrint PadRight$(div2$, 50), FG, BG, -1
     Locate 9, 1: QPrint "Name for Division 3 ", 14, 1, -1
-    Locate , 21: QPrint PadRight$(div3$, 20), FG, BG, -1
+    Locate , 21: QPrint PadRight$(div3$, 50), FG, BG, -1
     Locate 11, 1: QPrint "Name for Division 4 ", 14, 1, -1
-    Locate , 21: QPrint PadRight$(div4$, 20), FG, BG, -1
+    Locate , 21: QPrint PadRight$(div4$, 50), FG, BG, -1
 
     GetDiv1:
     Locate 5, 21 'location of beginning of field
-    CapsOn = 0: NumOnly = 0: Max = 20 'specify field parameters
+    CapsOn = 0: NumOnly = 0: Max = 50 'specify field parameters
     Call TextIn(div1$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
 
     GetDiv2:
     Locate 7, 21 'location of beginning of field
-    CapsOn = 0: NumOnly = 0: Max = 20 'specify field parameters
+    CapsOn = 0: NumOnly = 0: Max = 50 'specify field parameters
     Call TextIn(div2$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
 
     GetDiv3:
     Locate 9, 21 'location of beginning of field
-    CapsOn = 0: NumOnly = 0: Max = 20 'specify field parameters
+    CapsOn = 0: NumOnly = 0: Max = 50 'specify field parameters
     Call TextIn(div3$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv2: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
 
     GetDiv4:
     Locate 11, 21 'location of beginning of field
-    CapsOn = 0: NumOnly = 0: Max = 20 'specify field parameters
+    CapsOn = 0: NumOnly = 0: Max = 50 'specify field parameters
     Call TextIn(div4$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv3: 'can't back up any more, stay here
 

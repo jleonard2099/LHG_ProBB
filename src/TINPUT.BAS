@@ -412,10 +412,10 @@ Sub ViewRoster (A$, T1)
         fgPCT! = teamRatings%(20) / teamRatings%(19)
         Print Tab(38); Using ".###"; fgPCT!;
 
-        'FTM
+        'FTA
         Print Tab(43); Using "####"; teamRatings%(21);
 
-        'FTA
+        'FTM
         Print Tab(48); Using "####"; teamRatings%(22);
 
         ftPCT! = teamRatings%(22) / teamRatings%(21)

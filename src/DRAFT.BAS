@@ -108,14 +108,9 @@ Sub DRAFT ()
 
                         For I = 0 To 34
                             tmRat_DRAFT%(0, I) = 0
-                            tmTotal_DRAFT(I) = 0
                         Next
 
-                        For I = 0 To 14
-                            For I1 = 0 To 34
-                                leagTot_DRAFT(I, I1) = 0
-                            Next
-                        Next
+                        Erase leagTot_DRAFT, tmTotal_DRAFT
 
                         For I = 0 To 14
                             players_DRAFT$(0, I, 0) = "XXX"

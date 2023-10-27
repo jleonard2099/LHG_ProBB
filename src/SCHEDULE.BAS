@@ -49,7 +49,7 @@ Sub SCHEDULE ()
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -71,7 +71,7 @@ Sub SCHEDULE ()
                         Color 15, 0
                         Cls
 
-                        Call MenuBox (6, 8, 61, 8, 15, 1)
+                        Call MenuBox(6, 8, 61, 8, 15, 1)
 
                         Locate 7, 32
 
@@ -102,11 +102,11 @@ Sub SCHEDULE ()
 
                 Case 2 To 5:
                     'Have the user pick a schedule
-                    scheduleFile$ = ChooseFile$ (diskPaths$(0) + "*.SCD", "SCHEDULE", FileExit%)
+                    scheduleFile$ = ChooseFile$(diskPaths$(0) + "*.SCD", "SCHEDULE", FileExit%)
 
                     If FileExit% <> 27 And FileExit% <> 0 Then
 
-                        Call LoadScheduleInfo (scheduleFile$)
+                        Call LoadScheduleInfo(scheduleFile$)
 
                         'Edit / Extract / Change
                         If Selection% >= 3 And Selection% <= 5 Then
@@ -137,9 +137,9 @@ End Sub 'Menu
 '----------------------------------------
 '       NewSchedule SubRoutine
 '----------------------------------------
-'This subroutine facilitates the user 
-'creation of a schedule. It provides all 
-'options required and displays the schedule 
+'This subroutine facilitates the user
+'creation of a schedule. It provides all
+'options required and displays the schedule
 'while editing
 Sub NewSchedule (scheduleFile$)
 
@@ -157,7 +157,7 @@ Sub NewSchedule (scheduleFile$)
 
         Cls
         Locate 23, 1: Color , 1: Print Tab(80);
-        
+
         Locate 23, 1
         Color 13: Print "SC";: Color 14: Print "-SHOT CLOCK  ";
         Color 13: Print "MA";: Color 14: Print "-MODE OF PLAY  ";
@@ -198,12 +198,12 @@ Sub NewSchedule (scheduleFile$)
 
                 T1 = scheduleNG%(X + NS% * 20, 0)
                 YN$ = scheduleYN$(X + NS% * 20, 0)
-                Call ReadTeam (YN$, N$, T1)
+                Call ReadTeam(YN$, N$, T1)
                 scheduleV$(X) = N$
 
                 T1 = scheduleNG%(X + NS% * 20, 1)
                 YN$ = scheduleYN$(X + NS% * 20, 1)
-                Call ReadTeam (YN$, N$, T1)
+                Call ReadTeam(YN$, N$, T1)
                 scheduleH$(X) = N$
 
                 'Game number
@@ -248,7 +248,7 @@ Sub NewSchedule (scheduleFile$)
                 Locate , 75: Print yesNo$(scheduleNG%(X + NS% * 20, 3));
 
                 'Shot Clock
-                Locate , 78: Print Left$(sclockOpt$(scheduleNG%(X + NS% * 20, 7)), 2)
+                Locate , 78: Print Left$(sClockOpt$(scheduleNG%(X + NS% * 20, 7)), 2)
 
             End If
 
@@ -276,7 +276,7 @@ Sub NewSchedule (scheduleFile$)
                     End If
                 Next
 
-                For X = 0 To 1: 
+                For X = 0 To 1:
                     scheduleYN$(targetGame%, X) = scheduleYN$(targetGame% - 1, X)
                 Next
 
@@ -289,13 +289,13 @@ Sub NewSchedule (scheduleFile$)
 
             Case "B":
                 Do
-                   Locate 23, 1: Print "ENTER GAME # TO GO TO        "
-                   Locate 23, 1: Input "ENTER GAME # TO GO TO "; targetGame%
+                    Locate 23, 1: Print "ENTER GAME # TO GO TO        "
+                    Locate 23, 1: Input "ENTER GAME # TO GO TO "; targetGame%
                 Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
-                NS% = Int((targetGame%- 1) / 20)
+                NS% = Int((targetGame% - 1) / 20)
 
                 boxName$ = diskPaths$(1) + scheduleFile$ + "_GAME" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%))) + ".BS"
-                Call EditBoxscore (boxName$)
+                Call EditBoxscore(boxName$)
                 Color 15, 0
 
             Case "D"
@@ -308,11 +308,11 @@ Sub NewSchedule (scheduleFile$)
                     For X1 = 0 To 18
                         scheduleNG%(X, X1) = scheduleNG%(X + 1, X1)
                     Next
-                    
+
                     visitorScores(X) = visitorScores(X + 1)
                     homeScores(X) = homeScores(X + 1)
-                    
-                    For X1 = 0 To 1 
+
+                    For X1 = 0 To 1
                         scheduleYN$(X, X1) = scheduleYN$(X + 1, X1)
                     Next
                 Next
@@ -345,7 +345,7 @@ Sub NewSchedule (scheduleFile$)
                 Color , 0
                 Cls
 
-                Call MenuBox (6, 8, 61, 8, 15, 4)
+                Call MenuBox(6, 8, 61, 8, 15, 4)
 
                 Do
 
@@ -402,7 +402,7 @@ Sub NewSchedule (scheduleFile$)
 
                 Call PROHOOP
 
-                Call LoadScheduleInfo (scheduleFile$)
+                Call LoadScheduleInfo(scheduleFile$)
 
             Case "R"
                 ' *** RESET GAMES ***
@@ -502,13 +502,13 @@ End Sub
 Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
 
     Dim displayPause!
-    
+
     Shared N$
-    
+
     Shared scheduleNG%()
 
     Shared scheduleH$(), scheduleV$(), scheduleYN$()
-    
+
     Shared coachMode$(), foulOption$(), freeThrowOpt$()
     Shared location$(), modeAbbrev$()
     Shared playMode$(), playoffGame$()
@@ -603,8 +603,8 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
 
                 Case 2, 3:
 
-                    Call ChooseTeam (YN$, NTMS, teamNbr, team$)
-                    
+                    Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+
                     If teamNbr <> 0 Then
 
                         Color 15, 0
@@ -696,7 +696,7 @@ End Sub 'New Game
 '       ExtractSchedule SubRoutine
 '----------------------------------------
 'This is the core subroutine to leverage
-'when mass changes are needing to be made 
+'when mass changes are needing to be made
 'to a schedule. It essentially reads in
 'the existing schedule parameters, prompts
 'the user for the appropriate changes, and
@@ -731,19 +731,19 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                 Color 15, 0
                 Cls
 
-                Call MenuBox (6, 8, 61, 8, 15, 1)
+                Call MenuBox(6, 8, 61, 8, 15, 1)
 
                 Do
 
                     Locate 7, 32
 
-                    Locate , 12: Print "ENTER NAME FOR SUB-SCHEDULE: ": Print
+                    Locate , 12: Print "ENTER NAME FOR SUB-SCHEDULE: "
+                    Print
                     Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
                     Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
                     Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
                     Locate , 12: Print "SAMPLE NAMES ARE INDIANA, BOS68, CHI-76, ETC      "
-
-                    Locate 7, 37: Input subSchedFile$
+                    Locate 7, 40: Input subSchedFile$
 
                     If subSchedFile$ <> "" Then
 
@@ -763,7 +763,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
 
             If I$ <> Chr$(27) Or scheduleAction% = 4 Then
 
-                Call ChooseTeam (YN$, numberTeams, T1, N$)
+                Call ChooseTeam(YN$, numberTeams, T1, N$)
 
                 If T1 <> 0 Then
 
@@ -820,11 +820,11 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
 
                                 Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
 
-                                For X = 0 To 18: 
+                                For X = 0 To 18:
                                     LSet Q$(X + 1) = MKI$(scheduleNG%(I, X))
                                 Next
-                                
-                                For X = 0 To 1: 
+
+                                For X = 0 To 1:
                                     LSet Q$(20 + X) = scheduleYN$(I, X)
                                 Next
 
@@ -962,7 +962,7 @@ Sub BoxscoreMaintenance ()
 
         Call TITLE_SCHEDULER
 
-        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -976,11 +976,11 @@ Sub BoxscoreMaintenance ()
                     Call EditParameters
 
                 Case 2
-                    boxscoreFile$ = ChooseFile$ (diskPaths$(1) + "*.BSS", "BOXSCORE", ExitCode%)
-                    
+                    boxscoreFile$ = ChooseFile$(diskPaths$(1) + "*.BSS", "BOXSCORE", ExitCode%)
+
                     If ExitCode% <> 27 And ExitCode% <> 0 And boxscoreFile$ <> "" Then
                         boxName$ = diskPaths$(1) + boxscoreFile$
-                        Call EditBoxscore (boxName$)
+                        Call EditBoxscore(boxName$)
                     End If
 
                 Case 3
@@ -1058,7 +1058,7 @@ End Sub
 '----------------------------------------
 '       SortSchedule SubRoutine
 '----------------------------------------
-'This subroutine is used to automatically 
+'This subroutine is used to automatically
 'sort all games in the schedule by their
 'date / time.
 Sub SortSchedule ()
@@ -1114,7 +1114,7 @@ End Sub
 '----------------------------------------
 '    ChangeGlobalSettings SubRoutine
 '----------------------------------------
-'This subroutine presents the end user a 
+'This subroutine presents the end user a
 'variety of game options that can be changed
 'or applied to all games in the schedule file.
 'These would be game-specific options, as
@@ -1131,7 +1131,7 @@ Sub ChangeGlobalSettings ()
     Dim displayPause!
 
     ' GLOBAL SETTINGS FOR A SCHEDULE
-    
+
     ' The code below would use default values based on the most recent rules
     'playerOpt = 3
     'gameLoc = 1
@@ -1146,19 +1146,19 @@ Sub ChangeGlobalSettings ()
     'This code will assign defaults based on the first game in the schedule.
     'Usually when I want to change global settings, I want to keep most
     'settings in the schedule the same.
-    playerOpt = scheduleNG%(0, 8)
-    gameLoc = scheduleNG%(0, 2)
-    sClockVal = scheduleNG%(0, 7)
-    threePtOpt = scheduleNG%(0, 3)
-    playoffOpt = scheduleNG%(0, 5)
-    displayPause! = scheduleNG%(0, 4) / 10
-    coachOpt = scheduleNG%(0, 9)
-    bonusFoulNum = scheduleNG%(0, 14)
-    freeThrowVal = scheduleNG%(0, 10)
-    ftRulesOpt = scheduleNG%(0, 11)
+    playerOpt = scheduleNG%(1, 8)
+    gameLoc = scheduleNG%(1, 2)
+    sClockVal = scheduleNG%(1, 7)
+    threePtOpt = scheduleNG%(1, 3)
+    playoffOpt = scheduleNG%(1, 5)
+    displayPause! = scheduleNG%(1, 4) / 10
+    coachOpt = scheduleNG%(1, 9)
+    bonusFoulNum = scheduleNG%(1, 14)
+    freeThrowVal = scheduleNG%(1, 10)
+    ftRulesOpt = scheduleNG%(1, 11)
 
     DT$ = "10-01-23"
-    TM$ = "07:30P"        
+    TM$ = "07:30P"
 
     Do
         Color 15, 0
@@ -1168,7 +1168,8 @@ Sub ChangeGlobalSettings ()
         Locate 3, 2: Color 14: Print "(1) ";
         Color 15: Print "GAME PLAY: "; playMode$(playerOpt)
         Locate 4, 2: Color 14: Print "(2) ";
-        Color 15: Print "GAME LOCATION: "; location$(gameLoc)
+        'Color 15: Print "GAME LOCATION: "; location$(gameLoc)
+        Color 15: Print "OPTION RESERVED";
         Locate 5, 2: Color 14: Print "(3) ";
         Color 15: Print "SHOT CLOCK: "; sClockOpt$(sClockVal)
         Locate 6, 2: Color 14: Print "(4) ";
@@ -1205,7 +1206,8 @@ Sub ChangeGlobalSettings ()
                 If gameLoc > 2 Then gameLoc = 1
 
             Case 3
-                sClockVal = 1 - sClockVal
+                sClockVal = sClockVal + 1
+                If sClockVal > 2 Then sClockVal = 0
 
             Case 4:
                 threePtOpt = 1 - threePtOpt
@@ -1234,7 +1236,7 @@ Sub ChangeGlobalSettings ()
     Loop Until I = 0
 
     For I = 1 To scheduleAP%(0)
-        scheduleNG%(I, 2) = gameLoc
+        'scheduleNG%(I, 2) = gameLoc
         scheduleNG%(I, 3) = threePtOpt
         scheduleNG%(I, 4) = displayPause! * 10
         scheduleNG%(I, 5) = playoffOpt
@@ -1250,7 +1252,7 @@ End Sub
 
 
 '----------------------------------------
-'       DeleteBoxscores Subroutine       
+'       DeleteBoxscores Subroutine
 '----------------------------------------
 'This subroutine prompts for confirmation
 'of and proceeds to delete the specified
@@ -1340,13 +1342,14 @@ Sub LoadScheduleInfo (targetFile$)
     Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
 
     For I = 1 To scheduleAP%(0)
+
         Get #1, I
 
-        For X = 0 To 18: 
+        For X = 0 To 18:
             scheduleNG%(I, X) = CVI(Q$(X + 1))
         Next
 
-        For X = 0 To 1: 
+        For X = 0 To 1:
             scheduleYN$(I, X) = RTrim$(Q$(20 + X))
         Next
 
@@ -1388,7 +1391,7 @@ Sub EditBoxscore (boxName$)
 
     Else
 
-        Call QBWRITE (boxName$)
+        Call QBWRITE(boxName$)
 
     End If
 

@@ -184,7 +184,7 @@ End Sub
 'a variety of arrays.
 Sub UpdateExpandedLeaders (statFile$, JB, TS, TTS)
 
-    Shared AL$(), lookyA$()
+    Shared AL$(), statPlyrNames$()
     Shared TMA$(), TT$(), TT1$()
     Shared strZ1$()
 
@@ -221,7 +221,7 @@ Sub UpdateExpandedLeaders (statFile$, JB, TS, TTS)
 
                 For I = 0 To 14
 
-                    Input #1, lookyA$(I)
+                    Input #1, statPlyrNames$(I)
 
                     For J = 0 To 13
                         Input #1, compareA!(I, J)
@@ -266,10 +266,10 @@ Sub UpdateExpandedLeaders (statFile$, JB, TS, TTS)
 
                 For I = 0 To 14
 
-                    If lookyA$(I) <> "XXX" Then
+                    If statPlyrNames$(I) <> "XXX" Then
 
                         JB = JB + 1
-                        AL$(JB) = lookyA$(I)
+                        AL$(JB) = statPlyrNames$(I)
                         TBN = TBN + 1
                         TMA$(TBN) = B$
                         GMA!(JB) = year

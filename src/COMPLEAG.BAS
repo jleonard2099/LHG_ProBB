@@ -16,7 +16,7 @@ Sub CompileLeague ()
     Shared O%()
 
     Shared LD!(), O1!(), O2!(), leagS!()
-    Shared TRC!(), TRC1!(), statW0!(), statW1!()
+    Shared TRC!(), TRC1!(), statsW0!(), statsW1!()
 
     Shared BRC$(), DL$(), H1$()
     Shared N$(), O$(), OL$()
@@ -124,11 +124,7 @@ Sub CompileLeague ()
 
                     If confGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
 
-                        For I = 0 To 14
-                            For J = 0 To 22
-                                leagS!(I, J) = 0
-                            Next
-                        Next
+                        Erase leagS!
 
                         Call ReadStatsPro(H1$(XW), TN$)
                         Call StatsByCategoryPro(TN$, finalUpdate$, fullWins, fullLosses)
@@ -239,7 +235,7 @@ End Function
 Sub ReadStatsPro (statFile$, TN$)
 
     Shared DT!(), leagS!(), OT!()
-    Shared statW0!(), statW1!()
+    Shared statsW0!(), statsW1!()
     Shared N$()
 
     Open diskPaths$(1) + statFile$ For Input As #1
@@ -254,8 +250,8 @@ Sub ReadStatsPro (statFile$, TN$)
             Input #1, leagS!(I, J)
         Next
 
-        Input #1, statW0!(I)
-        Input #1, statW1!(I)
+        Input #1, statsW0!(I)
+        Input #1, statsW1!(I)
 
     Next I
 
@@ -281,7 +277,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
     Shared DT!(), OT!()
     Shared DL!(), OL!()
-    Shared LD!(), leagS!(), statW0!(), statW1!()
+    Shared LD!(), leagS!(), statsW0!(), statsW1!()
 
     Shared DL$(), N$(), OL$()
     Shared Z2$(), Z3$()
@@ -490,10 +486,10 @@ Sub CheckStatsPro (TN$, totalGames)
 
         '3 FG %
         '-- Must have 82 3FG's made; assumes 82 game schedule
-        If leagS!(X, 21) > LD!(130, 1) And statW0!(X) >= totalGames Then
+        If leagS!(X, 21) > LD!(130, 1) And statsW0!(X) >= totalGames Then
 
             LD!(130, 1) = leagS!(X, 21)
-            LD!(130, 2) = statW1!(X)
+            LD!(130, 2) = statsW1!(X)
             Z2$(130) = N$(X)
             Z3$(130) = TN$
 
@@ -514,9 +510,9 @@ Sub CheckStatsPro (TN$, totalGames)
 
         '3 FGM
         '-- Must have 82 3FG's made; assumes 82 game schedule
-        If statW0!(X) > LD!(140, 1) And statW0!(X) >= totalGames Then
+        If statsW0!(X) > LD!(140, 1) And statsW0!(X) >= totalGames Then
 
-            LD!(140, 1) = statW0!(X)
+            LD!(140, 1) = statsW0!(X)
             LD!(140, 2) = 0
             Z2$(140) = N$(X)
             Z3$(140) = TN$
@@ -869,7 +865,7 @@ End Sub
 Sub StatsByCategoryPro (TN$, finalUpdate$, fullWins, fullLosses)
 
     Shared DT!(), leagBRC!(), leagS!(), OT!()
-    Shared statW0!(), statW1!(), TRC!(), TRC1!()
+    Shared statsW0!(), statsW1!(), TRC!(), TRC1!()
 
     Shared BRC$(), N$(), TRC$(), TRC1$()
 
@@ -879,7 +875,7 @@ Sub StatsByCategoryPro (TN$, finalUpdate$, fullWins, fullLosses)
 
         leagS!(I, 25) = leagS!(I, 13)
         leagS!(I, 26) = leagS!(I, 12)
-        leagS!(I, 12) = leagS!(I, 2) * 2 + statW0!(I) + leagS!(I, 4): ' *** PTS ***
+        leagS!(I, 12) = leagS!(I, 2) * 2 + statsW0!(I) + leagS!(I, 4): ' *** PTS ***
 
         If leagS!(I, 0) <> 0 Then
 
@@ -899,8 +895,8 @@ Sub StatsByCategoryPro (TN$, finalUpdate$, fullWins, fullLosses)
                 leagS!(I, 20) = leagS!(I, 4) / leagS!(I, 3): ' *** FT% ***
             End If
 
-            If Not (statW1!(I) = 0 Or statW0!(I) / leagS!(I, 0) < .3) Then
-                leagS!(I, 21) = statW0!(I) / statW1!(I): ' *** 3FG% ***
+            If Not (statsW1!(I) = 0 Or statsW0!(I) / leagS!(I, 0) < .3) Then
+                leagS!(I, 21) = statsW0!(I) / statsW1!(I): ' *** 3FG% ***
             End If
 
             leagS!(I, 22) = leagS!(I, 12) / leagS!(I, 0): ' *** PTS/G ***
@@ -909,9 +905,9 @@ Sub StatsByCategoryPro (TN$, finalUpdate$, fullWins, fullLosses)
             If leagS!(I, 2) > leagBRC!(3) Then leagBRC!(3) = leagS!(I, 2): BRC$(3, 0) = N$(I): BRC$(3, 1) = TN$
             If leagS!(I, 19) > leagBRC!(4) And UCase$(finalUpdate$) = "Y" And leagS!(I, 2) / leagS!(I, 0) >= 3.65 Then leagBRC!(4) = leagS!(I, 19): BRC$(4, 0) = N$(I): BRC$(4, 1) = TN$
 
-            If statW1!(I) > leagBRC!(5) Then leagBRC!(5) = statW1!(I): BRC$(5, 0) = N$(I): BRC$(5, 1) = TN$
-            If statW0!(I) > leagBRC!(6) Then leagBRC!(6) = statW0!(I): BRC$(6, 0) = N$(I): BRC$(6, 1) = TN$
-            If leagS!(I, 21) > leagBRC!(7) And UCase$(finalUpdate$) = "Y" And statW0!(I) / leagS!(I, 0) >= .3 Then leagBRC!(7) = leagS!(I, 21): BRC$(7, 0) = N$(I): BRC$(7, 1) = TN$
+            If statsW1!(I) > leagBRC!(5) Then leagBRC!(5) = statsW1!(I): BRC$(5, 0) = N$(I): BRC$(5, 1) = TN$
+            If statsW0!(I) > leagBRC!(6) Then leagBRC!(6) = statsW0!(I): BRC$(6, 0) = N$(I): BRC$(6, 1) = TN$
+            If leagS!(I, 21) > leagBRC!(7) And UCase$(finalUpdate$) = "Y" And statsW0!(I) / leagS!(I, 0) >= .3 Then leagBRC!(7) = leagS!(I, 21): BRC$(7, 0) = N$(I): BRC$(7, 1) = TN$
 
             If leagS!(I, 3) > leagBRC!(8) Then leagBRC!(8) = leagS!(I, 3): BRC$(8, 0) = N$(I): BRC$(8, 1) = TN$
             If leagS!(I, 4) > leagBRC!(9) Then leagBRC!(9) = leagS!(I, 4): BRC$(9, 0) = N$(I): BRC$(9, 1) = TN$
