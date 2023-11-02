@@ -37,9 +37,13 @@ Sub InitVar ()
     Shared avgAttendance&()
     Shared teamIndicator$()
 
+    Shared statsH$(), HO$()
+    Shared gameW0!(), gameW1!()
+    Shared statsZ!(), statsZ1!(), statsZ2!()
+
     For I = 0 To 1
         For I1 = 0 To 4
-            B1!(I, I1) = -1
+            gameB1!(I, I1) = -1
         Next I1
     Next I
 
@@ -151,10 +155,12 @@ Sub InitVar ()
     Erase VG, VH, W2, W3
     Erase X7, Z5, Z6, timePlayed
 
-    Erase A!, M9!, indRecords!, W0!, W1!, Z!, Z1!, Z2!
+    Erase gameRatings!, M9!, indRecords!
+    Erase gameW0!, gameW1!
+    Erase statsZ!, statsZ1!, statsZ2!
 
     Erase gameCoach$, gameMascots$, gameStadium$, gameTeams$
-    Erase H$, HO$, diskPaths$
+    Erase statsH$, HO$, diskPaths$
     Erase Q$, players_GAME$, RC$, SX$
     Erase teamAbbrev$, teamNames$, Y$, YN$
 
@@ -364,7 +370,7 @@ Sub DISABLEPLAYERS (P9)
             Color 15, 0
 
             'Print player position, GP
-            '-- POSITION = PS$(B1!(P9, I1)) ???
+            '-- POSITION = PS$(gameB1!(P9, I1)) ???
             Print Tab(20); plyrRat_GAME(P9, I, 0)
 
         Next
@@ -526,7 +532,7 @@ Sub MAKEPBP ()
 
             Case 1
                 'TURNOVER
-                U$ = players_GAME$(P, B1!(P, B), 0)
+                U$ = players_GAME$(P, gameB1!(P, B), 0)
                 RN = Int(Rnd(1) * 14) + 1
 
                 Select Case RN
@@ -552,34 +558,34 @@ Sub MAKEPBP ()
 
                 Select Case RN
                     Case 1: U$ = "DIPSY-DOO DUNK-A-ROO!!!"
-                    Case 2: U$ = players_GAME$(P, B1!(P, B), 0) + " MAKES IT HAMMER TIME!!!"
-                    Case 3: U$ = players_GAME$(P, B1!(P, B), 0) + " SLAMS IT IN!!!"
-                    Case 4: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
-                    Case 5: U$ = players_GAME$(P, B1!(P, B), 0) + " SLAMS IT HOME!!!"
-                    Case 6: U$ = players_GAME$(P, B1!(P, B), 0) + " JAMS IT HOME!!!"
-                    Case 7: U$ = players_GAME$(P, B1!(P, B), 0) + " THROWS IT DOWN!!!"
-                    Case 8: U$ = players_GAME$(P, B1!(P, B), 0) + " THUNDERSLAM!!!"
+                    Case 2: U$ = players_GAME$(P, gameB1!(P, B), 0) + " MAKES IT HAMMER TIME!!!"
+                    Case 3: U$ = players_GAME$(P, gameB1!(P, B), 0) + " SLAMS IT IN!!!"
+                    Case 4: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
+                    Case 5: U$ = players_GAME$(P, gameB1!(P, B), 0) + " SLAMS IT HOME!!!"
+                    Case 6: U$ = players_GAME$(P, gameB1!(P, B), 0) + " JAMS IT HOME!!!"
+                    Case 7: U$ = players_GAME$(P, gameB1!(P, B), 0) + " THROWS IT DOWN!!!"
+                    Case 8: U$ = players_GAME$(P, gameB1!(P, B), 0) + " THUNDERSLAM!!!"
                     Case 9: U$ = "RIM ROCKING JAM!!!"
-                    Case 10: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE MONSTER SLAM!!"
-                    Case 11: U$ = players_GAME$(P, B1!(P, B), 0) + "POWER SLAMS IT!!!"
-                    Case 12: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE 2-HANDED STUFF!!!"
-                    Case 13: U$ = players_GAME$(P, B1!(P, B), 0) + " BACKWARDS JAM!!!"
-                    Case 14: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE 1-HANDED SLAM!!!"
-                    Case 15: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE REVERSE SLAM!!!"
-                    Case 16: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE REVERSE JAM!!!"
-                    Case 17: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE WINDMILL JAM!!!"
-                    Case 18: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE WINDMILL SLAM!!!"
-                    Case 19: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE TOMAHAWK SLAM!!!"
-                    Case 20: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE 360 SLAM!!!"
-                    Case 21: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE SPINNING SLAM!!!"
-                    Case 22: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE LEFT HANDED DUNK!!!"
+                    Case 10: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE MONSTER SLAM!!"
+                    Case 11: U$ = players_GAME$(P, gameB1!(P, B), 0) + "POWER SLAMS IT!!!"
+                    Case 12: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 2-HANDED STUFF!!!"
+                    Case 13: U$ = players_GAME$(P, gameB1!(P, B), 0) + " BACKWARDS JAM!!!"
+                    Case 14: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 1-HANDED SLAM!!!"
+                    Case 15: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE REVERSE SLAM!!!"
+                    Case 16: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE REVERSE JAM!!!"
+                    Case 17: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE WINDMILL JAM!!!"
+                    Case 18: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE WINDMILL SLAM!!!"
+                    Case 19: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE TOMAHAWK SLAM!!!"
+                    Case 20: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 360 SLAM!!!"
+                    Case 21: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE SPINNING SLAM!!!"
+                    Case 22: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE LEFT HANDED DUNK!!!"
                     Case 23: U$ = "DOUBLE CLUTCH JAM!!!"
-                    Case 24: U$ = players_GAME$(P, B1!(P, B), 0) + " GETS THE FLUSH!!!"
-                    Case 25: U$ = players_GAME$(P, B1!(P, B), 0) + " PUNCHES IT HOME!!!"
-                    Case 26: U$ = players_GAME$(P, B1!(P, B), 0) + "...DOUBLE PUMP SLAM!!!"
-                    Case 27: U$ = players_GAME$(P, B1!(P, B), 0) + "...IN YOUR FACE SLAM!!!"
+                    Case 24: U$ = players_GAME$(P, gameB1!(P, B), 0) + " GETS THE FLUSH!!!"
+                    Case 25: U$ = players_GAME$(P, gameB1!(P, B), 0) + " PUNCHES IT HOME!!!"
+                    Case 26: U$ = players_GAME$(P, gameB1!(P, B), 0) + "...DOUBLE PUMP SLAM!!!"
+                    Case 27: U$ = players_GAME$(P, gameB1!(P, B), 0) + "...IN YOUR FACE SLAM!!!"
                     Case 28, 37:
-                        U$ = players_GAME$(P, B1!(P, B), 0) + " IS UP"
+                        U$ = players_GAME$(P, gameB1!(P, B), 0) + " IS UP"
                         Call PBP
                         U$ = "HE SPINS"
                         Call PBP
@@ -591,14 +597,14 @@ Sub MAKEPBP ()
                     Case 33: U$ = "HE SLAMS IT IN!!!"
                     Case 34: U$ = "DIPSY-DOO DUNK-A-ROO!!!"
                     Case 35: U$ = "HE MAKES IT HAMMER TIME!!!"
-                    Case 36: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
+                    Case 36: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
                     Case 38: U$ = "HE JAMS IT HOME!!!"
                     Case 39: U$ = "HE HAMMERS IT HOME!"
                 End Select
 
             Case 3
                 'SHOOTS...
-                U$ = players_GAME$(P, B1!(P, B), 0)
+                U$ = players_GAME$(P, gameB1!(P, B), 0)
 
                 Select Case PZ%
 
@@ -1160,7 +1166,7 @@ Sub MAKEPBP ()
 
             Case 6
                 'FAST BREAK
-                U$ = players_GAME$(P, B1!(P, B), 0)
+                U$ = players_GAME$(P, gameB1!(P, B), 0)
                 RN = Int(Rnd(1) * 38) + 1
 
                 Select Case RN
@@ -1211,34 +1217,34 @@ Sub MAKEPBP ()
 
                 Select Case RN
                     Case 1: U$ = "DIPSY-DOO DUNK-A-ROO!!!"
-                    Case 2: U$ = players_GAME$(P, B1!(P, B), 0) + " MAKES IT HAMMER TIME!!!"
-                    Case 3: U$ = players_GAME$(P, B1!(P, B), 0) + " SLAMS IT IN!!!"
-                    Case 4: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
-                    Case 5: U$ = players_GAME$(P, B1!(P, B), 0) + " SLAMS IT HOME!!!"
-                    Case 6: U$ = players_GAME$(P, B1!(P, B), 0) + " JAMS IT HOME!!!"
-                    Case 7: U$ = players_GAME$(P, B1!(P, B), 0) + " THROWS IT DOWN!!!"
-                    Case 8: U$ = players_GAME$(P, B1!(P, B), 0) + " THUNDERSLAM!!!"
+                    Case 2: U$ = players_GAME$(P, gameB1!(P, B), 0) + " MAKES IT HAMMER TIME!!!"
+                    Case 3: U$ = players_GAME$(P, gameB1!(P, B), 0) + " SLAMS IT IN!!!"
+                    Case 4: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
+                    Case 5: U$ = players_GAME$(P, gameB1!(P, B), 0) + " SLAMS IT HOME!!!"
+                    Case 6: U$ = players_GAME$(P, gameB1!(P, B), 0) + " JAMS IT HOME!!!"
+                    Case 7: U$ = players_GAME$(P, gameB1!(P, B), 0) + " THROWS IT DOWN!!!"
+                    Case 8: U$ = players_GAME$(P, gameB1!(P, B), 0) + " THUNDERSLAM!!!"
                     Case 9: U$ = "RIM ROCKING JAM!!!"
-                    Case 10: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE MONSTER SLAM!!"
-                    Case 11: U$ = players_GAME$(P, B1!(P, B), 0) + "POWER SLAMS IT!!!"
-                    Case 12: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE 2-HANDED STUFF!!!"
-                    Case 13: U$ = players_GAME$(P, B1!(P, B), 0) + " BACKWARDS JAM!!!"
-                    Case 14: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE 1-HANDED SLAM!!!"
-                    Case 15: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE REVERSE SLAM!!!"
-                    Case 16: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE REVERSE JAM!!!"
-                    Case 17: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE WINDMILL JAM!!!"
-                    Case 18: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE WINDMILL SLAM!!!"
-                    Case 19: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE TOMAHAWK SLAM!!!"
-                    Case 20: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE 360 SLAM!!!"
-                    Case 21: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE SPINNING SLAM!!!"
-                    Case 22: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE LEFT HANDED DUNK!!!"
+                    Case 10: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE MONSTER SLAM!!"
+                    Case 11: U$ = players_GAME$(P, gameB1!(P, B), 0) + "POWER SLAMS IT!!!"
+                    Case 12: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 2-HANDED STUFF!!!"
+                    Case 13: U$ = players_GAME$(P, gameB1!(P, B), 0) + " BACKWARDS JAM!!!"
+                    Case 14: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 1-HANDED SLAM!!!"
+                    Case 15: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE REVERSE SLAM!!!"
+                    Case 16: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE REVERSE JAM!!!"
+                    Case 17: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE WINDMILL JAM!!!"
+                    Case 18: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE WINDMILL SLAM!!!"
+                    Case 19: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE TOMAHAWK SLAM!!!"
+                    Case 20: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 360 SLAM!!!"
+                    Case 21: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE SPINNING SLAM!!!"
+                    Case 22: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE LEFT HANDED DUNK!!!"
                     Case 23: U$ = "DOUBLE CLUTCH JAM!!!"
-                    Case 24: U$ = players_GAME$(P, B1!(P, B), 0) + " GETS THE FLUSH!!!"
-                    Case 25: U$ = players_GAME$(P, B1!(P, B), 0) + " PUNCHES IT HOME!!!"
-                    Case 26: U$ = players_GAME$(P, B1!(P, B), 0) + "...DOUBLE PUMP SLAM!!!"
-                    Case 27: U$ = players_GAME$(P, B1!(P, B), 0) + "...IN YOUR FACE SLAM!!!"
+                    Case 24: U$ = players_GAME$(P, gameB1!(P, B), 0) + " GETS THE FLUSH!!!"
+                    Case 25: U$ = players_GAME$(P, gameB1!(P, B), 0) + " PUNCHES IT HOME!!!"
+                    Case 26: U$ = players_GAME$(P, gameB1!(P, B), 0) + "...DOUBLE PUMP SLAM!!!"
+                    Case 27: U$ = players_GAME$(P, gameB1!(P, B), 0) + "...IN YOUR FACE SLAM!!!"
                     Case 28, 37:
-                        U$ = players_GAME$(P, B1!(P, B), 0) + " IS UP"
+                        U$ = players_GAME$(P, gameB1!(P, B), 0) + " IS UP"
                         Call PBP
                         U$ = "HE SPINS"
                         Call PBP
@@ -1250,7 +1256,7 @@ Sub MAKEPBP ()
                     Case 33: U$ = "HE SLAMS IT IN!!!"
                     Case 34: U$ = "DIPSY-DOO DUNK-A-ROO!!!"
                     Case 35: U$ = "HE MAKES IT HAMMER TIME!!!"
-                    Case 36: U$ = players_GAME$(P, B1!(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
+                    Case 36: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
                     Case 38: U$ = "HE JAMS IT HOME!!!"
                     Case 39: U$ = "HE HAMMERS IT HOME!"
                 End Select
@@ -1331,7 +1337,7 @@ Sub MAKEPBP ()
 
             Case 9
                 'NOPASS
-                U$ = players_GAME$(P, B1!(P, B), 0) + " "
+                U$ = players_GAME$(P, gameB1!(P, B), 0) + " "
                 RN = Int(Rnd(1) * 56) + 1
 
                 Select Case RN
@@ -1413,7 +1419,7 @@ Sub MAKEPBP ()
 
             Case 10
                 'PASS prevBall$=PREV HANDLER
-                V$ = players_GAME$(P, B1!(P, B), 0)
+                V$ = players_GAME$(P, gameB1!(P, B), 0)
 
                 RN = Int(Rnd(1) * 60) + 1
 
@@ -2242,7 +2248,7 @@ Sub PlayStyle ()
             Color 15, 0
             Print "ENTER "; PS$(M); " # ";
 
-            Z = B1!(P9, M)
+            Z = gameB1!(P9, M)
             CV% = 0
 
             For IP% = 0 To Z
@@ -2309,7 +2315,7 @@ Sub PlayStyle ()
 
                     If J >= 0 And J <= 14 And gameRatings!(P9, J, 12) < 6 And players_GAME$(P9, J, 0) <> "XXX" And plyrRat_GAME(P9, J, 18) = 0 Then
                         For I2 = 0 To 4
-                            If B1!(P9, I2) = J Then Exit For
+                            If gameB1!(P9, I2) = J Then Exit For
                         Next I2
                     End If
 
@@ -2317,7 +2323,7 @@ Sub PlayStyle ()
 
             Loop Until J >= 0 And J <= 14
 
-            B1!(P9, I) = J
+            gameB1!(P9, I) = J
             Z = J
             CV% = 0
 
@@ -2388,13 +2394,13 @@ Sub PlayStyle ()
             If X = 50 And I1 = B And P9 = P Then
 
                 Locate 20, 29
-                Color 14, 0: Print players_GAME$(P9, B1!(P9, I1), 0); " IS AT THE FT LINE"
+                Color 14, 0: Print players_GAME$(P9, gameB1!(P9, I1), 0); " IS AT THE FT LINE"
 
             Else
 
                 Locate 25, 1: Print Space$(25);
 
-                J = B1!(P9, I1)
+                J = gameB1!(P9, I1)
                 Z = J
                 CV% = 0
 
@@ -2411,7 +2417,7 @@ Sub PlayStyle ()
 
                     Locate I1 + 20, 1: Print Space$(26);
 
-                    B1!(P9, I1) = -1
+                    gameB1!(P9, I1) = -1
 
                     Locate , 1
                     Color 2: Print Using "# "; I1;
@@ -2437,7 +2443,7 @@ Sub PlayStyle ()
 
                         If J >= 0 And J <= 14 And gameRatings!(P9, J, 12) < 6 And players_GAME$(P9, J, 0) <> "XXX" And plyrRat_GAME(P9, J, 18) = 0 Then
                             For I2 = 0 To 4:
-                                If B1!(P9, I2) = J Then Exit For
+                                If gameB1!(P9, I2) = J Then Exit For
                             Next I2
                         End If
 
@@ -2445,7 +2451,7 @@ Sub PlayStyle ()
 
                 Loop Until J >= 0 And J <= 14
 
-                B1!(P9, I1) = J
+                gameB1!(P9, I1) = J
                 Z = J
                 CV% = 0
 
@@ -2491,13 +2497,13 @@ Sub PlayItSafe ()
 
     For ZZ = 0 To 4
 
-        If gameRatings!(P9, B1!(P9, ZZ), 22) = 50 Then
+        If gameRatings!(P9, gameB1!(P9, ZZ), 22) = 50 Then
             A = A + 1
             If SW = 0 Then Print: Print "THE FOLLOWING PLAYER(S) ARE PLAYING SAFE BUT CAN NOW PLAY NORMAL IF YOU WISH": SW = 1
         End If
 
-        If gameRatings!(P9, B1!(P9, ZZ), 22) = 50 And SW = 1 And S2 < 6 Then
-            Locate S2 + 3, 1: Print S2; "-"; players_GAME$(P9, B1!(P9, ZZ), 0)
+        If gameRatings!(P9, gameB1!(P9, ZZ), 22) = 50 And SW = 1 And S2 < 6 Then
+            Locate S2 + 3, 1: Print S2; "-"; players_GAME$(P9, gameB1!(P9, ZZ), 0)
             P5(A) = S2
             P4(A) = ZZ
             S2 = S2 + 1
@@ -2533,11 +2539,11 @@ Sub PlayItSafe ()
 
                 If P6 = P5(P6) Then
 
-                    gameRatings!(P9, B1!(P9, P4(A)), 17) = gameRatings!(P9, B1!(P9, P4(A)), 17) * 3
-                    gameRatings!(P9, B1!(P9, P4(A)), 22) = 0
+                    gameRatings!(P9, gameB1!(P9, P4(A)), 17) = gameRatings!(P9, gameB1!(P9, P4(A)), 17) * 3
+                    gameRatings!(P9, gameB1!(P9, P4(A)), 22) = 0
 
                     Locate P5(A) + 3, 20
-                    Print players_GAME$(P9, B1!(P9, P4(A)), 0); " WILL NOW PLAY NORMAL DEFENSE!"
+                    Print players_GAME$(P9, gameB1!(P9, P4(A)), 0); " WILL NOW PLAY NORMAL DEFENSE!"
                     Call RATINGTABLES
 
                     D1(P9) = D1(P9) - 1
@@ -2560,7 +2566,7 @@ Sub PlayItSafe ()
 
         For ZZ = 0 To 4
 
-            If H <= 2 And gameRatings!(P9, B1!(P9, ZZ), 12) >= 3 And gameRatings!(P9, B1!(P9, ZZ), 22) = 0 Or gameRatings!(P9, B1!(P9, ZZ), 12) = 5 And gameRatings!(P9, B1!(P9, ZZ), 22) = 0 Then
+            If H <= 2 And gameRatings!(P9, gameB1!(P9, ZZ), 12) >= 3 And gameRatings!(P9, gameB1!(P9, ZZ), 22) = 0 Or gameRatings!(P9, gameB1!(P9, ZZ), 12) = 5 And gameRatings!(P9, gameB1!(P9, ZZ), 22) = 0 Then
 
                 A = A + 1
 
@@ -2577,7 +2583,7 @@ Sub PlayItSafe ()
                 skipKey% = 1
             Else
                 If S2 = A And S2 < 6 Then
-                    Print S2; "- "; players_GAME$(P9, B1!(P9, ZZ), 0)
+                    Print S2; "- "; players_GAME$(P9, gameB1!(P9, ZZ), 0)
                     P5(A) = S2
                     P4(A) = ZZ
                     S2 = S2 + 1
@@ -2604,11 +2610,11 @@ Sub PlayItSafe ()
 
                     If P6 = P5(P6) Then
 
-                        gameRatings!(P9, B1!(P9, P4(A)), 17) = Int((gameRatings!(P9, B1!(P9, P4(A)), 17) + 1) / 3)
-                        gameRatings!(P9, B1!(P9, P4(A)), 22) = 50
+                        gameRatings!(P9, gameB1!(P9, P4(A)), 17) = Int((gameRatings!(P9, gameB1!(P9, P4(A)), 17) + 1) / 3)
+                        gameRatings!(P9, gameB1!(P9, P4(A)), 22) = 50
 
                         Locate P5(A) + 3, 20
-                        Print players_GAME$(P9, B1!(P9, P4(A)), 0); " WILL NOW PLAY SAFE!"
+                        Print players_GAME$(P9, gameB1!(P9, P4(A)), 0); " WILL NOW PLAY SAFE!"
                         Call RATINGTABLES
 
                         D1(P9) = D1(P9) + 1
@@ -2657,10 +2663,10 @@ Sub WHOGETSBALL
 
                 For I = 0 To 4
 
-                    M8 = Int(plyrRat_GAME(P, B1!(P, I), 2) / plyrRat_GAME(P, B1!(P, I), 0) + .5) - gameRatings!(P, B1!(P, I), 7)
+                    M8 = Int(plyrRat_GAME(P, gameB1!(P, I), 2) / plyrRat_GAME(P, gameB1!(P, I), 0) + .5) - gameRatings!(P, gameB1!(P, I), 7)
 
                     If M8 <= 0 Then M8 = 0
-                    If M8 <= 0 And gameRatings!(P, B1!(P, I), 3) - gameRatings!(P, B1!(P, I), 7) - gameRatings!(P, B1!(P, I), 11) - gameRatings!(P, B1!(P, I), 12) > 0 Then M8 = gameRatings!(P, B1!(P, I), 3) - gameRatings!(P, B1!(P, I), 7) - gameRatings!(P, B1!(P, I), 11) - gameRatings!(P, B1!(P, I), 12)
+                    If M8 <= 0 And gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12) > 0 Then M8 = gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12)
                     If M8 >= M9 Then B = I: M9 = M8
 
                 Next I
@@ -2699,11 +2705,11 @@ Sub PlayerCalcs ()
             If players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or H = 1 And gameRatings!(P9, I1, 12) >= 2 Or H = 2 And gameRatings!(P9, I1, 12) >= 4 Or H = 3 And gameRatings!(P9, I1, 12) >= 5 Or H = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5 Then M2 = M2 + 1
 
             If I1 <= 4 Then
-                M6 = gameRatings!(P9, B1!(P9, I1), 3) - gameRatings!(P9, B1!(P9, I1), 7) - gameRatings!(P9, B1!(P9, I1), 11) - gameRatings!(P9, B1!(P9, I1), 12)
+                M6 = gameRatings!(P9, gameB1!(P9, I1), 3) - gameRatings!(P9, gameB1!(P9, I1), 7) - gameRatings!(P9, gameB1!(P9, I1), 11) - gameRatings!(P9, gameB1!(P9, I1), 12)
 
                 If M6 <= 0 And H < 4 Or M6 <= 0 And H = 4 And gameClock! > 120 Then M3 = M3 + 1
 
-                If players_GAME$(P9, B1!(P9, I1), 0) = "XXX" Or gameRatings!(P9, B1!(P9, I1), 12) >= 6 Or plyrRat_GAME(P9, B1!(P9, I1), 18) <> 0 Or H = 1 And gameRatings!(P9, B1!(P9, I1), 12) >= 2 Or H = 2 And gameRatings!(P9, B1!(P9, I1), 12) >= 4 Or H = 3 And gameRatings!(P9, B1!(P9, I1), 12) >= 5 Or H = 4 And gameClock! > 300 And gameRatings!(P9, B1!(P9, I1), 12) = 5 Then M4 = M4 + 1
+                If players_GAME$(P9, gameB1!(P9, I1), 0) = "XXX" Or gameRatings!(P9, gameB1!(P9, I1), 12) >= 6 Or plyrRat_GAME(P9, gameB1!(P9, I1), 18) <> 0 Or H = 1 And gameRatings!(P9, gameB1!(P9, I1), 12) >= 2 Or H = 2 And gameRatings!(P9, gameB1!(P9, I1), 12) >= 4 Or H = 3 And gameRatings!(P9, gameB1!(P9, I1), 12) >= 5 Or H = 4 And gameClock! > 300 And gameRatings!(P9, gameB1!(P9, I1), 12) = 5 Then M4 = M4 + 1
 
             End If
         Next I1
@@ -2745,7 +2751,7 @@ Sub CreditAssists ()
 
             For M8 = 0 To 4
 
-                W5 = W5 + gameRatings!(P, B1!(P, M8), 25)
+                W5 = W5 + gameRatings!(P, gameB1!(P, M8), 25)
 
                 If R1 <= W5 Then
                     skipM8% = 1
@@ -2759,8 +2765,8 @@ Sub CreditAssists ()
             W5 = M8
             Locate 7, 25
 
-            If players_GAME$(P, B1!(P, B), 0) <> players_GAME$(P, B1!(P, M8), 0) Then
-                gameRatings!(P, B1!(P, M8), 14) = gameRatings!(P, B1!(P, M8), 14) + 1
+            If players_GAME$(P, gameB1!(P, B), 0) <> players_GAME$(P, gameB1!(P, M8), 0) Then
+                gameRatings!(P, gameB1!(P, M8), 14) = gameRatings!(P, gameB1!(P, M8), 14) + 1
             End If
 
             iterations = iterations + 1
@@ -2775,7 +2781,7 @@ Sub CreditAssists ()
             '-- That is, M8 stays as value 0 when the ball carrier is 0, so the
             '-- player names are never different.
 
-        Loop Until players_GAME$(P, B1!(P, B), 0) <> players_GAME$(P, B1!(P, M8), 0) Or iterations = 5
+        Loop Until players_GAME$(P, gameB1!(P, B), 0) <> players_GAME$(P, gameB1!(P, M8), 0) Or iterations = 5
 
     End If
 
@@ -2800,12 +2806,12 @@ Sub ReboundRoutine1 ()
         'index 21 is 2, and it's clearly operating for
         'the other team as P is replaced by 1-P
         ' (switching 1 to 0, and vice versa)
-        XZ = gameRatings!(P, B1!(P, I), 21)
+        XZ = gameRatings!(P, gameB1!(P, I), 21)
 
         If Not (H > 2 Or H = 2 And gameClock! <= 120) Then
             'This line, referencing P, is the other one changed
             'between the 2 routines
-            If gameRatings!(P, B1!(P, I), 3) - gameRatings!(P, B1!(P, I), 7) - gameRatings!(P, B1!(P, I), 11) - gameRatings!(P, B1!(P, I), 12) <= 0 Then XZ = XZ * .5
+            If gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12) <= 0 Then XZ = XZ * .5
         End If
 
         RB(I) = RB(I) + XZ
@@ -2842,10 +2848,10 @@ Sub ReboundRoutine2 ()
     For I = 0 To 4
 
         RB(I) = 0
-        XZ = gameRatings!(1 - P, B1!(1 - P, I), 2)
+        XZ = gameRatings!(1 - P, gameB1!(1 - P, I), 2)
 
         If Not (H > 2 Or H = 2 And gameClock! <= 120) Then
-            If gameRatings!(1 - P, B1!(1 - P, I), 3) - gameRatings!(1 - P, B1!(1 - P, I), 7) - gameRatings!(1 - P, B1!(1 - P, I), 11) - gameRatings!(1 - P, B1!(1 - P, I), 12) <= 0 Then XZ = XZ * .5
+            If gameRatings!(1 - P, gameB1!(1 - P, I), 3) - gameRatings!(1 - P, gameB1!(1 - P, I), 7) - gameRatings!(1 - P, gameB1!(1 - P, I), 11) - gameRatings!(1 - P, gameB1!(1 - P, I), 12) <= 0 Then XZ = XZ * .5
         End If
 
         RB(I) = RB(I) + XZ
@@ -3075,7 +3081,7 @@ Sub Fouls (skipRandom%)
         M9 = Int(Rnd(1) * F5%(D, 0)) + 1
 
         For M8 = 0 To 4:
-            W5 = W5 + gameRatings!(D, B1!(D, M8), 17)
+            W5 = W5 + gameRatings!(D, gameB1!(D, M8), 17)
             If M9 <= W5 Then
                 Exit For
             End If
@@ -3087,25 +3093,25 @@ Sub Fouls (skipRandom%)
 
     End If
 
-    gameRatings!(D, B1!(D, W5), 12) = gameRatings!(D, B1!(D, W5), 12) + 1
+    gameRatings!(D, gameB1!(D, W5), 12) = gameRatings!(D, gameB1!(D, W5), 12) + 1
     P2(D) = P2(D) + 1
 
     Call UPDATESCREEN
 
-    If gameRatings!(D, B1!(D, W5), 3) - gameRatings!(D, B1!(D, W5), 7) - gameRatings!(D, B1!(D, W5), 11) - gameRatings!(D, B1!(D, W5), 12) = 0 Then gameRatings!(D, B1!(D, W5), 3) = gameRatings!(D, B1!(D, W5), 3) + 1
+    If gameRatings!(D, gameB1!(D, W5), 3) - gameRatings!(D, gameB1!(D, W5), 7) - gameRatings!(D, gameB1!(D, W5), 11) - gameRatings!(D, gameB1!(D, W5), 12) = 0 Then gameRatings!(D, gameB1!(D, W5), 3) = gameRatings!(D, gameB1!(D, W5), 3) + 1
 
-    If gameRatings!(D, B1!(D, W5), 12) < 6 Then
+    If gameRatings!(D, gameB1!(D, W5), 12) < 6 Then
 
         If pbpOpt = 0 Then
-            U$ = "FOUL NUMBER" + Str$(gameRatings!(D, B1!(D, W5), 12)) + " CALLED ON " + players_GAME$(D, B1!(D, W5), 0)
+            U$ = "FOUL NUMBER" + Str$(gameRatings!(D, gameB1!(D, W5), 12)) + " CALLED ON " + players_GAME$(D, gameB1!(D, W5), 0)
             Call PBP
         Else
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
                 Call WINDEX
-                Print "FOUL ON "; players_GAME$(D, B1!(D, W5), 0)
+                Print "FOUL ON "; players_GAME$(D, gameB1!(D, W5), 0)
                 Call DELAY
-                Print "HE HAS "; gameRatings!(D, B1!(D, W5), 12)
+                Print "HE HAS "; gameRatings!(D, gameB1!(D, W5), 12)
                 Call DELAY
             End If
         End If
@@ -3113,29 +3119,29 @@ Sub Fouls (skipRandom%)
         Call DELAY
 
     Else
-        'gameRatings!(D, B1!(D, W5), 12) >= 6
+        'gameRatings!(D, gameB1!(D, W5), 12) >= 6
         M9 = 0
 
         For I3 = 0 To 14
-            If I3 <> B1!(D, W5) And players_GAME$(D, I3, 1) <> "XXX" And plyrRat_GAME(D, I3, 18) = 0 Then
+            If I3 <> gameB1!(D, W5) And players_GAME$(D, I3, 1) <> "XXX" And plyrRat_GAME(D, I3, 18) = 0 Then
                 M9 = M9 + 1
             End If
         Next
 
         For I3 = 0 To 14
-            If I3 <> B1!(D, W5) And players_GAME$(D, I3, 1) <> "XXX" And plyrRat_GAME(D, I3, 18) = 0 Then
-                If gameRatings!(D, I3, 0) <= gameRatings!(D, B1!(D, W5), 0) Then gameRatings!(D, I3, 3) = gameRatings!(D, I3, 3) + Int((gameRatings!(D, B1!(D, W5), 3) / M9) + .5)
+            If I3 <> gameB1!(D, W5) And players_GAME$(D, I3, 1) <> "XXX" And plyrRat_GAME(D, I3, 18) = 0 Then
+                If gameRatings!(D, I3, 0) <= gameRatings!(D, gameB1!(D, W5), 0) Then gameRatings!(D, I3, 3) = gameRatings!(D, I3, 3) + Int((gameRatings!(D, gameB1!(D, W5), 3) / M9) + .5)
             End If
         Next I3
 
         If pbpOpt = 0 Then
-            U$ = "FOUL CALLED ON " + players_GAME$(D, B1!(D, W5), 0)
+            U$ = "FOUL CALLED ON " + players_GAME$(D, gameB1!(D, W5), 0)
             Call PBP
         Else
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
                 Call WINDEX
-                Print "FOUL ON "; players_GAME$(D, B1!(D, W5), 0)
+                Print "FOUL ON "; players_GAME$(D, gameB1!(D, W5), 0)
                 Call DELAY
             End If
         End If
@@ -3184,6 +3190,8 @@ Sub LOADSTATS ()
 
     Dim nbrStats
 
+    Shared HO$(), statsH$()
+    
     For I = 0 To 1
 
         Cls
@@ -3202,7 +3210,7 @@ Sub LOADSTATS ()
 
             For I1 = 1 To NUM_STATRECORDS: Input #1, HT%(I1): Next
 
-            For I1 = 1 To NUM_STATRECORDS: Input #1, HO$(I1): Next
+            For I1 = 1 To NUM_STATRECORDS: Input #1, statsH$(I1): Next
 
             Close #1
 
@@ -3361,34 +3369,34 @@ Sub SCOREBOARD ()
 
         Color 3
 
-        Color 15: Print Left$(players_GAME$(0, B1!(0, I1), 0), 12);
+        Color 15: Print Left$(players_GAME$(0, gameB1!(0, I1), 0), 12);
         Locate , 16
 
-        J = (gameRatings!(0, B1!(0, I1), 3)) - gameRatings!(0, B1!(0, I1), 7) - gameRatings!(0, B1!(0, I1), 11) - gameRatings!(0, B1!(0, I1), 12)
+        J = (gameRatings!(0, gameB1!(0, I1), 3)) - gameRatings!(0, gameB1!(0, I1), 7) - gameRatings!(0, gameB1!(0, I1), 11) - gameRatings!(0, gameB1!(0, I1), 12)
 
         If J <= 0 Then J = 0
 
-        Print Using "##"; gameRatings!(0, B1!(0, I1), 0);
-        Print Using "### "; gameRatings!(0, B1!(0, I1), 1);
+        Print Using "##"; gameRatings!(0, gameB1!(0, I1), 0);
+        Print Using "### "; gameRatings!(0, gameB1!(0, I1), 1);
 
         If P = 0 Then
-            Print Using "##"; gameRatings!(0, B1!(0, I1), 21) * 2 / 10;
+            Print Using "##"; gameRatings!(0, gameB1!(0, I1), 21) * 2 / 10;
         Else
-            Print Using "##"; gameRatings!(0, B1!(0, I1), 2) * 2 / 10;
+            Print Using "##"; gameRatings!(0, gameB1!(0, I1), 2) * 2 / 10;
         End If
 
 
         If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And gameClock! > 120) Then Color 12
 
-        test2! = gameRatings!(0, B1!(0, I1), 5)
+        test2! = gameRatings!(0, gameB1!(0, I1), 5)
 
         Print Using "### "; J;
         Color 15
-        Print Using "## ##"; gameRatings!(0, B1!(0, I1), 4) / 10; gameRatings!(0, B1!(0, I1), 5) / 10;
-        Print Using "###  "; gameRatings!(0, B1!(0, I1), 8) * 2 + gameRatings!(0, B1!(0, I1), 10) + W%(0, B1!(0, I1), 0);
+        Print Using "## ##"; gameRatings!(0, gameB1!(0, I1), 4) / 10; gameRatings!(0, gameB1!(0, I1), 5) / 10;
+        Print Using "###  "; gameRatings!(0, gameB1!(0, I1), 8) * 2 + gameRatings!(0, gameB1!(0, I1), 10) + W%(0, gameB1!(0, I1), 0);
 
-        If gameRatings!(0, B1!(0, I1), 12) >= 5 Then Color 12
-        Print Using "#"; gameRatings!(0, B1!(0, I1), 12)
+        If gameRatings!(0, gameB1!(0, I1), 12) >= 5 Then Color 12
+        Print Using "#"; gameRatings!(0, gameB1!(0, I1), 12)
         Color 15
 
     Next I1
@@ -3407,20 +3415,20 @@ Sub SCOREBOARD ()
     For I1 = 0 To 4: Locate , 40: Color 2: Print Using "# "; I1;
 
         Color 15
-        Print Left$(players_GAME$(1, B1!(1, I1), 0), 12);
+        Print Left$(players_GAME$(1, gameB1!(1, I1), 0), 12);
         Locate , 56
 
-        J = (gameRatings!(1, B1!(1, I1), 3)) - gameRatings!(1, B1!(1, I1), 7) - gameRatings!(1, B1!(1, I1), 11) - gameRatings!(1, B1!(1, I1), 12)
+        J = (gameRatings!(1, gameB1!(1, I1), 3)) - gameRatings!(1, gameB1!(1, I1), 7) - gameRatings!(1, gameB1!(1, I1), 11) - gameRatings!(1, gameB1!(1, I1), 12)
 
         If J <= 0 Then J = 0
 
-        Print Using "##"; gameRatings!(1, B1!(1, I1), 0);
-        Print Using "### "; gameRatings!(1, B1!(1, I1), 1);
+        Print Using "##"; gameRatings!(1, gameB1!(1, I1), 0);
+        Print Using "### "; gameRatings!(1, gameB1!(1, I1), 1);
 
         If P = 1 Then
-            Print Using "##"; gameRatings!(1, B1!(1, I1), 21) * 2 / 10;
+            Print Using "##"; gameRatings!(1, gameB1!(1, I1), 21) * 2 / 10;
         Else
-            Print Using "##"; gameRatings!(1, B1!(1, I1), 2) * 2 / 10;
+            Print Using "##"; gameRatings!(1, gameB1!(1, I1), 2) * 2 / 10;
         End If
 
         If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And gameClock! > 120) Then Color 12
@@ -3429,11 +3437,11 @@ Sub SCOREBOARD ()
 
         Color 15
 
-        Print Using "## ##"; gameRatings!(1, B1!(1, I1), 4) / 10; gameRatings!(1, B1!(1, I1), 5) / 10;
-        Print Using "###  "; gameRatings!(1, B1!(1, I1), 8) * 2 + gameRatings!(1, B1!(1, I1), 10) + W%(1, B1!(1, I1), 0);
+        Print Using "## ##"; gameRatings!(1, gameB1!(1, I1), 4) / 10; gameRatings!(1, gameB1!(1, I1), 5) / 10;
+        Print Using "###  "; gameRatings!(1, gameB1!(1, I1), 8) * 2 + gameRatings!(1, gameB1!(1, I1), 10) + W%(1, gameB1!(1, I1), 0);
 
-        If gameRatings!(1, B1!(1, I1), 12) >= 5 Then Color 12
-        Print Using "#"; gameRatings!(1, B1!(1, I1), 12)
+        If gameRatings!(1, gameB1!(1, I1), 12) >= 5 Then Color 12
+        Print Using "#"; gameRatings!(1, gameB1!(1, I1), 12)
         Color 15
 
     Next I1
@@ -3630,11 +3638,11 @@ Sub RATINGTABLES ()
         F5%(I, 4) = 0
 
         For I1 = 0 To 4
-            F5%(I, 0) = F5%(I, 0) + gameRatings!(I, B1!(I, I1), 17)
-            F5%(I, 1) = F5%(I, 1) + plyrRat_GAME(I, B1!(I, I1), 18)
-            F5%(I, 2) = F5%(I, 2) + gameRatings!(I, B1!(I, I1), 25)
-            F5%(I, 3) = F5%(I, 3) + gameRatings!(I, B1!(I, I1), 5)
-            F5%(I, 4) = F5%(I, 4) + gameRatings!(I, B1!(I, I1), 4) / 10
+            F5%(I, 0) = F5%(I, 0) + gameRatings!(I, gameB1!(I, I1), 17)
+            F5%(I, 1) = F5%(I, 1) + plyrRat_GAME(I, gameB1!(I, I1), 18)
+            F5%(I, 2) = F5%(I, 2) + gameRatings!(I, gameB1!(I, I1), 25)
+            F5%(I, 3) = F5%(I, 3) + gameRatings!(I, gameB1!(I, I1), 5)
+            F5%(I, 4) = F5%(I, 4) + gameRatings!(I, gameB1!(I, I1), 4) / 10
         Next I1
 
         F5%(I, 4) = Int((F5%(I, 4) / (F7%(I, 6) * .9)) * 100 + .5)
@@ -3702,7 +3710,7 @@ End Sub
 'adjust contribution ratings for players
 Sub SETUPRATINGS ()
 
-    Dim FTF!, X3!, JX!
+    Dim FTF!, X3!
 
     For I = 0 To 1
 
@@ -4320,7 +4328,7 @@ End Sub
 Sub COMPUTERSUBS ()
 
     For I2 = 0 To 4
-        B1!(P9, I2) = -1
+        gameB1!(P9, I2) = -1
     Next
 
     For I2 = 0 To 1
@@ -4339,14 +4347,14 @@ Sub COMPUTERSUBS ()
 
                     M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
 
-                    If B1!(P9, I2) > -1 Then M7 = gameRatings!(P9, B1!(P9, I2), 3) - gameRatings!(P9, B1!(P9, I2), 7) - gameRatings!(P9, B1!(P9, I2), 11) - gameRatings!(P9, B1!(P9, I2), 12)
+                    If gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3) - gameRatings!(P9, gameB1!(P9, I2), 7) - gameRatings!(P9, gameB1!(P9, I2), 11) - gameRatings!(P9, gameB1!(P9, I2), 12)
 
                     If H = 4 And gameClock! < 120 Or H > 4 Then M6 = gameRatings!(P9, I1, 3)
 
-                    If (H = 4 And gameClock! < 120 Or H > 4) And B1!(P9, I2) > -1 Then M7 = gameRatings!(P9, B1!(P9, I2), 3)
+                    If (H = 4 And gameClock! < 120 Or H > 4) And gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3)
 
-                    If I2 <> 1 Or B1!(P9, 0) <> I1 Then
-                        If B1!(P9, I2) = -1 Or M6 >= M7 Then B1!(P9, I2) = I1
+                    If I2 <> 1 Or gameB1!(P9, 0) <> I1 Then
+                        If gameB1!(P9, I2) = -1 Or M6 >= M7 Then gameB1!(P9, I2) = I1
                     End If
 
                 End If
@@ -4355,7 +4363,7 @@ Sub COMPUTERSUBS ()
 
         Next I1
 
-        If B1!(P9, I2) = -1 And FS% <> 1 Then
+        If gameB1!(P9, I2) = -1 And FS% <> 1 Then
 
             If P$ = "G" Then
                 P$ = "F"
@@ -4375,7 +4383,7 @@ Sub COMPUTERSUBS ()
             FS% = 0
         End If
 
-        'Loop Until FS% = 1 And B1!(P9, I2) <> -1
+        'Loop Until FS% = 1 And gameB1!(P9, I2) <> -1
 
     Next I2
 
@@ -4395,13 +4403,13 @@ Sub COMPUTERSUBS ()
 
                     M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
 
-                    If B1!(P9, I2) > -1 Then M7 = gameRatings!(P9, B1!(P9, I2), 3) - gameRatings!(P9, B1!(P9, I2), 7) - gameRatings!(P9, B1!(P9, I2), 11) - gameRatings!(P9, B1!(P9, I2), 12)
+                    If gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3) - gameRatings!(P9, gameB1!(P9, I2), 7) - gameRatings!(P9, gameB1!(P9, I2), 11) - gameRatings!(P9, gameB1!(P9, I2), 12)
                     If H = 4 And gameClock! < 120 Or H > 4 Then M6 = gameRatings!(P9, I1, 3)
-                    If (H = 4 And gameClock! < 120 Or H > 4) And B1!(P9, I2) > -1 Then M7 = gameRatings!(P9, B1!(P9, I2), 3)
+                    If (H = 4 And gameClock! < 120 Or H > 4) And gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3)
 
-                    If Not (I2 = 2 And (B1!(P9, 0) = I1 Or B1!(P9, 1) = I1)) Then
-                        If Not (I2 = 3 And (B1!(P9, 0) = I1 Or B1!(P9, 1) = I1 Or B1!(P9, 2) = I1)) Then
-                            If B1!(P9, I2) = -1 Or M6 >= M7 Then B1!(P9, I2) = I1
+                    If Not (I2 = 2 And (gameB1!(P9, 0) = I1 Or gameB1!(P9, 1) = I1)) Then
+                        If Not (I2 = 3 And (gameB1!(P9, 0) = I1 Or gameB1!(P9, 1) = I1 Or gameB1!(P9, 2) = I1)) Then
+                            If gameB1!(P9, I2) = -1 Or M6 >= M7 Then gameB1!(P9, I2) = I1
                         End If
                     End If
 
@@ -4411,7 +4419,7 @@ Sub COMPUTERSUBS ()
 
         8784 Next I1
 
-        If B1!(P9, I2) = -1 And FS% <> 1 Then
+        If gameB1!(P9, I2) = -1 And FS% <> 1 Then
             If P$ = "F" Then P$ = "C": GoTo 8783
 
             If P$ = "C" Then
@@ -4440,12 +4448,12 @@ Sub COMPUTERSUBS ()
             If Not (players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or H = 1 And gameRatings!(P9, I1, 12) >= 2 + FS% Or H = 2 And gameRatings!(P9, I1, 12) >= 4 + FS% Or H = 3 And gameRatings!(P9, I1, 12) >= 5 Or H = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5) Then
 
                 M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
-                If B1!(P9, 4) > -1 Then M7 = gameRatings!(P9, B1!(P9, 4), 3) - gameRatings!(P9, B1!(P9, 4), 7) - gameRatings!(P9, B1!(P9, 4), 11) - gameRatings!(P9, B1!(P9, 4), 12)
+                If gameB1!(P9, 4) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, 4), 3) - gameRatings!(P9, gameB1!(P9, 4), 7) - gameRatings!(P9, gameB1!(P9, 4), 11) - gameRatings!(P9, gameB1!(P9, 4), 12)
                 If H = 4 And gameClock! < 120 Or H > 4 Then M6 = gameRatings!(P9, I1, 3)
-                If (H = 4 And gameClock! < 120 Or H > 4) And B1!(P9, I2) > -1 Then M7 = gameRatings!(P9, B1!(P9, I2), 3)
+                If (H = 4 And gameClock! < 120 Or H > 4) And gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3)
 
-                If Not (B1!(P9, 0) = I1 Or B1!(P9, 1) = I1 Or B1!(P9, 2) = I1 Or B1!(P9, 3) = I1) Then
-                    If B1!(P9, 4) = -1 Or M6 >= M7 Then B1!(P9, 4) = I1
+                If Not (gameB1!(P9, 0) = I1 Or gameB1!(P9, 1) = I1 Or gameB1!(P9, 2) = I1 Or gameB1!(P9, 3) = I1) Then
+                    If gameB1!(P9, 4) = -1 Or M6 >= M7 Then gameB1!(P9, 4) = I1
                 End If
 
             End If
@@ -4454,7 +4462,7 @@ Sub COMPUTERSUBS ()
 
     Next I1
 
-    If B1!(P9, I2) = -1 And FS% <> 1 Then
+    If gameB1!(P9, I2) = -1 And FS% <> 1 Then
 
         If P$ = "C" Then P$ = "F": GoTo 8785
 
@@ -4472,7 +4480,7 @@ Sub COMPUTERSUBS ()
 
     For I2 = 0 To 4
 
-        If B1!(P9, I2) = -1 Then
+        If gameB1!(P9, I2) = -1 Then
             8790 '
             I = 15
 
@@ -4481,7 +4489,7 @@ Sub COMPUTERSUBS ()
                 I = I - 1
                 If I < 0 Then Call ADJFOUL: GoTo 8790
                 If plyrRat_GAME(P9, I, 18) <> 0 Or players_GAME$(P9, I, 0) = "XXX" Or gameRatings!(P9, I, 12) >= 6 Then 8795
-                B1!(P9, I2) = I
+                gameB1!(P9, I2) = I
             Next I2
 
             Exit For
@@ -4503,7 +4511,7 @@ End Sub
 Sub MADEFT ()
 
     'Increase FTM
-    gameRatings!(P, B1!(P, B), 10) = gameRatings!(P, B1!(P, B), 10) + 1
+    gameRatings!(P, gameB1!(P, B), 10) = gameRatings!(P, gameB1!(P, B), 10) + 1
 
     If pbpDelay! <> 0 Then
         Locate F3 + 9, 1
@@ -4615,7 +4623,7 @@ End Sub
 Sub THREEFT ()
 
     'Increase FTM
-    gameRatings!(P, B1!(P, B), 10) = gameRatings!(P, B1!(P, B), 10) + 1
+    gameRatings!(P, gameB1!(P, B), 10) = gameRatings!(P, gameB1!(P, B), 10) + 1
 
     Call d100(RN)
 
@@ -4740,7 +4748,7 @@ Sub AdjustPlayTime ()
     For I3 = 0 To 1
 
         For I4 = 0 To 4
-            timePlayed(I3, B1!(I3, I4)) = timePlayed(I3, B1!(I3, I4)) + timeElapsed!
+            timePlayed(I3, gameB1!(I3, I4)) = timePlayed(I3, gameB1!(I3, I4)) + timeElapsed!
         Next
 
     Next
@@ -5038,30 +5046,30 @@ Sub UPDATESCREEN ()
             Print Using "# "; I1;
 
             Color 15
-            Print Left$(players_GAME$(0, B1!(0, I1), 0), 12); Tab(16);
-            J = (gameRatings!(0, B1!(0, I1), 3)) - gameRatings!(0, B1!(0, I1), 7) - gameRatings!(0, B1!(0, I1), 11) - gameRatings!(0, B1!(0, I1), 12)
+            Print Left$(players_GAME$(0, gameB1!(0, I1), 0), 12); Tab(16);
+            J = (gameRatings!(0, gameB1!(0, I1), 3)) - gameRatings!(0, gameB1!(0, I1), 7) - gameRatings!(0, gameB1!(0, I1), 11) - gameRatings!(0, gameB1!(0, I1), 12)
 
             If J <= 0 Then J = 0
-            If gameRatings!(0, B1!(0, I1), 1) >= 100 Then gameRatings!(0, B1!(0, I1), 1) = 99
+            If gameRatings!(0, gameB1!(0, I1), 1) >= 100 Then gameRatings!(0, gameB1!(0, I1), 1) = 99
 
-            Print Using "## ## "; gameRatings!(0, B1!(0, I1), 0); gameRatings!(0, B1!(0, I1), 1);
+            Print Using "## ## "; gameRatings!(0, gameB1!(0, I1), 0); gameRatings!(0, gameB1!(0, I1), 1);
 
             If P = 0 Then
-                Print Using "##"; gameRatings!(0, B1!(0, I1), 21) * 2 / 10;
+                Print Using "##"; gameRatings!(0, gameB1!(0, I1), 21) * 2 / 10;
             Else
-                Print Using "##"; gameRatings!(0, B1!(0, I1), 2) * 2 / 10;
+                Print Using "##"; gameRatings!(0, gameB1!(0, I1), 2) * 2 / 10;
             End If
 
             If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And gameClock! > 120) Then Color 12
 
             Print Using "### "; J;
             Color 15
-            Print Using "## ##"; gameRatings!(0, B1!(0, I1), 4) / 10; gameRatings!(0, B1!(0, I1), 5) / 10;
-            Print Using "###  "; gameRatings!(0, B1!(0, I1), 8) * 2 + gameRatings!(0, B1!(0, I1), 10) + W%(0, B1!(0, I1), 0);
+            Print Using "## ##"; gameRatings!(0, gameB1!(0, I1), 4) / 10; gameRatings!(0, gameB1!(0, I1), 5) / 10;
+            Print Using "###  "; gameRatings!(0, gameB1!(0, I1), 8) * 2 + gameRatings!(0, gameB1!(0, I1), 10) + W%(0, gameB1!(0, I1), 0);
 
-            If gameRatings!(0, B1!(0, I1), 12) >= 5 Then Color 12
+            If gameRatings!(0, gameB1!(0, I1), 12) >= 5 Then Color 12
 
-            Print Using "#"; gameRatings!(0, B1!(0, I1), 12)
+            Print Using "#"; gameRatings!(0, gameB1!(0, I1), 12)
             Color 15
 
         Next I1
@@ -5076,24 +5084,24 @@ Sub UPDATESCREEN ()
             Print Using "# "; I1;
 
             Color 15
-            Print Left$(players_GAME$(1, B1!(1, I1), 0), 12); Tab(56);
+            Print Left$(players_GAME$(1, gameB1!(1, I1), 0), 12); Tab(56);
 
-            J = (gameRatings!(1, B1!(1, I1), 3)) - gameRatings!(1, B1!(1, I1), 7) - gameRatings!(1, B1!(1, I1), 11) - gameRatings!(1, B1!(1, I1), 12)
+            J = (gameRatings!(1, gameB1!(1, I1), 3)) - gameRatings!(1, gameB1!(1, I1), 7) - gameRatings!(1, gameB1!(1, I1), 11) - gameRatings!(1, gameB1!(1, I1), 12)
             If J <= 0 Then J = 0
 
-            If gameRatings!(1, B1!(1, I1), 1) >= 100 Then gameRatings!(1, B1!(1, I1), 1) = 99
-            Print Using "## ## "; gameRatings!(1, B1!(1, I1), 0); gameRatings!(1, B1!(1, I1), 1);
-            If P = 1 Then Print Using "##"; gameRatings!(1, B1!(1, I1), 21) * 2 / 10; Else Print Using "##"; gameRatings!(1, B1!(1, I1), 2) * 2 / 10;
+            If gameRatings!(1, gameB1!(1, I1), 1) >= 100 Then gameRatings!(1, gameB1!(1, I1), 1) = 99
+            Print Using "## ## "; gameRatings!(1, gameB1!(1, I1), 0); gameRatings!(1, gameB1!(1, I1), 1);
+            If P = 1 Then Print Using "##"; gameRatings!(1, gameB1!(1, I1), 21) * 2 / 10; Else Print Using "##"; gameRatings!(1, gameB1!(1, I1), 2) * 2 / 10;
 
             If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And gameClock! > 120) Then Color 12
             Print Using "### "; J;
 
             Color 15
-            Print Using "## ##"; gameRatings!(1, B1!(1, I1), 4) / 10; gameRatings!(1, B1!(1, I1), 5) / 10;
-            Print Using "###  "; gameRatings!(1, B1!(1, I1), 8) * 2 + gameRatings!(1, B1!(1, I1), 10) + W%(1, B1!(1, I1), 0);
+            Print Using "## ##"; gameRatings!(1, gameB1!(1, I1), 4) / 10; gameRatings!(1, gameB1!(1, I1), 5) / 10;
+            Print Using "###  "; gameRatings!(1, gameB1!(1, I1), 8) * 2 + gameRatings!(1, gameB1!(1, I1), 10) + W%(1, gameB1!(1, I1), 0);
 
-            If gameRatings!(1, B1!(1, I1), 12) >= 5 Then Color 12
-            Print Using "#"; gameRatings!(1, B1!(1, I1), 12)
+            If gameRatings!(1, gameB1!(1, I1), 12) >= 5 Then Color 12
+            Print Using "#"; gameRatings!(1, gameB1!(1, I1), 12)
 
             Color 15
 
@@ -5810,6 +5818,11 @@ Sub COMPILESTATFILES (compileOpt)
 
     Dim TG!
 
+    Shared HO$(), statsH$()
+
+    Shared gameW0!(), gameW1!()
+    Shared statsZ!(), statsZ1!(), statsZ2!()
+
     Cls
 
     HH% = gameLoc
@@ -5832,8 +5845,8 @@ Sub COMPILESTATFILES (compileOpt)
                 gameRatings!(PX, I, J) = gameRatings!(PX, I, J + 6)
             Next
 
-            W0!(PX, I) = W%(PX, I, 0)
-            W1!(PX, I) = W%(PX, I, 1)
+            gameW0!(PX, I) = W%(PX, I, 0)
+            gameW1!(PX, I) = W%(PX, I, 1)
 
         Next
 
@@ -5871,7 +5884,7 @@ Sub COMPILESTATFILES (compileOpt)
                     Input #1, players_GAME$(teamIdx, I, 0)
 
                     For J = 0 To 13:
-                        Input #1, Z2!(I, J)
+                        Input #1, statsZ2!(I, J)
                     Next J
 
                     Input #1, W2(teamIdx, I)
@@ -5895,13 +5908,13 @@ Sub COMPILESTATFILES (compileOpt)
 
             For I = 0 To 14
 
-                If gameRatings!(teamIdx, I, 2) * 2 + gameRatings!(teamIdx, I, 4) + W0!(teamIdx, I) > Z2!(I, 13) Then Z2!(I, 13) = gameRatings!(teamIdx, I, 2) * 2 + gameRatings!(teamIdx, I, 4) + W0!(teamIdx, I)
+                If gameRatings!(teamIdx, I, 2) * 2 + gameRatings!(teamIdx, I, 4) + gameW0!(teamIdx, I) > statsZ2!(I, 13) Then statsZ2!(I, 13) = gameRatings!(teamIdx, I, 2) * 2 + gameRatings!(teamIdx, I, 4) + gameW0!(teamIdx, I)
 
-                If gameRatings!(teamIdx, I, 10) > 0 Then Z2!(I, 0) = Z2!(I, 0) + 1
+                If gameRatings!(teamIdx, I, 10) > 0 Then statsZ2!(I, 0) = statsZ2!(I, 0) + 1
 
                 For J = 1 To 12
 
-                    Z2!(I, J) = Z2!(I, J) + gameRatings!(teamIdx, I, J)
+                    statsZ2!(I, J) = statsZ2!(I, J) + gameRatings!(teamIdx, I, J)
 
                     If Not (J = 5 Or J = 6 Or J = 10 Or J = 11) Then
                         Z!(J) = Z!(J) + gameRatings!(teamIdx, I, J)
@@ -5935,12 +5948,12 @@ Sub COMPILESTATFILES (compileOpt)
             Z1!(11) = Z1!(11) + turnovers(1 - teamIdx)
 
             For J = 0 To 14:
-                Z!(13) = Z!(13) + W0!(teamIdx, J)
-                Z!(14) = Z!(14) + W1!(teamIdx, J)
-                Z1!(13) = Z1!(13) + W0!(1 - teamIdx, J)
-                Z1!(14) = Z1!(14) + W1!(1 - teamIdx, J)
-                W2(teamIdx, J) = W2(teamIdx, J) + W0!(teamIdx, J)
-                W3(teamIdx, J) = W3(teamIdx, J) + W1!(teamIdx, J)
+                Z!(13) = Z!(13) + gameW0!(teamIdx, J)
+                Z!(14) = Z!(14) + gameW1!(teamIdx, J)
+                Z1!(13) = Z1!(13) + gameW0!(1 - teamIdx, J)
+                Z1!(14) = Z1!(14) + gameW1!(1 - teamIdx, J)
+                W2(teamIdx, J) = W2(teamIdx, J) + gameW0!(teamIdx, J)
+                W3(teamIdx, J) = W3(teamIdx, J) + gameW1!(teamIdx, J)
             Next J
 
             Z!(10) = Z!(10) + score(teamIdx, 0)
@@ -5962,7 +5975,7 @@ Sub COMPILESTATFILES (compileOpt)
                 Print #2, players_GAME$(teamIdx, I, 0)
 
                 For J = 0 To 13:
-                    Print #2, Z2!(I, J)
+                    Print #2, statsZ2!(I, J)
                 Next J
 
                 Print #2, W2(teamIdx, I)
@@ -5991,7 +6004,7 @@ Sub COMPILESTATFILES (compileOpt)
                 For I = 1 To NUM_STATRECORDS: Input #3, O%(I): Next I
                 For I = 1 To NUM_STATRECORDS: Input #3, HO$(I): Next I
                 For I = 1 To NUM_STATRECORDS: Input #3, HT%(I): Next I
-                For I = 1 To NUM_STATRECORDS: Input #3, H$(I): Next I
+                For I = 1 To NUM_STATRECORDS: Input #3, statsH$(I): Next I
 
                 Close #3
 
@@ -6003,43 +6016,43 @@ Sub COMPILESTATFILES (compileOpt)
                 Case 2
                     Select Case TG!
                         Case Is < 14500
-                            H$(Y%) = "N"
+                            statsH$(Y%) = "N"
                         Case 14501 To 16000
-                            H$(Y%) = "N1"
+                            statsH$(Y%) = "N1"
                         Case 16001 To 17500
-                            H$(Y%) = "N2"
+                            statsH$(Y%) = "N2"
                         Case 17501 To 19000
-                            H$(Y%) = "N3"
+                            statsH$(Y%) = "N3"
                         Case 19001 To 20500
-                            H$(Y%) = "N4"
+                            statsH$(Y%) = "N4"
                     End Select
 
                 Case Is = teamIdx
                     Select Case TG!
                         Case Is < 14500
-                            H$(Y%) = "H"
+                            statsH$(Y%) = "H"
                         Case 14501 To 16000
-                            H$(Y%) = "H1"
+                            statsH$(Y%) = "H1"
                         Case 16001 To 17500
-                            H$(Y%) = "H2"
+                            statsH$(Y%) = "H2"
                         Case 17501 To 19000
-                            H$(Y%) = "H3"
+                            statsH$(Y%) = "H3"
                         Case 19001 To 20500
-                            H$(Y%) = "H4"
+                            statsH$(Y%) = "H4"
                     End Select
 
                 Case Is <> teamIdx
                     Select Case TG!
                         Case Is < 14500
-                            H$(Y%) = "V"
+                            statsH$(Y%) = "V"
                         Case 14501 To 16000
-                            H$(Y%) = "V1"
+                            statsH$(Y%) = "V1"
                         Case 16001 To 17500
-                            H$(Y%) = "V2"
+                            statsH$(Y%) = "V2"
                         Case 17501 To 19000
-                            H$(Y%) = "V3"
+                            statsH$(Y%) = "V3"
                         Case 19001 To 20500
-                            H$(Y%) = "V4"
+                            statsH$(Y%) = "V4"
                     End Select
 
             End Select
@@ -6058,14 +6071,14 @@ Sub COMPILESTATFILES (compileOpt)
 
             For I = 1 To NUM_STATRECORDS: Print #4, HT%(I): Next I
 
-            For I = 1 To NUM_STATRECORDS: Print #4, H$(I): Next I
+            For I = 1 To NUM_STATRECORDS: Print #4, statsH$(I): Next I
 
             Close #4
 
             'Reset arrays for next iteration
             Erase HT%, O%
-            Erase Z!, Z1!, Z2!
-            Erase H$, HO$
+            Erase statsZ!, statsZ1!, statsZ2!
+            Erase statsH$, HO$
 
         End If
 

@@ -8,11 +8,11 @@ Sub EditStats ()
 
     _Title "Basketball: The Pro Game - Stats Input"
 
-    Shared compareZ!(), compareZ1!()
-    Shared compareW0!(), compareW1!()
+    Shared statsZ!(), statsZ1!()
+    Shared statsW0!(), statsW1!()
 
     Dim statPlyrNames$(14)
-    Dim statsZ2!(0 To 14, 0 To 13)
+    Dim inputZ2!(0 To 14, 0 To 13)
 
     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
     statFile$ = nameStatFile$(team$)
@@ -38,20 +38,20 @@ Sub EditStats ()
             Input #1, statPlyrNames$(I)
 
             For J = 0 To 13:
-                Input #1, statsZ2!(I, J)
+                Input #1, inputZ2!(I, J)
             Next J
 
-            Input #1, compareW0!(I)
-            Input #1, compareW1!(I)
+            Input #1, statsW0!(I)
+            Input #1, statsW1!(I)
 
         Next I
 
         For L = 0 To 15:
-            Input #1, compareZ!(L)
+            Input #1, statsZ!(L)
         Next L
 
         For L = 0 To 15:
-            Input #1, compareZ1!(L)
+            Input #1, statsZ1!(L)
         Next L
 
         Close #1
@@ -68,21 +68,21 @@ Sub EditStats ()
         Locate 3, 1
         Print "1. STAT FILE NAME "; statFile$
         Print "2. TM MINUTES ";
-        Print Using "#####"; Int(compareZ!(0) / 60)
-        Print "3. TM FGA "; compareZ!(1)
-        Print "4. TM FGM "; compareZ!(2)
-        Print "5. TM 3FGA "; compareZ!(14)
-        Print "6. TM 3FGM "; compareZ!(13)
-        Print "7. TM FTA "; compareZ!(3)
-        Print "8. TM FTM "; compareZ!(4)
-        Print "9. TM OFF RB  "; compareZ!(12)
-        Print "10. TM TOT RB "; compareZ!(5)
-        Print "11. TM FOULS "; compareZ!(6)
-        Print "12. TM STEALS "; compareZ!(7)
-        Print "13. TM ASSISTS "; compareZ!(8)
-        Print "14. TM BLOCKS "; compareZ!(9)
-        Print "15. TM TURNOVERS "; compareZ!(11)
-        Print "16. TM POINTS  "; compareZ!(10)
+        Print Using "#####"; Int(statsZ!(0) / 60)
+        Print "3. TM FGA "; statsZ!(1)
+        Print "4. TM FGM "; statsZ!(2)
+        Print "5. TM 3FGA "; statsZ!(14)
+        Print "6. TM 3FGM "; statsZ!(13)
+        Print "7. TM FTA "; statsZ!(3)
+        Print "8. TM FTM "; statsZ!(4)
+        Print "9. TM OFF RB  "; statsZ!(12)
+        Print "10. TM TOT RB "; statsZ!(5)
+        Print "11. TM FOULS "; statsZ!(6)
+        Print "12. TM STEALS "; statsZ!(7)
+        Print "13. TM ASSISTS "; statsZ!(8)
+        Print "14. TM BLOCKS "; statsZ!(9)
+        Print "15. TM TURNOVERS "; statsZ!(11)
+        Print "16. TM POINTS  "; statsZ!(10)
 
         Do
 
@@ -97,50 +97,50 @@ Sub EditStats ()
                     Locate 3, 1: Input "1. STAT FILE NAME "; statFile$
 
                 Case 2:
-                    Locate 4, 1: Input "2. TM MINUTES "; compareZ!(0)
-                    compareZ!(0) = compareZ!(0) * 60
+                    Locate 4, 1: Input "2. TM MINUTES "; statsZ!(0)
+                    statsZ!(0) = statsZ!(0) * 60
 
                 Case 3:
-                    Locate 5, 1: Input "3. TM FGA "; compareZ!(1)
+                    Locate 5, 1: Input "3. TM FGA "; statsZ!(1)
 
                 Case 4:
-                    Locate 6, 1: Input "4. TM FGM "; compareZ!(2)
+                    Locate 6, 1: Input "4. TM FGM "; statsZ!(2)
 
                 Case 5:
-                    Locate 7, 1: Input "5. TM 3FGA "; compareZ!(14)
+                    Locate 7, 1: Input "5. TM 3FGA "; statsZ!(14)
 
                 Case 6:
-                    Locate 8, 1: Input "6. TM 3FGM "; compareZ!(13)
+                    Locate 8, 1: Input "6. TM 3FGM "; statsZ!(13)
 
                 Case 7:
-                    Locate 9, 1: Input "7. TM FTA "; compareZ!(3)
+                    Locate 9, 1: Input "7. TM FTA "; statsZ!(3)
 
                 Case 8:
-                    Locate 10, 1: Input "8. TM FTM "; compareZ!(4)
+                    Locate 10, 1: Input "8. TM FTM "; statsZ!(4)
 
                 Case 9:
-                    Locate 11, 1: Input "9. TM OFF RB  "; compareZ!(12)
+                    Locate 11, 1: Input "9. TM OFF RB  "; statsZ!(12)
 
                 Case 10:
-                    Locate 12, 1: Input "10. TM TOT RB "; compareZ!(5)
+                    Locate 12, 1: Input "10. TM TOT RB "; statsZ!(5)
 
                 Case 11:
-                    Locate 13, 1: Input "11. TM FOULS "; compareZ!(6)
+                    Locate 13, 1: Input "11. TM FOULS "; statsZ!(6)
 
                 Case 12:
-                    Locate 14, 1: Input "12. TM STEALS "; compareZ!(7)
+                    Locate 14, 1: Input "12. TM STEALS "; statsZ!(7)
 
                 Case 13:
-                    Locate 15, 1: Input "13. TM ASSISTS "; compareZ!(8)
+                    Locate 15, 1: Input "13. TM ASSISTS "; statsZ!(8)
 
                 Case 14:
-                    Locate 16, 1: Input "14. TM BLOCKS "; compareZ!(9)
+                    Locate 16, 1: Input "14. TM BLOCKS "; statsZ!(9)
 
                 Case 15:
-                    Locate 17, 1: Input "15. TM TURNOVERS "; compareZ!(11)
+                    Locate 17, 1: Input "15. TM TURNOVERS "; statsZ!(11)
 
                 Case 16:
-                    Locate 18, 1: Input "16. TM POINTS  "; compareZ!(10)
+                    Locate 18, 1: Input "16. TM POINTS  "; statsZ!(10)
 
             End Select
 
@@ -154,20 +154,20 @@ Sub EditStats ()
         Call TITLE_STAT_HEADER(X$)
 
         Locate 3, 1
-        Print "1. OPP FGA "; compareZ1!(1)
-        Print "2. OPP FGM "; compareZ1!(2)
-        Print "3. OPP 3FGA "; compareZ1!(14)
-        Print "4. OPP 3FGM "; compareZ1!(13)
-        Print "5. OPP FTA "; compareZ1!(3)
-        Print "6. OPP FTM "; compareZ1!(4)
-        Print "7. OPP OFF RB  "; compareZ1!(12)
-        Print "8. OPP TOT RB "; compareZ1!(5)
-        Print "9. OPP FOULS "; compareZ1!(6)
-        Print "10. OPP STEALS "; compareZ1!(7)
-        Print "11. OPP ASSISTS "; compareZ1!(8)
-        Print "12. OPP BLOCKS "; compareZ1!(9)
-        Print "13. OPP TURNOVERS "; compareZ1!(11)
-        Print "14. OPP POINTS  "; compareZ1!(10)
+        Print "1. OPP FGA "; statsZ1!(1)
+        Print "2. OPP FGM "; statsZ1!(2)
+        Print "3. OPP 3FGA "; statsZ1!(14)
+        Print "4. OPP 3FGM "; statsZ1!(13)
+        Print "5. OPP FTA "; statsZ1!(3)
+        Print "6. OPP FTM "; statsZ1!(4)
+        Print "7. OPP OFF RB  "; statsZ1!(12)
+        Print "8. OPP TOT RB "; statsZ1!(5)
+        Print "9. OPP FOULS "; statsZ1!(6)
+        Print "10. OPP STEALS "; statsZ1!(7)
+        Print "11. OPP ASSISTS "; statsZ1!(8)
+        Print "12. OPP BLOCKS "; statsZ1!(9)
+        Print "13. OPP TURNOVERS "; statsZ1!(11)
+        Print "14. OPP POINTS  "; statsZ1!(10)
 
         Do
 
@@ -179,46 +179,46 @@ Sub EditStats ()
             Select Case B9
 
                 Case 1
-                    Locate 3, 1: Input "1. OPP FGA "; compareZ1!(1)
+                    Locate 3, 1: Input "1. OPP FGA "; statsZ1!(1)
 
                 Case 2
-                    Locate 4, 1: Input "2. OPP FGM "; compareZ1!(2)
+                    Locate 4, 1: Input "2. OPP FGM "; statsZ1!(2)
 
                 Case 3
-                    Locate 5, 1: Input "3. OPP 3FGA "; compareZ1!(14)
+                    Locate 5, 1: Input "3. OPP 3FGA "; statsZ1!(14)
 
                 Case 4
-                    Locate 6, 1: Input "4. OPP 3FGM "; compareZ1!(13)
+                    Locate 6, 1: Input "4. OPP 3FGM "; statsZ1!(13)
 
                 Case 5
-                    Locate 7, 1: Input "5. OPP FTA "; compareZ1!(3)
+                    Locate 7, 1: Input "5. OPP FTA "; statsZ1!(3)
 
                 Case 6
-                    Locate 8, 1: Input "6. OPP FTM "; compareZ1!(4)
+                    Locate 8, 1: Input "6. OPP FTM "; statsZ1!(4)
 
                 Case 7
-                    Locate 9, 1: Input "7. OPP OFF RB  "; compareZ1!(12)
+                    Locate 9, 1: Input "7. OPP OFF RB  "; statsZ1!(12)
 
                 Case 8
-                    Locate 10, 1: Input "8. OPP TOT RB "; compareZ1!(5)
+                    Locate 10, 1: Input "8. OPP TOT RB "; statsZ1!(5)
 
                 Case 9
-                    Locate 11, 1: Input "9. OPP FOULS "; compareZ1!(6)
+                    Locate 11, 1: Input "9. OPP FOULS "; statsZ1!(6)
 
                 Case 10
-                    Locate 12, 1: Input "10. OPP STEALS "; compareZ1!(7)
+                    Locate 12, 1: Input "10. OPP STEALS "; statsZ1!(7)
 
                 Case 11
-                    Locate 13, 1: Input "11. OPP ASSISTS "; compareZ1!(8)
+                    Locate 13, 1: Input "11. OPP ASSISTS "; statsZ1!(8)
 
                 Case 12
-                    Locate 14, 1: Input "12. OPP BLOCKS "; compareZ1!(9)
+                    Locate 14, 1: Input "12. OPP BLOCKS "; statsZ1!(9)
 
                 Case 13
-                    Locate 15, 1: Input "13. OPP TURNOVERS "; compareZ1!(11)
+                    Locate 15, 1: Input "13. OPP TURNOVERS "; statsZ1!(11)
 
                 Case 14
-                    Locate 16, 1: Input "14. OPP POINTS  "; compareZ1!(10)
+                    Locate 16, 1: Input "14. OPP POINTS  "; statsZ1!(10)
 
             End Select
 
@@ -257,22 +257,22 @@ Sub EditStats ()
                 Locate 2, 1: Print "PLAYER - " + Str$(I + 1)
                 Locate 3, 1
                 Print "1. NAME "; statPlyrNames$(I)
-                Print "2. GAMES "; statsZ2!(I, 0)
-                Print "3. MINUTES "; Int(statsZ2!(I, 10) / 60 + .5)
-                Print "4. FGA "; statsZ2!(I, 1)
-                Print "5. FGM "; statsZ2!(I, 2); ""
-                Print "6. FTA "; statsZ2!(I, 3)
-                Print "7. FTM "; statsZ2!(I, 4)
-                Print "8. OFF REB "; statsZ2!(I, 12)
-                Print "9. TOT REB  "; statsZ2!(I, 5)
-                Print "10. FOULS "; statsZ2!(I, 6)
-                Print "11. STEALS "; statsZ2!(I, 7)
-                Print "12. ASSISTS "; statsZ2!(I, 8)
-                Print "13. BLOCKS "; statsZ2!(I, 9)
-                Print "14. TURNOVERS "; statsZ2!(I, 11)
-                Print "15. 3FGA "; compareW1!(I)
-                Print "16. 3FGM "; compareW0!(I)
-                Print "17. HI-GAME (PTS) "; statsZ2!(I, 13)
+                Print "2. GAMES "; inputZ2!(I, 0)
+                Print "3. MINUTES "; Int(inputZ2!(I, 10) / 60 + .5)
+                Print "4. FGA "; inputZ2!(I, 1)
+                Print "5. FGM "; inputZ2!(I, 2); ""
+                Print "6. FTA "; inputZ2!(I, 3)
+                Print "7. FTM "; inputZ2!(I, 4)
+                Print "8. OFF REB "; inputZ2!(I, 12)
+                Print "9. TOT REB  "; inputZ2!(I, 5)
+                Print "10. FOULS "; inputZ2!(I, 6)
+                Print "11. STEALS "; inputZ2!(I, 7)
+                Print "12. ASSISTS "; inputZ2!(I, 8)
+                Print "13. BLOCKS "; inputZ2!(I, 9)
+                Print "14. TURNOVERS "; inputZ2!(I, 11)
+                Print "15. 3FGA "; statsW1!(I)
+                Print "16. 3FGM "; statsW0!(I)
+                Print "17. HI-GAME (PTS) "; inputZ2!(I, 13)
 
                 Do
 
@@ -287,53 +287,53 @@ Sub EditStats ()
                             Locate 3, 1: Input "1. NAME "; statPlyrNames$(I)
 
                         Case 2
-                            Locate 4, 1: Input "2. GAMES "; statsZ2!(I, 0)
+                            Locate 4, 1: Input "2. GAMES "; inputZ2!(I, 0)
 
                         Case 3
-                            Locate 5, 1: Input "3. MINUTES "; statsZ2!(I, 10)
-                            statsZ2!(I, 10) = statsZ2!(I, 10) * 60
+                            Locate 5, 1: Input "3. MINUTES "; inputZ2!(I, 10)
+                            inputZ2!(I, 10) = inputZ2!(I, 10) * 60
 
                         Case 4
-                            Locate 6, 1: Input "4. FGA "; statsZ2!(I, 1)
+                            Locate 6, 1: Input "4. FGA "; inputZ2!(I, 1)
 
                         Case 5
-                            Locate 7, 1: Input "5. FGM "; statsZ2!(I, 2)
+                            Locate 7, 1: Input "5. FGM "; inputZ2!(I, 2)
 
                         Case 6
-                            Locate 8, 1: Input "6. FTA "; statsZ2!(I, 3)
+                            Locate 8, 1: Input "6. FTA "; inputZ2!(I, 3)
 
                         Case 7
-                            Locate 9, 1: Input "7. FTM "; statsZ2!(I, 4)
+                            Locate 9, 1: Input "7. FTM "; inputZ2!(I, 4)
 
                         Case 8
-                            Locate 10, 1: Input "8. OFF REB "; statsZ2!(I, 12)
+                            Locate 10, 1: Input "8. OFF REB "; inputZ2!(I, 12)
 
                         Case 9
-                            Locate 11, 1: Input "9. TOT REB  "; statsZ2!(I, 5)
+                            Locate 11, 1: Input "9. TOT REB  "; inputZ2!(I, 5)
 
                         Case 10
-                            Locate 12, 1: Input "10. FOULS "; statsZ2!(I, 6)
+                            Locate 12, 1: Input "10. FOULS "; inputZ2!(I, 6)
 
                         Case 11
-                            Locate 13, 1: Input "11. STEALS "; statsZ2!(I, 7)
+                            Locate 13, 1: Input "11. STEALS "; inputZ2!(I, 7)
 
                         Case 12
-                            Locate 14, 1: Input "12. ASSISTS "; statsZ2!(I, 8)
+                            Locate 14, 1: Input "12. ASSISTS "; inputZ2!(I, 8)
 
                         Case 13
-                            Locate 15, 1: Input "13. BLOCKS "; statsZ2!(I, 9)
+                            Locate 15, 1: Input "13. BLOCKS "; inputZ2!(I, 9)
 
                         Case 14
-                            Locate 16, 1: Input "14. TURNOVERS "; statsZ2!(I, 11)
+                            Locate 16, 1: Input "14. TURNOVERS "; inputZ2!(I, 11)
 
                         Case 15
-                            Locate 17, 1: Input "15. 3FGA "; compareW1!(I)
+                            Locate 17, 1: Input "15. 3FGA "; statsW1!(I)
 
                         Case 16
-                            Locate 18, 1: Input "16. 3FGM "; compareW0!(I)
+                            Locate 18, 1: Input "16. 3FGM "; statsW0!(I)
 
                         Case 17
-                            Locate 19, 1: Input "17. HI-GAME (PTS) "; statsZ2!(I, 13)
+                            Locate 19, 1: Input "17. HI-GAME (PTS) "; inputZ2!(I, 13)
 
                     End Select
 
@@ -355,21 +355,21 @@ Sub EditStats ()
             Print #2, statPlyrNames$(I)
 
             For J = 0 To 13:
-                Print #2, statsZ2!(I, J)
+                Print #2, inputZ2!(I, J)
             Next J
 
-            Print #2, compareW0!(I)
+            Print #2, statsW0!(I)
 
-            Print #2, compareW1!(I)
+            Print #2, statsW1!(I)
 
         Next I
 
         For L = 0 To 15:
-            Print #2, compareZ!(L)
+            Print #2, statsZ!(L)
         Next L
 
         For L = 0 To 15:
-            Print #2, compareZ1!(L)
+            Print #2, statsZ1!(L)
         Next L
 
         Close #2

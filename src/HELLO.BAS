@@ -608,6 +608,9 @@ Sub Replay_Menu ()
 
         End If
 
+        Color 15, 0
+        Cls
+
     Loop Until Selection% = 6 Or ExitCode% = 27
 
 End Sub
@@ -727,3 +730,4 @@ End Sub
 ' For Game
 '$INCLUDE: 'PROHOOP.BAS'
 '$INCLUDE: 'GameRoutines.bm'
+

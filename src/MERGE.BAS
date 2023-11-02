@@ -71,17 +71,17 @@ Sub MergeStats ()
 
     Shared Ycurr%, Yroad%
 
-    Shared alignA$()
-    Shared O$(), statsH$()
+    Shared statPlyrNames$()
+    Shared statsO$(), statsH$()
     Shared ORD$()
     Shared HRD$()
 
     Shared ARD!()
-    Shared ORD%(), mergeT%(), statO%()
+    Shared ORD%(), statsT%(), statO%()
     Shared TRD%(), W0RD!(), W1RD!()
 
-    Shared compareA!(), compareW0!(), compareW1!()
-    Shared alignZ!(), alignZ1!(), ZRD!(), ZRD1!()
+    Shared compareA!(), statsW0!(), statsW1!()
+    Shared statsZ!(), statsZ1!(), ZRD!(), ZRD1!()
 
     Do
 
@@ -153,17 +153,17 @@ Sub MergeStats ()
 
                         For I = 0 To 14:
 
-                            Input #3, alignA$(I)
+                            Input #3, statPlyrNames$(I)
 
                             For J = 0 To 13: Input #3, compareA!(I, J): Next
 
-                            Input #3, compareW0!(I)
-                            Input #3, compareW1!(I)
+                            Input #3, statsW0!(I)
+                            Input #3, statsW1!(I)
 
                         Next
 
-                        For L = 0 To 15: Input #3, alignZ!(L): Next
-                        For L = 0 To 15: Input #3, alignZ1!(L): Next
+                        For L = 0 To 15: Input #3, statsZ!(L): Next
+                        For L = 0 To 15: Input #3, statsZ1!(L): Next
 
                         Close #3
 
@@ -172,8 +172,8 @@ Sub MergeStats ()
                         Input #4, Ycurr%
 
                         For I = 1 to NUM_STATRECORDS: Input #4, statO%(I): Next I
-                        For I = 1 to NUM_STATRECORDS: Input #4, O$(I): Next I
-                        For I = 1 to NUM_STATRECORDS: Input #4, mergeT%(I): Next I
+                        For I = 1 to NUM_STATRECORDS: Input #4, statsO$(I): Next I
+                        For I = 1 to NUM_STATRECORDS: Input #4, statsT%(I): Next I
                         For I = 1 to NUM_STATRECORDS: Input #4, statsH$(I): Next I
 
                         Close #4
@@ -181,7 +181,7 @@ Sub MergeStats ()
                         SEQ = 0
 
                         For K = 0 To 14
-                            If UCase$(ARD$(K)) <> UCase$(alignA$(K)) Then
+                            If UCase$(ARD$(K)) <> UCase$(statPlyrNames$(K)) Then
                                 SEQ = SEQ + 1
                             End If
                         Next
@@ -276,22 +276,22 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
 
     Shared Ycurr%, Yroad%
 
-    Shared alignA$()
+    Shared statPlyrNames$()
     Shared HRD$(), ORD$()
-    Shared O$(), statsH$()
+    Shared statsO$(), statsH$()
 
     Shared ARD!()
-    Shared ORD%(), mergeT%(), TRD%()
+    Shared ORD%(), statsT%(), TRD%()
     Shared statO%(), W0RD!(), W1RD!()
 
-    Shared compareA!(), compareW0!(), compareW1!()
-    Shared alignZ!(), alignZ1!(), ZRD!(), ZRD1!()
+    Shared compareA!(), statsW0!(), statsW1!()
+    Shared statsZ!(), statsZ1!(), ZRD!(), ZRD1!()
 
     For K = 1 To Yroad%
         Ycurr% = Ycurr% + 1
         statO%(Ycurr%) = ORD%(K)
-        O$(Ycurr%) = ORD$(K)
-        mergeT%(Ycurr%) = TRD%(K)
+        statsO$(Ycurr%) = ORD$(K)
+        statsT%(Ycurr%) = TRD%(K)
         statsH$(Ycurr%) = HRD$(K)
     Next
 
@@ -302,8 +302,8 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
             compareA!(I, J) = compareA!(I, J) + ARD!(I, J)
         Next J
 
-        compareW0!(I) = compareW0!(I) + W0RD!(I)
-        compareW1!(I) = compareW1!(I) + W1RD!(I)
+        statsW0!(I) = statsW0!(I) + W0RD!(I)
+        statsW1!(I) = statsW1!(I) + W1RD!(I)
 
         If compareA!(I, 13) < ARD!(I, 13) Then
             compareA!(I, 13) = ARD!(I, 13)
@@ -313,8 +313,8 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
     Next I
 
     For L = 0 To 14
-        alignZ!(L) = alignZ!(L) + ZRD!(L)
-        alignZ1!(L) = alignZ1!(L) + ZRD1!(L)
+        statsZ!(L) = statsZ!(L) + ZRD!(L)
+        statsZ1!(L) = statsZ1!(L) + ZRD1!(L)
     Next
 
     Open pathCurrentStats$ + statFile$ For Output As #1
@@ -322,14 +322,14 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
     Write #1, B$
 
     For I = 0 To 14:
-        Write #1, alignA$(I)
+        Write #1, statPlyrNames$(I)
         For J = 0 To 13: Write #1, compareA!(I, J): Next
-        Write #1, compareW0!(I)
-        Write #1, compareW1!(I)
+        Write #1, statsW0!(I)
+        Write #1, statsW1!(I)
     Next
 
-    For L = 0 To 15: Write #1, alignZ!(L): Next
-    For L = 0 To 15: Write #1, alignZ1!(L): Next
+    For L = 0 To 15: Write #1, statsZ!(L): Next
+    For L = 0 To 15: Write #1, statsZ1!(L): Next
 
     Close #1
 
@@ -337,8 +337,8 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
 
     Write #2, Ycurr%
     For I = 1 to NUM_STATRECORDS: Write #2, statO%(I): Next I
-    For I = 1 to NUM_STATRECORDS: Write #2, O$(I): Next I
-    For I = 1 to NUM_STATRECORDS: Write #2, mergeT%(I): Next I
+    For I = 1 to NUM_STATRECORDS: Write #2, statsO$(I): Next I
+    For I = 1 to NUM_STATRECORDS: Write #2, statsT%(I): Next I
     For I = 1 to NUM_STATRECORDS: Write #2, statsH$(I): Next I
 
     Close #2

@@ -32,7 +32,7 @@ Sub LOOKY ()
 
             Else
 
-                Call LoadTeamStats(statFile$, totalGames%)
+                Call LoadTeamStats(statFile$, team$, totalGames%)
                 Call ViewStatSummary(statFile$, team$, totalGames%, menuExit)
 
             End If
@@ -58,9 +58,9 @@ Sub LoadTeamStats (statFile$, team$, totalGames%)
     Shared statO%(), statsL%()
 
     Shared categories$(), statPlyrNames$()
-    Shared O$(), statsH$()
+    Shared statsO$(), statsH$()
 
-    Shared compareZ!(), compareZ1!()
+    Shared statsZ!(), statsZ1!()
     Shared values!(), statsW0!(), statsW1!()
 
     ' *** READ IN TEAM STATS ***
@@ -86,7 +86,7 @@ Sub LoadTeamStats (statFile$, team$, totalGames%)
     Next I
 
     For I = 1 To NUM_STATRECORDS:
-        Input #1, O$(I)
+        Input #1, statsO$(I)
     Next I
 
     For I = 1 To NUM_STATRECORDS:
@@ -132,11 +132,11 @@ Sub LoadTeamStats (statFile$, team$, totalGames%)
     Next
 
     For K = 0 To 15:
-        Input #2, compareZ!(K)
+        Input #2, statsZ!(K)
     Next
 
     For K = 0 To 15:
-        Input #2, compareZ1!(K)
+        Input #2, statsZ1!(K)
     Next
 
     Close #2
@@ -178,7 +178,7 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
     Shared statO%(), statsL%()
 
     Shared categories$()
-    Shared O$(), statsH$()
+    Shared statsO$(), statsH$()
 
     Color , 0
     Cls
@@ -206,7 +206,7 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
         If I > 36 Then
             Locate I - 35, 53: Print Using "###"; statO%(I);
-            Print Tab(57); Left$(O$(I), 14);
+            Print Tab(57); Left$(statsO$(I), 14);
             Print Tab(72); Using "###"; statsL%(I);
             Print Tab(76); statsH$(I)
 
@@ -214,12 +214,12 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
             If I > 18 Then
                 Locate I - 17, 27: Print Using "###"; statO%(I);
-                Print Tab(31); Left$(O$(I), 14);
+                Print Tab(31); Left$(statsO$(I), 14);
                 Print Tab(46); Using "###"; statsL%(I);
                 Print Tab(50); statsH$(I)
             Else
                 Print Using "###"; statO%(I);
-                Print Tab(5); Left$(O$(I), 14);
+                Print Tab(5); Left$(statsO$(I), 14);
                 Print Tab(20); Using "###"; statsL%(I);
                 Print Tab(24); statsH$(I)
             End If
@@ -296,7 +296,7 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
     Shared categories$(), statPlyrNames$()
 
-    Shared compareZ!(), compareZ1!()
+    Shared statsZ!(), statsZ1!()
     Shared values!(), statsW0!(), statsW1!()
 
     categoryPick = 1
@@ -419,23 +419,23 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
         Locate , 15: Print Using "##"; totalGames%;
 
         'FGM / FGA
-        Locate , 28: Print Using "#### ####"; compareZ!(2); compareZ!(1);
-        If compareZ!(1) <> 0 Then 
-            fgPCT! = compareZ!(2) / compareZ!(1)
+        Locate , 28: Print Using "#### ####"; statsZ!(2); statsZ!(1);
+        If statsZ!(1) <> 0 Then 
+            fgPCT! = statsZ!(2) / statsZ!(1)
             Locate , 38: Print Using ".###"; fgPCT!;
         End if
 
         '3FGM / 3FGA
-        Locate , 44: Print Using "#### ####"; compareZ!(13); compareZ!(14);
-        If compareZ!(14) <> 0 Then 
-            threeFGPCT! = compareZ!(13) / compareZ!(14)
+        Locate , 44: Print Using "#### ####"; statsZ!(13); statsZ!(14);
+        If statsZ!(14) <> 0 Then 
+            threeFGPCT! = statsZ!(13) / statsZ!(14)
             Locate , 54: Print Using ".###"; threeFGPCT!;
         End If
 
         'FTM / FTA
-        Locate , 60: Print Using "#### ####"; compareZ!(4); compareZ!(3);
-        If compareZ!(3) <> 0 Then 
-            ftPCT! = compareZ!(4) / compareZ!(3)
+        Locate , 60: Print Using "#### ####"; statsZ!(4); statsZ!(3);
+        If statsZ!(3) <> 0 Then 
+            ftPCT! = statsZ!(4) / statsZ!(3)
             Locate , 70: Print Using ".###"; ftPCT!
         End If
 
@@ -446,23 +446,23 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
         Locate , 15: Print Using "##"; totalGames%;
 
         'FGM / FGA
-        Locate , 28: Print Using "#### ####"; compareZ1!(2); compareZ1!(1);
-        If compareZ1!(1) <> 0 Then 
-            fgPCT! = compareZ1!(2) / compareZ1!(1)
+        Locate , 28: Print Using "#### ####"; statsZ1!(2); statsZ1!(1);
+        If statsZ1!(1) <> 0 Then 
+            fgPCT! = statsZ1!(2) / statsZ1!(1)
             Locate , 38: Print Using ".###"; fgPCT!;
         End If
 
         '3FGM / 3FGA
-        Locate , 44: Print Using "#### ####"; compareZ1!(13); compareZ1!(14);
-        If compareZ1!(14) <> 0 Then 
-            threeFGPCT! = compareZ1!(13) / compareZ1!(14)
+        Locate , 44: Print Using "#### ####"; statsZ1!(13); statsZ1!(14);
+        If statsZ1!(14) <> 0 Then 
+            threeFGPCT! = statsZ1!(13) / statsZ1!(14)
             Locate , 54: Print Using ".###"; threeFGPCT!;
         End If
 
         'FTM / FTA
-        Locate , 60: Print Using "#### ####"; compareZ1!(4); compareZ1!(3);
-        If compareZ1!(3) <> 0 Then 
-            ftPCT! = compareZ1!(4) / compareZ1!(3)
+        Locate , 60: Print Using "#### ####"; statsZ1!(4); statsZ1!(3);
+        If statsZ1!(3) <> 0 Then 
+            ftPCT! = statsZ1!(4) / statsZ1!(3)
             Locate , 70: Print Using ".###"; ftPCT!
         End If
 
@@ -530,7 +530,7 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
     Shared categories$(), statPlyrNames$()
 
-    Shared compareZ!(), compareZ1!()
+    Shared statsZ!(), statsZ1!()
     Shared values!(), statsW0!(), statsW1!()
 
     categoryPick = 13
@@ -597,35 +597,35 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
         Next I
 
-        Print "TEAM";: Locate , 39: Print Using "####"; compareZ!(15)
+        Print "TEAM";: Locate , 39: Print Using "####"; statsZ!(15)
 
         Color 12: Print "TOTALS";
 
         'Team
 
         'Points
-        If totalGames% > 0 Then ptsCalc! = compareZ!(10) / totalGames% Else ptsCalc! = 0
-        Locate , 14: Print Using "##### ###.#"; compareZ!(10); ptsCalc!;
+        If totalGames% > 0 Then ptsCalc! = statsZ!(10) / totalGames% Else ptsCalc! = 0
+        Locate , 14: Print Using "##### ###.#"; statsZ!(10); ptsCalc!;
 
         'Rebounds
-        If totalGames% > 0 Then rebCalc! = compareZ!(5) / totalGames% Else rebCalc! = 0
-        Locate , 29: Print Using "#### #### ####  ##.#"; compareZ!(12); compareZ!(5) - compareZ!(12) - compareZ!(15); compareZ!(5); rebCalc!;
+        If totalGames% > 0 Then rebCalc! = statsZ!(5) / totalGames% Else rebCalc! = 0
+        Locate , 29: Print Using "#### #### ####  ##.#"; statsZ!(12); statsZ!(5) - statsZ!(12) - statsZ!(15); statsZ!(5); rebCalc!;
 
         'Fouls  AST  BLK  STL  TO
-        Print Using " #### #### #### #### ####"; compareZ!(6); compareZ!(8); compareZ!(9); compareZ!(7); compareZ!(11)
+        Print Using " #### #### #### #### ####"; statsZ!(6); statsZ!(8); statsZ!(9); statsZ!(7); statsZ!(11)
 
         'Opponents
 
         'Points
-        If totalGames% > 0 Then ptsCalc! = compareZ1!(10) / totalGames% Else ptsCalc! = 0
-        Locate , 14: Print Using "##### ###.#"; compareZ1!(10); ptsCalc!;
+        If totalGames% > 0 Then ptsCalc! = statsZ1!(10) / totalGames% Else ptsCalc! = 0
+        Locate , 14: Print Using "##### ###.#"; statsZ1!(10); ptsCalc!;
 
         'Rebounds
-        If totalGames% > 0 Then rebCalc! = compareZ1!(5) / totalGames% Else rebCalc! = 0
-        Locate , 29: Print Using "#### #### ####  ##.#"; compareZ1!(12); compareZ1!(5) - compareZ1!(12) - compareZ1!(15); compareZ1!(5); rebCalc!;
+        If totalGames% > 0 Then rebCalc! = statsZ1!(5) / totalGames% Else rebCalc! = 0
+        Locate , 29: Print Using "#### #### ####  ##.#"; statsZ1!(12); statsZ1!(5) - statsZ1!(12) - statsZ1!(15); statsZ1!(5); rebCalc!;
 
         'Fouls  AST  BLK  STL  TO
-        Print Using " #### #### #### #### ####"; compareZ1!(6); compareZ1!(8); compareZ1!(9); compareZ1!(7); compareZ1!(11)
+        Print Using " #### #### #### #### ####"; statsZ1!(6); statsZ1!(8); statsZ1!(9); statsZ1!(7); statsZ1!(11)
 
         Do
 
@@ -685,7 +685,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
     Shared statsL%(), statO%()
 
     Shared categories$()
-    Shared O$(), statsH$()
+    Shared statsO$(), statsH$()
 
     Color , 0
     Cls
@@ -715,7 +715,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
             If I <= 72 Then
 
                 Print Using "###"; statO%(I);
-                Print Tab(5); Left$(O$(I), 14);
+                Print Tab(5); Left$(statsO$(I), 14);
                 Print Tab(20); Using "###"; statsL%(I);
                 Print Tab(24); statsH$(I)
 
@@ -723,7 +723,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
                 Locate I - 71, 27
                 Print Using "###"; statO%(I);
-                Print Tab(31); Left$(O$(I), 14);
+                Print Tab(31); Left$(statsO$(I), 14);
                 Print Tab(46); Using "###"; statsL%(I);
                 Print Tab(50); statsH$(I)
 
@@ -800,7 +800,7 @@ Sub PrintStatsSchedule (teamName$, totalGames%)
 
     Shared O%(), statsL%()
 
-    Shared statsH$(), O$()
+    Shared statsH$(), statsO$()
 
     LPrint "SCHEDULE RESULTS FOR "; teamName$
     LPrint
@@ -808,19 +808,19 @@ Sub PrintStatsSchedule (teamName$, totalGames%)
     For I = 1 To 28
 
         LPrint Using "###"; statO%(I);
-        LPrint Tab(5); Left$(O$(I), 14);
+        LPrint Tab(5); Left$(statsO$(I), 14);
         LPrint Tab(20); Using "###"; statsL%(I);
         LPrint Tab(24); statsH$(I); Tab(27);
 
         If I + 28 <= totalGames% Then
             LPrint Using "###"; statO%(I + 28);
-            LPrint Tab(31); Left$(O$(I + 28), 14);
+            LPrint Tab(31); Left$(statsO$(I + 28), 14);
             LPrint Tab(46); Using "###"; statsL%(I + 28);
             LPrint Tab(50); statsH$(I + 28); Tab(53);
 
             If I + 56 <= totalGames% Then
                 LPrint Using "###"; statO%(I + 56);
-                LPrint Tab(57); Left$(O$(I + 56), 14);
+                LPrint Tab(57); Left$(statsO$(I + 56), 14);
                 LPrint Tab(72); Using "###"; statsL%(I + 56);
                 LPrint Tab(76); statsH$(I + 56)
             Else
@@ -852,7 +852,7 @@ End Sub
 'team's stats to the default printer
 Sub PrintStatsSummary (teamName$, totalGames%)
 
-    Shared compareZ!(), compareZ1!()
+    Shared statsZ!(), statsZ1!()
     Shared values!(), statsW0!(), statsW1!()
 
     Shared statPlyrNames$()
@@ -938,21 +938,21 @@ Sub PrintStatsSummary (teamName$, totalGames%)
     LPrint Using "##"; totalGames%;
 
     'FGM / FGA / FGPCT
-    LPrint Tab(28); Using "#### ####"; compareZ!(2); compareZ!(1);
-    If compareZ!(1) <> 0 Then 
-        LPrint Tab(38); Using ".###"; compareZ!(2) / compareZ!(1);
+    LPrint Tab(28); Using "#### ####"; statsZ!(2); statsZ!(1);
+    If statsZ!(1) <> 0 Then 
+        LPrint Tab(38); Using ".###"; statsZ!(2) / statsZ!(1);
     End If
 
     '3FGM / 3FGA / 3FGPCT
-    LPrint Tab(44); Using "#### ####"; compareZ!(13); compareZ!(14);
-    If compareZ!(14) <> 0 Then 
-        LPrint Tab(54); Using ".###"; compareZ!(13) / compareZ!(14);
+    LPrint Tab(44); Using "#### ####"; statsZ!(13); statsZ!(14);
+    If statsZ!(14) <> 0 Then 
+        LPrint Tab(54); Using ".###"; statsZ!(13) / statsZ!(14);
     End If
 
     'FTM / FTA / FTPCT
-    LPrint Tab(60); Using "#### ####"; compareZ!(4); compareZ!(3);
-    If compareZ!(3) <> 0 Then 
-        LPrint Tab(70); Using ".###"; compareZ!(4) / compareZ!(3)
+    LPrint Tab(60); Using "#### ####"; statsZ!(4); statsZ!(3);
+    If statsZ!(3) <> 0 Then 
+        LPrint Tab(70); Using ".###"; statsZ!(4) / statsZ!(3)
     End If
 
     'Opponents
@@ -961,16 +961,16 @@ Sub PrintStatsSummary (teamName$, totalGames%)
     LPrint Tab(15); Using "##"; totalGames%;
 
     'FGM / FGA / FGPCT
-    LPrint Tab(28); Using "#### ####"; compareZ1!(2); compareZ1!(1);
-    If compareZ1!(1) <> 0 Then LPrint Tab(38); Using ".###"; compareZ1!(2) / compareZ1!(1);
+    LPrint Tab(28); Using "#### ####"; statsZ1!(2); statsZ1!(1);
+    If statsZ1!(1) <> 0 Then LPrint Tab(38); Using ".###"; statsZ1!(2) / statsZ1!(1);
 
     '3FGM / 3FGA / 3FGPCT
-    LPrint Tab(44); Using "#### ####"; compareZ1!(13); compareZ1!(14);
-    If compareZ1!(14) <> 0 Then LPrint Tab(54); Using ".###"; compareZ1!(13) / compareZ1!(14);
+    LPrint Tab(44); Using "#### ####"; statsZ1!(13); statsZ1!(14);
+    If statsZ1!(14) <> 0 Then LPrint Tab(54); Using ".###"; statsZ1!(13) / statsZ1!(14);
 
     'FTM / FTA / FTPCT
-    LPrint Tab(60); Using "#### ####"; compareZ1!(4); compareZ1!(3);
-    If compareZ1!(3) <> 0 Then LPrint Tab(70); Using ".###"; compareZ1!(4) / compareZ1!(3)
+    LPrint Tab(60); Using "#### ####"; statsZ1!(4); statsZ1!(3);
+    If statsZ1!(3) <> 0 Then LPrint Tab(70); Using ".###"; statsZ1!(4) / statsZ1!(3)
 
     'Player Stats
     LPrint
@@ -1004,32 +1004,32 @@ Sub PrintStatsSummary (teamName$, totalGames%)
 
     Next I
 
-    LPrint "TEAM";: LPrint Tab(39); Using "####"; compareZ!(15)
+    LPrint "TEAM";: LPrint Tab(39); Using "####"; statsZ!(15)
 
     LPrint
     LPrint "TOTALS";
 
     'Points
-    If totalGames% > 0 Then ptsCalc! = compareZ!(5) / totalGames% Else ptsCalc! = 0
-    LPrint Tab(14); Using "##### ###.#"; compareZ!(10); ptsCalc;
+    If totalGames% > 0 Then ptsCalc! = statsZ!(5) / totalGames% Else ptsCalc! = 0
+    LPrint Tab(14); Using "##### ###.#"; statsZ!(10); ptsCalc;
 
     'Rebounds
-    If totalGames% > 0 Then rebCalc! = compareZ!(5) / totalGames% Else rebCalc! = 0
-    LPrint Tab(29); Using "#### #### ####  ##.#"; compareZ!(12); compareZ!(5) - compareZ!(12) - compareZ!(15); compareZ!(5); rebCalc!;
+    If totalGames% > 0 Then rebCalc! = statsZ!(5) / totalGames% Else rebCalc! = 0
+    LPrint Tab(29); Using "#### #### ####  ##.#"; statsZ!(12); statsZ!(5) - statsZ!(12) - statsZ!(15); statsZ!(5); rebCalc!;
 
     'Fouls  AST  BLK  STL  TO
-    LPrint Using " #### #### #### #### ####"; compareZ!(6); compareZ!(8); compareZ!(9); compareZ!(7); compareZ!(11)
+    LPrint Using " #### #### #### #### ####"; statsZ!(6); statsZ!(8); statsZ!(9); statsZ!(7); statsZ!(11)
 
     'Points
-    If totalGames% > 0 Then ptsCalc! = compareZ1!(10) / totalGames% Else ptsCalc! = 0
-    LPrint Tab(14); Using "##### ###.#"; compareZ1!(10); ptsCalc!;
+    If totalGames% > 0 Then ptsCalc! = statsZ1!(10) / totalGames% Else ptsCalc! = 0
+    LPrint Tab(14); Using "##### ###.#"; statsZ1!(10); ptsCalc!;
 
     'Rebounds
-    If totalGames% > 0 Then rebCalc! = compareZ1!(5) / totalGames% Else rebCalc! = 0
-    LPrint Tab(29); Using "#### #### ####  ##.#"; compareZ1!(12); compareZ1!(5) - compareZ1!(12) - compareZ1!(15); compareZ1!(5); rebCalc!;
+    If totalGames% > 0 Then rebCalc! = statsZ1!(5) / totalGames% Else rebCalc! = 0
+    LPrint Tab(29); Using "#### #### ####  ##.#"; statsZ1!(12); statsZ1!(5) - statsZ1!(12) - statsZ1!(15); statsZ1!(5); rebCalc!;
 
     'Fouls  AST  BLK  STL  TO
-    LPrint Using " #### #### #### #### ####"; compareZ1!(6); compareZ1!(8); compareZ1!(9); compareZ1!(7); compareZ1!(11)
+    LPrint Using " #### #### #### #### ####"; statsZ1!(6); statsZ1!(8); statsZ1!(9); statsZ1!(7); statsZ1!(11)
 
     LPrint Chr$(12)
 

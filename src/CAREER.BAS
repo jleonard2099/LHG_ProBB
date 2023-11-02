@@ -1,7 +1,7 @@
 '----------------------------------------
 '          CAREER Subroutine
 '----------------------------------------
-'This routine gives the user a menu from 
+'This routine gives the user a menu from
 'which they can choose several options
 'for managing career files
 Sub CAREER ()
@@ -122,54 +122,54 @@ Sub MergeFirstYear ()
     Dim careerW0!(62), careerW1!(62)
 
     Shared AR$()
-    Shared ars!(), compareZ!(), compareZ1!()
+    Shared ars!(), statsZ!(), statsZ1!()
     Shared W0S!(), W1S!()
 
 
     NB = -1
 
-	Do
+    Do
 
-		Cls
+        Cls
 
-		For J = 15 To 18: 
-			Locate J
-			Print Space$(68)
-		Next
+        For J = 15 To 18: 
+            Locate J
+            Print Space$(68)
+        Next
 
-		Color 11
-		Locate 15, 5
-		Input "ENTER NAME OF CAREER STAT FILE "; careerFile$
+        Color 11
+        Locate 15, 5
+        Input "ENTER NAME OF CAREER STAT FILE "; careerFile$
 
-		Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+        Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
-		If teamNbr <> 0 Then
+        If teamNbr <> 0 Then
 
-			statFile$ = nameStatFile$(team$)
+            statFile$ = nameStatFile$(team$)
 
-			Do
+            Do
 
-				Color 15, 0
-				Cls
+                Color 15, 0
+                Cls
 
-				Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
-				Locate 9, 25: Print "ANY CHANGE? (Y/N)"
+                Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
+                Locate 9, 25: Print "ANY CHANGE? (Y/N)"
 
-				J$ = GetKeyPress$
+                J$ = GetKeyPress$
 
-			Loop Until UCase$(J$) = "Y" Or UCase$(J$) = "N" Or I$ = Chr$(27)
+            Loop Until UCase$(J$) = "Y" Or UCase$(J$) = "N" Or I$ = Chr$(27)
 
-			If UCase$(J$) = "N" Then
+            If UCase$(J$) = "N" Then
 
-				Do
+                Do
                     Locate , 5
                     Print "WOULD YOU LIKE TO POST CAREER LEADERS? (Y/N)"
-					K$ = GetKeyPress$
-				Loop Until UCase$(K$) = "Y" Or UCase$(K$) = "N" Or K$ = Chr$(27)
+                    K$ = GetKeyPress$
+                Loop Until UCase$(K$) = "Y" Or UCase$(K$) = "N" Or K$ = Chr$(27)
 
-				If UCase$(K$) = "Y" Then finalUpdate% = 1 Else finalUpdate% = 0
+                If UCase$(K$) = "Y" Then doPostLeaders = 1 Else doPostLeaders = 0
 
-				If Not _FileExists(diskPaths$(1) + statFile$) Then
+                If Not _FileExists(diskPaths$(1) + statFile$) Then
 
                     MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
                     BoxWidth = 24
@@ -179,99 +179,101 @@ Sub MergeFirstYear ()
                     I$ = GetKeyPress$
                     Call CSMsgBox("", 0, Pass)
 
-				Else
+                Else
 
-					Locate 20, 5
-					Color 15
-					Print "MERGING AND UPDATING CAREER STATS . . . . PLEASE WAIT"
+                    Locate 20, 5
+                    Color 15
+                    Print "MERGING AND UPDATING CAREER STATS . . . . PLEASE WAIT"
 
                     TMR = 945
 
-					Open diskPaths$(1) + statFile$ For Input As #1
+                    Open diskPaths$(1) + statFile$ For Input As #1
 
-					Input #1, B$
+                    Input #1, B$
 
-					For I = 0 To 14:
+                    For I = 0 To 14:
 
-						Input #1, initA$(I)
+                        Input #1, initA$(I)
 
-						For J = 0 To 13: Input #1, initA!(I, J): Next
+                        For J = 0 To 13: Input #1, initA!(I, J): Next
 
-						Input #1, careerW0!(I)
-						Input #1, careerW1!(I)
+                        Input #1, careerW0!(I)
+                        Input #1, careerW1!(I)
 
-						Color 5
-						Locate 21, 38
-						TMR = TMR - 1
-						Print Using "####"; TMR
+                        Color 5
+                        Locate 21, 38
+                        TMR = TMR - 1
+                        Print Using "####"; TMR
 
-					Next
+                    Next
 
-					For L = 0 To 15: Input #1, compareZ!(L): Next
+                    For L = 0 To 15: Input #1, statsZ!(L): Next
 
-					For L = 0 To 15: Input #1, compareZ1!(L): Next
+                    For L = 0 To 15: Input #1, statsZ1!(L): Next
 
-					Close #1
+                    Close #1
 
-					For I = 0 To 61
+                    For I = 0 To 61
 
-						N = 1
+                        N = 1
 
-						If initA$(I) = "END" Or initA$(I) = "XXX" Or initA$(I) = "" Then
-							initA$(I) = ""
-						Else
-							NB = NB + 1
-						End If
+                        If initA$(I) = "END" Or initA$(I) = "XXX" Or initA$(I) = "" Then
+                            initA$(I) = ""
+                        Else
+                            NB = NB + 1
+                        End If
 
-						For J = 0 To 13
-							ars!(N, I, J) = initA!(I, J)
-						Next J
+                        For J = 0 To 13
+                            ars!(N, I, J) = initA!(I, J)
+                        Next J
 
-						ars!(N, I, 14) = 1
-						ars!(N, I, 15) = statYear
-						W0S!(N, I) = careerW0!(I)
-						W1S!(N, I) = careerW1!(I)
+                        ars!(N, I, 14) = 1
+                        ars!(N, I, 15) = statYear
+                        W0S!(N, I) = careerW0!(I)
+                        W1S!(N, I) = careerW1!(I)
 
-					Next I
+                    Next I
 
-					For I = 0 To 61: AR$(I) = initA$(I): Next
+                    For I = 0 To 61: 
+                        AR$(I) = initA$(I)
+                    Next
 
-					If finalUpdate% = 1 Then Call UpdateCareerLeaders(careerFile$)
+                    If doPostLeaders = 1 Then Call UpdateCareerLeaders(careerFile$)
 
-					Open diskPaths$(1) + careerFile$ + ".CAR" For Output As #2
+                    Open diskPaths$(1) + careerFile$ + ".CAR" For Output As #2
 
-					Write #2, NB, B$
+                    Write #2, NB, B$
 
-					For N = 1 To 15
+                    For N = 1 To 15
 
-						For I = 0 To 61
+                        For I = 0 To 61
 
-							Write #2, AR$(I)
+                            Write #2, AR$(I)
 
-							For J = 0 To 15: 
-								Write #2, ars!(N, I, J)
-							Next J
+                            For J = 0 To 15: 
+                                Write #2, ars!(N, I, J)
+                            Next J
 
-							Write #2, W0S!(N, I)
-							Write #2, W1S!(N, I)
+                            Write #2, W0S!(N, I)
+                            Write #2, W1S!(N, I)
 
-							Color 5
-							Locate 21, 38
-							TMR = TMR - 1: Print Using "####"; TMR
+                            Color 5
+                            Locate 21, 38
+                            TMR = TMR - 1: Print Using "####"; TMR
 
-						Next I
+                        Next I
 
-					Next N
+                    Next N
 
-					Close #2
+                    Close #2
 
-				End If 'Done checking for stat file
+                End If 'Done checking for stat file
 
-			End If 'Done checking for changes
+            End If 'Done checking for changes
 
-		End If 'Done checking if team was chosen
+        End If 'Done checking if team was chosen
 
-	Loop Until UCase$(J$) = "N"
+    Loop Until UCase$(J$) = "N"
 
 End Sub
 
@@ -496,7 +498,7 @@ Sub MergeAddYear (selectedFile$, statFile$)
 
     Shared AR$()
 
-    Shared ars!(), compareZ!(), compareZ1!()
+    Shared ars!(), statsZ!(), statsZ1!()
     Shared W0S!(), W1S!()
 
     'needs to be a constant???
@@ -520,7 +522,7 @@ Sub MergeAddYear (selectedFile$, statFile$)
             finalUpdate$ = UCase$(K$)
         Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N" Or K$ = Chr$(27)
 
-        If finalUpdate$ = "Y" Then finalupdate% = 1 Else finalupdate% = 0
+        If finalUpdate$ = "Y" Then doPostLeaders = 1 Else doPostLeaders = 0
 
         Locate 20, 5
         Print "LOADING CAREER STATS . . . . PLEASE WAIT"
@@ -578,9 +580,9 @@ Sub MergeAddYear (selectedFile$, statFile$)
 
         Next
 
-        For L = 0 To 15: Input #2, compareZ!(L): Next
+        For L = 0 To 15: Input #2, statsZ!(L): Next
 
-        For L = 0 To 15: Input #2, compareZ1!(L): Next
+        For L = 0 To 15: Input #2, statsZ1!(L): Next
 
         Close #2
 
@@ -645,7 +647,7 @@ Sub MergeAddYear (selectedFile$, statFile$)
 
         Next I
 
-        If finalUpdate% = 1 Then Call UpdateCareerLeaders(selectedFile$)
+        If doPostLeaders = 1 Then Call UpdateCareerLeaders(selectedFile$)
 
         Locate 20, 5
         Print "MERGING CAREER STATS . . . . PLEASE WAIT"
@@ -693,7 +695,6 @@ End Sub
 Sub UpdateCareerLeaders (careerFile$)
 
     Dim BL!(62), BLYR!(21)
-    Dim initA$(62)
     Dim BL$(0 To 20)
 
     Shared AR$()

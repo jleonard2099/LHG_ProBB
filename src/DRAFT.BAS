@@ -120,7 +120,7 @@ Sub DRAFT ()
                             Next
                         Next
 
-                        Call NewTeamParameters(teamYears$(0), tmInfo_DRAFT$(0, 0), teamIdx, yearIdx)
+                        Call NewTeamParameters(teamYears$(0), tmInfo_DRAFT$(0, 0), yearIdx)
                         Call DraftChoices(1, doneDraft, teamIdx, tmTotal_DRAFT(), yearIdx)
 
                     Case 2
@@ -147,7 +147,7 @@ End Sub
 'This subroutine prompts the user for the
 'minimum required parameters to create a
 'new team that players will be drafted to.
-Sub NewTeamParameters (teamYear$, teamName$, teamIdx, normYrIdx)
+Sub NewTeamParameters (teamYear$, teamName$, normYrIdx)
 
     Shared tmInfo_DRAFT$(), teamYears$()
     Shared leagRat_DRAFT%(), leagueAverages%(), tmRat_DRAFT%()
@@ -608,18 +608,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT(), normYrIdx)
 
     Cls
 
-    JJ = 1
-
-    Locate 6, 8: Color 15, 1
-
-    Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
-
-    For II = 1 To JJ: Locate 6 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-    Next
-
-    Locate 7 + JJ, 8
-    Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
+    Call box0 (6, 8, 8, 70, 2, 15, 1)
 
     Locate 7
 
@@ -811,7 +800,7 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
 
             Do
 
-                Call SelectDraftTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%, draftIdx)
+                Call SelectDraftTeam(numberTeams, yearNumber$, chosenIdx, ExitCode%, draftIdx)
 
                 If ExitCode% <> 27 Then
 
@@ -844,7 +833,7 @@ End Sub
 '----------------------------------------
 'This subroutine provides an interface for
 'selecting the team to draft players from
-Sub SelectDraftTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%, draftIdx)
+Sub SelectDraftTeam (numberTeams, yearNumber$, selectedIdx, ExitCode%, draftIdx)
 
     If numberTeams > 0 Then
 
@@ -879,7 +868,7 @@ Sub SelectDraftTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%
             Locate 2, 33: Color 3
             Print "LOADING.."
 
-            Call ReadDraftTeam(yearNumber$, teamName$, selectedIdx, draftIdx)
+            Call ReadDraftTeam(yearNumber$, selectedIdx, draftIdx)
 
         End If
 
@@ -893,7 +882,7 @@ End Sub
 '----------------------------------------
 'This subroutine reads team data into
 'arrays for the selected team
-Sub ReadDraftTeam (teamYear$, targetTeam$, teamIdx, draftIdx)
+Sub ReadDraftTeam (teamYear$, teamIdx, draftIdx)
 
     Shared tmInfo_DRAFT$(), players_DRAFT$(), teamYears$()
     Shared plyrRat_DRAFT%(), leagRat_DRAFT%(), tmRat_DRAFT%()

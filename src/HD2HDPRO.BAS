@@ -2,14 +2,12 @@
 '          HD2HDPRO Subroutine
 '----------------------------------------
 'This subroutine reads in stats from the
-'selected team and then presents the user 
-'a menu of options for viewing Head-to-Head 
+'selected team and then presents the user
+'a menu of options for viewing Head-to-Head
 'team comparisons.
 Sub HD2HDPRO ()
 
     _Title "Basketball: The Pro Game - Head-to-Head Stats"
-
-    ReDim menuChoices$(1 To 2)
 
     Shared statO%(), intZ1%()
 
@@ -18,13 +16,13 @@ Sub HD2HDPRO ()
     Shared TAL!(), TAW!(), THL!(), THW!()
     Shared TR1!(), TR2!(), TR3!(), TR4!()
 
-    Shared O$(), statsH$()
+    Shared statsO$(), statsH$()
+    Shared statsZ1$()
 
     Shared div1$, div2$, div3$, div4$
 
     Dim intT%(NUM_STATRECORDS)
 
-    Dim DV$(4)
     Dim Z2$(TEAMS_PER_CONFERENCE)
 
     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
@@ -32,13 +30,13 @@ Sub HD2HDPRO ()
 
     If Not _FileExists(diskPaths$(1) + statFile$ + "S") Then
 
-		MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
-		BoxWidth = 24
-		BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-		Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-		Call CSMsgBox(MsgText$, BoxWidth, Pass)
-		J$ = GetKeyPress$
-		Call CSMsgBox("", 0, Pass)
+        MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
+        BoxWidth = 24
+        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+        J$ = GetKeyPress$
+        Call CSMsgBox("", 0, Pass)
 
     Else
 
@@ -51,7 +49,7 @@ Sub HD2HDPRO ()
         Next
 
         For J = 1 to NUM_STATRECORDS:
-            Input #1, O$(J)
+            Input #1, statsO$(J)
         Next
 
         For J = 1 to NUM_STATRECORDS:
@@ -107,7 +105,7 @@ Sub HD2HDPRO ()
             Input #2, div4$
 
             For X = 1 To TEAMS_PER_CONFERENCE
-                Input #2, Z1$(X)
+                Input #2, statsZ1$(X)
                 Input #2, intZ1%(X)
                 Input #2, Z2$(X)
             Next
@@ -125,17 +123,17 @@ Sub HD2HDPRO ()
 
             For K = 1 To TEAMS_PER_CONFERENCE
 
-                If Z1$(K) <> "XXX" Then
+                If statsZ1$(K) <> "XXX" Then
 
                     For I = 1 To Y
-                        If statO%(I) > intT%(I) And Left$(statsH$(I), 1) = "V" And O$(I) = Z1$(K) Then AW!(K) = AW!(K) + 1
-                        If statO%(I) > intT%(I) And (Left$(statsH$(I), 1) = "H" Or Left$(statsH$(I), 1) = "N") And O$(I) = Z1$(K) Then HW!(K) = HW!(K) + 1
-                        If statO%(I) < intT%(I) And Left$(statsH$(I), 1) = "V" And O$(I) = Z1$(K) Then AL!(K) = AL!(K) + 1
-                        If statO%(I) < intT%(I) And (Left$(statsH$(I), 1) = "H" Or Left$(statsH$(I), 1) = "N") And O$(I) = Z1$(K) Then HL!(K) = HL!(K) + 1
-                        If O$(I) = Z1$(K) And (Left$(statsH$(I), 1) = "H" Or Left$(statsH$(I), 1) = "N") Then R2!(K) = R2!(K) + intT%(I)
-                        If O$(I) = Z1$(K) And (Left$(statsH$(I), 1) = "H" Or Left$(statsH$(I), 1) = "N") Then R1!(K) = R1!(K) + statO%(I)
-                        If O$(I) = Z1$(K) And Left$(statsH$(I), 1) = "V" Then R4!(K) = R4!(K) + intT%(I)
-                        If O$(I) = Z1$(K) And Left$(statsH$(I), 1) = "V" Then R3!(K) = R3!(K) + statO%(I)
+                        If statO%(I) > intT%(I) And Left$(statsH$(I), 1) = "V" And statsO$(I) = statsZ1$(K) Then AW!(K) = AW!(K) + 1
+                        If statO%(I) > intT%(I) And (Left$(statsH$(I), 1) = "H" Or Left$(statsH$(I), 1) = "N") And statsO$(I) = statsZ1$(K) Then HW!(K) = HW!(K) + 1
+                        If statO%(I) < intT%(I) And Left$(statsH$(I), 1) = "V" And statsO$(I) = statsZ1$(K) Then AL!(K) = AL!(K) + 1
+                        If statO%(I) < intT%(I) And (Left$(statsH$(I), 1) = "H" Or Left$(statsH$(I), 1) = "N") And statsO$(I) = statsZ1$(K) Then HL!(K) = HL!(K) + 1
+                        If statsO$(I) = statsZ1$(K) And (Left$(statsH$(I), 1) = "H" Or Left$(statsH$(I), 1) = "N") Then R2!(K) = R2!(K) + intT%(I)
+                        If statsO$(I) = statsZ1$(K) And (Left$(statsH$(I), 1) = "H" Or Left$(statsH$(I), 1) = "N") Then R1!(K) = R1!(K) + statO%(I)
+                        If statsO$(I) = statsZ1$(K) And Left$(statsH$(I), 1) = "V" Then R4!(K) = R4!(K) + intT%(I)
+                        If statsO$(I) = statsZ1$(K) And Left$(statsH$(I), 1) = "V" Then R3!(K) = R3!(K) + statO%(I)
 
                     Next I
 
@@ -168,7 +166,7 @@ Sub Hd2HdPro_Printer (teamName$)
     Shared TAL!(), TAW!(), THL!(), THW!()
     Shared TR1!(), TR2!(), TR3!(), TR4!()
 
-    Shared Z1$()
+    Shared statsZ1$()
 
     Shared div1$, div2$, div3$, div4$
 
@@ -205,9 +203,9 @@ Sub Hd2HdPro_Printer (teamName$)
 
             For K = DD To EE
 
-                If Z1$(K) <> "XXX" And Z1$(K) <> teamName$ Then
+                If statsZ1$(K) <> "XXX" And statsZ1$(K) <> teamName$ Then
 
-                    LPrint Z1$(K);
+                    LPrint statsZ1$(K);
                     LPrint Tab(22); Using "#"; HW!(K);
                     LPrint Tab(26); Using "#"; HL!(K);
 
@@ -413,7 +411,7 @@ Sub Hd2HdPro_Screen (teamName$)
     Shared TAL!(), TAW!(), THL!(), THW!()
     Shared TR1!(), TR2!(), TR3!(), TR4!()
 
-    Shared Z1$()
+    Shared statsZ1$()
 
     Shared div1$, div2$, div3$, div4$
 
@@ -456,10 +454,10 @@ Sub Hd2HdPro_Screen (teamName$)
 
             For K = DD To EE
 
-                If Z1$(K) <> "XXX" And Z1$(K) <> teamName$ And Z1$(K) <> "*" Then
+                If statsZ1$(K) <> "XXX" And statsZ1$(K) <> teamName$ And statsZ1$(K) <> "*" Then
 
                     Color 15
-                    Locate , 1: Print Left$(Z1$(K), 13);
+                    Locate , 1: Print Left$(statsZ1$(K), 13);
 
                     Color 7
                     Locate , 15: Print Using "#"; HW!(K);

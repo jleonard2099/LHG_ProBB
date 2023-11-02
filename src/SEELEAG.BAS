@@ -31,7 +31,7 @@ Sub LoadLeaderFiles_Pro (targetFile$)
 
     Shared O1!(), O2!()
     Shared DL!(), OL!()
-    Shared statZ!(), statZ1!()
+    Shared seeZ!(), seeZ1!()
 
     Shared DL$(), OL$()
     Shared leagT$(), Z2$(), Z3$()
@@ -60,7 +60,7 @@ Sub LoadLeaderFiles_Pro (targetFile$)
     Next
 
     For X = 1 To 250
-        Input #2, Z2$(X), Z3$(X), statZ!(X), statZ1!(X)
+        Input #2, Z2$(X), Z3$(X), seeZ!(X), seeZ1!(X)
     Next
 
     For X = 1 To TEAMS_PER_CONFERENCE
@@ -136,21 +136,7 @@ Sub StatOptions ()
             Color 15, 0
             Cls
 
-            JJ = 4
-
-            Locate 6, 8
-            Color 15, 1
-
-            Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
-
-            For II = 1 To JJ:
-                Locate 6 + II, 8
-                Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-            Next
-
-            Locate 7 + JJ, 8
-
-            Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
+            Call box0 (6, 8, 11, 70, 2, 15, 1)
 
             Do
                 Color 15, 1
@@ -217,7 +203,7 @@ Sub LeaderStats_Screen ()
     Shared O1!(), O2!()
 
     Shared DL!(), OL!()
-    Shared statZ!(), statZ1!()
+    Shared seeZ!(), seeZ1!()
 
     Shared DL$(), OL$(), OL!()
     Shared leagT$(), Z2$(), Z3$()
@@ -426,7 +412,7 @@ Sub LeaderStats_Screen ()
         If Z2$(P) <> "*" And Z2$(P) <> "" Then
             Print Left$(Z2$(P), 10) + ", " + Z3$(P);
             Locate , 28
-            Print Using "##.#  ####"; statZ!(P) * 100; statZ1!(P)
+            Print Using "##.#  ####"; seeZ!(P) * 100; seeZ1!(P)
         End If
 
     Next
@@ -444,7 +430,7 @@ Sub LeaderStats_Screen ()
             Locate , 41
             Print Left$(Z2$(P), 10) + ", " + Z3$(P);
             Locate , 68
-            Print Using "##.#  ####"; statZ!(P) * 100; statZ1!(P)
+            Print Using "##.#  ####"; seeZ!(P) * 100; seeZ1!(P)
         End If
 
     Next
@@ -467,7 +453,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; statZ!(P)
+            Locate , 34: Print Using "###.#"; seeZ!(P)
         End If
 
     Next
@@ -482,7 +468,7 @@ Sub LeaderStats_Screen ()
     For P = 21 To 40
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; statZ!(P)
+            Locate , 74: Print Using "####"; seeZ!(P)
         End If
     Next
 
@@ -503,7 +489,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; statZ!(P)
+            Locate , 34: Print Using "###.#"; seeZ!(P)
         End If
 
     Next
@@ -517,7 +503,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; statZ!(P)
+            Locate , 74: Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -531,7 +517,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; statZ!(P)
+            Locate , 34: Print Using "###.#"; seeZ!(P)
         End If
 
     Next
@@ -545,7 +531,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; statZ!(P)
+            Locate , 74: Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -567,7 +553,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; statZ!(P) * 100
+            Locate , 34: Print Using "###.#"; seeZ!(P) * 100
         End If
 
     Next P
@@ -581,7 +567,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "###.#"; statZ!(P)
+            Locate , 74: Print Using "###.#"; seeZ!(P)
         End If
 
     Next P
@@ -595,7 +581,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "####"; statZ!(P)
+            Locate , 34: Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -609,7 +595,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; statZ!(P)
+            Locate , 74: Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -631,7 +617,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; statZ!(P)
+            Locate , 34: Print Using "###.#"; seeZ!(P)
         End If
 
     Next
@@ -645,7 +631,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; statZ!(P)
+            Locate , 74: Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -659,7 +645,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; statZ!(P)
+            Locate , 34: Print Using "###.#"; seeZ!(P)
         End If
 
     Next
@@ -673,7 +659,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; statZ!(P)
+            Locate , 74: Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -694,7 +680,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "####"; statZ!(P)
+            Locate , 34: Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -708,7 +694,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; statZ!(P)
+            Locate , 74: Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -722,7 +708,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; statZ!(P)
+            Locate , 34: Print Using "###.#"; seeZ!(P)
         End If
 
     Next
@@ -736,7 +722,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "*" Then
             Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; statZ!(P)
+            Locate , 74: Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -758,7 +744,7 @@ Sub LeaderStats_Screen ()
 
         If Z2$(P) <> "*" Then
             Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "####"; statZ!(P)
+            Locate , 34: Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -963,7 +949,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
 
     Shared O1!(), O2!()
     Shared DL!(), OL!()
-    Shared statZ!(), statZ1!()
+    Shared seeZ!(), seeZ1!()
 
     Shared OL$(), DL$(), leagT$()
     Shared Z2$(), Z3$()
@@ -1097,7 +1083,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Left$(Z2$(P), 10) + ", " + Z3$(P);
             Print #1, Tab(28);
-            Print #1, Using "##.#  ####"; statZ!(P) * 100; statZ1!(P);
+            Print #1, Using "##.#  ####"; seeZ!(P) * 100; seeZ1!(P);
             Print #1, Tab(41);
         End If
 
@@ -1106,7 +1092,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Left$(Z2$(P + 20), 10) + ", " + Z3$(P + 20);
             Print #1, Tab(68);
-            Print #1, Using "##.#  ####"; statZ!(P + 20) * 100; statZ1!(P)
+            Print #1, Using "##.#  ####"; seeZ!(P + 20) * 100; seeZ1!(P)
         End If
 
     Next
@@ -1121,7 +1107,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P) + ", " + Z3$(P);
             Print #1, Tab(34);
-            Print #1, Using "###.#"; statZ!(P);
+            Print #1, Using "###.#"; seeZ!(P);
             Print #1, Tab(41);
         End If
 
@@ -1130,7 +1116,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P + 20) + ", " + Z3$(P + 20);
             Print #1, Tab(74);
-            Print #1, Using "####"; statZ!(P + 20)
+            Print #1, Using "####"; seeZ!(P + 20)
         End If
 
     Next
@@ -1145,7 +1131,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P) + ", " + Z3$(P);
             Print #1, Tab(34);
-            Print #1, Using "###.#"; statZ!(P);
+            Print #1, Using "###.#"; seeZ!(P);
             Print #1, Tab(41);
         End If
 
@@ -1154,7 +1140,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; statZ!(P + 10)
+            Print #1, Using "####"; seeZ!(P + 10)
         End If
 
     Next
@@ -1169,7 +1155,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P) + ", " + Z3$(P);
             Print #1, Tab(34);
-            Print #1, Using "###.#"; statZ!(P);
+            Print #1, Using "###.#"; seeZ!(P);
             Print #1, Tab(41);
         End If
 
@@ -1178,7 +1164,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; statZ!(P + 10)
+            Print #1, Using "####"; seeZ!(P + 10)
         End If
 
     Next
@@ -1193,7 +1179,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P) + ", " + Z3$(P);
             Print #1, Tab(34);
-            Print #1, Using "###.#"; statZ!(P) * 100;
+            Print #1, Using "###.#"; seeZ!(P) * 100;
             Print #1, Tab(41);
         End If
 
@@ -1202,7 +1188,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P + 20) + ", " + Z3$(P + 20);
             Print #1, Tab(74);
-            Print #1, Using "###.#"; statZ!(P + 20)
+            Print #1, Using "###.#"; seeZ!(P + 20)
         End If
 
     Next
@@ -1217,7 +1203,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P) + ", " + Z3$(P);
             Print #1, Tab(34);
-            Print #1, Using "####"; statZ!(P);
+            Print #1, Using "####"; seeZ!(P);
             Print #1, Tab(41);
         End If
 
@@ -1226,7 +1212,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P + 20) + ", " + Z3$(P + 20);
             Print #1, Tab(74);
-            Print #1, Using "####"; statZ!(P + 20)
+            Print #1, Using "####"; seeZ!(P + 20)
         End If
 
     Next
@@ -1242,7 +1228,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P) + ", " + Z3$(P);
             Print #1, Tab(34);
-            Print #1, Using "###.#"; statZ!(P);
+            Print #1, Using "###.#"; seeZ!(P);
             Print #1, Tab(41);
         End If
 
@@ -1251,7 +1237,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; statZ!(P + 10)
+            Print #1, Using "####"; seeZ!(P + 10)
         End If
 
     Next
@@ -1266,7 +1252,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P) + ", " + Z3$(P);
             Print #1, Tab(34);
-            Print #1, Using "###.#"; statZ!(P);
+            Print #1, Using "###.#"; seeZ!(P);
             Print #1, Tab(41);
         End If
 
@@ -1275,7 +1261,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; statZ!(P + 20)
+            Print #1, Using "####"; seeZ!(P + 20)
         End If
 
     Next
@@ -1290,7 +1276,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P) + ", " + Z3$(P);
             Print #1, Tab(34);
-            Print #1, Using "####"; statZ!(P);
+            Print #1, Using "####"; seeZ!(P);
             Print #1, Tab(41);
         End If
 
@@ -1299,7 +1285,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; statZ!(P + 10)
+            Print #1, Using "####"; seeZ!(P + 10)
         End If
 
     Next
@@ -1314,7 +1300,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P) + ", " + Z3$(P);
             Print #1, Tab(34);
-            Print #1, Using "###.#"; statZ!(P);
+            Print #1, Using "###.#"; seeZ!(P);
             Print #1, Tab(41);
         End If
 
@@ -1323,7 +1309,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         Else
             Print #1, Z2$(P + 10) + ", " + Z3$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; statZ!(P + 10)
+            Print #1, Using "####"; seeZ!(P + 10)
         End If
 
     Next
@@ -1335,7 +1321,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
         If Z2$(P) <> "" Then
             Print #1, Z2$(P) + ", " + Z3$(P);
             Print #1, Tab(34);
-            Print #1, Using "####"; statZ!(P)
+            Print #1, Using "####"; seeZ!(P)
         End If
     Next
 

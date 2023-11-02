@@ -55,8 +55,8 @@ Sub UpdateLeagueStandings (league$)
 
     Shared statO%()
 
-    Shared O$(), statsH$()
-    Shared TML$(), strZ1$()
+    Shared statsO$(), statsH$()
+    Shared TML$(), statsZ1$()
 
     Dim statsT%(NUM_STATRECORDS)
 
@@ -72,23 +72,23 @@ Sub UpdateLeagueStandings (league$)
         Locate 7, 39
         TMR = TMR - 1: Print Using "##"; TMR
 
-        If strZ1$(KK) <> "*" Then
+        If statsZ1$(KK) <> "*" Then
 
-            TML$(YY) = strZ1$(KK)
+            TML$(YY) = statsZ1$(KK)
 
             Color 15, 0
             Cls
 
             Locate 5: Print "COMPUTING RECORDS . . . . . . PLEASE WAIT"
 
-            If _FileExists(diskPaths$(1) + strZ1$(KK) + "S") Then
+            If _FileExists(diskPaths$(1) + statsZ1$(KK) + "S") Then
 
-                Open diskPaths$(1) + strZ1$(KK) + "S" For Input As #2
+                Open diskPaths$(1) + statsZ1$(KK) + "S" For Input As #2
 
                 Input #2, XX%
 
                 For J = 1 to NUM_STATRECORDS: Input #2, statO%(J): Next
-                For J = 1 to NUM_STATRECORDS: Input #2, O$(J): Next
+                For J = 1 to NUM_STATRECORDS: Input #2, statsO$(J): Next
                 For J = 1 to NUM_STATRECORDS: Input #2, statsT%(J): Next
                 For J = 1 to NUM_STATRECORDS: Input #2, statsH$(J): Next
 
@@ -157,8 +157,6 @@ End Sub
 'display in a formatted view
 Sub ViewNewStandings (league$)
 
-    ReDim menuChoices$(1 To 2)
-
     Shared HLL(), HWW()
     Shared LL(), LLS()
     Shared LTL(), LTW(), LWS()
@@ -167,7 +165,6 @@ Sub ViewNewStandings (league$)
 
     Shared statO%()
 
-    Shared O$(), statsH$()
     Shared TML$()
 
     Shared div1$, div2$, div3$, div4$
@@ -272,10 +269,7 @@ Sub PrintNewStandings (league$)
 
     Shared statO%()
 
-    Shared O$(), statsH$()
     Shared TML$()
-
-    ReDim menuChoices$(1 To 2)
 
     Shared div1$, div2$, div3$, div4$
 

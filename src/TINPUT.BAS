@@ -65,8 +65,6 @@ Sub DoTheInput (action%)
 
     Dim P$(2)
 
-    ReDim menuChoices$(1 To 5)
-
     Dim NTMS As Integer
 
     Color , 0
@@ -207,7 +205,7 @@ Sub DoTheInput (action%)
             Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
             If teamNbr <> 0 Then
-                Call ViewRoster(team$, teamNbr)
+                Call ViewRoster
             End If
 
     End Select
@@ -280,7 +278,7 @@ End Sub
 '----------------------------------------
 'This subroutine displays the selected
 'team's roster on the end user display
-Sub ViewRoster (A$, T1)
+Sub ViewRoster ()
 
     Shared playerRatings%(), leagueRatings%(), teamRatings%()
     Shared playerNames$(), teamInfo$()
@@ -528,7 +526,7 @@ Sub ViewRoster (A$, T1)
 
         Color 15
         Print
-        Print "VIEW AGAIN?? (Y/N)"
+        Print "VIEW AGAIN? (Y/N)"
 
         Do
             I$ = GetKeyPress$
@@ -553,7 +551,7 @@ End Sub
 'a user is prompted to press keys to CONTINUE
 'This improvement over the original makes it
 'faster and easier to proceed through screens
-Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBkocks)
+Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
 
     Shared playerRatings%(), leagueRatings%(), teamRatings%()
     Shared playerNames$(), teamInfo$()

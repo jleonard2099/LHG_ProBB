@@ -1,7 +1,5 @@
 Sub GPMIN ()
 
-    ReDim menuChoices$(1 To 2)
-
     _Title "Basketball: The Pro Game - Adjust Game Time"
 
     Shared playerNames$(), teamInfo$()

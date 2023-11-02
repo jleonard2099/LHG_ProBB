@@ -12,8 +12,6 @@ Sub TRADE ()
 
     _Title "Basketball: The Pro Game - Trade Players"
 
-    ReDim menuChoices$(1 To 2)
-
     Shared tradeT!()
 
     Shared teamYears$(), tmInfo_TRADE$()
@@ -57,26 +55,14 @@ Sub LoadStatsForTrade (tradeTeam)
     Shared tradeB1!(), tradeW0!(), tradeW1!()
 
     Shared B1$(), teamYears$(), statTeam$()
-    Shared tradeA1$(), tmInfo_TRADE$(), players_TRADE$()
+    Shared A1$(), tmInfo_TRADE$(), players_TRADE$()
 
     Color 15, 0
     Cls
 
     haveStats(tradeTeam) = 0
 
-    JJ = 1
-
-    Locate 6, 8
-    Color teamSettings%(tradeTeam, 33), teamSettings%(tradeTeam, 34)
-
-    Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
-
-    For II = 1 To JJ: Locate 6 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-    Next
-
-    Locate 7 + JJ, 8
-    Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
+    Call box0 (6, 8, 8, 70, 2, 15, 1)
 
     Do
         Locate 7
@@ -110,7 +96,7 @@ Sub LoadStatsForTrade (tradeTeam)
 
             Open diskPaths$(1) + statFiles$(tradeTeam) For Input As #1
 
-            Input #1, tradeA1$(tradeTeam)
+            Input #1, A1$(tradeTeam)
 
             For I = 0 To 14:
 
@@ -158,7 +144,7 @@ Sub ContinueTrade ()
     Shared haveStats(), tradeT!()
 
     Shared B1$(), teamYears$()
-    Shared tradeA1$(), tmInfo_TRADE$(), players_TRADE$()
+    Shared A1$(), tmInfo_TRADE$(), players_TRADE$()
 
     Do
 
@@ -333,7 +319,7 @@ Sub SaveTrades ()
     Shared tradeW0!(), tradeW1!()
 
     Shared B1$(), teamYears$(), statFiles$()
-    Shared tradeA1$(), tmInfo_TRADE$(), players_TRADE$()
+    Shared A1$(), tmInfo_TRADE$(), players_TRADE$()
 
     For J = 0 To 1
 
@@ -402,7 +388,7 @@ Sub SaveTrades ()
 
             Open diskPaths$(1) + RTrim$(statFiles$(J)) For Output As #2
 
-            Print #2, tradeA1$(J)
+            Print #2, A1$(J)
 
             For I = 0 To 14:
 
@@ -599,7 +585,7 @@ Sub ChooseTradeTeam (yearNumber$, numberTeams, chosenIdx, teamName$, tradeIdx)
 
             Do
 
-                Call SelectTradeTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%, tradeIdx)
+                Call SelectTradeTeam(numberTeams, yearNumber$, chosenIdx, ExitCode%, tradeIdx)
 
                 If ExitCode% <> 27 Then
 
@@ -632,7 +618,7 @@ End Sub
 '----------------------------------------
 'This subroutine provides an interface for 
 'selecting the team to trade players from
-Sub SelectTradeTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%, tradeIdx)
+Sub SelectTradeTeam (numberTeams, yearNumber$, selectedIdx, ExitCode%, tradeIdx)
 
     If numberTeams > 0 Then
 
@@ -666,7 +652,7 @@ Sub SelectTradeTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%
             Locate 2, 33: Color 3
             Print "LOADING.."
 
-            Call ReadTradeTeam(yearNumber$, teamName$, selectedIdx, tradeIdx)
+            Call ReadTradeTeam(yearNumber$, selectedIdx, tradeIdx)
 
         End If
 
@@ -680,7 +666,7 @@ End Sub
 '----------------------------------------
 'This subroutine reads team data into 
 'arrays for the selected team
-Sub ReadTradeTeam (teamYear$, targetTeam$, teamIdx, tradeIdx)
+Sub ReadTradeTeam (teamYear$, teamIdx, tradeIdx)
 
     Shared teamSettings%()
     Shared plyrRat_TRADE(), leagRat_TRADE()
