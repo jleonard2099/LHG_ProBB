@@ -798,7 +798,7 @@ Sub PrintStatsSchedule (teamName$, totalGames%)
 
     Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%
 
-    Shared O%(), statsL%()
+    Shared statO%(), statsL%()
 
     Shared statsH$(), statsO$()
 

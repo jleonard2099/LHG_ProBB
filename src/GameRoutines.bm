@@ -34,10 +34,14 @@ Sub InitVar ()
 
     Shared scheduleFile$
     Shared actualAttendance&
+
     Shared avgAttendance&()
+    Shared statO%()
+
+    Shared alpha$()
+    Shared HO$(), statsH$()
     Shared teamIndicator$()
 
-    Shared statsH$(), HO$()
     Shared gameW0!(), gameW1!()
     Shared statsZ!(), statsZ1!(), statsZ2!()
 
@@ -54,11 +58,11 @@ Sub InitVar ()
     offenseStyles$(1) = "AGGRESSIVE  "
     offenseStyles$(2) = "SAFE        "
 
-    X$(0) = "A "
-    X$(1) = "B "
-    X$(2) = "C "
-    X$(3) = "D "
-    X$(4) = "E "
+    alpha$(0) = "A "
+    alpha$(1) = "B "
+    alpha$(2) = "C "
+    alpha$(3) = "D "
+    alpha$(4) = "E "
 
     pbpType$(0) = "VERBOSE        "
     pbpType$(1) = "HAFFNER CLASSIC"
@@ -86,14 +90,14 @@ Sub InitVar ()
     D2(0) = 1
     D2(1) = 1
 
-    H = 1
+    quarter = 1
     nbrLines = 1
     bonusFoulNum = 5
 
     gameClock! = 720
 
     autoPlay = 0
-    B = 0
+    ballCarrier = 0
     compTeam = 0
     D = 0
     endAllGames = 0
@@ -104,17 +108,12 @@ Sub InitVar ()
     P = 0
     P7 = 0
     P9 = 0
-    QQ = 0
-    QR = 0
     shotClock = 0
     statSpecial = 0
     T1 = 0
     TMT = 0
-    VG = 0
-    VH = 0
-    X = 0
+    xFactor = 0
 
-    CF% = 0
     DK% = 0
     FB% = 0
     FT% = 0
@@ -131,28 +130,26 @@ Sub InitVar ()
     A1$ = ""
     B1$ = ""
     C1$ = ""
-    D$ = ""
     D1$ = ""
     E1$ = ""
     F1$ = ""
     G1$ = ""
     H1$ = ""
-    O$ = ""
     P7$ = ""
     prevBall$ = ""
     PS$ = ""
     scheduleFile$ = ""
     TS$ = ""
-    U$ = ""
+    pbpString$ = ""
     Y2$ = ""
     Z3$ = ""
 
-    Erase C1
+    'Erase C1
     Erase D1, D8, F1, G4, G5
     Erase P2, P4, P5, P7, QQ, QR
     Erase R3, RB, score, statTotals, S3
     Erase tmRat_GAME, turnovers, teamFouls
-    Erase VG, VH, W2, W3
+    Erase pbpFG, pbpBG, W2, W3
     Erase X7, Z5, Z6, timePlayed
 
     Erase gameRatings!, M9!, indRecords!
@@ -166,7 +163,7 @@ Sub InitVar ()
 
     Erase eventSettings, F%, F5%, F7%, G9%
     Erase HT%, leagRat_GAME, plyrRat_GAME, NG%
-    Erase N0%, O%, O0%
+    Erase N0%, statO%, O0%
     Erase PF%, schedGame, ST%, SX%
     Erase TOF%, teamIndex%, W%
 
@@ -322,9 +319,9 @@ Sub DISABLEPLAYERS (P9)
 
         Call TEAMBOX(1, P9)
 
-        U$ = "DISABLE PLAYERS FOR " + gameTeams$(P9) + "? (Y/N)"
-        Locate , (80 - Len(U$)) / 2
-        Print U$
+        pbpString$ = "DISABLE PLAYERS FOR " + gameTeams$(P9) + "? (Y/N)"
+        Locate , (80 - Len(pbpString$)) / 2
+        Print pbpString$
         Color 15, 0
 
         Print
@@ -434,24 +431,33 @@ Sub PBP ()
 
     M$ = InKey$
 
-    If UCase$(M$) = "O" Then Call OPTIONS
-    If UCase$(M$) = "Q" Then Cls: End
+    If UCase$(M$) = "O" Then 
+        Call OPTIONS
+    End If
+
+    If UCase$(M$) = "Q" Then 
+        Cls
+        End
+    End If
 
     'Positive delay or Verbose PBP
     If pbpDelay! > 0 And pbpOpt = 0 Then
 
-        U$ = PadRight$(U$, 38)
+        pbpString$ = PadRight$(pbpString$, 38)
 
         Locate 8, 1
 
-        If nbrLines = 1 Then A1$ = U$: VG(1) = tmRat_GAME(P, 33): VH(1) = tmRat_GAME(P, 34)
-        If nbrLines = 2 Then B1$ = U$: VG(2) = tmRat_GAME(P, 33): VH(2) = tmRat_GAME(P, 34)
-        If nbrLines = 3 Then C1$ = U$: VG(3) = tmRat_GAME(P, 33): VH(3) = tmRat_GAME(P, 34)
-        If nbrLines = 4 Then D1$ = U$: VG(4) = tmRat_GAME(P, 33): VH(4) = tmRat_GAME(P, 34)
-        If nbrLines = 5 Then E1$ = U$: VG(5) = tmRat_GAME(P, 33): VH(5) = tmRat_GAME(P, 34)
-        If nbrLines = 6 Then F1$ = U$: VG(6) = tmRat_GAME(P, 33): VH(6) = tmRat_GAME(P, 34)
-        If nbrLines = 7 Then G1$ = U$: VG(7) = tmRat_GAME(P, 33): VH(7) = tmRat_GAME(P, 34)
-        If nbrLines = 8 Then H1$ = U$: VG(8) = tmRat_GAME(P, 33): VH(8) = tmRat_GAME(P, 34)
+        If nbrLines = 1 Then A1$ = pbpString$
+        If nbrLines = 2 Then B1$ = pbpString$
+        If nbrLines = 3 Then C1$ = pbpString$
+        If nbrLines = 4 Then D1$ = pbpString$
+        If nbrLines = 5 Then E1$ = pbpString$
+        If nbrLines = 6 Then F1$ = pbpString$
+        If nbrLines = 7 Then G1$ = pbpString$
+        If nbrLines = 8 Then H1$ = pbpString$
+
+        pbpFG(nbrLines) = tmRat_GAME(P, 33)
+        pbpBG(nbrLines) = tmRat_GAME(P, 34)
 
         If nbrLines > 8 Then
 
@@ -462,28 +468,28 @@ Sub PBP ()
             E1$ = F1$
             F1$ = G1$
             G1$ = H1$
-            H1$ = U$
+            H1$ = pbpString$
 
             For I = 1 To 7
-                VG(I) = VG(I + 1)
-                VH(I) = VH(I + 1)
+                pbpFG(I) = pbpFG(I + 1)
+                pbpBG(I) = pbpBG(I + 1)
             Next
 
-            VG(8) = tmRat_GAME(P, 33)
-            VH(8) = tmRat_GAME(P, 34)
+            pbpFG(8) = tmRat_GAME(P, 33)
+            pbpBG(8) = tmRat_GAME(P, 34)
 
         End If
 
         nbrLines = nbrLines + 1
 
-        Color VG(1), VH(1): Print Left$(A1$, 38)
-        Color VG(2), VH(2): Print Left$(B1$, 38)
-        Color VG(3), VH(3): Print Left$(C1$, 38)
-        Color VG(4), VH(4): Print Left$(D1$, 38)
-        Color VG(5), VH(5): Print Left$(E1$, 38)
-        Color VG(6), VH(6): Print Left$(F1$, 38)
-        Color VG(7), VH(7): Print Left$(G1$, 38)
-        Color VG(8), VH(8): Print Left$(H1$, 38)
+        Color pbpFG(1), pbpBG(1): Print Left$(A1$, 38)
+        Color pbpFG(2), pbpBG(2): Print Left$(B1$, 38)
+        Color pbpFG(3), pbpBG(3): Print Left$(C1$, 38)
+        Color pbpFG(4), pbpBG(4): Print Left$(D1$, 38)
+        Color pbpFG(5), pbpBG(5): Print Left$(E1$, 38)
+        Color pbpFG(6), pbpBG(6): Print Left$(F1$, 38)
+        Color pbpFG(7), pbpBG(7): Print Left$(G1$, 38)
+        Color pbpFG(8), pbpBG(8): Print Left$(H1$, 38)
 
         Color 15, 0
         Call DELAY
@@ -506,7 +512,7 @@ Sub SELECTPBP ()
 
     If pbpOpt = 1 And pbpDelay! <> 0 Then
         Call WINDEX
-        Print U$
+        Print pbpString$
         Call DELAY
     End If
 
@@ -532,24 +538,24 @@ Sub MAKEPBP ()
 
             Case 1
                 'TURNOVER
-                U$ = players_GAME$(P, gameB1!(P, B), 0)
+                pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0)
                 RN = Int(Rnd(1) * 14) + 1
 
                 Select Case RN
-                    Case 1: U$ = U$ + " TURNS THE BALL OVER"
-                    Case 2: U$ = U$ + " THROWS IT AWAY"
-                    Case 3: U$ = U$ + " IS WHISTLED FOR TRAVELING"
-                    Case 4: U$ = U$ + " TURNS IT OVER"
-                    Case 5: U$ = U$ + " LOSES CONTROL OF THE BALL"
-                    Case 6: U$ = U$ + " LOSES IT OUT OF BOUNDS"
-                    Case 7: U$ = U$ + " LOSES THE HANDLE"
-                    Case 8: U$ = U$ + " LOSES IT"
-                    Case 9: U$ = U$ + " IS CALLED FOR STEPS"
-                    Case 10: U$ = U$ + " TRAVELS"
-                    Case 11: U$ = U$ + " WALKS WITH IT"
-                    Case 12: U$ = U$ + " LETS IT GET AWAY"
-                    Case 13: U$ = U$ + " DOUBLE DRIBBLES"
-                    Case 14: U$ = U$ + " LOSES CONTROL"
+                    Case 1: pbpString$ = pbpString$ + " TURNS THE BALL OVER"
+                    Case 2: pbpString$ = pbpString$ + " THROWS IT AWAY"
+                    Case 3: pbpString$ = pbpString$ + " IS WHISTLED FOR TRAVELING"
+                    Case 4: pbpString$ = pbpString$ + " TURNS IT OVER"
+                    Case 5: pbpString$ = pbpString$ + " LOSES CONTROL OF THE BALL"
+                    Case 6: pbpString$ = pbpString$ + " LOSES IT OUT OF BOUNDS"
+                    Case 7: pbpString$ = pbpString$ + " LOSES THE HANDLE"
+                    Case 8: pbpString$ = pbpString$ + " LOSES IT"
+                    Case 9: pbpString$ = pbpString$ + " IS CALLED FOR STEPS"
+                    Case 10: pbpString$ = pbpString$ + " TRAVELS"
+                    Case 11: pbpString$ = pbpString$ + " WALKS WITH IT"
+                    Case 12: pbpString$ = pbpString$ + " LETS IT GET AWAY"
+                    Case 13: pbpString$ = pbpString$ + " DOUBLE DRIBBLES"
+                    Case 14: pbpString$ = pbpString$ + " LOSES CONTROL"
                 End Select
 
             Case 2
@@ -557,54 +563,54 @@ Sub MAKEPBP ()
                 RN = Int(Rnd(1) * 39) + 1
 
                 Select Case RN
-                    Case 1: U$ = "DIPSY-DOO DUNK-A-ROO!!!"
-                    Case 2: U$ = players_GAME$(P, gameB1!(P, B), 0) + " MAKES IT HAMMER TIME!!!"
-                    Case 3: U$ = players_GAME$(P, gameB1!(P, B), 0) + " SLAMS IT IN!!!"
-                    Case 4: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
-                    Case 5: U$ = players_GAME$(P, gameB1!(P, B), 0) + " SLAMS IT HOME!!!"
-                    Case 6: U$ = players_GAME$(P, gameB1!(P, B), 0) + " JAMS IT HOME!!!"
-                    Case 7: U$ = players_GAME$(P, gameB1!(P, B), 0) + " THROWS IT DOWN!!!"
-                    Case 8: U$ = players_GAME$(P, gameB1!(P, B), 0) + " THUNDERSLAM!!!"
-                    Case 9: U$ = "RIM ROCKING JAM!!!"
-                    Case 10: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE MONSTER SLAM!!"
-                    Case 11: U$ = players_GAME$(P, gameB1!(P, B), 0) + "POWER SLAMS IT!!!"
-                    Case 12: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 2-HANDED STUFF!!!"
-                    Case 13: U$ = players_GAME$(P, gameB1!(P, B), 0) + " BACKWARDS JAM!!!"
-                    Case 14: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 1-HANDED SLAM!!!"
-                    Case 15: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE REVERSE SLAM!!!"
-                    Case 16: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE REVERSE JAM!!!"
-                    Case 17: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE WINDMILL JAM!!!"
-                    Case 18: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE WINDMILL SLAM!!!"
-                    Case 19: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE TOMAHAWK SLAM!!!"
-                    Case 20: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 360 SLAM!!!"
-                    Case 21: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE SPINNING SLAM!!!"
-                    Case 22: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE LEFT HANDED DUNK!!!"
-                    Case 23: U$ = "DOUBLE CLUTCH JAM!!!"
-                    Case 24: U$ = players_GAME$(P, gameB1!(P, B), 0) + " GETS THE FLUSH!!!"
-                    Case 25: U$ = players_GAME$(P, gameB1!(P, B), 0) + " PUNCHES IT HOME!!!"
-                    Case 26: U$ = players_GAME$(P, gameB1!(P, B), 0) + "...DOUBLE PUMP SLAM!!!"
-                    Case 27: U$ = players_GAME$(P, gameB1!(P, B), 0) + "...IN YOUR FACE SLAM!!!"
+                    Case 1: pbpString$ = "DIPSY-DOO DUNK-A-ROO!!!"
+                    Case 2: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " MAKES IT HAMMER TIME!!!"
+                    Case 3: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " SLAMS IT IN!!!"
+                    Case 4: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 2-HANDED SLAM!!!"
+                    Case 5: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " SLAMS IT HOME!!!"
+                    Case 6: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " JAMS IT HOME!!!"
+                    Case 7: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " THROWS IT DOWN!!!"
+                    Case 8: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " THUNDERSLAM!!!"
+                    Case 9: pbpString$ = "RIM ROCKING JAM!!!"
+                    Case 10: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE MONSTER SLAM!!"
+                    Case 11: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + "POWER SLAMS IT!!!"
+                    Case 12: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 2-HANDED STUFF!!!"
+                    Case 13: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " BACKWARDS JAM!!!"
+                    Case 14: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 1-HANDED SLAM!!!"
+                    Case 15: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE REVERSE SLAM!!!"
+                    Case 16: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE REVERSE JAM!!!"
+                    Case 17: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE WINDMILL JAM!!!"
+                    Case 18: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE WINDMILL SLAM!!!"
+                    Case 19: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE TOMAHAWK SLAM!!!"
+                    Case 20: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 360 SLAM!!!"
+                    Case 21: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE SPINNING SLAM!!!"
+                    Case 22: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE LEFT HANDED DUNK!!!"
+                    Case 23: pbpString$ = "DOUBLE CLUTCH JAM!!!"
+                    Case 24: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " GETS THE FLUSH!!!"
+                    Case 25: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " PUNCHES IT HOME!!!"
+                    Case 26: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + "...DOUBLE PUMP SLAM!!!"
+                    Case 27: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + "...IN YOUR FACE SLAM!!!"
                     Case 28, 37:
-                        U$ = players_GAME$(P, gameB1!(P, B), 0) + " IS UP"
+                        pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " IS UP"
                         Call PBP
-                        U$ = "HE SPINS"
+                        pbpString$ = "HE SPINS"
                         Call PBP
-                        U$ = "BEHIND THE BACK SLAM!!!"
-                    Case 29: U$ = "HE SLAMS IT HOME!!"
-                    Case 30: U$ = "HE LAYS IT UP AND IN!!"
-                    Case 31: U$ = "HE BANGS IT IN!!"
-                    Case 32: U$ = "HE RAMS IT IN!!"
-                    Case 33: U$ = "HE SLAMS IT IN!!!"
-                    Case 34: U$ = "DIPSY-DOO DUNK-A-ROO!!!"
-                    Case 35: U$ = "HE MAKES IT HAMMER TIME!!!"
-                    Case 36: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
-                    Case 38: U$ = "HE JAMS IT HOME!!!"
-                    Case 39: U$ = "HE HAMMERS IT HOME!"
+                        pbpString$ = "BEHIND THE BACK SLAM!!!"
+                    Case 29: pbpString$ = "HE SLAMS IT HOME!!"
+                    Case 30: pbpString$ = "HE LAYS IT UP AND IN!!"
+                    Case 31: pbpString$ = "HE BANGS IT IN!!"
+                    Case 32: pbpString$ = "HE RAMS IT IN!!"
+                    Case 33: pbpString$ = "HE SLAMS IT IN!!!"
+                    Case 34: pbpString$ = "DIPSY-DOO DUNK-A-ROO!!!"
+                    Case 35: pbpString$ = "HE MAKES IT HAMMER TIME!!!"
+                    Case 36: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 2-HANDED SLAM!!!"
+                    Case 38: pbpString$ = "HE JAMS IT HOME!!!"
+                    Case 39: pbpString$ = "HE HAMMERS IT HOME!"
                 End Select
 
             Case 3
                 'SHOOTS...
-                U$ = players_GAME$(P, gameB1!(P, B), 0)
+                pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0)
 
                 Select Case PZ%
 
@@ -612,16 +618,16 @@ Sub MAKEPBP ()
                         'BAD
 
                         Select Case RN
-                            Case 1 To 40: U$ = U$ + " TAKES A TOUGH SHOT"
-                            Case 41 To 45: U$ = U$ + " SHOOTS OFF BALANCE"
-                            Case 46 To 50: U$ = U$ + " FORCES ONE UP"
-                            Case 51 To 60: U$ = U$ + " SHOOTS UNDER PRESSURE"
-                            Case 61 To 65: U$ = U$ + " WITH A BAD SHOT"
-                            Case 66 To 70: U$ = U$ + " SHOOTS IN HEAVY TRAFFIC"
-                            Case 71 To 75: U$ = U$ + " THROWS UP A PRAYER"
-                            Case 76 To 80: U$ = U$ + " TAKES A BAD SHOT"
-                            Case 81 To 85: U$ = U$ + " FORCES THE INSIDE SHOT"
-                            Case 86 To 100: U$ = U$ + " TURNS AND SHOOTS"
+                            Case 1 To 40: pbpString$ = pbpString$ + " TAKES A TOUGH SHOT"
+                            Case 41 To 45: pbpString$ = pbpString$ + " SHOOTS OFF BALANCE"
+                            Case 46 To 50: pbpString$ = pbpString$ + " FORCES ONE UP"
+                            Case 51 To 60: pbpString$ = pbpString$ + " SHOOTS UNDER PRESSURE"
+                            Case 61 To 65: pbpString$ = pbpString$ + " WITH A BAD SHOT"
+                            Case 66 To 70: pbpString$ = pbpString$ + " SHOOTS IN HEAVY TRAFFIC"
+                            Case 71 To 75: pbpString$ = pbpString$ + " THROWS UP A PRAYER"
+                            Case 76 To 80: pbpString$ = pbpString$ + " TAKES A BAD SHOT"
+                            Case 81 To 85: pbpString$ = pbpString$ + " FORCES THE INSIDE SHOT"
+                            Case 86 To 100: pbpString$ = pbpString$ + " TURNS AND SHOOTS"
                         End Select
 
                     Case 2
@@ -629,73 +635,73 @@ Sub MAKEPBP ()
 
                         Select Case RN
                             Case 1 To 10
-                                U$ = "HE CUTS TO THE BASKET"
+                                pbpString$ = "HE CUTS TO THE BASKET"
                                 Call PBP
-                                U$ = "TAKES IT UP"
+                                pbpString$ = "TAKES IT UP"
 
                                 Call d100(RN0)
-                                If (B = 0 Or B = 1) And RN0 <= 1 Then DK% = 1
-                                If (B = 2 Or B = 3) And RN0 <= 5 Then DK% = 1
-                                If B = 4 And RN0 <= 7 Then DK% = 1
+                                If (ballCarrier = 0 Or ballCarrier = 1) And RN0 <= 1 Then DK% = 1
+                                If (ballCarrier = 2 Or ballCarrier = 3) And RN0 <= 5 Then DK% = 1
+                                If ballCarrier = 4 And RN0 <= 7 Then DK% = 1
 
                             Case 11 To 20
-                                U$ = "HE TAKES IT TO THE HOLE"
+                                pbpString$ = "HE TAKES IT TO THE HOLE"
 
                                 Call d100(RN0)
-                                If (B = 0 Or B = 1) And RN0 <= 1 Then DK% = 1
-                                If (B = 2 Or B = 3) And RN0 <= 5 Then DK% = 1
-                                If B = 4 And RN0 <= 7 Then DK% = 1
+                                If (ballCarrier = 0 Or ballCarrier = 1) And RN0 <= 1 Then DK% = 1
+                                If (ballCarrier = 2 Or ballCarrier = 3) And RN0 <= 5 Then DK% = 1
+                                If ballCarrier = 4 And RN0 <= 7 Then DK% = 1
 
                             Case 21 To 30
-                                U$ = "HE TAKES IT TO THE HOOP"
+                                pbpString$ = "HE TAKES IT TO THE HOOP"
 
                                 Call d100(RN0)
-                                If (B = 0 Or B = 1) And RN0 <= 1 Then DK% = 1
-                                If (B = 2 Or B = 3) And RN0 <= 5 Then DK% = 1
-                                If B = 4 And RN0 <= 7 Then DK% = 1
+                                If (ballCarrier = 0 Or ballCarrier = 1) And RN0 <= 1 Then DK% = 1
+                                If (ballCarrier = 2 Or ballCarrier = 3) And RN0 <= 5 Then DK% = 1
+                                If ballCarrier = 4 And RN0 <= 7 Then DK% = 1
 
                             Case 31 To 40
-                                U$ = "HE LEANS IN AND SHOOTS"
+                                pbpString$ = "HE LEANS IN AND SHOOTS"
 
                             Case 41 To 50
-                                U$ = "HE PUTS IT UP"
+                                pbpString$ = "HE PUTS IT UP"
 
                             Case 51 To 60
-                                U$ = "HE TAKES IT TO THE BOARD"
+                                pbpString$ = "HE TAKES IT TO THE BOARD"
 
                                 Call d100(RN0)
-                                If (B = 0 Or B = 1) And RN0 <= 1 Then DK% = 1
-                                If (B = 2 Or B = 3) And RN0 <= 5 Then DK% = 1
-                                If B = 4 And RN0 <= 7 Then DK% = 1
+                                If (ballCarrier = 0 Or ballCarrier = 1) And RN0 <= 1 Then DK% = 1
+                                If (ballCarrier = 2 Or ballCarrier = 3) And RN0 <= 5 Then DK% = 1
+                                If ballCarrier = 4 And RN0 <= 7 Then DK% = 1
 
                             Case 61 To 70
-                                U$ = "HE PUTS IT OFF THE GLASS"
+                                pbpString$ = "HE PUTS IT OFF THE GLASS"
 
                             Case 71 To 80
-                                If B = 4 Then
-                                    U$ = "HE SHOOTS THE HOOK"
+                                If ballCarrier = 4 Then
+                                    pbpString$ = "HE SHOOTS THE HOOK"
                                 Else
-                                    U$ = "HE GOES IN FOR THE LAYUP"
+                                    pbpString$ = "HE GOES IN FOR THE LAYUP"
                                 End If
 
                             Case 81 To 90
-                                U$ = "HE TAKES IT UP STRONG"
+                                pbpString$ = "HE TAKES IT UP STRONG"
 
                                 Call d100(RN0)
-                                If (B = 0 Or B = 1) And RN0 <= 1 Then DK% = 1
-                                If (B = 2 Or B = 3) And RN0 <= 5 Then DK% = 1
-                                If B = 4 And RN0 <= 7 Then DK% = 1
+                                If (ballCarrier = 0 Or ballCarrier = 1) And RN0 <= 1 Then DK% = 1
+                                If (ballCarrier = 2 Or ballCarrier = 3) And RN0 <= 5 Then DK% = 1
+                                If ballCarrier = 4 And RN0 <= 7 Then DK% = 1
 
                             Case 91 To 95
-                                U$ = "HE POWERS IT UP"
+                                pbpString$ = "HE POWERS IT UP"
 
                                 Call d100(RN0)
-                                If (B = 0 Or B = 1) And RN0 <= 1 Then DK% = 1
-                                If (B = 2 Or B = 3) And RN0 <= 5 Then DK% = 1
-                                If B = 4 And RN0 <= 7 Then DK% = 1
+                                If (ballCarrier = 0 Or ballCarrier = 1) And RN0 <= 1 Then DK% = 1
+                                If (ballCarrier = 2 Or ballCarrier = 3) And RN0 <= 5 Then DK% = 1
+                                If ballCarrier = 4 And RN0 <= 7 Then DK% = 1
 
                             Case 96 To 100
-                                U$ = "HE LAYS IT UP"
+                                pbpString$ = "HE LAYS IT UP"
                         End Select
 
                     Case 3
@@ -705,40 +711,40 @@ Sub MAKEPBP ()
                             Select Case RN
 
                                 Case 1 To 15:
-                                    U$ = "HE PUTS IT OFF THE GLASS"
+                                    pbpString$ = "HE PUTS IT OFF THE GLASS"
 
                                 Case 16 To 25:
-                                    U$ = "HE PIVOTS TO THE BASKET"
+                                    pbpString$ = "HE PIVOTS TO THE BASKET"
 
                                 Case 26 To 40:
-                                    U$ = "HE POWERS IT UP"
+                                    pbpString$ = "HE POWERS IT UP"
 
                                 Case 41 To 58:
-                                    U$ = "HE TAKES IT TO THE HOOP"
+                                    pbpString$ = "HE TAKES IT TO THE HOOP"
                                     Call d100(RN0)
                                     If RN0 <= 15 Then DK% = 1
 
                                 Case 59 To 70:
-                                    U$ = "HE TAKES THE SHOT"
+                                    pbpString$ = "HE TAKES THE SHOT"
 
                                 Case 71 To 72:
-                                    U$ = "HE CURLS OFF A PICK IN THE PAINT"
+                                    pbpString$ = "HE CURLS OFF A PICK IN THE PAINT"
                                     Call PBP
 
-                                    U$ = "TAKES IT UP"
+                                    pbpString$ = "TAKES IT UP"
                                     Call d100(RN0)
                                     If RN0 <= 15 Then DK% = 1
 
                                 Case 73 To 74:
-                                    U$ = "HE MAKES A NICE SPIN MOVE"
+                                    pbpString$ = "HE MAKES A NICE SPIN MOVE"
                                     Call PBP
-                                    U$ = "AND SOARS TO THE HOOP"
+                                    pbpString$ = "AND SOARS TO THE HOOP"
 
                                     Call d100(RN0)
                                     If RN0 <= 15 Then DK% = 1
 
                                 Case 75 To 100:
-                                    U$ = "HE TAKES IT UP STRONG"
+                                    pbpString$ = "HE TAKES IT UP STRONG"
 
                                     Call d100(RN0)
                                     If RN0 <= 15 Then DK% = 1
@@ -752,79 +758,79 @@ Sub MAKEPBP ()
                             Select Case RN
 
                                 Case 1 To 16:
-                                    U$ = "HE TAKES IT UP"
+                                    pbpString$ = "HE TAKES IT UP"
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
 
                                 Case 17 To 32:
-                                    U$ = "HE SPINS FREE"
+                                    pbpString$ = "HE SPINS FREE"
                                     Call PBP
-                                    U$ = "SHOOTS"
+                                    pbpString$ = "SHOOTS"
 
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
 
                                 Case 33 To 48:
-                                    U$ = "HE GETS LOOSE IN THE PAINT"
+                                    pbpString$ = "HE GETS LOOSE IN THE PAINT"
                                     Call PBP
-                                    U$ = "TAKES IT UP"
+                                    pbpString$ = "TAKES IT UP"
 
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
 
                                 Case 49 To 64:
-                                    U$ = "HE PUTS IT UP"
+                                    pbpString$ = "HE PUTS IT UP"
 
                                 Case 65 To 67:
-                                    U$ = "HE CURLS OFF A PICK IN THE PAINT"
+                                    pbpString$ = "HE CURLS OFF A PICK IN THE PAINT"
 
                                     Call PBP
-                                    U$ = "TAKES IT UP"
+                                    pbpString$ = "TAKES IT UP"
 
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
 
                                 Case 68 To 69:
-                                    U$ = "HE MAKES A NICE SPIN MOVE"
+                                    pbpString$ = "HE MAKES A NICE SPIN MOVE"
 
                                     Call PBP
-                                    U$ = "AND SOARS TO THE HOOP"
+                                    pbpString$ = "AND SOARS TO THE HOOP"
 
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
 
                                 Case 70 To 71:
-                                    U$ = "HE DRIVES THE BASELINE"
+                                    pbpString$ = "HE DRIVES THE BASELINE"
 
                                     Call PBP
-                                    U$ = "SPINS RIGHT AND GOES UP"
+                                    pbpString$ = "SPINS RIGHT AND GOES UP"
 
                                     Call d100(RN0)
                                     If RN0 <= 7 Then DK% = 1
 
                                 Case 72:
-                                    U$ = "HE SLICES IN THE HOLE"
+                                    pbpString$ = "HE SLICES IN THE HOLE"
 
                                     Call PBP
-                                    U$ = "UNDERHAND SCOOP SHOT"
+                                    pbpString$ = "UNDERHAND SCOOP SHOT"
 
                                 Case 73:
-                                    U$ = "STRONG CUT ALONG THE BASELINE"
+                                    pbpString$ = "STRONG CUT ALONG THE BASELINE"
 
                                     Call PBP
-                                    U$ = "DOUBLE PUMP REVERSE LAYUP"
+                                    pbpString$ = "DOUBLE PUMP REVERSE LAYUP"
 
                                 Case 74:
-                                    U$ = "HE PENETRATES"
+                                    pbpString$ = "HE PENETRATES"
 
                                     Call PBP
-                                    U$ = "GORGEOUS FINGER ROLL!"
+                                    pbpString$ = "GORGEOUS FINGER ROLL!"
 
                                 Case 75 To 80:
-                                    U$ = "HE SHOOTS"
+                                    pbpString$ = "HE SHOOTS"
 
                                 Case 81 To 100:
-                                    U$ = "HE TAKES THE SHOT"
+                                    pbpString$ = "HE TAKES THE SHOT"
 
                             End Select
 
@@ -833,76 +839,76 @@ Sub MAKEPBP ()
                             Select Case RN
 
                                 Case 1 To 25:
-                                    U$ = "HE SPINS FREE"
+                                    pbpString$ = "HE SPINS FREE"
 
                                     Call PBP
-                                    U$ = "SHOOTS"
+                                    pbpString$ = "SHOOTS"
 
                                 Case 26 To 50:
-                                    U$ = "HE TAKES IT UP UNDER THE BASKET"
+                                    pbpString$ = "HE TAKES IT UP UNDER THE BASKET"
 
                                     Call d100(RN0)
                                     If RN0 <= 2 Then DK% = 1
 
                                 Case 51 To 52:
-                                    U$ = "HE MAKES A NICE SPIN MOVE"
+                                    pbpString$ = "HE MAKES A NICE SPIN MOVE"
 
                                     Call PBP
-                                    U$ = "AND SOARS TO THE HOOP"
+                                    pbpString$ = "AND SOARS TO THE HOOP"
 
                                     Call d100(RN0)
                                     If RN0 <= 2 Then DK% = 1
 
                                 Case 53 To 54:
-                                    U$ = "HE BLOWS PAST TWO DEFENDERS"
+                                    pbpString$ = "HE BLOWS PAST TWO DEFENDERS"
 
                                 Case 55 To 56:
-                                    U$ = "HE DRIVES THE BASELINE"
+                                    pbpString$ = "HE DRIVES THE BASELINE"
 
                                     Call PBP
-                                    U$ = "SPINS RIGHT AND GOES UP"
+                                    pbpString$ = "SPINS RIGHT AND GOES UP"
 
                                     Call d100(RN0)
                                     If RN0 <= 2 Then DK% = 1
 
                                 Case 57:
-                                    U$ = "HE SLICES IN THE HOLE"
+                                    pbpString$ = "HE SLICES IN THE HOLE"
 
                                     Call PBP
-                                    U$ = "UNDERHAND SCOOP SHOT"
+                                    pbpString$ = "UNDERHAND SCOOP SHOT"
 
                                 Case 58:
-                                    U$ = "STRONG CUT ALONG THE BASELINE"
+                                    pbpString$ = "STRONG CUT ALONG THE BASELINE"
 
                                     Call PBP
-                                    U$ = "DOUBLE PUMP REVERSE LAYUP"
+                                    pbpString$ = "DOUBLE PUMP REVERSE LAYUP"
 
                                 Case 59:
-                                    U$ = "HE PENETRATES"
+                                    pbpString$ = "HE PENETRATES"
 
                                     Call PBP
-                                    U$ = "GORGEOUS FINGER ROLL!"
+                                    pbpString$ = "GORGEOUS FINGER ROLL!"
 
                                 Case 60 To 75:
-                                    U$ = "HE TAKES THE JUMPER"
+                                    pbpString$ = "HE TAKES THE JUMPER"
 
                                 Case 76 To 90:
-                                    U$ = "HE STOPS"
+                                    pbpString$ = "HE STOPS"
 
                                     Call PBP
-                                    U$ = "SHOOTS"
+                                    pbpString$ = "SHOOTS"
 
                                 Case 91:
-                                    U$ = "HE LOOKS TO PASS"
+                                    pbpString$ = "HE LOOKS TO PASS"
 
                                     Call PBP
-                                    U$ = "NO ONE IS OPEN"
+                                    pbpString$ = "NO ONE IS OPEN"
 
                                     Call PBP
-                                    U$ = "HE PUTS IT UP"
+                                    pbpString$ = "HE PUTS IT UP"
 
                                 Case 92 To 100:
-                                    U$ = "HE TAKES THE SHOT"
+                                    pbpString$ = "HE TAKES THE SHOT"
 
                             End Select
 
@@ -912,24 +918,24 @@ Sub MAKEPBP ()
                         'THREE!
                         If FT% = 1 Then
                             If RN <= 50 Then
-                                U$ = U$ + " THROWS UP A PRAYER"
+                                pbpString$ = pbpString$ + " THROWS UP A PRAYER"
                             Else
-                                U$ = U$ + " LAUNCHES A THREE"
+                                pbpString$ = pbpString$ + " LAUNCHES A THREE"
                             End If
 
                             FT% = 0
                         Else
                             Select Case RN
-                                Case 1 To 10: U$ = U$ + " TRIES FOR THREE!"
-                                Case 11 To 20: U$ = U$ + " SHOOTS FROM 3-POINT RANGE!"
-                                Case 21 To 30: U$ = U$ + " HOISTS A THREE!"
-                                Case 31 To 40: U$ = U$ + " BOMBS A THREE FROM THE CORNER!"
-                                Case 41 To 50: U$ = U$ + " FIRES FROM THE 3-POINT LINE!"
-                                Case 51 To 60: U$ = U$ + " SHOOTS FOR THREE!"
-                                Case 61 To 70: U$ = U$ + " SHOOTS THE 3-POINTER!"
-                                Case 71 To 80: U$ = U$ + " FOR 3...!"
-                                Case 81 To 90: U$ = U$ + " PUTS UP THE TREY!"
-                                Case 91 To 100: U$ = U$ + " TAKES THE 3-POINTER!"
+                                Case 1 To 10: pbpString$ = pbpString$ + " TRIES FOR THREE!"
+                                Case 11 To 20: pbpString$ = pbpString$ + " SHOOTS FROM 3-POINT RANGE!"
+                                Case 21 To 30: pbpString$ = pbpString$ + " HOISTS A THREE!"
+                                Case 31 To 40: pbpString$ = pbpString$ + " BOMBS A THREE FROM THE CORNER!"
+                                Case 41 To 50: pbpString$ = pbpString$ + " FIRES FROM THE 3-POINT LINE!"
+                                Case 51 To 60: pbpString$ = pbpString$ + " SHOOTS FOR THREE!"
+                                Case 61 To 70: pbpString$ = pbpString$ + " SHOOTS THE 3-POINTER!"
+                                Case 71 To 80: pbpString$ = pbpString$ + " FOR 3...!"
+                                Case 81 To 90: pbpString$ = pbpString$ + " PUTS UP THE TREY!"
+                                Case 91 To 100: pbpString$ = pbpString$ + " TAKES THE 3-POINTER!"
                             End Select
                         End If
 
@@ -939,275 +945,275 @@ Sub MAKEPBP ()
 
                         Select Case RN
 
-                            Case 1: U$ = U$ + " WITH A TWISTING JUMPER"
+                            Case 1: pbpString$ = pbpString$ + " WITH A TWISTING JUMPER"
 
-                            Case 2: U$ = U$ + " SHOOTS THE J"
+                            Case 2: pbpString$ = pbpString$ + " SHOOTS THE J"
 
                             Case 3:
-                                If B = 4 Then
-                                    U$ = U$ + " RELEASES THE HOOK"
+                                If ballCarrier = 4 Then
+                                    pbpString$ = pbpString$ + " RELEASES THE HOOK"
                                 Else
-                                    U$ = U$ + " TAKES THE SHOT"
+                                    pbpString$ = pbpString$ + " TAKES THE SHOT"
                                 End If
 
-                            Case 4: U$ = U$ + " WITH A SHORT JUMPER"
+                            Case 4: pbpString$ = pbpString$ + " WITH A SHORT JUMPER"
 
-                            Case 5: U$ = U$ + " WITH THE 10 FOOTER"
+                            Case 5: pbpString$ = pbpString$ + " WITH THE 10 FOOTER"
 
                             Case 6:
-                                If B = 4 Then
-                                    U$ = U$ + " WITH THE RUNNING HOOK"
+                                If ballCarrier = 4 Then
+                                    pbpString$ = pbpString$ + " WITH THE RUNNING HOOK"
                                 Else
-                                    U$ = U$ + " WITH THE RUNNER"
+                                    pbpString$ = pbpString$ + " WITH THE RUNNER"
                                 End If
 
                             Case 7:
-                                If B = 4 Then
-                                    U$ = U$ + " WITH A SWEEPING HOOK"
+                                If ballCarrier = 4 Then
+                                    pbpString$ = pbpString$ + " WITH A SWEEPING HOOK"
                                 Else
-                                    U$ = U$ + " WORKS FREE AND SHOOTS"
+                                    pbpString$ = pbpString$ + " WORKS FREE AND SHOOTS"
                                 End If
 
                             Case 8:
-                                If B = 4 Then
-                                    U$ = U$ + " WITH A BABY HOOK SHOT"
+                                If ballCarrier = 4 Then
+                                    pbpString$ = pbpString$ + " WITH A BABY HOOK SHOT"
                                 Else
-                                    U$ = U$ + " TAKES THE SHOT"
+                                    pbpString$ = pbpString$ + " TAKES THE SHOT"
                                 End If
 
-                            Case 9: U$ = U$ + " LEANS IN AND SHOOTS"
-                            Case 10: U$ = U$ + " SHOOTS"
-                            Case 11: U$ = U$ + " SHOOTS FALLING AWAY"
-                            Case 12: U$ = U$ + " LEANS IN FOR THE SHOT"
-                            Case 13: U$ = U$ + " TAKES THE LEFT HANDER"
-                            Case 14: U$ = U$ + " HARD TO THE HOLE..."
-                            Case 15: U$ = U$ + " FLIPS IT UP"
-                            Case 16: U$ = U$ + " FORCES THE INSIDE SHOT"
-                            Case 17: U$ = U$ + " CUTS TO THE BASKET"
-                            Case 18: U$ = U$ + " TAKES IT IN THE PAINT"
-                            Case 19: U$ = U$ + " FLOATS IT OVER HIS MAN"
-                            Case 20: U$ = U$ + " TAKES HIS MAN INSIDE"
-                            Case 21: U$ = U$ + " WHEELS IN THE LANE"
-                            Case 22: U$ = U$ + " CUTS INSIDE FOR THE SHOT"
-                            Case 23: U$ = U$ + " PENETRATES AND SHOOTS"
-                            Case 24: U$ = U$ + " SLICES INSIDE"
-                            Case 25: U$ = U$ + " LOOKS FOR TWO"
-                            Case 26: U$ = U$ + " DRIVES INTO THE PAINT"
-                            Case 27: U$ = U$ + " HAS THE BASELINE JUMPER"
-                            Case 28: U$ = U$ + " GLIDES TO THE HOLE"
-                            Case 29: U$ = U$ + " GETS INSIDE FOR THE SHOT"
-                            Case 30: U$ = U$ + " SPINS TOWARD THE HOOP"
-                            Case 31: U$ = U$ + " FROM SHORT RANGE"
-                            Case 32: U$ = U$ + " GOES BASELINE"
-                            Case 33: U$ = U$ + " PENETRATES AND SHOOTS"
-                            Case 34: U$ = U$ + " FROM 8 FEET"
-                            Case 35: U$ = U$ + " FROM 6 FEET"
-                            Case 36: U$ = U$ + " FROM 5 FEET"
-                            Case 37: U$ = U$ + " DRIVES TO THE HOLE"
-                            Case 38: U$ = U$ + " GLIDES TO THE HOLE"
-                            Case 39: U$ = U$ + " GETS INSIDE FOR THE SHOT"
-                            Case 40: U$ = U$ + " GOES TO THE HOLE"
-                            Case 41: U$ = U$ + " CUTS INSIDE"
-                            Case 42: U$ = U$ + " SPINS INSIDE"
-                            Case 43: U$ = U$ + " BREAKS INSIDE"
-                            Case 44: U$ = U$ + " SNEAKS INSIDE"
-                            Case 45: U$ = U$ + " SCOOTS INSIDE"
-                            Case 46: U$ = U$ + " WORKS IT INSIDE"
-                            Case 47: U$ = U$ + " KNIFES INSIDE"
-                            Case 48: U$ = U$ + " SCISSORS THROUGH"
-                            Case 49: U$ = U$ + " BANGS INSIDE"
-                            Case 50: U$ = U$ + " SLICES INSIDE"
-                            Case 51: U$ = U$ + " PUMPS AND SHOOTS"
-                            Case 52: U$ = U$ + " DOUBLE PUMPS AND SHOOTS"
-                            Case 53: U$ = U$ + "...ONE HANDED FADE AWAY"
-                            Case 54: U$ = U$ + "...LEFT HANDED FADE AWAY"
-                            Case 55: U$ = U$ + "...HIGH ARCHING SHOT"
-                            Case 56: U$ = U$ + " WITH A RUNNING LEFT HANDER"
-                            Case 57: U$ = U$ + " WITH A RUNNING SCOOP SHOT"
-                            Case 58: U$ = U$ + " WITH THE SCOOP SHOT"
-                            Case 59: U$ = U$ + " WITH THE FINGER ROLL"
+                            Case 9: pbpString$ = pbpString$ + " LEANS IN AND SHOOTS"
+                            Case 10: pbpString$ = pbpString$ + " SHOOTS"
+                            Case 11: pbpString$ = pbpString$ + " SHOOTS FALLING AWAY"
+                            Case 12: pbpString$ = pbpString$ + " LEANS IN FOR THE SHOT"
+                            Case 13: pbpString$ = pbpString$ + " TAKES THE LEFT HANDER"
+                            Case 14: pbpString$ = pbpString$ + " HARD TO THE HOLE..."
+                            Case 15: pbpString$ = pbpString$ + " FLIPS IT UP"
+                            Case 16: pbpString$ = pbpString$ + " FORCES THE INSIDE SHOT"
+                            Case 17: pbpString$ = pbpString$ + " CUTS TO THE BASKET"
+                            Case 18: pbpString$ = pbpString$ + " TAKES IT IN THE PAINT"
+                            Case 19: pbpString$ = pbpString$ + " FLOATS IT OVER HIS MAN"
+                            Case 20: pbpString$ = pbpString$ + " TAKES HIS MAN INSIDE"
+                            Case 21: pbpString$ = pbpString$ + " WHEELS IN THE LANE"
+                            Case 22: pbpString$ = pbpString$ + " CUTS INSIDE FOR THE SHOT"
+                            Case 23: pbpString$ = pbpString$ + " PENETRATES AND SHOOTS"
+                            Case 24: pbpString$ = pbpString$ + " SLICES INSIDE"
+                            Case 25: pbpString$ = pbpString$ + " LOOKS FOR TWO"
+                            Case 26: pbpString$ = pbpString$ + " DRIVES INTO THE PAINT"
+                            Case 27: pbpString$ = pbpString$ + " HAS THE BASELINE JUMPER"
+                            Case 28: pbpString$ = pbpString$ + " GLIDES TO THE HOLE"
+                            Case 29: pbpString$ = pbpString$ + " GETS INSIDE FOR THE SHOT"
+                            Case 30: pbpString$ = pbpString$ + " SPINS TOWARD THE HOOP"
+                            Case 31: pbpString$ = pbpString$ + " FROM SHORT RANGE"
+                            Case 32: pbpString$ = pbpString$ + " GOES BASELINE"
+                            Case 33: pbpString$ = pbpString$ + " PENETRATES AND SHOOTS"
+                            Case 34: pbpString$ = pbpString$ + " FROM 8 FEET"
+                            Case 35: pbpString$ = pbpString$ + " FROM 6 FEET"
+                            Case 36: pbpString$ = pbpString$ + " FROM 5 FEET"
+                            Case 37: pbpString$ = pbpString$ + " DRIVES TO THE HOLE"
+                            Case 38: pbpString$ = pbpString$ + " GLIDES TO THE HOLE"
+                            Case 39: pbpString$ = pbpString$ + " GETS INSIDE FOR THE SHOT"
+                            Case 40: pbpString$ = pbpString$ + " GOES TO THE HOLE"
+                            Case 41: pbpString$ = pbpString$ + " CUTS INSIDE"
+                            Case 42: pbpString$ = pbpString$ + " SPINS INSIDE"
+                            Case 43: pbpString$ = pbpString$ + " BREAKS INSIDE"
+                            Case 44: pbpString$ = pbpString$ + " SNEAKS INSIDE"
+                            Case 45: pbpString$ = pbpString$ + " SCOOTS INSIDE"
+                            Case 46: pbpString$ = pbpString$ + " WORKS IT INSIDE"
+                            Case 47: pbpString$ = pbpString$ + " KNIFES INSIDE"
+                            Case 48: pbpString$ = pbpString$ + " SCISSORS THROUGH"
+                            Case 49: pbpString$ = pbpString$ + " BANGS INSIDE"
+                            Case 50: pbpString$ = pbpString$ + " SLICES INSIDE"
+                            Case 51: pbpString$ = pbpString$ + " PUMPS AND SHOOTS"
+                            Case 52: pbpString$ = pbpString$ + " DOUBLE PUMPS AND SHOOTS"
+                            Case 53: pbpString$ = pbpString$ + "...ONE HANDED FADE AWAY"
+                            Case 54: pbpString$ = pbpString$ + "...LEFT HANDED FADE AWAY"
+                            Case 55: pbpString$ = pbpString$ + "...HIGH ARCHING SHOT"
+                            Case 56: pbpString$ = pbpString$ + " WITH A RUNNING LEFT HANDER"
+                            Case 57: pbpString$ = pbpString$ + " WITH A RUNNING SCOOP SHOT"
+                            Case 58: pbpString$ = pbpString$ + " WITH THE SCOOP SHOT"
+                            Case 59: pbpString$ = pbpString$ + " WITH THE FINGER ROLL"
                         End Select
 
                     Case 6, 7
                         RN = Int(Rnd(1) * 59) + 1
 
                         Select Case RN
-                            Case 1: U$ = U$ + " POPS FROM OUTSIDE"
-                            Case 2: U$ = U$ + " DECIDES TO SHOOT IT"
-                            Case 3: U$ = U$ + " FIRES THE FADE-AWAY"
-                            Case 4: U$ = U$ + " LETS IT FLY"
-                            Case 5: U$ = U$ + " LAUNCHES ONE"
-                            Case 6: U$ = U$ + " WITH THE OUTSIDE SHOT"
-                            Case 7: U$ = U$ + " OUT OF THE CORNER"
-                            Case 8: U$ = U$ + " PUTS IT UP FROM 18"
-                            Case 9: U$ = U$ + " SPOTS UP OUTSIDE"
-                            Case 10: U$ = U$ + " RELEASES THE JUMPER"
-                            Case 11: U$ = U$ + " FROM THE TOP OF THE KEY"
-                            Case 12: U$ = U$ + " FIRES FROM THE LEFT WING"
-                            Case 13: U$ = U$ + " TRIES THE 12 FOOTER"
-                            Case 14: U$ = U$ + " PULLS UP AND POPS"
-                            Case 15: U$ = U$ + " FIRES FROM 15"
-                            Case 16: U$ = U$ + " FROM THE PERIMETER"
-                            Case 17: U$ = U$ + " TURNS AND SHOOTS"
-                            Case 18: U$ = U$ + " SHOOTS OFF THE SCREEN"
-                            Case 19: U$ = U$ + " FAKES AND SHOOTS"
-                            Case 20: U$ = U$ + " FIRES AWAY"
-                            Case 21: U$ = U$ + " POPS FROM THE BASELINE"
-                            Case 22: U$ = U$ + " DRIVES THE LANE"
-                            Case 23: U$ = U$ + " TAKES THE SHOT"
-                            Case 24: U$ = U$ + " WORKS FREE AND FIRES"
-                            Case 25: U$ = U$ + " SHOOTS OVER HIS MAN"
-                            Case 26: U$ = U$ + " SHOOTS FALLING AWAY"
-                            Case 27: U$ = U$ + " FAKES AND SHOOTS"
-                            Case 28: U$ = U$ + " FIRES AWAY"
-                            Case 29: U$ = U$ + " POPS FROM THE BASELINE"
-                            Case 30: U$ = U$ + " DRIVES THE LANE"
-                            Case 31: U$ = U$ + " TAKES THE SHOT"
-                            Case 32: U$ = U$ + " WORKS FREE AND FIRES"
-                            Case 33: U$ = U$ + " SHOOTS FROM 15"
-                            Case 34: U$ = U$ + " SHOOTS"
-                            Case 35: U$ = U$ + " TAKES THE JUMPER"
-                            Case 36: U$ = U$ + " FROM THE RIGHT CORNER"
-                            Case 37: U$ = U$ + " FROM THE LEFT CORNER"
-                            Case 38: U$ = U$ + " FROM THE KEY"
-                            Case 39: U$ = U$ + " FIRES FROM OUTSIDE"
-                            Case 40: U$ = U$ + " PUTS IT UP FROM 16"
-                            Case 41: U$ = U$ + " FROM THE PERIMETER"
-                            Case 42: U$ = U$ + " FAKES AND SHOOTS"
-                            Case 43: U$ = U$ + " FROM AROUND 16 FEET"
-                            Case 44: U$ = U$ + " PUTS IT UP"
-                            Case 45: U$ = U$ + " WITH A RUNNING ONE-HANDER"
-                            Case 46: U$ = U$ + " PULLS UP"
-                            Case 47: U$ = U$ + " KISSES THE GLASS"
-                            Case 48: U$ = U$ + " SPINS AND SHOOTS"
-                            Case 49: U$ = U$ + " PUTS IT UP FROM 16"
-                            Case 50: U$ = U$ + " WITH A LONG JUMPER"
-                            Case 51: U$ = U$ + " PUMPS AND SHOOTS"
-                            Case 52: U$ = U$ + " DOUBLE PUMPS AND SHOOTS"
-                            Case 53: U$ = U$ + "...ONE HANDED FADE AWAY"
-                            Case 54: U$ = U$ + "...LEFT HANDED FADE AWAY"
-                            Case 55: U$ = U$ + "...HIGH ARCHING SHOT"
-                            Case 56: U$ = U$ + " WITH A RUNNING LEFT HANDER"
-                            Case 57: U$ = U$ + " WITH A RUNNING SCOOP SHOT"
-                            Case 58: U$ = U$ + " WITH THE SCOOP SHOT"
-                            Case 59: U$ = U$ + " WITH THE FINGER ROLL"
+                            Case 1: pbpString$ = pbpString$ + " POPS FROM OUTSIDE"
+                            Case 2: pbpString$ = pbpString$ + " DECIDES TO SHOOT IT"
+                            Case 3: pbpString$ = pbpString$ + " FIRES THE FADE-AWAY"
+                            Case 4: pbpString$ = pbpString$ + " LETS IT FLY"
+                            Case 5: pbpString$ = pbpString$ + " LAUNCHES ONE"
+                            Case 6: pbpString$ = pbpString$ + " WITH THE OUTSIDE SHOT"
+                            Case 7: pbpString$ = pbpString$ + " OUT OF THE CORNER"
+                            Case 8: pbpString$ = pbpString$ + " PUTS IT UP FROM 18"
+                            Case 9: pbpString$ = pbpString$ + " SPOTS UP OUTSIDE"
+                            Case 10: pbpString$ = pbpString$ + " RELEASES THE JUMPER"
+                            Case 11: pbpString$ = pbpString$ + " FROM THE TOP OF THE KEY"
+                            Case 12: pbpString$ = pbpString$ + " FIRES FROM THE LEFT WING"
+                            Case 13: pbpString$ = pbpString$ + " TRIES THE 12 FOOTER"
+                            Case 14: pbpString$ = pbpString$ + " PULLS UP AND POPS"
+                            Case 15: pbpString$ = pbpString$ + " FIRES FROM 15"
+                            Case 16: pbpString$ = pbpString$ + " FROM THE PERIMETER"
+                            Case 17: pbpString$ = pbpString$ + " TURNS AND SHOOTS"
+                            Case 18: pbpString$ = pbpString$ + " SHOOTS OFF THE SCREEN"
+                            Case 19: pbpString$ = pbpString$ + " FAKES AND SHOOTS"
+                            Case 20: pbpString$ = pbpString$ + " FIRES AWAY"
+                            Case 21: pbpString$ = pbpString$ + " POPS FROM THE BASELINE"
+                            Case 22: pbpString$ = pbpString$ + " DRIVES THE LANE"
+                            Case 23: pbpString$ = pbpString$ + " TAKES THE SHOT"
+                            Case 24: pbpString$ = pbpString$ + " WORKS FREE AND FIRES"
+                            Case 25: pbpString$ = pbpString$ + " SHOOTS OVER HIS MAN"
+                            Case 26: pbpString$ = pbpString$ + " SHOOTS FALLING AWAY"
+                            Case 27: pbpString$ = pbpString$ + " FAKES AND SHOOTS"
+                            Case 28: pbpString$ = pbpString$ + " FIRES AWAY"
+                            Case 29: pbpString$ = pbpString$ + " POPS FROM THE BASELINE"
+                            Case 30: pbpString$ = pbpString$ + " DRIVES THE LANE"
+                            Case 31: pbpString$ = pbpString$ + " TAKES THE SHOT"
+                            Case 32: pbpString$ = pbpString$ + " WORKS FREE AND FIRES"
+                            Case 33: pbpString$ = pbpString$ + " SHOOTS FROM 15"
+                            Case 34: pbpString$ = pbpString$ + " SHOOTS"
+                            Case 35: pbpString$ = pbpString$ + " TAKES THE JUMPER"
+                            Case 36: pbpString$ = pbpString$ + " FROM THE RIGHT CORNER"
+                            Case 37: pbpString$ = pbpString$ + " FROM THE LEFT CORNER"
+                            Case 38: pbpString$ = pbpString$ + " FROM THE KEY"
+                            Case 39: pbpString$ = pbpString$ + " FIRES FROM OUTSIDE"
+                            Case 40: pbpString$ = pbpString$ + " PUTS IT UP FROM 16"
+                            Case 41: pbpString$ = pbpString$ + " FROM THE PERIMETER"
+                            Case 42: pbpString$ = pbpString$ + " FAKES AND SHOOTS"
+                            Case 43: pbpString$ = pbpString$ + " FROM AROUND 16 FEET"
+                            Case 44: pbpString$ = pbpString$ + " PUTS IT UP"
+                            Case 45: pbpString$ = pbpString$ + " WITH A RUNNING ONE-HANDER"
+                            Case 46: pbpString$ = pbpString$ + " PULLS UP"
+                            Case 47: pbpString$ = pbpString$ + " KISSES THE GLASS"
+                            Case 48: pbpString$ = pbpString$ + " SPINS AND SHOOTS"
+                            Case 49: pbpString$ = pbpString$ + " PUTS IT UP FROM 16"
+                            Case 50: pbpString$ = pbpString$ + " WITH A LONG JUMPER"
+                            Case 51: pbpString$ = pbpString$ + " PUMPS AND SHOOTS"
+                            Case 52: pbpString$ = pbpString$ + " DOUBLE PUMPS AND SHOOTS"
+                            Case 53: pbpString$ = pbpString$ + "...ONE HANDED FADE AWAY"
+                            Case 54: pbpString$ = pbpString$ + "...LEFT HANDED FADE AWAY"
+                            Case 55: pbpString$ = pbpString$ + "...HIGH ARCHING SHOT"
+                            Case 56: pbpString$ = pbpString$ + " WITH A RUNNING LEFT HANDER"
+                            Case 57: pbpString$ = pbpString$ + " WITH A RUNNING SCOOP SHOT"
+                            Case 58: pbpString$ = pbpString$ + " WITH THE SCOOP SHOT"
+                            Case 59: pbpString$ = pbpString$ + " WITH THE FINGER ROLL"
                         End Select
 
                     Case 8
                         Select Case RN
-                            Case 1 To 20: U$ = "HE SAILS TO THE HOOP"
-                            Case 21 To 23: U$ = "HE TAKES IT TO THE BUCKET"
-                            Case 24 To 26: U$ = "HE TAKES IT TO THE HOLE"
-                            Case 27 To 29: U$ = "HE SLASHES TO THE HOLE"
-                            Case 30 To 32: U$ = "HE SLASHES TO THE BUCKET"
-                            Case 33 To 35: U$ = "HE SOARS TO THE BUCKET"
-                            Case 36 To 38: U$ = "HE SOARS TO THE HOLE"
-                            Case 39 To 40: U$ = "HE GLIDES TO THE HOLE"
-                            Case 41 To 60: U$ = "HE GOES IN STRONG"
-                            Case 61 To 80: U$ = "HE TAKES IT IN"
-                            Case 81 To 90: U$ = "HE TAKES A DEFENDER WITH HIM"
-                            Case 81 To 100: U$ = "HE GOES UP WITH IT"
+                            Case 1 To 20: pbpString$ = "HE SAILS TO THE HOOP"
+                            Case 21 To 23: pbpString$ = "HE TAKES IT TO THE BUCKET"
+                            Case 24 To 26: pbpString$ = "HE TAKES IT TO THE HOLE"
+                            Case 27 To 29: pbpString$ = "HE SLASHES TO THE HOLE"
+                            Case 30 To 32: pbpString$ = "HE SLASHES TO THE BUCKET"
+                            Case 33 To 35: pbpString$ = "HE SOARS TO THE BUCKET"
+                            Case 36 To 38: pbpString$ = "HE SOARS TO THE HOLE"
+                            Case 39 To 40: pbpString$ = "HE GLIDES TO THE HOLE"
+                            Case 41 To 60: pbpString$ = "HE GOES IN STRONG"
+                            Case 61 To 80: pbpString$ = "HE TAKES IT IN"
+                            Case 81 To 90: pbpString$ = "HE TAKES A DEFENDER WITH HIM"
+                            Case 81 To 100: pbpString$ = "HE GOES UP WITH IT"
                         End Select
 
                     Case 9
                         'BACK AFTER REB
-                        U$ = "HE "
+                        pbpString$ = "HE "
                         RN = Int(Rnd(1) * 11) + 1
 
                         Select Case RN
-                            Case 1: U$ = U$ + "TAKES IT BACK UP"
-                            Case 2: U$ = U$ + "GOES BACK UP WITH IT"
-                            Case 3: U$ = U$ + "POWERS HIS WAY UP WITH IT"
-                            Case 4: U$ = U$ + "GOES STRONG TO THE BASKET"
-                            Case 5: U$ = U$ + "MUSCLES IT UP"
-                            Case 6: U$ = U$ + "SHOOTS"
-                            Case 7: U$ = U$ + "TAKES IT TO THE GOAL"
-                            Case 8: U$ = U$ + "PUTS IT UP AGAIN"
-                            Case 9: U$ = U$ + "SHOOTS IT AGAIN"
-                            Case 10: U$ = U$ + "CLAWS HIS WAY UP"
-                            Case 11: U$ = U$ + "SHOOTS IN TRAFFIC"
+                            Case 1: pbpString$ = pbpString$ + "TAKES IT BACK UP"
+                            Case 2: pbpString$ = pbpString$ + "GOES BACK UP WITH IT"
+                            Case 3: pbpString$ = pbpString$ + "POWERS HIS WAY UP WITH IT"
+                            Case 4: pbpString$ = pbpString$ + "GOES STRONG TO THE BASKET"
+                            Case 5: pbpString$ = pbpString$ + "MUSCLES IT UP"
+                            Case 6: pbpString$ = pbpString$ + "SHOOTS"
+                            Case 7: pbpString$ = pbpString$ + "TAKES IT TO THE GOAL"
+                            Case 8: pbpString$ = pbpString$ + "PUTS IT UP AGAIN"
+                            Case 9: pbpString$ = pbpString$ + "SHOOTS IT AGAIN"
+                            Case 10: pbpString$ = pbpString$ + "CLAWS HIS WAY UP"
+                            Case 11: pbpString$ = pbpString$ + "SHOOTS IN TRAFFIC"
                         End Select
 
                         Call d100(RN0)
-                        If B = 2 Or B = 3 And RN0 <= 7 Then DK% = 1
-                        If B = 4 And RN0 <= 15 Then DK% = 1
+                        If ballCarrier = 2 Or ballCarrier = 3 And RN0 <= 7 Then DK% = 1
+                        If ballCarrier = 4 And RN0 <= 15 Then DK% = 1
 
                 End Select
 
             Case 4
                 'THREE GOOD
-                U$ = "HE "
+                pbpString$ = "HE "
 
                 Select Case RN
-                    Case 1 To 10: U$ = U$ + "FILLS UP THE BASKET!!!"
-                    Case 11 To 20: U$ = U$ + "HITS THE TREY!!!"
-                    Case 21 To 30: U$ = "IT'S GOOOODD!!"
-                    Case 31 To 40: U$ = U$ + "GETS IT!!!"
-                    Case 41 To 50: U$ = "COUNT IT!!"
-                    Case 51 To 60: U$ = U$ + "RINGS IT UP!!!"
-                    Case 61 To 80: U$ = U$ + "DRAINS IT!!!"
-                    Case 81 To 90: U$ = "HE BURIES IT!!!"
-                    Case 91 To 100: U$ = "IT'S ALL NET!!!"
+                    Case 1 To 10: pbpString$ = pbpString$ + "FILLS UP THE BASKET!!!"
+                    Case 11 To 20: pbpString$ = pbpString$ + "HITS THE TREY!!!"
+                    Case 21 To 30: pbpString$ = "IT'S GOOOODD!!"
+                    Case 31 To 40: pbpString$ = pbpString$ + "GETS IT!!!"
+                    Case 41 To 50: pbpString$ = "COUNT IT!!"
+                    Case 51 To 60: pbpString$ = pbpString$ + "RINGS IT UP!!!"
+                    Case 61 To 80: pbpString$ = pbpString$ + "DRAINS IT!!!"
+                    Case 81 To 90: pbpString$ = "HE BURIES IT!!!"
+                    Case 91 To 100: pbpString$ = "IT'S ALL NET!!!"
                 End Select
 
             Case 5
                 'THREE BAD
-                U$ = "HE "
+                pbpString$ = "HE "
 
                 Select Case RN
-                    Case 1 To 20: U$ = U$ + "GETS NONE"
-                    Case 21 To 25: U$ = "IT NEVER HAD A CHANCE"
-                    Case 26 To 35: U$ = "AIRRRR BALLLL!!"
-                    Case 36 To 40: U$ = U$ + "MISFIRES"
-                    Case 41 To 60: U$ = "IT'S OFF THE RIM...NO GOOD!"
-                    Case 61 To 80: U$ = "IT'S SHORT"
-                    Case 81 To 100: U$ = U$ + "MISSES"
+                    Case 1 To 20: pbpString$ = pbpString$ + "GETS NONE"
+                    Case 21 To 25: pbpString$ = "IT NEVER HAD A CHANCE"
+                    Case 26 To 35: pbpString$ = "AIRRRR BALLLL!!"
+                    Case 36 To 40: pbpString$ = pbpString$ + "MISFIRES"
+                    Case 41 To 60: pbpString$ = "IT'S OFF THE RIM...NO GOOD!"
+                    Case 61 To 80: pbpString$ = "IT'S SHORT"
+                    Case 81 To 100: pbpString$ = pbpString$ + "MISSES"
                 End Select
 
             Case 6
                 'FAST BREAK
-                U$ = players_GAME$(P, gameB1!(P, B), 0)
+                pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0)
                 RN = Int(Rnd(1) * 38) + 1
 
                 Select Case RN
-                    Case 1: U$ = U$ + " HAS IT ON THE FAST BREAK!"
-                    Case 2: U$ = U$ + " IS IN TRANSITION!"
-                    Case 3: U$ = U$ + " STARTS THE BREAK!"
-                    Case 4: U$ = U$ + " IS DOWN COURT IN A HURRY!"
-                    Case 5: U$ = U$ + " IS ON THE RUN!"
-                    Case 6: U$ = U$ + " GOES COAST TO COAST!"
-                    Case 7: U$ = U$ + " ON THE BREAK!"
-                    Case 8: U$ = U$ + " ON THE RUN!"
-                    Case 9: U$ = U$ + " ON THE FAST BREAK!"
-                    Case 10: U$ = U$ + " HAS THE FAST BREAK!"
-                    Case 11: U$ = U$ + " BREAKS INTO THE FORECOURT!"
-                    Case 12: U$ = U$ + " FLIES UPCOURT!"
-                    Case 13: U$ = U$ + " STARTS THE FASTBREAK!"
-                    Case 14: U$ = U$ + " ON THE MOVE!"
-                    Case 15: U$ = U$ + " IN TRANSITION!"
-                    Case 16: U$ = U$ + " DOWN COURT IN A HURRY!"
-                    Case 17: U$ = U$ + " CHARGES ACROSS THE LINE!"
-                    Case 18: U$ = U$ + " BREAKS QUICKLY!"
-                    Case 19: U$ = U$ + " BREAKS DOWN COURT!"
-                    Case 20: U$ = U$ + " STARTS THE RUNNING GAME!"
-                    Case 21: U$ = U$ + " FLIES DOWN THE FLOOR!"
-                    Case 22: U$ = U$ + " GOES RIGHT TO WORK!"
-                    Case 23: U$ = U$ + " BACK THE OTHER WAY!"
-                    Case 24: U$ = U$ + " QUICKLY UP THE FLOOR!"
-                    Case 25: U$ = U$ + " PUSHES IT UP COURT!"
-                    Case 26: U$ = U$ + " WASTES NO TIME!"
-                    Case 27: U$ = U$ + " UPS THE TEMPO!"
-                    Case 28: U$ = U$ + " HUSTLES DOWN COURT!"
-                    Case 29: U$ = U$ + " RUSHES UP THE FLOOR!"
-                    Case 30: U$ = U$ + " ON THE MOVE!"
-                    Case 31: U$ = U$ + " STREAKS UP THE COURT!"
-                    Case 32: U$ = U$ + " FLIES DOWN THE COURT!"
-                    Case 33: U$ = U$ + " JETS DOWN COURT!"
-                    Case 34: U$ = U$ + " QUICKLY GETS IT UP COURT!"
-                    Case 35: U$ = U$ + " TAKES IT COAST TO COAST!"
-                    Case 36: U$ = U$ + " IS RUNNING AND GUNNING!"
-                    Case 37: U$ = U$ + " FLIES OVER THE TIME LINE!"
-                    Case 38: U$ = U$ + " RUSHES IT UP THE FLOOR!"
+                    Case 1: pbpString$ = pbpString$ + " HAS IT ON THE FAST BREAK!"
+                    Case 2: pbpString$ = pbpString$ + " IS IN TRANSITION!"
+                    Case 3: pbpString$ = pbpString$ + " STARTS THE BREAK!"
+                    Case 4: pbpString$ = pbpString$ + " IS DOWN COURT IN A HURRY!"
+                    Case 5: pbpString$ = pbpString$ + " IS ON THE RUN!"
+                    Case 6: pbpString$ = pbpString$ + " GOES COAST TO COAST!"
+                    Case 7: pbpString$ = pbpString$ + " ON THE BREAK!"
+                    Case 8: pbpString$ = pbpString$ + " ON THE RUN!"
+                    Case 9: pbpString$ = pbpString$ + " ON THE FAST BREAK!"
+                    Case 10: pbpString$ = pbpString$ + " HAS THE FAST BREAK!"
+                    Case 11: pbpString$ = pbpString$ + " BREAKS INTO THE FORECOURT!"
+                    Case 12: pbpString$ = pbpString$ + " FLIES UPCOURT!"
+                    Case 13: pbpString$ = pbpString$ + " STARTS THE FASTBREAK!"
+                    Case 14: pbpString$ = pbpString$ + " ON THE MOVE!"
+                    Case 15: pbpString$ = pbpString$ + " IN TRANSITION!"
+                    Case 16: pbpString$ = pbpString$ + " DOWN COURT IN A HURRY!"
+                    Case 17: pbpString$ = pbpString$ + " CHARGES ACROSS THE LINE!"
+                    Case 18: pbpString$ = pbpString$ + " BREAKS QUICKLY!"
+                    Case 19: pbpString$ = pbpString$ + " BREAKS DOWN COURT!"
+                    Case 20: pbpString$ = pbpString$ + " STARTS THE RUNNING GAME!"
+                    Case 21: pbpString$ = pbpString$ + " FLIES DOWN THE FLOOR!"
+                    Case 22: pbpString$ = pbpString$ + " GOES RIGHT TO WORK!"
+                    Case 23: pbpString$ = pbpString$ + " BACK THE OTHER WAY!"
+                    Case 24: pbpString$ = pbpString$ + " QUICKLY UP THE FLOOR!"
+                    Case 25: pbpString$ = pbpString$ + " PUSHES IT UP COURT!"
+                    Case 26: pbpString$ = pbpString$ + " WASTES NO TIME!"
+                    Case 27: pbpString$ = pbpString$ + " UPS THE TEMPO!"
+                    Case 28: pbpString$ = pbpString$ + " HUSTLES DOWN COURT!"
+                    Case 29: pbpString$ = pbpString$ + " RUSHES UP THE FLOOR!"
+                    Case 30: pbpString$ = pbpString$ + " ON THE MOVE!"
+                    Case 31: pbpString$ = pbpString$ + " STREAKS UP THE COURT!"
+                    Case 32: pbpString$ = pbpString$ + " FLIES DOWN THE COURT!"
+                    Case 33: pbpString$ = pbpString$ + " JETS DOWN COURT!"
+                    Case 34: pbpString$ = pbpString$ + " QUICKLY GETS IT UP COURT!"
+                    Case 35: pbpString$ = pbpString$ + " TAKES IT COAST TO COAST!"
+                    Case 36: pbpString$ = pbpString$ + " IS RUNNING AND GUNNING!"
+                    Case 37: pbpString$ = pbpString$ + " FLIES OVER THE TIME LINE!"
+                    Case 38: pbpString$ = pbpString$ + " RUSHES IT UP THE FLOOR!"
                 End Select
 
             Case 7
@@ -1216,49 +1222,49 @@ Sub MAKEPBP ()
                 RN = Int(Rnd(1) * 39) + 1
 
                 Select Case RN
-                    Case 1: U$ = "DIPSY-DOO DUNK-A-ROO!!!"
-                    Case 2: U$ = players_GAME$(P, gameB1!(P, B), 0) + " MAKES IT HAMMER TIME!!!"
-                    Case 3: U$ = players_GAME$(P, gameB1!(P, B), 0) + " SLAMS IT IN!!!"
-                    Case 4: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
-                    Case 5: U$ = players_GAME$(P, gameB1!(P, B), 0) + " SLAMS IT HOME!!!"
-                    Case 6: U$ = players_GAME$(P, gameB1!(P, B), 0) + " JAMS IT HOME!!!"
-                    Case 7: U$ = players_GAME$(P, gameB1!(P, B), 0) + " THROWS IT DOWN!!!"
-                    Case 8: U$ = players_GAME$(P, gameB1!(P, B), 0) + " THUNDERSLAM!!!"
-                    Case 9: U$ = "RIM ROCKING JAM!!!"
-                    Case 10: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE MONSTER SLAM!!"
-                    Case 11: U$ = players_GAME$(P, gameB1!(P, B), 0) + "POWER SLAMS IT!!!"
-                    Case 12: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 2-HANDED STUFF!!!"
-                    Case 13: U$ = players_GAME$(P, gameB1!(P, B), 0) + " BACKWARDS JAM!!!"
-                    Case 14: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 1-HANDED SLAM!!!"
-                    Case 15: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE REVERSE SLAM!!!"
-                    Case 16: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE REVERSE JAM!!!"
-                    Case 17: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE WINDMILL JAM!!!"
-                    Case 18: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE WINDMILL SLAM!!!"
-                    Case 19: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE TOMAHAWK SLAM!!!"
-                    Case 20: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 360 SLAM!!!"
-                    Case 21: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE SPINNING SLAM!!!"
-                    Case 22: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE LEFT HANDED DUNK!!!"
-                    Case 23: U$ = "DOUBLE CLUTCH JAM!!!"
-                    Case 24: U$ = players_GAME$(P, gameB1!(P, B), 0) + " GETS THE FLUSH!!!"
-                    Case 25: U$ = players_GAME$(P, gameB1!(P, B), 0) + " PUNCHES IT HOME!!!"
-                    Case 26: U$ = players_GAME$(P, gameB1!(P, B), 0) + "...DOUBLE PUMP SLAM!!!"
-                    Case 27: U$ = players_GAME$(P, gameB1!(P, B), 0) + "...IN YOUR FACE SLAM!!!"
+                    Case 1: pbpString$ = "DIPSY-DOO DUNK-A-ROO!!!"
+                    Case 2: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " MAKES IT HAMMER TIME!!!"
+                    Case 3: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " SLAMS IT IN!!!"
+                    Case 4: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 2-HANDED SLAM!!!"
+                    Case 5: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " SLAMS IT HOME!!!"
+                    Case 6: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " JAMS IT HOME!!!"
+                    Case 7: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " THROWS IT DOWN!!!"
+                    Case 8: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " THUNDERSLAM!!!"
+                    Case 9: pbpString$ = "RIM ROCKING JAM!!!"
+                    Case 10: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE MONSTER SLAM!!"
+                    Case 11: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + "POWER SLAMS IT!!!"
+                    Case 12: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 2-HANDED STUFF!!!"
+                    Case 13: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " BACKWARDS JAM!!!"
+                    Case 14: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 1-HANDED SLAM!!!"
+                    Case 15: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE REVERSE SLAM!!!"
+                    Case 16: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE REVERSE JAM!!!"
+                    Case 17: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE WINDMILL JAM!!!"
+                    Case 18: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE WINDMILL SLAM!!!"
+                    Case 19: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE TOMAHAWK SLAM!!!"
+                    Case 20: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 360 SLAM!!!"
+                    Case 21: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE SPINNING SLAM!!!"
+                    Case 22: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE LEFT HANDED DUNK!!!"
+                    Case 23: pbpString$ = "DOUBLE CLUTCH JAM!!!"
+                    Case 24: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " GETS THE FLUSH!!!"
+                    Case 25: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " PUNCHES IT HOME!!!"
+                    Case 26: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + "...DOUBLE PUMP SLAM!!!"
+                    Case 27: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + "...IN YOUR FACE SLAM!!!"
                     Case 28, 37:
-                        U$ = players_GAME$(P, gameB1!(P, B), 0) + " IS UP"
+                        pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " IS UP"
                         Call PBP
-                        U$ = "HE SPINS"
+                        pbpString$ = "HE SPINS"
                         Call PBP
-                        U$ = "BEHIND THE BACK SLAM!!!"
-                    Case 29: U$ = "HE SLAMS IT HOME!!"
-                    Case 30: U$ = "HE LAYS IT UP AND IN!!"
-                    Case 31: U$ = "HE BANGS IT IN!!"
-                    Case 32: U$ = "HE RAMS IT IN!!"
-                    Case 33: U$ = "HE SLAMS IT IN!!!"
-                    Case 34: U$ = "DIPSY-DOO DUNK-A-ROO!!!"
-                    Case 35: U$ = "HE MAKES IT HAMMER TIME!!!"
-                    Case 36: U$ = players_GAME$(P, gameB1!(P, B), 0) + " WITH THE 2-HANDED SLAM!!!"
-                    Case 38: U$ = "HE JAMS IT HOME!!!"
-                    Case 39: U$ = "HE HAMMERS IT HOME!"
+                        pbpString$ = "BEHIND THE BACK SLAM!!!"
+                    Case 29: pbpString$ = "HE SLAMS IT HOME!!"
+                    Case 30: pbpString$ = "HE LAYS IT UP AND IN!!"
+                    Case 31: pbpString$ = "HE BANGS IT IN!!"
+                    Case 32: pbpString$ = "HE RAMS IT IN!!"
+                    Case 33: pbpString$ = "HE SLAMS IT IN!!!"
+                    Case 34: pbpString$ = "DIPSY-DOO DUNK-A-ROO!!!"
+                    Case 35: pbpString$ = "HE MAKES IT HAMMER TIME!!!"
+                    Case 36: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 2-HANDED SLAM!!!"
+                    Case 38: pbpString$ = "HE JAMS IT HOME!!!"
+                    Case 39: pbpString$ = "HE HAMMERS IT HOME!"
                 End Select
 
             Case 8
@@ -1266,14 +1272,14 @@ Sub MAKEPBP ()
                 If PZ% = 8 Then
                     PZ% = 0
                     FB% = 0
-                    U$ = "HE "
+                    pbpString$ = "HE "
 
                     Select Case RN
-                        Case 1 To 20: U$ = U$ + "MISSES THE EASY BASKET!"
-                        Case 21 To 40: U$ = U$ + "JAMS IT TOO HARD!!"
-                        Case 41 To 60: U$ = U$ + "SLAMS IT OFF THE IRON...NO GOOD!"
-                        Case 61 To 80: U$ = U$ + "CAN'T GET IT DOWN!"
-                        Case 81 To 100: U$ = U$ + "BLOWS THE EASY BASKET!!"
+                        Case 1 To 20: pbpString$ = pbpString$ + "MISSES THE EASY BASKET!"
+                        Case 21 To 40: pbpString$ = pbpString$ + "JAMS IT TOO HARD!!"
+                        Case 41 To 60: pbpString$ = pbpString$ + "SLAMS IT OFF THE IRON...NO GOOD!"
+                        Case 61 To 80: pbpString$ = pbpString$ + "CAN'T GET IT DOWN!"
+                        Case 81 To 100: pbpString$ = pbpString$ + "BLOWS THE EASY BASKET!!"
                     End Select
 
                 Else
@@ -1281,238 +1287,238 @@ Sub MAKEPBP ()
                     RN = Int(Rnd(1) * 50) + 1
 
                     Select Case RN
-                        Case 1: U$ = "IT RATTLES IN AND OUT...NO GOOD"
-                        Case 2: U$ = "OFF THE IRON"
-                        Case 3: U$ = "IT SPINS IN AND OUT"
-                        Case 4: U$ = "IT'S OFF THE GLASS"
-                        Case 5: U$ = "IT'S NO GOOD"
-                        Case 6: U$ = "IT'S OFF THE MARK"
-                        Case 7: U$ = "IT'S A BRICK"
-                        Case 8: U$ = "OFF THE RIM"
-                        Case 9: U$ = "NOT EVEN CLOSE!"
-                        Case 10: U$ = "NO GOOD"
-                        Case 11: U$ = "HE MISSES"
-                        Case 12: U$ = "DOESN'T GET THE ROLL"
-                        Case 13: U$ = "OFF THE GLASS"
-                        Case 14: U$ = "FALLS SHORT"
-                        Case 15: U$ = "NO GOOD"
-                        Case 16: U$ = "NO"
-                        Case 17: U$ = "HE MISSES"
-                        Case 18: U$ = "IN AND OUT"
-                        Case 19: U$ = "OFF THE RIM"
-                        Case 20: U$ = "OFF THE IRON"
-                        Case 21: U$ = "IT'S NOT THERE"
-                        Case 22: U$ = "OFF TARGET"
-                        Case 23: U$ = "IT RATTLES OUT"
-                        Case 24: U$ = "IT DOESN'T FALL"
-                        Case 25: U$ = "IT BOUNCES OFF"
-                        Case 26: U$ = "IT ROLLS OFF"
-                        Case 27: U$ = "SHORT"
-                        Case 28: U$ = "IT DOESN'T GO DOWN"
-                        Case 29: U$ = "IT'S NO GOOD"
-                        Case 30: U$ = "NO GOOD"
-                        Case 31: U$ = "HE MISSES"
-                        Case 32: U$ = "IT'S A BRICK"
-                        Case 33: U$ = "HE FAILS TO CONNECT"
-                        Case 34: U$ = "OFF THE SIDE OF THE RIM"
-                        Case 35: U$ = "IT COMES UP SHORT"
-                        Case 36: U$ = "IT ROLLS OUT"
-                        Case 37: U$ = "AROUND AND OUT"
-                        Case 38: U$ = "OFF THE BACK OF THE IRON"
-                        Case 39: U$ = "ON THE FRONT RIM...ROLLS OFF"
-                        Case 40: U$ = "IN THE AIR...NO GOOD"
-                        Case 41: U$ = "TOO SHORT"
-                        Case 42: U$ = "NO GOOD"
-                        Case 43: U$ = "IT COMES UP SHORT"
-                        Case 44: U$ = "IT ROLLS OUT"
-                        Case 45: U$ = "IN AND OUT"
-                        Case 46: U$ = "OFF THE FRONT OF THE IRON"
-                        Case 47: U$ = "ON THE RIM...ROLLS OFF"
-                        Case 48: U$ = "OFF THE FRONT OF THE RIM"
-                        Case 49: U$ = "TOO SHORT"
-                        Case 50: U$ = "TOO STRONG"
+                        Case 1: pbpString$ = "IT RATTLES IN AND OUT...NO GOOD"
+                        Case 2: pbpString$ = "OFF THE IRON"
+                        Case 3: pbpString$ = "IT SPINS IN AND OUT"
+                        Case 4: pbpString$ = "IT'S OFF THE GLASS"
+                        Case 5: pbpString$ = "IT'S NO GOOD"
+                        Case 6: pbpString$ = "IT'S OFF THE MARK"
+                        Case 7: pbpString$ = "IT'S A BRICK"
+                        Case 8: pbpString$ = "OFF THE RIM"
+                        Case 9: pbpString$ = "NOT EVEN CLOSE!"
+                        Case 10: pbpString$ = "NO GOOD"
+                        Case 11: pbpString$ = "HE MISSES"
+                        Case 12: pbpString$ = "DOESN'T GET THE ROLL"
+                        Case 13: pbpString$ = "OFF THE GLASS"
+                        Case 14: pbpString$ = "FALLS SHORT"
+                        Case 15: pbpString$ = "NO GOOD"
+                        Case 16: pbpString$ = "NO"
+                        Case 17: pbpString$ = "HE MISSES"
+                        Case 18: pbpString$ = "IN AND OUT"
+                        Case 19: pbpString$ = "OFF THE RIM"
+                        Case 20: pbpString$ = "OFF THE IRON"
+                        Case 21: pbpString$ = "IT'S NOT THERE"
+                        Case 22: pbpString$ = "OFF TARGET"
+                        Case 23: pbpString$ = "IT RATTLES OUT"
+                        Case 24: pbpString$ = "IT DOESN'T FALL"
+                        Case 25: pbpString$ = "IT BOUNCES OFF"
+                        Case 26: pbpString$ = "IT ROLLS OFF"
+                        Case 27: pbpString$ = "SHORT"
+                        Case 28: pbpString$ = "IT DOESN'T GO DOWN"
+                        Case 29: pbpString$ = "IT'S NO GOOD"
+                        Case 30: pbpString$ = "NO GOOD"
+                        Case 31: pbpString$ = "HE MISSES"
+                        Case 32: pbpString$ = "IT'S A BRICK"
+                        Case 33: pbpString$ = "HE FAILS TO CONNECT"
+                        Case 34: pbpString$ = "OFF THE SIDE OF THE RIM"
+                        Case 35: pbpString$ = "IT COMES UP SHORT"
+                        Case 36: pbpString$ = "IT ROLLS OUT"
+                        Case 37: pbpString$ = "AROUND AND OUT"
+                        Case 38: pbpString$ = "OFF THE BACK OF THE IRON"
+                        Case 39: pbpString$ = "ON THE FRONT RIM...ROLLS OFF"
+                        Case 40: pbpString$ = "IN THE AIR...NO GOOD"
+                        Case 41: pbpString$ = "TOO SHORT"
+                        Case 42: pbpString$ = "NO GOOD"
+                        Case 43: pbpString$ = "IT COMES UP SHORT"
+                        Case 44: pbpString$ = "IT ROLLS OUT"
+                        Case 45: pbpString$ = "IN AND OUT"
+                        Case 46: pbpString$ = "OFF THE FRONT OF THE IRON"
+                        Case 47: pbpString$ = "ON THE RIM...ROLLS OFF"
+                        Case 48: pbpString$ = "OFF THE FRONT OF THE RIM"
+                        Case 49: pbpString$ = "TOO SHORT"
+                        Case 50: pbpString$ = "TOO STRONG"
                     End Select
 
                 End If
 
             Case 9
                 'NOPASS
-                U$ = players_GAME$(P, gameB1!(P, B), 0) + " "
+                pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " "
                 RN = Int(Rnd(1) * 56) + 1
 
                 Select Case RN
-                    Case 1: U$ = U$ + "LOOKS INSIDE"
-                    Case 2: U$ = U$ + "TRIES TO WORK FREE"
-                    Case 3: U$ = U$ + "SETS UP THE PLAY"
-                    Case 4: U$ = U$ + "LOOKS FOR AN OPENING"
-                    Case 5: U$ = U$ + "DRIBBLES AROUND HIS MAN"
-                    Case 6: U$ = U$ + "SIGNALS THE PLAY"
-                    Case 7: U$ = U$ + "IS IN CONTROL"
-                    Case 8: U$ = U$ + "IS IN POSSESSION"
-                    Case 9: U$ = U$ + "TRIES TO GET OPEN"
-                    Case 10: U$ = U$ + "YO-YO'S OUT TOP"
-                    Case 11: U$ = U$ + "GOES TO WORK"
-                    Case 12: U$ = U$ + "WORKS OFF THE PICK"
-                    Case 13: U$ = U$ + "ON THE DRIBBLE"
-                    Case 14: U$ = U$ + "CUTS TO THE LEFT"
-                    Case 15: U$ = U$ + "CUTS TO THE RIGHT"
-                    Case 16: U$ = U$ + "WHEELS AND DEALS"
-                    Case 17: U$ = U$ + "SETS UP ON TOP"
-                    Case 18: U$ = U$ + "SLIDES RIGHT"
-                    Case 19: U$ = U$ + "SLIDES LEFT"
-                    Case 20: U$ = U$ + "GOES TO WORK"
-                    Case 21: U$ = U$ + "MOVES IT LEFT-SIDE"
-                    Case 22: U$ = U$ + "MOVES IT RIGHT-SIDE"
-                    Case 23: U$ = U$ + "REVERSES THE DRIBBLE"
-                    Case 24: U$ = U$ + "TRIES TO GET OPEN"
-                    Case 25: U$ = U$ + "DRIBBLES TO THE MIDDLE"
-                    Case 26: U$ = U$ + "FAKES THE PASS"
-                    Case 27: U$ = U$ + "SETS UP ON TOP"
-                    Case 28: U$ = U$ + "SLIDES RIGHT"
-                    Case 29: U$ = U$ + "SLIDES LEFT"
-                    Case 30: U$ = U$ + "DRIBBLES IT BEHIND THE BACK"
-                    Case 31: U$ = U$ + "FAKES LEFT...GOES RIGHT"
-                    Case 32: U$ = U$ + "FAKES RIGHT...GOES LEFT"
-                    Case 33: U$ = U$ + "SPINS HARD TO THE LEFT"
-                    Case 34: U$ = U$ + "SPINS HARD TO THE RIGHT"
-                    Case 35: U$ = U$ + "LEANS LEFT...GOES RIGHT"
-                    Case 36: U$ = U$ + "LEANS RIGHT...GOES LEFT"
-                    Case 37: U$ = U$ + "LEANS LEFT...CUTS RIGHT"
-                    Case 38: U$ = U$ + "LEANS RIGHT...CUTS LEFT"
-                    Case 39: U$ = U$ + "DOUBLE REVERSES HIS DRIBBLE"
-                    Case 40: U$ = U$ + "BACKS IN"
-                    Case 41: U$ = U$ + "LEANS FORWARD"
-                    Case 42: U$ = U$ + "CROSSES OVER...SPINS"
-                    Case 43: U$ = U$ + "CUTS LEFT"
-                    Case 44: U$ = U$ + "CUTS RIGHT"
+                    Case 1: pbpString$ = pbpString$ + "LOOKS INSIDE"
+                    Case 2: pbpString$ = pbpString$ + "TRIES TO WORK FREE"
+                    Case 3: pbpString$ = pbpString$ + "SETS UP THE PLAY"
+                    Case 4: pbpString$ = pbpString$ + "LOOKS FOR AN OPENING"
+                    Case 5: pbpString$ = pbpString$ + "DRIBBLES AROUND HIS MAN"
+                    Case 6: pbpString$ = pbpString$ + "SIGNALS THE PLAY"
+                    Case 7: pbpString$ = pbpString$ + "IS IN CONTROL"
+                    Case 8: pbpString$ = pbpString$ + "IS IN POSSESSION"
+                    Case 9: pbpString$ = pbpString$ + "TRIES TO GET OPEN"
+                    Case 10: pbpString$ = pbpString$ + "YO-YO'S OUT TOP"
+                    Case 11: pbpString$ = pbpString$ + "GOES TO WORK"
+                    Case 12: pbpString$ = pbpString$ + "WORKS OFF THE PICK"
+                    Case 13: pbpString$ = pbpString$ + "ON THE DRIBBLE"
+                    Case 14: pbpString$ = pbpString$ + "CUTS TO THE LEFT"
+                    Case 15: pbpString$ = pbpString$ + "CUTS TO THE RIGHT"
+                    Case 16: pbpString$ = pbpString$ + "WHEELS AND DEALS"
+                    Case 17: pbpString$ = pbpString$ + "SETS UP ON TOP"
+                    Case 18: pbpString$ = pbpString$ + "SLIDES RIGHT"
+                    Case 19: pbpString$ = pbpString$ + "SLIDES LEFT"
+                    Case 20: pbpString$ = pbpString$ + "GOES TO WORK"
+                    Case 21: pbpString$ = pbpString$ + "MOVES IT LEFT-SIDE"
+                    Case 22: pbpString$ = pbpString$ + "MOVES IT RIGHT-SIDE"
+                    Case 23: pbpString$ = pbpString$ + "REVERSES THE DRIBBLE"
+                    Case 24: pbpString$ = pbpString$ + "TRIES TO GET OPEN"
+                    Case 25: pbpString$ = pbpString$ + "DRIBBLES TO THE MIDDLE"
+                    Case 26: pbpString$ = pbpString$ + "FAKES THE PASS"
+                    Case 27: pbpString$ = pbpString$ + "SETS UP ON TOP"
+                    Case 28: pbpString$ = pbpString$ + "SLIDES RIGHT"
+                    Case 29: pbpString$ = pbpString$ + "SLIDES LEFT"
+                    Case 30: pbpString$ = pbpString$ + "DRIBBLES IT BEHIND THE BACK"
+                    Case 31: pbpString$ = pbpString$ + "FAKES LEFT...GOES RIGHT"
+                    Case 32: pbpString$ = pbpString$ + "FAKES RIGHT...GOES LEFT"
+                    Case 33: pbpString$ = pbpString$ + "SPINS HARD TO THE LEFT"
+                    Case 34: pbpString$ = pbpString$ + "SPINS HARD TO THE RIGHT"
+                    Case 35: pbpString$ = pbpString$ + "LEANS LEFT...GOES RIGHT"
+                    Case 36: pbpString$ = pbpString$ + "LEANS RIGHT...GOES LEFT"
+                    Case 37: pbpString$ = pbpString$ + "LEANS LEFT...CUTS RIGHT"
+                    Case 38: pbpString$ = pbpString$ + "LEANS RIGHT...CUTS LEFT"
+                    Case 39: pbpString$ = pbpString$ + "DOUBLE REVERSES HIS DRIBBLE"
+                    Case 40: pbpString$ = pbpString$ + "BACKS IN"
+                    Case 41: pbpString$ = pbpString$ + "LEANS FORWARD"
+                    Case 42: pbpString$ = pbpString$ + "CROSSES OVER...SPINS"
+                    Case 43: pbpString$ = pbpString$ + "CUTS LEFT"
+                    Case 44: pbpString$ = pbpString$ + "CUTS RIGHT"
                     Case 45:
-                        U$ = U$ + "WITH THE HESITATION DRIBBLE"
+                        pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
                         Call PBP
-                        U$ = "HE SPINS LEFT"
+                        pbpString$ = "HE SPINS LEFT"
                     Case 46:
-                        U$ = U$ + "WITH THE HESITATION DRIBBLE"
+                        pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
                         Call PBP
-                        U$ = "HE SPINS RIGHT"
+                        pbpString$ = "HE SPINS RIGHT"
                     Case 47:
-                        U$ = U$ + "WITH THE HESITATION DRIBBLE"
+                        pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
                         Call PBP
-                        U$ = "HE CUTS LEFT"
+                        pbpString$ = "HE CUTS LEFT"
                     Case 48:
-                        U$ = U$ + "WITH THE HESITATION DRIBBLE"
+                        pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
                         Call PBP
-                        U$ = "HE CUTS RIGHT"
+                        pbpString$ = "HE CUTS RIGHT"
                     Case 49:
-                        U$ = U$ + "STUTTER STEPS"
+                        pbpString$ = pbpString$ + "STUTTER STEPS"
                         Call PBP
-                        U$ = "HE MOVES LEFT"
-                    Case 50: U$ = U$ + "MAINTAINS HIS DRIBBLE"
-                    Case 51: U$ = U$ + "FAKE SPINS LEFT...GOES RIGHT"
-                    Case 52: U$ = U$ + "FAKE SPINS RIGHT...GOES LEFT"
+                        pbpString$ = "HE MOVES LEFT"
+                    Case 50: pbpString$ = pbpString$ + "MAINTAINS HIS DRIBBLE"
+                    Case 51: pbpString$ = pbpString$ + "FAKE SPINS LEFT...GOES RIGHT"
+                    Case 52: pbpString$ = pbpString$ + "FAKE SPINS RIGHT...GOES LEFT"
                     Case 53:
-                        U$ = U$ + "PALMS THE BALL"
+                        pbpString$ = pbpString$ + "PALMS THE BALL"
                         Call PBP
-                        U$ = "HE TAKES IT AND SPINS"
-                    Case 54: U$ = U$ + "SHAKES AND BAKES"
-                    Case 55: U$ = U$ + "DRIBBLES WITH THE LEFT HAND"
-                    Case 56: U$ = U$ + "DRIBBLES WITH THE RIGHT HAND"
+                        pbpString$ = "HE TAKES IT AND SPINS"
+                    Case 54: pbpString$ = pbpString$ + "SHAKES AND BAKES"
+                    Case 55: pbpString$ = pbpString$ + "DRIBBLES WITH THE LEFT HAND"
+                    Case 56: pbpString$ = pbpString$ + "DRIBBLES WITH THE RIGHT HAND"
                 End Select
 
             Case 10
                 'PASS prevBall$=PREV HANDLER
-                V$ = players_GAME$(P, gameB1!(P, B), 0)
+                V$ = players_GAME$(P, gameB1!(P, ballCarrier), 0)
 
                 RN = Int(Rnd(1) * 60) + 1
 
                 Select Case RN
-                    Case 1: U$ = prevBall$ + " TO " + V$
+                    Case 1: pbpString$ = prevBall$ + " TO " + V$
                     Case 2:
-                        U$ = prevBall$ + " KICKS IT OUT"
+                        pbpString$ = prevBall$ + " KICKS IT OUT"
                         Call PBP
-                        U$ = V$ + " TAKES THE PASS"
-                    Case 3: U$ = prevBall$ + " FEEDS " + V$
-                    Case 4: U$ = prevBall$ + " PASSES TO " + V$
-                    Case 4: U$ = prevBall$ + " DISHES TO " + V$
-                    Case 5: U$ = prevBall$ + " GIVES IT TO " + V$
-                    Case 6: U$ = prevBall$ + " WITH A NICE GIVE TO " + V$
+                        pbpString$ = V$ + " TAKES THE PASS"
+                    Case 3: pbpString$ = prevBall$ + " FEEDS " + V$
+                    Case 4: pbpString$ = prevBall$ + " PASSES TO " + V$
+                    Case 4: pbpString$ = prevBall$ + " DISHES TO " + V$
+                    Case 5: pbpString$ = prevBall$ + " GIVES IT TO " + V$
+                    Case 6: pbpString$ = prevBall$ + " WITH A NICE GIVE TO " + V$
                     Case 7:
-                        U$ = prevBall$ + " LOOKS"
+                        pbpString$ = prevBall$ + " LOOKS"
                         Call PBP
-                        U$ = "HE GETS IT TO " + V$
-                    Case 8: U$ = prevBall$ + " SENDS IT TO " + V$
-                    Case 9: U$ = prevBall$ + " TO " + V$
-                    Case 10: U$ = prevBall$ + " GETS IT TO " + V$
-                    Case 11: U$ = prevBall$ + " OVER TO " + V$
-                    Case 12: U$ = prevBall$ + " ZIPS IT TO " + V$
-                    Case 13: U$ = prevBall$ + " FINDS " + V$
-                    Case 14: U$ = prevBall$ + " LOOKS FOR " + V$
-                    Case 14: U$ = prevBall$ + " THROWS IT TO " + V$
-                    Case 15: U$ = prevBall$ + " GOES TO " + V$
-                    Case 16: U$ = prevBall$ + " SETS UP " + V$
-                    Case 17: U$ = prevBall$ + " OUT TO " + V$
-                    Case 18: U$ = prevBall$ + " FLIPS IT TO " + V$
-                    Case 19: U$ = "BOUNCE PASS TO " + V$
-                    Case 20: U$ = prevBall$ + " LEAVES IT FOR " + V$
-                    Case 21: U$ = prevBall$ + " LOOPS IT TO " + V$
-                    Case 22: U$ = prevBall$ + " SHOVELS IT OVER TO " + V$
-                    Case 23: U$ = prevBall$ + " GIVES IT BACK TO " + V$
-                    Case 24: U$ = prevBall$ + " FEEDS IT TO " + V$
-                    Case 25: U$ = prevBall$ + " GIVES IT OFF TO " + V$
-                    Case 26: U$ = "PASSES TO " + V$
-                    Case 27: U$ = "DISHES TO " + V$
-                    Case 28: U$ = "GIVES TO " + V$
-                    Case 29: U$ = "OVER TO " + V$
-                    Case 30: U$ = "SENDS IT BACK TO " + V$
-                    Case 31: U$ = "NO-LOOK PASS TO " + V$
-                    Case 32: U$ = "NO-LOOK BOUNCE PASS TO " + V$
-                    Case 33: U$ = "BEHIND THE BACK TO " + V$
-                    Case 34: U$ = prevBall$ + " SWINGS IT TO " + V$
-                    Case 35: U$ = prevBall$ + " FIRES A PASS TO " + V$
-                    Case 36: U$ = prevBall$ + " SNAPS A PASS TO " + V$
-                    Case 37: U$ = prevBall$ + " SWINGS A PASS TO " + V$
-                    Case 38: U$ = "TWO-HANDED PASS TO " + V$
-                    Case 39: U$ = "WRAP AROUND PASS TO " + V$
-                    Case 40: U$ = "OVER THE SHOULDER PASS TO " + V$
-                    Case 41: U$ = "BACKHAND PASS TO " + V$
-                    Case 42: U$ = "BACKHAND DISH TO " + V$
-                    Case 43: U$ = "PASS CONNECTED TO " + V$
-                    Case 44: U$ = prevBall$ + " WIRES IT TO " + V$
-                    Case 45: U$ = prevBall$ + " WIRES A PASS TO " + V$
-                    Case 46: U$ = prevBall$ + " SNAPS A PASS TO " + V$
-                    Case 47: U$ = prevBall$ + " FAKES..PASSES TO " + V$
-                    Case 48: U$ = prevBall$ + " SHUFFLES IT TO " + V$
-                    Case 49: U$ = prevBall$ + " SLINGS IT TO " + V$
-                    Case 50: U$ = prevBall$ + " FLIPS IT TO " + V$
-                    Case 51: U$ = prevBall$ + " WHIPS IT OVER TO " + V$
-                    Case 52: U$ = prevBall$ + " SLINGS A BOUNCE PASS TO " + V$
-                    Case 53: U$ = prevBall$ + " SHOVELS IT TO " + V$
+                        pbpString$ = "HE GETS IT TO " + V$
+                    Case 8: pbpString$ = prevBall$ + " SENDS IT TO " + V$
+                    Case 9: pbpString$ = prevBall$ + " TO " + V$
+                    Case 10: pbpString$ = prevBall$ + " GETS IT TO " + V$
+                    Case 11: pbpString$ = prevBall$ + " OVER TO " + V$
+                    Case 12: pbpString$ = prevBall$ + " ZIPS IT TO " + V$
+                    Case 13: pbpString$ = prevBall$ + " FINDS " + V$
+                    Case 14: pbpString$ = prevBall$ + " LOOKS FOR " + V$
+                    Case 14: pbpString$ = prevBall$ + " THROWS IT TO " + V$
+                    Case 15: pbpString$ = prevBall$ + " GOES TO " + V$
+                    Case 16: pbpString$ = prevBall$ + " SETS UP " + V$
+                    Case 17: pbpString$ = prevBall$ + " OUT TO " + V$
+                    Case 18: pbpString$ = prevBall$ + " FLIPS IT TO " + V$
+                    Case 19: pbpString$ = "BOUNCE PASS TO " + V$
+                    Case 20: pbpString$ = prevBall$ + " LEAVES IT FOR " + V$
+                    Case 21: pbpString$ = prevBall$ + " LOOPS IT TO " + V$
+                    Case 22: pbpString$ = prevBall$ + " SHOVELS IT OVER TO " + V$
+                    Case 23: pbpString$ = prevBall$ + " GIVES IT BACK TO " + V$
+                    Case 24: pbpString$ = prevBall$ + " FEEDS IT TO " + V$
+                    Case 25: pbpString$ = prevBall$ + " GIVES IT OFF TO " + V$
+                    Case 26: pbpString$ = "PASSES TO " + V$
+                    Case 27: pbpString$ = "DISHES TO " + V$
+                    Case 28: pbpString$ = "GIVES TO " + V$
+                    Case 29: pbpString$ = "OVER TO " + V$
+                    Case 30: pbpString$ = "SENDS IT BACK TO " + V$
+                    Case 31: pbpString$ = "NO-LOOK PASS TO " + V$
+                    Case 32: pbpString$ = "NO-LOOK BOUNCE PASS TO " + V$
+                    Case 33: pbpString$ = "BEHIND THE BACK TO " + V$
+                    Case 34: pbpString$ = prevBall$ + " SWINGS IT TO " + V$
+                    Case 35: pbpString$ = prevBall$ + " FIRES A PASS TO " + V$
+                    Case 36: pbpString$ = prevBall$ + " SNAPS A PASS TO " + V$
+                    Case 37: pbpString$ = prevBall$ + " SWINGS A PASS TO " + V$
+                    Case 38: pbpString$ = "TWO-HANDED PASS TO " + V$
+                    Case 39: pbpString$ = "WRAP AROUND PASS TO " + V$
+                    Case 40: pbpString$ = "OVER THE SHOULDER PASS TO " + V$
+                    Case 41: pbpString$ = "BACKHAND PASS TO " + V$
+                    Case 42: pbpString$ = "BACKHAND DISH TO " + V$
+                    Case 43: pbpString$ = "PASS CONNECTED TO " + V$
+                    Case 44: pbpString$ = prevBall$ + " WIRES IT TO " + V$
+                    Case 45: pbpString$ = prevBall$ + " WIRES A PASS TO " + V$
+                    Case 46: pbpString$ = prevBall$ + " SNAPS A PASS TO " + V$
+                    Case 47: pbpString$ = prevBall$ + " FAKES..PASSES TO " + V$
+                    Case 48: pbpString$ = prevBall$ + " SHUFFLES IT TO " + V$
+                    Case 49: pbpString$ = prevBall$ + " SLINGS IT TO " + V$
+                    Case 50: pbpString$ = prevBall$ + " FLIPS IT TO " + V$
+                    Case 51: pbpString$ = prevBall$ + " WHIPS IT OVER TO " + V$
+                    Case 52: pbpString$ = prevBall$ + " SLINGS A BOUNCE PASS TO " + V$
+                    Case 53: pbpString$ = prevBall$ + " SHOVELS IT TO " + V$
                     Case 54:
-                        U$ = prevBall$ + " PUMP FAKES A SHOT"
+                        pbpString$ = prevBall$ + " PUMP FAKES A SHOT"
                         Call PBP
-                        U$ = "HE SWINGS IT TO " + V$
+                        pbpString$ = "HE SWINGS IT TO " + V$
                     Case 55:
-                        U$ = prevBall$ + " PUMP FAKES A SHOT"
+                        pbpString$ = prevBall$ + " PUMP FAKES A SHOT"
                         Call PBP
-                        U$ = "HE BOUNCES IT TO " + V$
+                        pbpString$ = "HE BOUNCES IT TO " + V$
                     Case 56:
-                        U$ = prevBall$ + " WITH A FOOT FAKE"
+                        pbpString$ = prevBall$ + " WITH A FOOT FAKE"
                         Call PBP
-                        U$ = "HE SPINS AND DUMPS IT TO " + V$
+                        pbpString$ = "HE SPINS AND DUMPS IT TO " + V$
                     Case 57:
-                        U$ = prevBall$ + " CUTS ACROSS THE LANE"
+                        pbpString$ = prevBall$ + " CUTS ACROSS THE LANE"
                         Call PBP
-                        U$ = "HE DISHES INSIDE TO " + V$
+                        pbpString$ = "HE DISHES INSIDE TO " + V$
                     Case 58:
-                        U$ = prevBall$ + " DRIVES THE BASELINE"
+                        pbpString$ = prevBall$ + " DRIVES THE BASELINE"
                         Call PBP
-                        U$ = "DISHES UNDERNEATH TO " + V$
+                        pbpString$ = "DISHES UNDERNEATH TO " + V$
                     Case 59:
-                        U$ = prevBall$ + " FAKES RIGHT...CUTS LEFT"
+                        pbpString$ = prevBall$ + " FAKES RIGHT...CUTS LEFT"
                         Call PBP
-                        U$ = "SHUFFLES IT TO " + V$
+                        pbpString$ = "SHUFFLES IT TO " + V$
                     Case 60:
-                        U$ = prevBall$ + " HEAD FAKES"
+                        pbpString$ = prevBall$ + " HEAD FAKES"
                         Call PBP
-                        U$ = "HE PUSHES IT TO " + V$
+                        pbpString$ = "HE PUSHES IT TO " + V$
                 End Select
 
         End Select
@@ -1629,21 +1635,21 @@ Sub TICKER ()
         If TMT = 0 Then
             Locate 10, 28: Print "NO OTHER GAMES SCHEDULED"
         Else
-            If H = 1 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 1
-            If H = 1 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 2
-            If H = 1 And gameClock! < 240 Then timeInterval = 3
-            If H = 2 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 4
-            If H = 2 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 5
-            If H = 2 And gameClock! < 240 Then timeInterval = 6
-            If H = 3 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 9
-            If H = 3 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 10
-            If H = 3 And gameClock! < 240 Then timeInterval = 11
-            If H = 4 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 12
-            If H = 4 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 13
-            If H = 4 And gameClock! < 240 Then timeInterval = 14
-            If H = 5 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 15
-            If H = 5 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 16
-            If H = 5 And gameClock! < 240 Then timeInterval = 17
+            If quarter = 1 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 1
+            If quarter = 1 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 2
+            If quarter = 1 And gameClock! < 240 Then timeInterval = 3
+            If quarter = 2 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 4
+            If quarter = 2 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 5
+            If quarter = 2 And gameClock! < 240 Then timeInterval = 6
+            If quarter = 3 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 9
+            If quarter = 3 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 10
+            If quarter = 3 And gameClock! < 240 Then timeInterval = 11
+            If quarter = 4 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 12
+            If quarter = 4 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 13
+            If quarter = 4 And gameClock! < 240 Then timeInterval = 14
+            If quarter = 5 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 15
+            If quarter = 5 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 16
+            If quarter = 5 And gameClock! < 240 Then timeInterval = 17
 
             If HT% = 1 Then timeInterval = 8
 
@@ -1654,7 +1660,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(1, 0), 13);
                 Locate , 15: Print Using "### "; SX%(1, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
 
                 Print Left$(SX$(1, 1), 13);
                 Locate , 15: Print Using "### #"; SX%(1, 1, tickInterval)
@@ -1667,7 +1673,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(2, 0), 13);
                 Locate , 15: Print Using "### "; SX%(2, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
 
                 Print Left$(SX$(2, 1), 13);
                 Locate , 15: Print Using "### #"; SX%(2, 1, tickInterval)
@@ -1680,7 +1686,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(3, 0), 13);
                 Locate , 15: Print Using "### "; SX%(3, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
 
                 Print Left$(SX$(3, 1), 13);
                 Locate , 15: Print Using "### #"; SX%(3, 1, tickInterval)
@@ -1693,7 +1699,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(4, 0), 13);
                 Locate , 15: Print Using "### "; SX%(4, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
 
                 Print Left$(SX$(4, 1), 13);
                 Locate , 15: Print Using "### #"; SX%(4, 1, tickInterval)
@@ -1706,7 +1712,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(5, 0), 13);
                 Locate , 15: Print Using "### "; SX%(5, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
 
                 Print Left$(SX$(5, 1), 13);
                 Locate , 15: Print Using "### #"; SX%(5, 1, tickInterval)
@@ -1719,7 +1725,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(6, 0), 13);
                 Locate , 15: Print Using "### "; SX%(6, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
 
                 Print Left$(SX$(6, 1), 13);
                 Locate , 15: Print Using "### #"; SX%(6, 1, tickInterval)
@@ -1732,7 +1738,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(7, 0), 13);
                 Locate , 15: Print Using "### "; SX%(7, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
 
                 Print Left$(SX$(7, 1), 13);
                 Locate , 15: Print Using "### #"; SX%(7, 1, tickInterval)
@@ -1745,7 +1751,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(8, 0), 13);
                 Locate , 15: Print Using "### "; SX%(8, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
 
                 Print Left$(SX$(8, 1), 13);
                 Locate , 15: Print Using "### #"; SX%(8, 1, tickInterval);
@@ -1758,7 +1764,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(9, 0), 13);
                 Locate , 35: Print Using "### "; SX%(9, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 21
 
                 Print Left$(SX$(9, 1), 13);
@@ -1772,7 +1778,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(10, 0), 13);
                 Locate , 35: Print Using "### "; SX%(10, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 21
 
                 Print Left$(SX$(10, 1), 13);
@@ -1786,7 +1792,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(11, 0), 13);
                 Locate , 35: Print Using "### "; SX%(11, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 21
 
                 Print Left$(SX$(11, 1), 13);
@@ -1800,7 +1806,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(12, 0), 13);
                 Locate , 35: Print Using "### "; SX%(12, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 21
 
                 Print Left$(SX$(12, 1), 13);
@@ -1814,7 +1820,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(13, 0), 13);
                 Locate , 35: Print Using "### "; SX%(13, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 21
 
                 Print Left$(SX$(13, 1), 13);
@@ -1828,7 +1834,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(14, 0), 13);
                 Locate , 35: Print Using "### "; SX%(14, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 21
 
                 Print Left$(SX$(14, 1), 13);
@@ -1842,7 +1848,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(15, 0), 13);
                 Locate , 35: Print Using "### "; SX%(15, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 21
 
                 Print Left$(SX$(15, 1), 13);
@@ -1856,7 +1862,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(16, 0), 13);
                 Locate , 35: Print Using "### "; SX%(16, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 21
 
                 Print Left$(SX$(16, 1), 13);
@@ -1870,7 +1876,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(17, 0), 13);
                 Locate , 55: Print Using "### "; SX%(17, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 41
 
                 Print Left$(SX$(17, 1), 13);
@@ -1884,7 +1890,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(18, 0), 13);
                 Locate , 55: Print Using "### "; SX%(18, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 41
 
                 Print Left$(SX$(18, 1), 13);
@@ -1898,7 +1904,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(19, 0), 13);
                 Locate , 55: Print Using "### "; SX%(19, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 41
 
                 Print Left$(SX$(19, 1), 13);
@@ -1912,7 +1918,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(20, 0), 13);
                 Locate , 55: Print Using "### "; SX%(20, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 41
 
                 Print Left$(SX$(20, 1), 13);
@@ -1926,7 +1932,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(21, 0), 13);
                 Locate , 55: Print Using "### "; SX%(21, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 41
                 Print Left$(SX$(21, 1), 13);
                 Locate , 55: Print Using "### #"; SX%(21, 1, tickInterval)
@@ -1939,7 +1945,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(22, 0), 13);
                 Locate , 55: Print Using "### "; SX%(22, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 41
 
                 Print Left$(SX$(22, 1), 13);
@@ -1953,7 +1959,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(23, 0), 13);
                 Locate , 55: Print Using "### "; SX%(23, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 41
 
                 Print Left$(SX$(23, 1), 13);
@@ -1967,7 +1973,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(24, 0), 13);
                 Locate , 55: Print Using "### "; SX%(24, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 41
 
                 Print Left$(SX$(24, 1), 13);
@@ -1981,7 +1987,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(25, 0), 13);
                 Locate , 75: Print Using "### "; SX%(25, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 61
 
                 Print Left$(SX$(25, 1), 13);
@@ -1995,7 +2001,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(26, 0), 13);
                 Locate , 75: Print Using "### "; SX%(26, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 61
 
                 Print Left$(SX$(26, 1), 13);
@@ -2009,7 +2015,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(27, 0), 13);
                 Locate , 75: Print Using "### "; SX%(27, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 61
 
                 Print Left$(SX$(27, 1), 13);
@@ -2023,7 +2029,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(28, 0), 13);
                 Locate , 75: Print Using "### "; SX%(28, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 61
 
                 Print Left$(SX$(28, 1), 13);
@@ -2037,7 +2043,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(29, 0), 13);
                 Locate , 75: Print Using "### "; SX%(29, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 61
 
                 Print Left$(SX$(29, 1), 13);
@@ -2051,7 +2057,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(30, 0), 13);
                 Locate , 75: Print Using "### "; SX%(30, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 61
 
                 Print Left$(SX$(30, 1), 13);
@@ -2065,7 +2071,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(31, 0), 13);
                 Locate , 75: Print Using "### "; SX%(31, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 61
 
                 Print Left$(SX$(31, 1), 13);
@@ -2079,7 +2085,7 @@ Sub TICKER ()
 
                 Print Left$(SX$(32, 0), 13);
                 Locate , 75: Print Using "### "; SX%(32, 0, tickInterval);
-                Print R$(tickInterval)
+                Print tickerPeriod$(tickInterval)
                 Locate , 61
 
                 Print Left$(SX$(32, 1), 13);
@@ -2127,23 +2133,23 @@ Sub TICKERUPDATE ()
 
     If autoPlay = 1 And schedGame(2) <= 31 Then
 
-        If H = 1 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 1) = -1 Then SX%(1 + schedGame(2), 0, 1) = score(0, 0): SX%(1 + schedGame(2), 1, 1) = score(1, 0): GoTo 2580
-        If H = 1 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 2) = -1 Then SX%(1 + schedGame(2), 0, 2) = score(0, 0): SX%(1 + schedGame(2), 1, 2) = score(1, 0): GoTo 2580
+        If quarter = 1 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 1) = -1 Then SX%(1 + schedGame(2), 0, 1) = score(0, 0): SX%(1 + schedGame(2), 1, 1) = score(1, 0): GoTo 2580
+        If quarter = 1 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 2) = -1 Then SX%(1 + schedGame(2), 0, 2) = score(0, 0): SX%(1 + schedGame(2), 1, 2) = score(1, 0): GoTo 2580
 
-        If H > 1 And SX%(1 + schedGame(2), 0, 3) = -1 Then SX%(1 + schedGame(2), 0, 3) = score(0, 1): SX%(1 + schedGame(2), 1, 3) = score(1, 1): GoTo 2580
+        If quarter > 1 And SX%(1 + schedGame(2), 0, 3) = -1 Then SX%(1 + schedGame(2), 0, 3) = score(0, 1): SX%(1 + schedGame(2), 1, 3) = score(1, 1): GoTo 2580
 
-        If H = 2 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 4) = -1 Then SX%(1 + schedGame(2), 0, 4) = score(0, 0): SX%(1 + schedGame(2), 1, 4) = score(1, 0): GoTo 2580
-        If H = 2 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 5) = -1 Then SX%(1 + schedGame(2), 0, 5) = score(0, 0): SX%(1 + schedGame(2), 1, 5) = score(1, 0): GoTo 2580
+        If quarter = 2 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 4) = -1 Then SX%(1 + schedGame(2), 0, 4) = score(0, 0): SX%(1 + schedGame(2), 1, 4) = score(1, 0): GoTo 2580
+        If quarter = 2 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 5) = -1 Then SX%(1 + schedGame(2), 0, 5) = score(0, 0): SX%(1 + schedGame(2), 1, 5) = score(1, 0): GoTo 2580
 
-        If H > 2 And SX%(1 + schedGame(2), 0, 6) = -1 Then For I2 = 6 To 8: SX%(1 + schedGame(2), 0, I2) = score(0, 2) + score(0, 1): SX%(1 + schedGame(2), 1, I2) = score(1, 2) + score(1, 1): Next: GoTo 2580
+        If quarter > 2 And SX%(1 + schedGame(2), 0, 6) = -1 Then For I2 = 6 To 8: SX%(1 + schedGame(2), 0, I2) = score(0, 2) + score(0, 1): SX%(1 + schedGame(2), 1, I2) = score(1, 2) + score(1, 1): Next: GoTo 2580
 
-        If H = 3 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 9) = -1 Then SX%(1 + schedGame(2), 0, 9) = score(0, 0): SX%(1 + schedGame(2), 1, 9) = score(1, 0): GoTo 2580
-        If H = 3 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 10) = -1 Then SX%(1 + schedGame(2), 0, 10) = score(0, 0): SX%(1 + schedGame(2), 1, 10) = score(1, 0): GoTo 2580
+        If quarter = 3 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 9) = -1 Then SX%(1 + schedGame(2), 0, 9) = score(0, 0): SX%(1 + schedGame(2), 1, 9) = score(1, 0): GoTo 2580
+        If quarter = 3 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 10) = -1 Then SX%(1 + schedGame(2), 0, 10) = score(0, 0): SX%(1 + schedGame(2), 1, 10) = score(1, 0): GoTo 2580
 
-        If H > 3 And SX%(1 + schedGame(2), 0, 11) = -1 Then SX%(1 + schedGame(2), 0, 11) = score(0, 3) + score(0, 2) + score(0, 1): SX%(1 + schedGame(2), 1, 11) = score(1, 3) + score(1, 2) + score(1, 1): GoTo 2580
+        If quarter > 3 And SX%(1 + schedGame(2), 0, 11) = -1 Then SX%(1 + schedGame(2), 0, 11) = score(0, 3) + score(0, 2) + score(0, 1): SX%(1 + schedGame(2), 1, 11) = score(1, 3) + score(1, 2) + score(1, 1): GoTo 2580
 
-        If H = 4 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 12) = -1 Then SX%(1 + schedGame(2), 0, 12) = score(0, 0): SX%(1 + schedGame(2), 1, 12) = score(1, 0): GoTo 2580
-        If H = 4 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 13) = -1 Then SX%(1 + schedGame(2), 0, 13) = score(0, 0): SX%(1 + schedGame(2), 1, 13) = score(1, 0): GoTo 2580
+        If quarter = 4 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 12) = -1 Then SX%(1 + schedGame(2), 0, 12) = score(0, 0): SX%(1 + schedGame(2), 1, 12) = score(1, 0): GoTo 2580
+        If quarter = 4 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 13) = -1 Then SX%(1 + schedGame(2), 0, 13) = score(0, 0): SX%(1 + schedGame(2), 1, 13) = score(1, 0): GoTo 2580
 
         SX%(1 + schedGame(2), 0, 14) = score(0, 0): SX%(1 + schedGame(2), 1, 14) = score(1, 0)
 
@@ -2166,17 +2172,29 @@ Sub TickerSchedule
 
     If schedGame(2) <= 31 Then
 
-        For X = 0 To 1: SX$(schedGame(2) + 1, X) = gameTeams$(X): Next
+        For X = 0 To 1: 
+            SX$(schedGame(2) + 1, X) = gameTeams$(X)
+        Next
 
         Open "TICKER" For Output As #1
 
-        For I = 1 To 32: For I1 = 0 To 1: For I2 = 1 To 14
+        For I = 1 To 32: 
+            For I1 = 0 To 1: 
+                For I2 = 1 To 14
+                    Print #1, SX%(I, I1, I2)
+                Next
+            Next
+        Next
 
-        Print #1, SX%(I, I1, I2): Next: Next: Next
+        For I = 1 To 32: 
+            For I1 = 0 To 1: 
+                Print #1, SX$(I, I1)
+            Next
+        Next
 
-        For I = 1 To 32: For I1 = 0 To 1: Print #1, SX$(I, I1): Next: Next
-
-        For I = 1 To 32: Print #1, ST%(I): Next
+        For I = 1 To 32: 
+            Print #1, ST%(I)
+        Next
 
         Close #1
 
@@ -2391,7 +2409,7 @@ Sub PlayStyle ()
 
         If I1 <= 4 Then
 
-            If X = 50 And I1 = B And P9 = P Then
+            If xFactor = 50 And I1 = ballCarrier And P9 = P Then
 
                 Locate 20, 29
                 Color 14, 0: Print players_GAME$(P9, gameB1!(P9, I1), 0); " IS AT THE FT LINE"
@@ -2566,7 +2584,7 @@ Sub PlayItSafe ()
 
         For ZZ = 0 To 4
 
-            If H <= 2 And gameRatings!(P9, gameB1!(P9, ZZ), 12) >= 3 And gameRatings!(P9, gameB1!(P9, ZZ), 22) = 0 Or gameRatings!(P9, gameB1!(P9, ZZ), 12) = 5 And gameRatings!(P9, gameB1!(P9, ZZ), 22) = 0 Then
+            If quarter <= 2 And gameRatings!(P9, gameB1!(P9, ZZ), 12) >= 3 And gameRatings!(P9, gameB1!(P9, ZZ), 22) = 0 Or gameRatings!(P9, gameB1!(P9, ZZ), 12) = 5 And gameRatings!(P9, gameB1!(P9, ZZ), 22) = 0 Then
 
                 A = A + 1
 
@@ -2635,7 +2653,7 @@ Sub PlayItSafe ()
     MJ = 0
     FO = 99
 
-    If H = 1 And gameClock! = 720 Then FO = 0
+    If quarter = 1 And gameClock! = 720 Then FO = 0
 
 End Sub
 
@@ -2656,10 +2674,10 @@ Sub WHOGETSBALL
         If CNT% <> 4 Then
 
             M9 = 0
-            B = Int(Rnd(1) * 5)
-            Call d100(X)
+            ballCarrier = Int(Rnd(1) * 5)
+            Call d100(xFactor)
 
-            If X > 30 Then
+            If xFactor > 30 Then
 
                 For I = 0 To 4
 
@@ -2667,7 +2685,7 @@ Sub WHOGETSBALL
 
                     If M8 <= 0 Then M8 = 0
                     If M8 <= 0 And gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12) > 0 Then M8 = gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12)
-                    If M8 >= M9 Then B = I: M9 = M8
+                    If M8 >= M9 Then ballCarrier = I: M9 = M8
 
                 Next I
 
@@ -2693,34 +2711,34 @@ Sub PlayerCalcs ()
     M4 = 0
 
     'This translates close to, but not exactly:
-    'If human player on offense and X = 50
-    If Not (playerMode = 1 And P9 = compTeam And X = 50 Or playerMode = 2 And P9 = P And X = 50) Then
+    'If human player on offense and xFactor = 50
+    If Not (playerMode = 1 And P9 = compTeam And xFactor = 50 Or playerMode = 2 And P9 = P And xFactor = 50) Then
 
         For I1 = 0 To 14
 
             M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
 
-            If H < 4 And M6 <= 0 Or H = 4 And gameClock! > 120 And M6 <= 0 Then M1 = M1 + 1
+            If quarter < 4 And M6 <= 0 Or quarter = 4 And gameClock! > 120 And M6 <= 0 Then M1 = M1 + 1
 
-            If players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or H = 1 And gameRatings!(P9, I1, 12) >= 2 Or H = 2 And gameRatings!(P9, I1, 12) >= 4 Or H = 3 And gameRatings!(P9, I1, 12) >= 5 Or H = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5 Then M2 = M2 + 1
+            If players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or quarter = 1 And gameRatings!(P9, I1, 12) >= 2 Or quarter = 2 And gameRatings!(P9, I1, 12) >= 4 Or quarter = 3 And gameRatings!(P9, I1, 12) >= 5 Or quarter = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5 Then M2 = M2 + 1
 
             If I1 <= 4 Then
                 M6 = gameRatings!(P9, gameB1!(P9, I1), 3) - gameRatings!(P9, gameB1!(P9, I1), 7) - gameRatings!(P9, gameB1!(P9, I1), 11) - gameRatings!(P9, gameB1!(P9, I1), 12)
 
-                If M6 <= 0 And H < 4 Or M6 <= 0 And H = 4 And gameClock! > 120 Then M3 = M3 + 1
+                If M6 <= 0 And quarter < 4 Or M6 <= 0 And quarter = 4 And gameClock! > 120 Then M3 = M3 + 1
 
-                If players_GAME$(P9, gameB1!(P9, I1), 0) = "XXX" Or gameRatings!(P9, gameB1!(P9, I1), 12) >= 6 Or plyrRat_GAME(P9, gameB1!(P9, I1), 18) <> 0 Or H = 1 And gameRatings!(P9, gameB1!(P9, I1), 12) >= 2 Or H = 2 And gameRatings!(P9, gameB1!(P9, I1), 12) >= 4 Or H = 3 And gameRatings!(P9, gameB1!(P9, I1), 12) >= 5 Or H = 4 And gameClock! > 300 And gameRatings!(P9, gameB1!(P9, I1), 12) = 5 Then M4 = M4 + 1
+                If players_GAME$(P9, gameB1!(P9, I1), 0) = "XXX" Or gameRatings!(P9, gameB1!(P9, I1), 12) >= 6 Or plyrRat_GAME(P9, gameB1!(P9, I1), 18) <> 0 Or quarter = 1 And gameRatings!(P9, gameB1!(P9, I1), 12) >= 2 Or quarter = 2 And gameRatings!(P9, gameB1!(P9, I1), 12) >= 4 Or quarter = 3 And gameRatings!(P9, gameB1!(P9, I1), 12) >= 5 Or quarter = 4 And gameClock! > 300 And gameRatings!(P9, gameB1!(P9, I1), 12) = 5 Then M4 = M4 + 1
 
             End If
         Next I1
 
-        If M3 >= 1 And 5 - M3 < 15 - M1 Or H = 4 And gameClock! < 120 Or H > 4 Or M4 >= 1 And M2 < 14 Then
+        If M3 >= 1 And 5 - M3 < 15 - M1 Or quarter = 4 And gameClock! < 120 Or quarter > 4 Or M4 >= 1 And M2 < 14 Then
             Call COMPUTERSUBS
         End If
 
     End If
 
-    If H = 4 And gameClock! <= 120 Then G9%(P9) = 1
+    If quarter = 4 And gameClock! <= 120 Then G9%(P9) = 1
 
 End Sub
 
@@ -2765,7 +2783,7 @@ Sub CreditAssists ()
             W5 = M8
             Locate 7, 25
 
-            If players_GAME$(P, gameB1!(P, B), 0) <> players_GAME$(P, gameB1!(P, M8), 0) Then
+            If players_GAME$(P, gameB1!(P, ballCarrier), 0) <> players_GAME$(P, gameB1!(P, M8), 0) Then
                 gameRatings!(P, gameB1!(P, M8), 14) = gameRatings!(P, gameB1!(P, M8), 14) + 1
             End If
 
@@ -2781,7 +2799,7 @@ Sub CreditAssists ()
             '-- That is, M8 stays as value 0 when the ball carrier is 0, so the
             '-- player names are never different.
 
-        Loop Until players_GAME$(P, gameB1!(P, B), 0) <> players_GAME$(P, gameB1!(P, M8), 0) Or iterations = 5
+        Loop Until players_GAME$(P, gameB1!(P, ballCarrier), 0) <> players_GAME$(P, gameB1!(P, M8), 0) Or iterations = 5
 
     End If
 
@@ -2808,7 +2826,7 @@ Sub ReboundRoutine1 ()
         ' (switching 1 to 0, and vice versa)
         XZ = gameRatings!(P, gameB1!(P, I), 21)
 
-        If Not (H > 2 Or H = 2 And gameClock! <= 120) Then
+        If Not (quarter > 2 Or quarter = 2 And gameClock! <= 120) Then
             'This line, referencing P, is the other one changed
             'between the 2 routines
             If gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12) <= 0 Then XZ = XZ * .5
@@ -2820,17 +2838,17 @@ Sub ReboundRoutine1 ()
 
     RN = Rnd(1) * RB
 
-    For B = 0 To 4
-        If RN <= RB(B) Then
+    For ballCarrier = 0 To 4
+        If RN <= RB(ballCarrier) Then
             skipRandom% = 1
             Exit For
         Else
-            RB(B + 1) = RB(B + 1) + RB(B)
+            RB(ballCarrier + 1) = RB(ballCarrier + 1) + RB(ballCarrier)
         End If
     Next
 
     If skipRandom% = 0 Then
-        B = Int(Rnd(1) * 5)
+        ballCarrier = Int(Rnd(1) * 5)
     End If
 
 End Sub
@@ -2850,7 +2868,7 @@ Sub ReboundRoutine2 ()
         RB(I) = 0
         XZ = gameRatings!(1 - P, gameB1!(1 - P, I), 2)
 
-        If Not (H > 2 Or H = 2 And gameClock! <= 120) Then
+        If Not (quarter > 2 Or quarter = 2 And gameClock! <= 120) Then
             If gameRatings!(1 - P, gameB1!(1 - P, I), 3) - gameRatings!(1 - P, gameB1!(1 - P, I), 7) - gameRatings!(1 - P, gameB1!(1 - P, I), 11) - gameRatings!(1 - P, gameB1!(1 - P, I), 12) <= 0 Then XZ = XZ * .5
         End If
 
@@ -2860,17 +2878,17 @@ Sub ReboundRoutine2 ()
 
     RN = Rnd(1) * RB
 
-    For B = 0 To 4
-        If RN <= RB(B) Then
+    For ballCarrier = 0 To 4
+        If RN <= RB(ballCarrier) Then
             skipRandom% = 1
             Exit For
         Else
-            RB(B + 1) = RB(B + 1) + RB(B)
+            RB(ballCarrier + 1) = RB(ballCarrier + 1) + RB(ballCarrier)
         End If
     Next
 
     If skipRandom% = 0 Then
-        B = Int(Rnd(1) * 5)
+        ballCarrier = Int(Rnd(1) * 5)
     End If
 
 End Sub
@@ -2941,7 +2959,8 @@ Sub Choices ()
             Else
                 If Not (timeouts(P) <= 0 Or P3 = 1 And P = compTeam And playerMode = 1) Then
                     timeouts(P) = timeouts(P) - 1
-                    Color 15, 0: Call Substitutions
+                    Color 15, 0
+                    Call Substitutions
                 End If
                 'Exit Do
             End If
@@ -3103,7 +3122,7 @@ Sub Fouls (skipRandom%)
     If gameRatings!(D, gameB1!(D, W5), 12) < 6 Then
 
         If pbpOpt = 0 Then
-            U$ = "FOUL NUMBER" + Str$(gameRatings!(D, gameB1!(D, W5), 12)) + " CALLED ON " + players_GAME$(D, gameB1!(D, W5), 0)
+            pbpString$ = "FOUL NUMBER" + Str$(gameRatings!(D, gameB1!(D, W5), 12)) + " CALLED ON " + players_GAME$(D, gameB1!(D, W5), 0)
             Call PBP
         Else
             'pbpOpt = 1
@@ -3135,7 +3154,7 @@ Sub Fouls (skipRandom%)
         Next I3
 
         If pbpOpt = 0 Then
-            U$ = "FOUL CALLED ON " + players_GAME$(D, gameB1!(D, W5), 0)
+            pbpString$ = "FOUL CALLED ON " + players_GAME$(D, gameB1!(D, W5), 0)
             Call PBP
         Else
             'pbpOpt = 1
@@ -3146,19 +3165,19 @@ Sub Fouls (skipRandom%)
             End If
         End If
 
-        U$ = "HE HAS JUST FOULED OUT !!!"
+        pbpString$ = "HE HAS JUST FOULED OUT !!!"
 
         If pbpOpt = 0 Then
             Call PBP
         Else
             'pbpOpt = 1
-            If pbpDelay! <> 0 Then Print U$: Call DELAY
+            If pbpDelay! <> 0 Then Print pbpString$: Call DELAY
         End If
 
         Call DELAY
         C9 = 9
 
-        If P2(D) > bonusFoulNum Then X = 50
+        If P2(D) > bonusFoulNum Then xFactor = 50
 
         P3 = 1
 
@@ -3173,7 +3192,7 @@ Sub Fouls (skipRandom%)
 
         Call CheckGameClock
 
-        X = 0
+        xFactor = 0
 
     End If
 
@@ -3204,7 +3223,7 @@ Sub LOADSTATS ()
 
             Input #1, nbrStats
 
-            For I1 = 1 To NUM_STATRECORDS: Input #1, O%(I1): Next
+            For I1 = 1 To NUM_STATRECORDS: Input #1, statO%(I1): Next
 
             For I1 = 1 To NUM_STATRECORDS: Input #1, HO$(I1): Next
 
@@ -3215,8 +3234,8 @@ Sub LOADSTATS ()
             Close #1
 
             For I1 = 1 To nbrStats
-                If O%(I1) > HT%(I1) Then Z5(I) = Z5(I) + 1
-                If O%(I1) < HT%(I1) Then Z6(I) = Z6(I) + 1
+                If statO%(I1) > HT%(I1) Then Z5(I) = Z5(I) + 1
+                If statO%(I1) < HT%(I1) Then Z6(I) = Z6(I) + 1
             Next
 
         End If
@@ -3278,8 +3297,8 @@ Sub SCOREBOARD ()
 
     'Period Designation
     Locate 2, 35
-    Print Using " PERIOD #"; H;
-    If H > 4 Then Locate , 35: Print Using "OVERTIME #"; H - 4
+    Print Using " PERIOD #"; quarter;
+    If quarter > 4 Then Locate , 35: Print Using "OVERTIME #"; quarter - 4
 
     'Score Team 2
     Color 14, 0
@@ -3302,13 +3321,13 @@ Sub SCOREBOARD ()
     Print Using "##"; P2(1);
 
     'Bonus
-    If P2(0) > bonusFoulNum - 1 And H <= 4 Or P2(0) > 2 And H > 4 Then
+    If P2(0) > bonusFoulNum - 1 And quarter <= 4 Or P2(0) > 2 And quarter > 4 Then
         Color 0, 2
         Locate , 46: Print "BONUS";
         Color 7, 0
     End If
 
-    If P2(1) > bonusFoulNum - 1 And H <= 4 Or P2(1) > 2 And H > 4 Then
+    If P2(1) > bonusFoulNum - 1 And quarter <= 4 Or P2(1) > 2 And quarter > 4 Then
         Color 0, 2
         Locate , 29: Print "BONUS"
         Color 7, 0
@@ -3386,7 +3405,7 @@ Sub SCOREBOARD ()
         End If
 
 
-        If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And gameClock! > 120) Then Color 12
+        If J <= 0 And (quarter = 1 Or quarter = 2 Or quarter = 3 Or quarter = 4 And gameClock! > 120) Then Color 12
 
         test2! = gameRatings!(0, gameB1!(0, I1), 5)
 
@@ -3431,7 +3450,7 @@ Sub SCOREBOARD ()
             Print Using "##"; gameRatings!(1, gameB1!(1, I1), 2) * 2 / 10;
         End If
 
-        If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And gameClock! > 120) Then Color 12
+        If J <= 0 And (quarter = 1 Or quarter = 2 Or quarter = 3 Or quarter = 4 And gameClock! > 120) Then Color 12
 
         Print Using "### "; J;
 
@@ -3488,130 +3507,130 @@ Sub QUARTERTOTAL ()
             statTotals(10) = statTotals(10) + timePlayed(I, I1)
         Next
 
-        If H = 1 Or H = 2 Then
+        If quarter = 1 Or quarter = 2 Then
 
             For I2 = 0 To 14
-                QR(I, H, I2) = statTotals(I2) - QR(I, H - 1, I2)
+                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2)
             Next
 
             For I1 = 0 To 14
 
                 For I2 = 7 To 15
-                    QQ(I, H, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6)
+                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6)
                 Next
 
-                QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10)
-                QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11)
-                QQ(I, H, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, H - 1, I1, 12)
-                QQ(I, H, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13)
-                QQ(I, H, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, H - 1, I1, 14)
+                QQ(I, quarter, I1, 10) = W%(I, I1, 0) - QQ(I, quarter - 1, I1, 10)
+                QQ(I, quarter, I1, 11) = W%(I, I1, 1) - QQ(I, quarter - 1, I1, 11)
+                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, quarter - 1, I1, 13)
+                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14)
 
             Next
 
         End If
 
-        If H = 3 Then
+        If quarter = 3 Then
 
             For I2 = 0 To 14
-                QR(I, H, I2) = statTotals(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2)
+                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2) - QR(I, quarter - 2, I2)
             Next
 
             For I1 = 0 To 14
 
                 For I2 = 7 To 15
-                    QQ(I, H, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6)
+                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6)
                 Next
 
-                QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10)
-                QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11)
-                QQ(I, H, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12)
-                QQ(I, H, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13)
-                QQ(I, H, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14)
+                QQ(I, quarter, I1, 10) = W%(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10)
+                QQ(I, quarter, I1, 11) = W%(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11)
+                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13)
+                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14)
 
             Next
 
         End If
 
-        If H = 4 Then
+        If quarter = 4 Then
 
             For I2 = 0 To 14
-                QR(I, H, I2) = statTotals(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2)
+                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2) - QR(I, quarter - 2, I2) - QR(I, quarter - 3, I2)
             Next
 
             For I1 = 0 To 14
 
                 For I2 = 7 To 15
-                    QQ(I, H, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6)
+                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6) - QQ(I, quarter - 3, I1, I2 - 6)
                 Next
 
-                QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10)
-                QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11)
-                QQ(I, H, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12)
-                QQ(I, H, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13)
-                QQ(I, H, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14)
+                QQ(I, quarter, I1, 10) = W%(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10)
+                QQ(I, quarter, I1, 11) = W%(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11)
+                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12) - QQ(I, quarter - 3, I1, 12)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13)
+                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14) - QQ(I, quarter - 3, I1, 14)
 
             Next
 
         End If
 
-        If H = 5 Then
+        If quarter = 5 Then
 
             For I2 = 0 To 14
-                QR(I, H, I2) = statTotals(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2) - QR(I, H - 4, I2)
+                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2) - QR(I, quarter - 2, I2) - QR(I, quarter - 3, I2) - QR(I, quarter - 4, I2)
             Next
 
             For I1 = 0 To 14
 
                 For I2 = 7 To 15
-                    QQ(I, H, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6) - QQ(I, H - 4, I1, I2 - 6)
+                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6) - QQ(I, quarter - 3, I1, I2 - 6) - QQ(I, quarter - 4, I1, I2 - 6)
                 Next
 
-                QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10) - QQ(I, H - 4, I1, 10)
-                QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11) - QQ(I, H - 4, I1, 11)
-                QQ(I, H, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12) - QQ(I, H - 4, I1, 12)
-                QQ(I, H, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13) - QQ(I, H - 4, I1, 13)
-                QQ(I, H, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14) - QQ(I, H - 4, I1, 14)
+                QQ(I, quarter, I1, 10) = W%(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10) - QQ(I, quarter - 4, I1, 10)
+                QQ(I, quarter, I1, 11) = W%(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11) - QQ(I, quarter - 4, I1, 11)
+                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12) - QQ(I, quarter - 3, I1, 12) - QQ(I, quarter - 4, I1, 12)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13) - QQ(I, quarter - 4, I1, 13)
+                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14) - QQ(I, quarter - 3, I1, 14) - QQ(I, quarter - 4, I1, 14)
 
             Next
 
         End If
 
-        If H = 6 Then
+        If quarter = 6 Then
 
             For I2 = 0 To 14
-                QR(I, H, I2) = statTotals(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2) - QR(I, H - 4, I2) - QR(I, H - 5, I2)
+                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2) - QR(I, quarter - 2, I2) - QR(I, quarter - 3, I2) - QR(I, quarter - 4, I2) - QR(I, quarter - 5, I2)
             Next
 
             For I1 = 0 To 14
                 For I2 = 7 To 15
-                    QQ(I, H, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6) - QQ(I, H - 4, I1, I2 - 6) - QQ(I, H - 5, I1, I2 - 6)
+                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6) - QQ(I, quarter - 3, I1, I2 - 6) - QQ(I, quarter - 4, I1, I2 - 6) - QQ(I, quarter - 5, I1, I2 - 6)
                 Next
-                QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10) - QQ(I, H - 4, I1, 10) - QQ(I, H - 5, I1, 10)
-                QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11) - QQ(I, H - 4, I1, 11) - QQ(I, H - 5, I1, 11)
-                QQ(I, H, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12) - QQ(I, H - 4, I1, 12) - QQ(I, H - 5, I1, 12)
-                QQ(I, H, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13) - QQ(I, H - 4, I1, 13) - QQ(I, H - 5, I1, 13)
-                QQ(I, H, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14) - QQ(I, H - 4, I1, 14) - QQ(I, H - 5, I1, 14)
+                QQ(I, quarter, I1, 10) = W%(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10) - QQ(I, quarter - 4, I1, 10) - QQ(I, quarter - 5, I1, 10)
+                QQ(I, quarter, I1, 11) = W%(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11) - QQ(I, quarter - 4, I1, 11) - QQ(I, quarter - 5, I1, 11)
+                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12) - QQ(I, quarter - 3, I1, 12) - QQ(I, quarter - 4, I1, 12) - QQ(I, quarter - 5, I1, 12)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13) - QQ(I, quarter - 4, I1, 13) - QQ(I, quarter - 5, I1, 13)
+                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14) - QQ(I, quarter - 3, I1, 14) - QQ(I, quarter - 4, I1, 14) - QQ(I, quarter - 5, I1, 14)
             Next
 
         End If
 
-        If H = 7 Then
+        If quarter = 7 Then
 
             For I2 = 0 To 14
-                QR(I, H, I2) = statTotals(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2) - QR(I, H - 4, I2) - QR(I, H - 5, I2) - QR(I, H - 6, I2)
+                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2) - QR(I, quarter - 2, I2) - QR(I, quarter - 3, I2) - QR(I, quarter - 4, I2) - QR(I, quarter - 5, I2) - QR(I, quarter - 6, I2)
             Next
 
             For I1 = 0 To 14
 
                 For I2 = 7 To 15
-                    QQ(I, H, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6) - QQ(I, H - 4, I1, I2 - 6) - QQ(I, H - 5, I1, I2 - 6) - QQ(I, H - 6, I1, I2 - 6)
+                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6) - QQ(I, quarter - 3, I1, I2 - 6) - QQ(I, quarter - 4, I1, I2 - 6) - QQ(I, quarter - 5, I1, I2 - 6) - QQ(I, quarter - 6, I1, I2 - 6)
                 Next
 
-                QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10) - QQ(I, H - 4, I1, 10) - QQ(I, H - 5, I1, 10) - QQ(I, H - 6, I1, 10)
-                QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11) - QQ(I, H - 4, I1, 11) - QQ(I, H - 5, I1, 11) - QQ(I, H - 6, I1, 11)
-                QQ(I, H, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12) - QQ(I, H - 4, I1, 12) - QQ(I, H - 5, I1, 12) - QQ(I, H - 6, I1, 12)
-                QQ(I, H, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13) - QQ(I, H - 4, I1, 13) - QQ(I, H - 5, I1, 13) - QQ(I, H - 6, I1, 13)
-                QQ(I, H, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14) - QQ(I, H - 4, I1, 14) - QQ(I, H - 5, I1, 14) - QQ(I, H - 6, I1, 14)
+                QQ(I, quarter, I1, 10) = W%(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10) - QQ(I, quarter - 4, I1, 10) - QQ(I, quarter - 5, I1, 10) - QQ(I, quarter - 6, I1, 10)
+                QQ(I, quarter, I1, 11) = W%(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11) - QQ(I, quarter - 4, I1, 11) - QQ(I, quarter - 5, I1, 11) - QQ(I, quarter - 6, I1, 11)
+                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12) - QQ(I, quarter - 3, I1, 12) - QQ(I, quarter - 4, I1, 12) - QQ(I, quarter - 5, I1, 12) - QQ(I, quarter - 6, I1, 12)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13) - QQ(I, quarter - 4, I1, 13) - QQ(I, quarter - 5, I1, 13) - QQ(I, quarter - 6, I1, 13)
+                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14) - QQ(I, quarter - 3, I1, 14) - QQ(I, quarter - 4, I1, 14) - QQ(I, quarter - 5, I1, 14) - QQ(I, quarter - 6, I1, 14)
 
             Next
 
@@ -4172,9 +4191,9 @@ End Sub
 'missed FT's when there are 3 attempts.
 Sub BADFT ()
 
-    If F3 = 1 Then U$ = "FIRST FREE THROW IS MISSED"
-    If F3 = 2 Then U$ = "SECOND FREE THROW IS MISSED"
-    If F3 = 3 Then U$ = "THIRD FREE THROW IS MISSED"
+    If F3 = 1 Then pbpString$ = "FIRST FREE THROW IS MISSED"
+    If F3 = 2 Then pbpString$ = "SECOND FREE THROW IS MISSED"
+    If F3 = 3 Then pbpString$ = "THIRD FREE THROW IS MISSED"
     Call PBP
 
 End Sub
@@ -4279,43 +4298,43 @@ Sub COMPUTERCOACH ()
 
         I5 = score(I6, 0) - score(P9, 0)
 
-        If H <= 2 Then D2(P9) = 1: P7(P9) = 0
-        If H = 3 And I5 > 20 Then D2(P9) = 1: P7(P9) = 0
-        If H = 3 And I5 >= 10 And I5 < 20 Then D2(P9) = 1: P7(P9) = 1
-        If H = 3 And I5 < 10 Then D2(P9) = 1: P7(P9) = 0
-        If H = 4 And gameClock! >= 120 And I5 > 20 Then D2(P9) = 1: P7(P9) = 0
-        If H = 4 And gameClock! >= 120 And I5 > 10 And I5 < 20 Then D2(P9) = 3: P7(P9) = 1
-        If H = 4 And gameClock! >= 120 And I5 <= 10 Then D2(P9) = 1: P7(P9) = 1
-        If H = 4 And gameClock! < 120 And I5 > 10 Then D2(P9) = 1: P7(P9) = 0
-        If H = 4 And gameClock! < 120 And I5 <= 10 And I5 > 4 Then D2(P9) = 3: P7(P9) = 1
-        If H = 4 And gameClock! < 120 And I5 <= 4 Then D2(P9) = 1: P7(P9) = 1
-        If H > 4 Then D2(P9) = 1: P7(P9) = 1
+        If quarter <= 2 Then D2(P9) = 1: P7(P9) = 0
+        If quarter = 3 And I5 > 20 Then D2(P9) = 1: P7(P9) = 0
+        If quarter = 3 And I5 >= 10 And I5 < 20 Then D2(P9) = 1: P7(P9) = 1
+        If quarter = 3 And I5 < 10 Then D2(P9) = 1: P7(P9) = 0
+        If quarter = 4 And gameClock! >= 120 And I5 > 20 Then D2(P9) = 1: P7(P9) = 0
+        If quarter = 4 And gameClock! >= 120 And I5 > 10 And I5 < 20 Then D2(P9) = 3: P7(P9) = 1
+        If quarter = 4 And gameClock! >= 120 And I5 <= 10 Then D2(P9) = 1: P7(P9) = 1
+        If quarter = 4 And gameClock! < 120 And I5 > 10 Then D2(P9) = 1: P7(P9) = 0
+        If quarter = 4 And gameClock! < 120 And I5 <= 10 And I5 > 4 Then D2(P9) = 3: P7(P9) = 1
+        If quarter = 4 And gameClock! < 120 And I5 <= 4 Then D2(P9) = 1: P7(P9) = 1
+        If quarter > 4 Then D2(P9) = 1: P7(P9) = 1
 
     Else
 
         Call d100(RN0)
         P7(P9) = 0
 
-        If H <= 4 And RN0 >= 41 Then D2(P9) = 1
-        If H <= 4 And RN0 > 20 And RN0 <= 40 Then D2(P9) = 4
-        If H <= 4 And RN0 <= 20 Then D2(P9) = 2
-        If H = 3 And RN0 >= 50 Then D2(P9) = 1
-        If H = 3 And RN0 > 25 And RN0 < 50 Then D2(P9) = 4
-        If H = 3 And RN0 <= 25 Then D2(P9) = 2
-        If H = 4 And RN0 >= 70 Then D2(P9) = 1
-        If H = 4 And RN0 >= 35 And RN0 < 70 Then D2(P9) = 2
-        If H = 4 And RN0 < 35 Then D2(P9) = 4
-        If H > 4 And RN0 >= 50 Then D2(P9) = 1
-        If H > 4 And RN0 >= 25 And RN0 < 50 Then D2(P9) = 2
-        If H > 4 And RN0 < 25 Then D2(P9) = 4
+        If quarter <= 4 And RN0 >= 41 Then D2(P9) = 1
+        If quarter <= 4 And RN0 > 20 And RN0 <= 40 Then D2(P9) = 4
+        If quarter <= 4 And RN0 <= 20 Then D2(P9) = 2
+        If quarter = 3 And RN0 >= 50 Then D2(P9) = 1
+        If quarter = 3 And RN0 > 25 And RN0 < 50 Then D2(P9) = 4
+        If quarter = 3 And RN0 <= 25 Then D2(P9) = 2
+        If quarter = 4 And RN0 >= 70 Then D2(P9) = 1
+        If quarter = 4 And RN0 >= 35 And RN0 < 70 Then D2(P9) = 2
+        If quarter = 4 And RN0 < 35 Then D2(P9) = 4
+        If quarter > 4 And RN0 >= 50 Then D2(P9) = 1
+        If quarter > 4 And RN0 >= 25 And RN0 < 50 Then D2(P9) = 2
+        If quarter > 4 And RN0 < 25 Then D2(P9) = 4
 
     End If
 
     O0%(P9) = 0
 
-    If H < 3 Then O0%(P9) = 0
-    If H >= 3 And score(P9, 0) - score(I6, 0) < 0 And Int(Rnd(1) * 2) = 1 Then O0%(P9) = 1
-    If H >= 3 And score(P9, 0) - score(I6, 0) >= 0 And Int(Rnd(1) * 2) = 1 Then O0%(P9) = 2
+    If quarter < 3 Then O0%(P9) = 0
+    If quarter >= 3 And score(P9, 0) - score(I6, 0) < 0 And Int(Rnd(1) * 2) = 1 Then O0%(P9) = 1
+    If quarter >= 3 And score(P9, 0) - score(I6, 0) >= 0 And Int(Rnd(1) * 2) = 1 Then O0%(P9) = 2
 
 End Sub
 
@@ -4343,15 +4362,15 @@ Sub COMPUTERSUBS ()
 
             If Left$(players_GAME$(P9, I1, 1), 1) = P$ Or Right$(players_GAME$(P9, I1, 1), 1) = P$ Then
 
-                If Not (players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or H = 1 And gameRatings!(P9, I1, 12) >= 2 + FS% Or H = 2 And gameRatings!(P9, I1, 12) >= 4 + FS% Or H = 3 And gameRatings!(P9, I1, 12) >= 5 Or H = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5) Then
+                If Not (players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or quarter = 1 And gameRatings!(P9, I1, 12) >= 2 + FS% Or quarter = 2 And gameRatings!(P9, I1, 12) >= 4 + FS% Or quarter = 3 And gameRatings!(P9, I1, 12) >= 5 Or quarter = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5) Then
 
                     M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
 
                     If gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3) - gameRatings!(P9, gameB1!(P9, I2), 7) - gameRatings!(P9, gameB1!(P9, I2), 11) - gameRatings!(P9, gameB1!(P9, I2), 12)
 
-                    If H = 4 And gameClock! < 120 Or H > 4 Then M6 = gameRatings!(P9, I1, 3)
+                    If quarter = 4 And gameClock! < 120 Or quarter > 4 Then M6 = gameRatings!(P9, I1, 3)
 
-                    If (H = 4 And gameClock! < 120 Or H > 4) And gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3)
+                    If (quarter = 4 And gameClock! < 120 Or quarter > 4) And gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3)
 
                     If I2 <> 1 Or gameB1!(P9, 0) <> I1 Then
                         If gameB1!(P9, I2) = -1 Or M6 >= M7 Then gameB1!(P9, I2) = I1
@@ -4399,13 +4418,13 @@ Sub COMPUTERSUBS ()
 
             If Left$(players_GAME$(P9, I1, 1), 1) = P$ Or Right$(players_GAME$(P9, I1, 1), 1) = P$ Then
 
-                If Not (players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or H = 1 And gameRatings!(P9, I1, 12) >= 2 + FS% Or H = 2 And gameRatings!(P9, I1, 12) >= 4 + FS% Or H = 3 And gameRatings!(P9, I1, 12) >= 5 Or H = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5) Then
+                If Not (players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or quarter = 1 And gameRatings!(P9, I1, 12) >= 2 + FS% Or quarter = 2 And gameRatings!(P9, I1, 12) >= 4 + FS% Or quarter = 3 And gameRatings!(P9, I1, 12) >= 5 Or quarter = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5) Then
 
                     M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
 
                     If gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3) - gameRatings!(P9, gameB1!(P9, I2), 7) - gameRatings!(P9, gameB1!(P9, I2), 11) - gameRatings!(P9, gameB1!(P9, I2), 12)
-                    If H = 4 And gameClock! < 120 Or H > 4 Then M6 = gameRatings!(P9, I1, 3)
-                    If (H = 4 And gameClock! < 120 Or H > 4) And gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3)
+                    If quarter = 4 And gameClock! < 120 Or quarter > 4 Then M6 = gameRatings!(P9, I1, 3)
+                    If (quarter = 4 And gameClock! < 120 Or quarter > 4) And gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3)
 
                     If Not (I2 = 2 And (gameB1!(P9, 0) = I1 Or gameB1!(P9, 1) = I1)) Then
                         If Not (I2 = 3 And (gameB1!(P9, 0) = I1 Or gameB1!(P9, 1) = I1 Or gameB1!(P9, 2) = I1)) Then
@@ -4445,12 +4464,12 @@ Sub COMPUTERSUBS ()
 
         If Left$(players_GAME$(P9, I1, 1), 1) = P$ Or Right$(players_GAME$(P9, I1, 1), 1) = P$ Then
 
-            If Not (players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or H = 1 And gameRatings!(P9, I1, 12) >= 2 + FS% Or H = 2 And gameRatings!(P9, I1, 12) >= 4 + FS% Or H = 3 And gameRatings!(P9, I1, 12) >= 5 Or H = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5) Then
+            If Not (players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or quarter = 1 And gameRatings!(P9, I1, 12) >= 2 + FS% Or quarter = 2 And gameRatings!(P9, I1, 12) >= 4 + FS% Or quarter = 3 And gameRatings!(P9, I1, 12) >= 5 Or quarter = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5) Then
 
                 M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
                 If gameB1!(P9, 4) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, 4), 3) - gameRatings!(P9, gameB1!(P9, 4), 7) - gameRatings!(P9, gameB1!(P9, 4), 11) - gameRatings!(P9, gameB1!(P9, 4), 12)
-                If H = 4 And gameClock! < 120 Or H > 4 Then M6 = gameRatings!(P9, I1, 3)
-                If (H = 4 And gameClock! < 120 Or H > 4) And gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3)
+                If quarter = 4 And gameClock! < 120 Or quarter > 4 Then M6 = gameRatings!(P9, I1, 3)
+                If (quarter = 4 And gameClock! < 120 Or quarter > 4) And gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3)
 
                 If Not (gameB1!(P9, 0) = I1 Or gameB1!(P9, 1) = I1 Or gameB1!(P9, 2) = I1 Or gameB1!(P9, 3) = I1) Then
                     If gameB1!(P9, 4) = -1 Or M6 >= M7 Then gameB1!(P9, 4) = I1
@@ -4511,7 +4530,7 @@ End Sub
 Sub MADEFT ()
 
     'Increase FTM
-    gameRatings!(P, gameB1!(P, B), 10) = gameRatings!(P, gameB1!(P, B), 10) + 1
+    gameRatings!(P, gameB1!(P, ballCarrier), 10) = gameRatings!(P, gameB1!(P, ballCarrier), 10) + 1
 
     If pbpDelay! <> 0 Then
         Locate F3 + 9, 1
@@ -4519,7 +4538,7 @@ Sub MADEFT ()
         Print F3; " GOOD"
     End If
 
-    score(P, H) = score(P, H) + 1
+    score(P, quarter) = score(P, quarter) + 1
     score(P, 0) = score(P, 0) + 1
 
     Call UPDATESCREEN
@@ -4553,6 +4572,8 @@ End Sub
 'an interface for changing the lineup
 Sub LINEUPS ()
 
+    Shared alpha$()
+    
     Cls
 
     Color tmRat_GAME(P9, 33), tmRat_GAME(P9, 34): Print gameTeams$(P9);
@@ -4565,7 +4586,7 @@ Sub LINEUPS ()
     Print Using "##"; tmRat_GAME(P9, 2) + tmRat_GAME(P9, 4)
 
     Color 14
-    Print "# NAME         PS GP MG FG 3FG %3A FT  ORB  DRB  A  S  B CX CN PT F  FC  PPG"
+    Print "# NAME         PS GP MG FG 3FG %3A FT  ORB  DRB  A  S  ballCarrier CX CN PT F  FC  PPG"
 
     Locate 3, 1
 
@@ -4576,7 +4597,7 @@ Sub LINEUPS ()
             Color 2
 
             If R1 <= 9 Then Print Using "# "; R1;
-            If R1 > 9 Then Print X$(R1 - 10);
+            If R1 > 9 Then Print alpha$(R1 - 10);
 
             Color 15
 
@@ -4593,11 +4614,11 @@ Sub LINEUPS ()
 
             J = (gameRatings!(P9, R1, 3)) - gameRatings!(P9, R1, 7) - gameRatings!(P9, R1, 11) - gameRatings!(P9, R1, 12)
 
-            If H <= 3 And J / gameRatings!(P9, R1, 3) < .25 Then Locate , 61: Print " T";
-            If J / gameRatings!(P9, R1, 3) < .5 And H <= 2 Then Locate , 61: Print " T";
-            If H = 4 And gameClock! > 200 And J / gameRatings!(P9, R1, 3) <= gameClock! / 2880 Then Locate , 61: Print " T";
+            If quarter <= 3 And J / gameRatings!(P9, R1, 3) < .25 Then Locate , 61: Print " T";
+            If J / gameRatings!(P9, R1, 3) < .5 And quarter <= 2 Then Locate , 61: Print " T";
+            If quarter = 4 And gameClock! > 200 And J / gameRatings!(P9, R1, 3) <= gameClock! / 2880 Then Locate , 61: Print " T";
             If gameRatings!(P9, R1, 3) - gameRatings!(P9, R1, 7) - gameRatings!(P9, R1, 11) - gameRatings!(P9, R1, 12) <= 0 Then Locate , 61: Print "EX";
-            If H > 4 Or H = 4 And gameClock! <= 120 And gameClock! <> 0 Then Locate , 61: Print "  ";
+            If quarter > 4 Or quarter = 4 And gameClock! <= 120 And gameClock! <> 0 Then Locate , 61: Print "  ";
 
             Locate , 63: Print Using "### # ### ##.#"; gameRatings!(P9, R1, 8) * 2 + gameRatings!(P9, R1, 10) + W%(P9, R1, 0); gameRatings!(P9, R1, 12); gameRatings!(P9, R1, 17); (plyrRat_GAME(P9, R1, 3) * 2 + plyrRat_GAME(P9, R1, 5) + plyrRat_GAME(P9, R1, 14)) / plyrRat_GAME(P9, R1, 0)
         End If
@@ -4623,7 +4644,7 @@ End Sub
 Sub THREEFT ()
 
     'Increase FTM
-    gameRatings!(P, gameB1!(P, B), 10) = gameRatings!(P, gameB1!(P, B), 10) + 1
+    gameRatings!(P, gameB1!(P, ballCarrier), 10) = gameRatings!(P, gameB1!(P, ballCarrier), 10) + 1
 
     Call d100(RN)
 
@@ -4631,30 +4652,30 @@ Sub THREEFT ()
 
         Case 1
             If RN <= 50 Then
-                U$ = "FREE THROW IS GOOD"
+                pbpString$ = "FREE THROW IS GOOD"
             Else
-                U$ = "HE HITS THE FIRST FREE THROW"
+                pbpString$ = "HE HITS THE FIRST FREE THROW"
             End If
 
         Case 2
             If RN <= 50 Then
-                U$ = "SECOND FREE THROW IS GOOD"
+                pbpString$ = "SECOND FREE THROW IS GOOD"
             Else
-                U$ = "HE HITS THE SECOND ONE"
+                pbpString$ = "HE HITS THE SECOND ONE"
             End If
 
         Case 3
             If RN <= 50 Then
-                U$ = "THIRD FREE THROW IS GOOD"
+                pbpString$ = "THIRD FREE THROW IS GOOD"
             Else
-                U$ = "HE HITS THE LAST ONE"
+                pbpString$ = "HE HITS THE LAST ONE"
             End If
 
     End Select
 
     Call PBP
 
-    score(P, H) = score(P, H) + 1
+    score(P, quarter) = score(P, quarter) + 1
     score(P, 0) = score(P, 0) + 1
 
     Call UPDATESCREEN
@@ -4871,7 +4892,7 @@ Sub EVENTS (specialCount, specialStat)
 
         checkSpecial% = 0
 
-        If H - 1 > eventSettings(1) Then
+        If quarter - 1 > eventSettings(1) Then
             checkSpecial% = 1
         Else
             '--Combine into multiple Or
@@ -4971,8 +4992,8 @@ Sub UPDATESCREEN ()
 
     'Period Designation
     Locate 4, 13: Print Using "###"; score(0, 0);
-    Locate 2, 35: Print Using " PERIOD #"; H;
-    If H > 4 Then Locate , 35: Print Using "OVERTIME #"; H - 4
+    Locate 2, 35: Print Using " PERIOD #"; quarter;
+    If quarter > 4 Then Locate , 35: Print Using "OVERTIME #"; quarter - 4
 
     'Color 14, 0
 
@@ -4989,13 +5010,13 @@ Sub UPDATESCREEN ()
     Color 12: Print "TF  ";: Color 7: Print Using "##"; P2(1);
 
     'Bonus
-    If P2(0) > bonusFoulNum - 1 And H <= 4 Or P2(0) > 2 And H > 4 Then
+    If P2(0) > bonusFoulNum - 1 And quarter <= 4 Or P2(0) > 2 And quarter > 4 Then
         Color 0, 2
         Locate , 46: Print "BONUS";
         Color 7, 0
     End If
 
-    If P2(1) > bonusFoulNum - 1 And H <= 4 Or P2(1) > 2 And H > 4 Then
+    If P2(1) > bonusFoulNum - 1 And quarter <= 4 Or P2(1) > 2 And quarter > 4 Then
         Color 0, 2
         Locate , 29: Print "BONUS";
         Color 7, 0
@@ -5009,7 +5030,7 @@ Sub UPDATESCREEN ()
 
     'Shot Clock
     'If no shot clock, or shot clock expired
-    If sClockVal = 2 Or gameClock! < 24 And shotClock >= gameClock! And sClockVal = 0 Or gameClock! < 30 And shotClock >= gameClock! And sClockVal = 1 Or H > 4 And gameClock! = 300 Then
+    If sClockVal = 2 Or gameClock! < 24 And shotClock >= gameClock! And sClockVal = 0 Or gameClock! < 30 And shotClock >= gameClock! And sClockVal = 1 Or quarter > 4 And gameClock! = 300 Then
         Locate 6, 37: Print " :  "
     Else
         Locate 6, 37: Print Using " :##"; shotClock
@@ -5060,7 +5081,7 @@ Sub UPDATESCREEN ()
                 Print Using "##"; gameRatings!(0, gameB1!(0, I1), 2) * 2 / 10;
             End If
 
-            If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And gameClock! > 120) Then Color 12
+            If J <= 0 And (quarter = 1 Or quarter = 2 Or quarter = 3 Or quarter = 4 And gameClock! > 120) Then Color 12
 
             Print Using "### "; J;
             Color 15
@@ -5093,7 +5114,7 @@ Sub UPDATESCREEN ()
             Print Using "## ## "; gameRatings!(1, gameB1!(1, I1), 0); gameRatings!(1, gameB1!(1, I1), 1);
             If P = 1 Then Print Using "##"; gameRatings!(1, gameB1!(1, I1), 21) * 2 / 10; Else Print Using "##"; gameRatings!(1, gameB1!(1, I1), 2) * 2 / 10;
 
-            If J <= 0 And (H = 1 Or H = 2 Or H = 3 Or H = 4 And gameClock! > 120) Then Color 12
+            If J <= 0 And (quarter = 1 Or quarter = 2 Or quarter = 3 Or quarter = 4 And gameClock! > 120) Then Color 12
             Print Using "### "; J;
 
             Color 15
@@ -5143,19 +5164,19 @@ Sub POSTGAME ()
         Color 15: Print "STATS TO TEXT FILE"
 
         If autoPlay = 1 And playerMode = 2 Then
-            X = 2
+            choice = 2
         Else
             Do
                 I$ = GetKeyPress$
-                X = Val(I$)
-            Loop Until X >= 0 And X <= 2
+                choice = Val(I$)
+            Loop Until choice >= 0 And choice <= 2
         End If
 
-        Call BOXOPTIONS(X)
+        Call BOXOPTIONS(choice)
         Call TICKER
 
         'Reset option for next call
-        If X <> 0 Then X = 0
+        If choice <> 0 Then choice = 0
 
         'Prompt to display stats again
         Color 15, 0
@@ -5166,9 +5187,9 @@ Sub POSTGAME ()
             Do
                 'Using Home Team's color for the box
                 Call TEAMBOX(1, 1)
-                U$ = "DISPLAY STATS AGAIN? (Y/N)"
-                Locate 7, (80 - Len(U$)) / 2
-                Print U$
+                pbpString$ = "DISPLAY STATS AGAIN? (Y/N)"
+                Locate 7, (80 - Len(pbpString$)) / 2
+                Print pbpString$
                 Color 15, 0
                 I$ = GetKeyPress$
             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
@@ -5702,7 +5723,7 @@ Sub BOX2SPC (NM$)
     Print #1,
 
     'Output any special events
-    If H - 1 > eventSettings(1) Then Print #1, Using "MORE THAN ## QUARTERS"; eventSettings(1)
+    If quarter - 1 > eventSettings(1) Then Print #1, Using "MORE THAN ## QUARTERS"; eventSettings(1)
     If score(1, 0) + score(0, 0) > eventSettings(2) Then Print #1, Using "MORE THAN ### COMBINED POINTS"; eventSettings(2)
     If R3(0) + R3(1) > eventSettings(3) Then Print #1, Using "MORE THAN ### COMBINED REBOUNDS"; eventSettings(3)
     If score(0, 0) > eventSettings(4) Then Print #1, gameTeams$(0);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
@@ -5749,9 +5770,9 @@ Sub SAVESTATS ()
         Call TEAMBOX(1, 1)
 
         Do
-            U$ = "SAVE STATS FOR EITHER TEAM? (Y/N)"
-            Locate 7, (80 - Len(U$)) / 2
-            Print U$
+            pbpString$ = "SAVE STATS FOR EITHER TEAM? (Y/N)"
+            Locate 7, (80 - Len(pbpString$)) / 2
+            Print pbpString$
             Color 15, 0
             I$ = GetKeyPress$
         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
@@ -5818,10 +5839,12 @@ Sub COMPILESTATFILES (compileOpt)
 
     Dim TG!
 
-    Shared HO$(), statsH$()
+    Shared statO%()
 
     Shared gameW0!(), gameW1!()
     Shared statsZ!(), statsZ1!(), statsZ2!()
+
+    Shared HO$(), statsH$()
 
     Cls
 
@@ -5961,9 +5984,9 @@ Sub COMPILESTATFILES (compileOpt)
 
             Call TEAMBOX(1, teamIdx)
 
-            U$ = "SAVING STATS FOR " + gameTeams$(teamIdx)
-            Locate , (80 - Len(U$)) / 2
-            Print U$
+            pbpString$ = "SAVING STATS FOR " + gameTeams$(teamIdx)
+            Locate , (80 - Len(pbpString$)) / 2
+            Print pbpString$
             Color 15, 0
 
             Open diskPaths$(1) + statFile$ For Output As #2
@@ -6001,7 +6024,7 @@ Sub COMPILESTATFILES (compileOpt)
 
                 Input #3, Y%
 
-                For I = 1 To NUM_STATRECORDS: Input #3, O%(I): Next I
+                For I = 1 To NUM_STATRECORDS: Input #3, statO%(I): Next I
                 For I = 1 To NUM_STATRECORDS: Input #3, HO$(I): Next I
                 For I = 1 To NUM_STATRECORDS: Input #3, HT%(I): Next I
                 For I = 1 To NUM_STATRECORDS: Input #3, statsH$(I): Next I
@@ -6057,7 +6080,7 @@ Sub COMPILESTATFILES (compileOpt)
 
             End Select
 
-            O%(Y%) = score(teamIdx, 0)
+            statO%(Y%) = score(teamIdx, 0)
             HO$(Y%) = gameTeams$(1 - teamIdx)
             HT%(Y%) = score(1 - teamIdx, 0)
 
@@ -6065,7 +6088,7 @@ Sub COMPILESTATFILES (compileOpt)
 
             Print #4, Y%
 
-            For I = 1 To NUM_STATRECORDS: Print #4, O%(I): Next I
+            For I = 1 To NUM_STATRECORDS: Print #4, statO%(I): Next I
 
             For I = 1 To NUM_STATRECORDS: Print #4, HO$(I): Next I
 
@@ -6076,7 +6099,7 @@ Sub COMPILESTATFILES (compileOpt)
             Close #4
 
             'Reset arrays for next iteration
-            Erase HT%, O%
+            Erase HT%, statO%
             Erase statsZ!, statsZ1!, statsZ2!
             Erase statsH$, HO$
 
@@ -6126,7 +6149,7 @@ Sub pbplog (lineNumber)
 
     Print #11, "Called from line "; lineNumber
     'Print #11, gameTeams$(0); " vs "; gameTeams$(1)
-    Print #11, U$
+    Print #11, pbpString$
     Print #11,
 
 End Sub
@@ -7256,8 +7279,8 @@ Sub CheckRecords ()
     Next
 
     ' MOST OVERTIME PERIODS
-    If H - 5 > TREC(0, 0) Then
-        TREC(0, 0) = H - 5
+    If quarter - 5 > TREC(0, 0) Then
+        TREC(0, 0) = quarter - 5
         TREC(0, 1) = score(0, 0)
         TREC(0, 2) = score(1, 0)
         TRC$(0, 0) = gameTeams$(0)

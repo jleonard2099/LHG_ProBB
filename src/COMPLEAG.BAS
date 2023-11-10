@@ -13,7 +13,7 @@ Sub CompileLeague ()
     Shared leagueT%()
     Shared BRC!()
 
-    Shared O%()
+    Shared statO%()
 
     Shared LD!(), O1!(), O2!(), leagS!()
     Shared TRC!(), TRC1!(), statsW0!(), statsW1!()
@@ -154,7 +154,7 @@ End Sub
 '...explanation...
 Function FindStatsLeague% (statFile$, totalGames, fullWins, fullLosses)
 
-    Shared leagueT%(), O%()
+    Shared leagueT%(), statO%()
 
     Shared H1$(), statsO$()
 
@@ -169,7 +169,7 @@ Function FindStatsLeague% (statFile$, totalGames, fullWins, fullLosses)
 
         Input #1, totalGames
 
-        For I = 1 to NUM_STATRECORDS: Input #1, O%(I): Next I
+        For I = 1 to NUM_STATRECORDS: Input #1, statO%(I): Next I
 
         For I = 1 to NUM_STATRECORDS: Input #1, statsO$(I): Next I
 
@@ -199,11 +199,11 @@ Function FindStatsLeague% (statFile$, totalGames, fullWins, fullLosses)
             Next EC
 
             If confGame <> 1 Then
-                If O%(I) > leagueT%(I) Then fullWins = fullWins + 1
-                If O%(I) < leagueT%(I) Then fullLosses = fullLosses + 1
+                If statO%(I) > leagueT%(I) Then fullWins = fullWins + 1
+                If statO%(I) < leagueT%(I) Then fullLosses = fullLosses + 1
             Else
-                If O%(I) > leagueT%(I) Then confWins = confWins + 1: fullWins = fullWins + 1
-                If O%(I) < leagueT%(I) Then confLosses = confLosses + 1: fullLosses = fullLosses + 1
+                If statO%(I) > leagueT%(I) Then confWins = confWins + 1: fullWins = fullWins + 1
+                If statO%(I) < leagueT%(I) Then confLosses = confLosses + 1: fullLosses = fullLosses + 1
             End If
 
             EC = 0

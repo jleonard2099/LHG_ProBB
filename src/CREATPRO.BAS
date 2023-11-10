@@ -49,7 +49,7 @@ Sub CREATPRO ()
                 memberTeams$(X) = "XXX"
                 memberYears$(X) = "XXX"
             Next
-            
+
             div1$ = ""
             div2$ = ""
             div3$ = ""
@@ -62,7 +62,7 @@ Sub CREATPRO ()
                     Call ReviewEditLeague(league$, div1$, div2$, div3$, div4$)
 
                 Case 2:
-                    league$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "LEAGUE", FileExit%)
+                    league$ = ChooseFile$(diskPaths$(1) + "*.LIB", "LEAGUE", FileExit%)
 
                     If FileExit% <> 27 And FileExit% <> 0 Then
                         Call ReviewEditLeague(league$, div1$, div2$, div3$, div4$)
@@ -92,7 +92,7 @@ Sub DefineLeaguePro (league$, div1$, div2$, div3$, div4$)
         Color 15, 0
         Cls
 
-        Call MenuBox (6, 8, 61, 7, 15, 1)
+        Call MenuBox(6, 8, 61, 7, 15, 1)
 
         Do
 
@@ -287,7 +287,7 @@ Sub SaveLeague (league$, div1$, div2$, div3$, div4$)
 
     Shared intZ1%()
 
-    Shared memberTeams$(), memberYears$()
+    Shared memberTeams$(), memberYears$(), statNames$()
 
     Open diskPaths$(1) + league$ + ".LIB" For Output As #1
 
@@ -308,30 +308,9 @@ Sub SaveLeague (league$, div1$, div2$, div3$, div4$)
     For X = 1 To TEAMS_PER_CONFERENCE
 
         If memberTeams$(X) = "XXX" Then
-            memberTeams$(X) = Chr$(42)
+            statNames$(X) = Chr$(42)
         Else
-
-            For D = 4 To 11
-                If Mid$(memberTeams$(X), D, 1) = Chr$(32) Or Mid$(memberTeams$(X), D, 1) = "." Then
-                    Mid$(memberTeams$(X), D, 1) = "_"
-                End If
-            Next D
-
-            QQ = 8
-
-            For D = 11 To 4 Step -1
-                If Mid$(memberTeams$(X), D, 1) = "_" Then
-                    QQ = D - 4
-                Else
-                    Exit For
-                End If
-            Next D
-
-            L = Len(memberTeams$(X))
-            YR$ = Left$(memberTeams$(X), 2)
-            TM$ = Mid$(memberTeams$(X), 4, QQ)
-            memberTeams$(X) = TM$ + "." + YR$
-
+            statNames$(X) = nameStatFile$(memberTeams$(X))
         End If
 
     Next X
@@ -341,9 +320,10 @@ Sub SaveLeague (league$, div1$, div2$, div3$, div4$)
     Write #2, league$, div1$, div2$, div3$, div4$
 
     For X = 1 To TEAMS_PER_CONFERENCE
-        Write #2, memberTeams$(X)
+        Write #2, statNames$(X)
     Next
 
     Close #2
 
 End Sub
+

@@ -144,8 +144,7 @@ End Sub 'Menu
 Sub NewSchedule (scheduleFile$)
 
     Shared BS%, NS%
-    Shared N$
-
+    
     Shared homeScores(), visitorScores()
     Shared scheduleAP%(), scheduleNG%()
     Shared scheduleH$(), scheduleV$()
@@ -503,8 +502,6 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
 
     Dim displayPause!
 
-    Shared N$
-
     Shared scheduleNG%()
 
     Shared scheduleH$(), scheduleV$(), scheduleYN$()
@@ -708,8 +705,6 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
     'scheduleAction% = 5: MAKE GLOBAL CHANGES TO A SCHEDULE
     Dim displayPause!
 
-    Shared N$
-
     Shared homeScores(), visitorScores()
 
     Shared scheduleAP%()
@@ -763,7 +758,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
 
             If I$ <> Chr$(27) Or scheduleAction% = 4 Then
 
-                Call ChooseTeam(YN$, numberTeams, T1, N$)
+                Call ChooseTeam(YN$, numberTeams, T1, teamName$)
 
                 If T1 <> 0 Then
 
@@ -773,7 +768,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                     'Change mode of play
                     If scheduleAction% = 4 Then
 
-                        Color teamRatings%(33), teamRatings%(34): Print N$;
+                        Color teamRatings%(33), teamRatings%(34): Print teamName$;
                         Color 15, 0
                         Print " IS TO BE:"
                         Print
@@ -876,7 +871,6 @@ Sub EditParameters ()
     Color 14
     Print "PARAMETERS FOR SAVING SPECIAL EVENTS BOXSCORES"
 
-    X% = 2
     Color 15
 
     Print " 1. QUARTERS ARE OVER "; eventSettings(1)

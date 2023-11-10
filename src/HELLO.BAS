@@ -26,6 +26,7 @@ DefInt A-Z
 '$INCLUDE: 'FileTeamSelection.bi'
 '$INCLUDE: 'Variables.bi'
 
+
 '$INCLUDE: 'MainRoutines.bi'
 '$INCLUDE: 'TITLE.bi'
 
@@ -177,7 +178,7 @@ For I = 1 To 20: Read teamRecords$(I): Next
 
 Data L,1,1,1,2,2,2,H,H,3,3,3,4,4,F
 For I = 0 To 14
-    Read R$(I)
+    Read tickerPeriod$(I)
 Next
 
 Data 60,61,60,58,58,59,59,59,59,58,58,58,57,58,57,51,51,52,49,50,44,45,42,47,43,43,42,39,38,38,35,34,34
@@ -197,6 +198,7 @@ Next I
 
 Data -2,-2,-3,-4,-4,-5,-5,-6,-7
 Data -4,-5,-5,-6,-7,-8,-9,-10,-11
+
 Data 0,0,-1,-2,-3,-4,-5,-5,-6
 Data -3,-3,-4,-5,-6,-6,-7,-8,-9
 Data -6,-7,-8,-8,-8,-9,-10,-11,-12
@@ -205,6 +207,7 @@ For I = 0 To 1
         Read CF%(I, I1)
     Next I1
 Next I
+
 For I = 0 To 2
     For I1 = 1 To 9
         Read GF%(I, I1)
@@ -310,6 +313,7 @@ If _FileExists("GAME82") Then
     Print #9, "Schedule game # "; Using "###"; schedGame(0) + schedGame(2)
     Print #9, gameTeams$(0) + " vs. " + gameTeams$(1)
 End If
+Print #9, "Ball Carrier = "; ballCarrier
 Print #9,
 Close #9
 

@@ -70,7 +70,8 @@ Sub UpdateLeagueStandings (league$)
         YY = YY + 1
         Color 14
         Locate 7, 39
-        TMR = TMR - 1: Print Using "##"; TMR
+        TMR = TMR - 1
+        Print Using "##"; TMR
 
         If statsZ1$(KK) <> "*" Then
 

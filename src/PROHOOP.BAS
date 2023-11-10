@@ -454,7 +454,7 @@ Sub PROHOOP ()
 
     250 '
 
-    If H = 2 Then
+    If quarter = 2 Then
         If JB = 0 Then
             JB = 1
         Else
@@ -462,16 +462,16 @@ Sub PROHOOP ()
         End If
     End If
 
-    If H = 4 Then
+    If quarter = 4 Then
         If JB = 0 Then
             JB = 1
         Else
-            If H = 4 And JB = 1 Then JB = 0
+            If quarter = 4 And JB = 1 Then JB = 0
         End If
     End If
 
     '251
-    If Not (H < 1 And H > 5) Then
+    If Not (quarter < 1 And quarter > 5) Then
         P = Int(Rnd(1) * 2)
         JB = P
     End If
@@ -506,33 +506,33 @@ Sub PROHOOP ()
     '           Tip Off!
     '----------------------------------------
 
-    If H = 1 Or H > 4 Then
+    If quarter = 1 Or quarter > 4 Then
         If pbpOpt = 0 Then
-            U$ = gameTeams$(JB) + " GETS THE JUMP"
+            pbpString$ = gameTeams$(JB) + " GETS THE JUMP"
             Call PBP
         Else
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
-                U$ = " GETS THE JUMP"
+                pbpString$ = " GETS THE JUMP"
                 Call WINDEX
                 Color tmRat_GAME(JB, 33), tmRat_GAME(JB, 34): Print gameTeams$(JB);
                 Color 15, 0
-                Print U$
+                Print pbpString$
                 Call DELAY
             End If
         End If
     Else
         If pbpOpt = 0 Then
-            U$ = gameTeams$(JB) + " INBOUNDS THE BALL"
+            pbpString$ = gameTeams$(JB) + " INBOUNDS THE BALL"
             Call PBP
         Else
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
-                U$ = " INBOUNDS THE BALL"
+                pbpString$ = " INBOUNDS THE BALL"
                 Call WINDEX
                 Color tmRat_GAME(JB, 33), tmRat_GAME(JB, 34): Print gameTeams$(JB);
                 Color 15, 0
-                Print U$
+                Print pbpString$
                 Call DELAY
             End If
         End If
@@ -550,14 +550,14 @@ Sub PROHOOP ()
     teamFouls(0) = teamFouls(0) + P2(0)
     teamFouls(1) = teamFouls(1) + P2(1)
     Call QUARTERTOTAL
-    H = H + 1
+    quarter = quarter + 1
 
     ' *** ADJUST TIMEOUTS ***
-    If H >= 4 Then
+    If quarter >= 4 Then
 
         For PG = 0 To 1
             If timeouts(PG) > 4 Then timeouts(PG) = 4
-            If H > 4 Then timeouts(PG) = 3
+            If quarter > 4 Then timeouts(PG) = 3
         Next
 
     End If
@@ -565,31 +565,31 @@ Sub PROHOOP ()
     XS = 1
     P2(0) = 0
     P2(1) = 0
-    X = 0
+    xFactor = 0
 
-    U$ = "END OF QUARTER!"
+    pbpString$ = "END OF QUARTER!"
 
     Select Case pbpOpt
         Case 0:
             Color 7, 0
             Call WINDEX
-            Print U$
+            Print pbpString$
         Case 1:
-            If pbpDelay! > 0 Then Call WINDEX: Print U$ ': Call DELAY
+            If pbpDelay! > 0 Then Call WINDEX: Print pbpString$ ': Call DELAY
     End Select
 
-    If H = 3 Then
+    If quarter = 3 Then
 
-        U$ = "HALFTIME!"
+        pbpString$ = "HALFTIME!"
 
         Select Case pbpOpt
             Case 0:
                 Color 7, 0
                 Call WINDEX
-                Print U$
+                Print pbpString$
             Case 1:
                 Call WINDEX
-                Print U$
+                Print pbpString$
                 Call DELAY
         End Select
 
@@ -626,7 +626,7 @@ Sub PROHOOP ()
 
     End If
 
-    If H < 5 And playerMode <> 0 Then
+    If quarter < 5 And playerMode <> 0 Then
         If playerMode = 1 Then
             P9 = compTeam
             Call COMPUTERSUBS
@@ -640,13 +640,13 @@ Sub PROHOOP ()
         End If
     End If
 
-    If H < 5 Then
+    If quarter < 5 Then
 
         Call CheckGameClock
 
         Call SCOREBOARD
 
-        B = -1
+        ballCarrier = -1
         Call Substitutions
         gameClock! = 720
 
@@ -660,19 +660,19 @@ Sub PROHOOP ()
 
     Call SCOREBOARD
 
-    If H = 5 Then
+    If quarter = 5 Then
 
-        U$ = "END OF REGULATION"
+        pbpString$ = "END OF REGULATION"
 
         Select Case pbpOpt
             Case 0:
                 Color 7, 0
                 Call WINDEX
-                Print U$
+                Print pbpString$
             Case 1:
                 If pbpDelay! > 0 Then
                     Call WINDEX
-                    Print U$ ': Call DELAY
+                    Print pbpString$ ': Call DELAY
                 End If
         End Select
 
@@ -682,14 +682,14 @@ Sub PROHOOP ()
 
     If score(0, 0) = score(1, 0) Then
 
-        U$ = "OVERTIME !!!"
+        pbpString$ = "OVERTIME !!!"
 
         Select Case pbpOpt
             Case 0:
                 Color 7, 0
-                Call WINDEX: Print U$
+                Call WINDEX: Print pbpString$
             Case 1:
-                Call WINDEX: Print U$
+                Call WINDEX: Print pbpString$
                 Call DELAY
         End Select
 
@@ -698,7 +698,7 @@ Sub PROHOOP ()
         gameClock! = 300
 
         Call UPDATESCREEN
-        B = -1
+        ballCarrier = -1
 
         Call Substitutions
 
@@ -722,9 +722,9 @@ Sub PROHOOP ()
         Call TEAMBOX(1, 1)
 
         Do
-            U$ = "PLAY ANOTHER GAME? (Y/N)"
-            Locate 7, (80 - Len(U$)) / 2
-            Print U$
+            pbpString$ = "PLAY ANOTHER GAME? (Y/N)"
+            Locate 7, (80 - Len(pbpString$)) / 2
+            Print pbpString$
 
             Color 15, 0
             I$ = GetKeyPress$
@@ -788,7 +788,7 @@ Sub PROHOOP ()
     A6 = 0
     F = 0
 
-    If X <> 90 Then X = 0
+    If xFactor <> 90 Then xFactor = 0
 
     GoTo 400
 
@@ -802,7 +802,7 @@ Sub PROHOOP ()
     D6 = 0
     A6 = 1
     F = 0
-    X = 0
+    xFactor = 0
 
     400 '
     A4 = 0
@@ -810,7 +810,7 @@ Sub PROHOOP ()
     P3 = 0
 
     'Random ball carrier
-    'B = Int(Rnd(1) * 5)
+    'ballCarrier = Int(Rnd(1) * 5)
     Call d100(R0)
 
     If playerMode = 0 And coachOpt = 1 Or playerMode = 1 And D = compTeam And coachOpt = 1 Or playerMode = 1 And P = compTeam Or playerMode = 2 Then
@@ -821,7 +821,7 @@ Sub PROHOOP ()
 
         If R0 > 40 Then
             'random ball carrier
-            B = Int(Rnd(1) * 5)
+            ballCarrier = Int(Rnd(1) * 5)
         Else
 
             Do
@@ -829,7 +829,7 @@ Sub PROHOOP ()
                 If pbpDelay! <> 0 Then
 
                     If pbpOpt = 0 Then
-                        U$ = "PASS TO CHOICE (0-4)"
+                        pbpString$ = "PASS TO CHOICE (0-4)"
                         Call PBP
                     Else
                         'pbpOpt = 1
@@ -861,15 +861,15 @@ Sub PROHOOP ()
                                 Call CHANGESTRATEGY(I$)
 
                             Case Else
-                                B = Val(I$)
+                                ballCarrier = Val(I$)
 
                         End Select
 
-                    Loop Until B >= 0 And B <= 4
+                    Loop Until ballCarrier >= 0 And ballCarrier <= 4
 
                 End If
 
-            Loop Until B >= 0 And B <= 4
+            Loop Until ballCarrier >= 0 And ballCarrier <= 4
 
         End If
 
@@ -889,14 +889,14 @@ Sub PROHOOP ()
                 Select Case R0
 
                     Case 1, 2
-                        X = 0
+                        xFactor = 0
                         GoTo 580
 
                     Case 3 To 30
                         Call LastShot
                         Call ResetShotClock
                         Call UPDATESCREEN
-                        X = 88
+                        xFactor = 88
                         GoTo 565
 
                     Case 31 To 30 + F7%(P, 1) + F7%(D, 2)
@@ -921,14 +921,14 @@ Sub PROHOOP ()
                 Select Case R0
 
                     Case 1
-                        X = 0
+                        xFactor = 0
                         GoTo 580
 
                     Case 2 To 10
                         Call LastShot
                         Call ResetShotClock
                         Call UPDATESCREEN
-                        X = 88
+                        xFactor = 88
                         GoTo 565
 
                     Case 10 To 10 + F7%(P, 1) + F7%(D, 2)
@@ -954,14 +954,14 @@ Sub PROHOOP ()
                 Select Case R0
 
                     Case 1 To 3
-                        X = 0
+                        xFactor = 0
                         GoTo 580
 
                     Case 4 To 50
                         Call LastShot
                         Call ResetShotClock
                         Call UPDATESCREEN
-                        X = 88
+                        xFactor = 88
 
                         GoTo 565
 
@@ -992,14 +992,14 @@ Sub PROHOOP ()
         Select Case R0
 
             Case 1 To 3
-                X = 0
+                xFactor = 0
                 GoTo 580
 
             Case 4 To 50
                 Call LastShot
                 Call ResetShotClock
                 Call UPDATESCREEN
-                X = 88
+                xFactor = 88
                 GoTo 565
 
             Case 50 To 50 + F7%(P, 1) + F7%(D, 2)
@@ -1033,7 +1033,7 @@ Sub PROHOOP ()
     A4 = 0
     RN0 = Int(Rnd(1) * 3) + 1
 
-    If gameRatings!(P, gameB1!(P, B), 0) > 60 Then
+    If gameRatings!(P, gameB1!(P, ballCarrier), 0) > 60 Then
 
         Select Case RN0
             Case 1
@@ -1047,17 +1047,17 @@ Sub PROHOOP ()
 
         Select Case RN0
             Case 1
-                F = gameRatings!(P, gameB1!(P, B), 0) * .4
+                F = gameRatings!(P, gameB1!(P, ballCarrier), 0) * .4
             Case 2
-                F = gameRatings!(P, gameB1!(P, B), 0) * .5
+                F = gameRatings!(P, gameB1!(P, ballCarrier), 0) * .5
             Case 3
-                F = gameRatings!(P, gameB1!(P, B), 0) * .6
+                F = gameRatings!(P, gameB1!(P, ballCarrier), 0) * .6
         End Select
 
     End If
 
     PZ% = 1
-    X = 0
+    xFactor = 0
 
     GoTo 520
 
@@ -1065,8 +1065,8 @@ Sub PROHOOP ()
 
     445 '
 
-    If Not (H = 4 And gameClock! <= 120 Or H > 4) Then
-        If gameRatings!(P, gameB1!(P, B), 3) - gameRatings!(P, gameB1!(P, B), 7) - gameRatings!(P, gameB1!(P, B), 11) - gameRatings!(P, gameB1!(P, B), 12) <= 0 Then 437
+    If Not (quarter = 4 And gameClock! <= 120 Or quarter > 4) Then
+        If gameRatings!(P, gameB1!(P, ballCarrier), 3) - gameRatings!(P, gameB1!(P, ballCarrier), 7) - gameRatings!(P, gameB1!(P, ballCarrier), 11) - gameRatings!(P, gameB1!(P, ballCarrier), 12) <= 0 Then 437
     End If
 
     ' *** CHECKING 3-POINT SHOT ***
@@ -1076,12 +1076,12 @@ Sub PROHOOP ()
 
         Call d100(RN)
 
-        If RN <= gameRatings!(P, gameB1!(P, B), 19) Then
+        If RN <= gameRatings!(P, gameB1!(P, ballCarrier), 19) Then
             PZ% = 4
-            F3S% = gameRatings!(P, gameB1!(P, B), 20) + F7%(D, 4)
+            F3S% = gameRatings!(P, gameB1!(P, ballCarrier), 20) + F7%(D, 4)
             'Adjust shot chance by -3 to 3
             F3S% = F3S% + Int(Rnd(1) * 7) - 3
-            X = 0
+            xFactor = 0
 
             GoTo 520
 
@@ -1095,17 +1095,17 @@ Sub PROHOOP ()
                 GoTo 437
             Else
                 PZ% = 4
-                X = 0
-                F3S% = .4 * gameRatings!(P, gameB1!(P, B), 20) + F7%(D, 4)
+                xFactor = 0
+                F3S% = .4 * gameRatings!(P, gameB1!(P, ballCarrier), 20) + F7%(D, 4)
                 GoTo 520
             End If
 
         Else
 
-            If H >= 4 And gameClock! < 30 And score(D, 0) - score(P, 0) > 3 And gameRatings!(P, gameB1!(P, B), 19) >= 3 Then
+            If quarter >= 4 And gameClock! < 30 And score(D, 0) - score(P, 0) > 3 And gameRatings!(P, gameB1!(P, ballCarrier), 19) >= 3 Then
                 PZ% = 4
-                X = 0
-                F3S% = gameRatings!(P, gameB1!(P, B), 20) + F7%(D, 4)
+                xFactor = 0
+                F3S% = gameRatings!(P, gameB1!(P, ballCarrier), 20) + F7%(D, 4)
                 GoTo 520
             End If
 
@@ -1116,7 +1116,7 @@ Sub PROHOOP ()
     ' *** CHECKING FOR ASSISTED SHOT ***
 
     ' *** GET SHOT PCT ***
-    F = gameRatings!(P, gameB1!(P, B), 0) + D1(D)
+    F = gameRatings!(P, gameB1!(P, ballCarrier), 0) + D1(D)
 
     If gameLoc = P Then
         F = F + 2
@@ -1131,26 +1131,26 @@ Sub PROHOOP ()
     If RN >= RN0 Then
         F = F + A4
         PZ% = 2
-        X = 0
+        xFactor = 0
     Else
 
         ' *** CHECK PENETRATION SHOT ***
         Call d100(RN)
         A4 = Int(Rnd(1) * 50) + 1
 
-        If RN <= (plyrRat_GAME(P, gameB1!(P, B), 16) + OY%(O0%(P))) * 2 + 1 Then
+        If RN <= (plyrRat_GAME(P, gameB1!(P, ballCarrier), 16) + OY%(O0%(P))) * 2 + 1 Then
 
             PZ% = 3
             F = F + A4
-            X = 0
+            xFactor = 0
 
         Else
 
             ' *** CHECK AVERAGE SHOT ***
-            I2 = plyrRat_GAME(P, gameB1!(P, B), 16)
+            I2 = plyrRat_GAME(P, gameB1!(P, ballCarrier), 16)
             RN = Int(Rnd(1) * 2)
 
-            If Left$(players_GAME$(P, gameB1!(P, B), 1), 1) = "G" Or Left$(players_GAME$(P, gameB1!(P, B), 1), 1) = "F" Then
+            If Left$(players_GAME$(P, gameB1!(P, ballCarrier), 1), 1) = "G" Or Left$(players_GAME$(P, gameB1!(P, ballCarrier), 1), 1) = "F" Then
 
                 'For a Guard or Forward
                 R2 = Int(Rnd(1) * 3)
@@ -1172,7 +1172,7 @@ Sub PROHOOP ()
             End If
 
             F = F + GF%(RN, I2)
-            X = 0
+            xFactor = 0
 
         End If
 
@@ -1190,7 +1190,7 @@ Sub PROHOOP ()
     Call LastShot
     Call ResetShotClock
 
-    gameRatings!(P, gameB1!(P, B), 23) = gameRatings!(P, gameB1!(P, B), 23) + 1
+    gameRatings!(P, gameB1!(P, ballCarrier), 23) = gameRatings!(P, gameB1!(P, ballCarrier), 23) + 1
 
     If pbpDelay! <> 0 Then
 
@@ -1202,35 +1202,35 @@ Sub PROHOOP ()
             Call d100(RN)
 
             Select Case RN
-                Case 1 To 3: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " QUICKLY REACHES IN!"
-                Case 4 To 6: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " SNEAKS IN FROM BEHIND!"
-                Case 7 To 10: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " GETS A HAND ON THE BALL!"
+                Case 1 To 3: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " QUICKLY REACHES IN!"
+                Case 4 To 6: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " SNEAKS IN FROM BEHIND!"
+                Case 7 To 10: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " GETS A HAND ON THE BALL!"
             End Select
 
             Call PBP
             RN = Int(Rnd(1) * 20) + 1
 
             Select Case RN
-                Case 1: U$ = "PASS INTERCEPTED BY " + players_GAME$(D, gameB1!(D, P9), 0) + "!"
-                Case 2: U$ = "PASS IS PICKED OFF BY " + players_GAME$(D, gameB1!(D, P9), 0) + "!"
-                Case 3: U$ = "BALL IS STOLEN BY " + players_GAME$(D, gameB1!(D, P9), 0) + "!"
-                Case 4: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " WITH THE STEAL!"
-                Case 5: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " TAKES IT AWAY!"
-                Case 6: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " STEALS IT!"
-                Case 7: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " RIPS IT LOOSE!"
-                Case 8: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " TAKES THE BALL AWAY!"
-                Case 9: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " STEALS THE BALL!"
-                Case 10: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " PICKS IT OFF!"
-                Case 11: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " SWIPES THE BALL!"
-                Case 12: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " WITH THE STOLEN BALL!"
-                Case 13: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " STRIPS IT AWAY!"
-                Case 14: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " WITH THE STEAL!"
-                Case 15: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " SWIPES AND STEALS IT!"
-                Case 16: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " SNATCHES IT AWAY!"
-                Case 17: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " QUICKLY REACHES IN!"
-                Case 18: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " TAKES IT THE OTHER WAY!"
-                Case 19: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " POKES IT LOOSE!"
-                Case 20: U$ = players_GAME$(D, gameB1!(D, P9), 0) + " STRIPS IT CLEAN!"
+                Case 1: pbpString$ = "PASS INTERCEPTED BY " + players_GAME$(D, gameB1!(D, P9), 0) + "!"
+                Case 2: pbpString$ = "PASS IS PICKED OFF BY " + players_GAME$(D, gameB1!(D, P9), 0) + "!"
+                Case 3: pbpString$ = "BALL IS STOLEN BY " + players_GAME$(D, gameB1!(D, P9), 0) + "!"
+                Case 4: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " WITH THE STEAL!"
+                Case 5: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " TAKES IT AWAY!"
+                Case 6: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " STEALS IT!"
+                Case 7: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " RIPS IT LOOSE!"
+                Case 8: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " TAKES THE BALL AWAY!"
+                Case 9: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " STEALS THE BALL!"
+                Case 10: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " PICKS IT OFF!"
+                Case 11: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " SWIPES THE BALL!"
+                Case 12: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " WITH THE STOLEN BALL!"
+                Case 13: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " STRIPS IT AWAY!"
+                Case 14: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " WITH THE STEAL!"
+                Case 15: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " SWIPES AND STEALS IT!"
+                Case 16: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " SNATCHES IT AWAY!"
+                Case 17: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " QUICKLY REACHES IN!"
+                Case 18: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " TAKES IT THE OTHER WAY!"
+                Case 19: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " POKES IT LOOSE!"
+                Case 20: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " STRIPS IT CLEAN!"
             End Select
 
             Call PBP
@@ -1276,7 +1276,7 @@ Sub PROHOOP ()
     Call LastShot
     Call ResetShotClock
 
-    gameRatings!(P, gameB1!(P, B), 23) = gameRatings!(P, gameB1!(P, B), 23) + 1
+    gameRatings!(P, gameB1!(P, ballCarrier), 23) = gameRatings!(P, gameB1!(P, ballCarrier), 23) + 1
     turnovers(P) = turnovers(P) + 1
 
     If SV% <> 1 Then
@@ -1295,13 +1295,13 @@ Sub PROHOOP ()
     End If
 
     If pbpOpt = 0 Then Call PBP
-    U$ = "BALL OUT OF BOUNDS TO " + gameTeams$(D)
+    pbpString$ = "BALL OUT OF BOUNDS TO " + gameTeams$(D)
 
     If pbpOpt = 0 Then
         Call PBP
     Else
         'pbpOpt = 1
-        If pbpDelay! <> 0 Then Print U$: Call DELAY
+        If pbpDelay! <> 0 Then Print pbpString$: Call DELAY
     End If
 
     Call DELAY
@@ -1352,15 +1352,15 @@ Sub PROHOOP ()
             Call PBP
         Else
 
-            If players_GAME$(P, gameB1!(P, B), 0) <> prevBall$ Then
+            If players_GAME$(P, gameB1!(P, ballCarrier), 0) <> prevBall$ Then
                 If prevBall$ = "" Then
-                    U$ = "PASS TO " + players_GAME$(P, gameB1!(P, B), 0)
+                    pbpString$ = "PASS TO " + players_GAME$(P, gameB1!(P, ballCarrier), 0)
                 Else
                     PT% = 10
                     Call MAKEPBP
                 End If
             Else
-                'players_GAME$(P, gameB1!(P, B), 0) = prevBall$
+                'players_GAME$(P, gameB1!(P, ballCarrier), 0) = prevBall$
                 PT% = 9
                 Call MAKEPBP
             End If
@@ -1368,20 +1368,20 @@ Sub PROHOOP ()
             Call PBP
 
             If shotClock <= 0 And sClockVal < 2 Then
-                U$ = "SHOT CLOCK HAS EXPIRED!"
+                pbpString$ = "SHOT CLOCK HAS EXPIRED!"
                 SV% = 1
                 GoTo 515
             End If
 
             If shotClock < 5 And sClockVal < 2 Then
-                U$ = "SHOT CLOCK DOWN TO" + Str$(shotClock)
+                pbpString$ = "SHOT CLOCK DOWN TO" + Str$(shotClock)
                 Call PBP
             End If
 
-            prevBall$ = players_GAME$(P, gameB1!(P, B), 0)
-            Z3$ = Left$(players_GAME$(P, gameB1!(P, B), 1), 1)
+            prevBall$ = players_GAME$(P, gameB1!(P, ballCarrier), 0)
+            Z3$ = Left$(players_GAME$(P, gameB1!(P, ballCarrier), 1), 1)
             Y2$ = "HE"
-            Y3$ = players_GAME$(D, gameB1!(D, B), 0)
+            Y3$ = players_GAME$(D, gameB1!(D, ballCarrier), 0)
 
             'On PZ% GOTO 521, 522, 523, 524, 525, 526, 527
 
@@ -1392,27 +1392,27 @@ Sub PROHOOP ()
                         RN = Int(Rnd(1) * 12) + 1
 
                         Select Case RN
-                            Case 1: U$ = Y2$ + "'S HEAVILY GUARDED"
-                            Case 2: U$ = Y2$ + "'S GUARDED"
-                            Case 3: U$ = Y2$ + "'S GUARDED BY " + Y3$
-                            Case 4: U$ = Y2$ + " HAS A MAN ON HIM"
-                            Case 5: U$ = Y2$ + " HAS A DEFENDER ON HIM"
-                            Case 6: U$ = Y2$ + "'S COVERED"
-                            Case 7: U$ = Y2$ + " CAN'T GET AROUND THE DEFENDER"
-                            Case 8: U$ = Y2$ + "'S PRESSURED"
-                            Case 9: U$ = Y2$ + " HAS NOWHERE TO GO"
-                            Case 10: U$ = Y2$ + " HAS A HAND IN HIS FACE"
-                            Case 11: U$ = Y2$ + "'S WATCHED BY " + Y3$
-                            Case 12: U$ = Y2$ + "'S WORKING ON " + Y3$
+                            Case 1: pbpString$ = Y2$ + "'S HEAVILY GUARDED"
+                            Case 2: pbpString$ = Y2$ + "'S GUARDED"
+                            Case 3: pbpString$ = Y2$ + "'S GUARDED BY " + Y3$
+                            Case 4: pbpString$ = Y2$ + " HAS A MAN ON HIM"
+                            Case 5: pbpString$ = Y2$ + " HAS A DEFENDER ON HIM"
+                            Case 6: pbpString$ = Y2$ + "'S COVERED"
+                            Case 7: pbpString$ = Y2$ + " CAN'T GET AROUND THE DEFENDER"
+                            Case 8: pbpString$ = Y2$ + "'S PRESSURED"
+                            Case 9: pbpString$ = Y2$ + " HAS NOWHERE TO GO"
+                            Case 10: pbpString$ = Y2$ + " HAS A HAND IN HIS FACE"
+                            Case 11: pbpString$ = Y2$ + "'S WATCHED BY " + Y3$
+                            Case 12: pbpString$ = Y2$ + "'S WORKING ON " + Y3$
                         End Select
                     End If
 
                     Call PBP
 
                 Case 2:
-                    U$ = Y2$ + " WORKS FREE INSIDE"
+                    pbpString$ = Y2$ + " WORKS FREE INSIDE"
                     Call PBP
-                    U$ = "HE HAS AN OPEN SHOT"
+                    pbpString$ = "HE HAS AN OPEN SHOT"
                     Call PBP
 
                 Case 3:
@@ -1423,62 +1423,62 @@ Sub PROHOOP ()
                         If Z3$ = "C" Then
 
                             Select Case RN
-                                Case 1 To 25: U$ = Y2$ + " MAKES A MOVE DOWN LOW":
-                                Case 26 To 50: U$ = Y2$ + " POSITIONS HIMSELF DOWN LOW"
-                                Case 51 To 75: U$ = Y2$ + " POSTS UP UNDERNEATH"
-                                Case 76 To 100: U$ = Y2$ + " BACKS IN AGAINST " + players_GAME$(D, gameB1!(D, 4), 0)
+                                Case 1 To 25: pbpString$ = Y2$ + " MAKES A MOVE DOWN LOW":
+                                Case 26 To 50: pbpString$ = Y2$ + " POSITIONS HIMSELF DOWN LOW"
+                                Case 51 To 75: pbpString$ = Y2$ + " POSTS UP UNDERNEATH"
+                                Case 76 To 100: pbpString$ = Y2$ + " BACKS IN AGAINST " + players_GAME$(D, gameB1!(D, 4), 0)
                             End Select
 
                             Call PBP
-                            U$ = "HE HAS A GOOD SHOT INSIDE"
+                            pbpString$ = "HE HAS A GOOD SHOT INSIDE"
                             Call PBP
 
                         End If
 
                         If Z3$ = "F" Then
                             Select Case RN
-                                Case 1 To 17: U$ = Y2$ + " DRIVES THE BASELINE"
-                                Case 18 To 34: U$ = Y2$ + " PENETRATES THE LANE"
-                                Case 35 To 50: U$ = Y2$ + " MOVES INSIDE"
-                                Case 51 To 67: U$ = Y2$ + " DRIVES THE LANE"
-                                Case 68 To 84: U$ = Y2$ + " MOVES INTO THE PAINT"
-                                Case 85 To 100: U$ = Y2$ + " DRIVES UNDERNEATH"
+                                Case 1 To 17: pbpString$ = Y2$ + " DRIVES THE BASELINE"
+                                Case 18 To 34: pbpString$ = Y2$ + " PENETRATES THE LANE"
+                                Case 35 To 50: pbpString$ = Y2$ + " MOVES INSIDE"
+                                Case 51 To 67: pbpString$ = Y2$ + " DRIVES THE LANE"
+                                Case 68 To 84: pbpString$ = Y2$ + " MOVES INTO THE PAINT"
+                                Case 85 To 100: pbpString$ = Y2$ + " DRIVES UNDERNEATH"
                             End Select
 
                             Call PBP
-                            U$ = "HE'S GOT A GOOD SHOT UNDERNEATH"
+                            pbpString$ = "HE'S GOT A GOOD SHOT UNDERNEATH"
                             Call PBP
                         End If
 
                         If Z3$ = "G" Then
                             Select Case RN
-                                Case 1 To 25: U$ = Y2$ + " DRIVES THE LANE": Call PBP: U$ = "HE HAS A GOOD SHOT CLOSE IN"
-                                Case 26 To 50: U$ = Y2$ + " DRIVES THROUGH THE KEY": Call PBP: U$ = "HE'S INTO THE LANE": Call PBP: U$ = "HE HAS A GOOD SHOT CLOSE IN"
-                                Case 51 To 75: U$ = Y2$ + " DRIVES TO THE BASKET": Call PBP: U$ = "HE HAS A GOOD SHOT CLOSE IN"
+                                Case 1 To 25: pbpString$ = Y2$ + " DRIVES THE LANE": Call PBP: pbpString$ = "HE HAS A GOOD SHOT CLOSE IN"
+                                Case 26 To 50: pbpString$ = Y2$ + " DRIVES THROUGH THE KEY": Call PBP: pbpString$ = "HE'S INTO THE LANE": Call PBP: pbpString$ = "HE HAS A GOOD SHOT CLOSE IN"
+                                Case 51 To 75: pbpString$ = Y2$ + " DRIVES TO THE BASKET": Call PBP: pbpString$ = "HE HAS A GOOD SHOT CLOSE IN"
                             End Select
 
                             Call PBP
                         Else
-                            U$ = Y2$ + " DRIVES THROUGH AN OPENING"
+                            pbpString$ = Y2$ + " DRIVES THROUGH AN OPENING"
                             Call PBP
                         End If
 
                     End If
 
                 Case 4:
-                    U$ = "HE'S OPEN FROM 3-POINT RANGE!"
+                    pbpString$ = "HE'S OPEN FROM 3-POINT RANGE!"
                     Call PBP
 
                 Case 5:
-                    U$ = "HE'S OPEN FROM CLOSE RANGE"
+                    pbpString$ = "HE'S OPEN FROM CLOSE RANGE"
                     Call PBP
 
                 Case 6:
-                    U$ = "HE'S OPEN FROM MEDIUM RANGE"
+                    pbpString$ = "HE'S OPEN FROM MEDIUM RANGE"
                     Call PBP
 
                 Case 7:
-                    U$ = "HE'S OPEN FROM LONG RANGE"
+                    pbpString$ = "HE'S OPEN FROM LONG RANGE"
                     Call PBP
 
             End Select
@@ -1494,7 +1494,7 @@ Sub PROHOOP ()
 
         If pbpOpt = 1 Then
             Call WINDEX
-            Print "PASS TO "; players_GAME$(P, gameB1!(P, B), 0); " OF ";
+            Print "PASS TO "; players_GAME$(P, gameB1!(P, ballCarrier), 0); " OF ";
             Color tmRat_GAME(P, 33), tmRat_GAME(P, 34)
             Print gameTeams$(P)
             Color 15, 0
@@ -1535,10 +1535,10 @@ Sub PROHOOP ()
 
     If playerMode <> 0 Or coachOpt = 1 Then
 
-        If H >= 4 And gameClock! <= 240 And score(P, 0) - score(D, 0) > 0 And playerMode = 1 And P = compTeam Then
+        If quarter >= 4 And gameClock! <= 240 And score(P, 0) - score(D, 0) > 0 And playerMode = 1 And P = compTeam Then
 
             '985
-            U$ = Str$(gameRatings!(P, gameB1!(P, B), 1)) + " FT%  INTENTIONAL FOUL? (Y/N)"
+            pbpString$ = Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " FT%  INTENTIONAL FOUL? (Y/N)"
 
             Do
                 I$ = GetKeyPress$
@@ -1551,10 +1551,10 @@ Sub PROHOOP ()
             If playerMode = 2 Or playerMode = 1 And D = compTeam Then
 
                 '980
-                If gameClock! <= 240 And H >= 4 And score(P, 0) - score(D, 0) > 10 Then
+                If gameClock! <= 240 And quarter >= 4 And score(P, 0) - score(D, 0) > 10 Then
                     If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then 530
                 Else
-                    If gameClock! <= 30 And H >= 4 And score(P, 0) - score(D, 0) > 0 Then P6 = 3: GoTo 532
+                    If gameClock! <= 30 And quarter >= 4 And score(P, 0) - score(D, 0) > 0 Then P6 = 3: GoTo 532
                     If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then 530
                 End If
 
@@ -1564,10 +1564,10 @@ Sub PROHOOP ()
         If gameClock! <= 1 Or shotClock <= 6 Then
             P6 = 1
         Else
-            If gameClock! <= 8 And score(P, 0) - score(D, 0) <= -3 And H >= 4 Then
+            If gameClock! <= 8 And score(P, 0) - score(D, 0) <= -3 And quarter >= 4 Then
                 P6 = 1
             Else
-                If gameClock! <= 20 And score(P, 0) - score(D, 0) <= -5 And H >= 4 Then
+                If gameClock! <= 20 And score(P, 0) - score(D, 0) <= -5 And quarter >= 4 Then
                     P6 = 1
                 Else
                     If PZ% > 1 Then
@@ -1646,14 +1646,14 @@ Sub PROHOOP ()
 
     End Select
 
-    If Val(I$) = 3 And (playerMode = 0 Or playerMode = 1 And P = compTeam) And H >= 4 And gameClock! < 240 Then P6 = 3
+    If Val(I$) = 3 And (playerMode = 0 Or playerMode = 1 And P = compTeam) And quarter >= 4 And gameClock! < 240 Then P6 = 3
     If Val(I$) = 2 And (playerMode = 0 Or playerMode = 1 And D = compTeam) And timeouts(P) > 0 Then P6 = 2
 
     P3 = P6
 
     If P6 = 2 And timeouts(P) = 0 Then 530
-    If P6 = 3 And H < 4 Or P6 = 3 And playerMode = 1 And D = compTeam Then 530
-    If P6 = 3 And H = 4 And gameClock! > 240 Then 530
+    If P6 = 3 And quarter < 4 Or P6 = 3 And playerMode = 1 And D = compTeam Then 530
+    If P6 = 3 And quarter = 4 And gameClock! > 240 Then 530
     If (P6 = 1 Or P6 = 4) And PZ% = 4 Then P6 = 4
 
     caseVar = P6 + 1
@@ -1677,7 +1677,7 @@ Sub PROHOOP ()
                 timeElapsed! = -M5
                 Call AdjustPlayTime
                 shotClock = shotClock + M5
-                U$ = "TIMEOUT " + gameTeams$(P):
+                pbpString$ = "TIMEOUT " + gameTeams$(P):
 
                 Call PBP
                 Call DELAY
@@ -1697,7 +1697,7 @@ Sub PROHOOP ()
 
                 If P7(D) = 1 Then
                     If pbpOpt = 0 Then
-                        U$ = gameTeams$(D) + " IS PRESSING"
+                        pbpString$ = gameTeams$(D) + " IS PRESSING"
                         Call PBP
                     Else
                         'pbpOpt = 1
@@ -1732,7 +1732,7 @@ Sub PROHOOP ()
 
             C1 = 2
             P9 = D
-            U$ = "DESIGNATED FOULER (0-4)"
+            pbpString$ = "DESIGNATED FOULER (0-4)"
             Call SELECTPBP
 
             If playerMode = 1 And D = compTeam Or playerMode = 2 Then
@@ -1757,8 +1757,8 @@ Sub PROHOOP ()
         Case 5
             359 '
             Call d100(S)
-            W%(P, gameB1!(P, B), 1) = W%(P, gameB1!(P, B), 1) + 1
-            gameRatings!(P, gameB1!(P, B), 7) = gameRatings!(P, gameB1!(P, B), 7) + 1
+            W%(P, gameB1!(P, ballCarrier), 1) = W%(P, gameB1!(P, ballCarrier), 1) + 1
+            gameRatings!(P, gameB1!(P, ballCarrier), 7) = gameRatings!(P, gameB1!(P, ballCarrier), 7) + 1
             PT% = 3
 
             Call MAKEPBP
@@ -1770,7 +1770,7 @@ Sub PROHOOP ()
 
                 If pbpOpt = 1 And pbpDelay! <> 0 Then
                     Call WINDEX
-                    Print "3 PT FG GOOD BY "; players_GAME$(P, gameB1!(P, B), 0); " !!!"
+                    Print "3 PT FG GOOD BY "; players_GAME$(P, gameB1!(P, ballCarrier), 0); " !!!"
                     Call DELAY
                 End If
 
@@ -1782,10 +1782,10 @@ Sub PROHOOP ()
 
                 Call DELAY
 
-                score(P, H) = score(P, H) + 3
+                score(P, quarter) = score(P, quarter) + 3
                 score(P, 0) = score(P, 0) + 3
-                W%(P, gameB1!(P, B), 0) = W%(P, gameB1!(P, B), 0) + 1
-                gameRatings!(P, gameB1!(P, B), 8) = gameRatings!(P, gameB1!(P, B), 8) + 1
+                W%(P, gameB1!(P, ballCarrier), 0) = W%(P, gameB1!(P, ballCarrier), 0) + 1
+                gameRatings!(P, gameB1!(P, ballCarrier), 8) = gameRatings!(P, gameB1!(P, ballCarrier), 8) + 1
 
                 Call CreditAssists
                 Call UPDATESCREEN
@@ -1796,7 +1796,7 @@ Sub PROHOOP ()
 
             If pbpOpt = 1 And pbpDelay! <> 0 Then
                 Call WINDEX
-                Print "3 PT FG MISSED BY "; players_GAME$(P, gameB1!(P, B), 0)
+                Print "3 PT FG MISSED BY "; players_GAME$(P, gameB1!(P, ballCarrier), 0)
                 Call DELAY
             End If
 
@@ -1832,13 +1832,13 @@ Sub PROHOOP ()
 
     S = 0
     Call d100(RN0)
-    gameRatings!(P, gameB1!(P, B), 7) = gameRatings!(P, gameB1!(P, B), 7) + 1
+    gameRatings!(P, gameB1!(P, ballCarrier), 7) = gameRatings!(P, gameB1!(P, ballCarrier), 7) + 1
 
-    If Not (H > 3 And gameClock! <= 30 And score(D, 0) - score(P, 0) = 2 Or H > 3 And gameClock! <= 30 And score(D, 0) - score(P, 0) = 0) Then
+    If Not (quarter > 3 And gameClock! <= 30 And score(D, 0) - score(P, 0) = 2 Or quarter > 3 And gameClock! <= 30 And score(D, 0) - score(P, 0) = 0) Then
 
-        If RN0 <= gameRatings!(P, gameB1!(P, B), 16) + F7%(D, 3) Then
+        If RN0 <= gameRatings!(P, gameB1!(P, ballCarrier), 16) + F7%(D, 3) Then
 
-            gameRatings!(P, gameB1!(P, B), 7) = gameRatings!(P, gameB1!(P, B), 7) - 1
+            gameRatings!(P, gameB1!(P, ballCarrier), 7) = gameRatings!(P, gameB1!(P, ballCarrier), 7) - 1
             Call ResetShotClock
 
             589 '
@@ -1852,11 +1852,11 @@ Sub PROHOOP ()
             If pbpDelay! <> 0 Then
 
                 If pbpOpt = 0 Then
-                    If freeThrowVal = 1 And P2(D) > bonusFoulNum And H <= 4 Or P2(D) > 3 And H > 4 Then
-                        U$ = "3 TO MAKE 2 FT: " + players_GAME$(P, gameB1!(P, B), 0) + Str$(gameRatings!(P, gameB1!(P, B), 1)) + " %"
+                    If freeThrowVal = 1 And P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then
+                        pbpString$ = "3 TO MAKE 2 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
                         Call PBP
                     Else
-                        U$ = "2 FT: " + players_GAME$(P, gameB1!(P, B), 0) + Str$(gameRatings!(P, gameB1!(P, B), 1)) + " %"
+                        pbpString$ = "2 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
                         Call PBP
                     End If
                 Else
@@ -1864,12 +1864,12 @@ Sub PROHOOP ()
                     Call WINDEX
                     Print gameTeams$(P)
 
-                    If freeThrowVal = 1 And P2(D) > bonusFoulNum And H <= 4 Or P2(D) > 3 And H > 4 Then
+                    If freeThrowVal = 1 And P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then
                         Print "3 TO MAKE 2 FT: ";
-                        Print players_GAME$(P, gameB1!(P, B), 0); "   "; gameRatings!(P, gameB1!(P, B), 1); " %"
+                        Print players_GAME$(P, gameB1!(P, ballCarrier), 0); "   "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
                     Else
                         Print "2 FT: ";
-                        Print players_GAME$(P, gameB1!(P, B), 0); "   "; gameRatings!(P, gameB1!(P, B), 1); " %"
+                        Print players_GAME$(P, gameB1!(P, ballCarrier), 0); "   "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
                     End If
                 End If
 
@@ -1901,7 +1901,7 @@ Sub PROHOOP ()
                 PT% = 2
 
                 Call MAKEPBP
-                U$ = "STUFF BY " + players_GAME$(P, gameB1!(P, B), 0)
+                pbpString$ = "STUFF BY " + players_GAME$(P, gameB1!(P, ballCarrier), 0)
                 Call PBP
 
                 DK% = 0
@@ -1909,7 +1909,7 @@ Sub PROHOOP ()
             Else
                 'pbpOpt = 1
                 Call WINDEX
-                Print "STUFF BY " + players_GAME$(P, gameB1!(P, B), 0)
+                Print "STUFF BY " + players_GAME$(P, gameB1!(P, ballCarrier), 0)
                 Call DELAY
                 DK% = 0
                 GoTo 617
@@ -1925,26 +1925,26 @@ Sub PROHOOP ()
         End If
 
         If pbpOpt = 0 Then
-            U$ = "BASKET GOOD BY " + players_GAME$(P, gameB1!(P, B), 0)
+            pbpString$ = "BASKET GOOD BY " + players_GAME$(P, gameB1!(P, ballCarrier), 0)
             Call PBP
         Else
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
                 Call WINDEX
-                Print "BASKET GOOD BY " + players_GAME$(P, gameB1!(P, B), 0)
+                Print "BASKET GOOD BY " + players_GAME$(P, gameB1!(P, ballCarrier), 0)
                 Call DELAY
             End If
         End If
 
         617 '
-        U$ = "... AND HE'S FOULED !!!"
+        pbpString$ = "... AND HE'S FOULED !!!"
 
         If pbpOpt = 0 Then
             Call PBP
         Else
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
-                Print U$
+                Print pbpString$
                 Call DELAY
             End If
         End If
@@ -1955,9 +1955,9 @@ Sub PROHOOP ()
         Call CreditAssists
 
         F3 = 1
-        score(P, H) = score(P, H) + 2
+        score(P, quarter) = score(P, quarter) + 2
         score(P, 0) = score(P, 0) + 2
-        gameRatings!(P, gameB1!(P, B), 8) = gameRatings!(P, gameB1!(P, B), 8) + 1
+        gameRatings!(P, gameB1!(P, ballCarrier), 8) = gameRatings!(P, gameB1!(P, ballCarrier), 8) + 1
 
         Call UPDATESCREEN
         Call Fouls(0)
@@ -1965,24 +1965,24 @@ Sub PROHOOP ()
         If pbpDelay! <> 0 Then
 
             If pbpOpt = 0 Then
-                If freeThrowVal = 1 And P2(D) > bonusFoulNum And H <= 4 Or P2(D) > 3 And H > 4 Then
-                    U$ = "2 TO MAKE 1 FT: " + players_GAME$(P, gameB1!(P, B), 0) + Str$(gameRatings!(P, gameB1!(P, B), 1)) + " %"
+                If freeThrowVal = 1 And P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then
+                    pbpString$ = "2 TO MAKE 1 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
                     Call PBP
                 Else
-                    U$ = "1 FT: " + players_GAME$(P, gameB1!(P, B), 0) + Str$(gameRatings!(P, gameB1!(P, B), 1)) + " %"
+                    pbpString$ = "1 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
                     Call PBP
                 End If
             Else
                 'pbpOpt = 1
-                If freeThrowVal = 1 And P2(D) > bonusFoulNum And H <= 4 Or P2(D) > 3 And H > 4 Then
+                If freeThrowVal = 1 And P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then
                     Call WINDEX
                     Print gameTeams$(P)
-                    U$ = "2 TO MAKE 1 FT: " + players_GAME$(P, gameB1!(P, B), 0) + "   " + Str$(gameRatings!(P, gameB1!(P, B), 1)) + " %"
+                    pbpString$ = "2 TO MAKE 1 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + "   " + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
 
                 Else
                     Call WINDEX
                     Print gameTeams$(P)
-                    Print "1 FT: "; players_GAME$(P, gameB1!(P, B), 0); "   "; gameRatings!(P, gameB1!(P, B), 1); " %"
+                    Print "1 FT: "; players_GAME$(P, gameB1!(P, ballCarrier), 0); "   "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
                 End If
 
             End If
@@ -1990,17 +1990,17 @@ Sub PROHOOP ()
         End If
 
         '620
-        X = 50
+        xFactor = 50
         Call Substitutions
-        X = 0
+        xFactor = 0
 
         If pbpDelay! <> 0 Then
 
             If pbpOpt = 0 Then
-                If freeThrowVal = 1 And P2(D) > bonusFoulNum And H <= 4 Or P2(D) > 3 And H > 4 Then
-                    U$ = "2 TO MAKE 1 FT: " + players_GAME$(P, gameB1!(P, B), 0) + Str$(gameRatings!(P, gameB1!(P, B), 1)) + " %"
+                If freeThrowVal = 1 And P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then
+                    pbpString$ = "2 TO MAKE 1 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
                 Else
-                    U$ = "1 FT: " + players_GAME$(P, gameB1!(P, B), 0) + Str$(gameRatings!(P, gameB1!(P, B), 1)) + " %"
+                    pbpString$ = "1 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
                 End If
                 Call PBP
             End If
@@ -2008,11 +2008,11 @@ Sub PROHOOP ()
             If pbpOpt = 1 Then
                 Call WINDEX
                 Print gameTeams$(P)
-                If freeThrowVal = 1 And P2(D) > bonusFoulNum And H <= 4 Or P2(D) > 3 And H > 4 Then
+                If freeThrowVal = 1 And P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then
                     Print "2 TO MAKE 1 FT: ";
-                    Print players_GAME$(P, gameB1!(P, B), 0); "   "; gameRatings!(P, gameB1!(P, B), 1); " %"
+                    Print players_GAME$(P, gameB1!(P, ballCarrier), 0); "   "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
                 Else
-                    Print "1 FT: "; players_GAME$(P, gameB1!(P, B), 0); "   "; gameRatings!(P, gameB1!(P, B), 1); " %"
+                    Print "1 FT: "; players_GAME$(P, gameB1!(P, ballCarrier), 0); "   "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
                 End If
 
             End If
@@ -2025,12 +2025,12 @@ Sub PROHOOP ()
         For F3 = 1 To 2
 
             'Increase FT ATT
-            gameRatings!(P, gameB1!(P, B), 9) = gameRatings!(P, gameB1!(P, B), 9) + 1
+            gameRatings!(P, gameB1!(P, ballCarrier), 9) = gameRatings!(P, gameB1!(P, ballCarrier), 9) + 1
 
             Call d100(S)
 
             'FT Success Chance
-            FX% = gameRatings!(P, gameB1!(P, B), 1)
+            FX% = gameRatings!(P, gameB1!(P, ballCarrier), 1)
 
             If S <= FX% Then
 
@@ -2054,14 +2054,14 @@ Sub PROHOOP ()
             End If
 
             If NM% = 1 Then Exit For
-            If F3 = 1 And (freeThrowVal = 0 Or freeThrowVal = 1 And (P2(D) <= bonusFoulNum And H <= 4 Or P2(D) <= 3 And H > 4)) Then Exit For
+            If F3 = 1 And (freeThrowVal = 0 Or freeThrowVal = 1 And (P2(D) <= bonusFoulNum And quarter <= 4 Or P2(D) <= 3 And quarter > 4)) Then Exit For
 
         Next F3
 
         Call CheckGameClock
         If gameClock! = 0 Then 170
 
-        X = 99
+        xFactor = 99
 
         If S > FX% Then 670
 
@@ -2083,13 +2083,13 @@ Sub PROHOOP ()
         End If
         'End Sub
 
-        U$ = gameTeams$(P) + " BALL AFTER SCORE"
+        pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
         Call SELECTPBP
         Locate 8, 41: Print Space$(12)
         Call Choices
 
-        B = 6
-        X = 0
+        ballCarrier = 6
+        xFactor = 0
 
         If pbpDelay! <> 0 Then
             For I = 8 To 15
@@ -2103,7 +2103,7 @@ Sub PROHOOP ()
         'PRESSING
         If P7(D) = 1 Then
             If pbpOpt = 0 Then
-                U$ = gameTeams$(D) + " IS PRESSING"
+                pbpString$ = gameTeams$(D) + " IS PRESSING"
                 Call PBP
             End If
 
@@ -2128,10 +2128,10 @@ Sub PROHOOP ()
             If pbpOpt = 0 Then
                 PT% = 2
                 Call MAKEPBP
-                U$ = "STUFF BY " + players_GAME$(P, gameB1!(P, B), 0) + " !!!": DK% = 0
+                pbpString$ = "STUFF BY " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + " !!!": DK% = 0
             Else
                 'pbpOpt = 1
-                U$ = "STUFF BY " + players_GAME$(P, gameB1!(P, B), 0) + " !!!": DK% = 0
+                pbpString$ = "STUFF BY " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + " !!!": DK% = 0
             End If
         Else
             If pbpOpt = 0 And PZ% = 8 Then
@@ -2141,15 +2141,15 @@ Sub PROHOOP ()
                 PZ% = 0
                 skipShotPBP% = 1
             Else
-                U$ = "BASKET BY "
-                U$ = U$ + players_GAME$(P, gameB1!(P, B), 0) + " !!!"
+                pbpString$ = "BASKET BY "
+                pbpString$ = pbpString$ + players_GAME$(P, gameB1!(P, ballCarrier), 0) + " !!!"
             End If
         End If
 
         If skipShotPBP% = 0 Then
 
             If pbpOpt = 1 And pbpDelay! <> 0 Then
-                Call WINDEX: Print U$: Call DELAY
+                Call WINDEX: Print pbpString$: Call DELAY
             Else
 
                 Call d100(RN)
@@ -2159,28 +2159,28 @@ Sub PROHOOP ()
                     RN = Int(Rnd(1) * 22) + 1
 
                     Select Case RN
-                        Case 1: U$ = "NOTHING BUT THE BOTTOM OF THE NET!"
-                        Case 2: U$ = "Count IT!"
-                        Case 3: U$ = players_GAME$(P, gameB1!(P, B), 0) + " TICKLES THE TWINE!"
-                        Case 4: U$ = "NO RIM, NO BOARD, JUST CORD!"
-                        Case 5: U$ = "GOOD!"
-                        Case 6: U$ = "YES!"
-                        Case 7: U$ = "COUNT IT!"
-                        Case 8: U$ = "IT'S GOOD!"
-                        Case 9: U$ = "BINGO!"
-                        Case 10: U$ = "IT FALLS!"
-                        Case 11: U$ = "HE DRAINS IT!"
-                        Case 12: U$ = "SWISH!"
-                        Case 13: U$ = "ALL NET!"
-                        Case 14: U$ = "IT'S THERE!"
-                        Case 15: U$ = "HE BURIES IT!"
-                        Case 16: U$ = "IT GOES IN!"
-                        Case 17: U$ = "RING IT UP!"
-                        Case 18: U$ = "IT GOES DOWN!"
-                        Case 19: U$ = "BULLSEYE!"
-                        Case 20: U$ = "HE SCORES!"
-                        Case 21: U$ = "HE HAS IT!"
-                        Case 22: U$ = "HE CONNECTS!"
+                        Case 1: pbpString$ = "NOTHING BUT THE BOTTOM OF THE NET!"
+                        Case 2: pbpString$ = "Count IT!"
+                        Case 3: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " TICKLES THE TWINE!"
+                        Case 4: pbpString$ = "NO RIM, NO BOARD, JUST CORD!"
+                        Case 5: pbpString$ = "GOOD!"
+                        Case 6: pbpString$ = "YES!"
+                        Case 7: pbpString$ = "COUNT IT!"
+                        Case 8: pbpString$ = "IT'S GOOD!"
+                        Case 9: pbpString$ = "BINGO!"
+                        Case 10: pbpString$ = "IT FALLS!"
+                        Case 11: pbpString$ = "HE DRAINS IT!"
+                        Case 12: pbpString$ = "SWISH!"
+                        Case 13: pbpString$ = "ALL NET!"
+                        Case 14: pbpString$ = "IT'S THERE!"
+                        Case 15: pbpString$ = "HE BURIES IT!"
+                        Case 16: pbpString$ = "IT GOES IN!"
+                        Case 17: pbpString$ = "RING IT UP!"
+                        Case 18: pbpString$ = "IT GOES DOWN!"
+                        Case 19: pbpString$ = "BULLSEYE!"
+                        Case 20: pbpString$ = "HE SCORES!"
+                        Case 21: pbpString$ = "HE HAS IT!"
+                        Case 22: pbpString$ = "HE CONNECTS!"
                     End Select
 
                 End If
@@ -2192,18 +2192,18 @@ Sub PROHOOP ()
         End If
 
         560 '
-        score(P, H) = score(P, H) + 2
+        score(P, quarter) = score(P, quarter) + 2
         score(P, 0) = score(P, 0) + 2
 
         Call CreditAssists
 
         Call UPDATESCREEN
 
-        gameRatings!(P, gameB1!(P, B), 8) = gameRatings!(P, gameB1!(P, B), 8) + 1
+        gameRatings!(P, gameB1!(P, ballCarrier), 8) = gameRatings!(P, gameB1!(P, ballCarrier), 8) + 1
 
         '---> possibly a new sub
         562 '
-        U$ = gameTeams$(D) + " BALL AFTER SCORE"
+        pbpString$ = gameTeams$(D) + " BALL AFTER SCORE"
 
         If pbpOpt = 1 And pbpDelay! <> 0 Then
             Locate 9, 1
@@ -2260,7 +2260,7 @@ Sub PROHOOP ()
 
         If P7(D) = 1 Then
             If pbpOpt = 0 Then
-                U$ = gameTeams$(D) + " IS PRESSING"
+                pbpString$ = gameTeams$(D) + " IS PRESSING"
                 Call PBP
             Else
                 'pbpOpt = 1
@@ -2288,7 +2288,7 @@ Sub PROHOOP ()
         545 '
         If pbpOpt = 1 And pbpDelay! <> 0 Then
             Call WINDEX
-            Print "SHOT MISSED BY "; players_GAME$(P, gameB1!(P, B), 0)
+            Print "SHOT MISSED BY "; players_GAME$(P, gameB1!(P, ballCarrier), 0)
             Call DELAY
         End If
 
@@ -2312,15 +2312,15 @@ Sub PROHOOP ()
                 Call d100(RN)
 
                 Select Case RN
-                    Case 1 To 10: U$ = players_GAME$(D, gameB1!(D, I3), 0) + " STUFFS THE SHOT!!"
-                    Case 11 To 15: U$ = "DENIED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
-                    Case 16 To 20: U$ = "ERASED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
-                    Case 21 To 25: U$ = "EXPUNGED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
-                    Case 26 To 30: U$ = "REBUKED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
-                    Case 31 To 35: U$ = "SHOT BLOCKED CLEANLY BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
-                    Case 36 To 70: U$ = "SHOT BLOCKED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
-                    Case 71 To 90: U$ = "SHOT REJECTED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
-                    Case 91 To 100: U$ = "SHOT SWATTED OUT BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
+                    Case 1 To 10: pbpString$ = players_GAME$(D, gameB1!(D, I3), 0) + " STUFFS THE SHOT!!"
+                    Case 11 To 15: pbpString$ = "DENIED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
+                    Case 16 To 20: pbpString$ = "ERASED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
+                    Case 21 To 25: pbpString$ = "EXPUNGED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
+                    Case 26 To 30: pbpString$ = "REBUKED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
+                    Case 31 To 35: pbpString$ = "SHOT BLOCKED CLEANLY BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
+                    Case 36 To 70: pbpString$ = "SHOT BLOCKED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
+                    Case 71 To 90: pbpString$ = "SHOT REJECTED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
+                    Case 91 To 100: pbpString$ = "SHOT SWATTED OUT BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
                 End Select
 
                 Call PBP
@@ -2331,7 +2331,7 @@ Sub PROHOOP ()
 
         554 '
         gameRatings!(D, gameB1!(D, I3), 15) = gameRatings!(D, gameB1!(D, I3), 15) + 1
-        X = 98
+        xFactor = 98
 
     End If
 
@@ -2353,7 +2353,7 @@ Sub PROHOOP ()
     Call Fouls(0)
 
     566 '
-    If P2(D) > bonusFoulNum And H <= 4 Or P2(D) > 3 And H > 4 Then 570
+    If P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then 570
 
     Call CheckGameClock
     If gameClock! = 0 Then 170
@@ -2370,7 +2370,7 @@ Sub PROHOOP ()
         End If
 
         Locate 8, 1
-        U$ = gameTeams$(P) + " BALL AFTER FOUL"
+        pbpString$ = gameTeams$(P) + " BALL AFTER FOUL"
         Call PBP
 
         Locate 8, 41: Print Space$(12)
@@ -2384,7 +2384,7 @@ Sub PROHOOP ()
     If pbpDelay! <> 0 Then
 
         If pbpOpt = 0 Then
-            U$ = "1 FT: " + players_GAME$(P, gameB1!(P, B), 0) + Str$(gameRatings!(P, gameB1!(P, B), 1)) + " %"
+            pbpString$ = "1 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
             Call PBP
         Else
 
@@ -2392,25 +2392,25 @@ Sub PROHOOP ()
             Color tmRat_GAME(P, 33), tmRat_GAME(P, 34): Print gameTeams$(P)
             Color 15, 0
 
-            Print "1 FT: "; players_GAME$(P, gameB1!(P, B), 0); " "; gameRatings!(P, gameB1!(P, B), 1); " %"
+            Print "1 FT: "; players_GAME$(P, gameB1!(P, ballCarrier), 0); " "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
         End If
 
     End If
 
-    X = 50
+    xFactor = 50
     Call Substitutions
-    X = 0
+    xFactor = 0
 
     If pbpDelay! <> 0 Then
 
         If pbpOpt = 0 Then
-            U$ = "1 FT: " + players_GAME$(P, gameB1!(P, B), 0) + Str$(gameRatings!(P, gameB1!(P, B), 1)) + " %"
+            pbpString$ = "1 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
             Call PBP
         Else
             Call WINDEX
             Color tmRat_GAME(P, 33), tmRat_GAME(P, 34): Print gameTeams$(P)
             Color 15, 0
-            Print "1 FT: "; players_GAME$(P, gameB1!(P, B), 0); " "; gameRatings!(P, gameB1!(P, B), 1); " %"
+            Print "1 FT: "; players_GAME$(P, gameB1!(P, ballCarrier), 0); " "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
         End If
     End If
 
@@ -2418,12 +2418,12 @@ Sub PROHOOP ()
     F3 = 1
 
     'Increase FT ATT
-    gameRatings!(P, gameB1!(P, B), 9) = gameRatings!(P, gameB1!(P, B), 9) + 1
+    gameRatings!(P, gameB1!(P, ballCarrier), 9) = gameRatings!(P, gameB1!(P, ballCarrier), 9) + 1
 
     Call d100(S)
 
     'FT Success Chance
-    FX% = gameRatings!(P, gameB1!(P, B), 1)
+    FX% = gameRatings!(P, gameB1!(P, ballCarrier), 1)
 
     If S <= FX% Then
         If pbpOpt = 0 Then
@@ -2465,12 +2465,12 @@ Sub PROHOOP ()
         C1 = 2
     End If
 
-    U$ = gameTeams$(P) + " BALL AFTER SCORE"
+    pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
     Call SELECTPBP
     Locate 8, 41: Print Space$(12)
     Call Choices
-    B = 6
-    X = 0
+    ballCarrier = 6
+    xFactor = 0
 
     If pbpDelay! <> 0 Then
         For I = 8 To 15
@@ -2483,7 +2483,7 @@ Sub PROHOOP ()
 
     If P7(D) = 1 Then
         If pbpOpt = 0 Then
-            U$ = gameTeams$(D) + " IS PRESSING"
+            pbpString$ = gameTeams$(D) + " IS PRESSING"
             Call PBP
         Else
             'pbpOpt = 1
@@ -2504,10 +2504,10 @@ Sub PROHOOP ()
     '----- NOODLE -----
 
     570 '
-    If freeThrowVal = 1 And (P2(D) > bonusFoulNum And H <= 4 Or P2(D) > 3 And H > 4) Then
-        U$ = players_GAME$(P, gameB1!(P, B), 0) + " GETS 3 FT TO MAKE 2..."
+    If freeThrowVal = 1 And (P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4) Then
+        pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " GETS 3 FT TO MAKE 2..."
     Else
-        U$ = players_GAME$(P, gameB1!(P, B), 0) + " GETS 2 FREE THROWS..."
+        pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " GETS 2 FREE THROWS..."
     End If
     Call PBP
 
@@ -2538,14 +2538,14 @@ Sub PROHOOP ()
     Call Fouls(0)
 
     P2(D) = P2(D) - 1
-    B = W5
+    ballCarrier = W5
 
-    If P2(D) > bonusFoulNum And H <= 4 Or P2(D) > 3 And H > 4 Then 570
+    If P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then 570
 
     Call CheckGameClock
     If gameClock! = 0 Then 170
 
-    U$ = "OFFENSIVE FOUL"
+    pbpString$ = "OFFENSIVE FOUL"
 
     If pbpOpt = 0 Then
         Call PBP
@@ -2553,25 +2553,25 @@ Sub PROHOOP ()
         'pbpOpt = 1
         If pbpDelay! <> 0 Then
             Call WINDEX
-            Print U$
+            Print pbpString$
             Call DELAY
         End If
     End If
 
-    U$ = gameTeams$(P) + " BALL AFTER FOUL"
+    pbpString$ = gameTeams$(P) + " BALL AFTER FOUL"
     If pbpOpt = 0 Then
         Call PBP
     Else
         'pbpOpt = 1
         If pbpDelay! <> 0 Then
-            Print U$
+            Print pbpString$
             Call DELAY
         End If
     End If
 
     Locate 8, 41: Print Space$(12)
 
-    B = 6
+    ballCarrier = 6
     Call PBP
     turnovers(D) = turnovers(D) + 1
     Call UPDATESCREEN
@@ -2589,7 +2589,7 @@ Sub PROHOOP ()
     If P7(D) = 1 Then
 
         If pbpOpt = 0 Then
-            U$ = gameTeams$(D) + " IS PRESSING"
+            pbpString$ = gameTeams$(D) + " IS PRESSING"
             Call PBP
         Else
             'pbpOpt = 1
@@ -2611,18 +2611,18 @@ Sub PROHOOP ()
 
     591 '
 
-    X = 50
+    xFactor = 50
     Call Substitutions
-    X = 0
+    xFactor = 0
 
     If pbpDelay! <> 0 Then
 
         If pbpOpt = 0 Then
 
-            If freeThrowVal = 1 And P2(D) > bonusFoulNum And H <= 4 Or P2(D) > 3 And H > 4 Then
-                U$ = "3 TO MAKE 2 FT: " + players_GAME$(P, gameB1!(P, B), 0) + Str$(gameRatings!(P, gameB1!(P, B), 1)) + " %":
+            If freeThrowVal = 1 And P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then
+                pbpString$ = "3 TO MAKE 2 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %":
             Else
-                U$ = "2 FT: " + players_GAME$(P, gameB1!(P, B), 0) + Str$(gameRatings!(P, gameB1!(P, B), 1)) + " %"
+                pbpString$ = "2 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
             End If
 
             Call PBP
@@ -2632,12 +2632,12 @@ Sub PROHOOP ()
             Call WINDEX
             Print gameTeams$(P)
 
-            If freeThrowVal = 1 And P2(D) > bonusFoulNum And H <= 4 Or P2(D) > 3 And H > 4 Then
+            If freeThrowVal = 1 And P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then
                 Print "3 TO MAKE 2 FT: ";
-                Print players_GAME$(P, gameB1!(P, B), 0); "   "; gameRatings!(P, gameB1!(P, B), 1); " %"
+                Print players_GAME$(P, gameB1!(P, ballCarrier), 0); "   "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
             Else
                 Print "2 FT: ";
-                Print players_GAME$(P, gameB1!(P, B), 0); "   "; gameRatings!(P, gameB1!(P, B), 1); " %"
+                Print players_GAME$(P, gameB1!(P, ballCarrier), 0); "   "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
             End If
 
         End If
@@ -2651,12 +2651,12 @@ Sub PROHOOP ()
     For F3 = 1 To 3
 
         'Increase FTA
-        gameRatings!(P, gameB1!(P, B), 9) = gameRatings!(P, gameB1!(P, B), 9) + 1
+        gameRatings!(P, gameB1!(P, ballCarrier), 9) = gameRatings!(P, gameB1!(P, ballCarrier), 9) + 1
 
         Call d100(S)
 
         'FT Success Chance
-        FX% = gameRatings!(P, gameB1!(P, B), 1)
+        FX% = gameRatings!(P, gameB1!(P, ballCarrier), 1)
 
         If S <= FX% Then
             If pbpOpt = 0 Then
@@ -2683,7 +2683,7 @@ Sub PROHOOP ()
         If F3 = 2 Then
             'Modern rules - just exit (only 2 FT)
             '3 to make 2 - if 2 misses then done
-            If freeThrowVal = 0 Or (freeThrowVal = 1 And (P2(D) <= bonusFoulNum And H <= 4 Or P2(D) <= 3 And H > 4)) Then Exit For
+            If freeThrowVal = 0 Or (freeThrowVal = 1 And (P2(D) <= bonusFoulNum And quarter <= 4 Or P2(D) <= 3 And quarter > 4)) Then Exit For
         End If
 
     Next F3
@@ -2692,7 +2692,7 @@ Sub PROHOOP ()
 
     If gameClock! = 0 Then 170
 
-    If S > gameRatings!(P, gameB1!(P, B), 1) Then 650
+    If S > gameRatings!(P, gameB1!(P, ballCarrier), 1) Then 650
 
     'GoSub 3000
     'AKA ChangePosession
@@ -2711,14 +2711,14 @@ Sub PROHOOP ()
         C1 = 2
     End If
 
-    U$ = gameTeams$(P) + " BALL AFTER SCORE"
+    pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
 
     Call SELECTPBP
     Locate 8, 41: Print Space$(12)
     Call Choices
 
-    B = 6
-    X = 0
+    ballCarrier = 6
+    xFactor = 0
 
     If pbpDelay! <> 0 Then
         For I = 8 To 15
@@ -2731,7 +2731,7 @@ Sub PROHOOP ()
     If P7(D) = 1 Then
 
         If pbpOpt = 0 Then
-            U$ = gameTeams$(D) + " IS PRESSING"
+            pbpString$ = gameTeams$(D) + " IS PRESSING"
             Call PBP
         End If
 
@@ -2765,7 +2765,7 @@ Sub PROHOOP ()
 
     Call d100(RN0)
 
-    If H > 3 And gameClock! < 30 And score(D, 0) - score(P, 0) = 2 And RN0 <= 12 Or H > 3 And gameClock! < 30 And score(D, 0) - score(P, 0) = 0 And RN0 <= 12 Then
+    If quarter > 3 And gameClock! < 30 And score(D, 0) - score(P, 0) = 2 And RN0 <= 12 Or quarter > 3 And gameClock! < 30 And score(D, 0) - score(P, 0) = 0 And RN0 <= 12 Then
         Call ReboundRoutine1
         GoTo 760
     End If
@@ -2810,36 +2810,36 @@ Sub PROHOOP ()
 
     GG = score(D, 0) - score(P, 0)
 
-    If RN0 <= 12 And H > 3 And gameClock! < 30 And (GG = 2 Or GG = 0) Then 700
+    If RN0 <= 12 And quarter > 3 And gameClock! < 30 And (GG = 2 Or GG = 0) Then 700
     '-- End Loop
 
     Select Case RN0
 
         Case 1
 
-            If X = 98 Then 700
+            If xFactor = 98 Then 700
 
             turnovers(P) = turnovers(P) + 1
-            U$ = "OFFENSIVE GOAL TENDING"
+            pbpString$ = "OFFENSIVE GOAL TENDING"
             If pbpOpt = 0 Then
                 Call PBP
             Else
                 'pbpOpt = 1
                 If pbpDelay! <> 0 Then
                     Call WINDEX
-                    Print U$
+                    Print pbpString$
                     Call DELAY
                 End If
             End If
 
-            U$ = "BALL GOES TO " + gameTeams$(D)
+            pbpString$ = "BALL GOES TO " + gameTeams$(D)
             If pbpOpt = 0 Then
                 Call PBP
             Else
                 'pbpOpt = 1
                 If pbpDelay! <> 0 Then
                     Call WINDEX
-                    Print U$
+                    Print pbpString$
                     Call DELAY
                 End If
             End If
@@ -2879,7 +2879,7 @@ Sub PROHOOP ()
 
                 Call UPDATESCREEN
 
-                U$ = "RB KNOCKED O.B. TO " + gameTeams$(P)
+                pbpString$ = "RB KNOCKED O.B. TO " + gameTeams$(P)
 
                 If pbpOpt = 0 Then
                     Call PBP
@@ -2887,7 +2887,7 @@ Sub PROHOOP ()
                     'pbpOpt = 1
                     If pbpDelay! <> 0 Then
                         Call WINDEX
-                        Print U$
+                        Print pbpString$
                         Call DELAY
                     End If
                 End If
@@ -2902,14 +2902,14 @@ Sub PROHOOP ()
             R3(D) = R3(D) + 1
             Call UPDATESCREEN
 
-            U$ = "RB KNOCKED O.B. TO " + gameTeams$(D)
+            pbpString$ = "RB KNOCKED O.B. TO " + gameTeams$(D)
             If pbpOpt = 0 Then
                 Call PBP
             Else
                 'pbpOpt = 1
                 If pbpDelay! <> 0 Then
                     Call WINDEX
-                    Print U$
+                    Print pbpString$
                     Call DELAY
                 End If
             End If
@@ -2940,15 +2940,15 @@ Sub PROHOOP ()
 
         Case 20 To 22
 
-            If X = 99 Then 700
+            If xFactor = 99 Then 700
 
             Call ReboundRoutine1
 
-            gameRatings!(P, gameB1!(P, B), 7) = gameRatings!(P, gameB1!(P, B), 7) + 1
-            gameRatings!(P, gameB1!(P, B), 8) = gameRatings!(P, gameB1!(P, B), 8) + 1
-            gameRatings!(P, gameB1!(P, B), 11) = gameRatings!(P, gameB1!(P, B), 11) + 1
+            gameRatings!(P, gameB1!(P, ballCarrier), 7) = gameRatings!(P, gameB1!(P, ballCarrier), 7) + 1
+            gameRatings!(P, gameB1!(P, ballCarrier), 8) = gameRatings!(P, gameB1!(P, ballCarrier), 8) + 1
+            gameRatings!(P, gameB1!(P, ballCarrier), 11) = gameRatings!(P, gameB1!(P, ballCarrier), 11) + 1
             R3(P) = R3(P) + 1
-            score(P, H) = score(P, H) + 2
+            score(P, quarter) = score(P, quarter) + 2
             score(P, 0) = score(P, 0) + 2
 
             Call UPDATESCREEN
@@ -2956,12 +2956,12 @@ Sub PROHOOP ()
             If pbpOpt = 1 Then
                 If pbpDelay! <> 0 Then
                     Call WINDEX
-                    Print "TIPPED IN BY "; players_GAME$(P, gameB1!(P, B), 0); "!!!"
+                    Print "TIPPED IN BY "; players_GAME$(P, gameB1!(P, ballCarrier), 0); "!!!"
                     Call DELAY
                 End If
             Else
                 'pbpOpt = 0
-                U$ = players_GAME$(P, gameB1!(P, B), 0) + " TIPS IT IN!!!"
+                pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " TIPS IT IN!!!"
                 Call PBP
             End If
 
@@ -2981,14 +2981,14 @@ Sub PROHOOP ()
                 C1 = 2
             End If
 
-            U$ = gameTeams$(P) + " BALL AFTER SCORE"
+            pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
             Locate 8, 41: Print Space$(12)
 
             If pbpOpt = 0 Then
                 Call PBP
             Else
                 'pbpOpt = 1
-                If pbpDelay! <> 0 Then Print U$: Call DELAY
+                If pbpDelay! <> 0 Then Print pbpString$: Call DELAY
             End If
 
             Call Choices
@@ -3005,7 +3005,7 @@ Sub PROHOOP ()
             If P7(D) = 1 Then
 
                 If pbpOpt = 0 Then
-                    U$ = gameTeams$(D) + " IS PRESSING"
+                    pbpString$ = gameTeams$(D) + " IS PRESSING"
                     Call PBP
                 Else
                     'pbpOpt = 1
@@ -3027,9 +3027,9 @@ Sub PROHOOP ()
 
             If P6 <> 4 Then
 
-                If X = 99 Then 700
+                If xFactor = 99 Then 700
 
-                U$ = "DEFENSIVE GOAL TENDING"
+                pbpString$ = "DEFENSIVE GOAL TENDING"
 
                 If pbpOpt = 0 Then
                     Call PBP
@@ -3037,7 +3037,7 @@ Sub PROHOOP ()
                     'pbpOpt = 1
                     If pbpDelay! <> 0 Then
                         Call WINDEX
-                        Print U$
+                        Print pbpString$
                         Call DELAY
                     End If
                     Call DELAY
@@ -3059,7 +3059,7 @@ Sub PROHOOP ()
 
     For I = 0 To 4
 
-        If H > 4 Or H = 4 And gameClock! <= 120 Then
+        If quarter > 4 Or quarter = 4 And gameClock! <= 120 Then
             RB(I) = RB(I) + gameRatings!(P, gameB1!(P, I), 21)
             RB = RB + gameRatings!(P, gameB1!(P, I), 21)
         Else
@@ -3076,7 +3076,7 @@ Sub PROHOOP ()
 
     For I = 0 To 4
 
-        If H > 4 Or H = 4 And gameClock! <= 120 Then
+        If quarter > 4 Or quarter = 4 And gameClock! <= 120 Then
             RB(I + 5) = RB(I + 5) + gameRatings!(1 - P, gameB1!(1 - P, I), 2)
             RB = RB + gameRatings!(1 - P, gameB1!(1 - P, I), 2)
         Else
@@ -3103,7 +3103,7 @@ Sub PROHOOP ()
     End If
 
     If RN1 <= 4 Then 761
-    B = RN1 - 5
+    ballCarrier = RN1 - 5
 
     GoTo 800
 
@@ -3116,7 +3116,7 @@ Sub PROHOOP ()
 
         FF% = 0
 
-        U$ = players_GAME$(P, gameB1!(P, B), 0) + " HAS THE OFFENSIVE REBOUND"
+        pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " HAS THE OFFENSIVE REBOUND"
 
         If pbpOpt = 0 Then
             Call PBP
@@ -3124,27 +3124,27 @@ Sub PROHOOP ()
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
                 Call WINDEX
-                Print U$
+                Print pbpString$
                 Print "FOR "; gameTeams$(P)
                 Call DELAY
             End If
         End If
 
-        U$ = "HE'S FOULED !!!"
+        pbpString$ = "HE'S FOULED !!!"
         If pbpOpt = 0 Then
             Call PBP
         Else
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
-                Print U$
+                Print pbpString$
                 Call DELAY
             End If
         End If
 
         Call DELAY
 
-        gameRatings!(P, gameB1!(P, B), 24) = gameRatings!(P, gameB1!(P, B), 24) + 1
-        gameRatings!(P, gameB1!(P, B), 11) = gameRatings!(P, gameB1!(P, B), 11) + 1
+        gameRatings!(P, gameB1!(P, ballCarrier), 24) = gameRatings!(P, gameB1!(P, ballCarrier), 24) + 1
+        gameRatings!(P, gameB1!(P, ballCarrier), 11) = gameRatings!(P, gameB1!(P, ballCarrier), 11) + 1
         R3(P) = R3(P) + 1
 
         Call UPDATESCREEN
@@ -3155,11 +3155,11 @@ Sub PROHOOP ()
     Else
 
         761 '
-        gameRatings!(P, gameB1!(P, B), 24) = gameRatings!(P, gameB1!(P, B), 24) + 1
-        gameRatings!(P, gameB1!(P, B), 11) = gameRatings!(P, gameB1!(P, B), 11) + 1
+        gameRatings!(P, gameB1!(P, ballCarrier), 24) = gameRatings!(P, gameB1!(P, ballCarrier), 24) + 1
+        gameRatings!(P, gameB1!(P, ballCarrier), 11) = gameRatings!(P, gameB1!(P, ballCarrier), 11) + 1
         R3(P) = R3(P) + 1
         Call UPDATESCREEN
-        U$ = players_GAME$(P, gameB1!(P, B), 0) + " HAS THE OFFENSIVE REBOUND"
+        pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " HAS THE OFFENSIVE REBOUND"
 
         If pbpDelay! <> 0 Then
             If pbpOpt = 0 Then
@@ -3167,7 +3167,7 @@ Sub PROHOOP ()
             Else
                 'pbpOpt = 1
                 Call WINDEX
-                Print U$
+                Print pbpString$
                 Print "FOR " + gameTeams$(P)
                 Call DELAY
             End If
@@ -3176,11 +3176,11 @@ Sub PROHOOP ()
         Call CheckGameClock
         If gameClock! = 0 Then 170
 
-        prevBall$ = players_GAME$(P, gameB1!(P, B), 0)
+        prevBall$ = players_GAME$(P, gameB1!(P, ballCarrier), 0)
         RN0 = Int(Rnd(1) * 10) + 1
 
         ' *** GET SHOT PCT ***
-        F = gameRatings!(P, gameB1!(P, B), 0) + D1(D)
+        F = gameRatings!(P, gameB1!(P, ballCarrier), 0) + D1(D)
 
         If gameLoc = P Then
             F = F + 2
@@ -3188,8 +3188,8 @@ Sub PROHOOP ()
             If gameLoc <> 2 Then F = F - 2
         End If
 
-        If Not (H > 4 Or H = 4 And gameClock! <= 120) Then
-            If gameRatings!(P, gameB1!(P, B), 3) - gameRatings!(P, gameB1!(P, B), 7) - gameRatings!(P, gameB1!(P, B), 11) - gameRatings!(P, gameB1!(P, B), 12) <= 0 Then F = F * .6
+        If Not (quarter > 4 Or quarter = 4 And gameClock! <= 120) Then
+            If gameRatings!(P, gameB1!(P, ballCarrier), 3) - gameRatings!(P, gameB1!(P, ballCarrier), 7) - gameRatings!(P, gameB1!(P, ballCarrier), 11) - gameRatings!(P, gameB1!(P, ballCarrier), 12) <= 0 Then F = F * .6
         End If
 
         If RN0 <= 8 Then
@@ -3212,20 +3212,20 @@ Sub PROHOOP ()
         If pbpDelay! <> 0 Then
             If pbpOpt = 1 Then
                 Call WINDEX
-                Print players_GAME$(D, gameB1!(D, B), 0); " HAS THE DEF REBOUND FOR "
+                Print players_GAME$(D, gameB1!(D, ballCarrier), 0); " HAS THE DEF REBOUND FOR "
                 Print gameTeams$(D); " AND IS FOULED !!!"
                 Call DELAY
             Else
-                U$ = players_GAME$(D, gameB1!(D, B), 0) + " HAS THE DEFENSIVE REBOUND"
+                pbpString$ = players_GAME$(D, gameB1!(D, ballCarrier), 0) + " HAS THE DEFENSIVE REBOUND"
                 Call PBP
-                U$ = "HE'S FOULED !!!"
+                pbpString$ = "HE'S FOULED !!!"
                 Call PBP
                 Call DELAY
             End If
         End If
 
         'Increase foul count
-        gameRatings!(D, gameB1!(D, B), 11) = gameRatings!(D, gameB1!(D, B), 11) + 1
+        gameRatings!(D, gameB1!(D, ballCarrier), 11) = gameRatings!(D, gameB1!(D, ballCarrier), 11) + 1
         R3(D) = R3(D) + 1
         Call UPDATESCREEN
 
@@ -3250,11 +3250,11 @@ Sub PROHOOP ()
 
     Else
 
-        gameRatings!(D, gameB1!(D, B), 11) = gameRatings!(D, gameB1!(D, B), 11) + 1
+        gameRatings!(D, gameB1!(D, ballCarrier), 11) = gameRatings!(D, gameB1!(D, ballCarrier), 11) + 1
         R3(D) = R3(D) + 1
         Call UPDATESCREEN
 
-        U$ = players_GAME$(D, gameB1!(D, B), 0) + " HAS THE DEFENSIVE REBOUND"
+        pbpString$ = players_GAME$(D, gameB1!(D, ballCarrier), 0) + " HAS THE DEFENSIVE REBOUND"
 
         If pbpDelay! <> 0 Then
             If pbpOpt = 0 Then
@@ -3262,13 +3262,13 @@ Sub PROHOOP ()
             Else
                 'pbpOpt = 1
                 Call WINDEX
-                Print U$
+                Print pbpString$
                 Print "FOR " + gameTeams$(D)
                 Call DELAY
             End If
         End If
 
-        prevBall$ = players_GAME$(D, gameB1!(D, B), 0)
+        prevBall$ = players_GAME$(D, gameB1!(D, ballCarrier), 0)
         C1 = 2
         P9 = D
 
@@ -3294,5 +3294,4 @@ Sub PROHOOP ()
     End If
 
 End Sub
-
 

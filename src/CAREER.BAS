@@ -501,7 +501,6 @@ Sub MergeAddYear (selectedFile$, statFile$)
     Shared ars!(), statsZ!(), statsZ1!()
     Shared W0S!(), W1S!()
 
-    'needs to be a constant???
     TMR1% = 1875
 
     Color 15, 0
