@@ -10,18 +10,17 @@ Sub CompileLeague ()
 
     _Title "Basketball: The Pro Game - Update League Stats"
 
-    Shared leagueT%()
+    Shared teamScore(), oppScore()
+
     Shared BRC!()
-
-    Shared statO%()
-
     Shared LD!(), O1!(), O2!(), leagS!()
     Shared TRC!(), TRC1!(), statsW0!(), statsW1!()
 
     Shared BRC$(), DL$(), H1$()
-    Shared N$(), statsO$(), OL$()
-    Shared TRC$(), TRC1$()
-    Shared statsZ1$(), Z2$(), Z3$()
+    Shared N$(), OL$()
+    Shared oppName$(), locIndicator$()
+    Shared statsZ1$(), TRC$(), TRC1$()
+    Shared Z2$(), Z3$()
 
     Shared DT!(), DL!()
     Shared OT!()
@@ -154,9 +153,9 @@ End Sub
 '...explanation...
 Function FindStatsLeague% (statFile$, totalGames, fullWins, fullLosses)
 
-    Shared leagueT%(), statO%()
+    Shared oppScore(), teamScore()
 
-    Shared H1$(), statsO$()
+    Shared H1$(), locIndicator$(), oppName$()
 
     If Not _FileExists(diskPaths$(1) + statFile$ + "S") Then
 
@@ -169,11 +168,17 @@ Function FindStatsLeague% (statFile$, totalGames, fullWins, fullLosses)
 
         Input #1, totalGames
 
-        For I = 1 to NUM_STATRECORDS: Input #1, statO%(I): Next I
+        For I = 1 to MAX_SCHED_STATS: 
+            Input #1, teamScore(I)
+        Next I
 
-        For I = 1 to NUM_STATRECORDS: Input #1, statsO$(I): Next I
+        For I = 1 to MAX_SCHED_STATS: 
+            Input #1, oppName$(I)
+        Next I
 
-        For I = 1 to NUM_STATRECORDS: Input #1, leagueT%(I): Next I
+        For I = 1 to MAX_SCHED_STATS: 
+            Input #1, oppScore(I)
+        Next I
 
         Close #1
 
@@ -184,14 +189,14 @@ Function FindStatsLeague% (statFile$, totalGames, fullWins, fullLosses)
 
         For I = 1 To totalGames
 
-            targetFile$ = nameStatFile$(statsO$(I))
-            statsO$(I) = targetFile$
+            targetFile$ = nameStatFile$(oppName$(I))
+            oppName$(I) = targetFile$
 
             confGame = 0
 
             For EC = 1 To TEAMS_PER_CONFERENCE
 
-                If statsO$(I) = H1$(EC) Then
+                If oppName$(I) = H1$(EC) Then
                     confGame = 1
                     Exit For
                 End If
@@ -199,11 +204,17 @@ Function FindStatsLeague% (statFile$, totalGames, fullWins, fullLosses)
             Next EC
 
             If confGame <> 1 Then
-                If statO%(I) > leagueT%(I) Then fullWins = fullWins + 1
-                If statO%(I) < leagueT%(I) Then fullLosses = fullLosses + 1
+                If teamScore(I) > oppScore(I) Then fullWins = fullWins + 1
+                If teamScore(I) < oppScore(I) Then fullLosses = fullLosses + 1
             Else
-                If statO%(I) > leagueT%(I) Then confWins = confWins + 1: fullWins = fullWins + 1
-                If statO%(I) < leagueT%(I) Then confLosses = confLosses + 1: fullLosses = fullLosses + 1
+                If teamScore(I) > oppScore(I) Then 
+                    confWins = confWins + 1
+                    fullWins = fullWins + 1
+                End If
+                If teamScore(I) < oppScore(I) Then 
+                    confLosses = confLosses + 1
+                    fullLosses = fullLosses + 1
+                End If
             End If
 
             EC = 0
@@ -237,6 +248,7 @@ Sub ReadStatsPro (statFile$, TN$)
 
     Shared DT!(), leagS!(), OT!()
     Shared statsW0!(), statsW1!()
+
     Shared N$()
 
     Open diskPaths$(1) + statFile$ For Input As #1
@@ -278,7 +290,8 @@ Sub CheckStatsPro (TN$, totalGames)
 
     Shared DT!(), OT!()
     Shared DL!(), OL!()
-    Shared LD!(), leagS!(), statsW0!(), statsW1!()
+    Shared LD!(), leagS!()
+    Shared statsW0!(), statsW1!()
 
     Shared DL$(), N$(), OL$()
     Shared Z2$(), Z3$()
@@ -1069,13 +1082,13 @@ End Sub
 'writes the updated stats to the file
 Sub PostLeadersPro (leaderFile$)
 
-    Shared DL!(), LD!(), BRC!()
+    Shared BRC!(), DL!(), LD!()
     Shared O1!(), O2!(), OL!()
     Shared TRC!(), TRC1!()
 
     Shared BRC$(), DL$(), OL$()
-    Shared TRC$(), TRC1$()
-    Shared statsZ1$(), Z2$(), Z3$()
+    Shared statsZ1$(), TRC$(), TRC1$()
+    Shared Z2$(), Z3$()
 
     Cls
 

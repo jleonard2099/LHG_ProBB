@@ -53,12 +53,12 @@ Sub LoadTeamStats (statFile$, team$, totalGames%)
 
     Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, Z%
 
-    Dim P%(0 To NUM_STATRECORDS)
+    Dim P%(0 To MAX_SCHED_STATS)
 
-    Shared statO%(), statsL%()
+    Shared teamScore(), oppScore()
 
     Shared categories$(), statPlyrNames$()
-    Shared statsO$(), statsH$()
+    Shared oppName$(), locIndicator$()
 
     Shared statsZ!(), statsZ1!()
     Shared values!(), statsW0!(), statsW1!()
@@ -81,36 +81,36 @@ Sub LoadTeamStats (statFile$, team$, totalGames%)
 
     Input #1, totalGames%
 
-    For I = 1 To NUM_STATRECORDS:
-        Input #1, statO%(I)
+    For I = 1 To MAX_SCHED_STATS:
+        Input #1, teamScore(I)
     Next I
 
-    For I = 1 To NUM_STATRECORDS:
-        Input #1, statsO$(I)
+    For I = 1 To MAX_SCHED_STATS:
+        Input #1, oppName$(I)
     Next I
 
-    For I = 1 To NUM_STATRECORDS:
-        Input #1, statsL%(I)
+    For I = 1 To MAX_SCHED_STATS:
+        Input #1, oppScore(I)
     Next I
 
-    For I = 1 To NUM_STATRECORDS:
-        Input #1, statsH$(I)
+    For I = 1 To MAX_SCHED_STATS:
+        Input #1, locIndicator$(I)
     Next I
 
     Close #1
 
     For I = 1 To totalGames%
-        If statO%(I) > statsL%(I) Then W% = W% + 1
-        If statO%(I) > statsL%(I) And Left$(statsH$(I), 1) = "H" Then HW% = HW% + 1
-        If statO%(I) > statsL%(I) And Left$(statsH$(I), 1) = "V" Then VW% = VW% + 1
-        If statO%(I) > statsL%(I) And Left$(statsH$(I), 1) = "N" Then NW% = NW% + 1
-        If statO%(I) < statsL%(I) Then L% = L% + 1
-        If statO%(I) < statsL%(I) And Left$(statsH$(I), 1) = "H" Then HL% = HL% + 1
-        If statO%(I) < statsL%(I) And Left$(statsH$(I), 1) = "V" Then VL% = VL% + 1
-        If statO%(I) < statsL%(I) And Left$(statsH$(I), 1) = "N" Then NL% = NL% + 1
-        If statO%(I) = statsL%(I) Then Z% = Z% + 1
-        P%(0) = P%(0) + statO%(I)
-        P%(1) = P%(1) + statsL%(I)
+        If teamScore(I) > oppScore(I) Then W% = W% + 1
+        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then HW% = HW% + 1
+        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then VW% = VW% + 1
+        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "N" Then NW% = NW% + 1
+        If teamScore(I) < oppScore(I) Then L% = L% + 1
+        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then HL% = HL% + 1
+        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then VL% = VL% + 1
+        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "N" Then NL% = NL% + 1
+        If teamScore(I) = oppScore(I) Then Z% = Z% + 1
+        P%(0) = P%(0) + teamScore(I)
+        P%(1) = P%(1) + oppScore(I)
     Next
 
     Open diskPaths$(1) + statFile$ For Input As #2
@@ -175,10 +175,10 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
     Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%
 
-    Shared statO%(), statsL%()
+    Shared teamScore(), oppScore()
 
     Shared categories$()
-    Shared statsO$(), statsH$()
+    Shared oppName$(), locIndicator$()
 
     Color , 0
     Cls
@@ -205,23 +205,23 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
         If I > 54 Then Exit For
 
         If I > 36 Then
-            Locate I - 35, 53: Print Using "###"; statO%(I);
-            Print Tab(57); Left$(statsO$(I), 14);
-            Print Tab(72); Using "###"; statsL%(I);
-            Print Tab(76); statsH$(I)
+            Locate I - 35, 53: Print Using "###"; teamScore(I);
+            Print Tab(57); Left$(oppName$(I), 14);
+            Print Tab(72); Using "###"; oppScore(I);
+            Print Tab(76); locIndicator$(I)
 
         Else
 
             If I > 18 Then
-                Locate I - 17, 27: Print Using "###"; statO%(I);
-                Print Tab(31); Left$(statsO$(I), 14);
-                Print Tab(46); Using "###"; statsL%(I);
-                Print Tab(50); statsH$(I)
+                Locate I - 17, 27: Print Using "###"; teamScore(I);
+                Print Tab(31); Left$(oppName$(I), 14);
+                Print Tab(46); Using "###"; oppScore(I);
+                Print Tab(50); locIndicator$(I)
             Else
-                Print Using "###"; statO%(I);
-                Print Tab(5); Left$(statsO$(I), 14);
-                Print Tab(20); Using "###"; statsL%(I);
-                Print Tab(24); statsH$(I)
+                Print Using "###"; teamScore(I);
+                Print Tab(5); Left$(oppName$(I), 14);
+                Print Tab(20); Using "###"; oppScore(I);
+                Print Tab(24); locIndicator$(I)
             End If
 
         End If
@@ -296,8 +296,9 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
     Shared categories$(), statPlyrNames$()
 
+    Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
-    Shared values!(), statsW0!(), statsW1!()
+    Shared values!()
 
     categoryPick = 1
 
@@ -531,7 +532,8 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
     Shared categories$(), statPlyrNames$()
 
     Shared statsZ!(), statsZ1!()
-    Shared values!(), statsW0!(), statsW1!()
+    Shared statsW0!(), statsW1!()
+    Shared values!()
 
     categoryPick = 13
 
@@ -682,10 +684,10 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
     Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%
 
-    Shared statsL%(), statO%()
+    Shared oppScore(), teamScore()
 
     Shared categories$()
-    Shared statsO$(), statsH$()
+    Shared oppName$(), locIndicator$()
 
     Color , 0
     Cls
@@ -714,18 +716,18 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
             If I <= 72 Then
 
-                Print Using "###"; statO%(I);
-                Print Tab(5); Left$(statsO$(I), 14);
-                Print Tab(20); Using "###"; statsL%(I);
-                Print Tab(24); statsH$(I)
+                Print Using "###"; teamScore(I);
+                Print Tab(5); Left$(oppName$(I), 14);
+                Print Tab(20); Using "###"; oppScore(I);
+                Print Tab(24); locIndicator$(I)
 
             Else
 
                 Locate I - 71, 27
-                Print Using "###"; statO%(I);
-                Print Tab(31); Left$(statsO$(I), 14);
-                Print Tab(46); Using "###"; statsL%(I);
-                Print Tab(50); statsH$(I)
+                Print Using "###"; teamScore(I);
+                Print Tab(31); Left$(oppName$(I), 14);
+                Print Tab(46); Using "###"; oppScore(I);
+                Print Tab(50); locIndicator$(I)
 
             End If
 
@@ -798,31 +800,31 @@ Sub PrintStatsSchedule (teamName$, totalGames%)
 
     Shared HL%, HW%, L%, NL%, NW%, VL%, VW%, W%
 
-    Shared statO%(), statsL%()
+    Shared teamScore(), oppScore()
 
-    Shared statsH$(), statsO$()
+    Shared locIndicator$(), oppName$()
 
     LPrint "SCHEDULE RESULTS FOR "; teamName$
     LPrint
 
     For I = 1 To 28
 
-        LPrint Using "###"; statO%(I);
-        LPrint Tab(5); Left$(statsO$(I), 14);
-        LPrint Tab(20); Using "###"; statsL%(I);
-        LPrint Tab(24); statsH$(I); Tab(27);
+        LPrint Using "###"; teamScore(I);
+        LPrint Tab(5); Left$(oppName$(I), 14);
+        LPrint Tab(20); Using "###"; oppScore(I);
+        LPrint Tab(24); locIndicator$(I); Tab(27);
 
         If I + 28 <= totalGames% Then
-            LPrint Using "###"; statO%(I + 28);
-            LPrint Tab(31); Left$(statsO$(I + 28), 14);
-            LPrint Tab(46); Using "###"; statsL%(I + 28);
-            LPrint Tab(50); statsH$(I + 28); Tab(53);
+            LPrint Using "###"; teamScore(I + 28);
+            LPrint Tab(31); Left$(oppName$(I + 28), 14);
+            LPrint Tab(46); Using "###"; oppScore(I + 28);
+            LPrint Tab(50); locIndicator$(I + 28); Tab(53);
 
             If I + 56 <= totalGames% Then
-                LPrint Using "###"; statO%(I + 56);
-                LPrint Tab(57); Left$(statsO$(I + 56), 14);
-                LPrint Tab(72); Using "###"; statsL%(I + 56);
-                LPrint Tab(76); statsH$(I + 56)
+                LPrint Using "###"; teamScore(I + 56);
+                LPrint Tab(57); Left$(oppName$(I + 56), 14);
+                LPrint Tab(72); Using "###"; oppScore(I + 56);
+                LPrint Tab(76); locIndicator$(I + 56)
             Else
                 LPrint
             End If
@@ -853,7 +855,8 @@ End Sub
 Sub PrintStatsSummary (teamName$, totalGames%)
 
     Shared statsZ!(), statsZ1!()
-    Shared values!(), statsW0!(), statsW1!()
+    Shared statsW0!(), statsW1!()
+    Shared values!()
 
     Shared statPlyrNames$()
 
@@ -1043,7 +1046,9 @@ End Sub
 'based on the chosen category
 Sub SortStats (categoryPick)
 
-    Shared values!(), statsW0!(), statsW1!()
+    Shared statsW0!(), statsW1!()
+    Shared values!()
+
     Shared statPlyrNames$()
 
     'SORT BASED ON CATEGORY

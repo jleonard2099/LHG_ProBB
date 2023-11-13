@@ -11,6 +11,7 @@ Sub COMPARE ()
     Shared AL%, AW%, HL%, HW%
 
     Shared leagueRatings%(), teamRatings%()
+    Shared teamScore(), oppScore()
 
     Shared compareA!(), statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
@@ -18,10 +19,9 @@ Sub COMPARE ()
     Shared statPlyrNames$()
     Shared playerNames$()
 
-    Dim HP%(NUM_STATRECORDS), OP%(NUM_STATRECORDS)
+    Shared oppName$(), locIndicator$()
 
     Dim posn$(0 To 14)
-    Dim HP$(NUM_STATRECORDS), OP$(NUM_STATRECORDS)
 
     Do
 
@@ -88,10 +88,21 @@ Sub COMPARE ()
 
                 Input #2, Y
 
-                For J = 1 To NUM_STATRECORDS: Input #2, OP%(J): Next
-                For J = 1 To NUM_STATRECORDS: Input #2, OP$(J): Next
-                For J = 1 To NUM_STATRECORDS: Input #2, HP%(J): Next
-                For J = 1 To NUM_STATRECORDS: Input #2, HP$(J): Next
+                For J = 1 To MAX_SCHED_STATS: 
+                    Input #2, teamScore(J)
+                Next
+
+                For J = 1 To MAX_SCHED_STATS: 
+                    Input #2, oppName$(J)
+                Next
+
+                For J = 1 To MAX_SCHED_STATS: 
+                    Input #2, oppScore(J)
+                Next
+
+                For J = 1 To MAX_SCHED_STATS: 
+                    Input #2, locIndicator$(J)
+                Next
 
                 Close #2
 
@@ -101,10 +112,10 @@ Sub COMPARE ()
                 AL% = 0
 
                 For I = 1 To Y
-                    If OP%(I) < HP%(I) And Left$(HP$(I), 1) = "H" Then HL% = HL% + 1
-                    If OP%(I) > HP%(I) And Left$(HP$(I), 1) = "H" Then HW% = HW% + 1
-                    If OP%(I) < HP%(I) And Left$(HP$(I), 1) = "V" Then AL% = AL% + 1
-                    If OP%(I) > HP%(I) And Left$(HP$(I), 1) = "V" Then AW% = AW% + 1
+                    If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then HL% = HL% + 1
+                    If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then HW% = HW% + 1
+                    If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then AL% = AL% + 1
+                    If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then AW% = AW% + 1
                 Next
 
                 Color 15, 0
@@ -290,7 +301,7 @@ End Sub
 'This subroutine focuses on the formatting
 'of team stats for comparison. The stats
 'are output to the end user display
-Sub TeamComparisons_Screen (T$)
+Sub TeamComparisons_Screen (teamName$)
 
     Shared AL%, AW%, HL%, HW%
 
@@ -301,7 +312,7 @@ Sub TeamComparisons_Screen (T$)
     Locate 11, 31: Print Space$(18)
 
     Color 11
-    Locate 11, 33: Print T$
+    Locate 11, 33: Print teamName$
 
     Color 15, 2
     Locate 5, 30: Print "      HOME    W - L ";
@@ -781,7 +792,7 @@ End Sub
 'This subroutine focuses on the formatting
 'of team stats for comparison. The stats
 'are output to the default printer
-Sub TeamComparisons_Printer (T$)
+Sub TeamComparisons_Printer (teamName$)
 
     Shared AL%, AW%, HL%, HW%
 
@@ -793,7 +804,7 @@ Sub TeamComparisons_Printer (T$)
 
     Print #1,
     'Locate 1
-    Print #1, Tab(33); T$
+    Print #1, Tab(33); teamName$
     Print #1,
 
     'Locate 2

@@ -9,19 +9,17 @@ Sub HD2HDPRO ()
 
     _Title "Basketball: The Pro Game - Head-to-Head Stats"
 
-    Shared statO%(), intZ1%()
+    Shared intZ1%(), teamScore(), oppScore(), teamRatings%()
 
-    Shared AW!(), AL!(), teamRatings%(), HL!(), HW!()
+    Shared AW!(), AL!(), HL!(), HW!()
     Shared R1!(), R2!(), R3!(), R4!()
     Shared TAL!(), TAW!(), THL!(), THW!()
     Shared TR1!(), TR2!(), TR3!(), TR4!()
 
-    Shared statsO$(), statsH$()
+    Shared oppName$(), locIndicator$()
     Shared statsZ1$()
 
     Shared div1$, div2$, div3$, div4$
-
-    Dim intT%(NUM_STATRECORDS)
 
     Dim Z2$(TEAMS_PER_CONFERENCE)
 
@@ -44,20 +42,20 @@ Sub HD2HDPRO ()
 
         Input #1, Y
 
-        For J = 1 to NUM_STATRECORDS:
-            Input #1, statO%(J)
+        For J = 1 to MAX_SCHED_STATS:
+            Input #1, teamScore(J)
         Next
 
-        For J = 1 to NUM_STATRECORDS:
-            Input #1, statsO$(J)
+        For J = 1 to MAX_SCHED_STATS:
+            Input #1, oppName$(J)
         Next
 
-        For J = 1 to NUM_STATRECORDS:
-            Input #1, intT%(J)
+        For J = 1 to MAX_SCHED_STATS:
+            Input #1, oppScore(J)
         Next
 
-        For J = 1 to NUM_STATRECORDS:
-            Input #1, statsH$(J)
+        For J = 1 to MAX_SCHED_STATS:
+            Input #1, locIndicator$(J)
         Next
 
         Close #1
@@ -126,14 +124,14 @@ Sub HD2HDPRO ()
                 If statsZ1$(K) <> "XXX" Then
 
                     For I = 1 To Y
-                        If statO%(I) > intT%(I) And Left$(statsH$(I), 1) = "V" And statsO$(I) = statsZ1$(K) Then AW!(K) = AW!(K) + 1
-                        If statO%(I) > intT%(I) And (Left$(statsH$(I), 1) = "H" Or Left$(statsH$(I), 1) = "N") And statsO$(I) = statsZ1$(K) Then HW!(K) = HW!(K) + 1
-                        If statO%(I) < intT%(I) And Left$(statsH$(I), 1) = "V" And statsO$(I) = statsZ1$(K) Then AL!(K) = AL!(K) + 1
-                        If statO%(I) < intT%(I) And (Left$(statsH$(I), 1) = "H" Or Left$(statsH$(I), 1) = "N") And statsO$(I) = statsZ1$(K) Then HL!(K) = HL!(K) + 1
-                        If statsO$(I) = statsZ1$(K) And (Left$(statsH$(I), 1) = "H" Or Left$(statsH$(I), 1) = "N") Then R2!(K) = R2!(K) + intT%(I)
-                        If statsO$(I) = statsZ1$(K) And (Left$(statsH$(I), 1) = "H" Or Left$(statsH$(I), 1) = "N") Then R1!(K) = R1!(K) + statO%(I)
-                        If statsO$(I) = statsZ1$(K) And Left$(statsH$(I), 1) = "V" Then R4!(K) = R4!(K) + intT%(I)
-                        If statsO$(I) = statsZ1$(K) And Left$(statsH$(I), 1) = "V" Then R3!(K) = R3!(K) + statO%(I)
+                        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "V" And oppName$(I) = statsZ1$(K) Then AW!(K) = AW!(K) + 1
+                        If teamScore(I) > oppScore(I) And (Left$(locIndicator$(I), 1) = "H" Or Left$(locIndicator$(I), 1) = "N") And oppName$(I) = statsZ1$(K) Then HW!(K) = HW!(K) + 1
+                        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "V" And oppName$(I) = statsZ1$(K) Then AL!(K) = AL!(K) + 1
+                        If teamScore(I) < oppScore(I) And (Left$(locIndicator$(I), 1) = "H" Or Left$(locIndicator$(I), 1) = "N") And oppName$(I) = statsZ1$(K) Then HL!(K) = HL!(K) + 1
+                        If oppName$(I) = statsZ1$(K) And (Left$(locIndicator$(I), 1) = "H" Or Left$(locIndicator$(I), 1) = "N") Then R2!(K) = R2!(K) + oppScore(I)
+                        If oppName$(I) = statsZ1$(K) And (Left$(locIndicator$(I), 1) = "H" Or Left$(locIndicator$(I), 1) = "N") Then R1!(K) = R1!(K) + teamScore(I)
+                        If oppName$(I) = statsZ1$(K) And Left$(locIndicator$(I), 1) = "V" Then R4!(K) = R4!(K) + oppScore(I)
+                        If oppName$(I) = statsZ1$(K) And Left$(locIndicator$(I), 1) = "V" Then R3!(K) = R3!(K) + teamScore(I)
 
                     Next I
 
@@ -405,8 +403,9 @@ End Sub
 'comparison values to the end user display
 Sub Hd2HdPro_Screen (teamName$)
 
-    Shared AL!(), teamRatings%()
-    Shared AW!(), HL!(), HW!()
+    Shared teamRatings%()
+
+    Shared AL!(), AW!(), HL!(), HW!()
     Shared R1!(), R2!(), R3!(), R4!()
     Shared TAL!(), TAW!(), THL!(), THW!()
     Shared TR1!(), TR2!(), TR3!(), TR4!()

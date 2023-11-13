@@ -1057,7 +1057,7 @@ End Sub
 'date / time.
 Sub SortSchedule ()
 
-    Dim schedDates&(MAX_GAMES)
+    Dim schedDates&(MAX_SCHEDULE_GAMES)
     Dim D&, M&, Y&
 
     Shared homeScores(), visitorScores()

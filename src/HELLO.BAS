@@ -1,8 +1,8 @@
 $Debug
 
-Const GAME_VERSION$ = "4.85"
+Const GAME_VERSION$ = "4.37"
+Const MAX_SCHEDULE_GAMES = 1500
 Const MAX_TEAMS = 1000
-Const MAX_GAMES = 1500
 Const MAX_FILES = 10240
 'optimium = 1048576 (but slows code)
 Const MAX_CONFERENCES = 40
@@ -10,7 +10,7 @@ Const TEAMS_PER_DIV = 10
 Const DIVS_PER_CONFERENCE = 4
 Const TEAMS_PER_CONFERENCE = 40
 
-Const NUM_STATRECORDS = 100
+Const MAX_SCHED_STATS = 100
 Const SCHEDULE_SIZE_BYTES = 48
 
 DefInt A-Z
@@ -307,15 +307,14 @@ System
 '----------------------------------------
 
 Errhandler:
-Open "errlog" For Append As #9
-Print #9, "Error #"; Err; "on program file line"; _ErrorLine
+Open "errlog" For Append As #10
+Print #10, "Error #"; Err; "on program file line"; _ErrorLine
 If _FileExists("GAME82") Then
-    Print #9, "Schedule game # "; Using "###"; schedGame(0) + schedGame(2)
-    Print #9, gameTeams$(0) + " vs. " + gameTeams$(1)
+    Print #10, "Schedule game # "; Using "###"; schedGame(0) + schedGame(2)
+    Print #10, gameTeams$(0) + " vs. " + gameTeams$(1)
 End If
-Print #9, "Ball Carrier = "; ballCarrier
-Print #9,
-Close #9
+Print #10,
+Close #10
 
 Resume Next ' moves program to code following the error.
 

@@ -8,7 +8,7 @@ Sub CARVIEW ()
 
     _Title "Basketball: The Pro Game - View Careers"
 
-    Dim A$(62)
+    Dim careerPlayers$(62)
 
     Shared ars!(), W0S!(), W1S!()
 
@@ -31,7 +31,7 @@ Sub CARVIEW ()
 
             For I = 0 To 61
 
-                Input #1, A$(I)
+                Input #1, careerPlayers$(I)
 
                 For J = 0 To 15
                     Input #1, ars!(N, I, J)
@@ -65,10 +65,10 @@ Sub CARVIEW ()
         Select Case UCase$(I$)
 
             Case "P":
-                Call CareerToPrinter(A$(), Z$)
+                Call CareerToPrinter(careerPlayers$(), Z$)
 
             Case "V":
-                Call CareerToScreen(A$(), Z$)
+                Call CareerToScreen(careerPlayers$(), Z$)
 
         End Select
 
@@ -85,7 +85,7 @@ End Sub
 'It then calls a supplemental routine for 
 'each  that will format those stats and 
 'send them to the display screen
-Sub CareerToScreen (A$(), Z$)
+Sub CareerToScreen (careerPlayers$(), Z$)
 
     Do
         Color 15, 0
@@ -100,10 +100,10 @@ Sub CareerToScreen (A$(), Z$)
         Select Case UCase$(I$)
 
             Case "P":
-                Call ViewPlayer(A$(), Z$)
+                Call ViewPlayer(careerPlayers$(), Z$)
 
             Case "R":
-                Call ViewRosterSequence(A$(), Z$)
+                Call ViewRosterSequence(careerPlayers$(), Z$)
 
         End Select
 
@@ -117,7 +117,7 @@ End Sub
 '----------------------------------------
 'Formats results of Career stats and sends
 'to the user's default printer
-Sub CareerToPrinter (A$(), Z$)
+Sub CareerToPrinter (careerPlayers$(), Z$)
 
     Color 0, 15
 
@@ -129,7 +129,7 @@ Sub CareerToPrinter (A$(), Z$)
 
     For I = 0 To 61
 
-        If A$(I) <> "" And A$(I) <> "XXX" Then
+        If careerPlayers$(I) <> "" And careerPlayers$(I) <> "XXX" Then
 
             'Process player
             TT1 = 0
@@ -158,7 +158,7 @@ Sub CareerToPrinter (A$(), Z$)
                 LPrint "PLAYER      YEAR   G  FGM   FGA  PCT  FTM   FTA  PCT   PTS  AVG.  3FGM 3FGA  PCT   RB   AVG   PF  AST  BLK   ST  HI   MIN  AVG."
                 PTN = 0
             Else
-                LPrint Left$(A$(I), 11);
+                LPrint Left$(careerPlayers$(I), 11);
 
                 For V = 1 To VV
                     PTN = PTN + 1
@@ -286,40 +286,40 @@ End Sub
 '----------------------------------------
 'This subroutine will display player stats
 'from the team's career file
-Sub ViewPlayer (A$(), Z$)
+Sub ViewPlayer (careerPlayers$(), teamName$)
 
     Shared ars!(), W0S!(), W1S!()
 
     Cls
     
-    Color 12: Print Z$
+    Color 12: Print teamName$
 
     For I = 0 To 15:
         Locate I + 2: Color 3
         Print Using "##"; I;
         Print " ";
-        Color 7: Print A$(I)
+        Color 7: Print careerPlayers$(I)
     Next
 
     For I = 16 To 31:
         Locate I - 14, 20: Color 3
         Print Using "##"; I;
         Print " ";
-        Color 7: Print A$(I)
+        Color 7: Print careerPlayers$(I)
     Next
 
     For I = 32 To 46:
         Locate I - 30, 40: Color 3
         Print Using "##"; I;
         Print " ";
-        Color 7: Print A$(I):
+        Color 7: Print careerPlayers$(I):
     Next
 
     For I = 47 To 61:
         Locate I - 45, 60: Color 3
         Print Using "##"; I;
         Print " ";
-        Color 7: Print A$(I)
+        Color 7: Print careerPlayers$(I)
     Next
 
     Print
@@ -351,7 +351,7 @@ Sub ViewPlayer (A$(), Z$)
     Color 12
     Locate 2: Print "PLAYER         YEAR  G  FGM  FGA  PCT FTM  FTA  PCT 3FGM 3FGA  PCT  PTS  AVG."
     Color 15
-    Locate 3: Print Left$(A$(B9), 13);
+    Locate 3: Print Left$(careerPlayers$(B9), 13);
 
     VV = ars!(1, B9, 14) + ars!(2, B9, 14) + ars!(3, B9, 14) + ars!(4, B9, 14) + ars!(5, B9, 14) + ars!(6, B9, 14) + ars!(7, B9, 14) + ars!(8, B9, 14) + ars!(9, B9, 14) + ars!(10, B9, 14) + ars!(11, B9, 14) + ars!(12, B9, 14) + ars!(13, B9, 14) + ars!(14, B9, 14) + ars!(15, B9, 14)
 
@@ -447,7 +447,7 @@ Sub ViewPlayer (A$(), Z$)
     Locate 1: Print Z$
     Color 12: Print "PLAYER         YEAR OREB DREB  TRB  AVG  PF  AST BLK  ST  TO HI   MIN  AVG."
     Color 15
-    Locate 3: Print Left$(A$(B9), 13);
+    Locate 3: Print Left$(careerPlayers$(B9), 13);
 
     For V = 1 To VV
 
@@ -526,7 +526,7 @@ End Sub
 '----------------------------------------
 'This subroutine will display player stats
 'from the team's career file, in sequence
-Sub ViewRosterSequence (A$(), Z$)
+Sub ViewRosterSequence (careerPlayers$(), teamName$)
 
     Shared ars!(), W0S!(), W1S!()
 
@@ -535,7 +535,7 @@ Sub ViewRosterSequence (A$(), Z$)
         For I = 0 To 61
 
             'Check for valid player
-            If A$(I) <> "" And A$(I) <> "XXX" Then
+            If careerPlayers$(I) <> "" And careerPlayers$(I) <> "XXX" Then
 
                 TT1 = 0
                 TT2 = 0
@@ -558,11 +558,11 @@ Sub ViewRosterSequence (A$(), Z$)
                 Cls
 
                 Color 11
-                Locate 1: Print Z$
+                Locate 1: Print teamName$
                 Color 12
                 Locate 2: Print "PLAYER         YEAR  G FGM  FGA   PCT FTM FTA   PCT 3FGM 3FGA PCT  PTS  AVG"
                 Color 15
-                Locate 3: Print Left$(A$(I), 13);
+                Locate 3: Print Left$(careerPlayers$(I), 13);
 
                 VV = ars!(1, I, 14) + ars!(2, I, 14) + ars!(3, I, 14) + ars!(4, I, 14) + ars!(5, I, 14) + ars!(6, I, 14) + ars!(7, I, 14) + ars!(8, I, 14) + ars!(9, I, 14) + ars!(10, I, 14) + ars!(11, I, 14) + ars!(12, I, 14) + ars!(13, I, 14) + ars!(14, I, 14) + ars!(15, I, 14)
 
@@ -663,7 +663,7 @@ Sub ViewRosterSequence (A$(), Z$)
                 Color 12
                 Print "PLAYER         YEAR OREB DREB  TRB  AVG  PF  AST BLK  ST  TO HI   MIN  AVG."
                 Color 15
-                Locate 3: Print Left$(A$(I), 13);
+                Locate 3: Print Left$(careerPlayers$(I), 13);
 
                 For V = 1 To VV
 

@@ -9,19 +9,23 @@ Dim Shared teamIndex%(MAX_TEAMS)
 
 ' *** Reading Stat Data ***
 ' -------------------------
-Dim ORD%(0 To NUM_STATRECORDS), TRD%(0 To NUM_STATRECORDS)
-Dim statO%(0 To NUM_STATRECORDS), statsL%(0 To NUM_STATRECORDS), statsT%(0 To NUM_STATRECORDS)
+Dim teamScore(0 To MAX_SCHED_STATS), oppScore(0 To MAX_SCHED_STATS)
+
+Dim locIndicator$(0 To MAX_SCHED_STATS), oppName$(MAX_SCHED_STATS)
+
+Dim statsZ1$(TEAMS_PER_CONFERENCE)
 
 Dim statsW0!(0 To 14), statsW1!(0 To 14)
 Dim statsZ!(0 To 15), statsZ1!(0 To 15), statsZ2!(0 To 14, 0 To 13)
 
-Dim HRD$(0 To NUM_STATRECORDS), ORD$(0 To NUM_STATRECORDS)
-Dim HO$(NUM_STATRECORDS), statsH$(0 To NUM_STATRECORDS), statsO$(0 To NUM_STATRECORDS)
-Dim statsZ1$(TEAMS_PER_CONFERENCE)
+'-- For Road Data
+Dim ORD%(0 To MAX_SCHED_STATS), TRD%(0 To MAX_SCHED_STATS)
+Dim HRD$(0 To MAX_SCHED_STATS), ORD$(0 To MAX_SCHED_STATS)
+
 
 ' *** Schedule Data ***
 ' -------------------------
-Dim homeScores(MAX_GAMES), visitorScores(MAX_GAMES)
+Dim homeScores(MAX_SCHEDULE_GAMES), visitorScores(MAX_SCHEDULE_GAMES)
 
 ' *** Game Options ***
 ' -------------------------
@@ -44,7 +48,7 @@ Dim compareA!(15, 14)
 '----------------------------------------
 ' Used in ALIGN / MERGE routines
 '----------------------------------------
-Dim Ycurr%, Yroad%
+Dim nbrGamesCurr, nbrGamesRoad
 
 Dim roadPlyrNames$(15)
 Dim AN$(0 To 14)
@@ -123,8 +127,6 @@ Dim league$, div1$, div2$, div3$, div4$
 '----------------------------------------
 ' Used in STAT / INPUT routines
 '----------------------------------------
-Dim leagueT%(100)
-
 Dim DL!(40, 20), LD!(250, 2), leagS!(14, 26)
 Dim DT!(21), OT!(21)
 Dim O1!(40), O2!(40), OL!(40, 20)
@@ -176,21 +178,23 @@ Dim allRecords!(50, 2), teamRecords!(125, 2)
 '----------------------------------------
 Dim BS%, NS%
 
-Dim scheduleAP%(1), scheduleNG%(MAX_GAMES, 18)
+Dim scheduleAP%(1), scheduleNG%(MAX_SCHEDULE_GAMES, 18)
 
 ReDim scheduleH$(0 To 20), scheduleV$(0 To 20)
-Dim scheduleYN$(MAX_GAMES, 1)
+Dim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
 
 
 '----------------------------------------
 ' Used in Game Routines
 '----------------------------------------
-Dim tickerStart
-
 Dim scheduleFile$
 
 Dim actualAttendance&
 Dim avgAttendance&(1)
+
+Dim tickerStart
+
+Dim alpha$(4), tickerPeriod$(14)
 
 Dim Shared autoPlay, ballCarrier, bonusFoulNum, coachOpt, compTeam
 Dim Shared D, endGame, endAllGames, ftRulesOpt, F3, freeThrowVal
@@ -211,7 +215,7 @@ Dim Shared P7$, prevBall$, PS$, TS$, pbpString$, Y2$, Z3$
 
 Dim Shared CF%(1, 9), eventSettings(13)
 Dim Shared F%(1, 9), F5%(1, 4), F7%(1, 9), FY%(0 To 1), G9%(1), GF%(2, 9)
-Dim Shared HT%(100), NG%(18), N0%(2, 2, 4)
+Dim Shared NG%(18), N0%(2, 2, 4)
 Dim Shared OX%(2), OY%(2), O0%(1)
 Dim Shared PF%(1), PFA%(33), ST%(32), SX%(32, 1, 14)
 Dim Shared TOA%(33), TOF%(1), W%(1, 14, 1), YR%(1)
@@ -222,9 +226,8 @@ Dim Shared leagRat_GAME(1, 6), plyrRat_GAME(1, 14, 19)
 Dim Shared P2(1), P4(5), P5(5), P7(1), QQ(1, 8, 14, 14), QR(1, 7, 14)
 Dim Shared R3(1), RB(0 To 10), S3(14), scSettings(0 To 2)
 Dim Shared score(1, 14), schedGame(2)
-Dim Shared timePlayed(2, 14), timeouts(1), tmRat_GAME(1, 34)
-'                   teamFouls
-Dim Shared turnovers(1), teamFouls(1)
+Dim Shared teamFouls(1), timePlayed(2, 14), timeouts(1)
+Dim Shared tmRat_GAME(1, 34), turnovers(1)
 Dim Shared statTotals(14), pbpFG(9), pbpBG(9), W2(1, 14), W3(1, 14)
 Dim Shared X7(1), Z5(1), Z6(1)
 
@@ -232,9 +235,8 @@ Dim Shared gameB1!(0 To 1, 0 To 4), gameRatings!(0 to 1, 0 to 14, 0 to 25)
 Dim Shared indRecords!(50, 2), M9!(1)
 Dim gameW0!(1, 14), gameW1!(1, 14)
 
-Dim alpha$(4)
-Dim Shared defenseStyles$(5)
+Dim Shared defenseStyles$(5), diskIDs$(0 To 1)
 Dim Shared gameCoach$(3), gameMascots$(3), gameStadium$(3), gameTeams$(3)
 Dim Shared offenseStyles$(2), pbpType$(1), players_GAME$(1, 14, 1), PS$(4)
 Dim Shared RC$(50, 4), SX$(32, 1)
-Dim Shared teamAbbrev$(3), tickerPeriod$(14), Y$(1), YN$(0 To 1)
+Dim Shared teamAbbrev$(3), Y$(1)

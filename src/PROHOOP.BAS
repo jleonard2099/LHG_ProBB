@@ -148,7 +148,7 @@ Sub PROHOOP ()
         Next
 
         For X = 0 To 1:
-            YN$(X) = Q$(20 + X)
+            diskIDs$(X) = Q$(20 + X)
         Next
 
         VS% = CVI(Q$(22))

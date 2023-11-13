@@ -11,7 +11,8 @@ Sub INFO ()
     Locate 1, 1
     Print Tab(80);
 
-    Locate , 33: Color 14
+    Locate , 33
+    Color 14
     Print "GAME OPTIONS MENU"
 
     Locate 24, 1
@@ -36,10 +37,10 @@ Sub InitVar ()
     Shared actualAttendance&
 
     Shared avgAttendance&()
-    Shared statO%()
+    Shared teamScore(), oppScore()
 
     Shared alpha$()
-    Shared HO$(), statsH$()
+    Shared oppName$(), locIndicator$()
     Shared teamIndicator$()
 
     Shared gameW0!(), gameW1!()
@@ -90,14 +91,9 @@ Sub InitVar ()
     D2(0) = 1
     D2(1) = 1
 
-    quarter = 1
-    nbrLines = 1
-    bonusFoulNum = 5
-
-    gameClock! = 720
-
     autoPlay = 0
     ballCarrier = 0
+    bonusFoulNum = 5
     compTeam = 0
     D = 0
     endAllGames = 0
@@ -105,14 +101,18 @@ Sub InitVar ()
     F3 = 0
     halfTime = 0
     JY = 0
+    nbrLines = 1
     P = 0
     P7 = 0
     P9 = 0
+    quarter = 1
     shotClock = 0
     statSpecial = 0
     T1 = 0
     TMT = 0
     xFactor = 0
+
+    gameClock! = 720
 
     DK% = 0
     FB% = 0
@@ -136,35 +136,37 @@ Sub InitVar ()
     G1$ = ""
     H1$ = ""
     P7$ = ""
+    pbpString$ = ""
     prevBall$ = ""
     PS$ = ""
     scheduleFile$ = ""
     TS$ = ""
-    pbpString$ = ""
     Y2$ = ""
     Z3$ = ""
 
     'Erase C1
-    Erase D1, D8, F1, G4, G5
-    Erase P2, P4, P5, P7, QQ, QR
-    Erase R3, RB, score, statTotals, S3
-    Erase tmRat_GAME, turnovers, teamFouls
-    Erase pbpFG, pbpBG, W2, W3
-    Erase X7, Z5, Z6, timePlayed
+    Erase D1, D8, eventSettings, F1, G4, G5
+    Erase leagRat_GAME ', nbrInnings
+    Erase P2, P4, P5, P7
+    Erase pbpFG, pbpBG, QQ, QR
+    Erase R3, RB, score, schedGame, statTotals, S3
+    Erase teamFouls, timePlayed, tmRat_GAME, turnovers
+    Erase W2, W3, X7, Z5, Z6
 
-    Erase gameRatings!, M9!, indRecords!
+    Erase gameRatings!, indRecords!, M9!
     Erase gameW0!, gameW1!
     Erase statsZ!, statsZ1!, statsZ2!
 
     Erase gameCoach$, gameMascots$, gameStadium$, gameTeams$
-    Erase statsH$, HO$, diskPaths$
-    Erase Q$, players_GAME$, RC$, SX$
-    Erase teamAbbrev$, teamNames$, Y$, YN$
+    Erase diskIDs$, diskPaths$
+    Erase players_GAME$, Q$, RC$
+    Erase locIndicator$, oppName$
+    Erase SX$, teamAbbrev$, teamNames$
+    Erase Y$
 
-    Erase eventSettings, F%, F5%, F7%, G9%
-    Erase HT%, leagRat_GAME, plyrRat_GAME, NG%
-    Erase N0%, statO%, O0%
-    Erase PF%, schedGame, ST%, SX%
+    Erase F%, F5%, F7%, G9%
+    Erase N0%, NG%, O0%, PF%, plyrRat_GAME
+    Erase teamScore, oppScore, ST%, SX%
     Erase TOF%, teamIndex%, W%
 
     actualAttendance& = 0
@@ -195,7 +197,7 @@ Sub AUTOSETUP
 
     For P9 = 0 To 1
         idx = NG%(P9)
-        Call ReadGameTeam(YN$(P9), gameTeams$(P9), idx, P9)
+        Call ReadGameTeam(diskIDs$(P9), gameTeams$(P9), idx, P9)
         NG%(P9) = idx
     Next P9
 
@@ -357,7 +359,10 @@ Sub DISABLEPLAYERS (P9)
             Print " ";
 
             'Automatically disable "non-existent" players
-            If players_GAME$(P9, I, 0) = "XXX" Then plyrRat_GAME(P9, I, 18) = -1: Color tmRat_GAME(P9, 33), tmRat_GAME(P9, 34)
+            If players_GAME$(P9, I, 0) = "XXX" Then
+                plyrRat_GAME(P9, I, 18) = -1
+                Color tmRat_GAME(P9, 33), tmRat_GAME(P9, 34)
+            End If
 
             'Color players who have been disabled
             If plyrRat_GAME(P9, I, 18) <> 0 Then Color tmRat_GAME(P9, 33), tmRat_GAME(P9, 34)
@@ -431,11 +436,11 @@ Sub PBP ()
 
     M$ = InKey$
 
-    If UCase$(M$) = "O" Then 
+    If UCase$(M$) = "O" Then
         Call OPTIONS
     End If
 
-    If UCase$(M$) = "Q" Then 
+    If UCase$(M$) = "Q" Then
         Cls
         End
     End If
@@ -1588,6 +1593,8 @@ End Sub
 'matches the current game time / period.
 Sub TICKER ()
 
+    Shared tickerPeriod$()
+
     If autoPlay <> 1 Or playerMode <> 2 Then
 
         Color 14, 0
@@ -1651,7 +1658,7 @@ Sub TICKER ()
             If quarter = 5 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 16
             If quarter = 5 And gameClock! < 240 Then timeInterval = 17
 
-            If HT% = 1 Then timeInterval = 8
+            If oppScore = 1 Then timeInterval = 8
 
             If Left$(SX$(1, 0), 3) <> "XXX" Then
                 Locate 2, 1
@@ -2172,27 +2179,27 @@ Sub TickerSchedule
 
     If schedGame(2) <= 31 Then
 
-        For X = 0 To 1: 
+        For X = 0 To 1:
             SX$(schedGame(2) + 1, X) = gameTeams$(X)
         Next
 
         Open "TICKER" For Output As #1
 
-        For I = 1 To 32: 
-            For I1 = 0 To 1: 
+        For I = 1 To 32:
+            For I1 = 0 To 1:
                 For I2 = 1 To 14
                     Print #1, SX%(I, I1, I2)
                 Next
             Next
         Next
 
-        For I = 1 To 32: 
-            For I1 = 0 To 1: 
+        For I = 1 To 32:
+            For I1 = 0 To 1:
                 Print #1, SX$(I, I1)
             Next
         Next
 
-        For I = 1 To 32: 
+        For I = 1 To 32:
             Print #1, ST%(I)
         Next
 
@@ -2215,7 +2222,7 @@ Sub TickerSchedule
     Next
 
     For X = 0 To 1:
-        LSet Q$(20 + X) = YN$(X)
+        LSet Q$(20 + X) = diskIDs$(X)
     Next
 
     LSet Q$(22) = MKI$(score(0, 0))
@@ -3209,8 +3216,9 @@ Sub LOADSTATS ()
 
     Dim nbrStats
 
-    Shared HO$(), statsH$()
-    
+    Shared teamScore(), oppScore()
+    Shared oppName$(), locIndicator$()
+
     For I = 0 To 1
 
         Cls
@@ -3223,19 +3231,27 @@ Sub LOADSTATS ()
 
             Input #1, nbrStats
 
-            For I1 = 1 To NUM_STATRECORDS: Input #1, statO%(I1): Next
+            For I1 = 1 To MAX_SCHED_STATS:
+                Input #1, teamScore(I1)
+            Next
 
-            For I1 = 1 To NUM_STATRECORDS: Input #1, HO$(I1): Next
+            For I1 = 1 To MAX_SCHED_STATS:
+                Input #1, oppName$(I1)
+            Next
 
-            For I1 = 1 To NUM_STATRECORDS: Input #1, HT%(I1): Next
+            For I1 = 1 To MAX_SCHED_STATS:
+                Input #1, oppScore(I1)
+            Next
 
-            For I1 = 1 To NUM_STATRECORDS: Input #1, statsH$(I1): Next
+            For I1 = 1 To MAX_SCHED_STATS:
+                Input #1, locIndicator$(I1)
+            Next
 
             Close #1
 
             For I1 = 1 To nbrStats
-                If statO%(I1) > HT%(I1) Then Z5(I) = Z5(I) + 1
-                If statO%(I1) < HT%(I1) Then Z6(I) = Z6(I) + 1
+                If teamScore(I1) > oppScore(I1) Then Z5(I) = Z5(I) + 1
+                If teamScore(I1) < oppScore(I1) Then Z6(I) = Z6(I) + 1
             Next
 
         End If
@@ -3745,7 +3761,7 @@ Sub SETUPRATINGS ()
             Case 1969 To 1972
                 FTF! = .91
 
-            Case 1973 to 2009
+            Case 1973 To 2009
                 FTF! = 1
 
                 'This is arbitrary / temporary!
@@ -4573,7 +4589,7 @@ End Sub
 Sub LINEUPS ()
 
     Shared alpha$()
-    
+
     Cls
 
     Color tmRat_GAME(P9, 33), tmRat_GAME(P9, 34): Print gameTeams$(P9);
@@ -5839,12 +5855,12 @@ Sub COMPILESTATFILES (compileOpt)
 
     Dim TG!
 
-    Shared statO%()
+    Shared teamScore(), oppScore()
 
     Shared gameW0!(), gameW1!()
     Shared statsZ!(), statsZ1!(), statsZ2!()
 
-    Shared HO$(), statsH$()
+    Shared oppName$(), locIndicator$()
 
     Cls
 
@@ -5916,11 +5932,11 @@ Sub COMPILESTATFILES (compileOpt)
                 Next I
 
                 For L = 0 To 15:
-                    Input #1, Z!(L)
+                    Input #1, statsZ!(L)
                 Next L
 
                 For L = 0 To 15:
-                    Input #1, Z1!(L)
+                    Input #1, statsZ1!(L)
                 Next L
 
                 Close #1
@@ -5940,12 +5956,12 @@ Sub COMPILESTATFILES (compileOpt)
                     statsZ2!(I, J) = statsZ2!(I, J) + gameRatings!(teamIdx, I, J)
 
                     If Not (J = 5 Or J = 6 Or J = 10 Or J = 11) Then
-                        Z!(J) = Z!(J) + gameRatings!(teamIdx, I, J)
-                        Z1!(J) = Z1!(J) + gameRatings!(1 - teamIdx, I, J)
+                        statsZ!(J) = statsZ!(J) + gameRatings!(teamIdx, I, J)
+                        statsZ1!(J) = statsZ1!(J) + gameRatings!(1 - teamIdx, I, J)
                     End If
                 Next J
 
-                Z!(0) = Z!(0) + gameRatings!(teamIdx, I, 10)
+                statsZ!(0) = statsZ!(0) + gameRatings!(teamIdx, I, 10)
                 TG! = TG! + gameRatings!(teamIdx, I, 10)
 
             Next I
@@ -5958,29 +5974,29 @@ Sub COMPILESTATFILES (compileOpt)
                 Next
             Next
 
-            Z!(15) = Z!(15) + R3(teamIdx) - statTotals(teamIdx)
-            Z1!(15) = Z1!(15) + R3(1 - teamIdx) - statTotals(1 - teamIdx)
+            statsZ!(15) = statsZ!(15) + R3(teamIdx) - statTotals(teamIdx)
+            statsZ1!(15) = statsZ1!(15) + R3(1 - teamIdx) - statTotals(1 - teamIdx)
 
-            Z!(6) = Z!(6) + teamFouls(teamIdx)
-            Z1!(6) = Z1!(6) + teamFouls(1 - teamIdx)
+            statsZ!(6) = statsZ!(6) + teamFouls(teamIdx)
+            statsZ1!(6) = statsZ1!(6) + teamFouls(1 - teamIdx)
 
-            Z!(5) = Z!(5) + R3(teamIdx)
-            Z1!(5) = Z1!(5) + R3(1 - teamIdx)
+            statsZ!(5) = statsZ!(5) + R3(teamIdx)
+            statsZ1!(5) = statsZ1!(5) + R3(1 - teamIdx)
 
-            Z!(11) = Z!(11) + turnovers(teamIdx)
-            Z1!(11) = Z1!(11) + turnovers(1 - teamIdx)
+            statsZ!(11) = statsZ!(11) + turnovers(teamIdx)
+            statsZ1!(11) = statsZ1!(11) + turnovers(1 - teamIdx)
 
             For J = 0 To 14:
-                Z!(13) = Z!(13) + gameW0!(teamIdx, J)
-                Z!(14) = Z!(14) + gameW1!(teamIdx, J)
-                Z1!(13) = Z1!(13) + gameW0!(1 - teamIdx, J)
-                Z1!(14) = Z1!(14) + gameW1!(1 - teamIdx, J)
+                statsZ!(13) = statsZ!(13) + gameW0!(teamIdx, J)
+                statsZ!(14) = statsZ!(14) + gameW1!(teamIdx, J)
+                statsZ1!(13) = statsZ1!(13) + gameW0!(1 - teamIdx, J)
+                statsZ1!(14) = statsZ1!(14) + gameW1!(1 - teamIdx, J)
                 W2(teamIdx, J) = W2(teamIdx, J) + gameW0!(teamIdx, J)
                 W3(teamIdx, J) = W3(teamIdx, J) + gameW1!(teamIdx, J)
             Next J
 
-            Z!(10) = Z!(10) + score(teamIdx, 0)
-            Z1!(10) = Z1!(10) + score(1 - teamIdx, 0)
+            statsZ!(10) = statsZ!(10) + score(teamIdx, 0)
+            statsZ1!(10) = statsZ1!(10) + score(1 - teamIdx, 0)
 
             Call TEAMBOX(1, teamIdx)
 
@@ -6007,11 +6023,11 @@ Sub COMPILESTATFILES (compileOpt)
             Next I
 
             For L = 0 To 15
-                Print #2, Z!(L)
+                Print #2, statsZ!(L)
             Next L
 
             For L = 0 To 15:
-                Print #2, Z1!(L)
+                Print #2, statsZ1!(L)
             Next L
 
             Close #2
@@ -6024,10 +6040,21 @@ Sub COMPILESTATFILES (compileOpt)
 
                 Input #3, Y%
 
-                For I = 1 To NUM_STATRECORDS: Input #3, statO%(I): Next I
-                For I = 1 To NUM_STATRECORDS: Input #3, HO$(I): Next I
-                For I = 1 To NUM_STATRECORDS: Input #3, HT%(I): Next I
-                For I = 1 To NUM_STATRECORDS: Input #3, statsH$(I): Next I
+                For I = 1 To MAX_SCHED_STATS:
+                    Input #3, teamScore(I)
+                Next I
+
+                For I = 1 To MAX_SCHED_STATS:
+                    Input #3, oppName$(I)
+                Next I
+
+                For I = 1 To MAX_SCHED_STATS:
+                    Input #3, oppScore(I)
+                Next I
+
+                For I = 1 To MAX_SCHED_STATS:
+                    Input #3, locIndicator$(I)
+                Next I
 
                 Close #3
 
@@ -6039,74 +6066,82 @@ Sub COMPILESTATFILES (compileOpt)
                 Case 2
                     Select Case TG!
                         Case Is < 14500
-                            statsH$(Y%) = "N"
+                            locIndicator$(Y%) = "N"
                         Case 14501 To 16000
-                            statsH$(Y%) = "N1"
+                            locIndicator$(Y%) = "N1"
                         Case 16001 To 17500
-                            statsH$(Y%) = "N2"
+                            locIndicator$(Y%) = "N2"
                         Case 17501 To 19000
-                            statsH$(Y%) = "N3"
+                            locIndicator$(Y%) = "N3"
                         Case 19001 To 20500
-                            statsH$(Y%) = "N4"
+                            locIndicator$(Y%) = "N4"
                     End Select
 
                 Case Is = teamIdx
                     Select Case TG!
                         Case Is < 14500
-                            statsH$(Y%) = "H"
+                            locIndicator$(Y%) = "H"
                         Case 14501 To 16000
-                            statsH$(Y%) = "H1"
+                            locIndicator$(Y%) = "H1"
                         Case 16001 To 17500
-                            statsH$(Y%) = "H2"
+                            locIndicator$(Y%) = "H2"
                         Case 17501 To 19000
-                            statsH$(Y%) = "H3"
+                            locIndicator$(Y%) = "H3"
                         Case 19001 To 20500
-                            statsH$(Y%) = "H4"
+                            locIndicator$(Y%) = "H4"
                     End Select
 
                 Case Is <> teamIdx
                     Select Case TG!
                         Case Is < 14500
-                            statsH$(Y%) = "V"
+                            locIndicator$(Y%) = "V"
                         Case 14501 To 16000
-                            statsH$(Y%) = "V1"
+                            locIndicator$(Y%) = "V1"
                         Case 16001 To 17500
-                            statsH$(Y%) = "V2"
+                            locIndicator$(Y%) = "V2"
                         Case 17501 To 19000
-                            statsH$(Y%) = "V3"
+                            locIndicator$(Y%) = "V3"
                         Case 19001 To 20500
-                            statsH$(Y%) = "V4"
+                            locIndicator$(Y%) = "V4"
                     End Select
 
             End Select
 
-            statO%(Y%) = score(teamIdx, 0)
-            HO$(Y%) = gameTeams$(1 - teamIdx)
-            HT%(Y%) = score(1 - teamIdx, 0)
+            teamScore(Y%) = score(teamIdx, 0)
+            oppName$(Y%) = gameTeams$(1 - teamIdx)
+            oppScore(Y%) = score(1 - teamIdx, 0)
 
             Open diskPaths$(1) + statFile$ + "S" For Output As #4
 
             Print #4, Y%
 
-            For I = 1 To NUM_STATRECORDS: Print #4, statO%(I): Next I
+            For I = 1 To MAX_SCHED_STATS:
+                Print #4, teamScore(I)
+            Next I
 
-            For I = 1 To NUM_STATRECORDS: Print #4, HO$(I): Next I
+            For I = 1 To MAX_SCHED_STATS:
+                Print #4, oppName$(I)
+            Next I
 
-            For I = 1 To NUM_STATRECORDS: Print #4, HT%(I): Next I
+            For I = 1 To MAX_SCHED_STATS:
+                Print #4, oppScore(I)
+            Next I
 
-            For I = 1 To NUM_STATRECORDS: Print #4, statsH$(I): Next I
+            For I = 1 To MAX_SCHED_STATS:
+                Print #4, locIndicator$(I)
+            Next I
 
             Close #4
 
             'Reset arrays for next iteration
-            Erase HT%, statO%
+            Erase teamScore, oppScore
             Erase statsZ!, statsZ1!, statsZ2!
-            Erase statsH$, HO$
+            Erase locIndicator$, oppName$
 
         End If
 
         teamIdx = teamIdx + 1
-        Z!(12) = 0
+        statsZ!(12) = 0
 
     Loop Until teamIdx = 2
 
@@ -8625,4 +8660,5 @@ Sub CheckRecords ()
     Close #3
 
 End Sub
+
 

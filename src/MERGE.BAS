@@ -69,19 +69,19 @@ Sub MergeStats ()
 
     Dim ARD$(0 To 14)
 
-    Shared Ycurr%, Yroad%
+    Shared nbrGamesCurr, nbrGamesRoad
 
-    Shared statPlyrNames$()
-    Shared statsO$(), statsH$()
-    Shared ORD$()
-    Shared HRD$()
+    Shared ORD%(), teamScore(), oppScore()
 
-    Shared ARD!()
-    Shared ORD%(), statsT%(), statO%()
+    Shared ARD!(), compareA!()
+    Shared statsW0!(), statsW1!()
+    Shared statsZ!(), statsZ1!()
     Shared TRD%(), W0RD!(), W1RD!()
+    Shared ZRD!(), ZRD1!()
 
-    Shared compareA!(), statsW0!(), statsW1!()
-    Shared statsZ!(), statsZ1!(), ZRD!(), ZRD1!()
+    Shared HRD$(), ORD$()
+    Shared statPlyrNames$()
+    Shared locIndicator$(), oppName$()
 
     Do
 
@@ -131,12 +131,23 @@ Sub MergeStats ()
 
                     Open pathRoadStats$ + statFile$ + "S" For Input As #2
 
-                    Input #2, Yroad%
+                    Input #2, nbrGamesRoad
 
-                    For I = 1 to NUM_STATRECORDS: Input #2, ORD%(I): Next I
-                    For I = 1 to NUM_STATRECORDS: Input #2, ORD$(I): Next I
-                    For I = 1 to NUM_STATRECORDS: Input #2, TRD%(I): Next I
-                    For I = 1 to NUM_STATRECORDS: Input #2, HRD$(I): Next I
+                    For I = 1 to MAX_SCHED_STATS: 
+                        Input #2, ORD%(I)
+                    Next I
+                    
+                    For I = 1 to MAX_SCHED_STATS: 
+                        Input #2, ORD$(I)
+                    Next I
+                    
+                    For I = 1 to MAX_SCHED_STATS: 
+                        Input #2, TRD%(I)
+                    Next I
+                    
+                    For I = 1 to MAX_SCHED_STATS: 
+                        Input #2, HRD$(I)
+                    Next I
 
                     Close #2
 
@@ -162,19 +173,35 @@ Sub MergeStats ()
 
                         Next
 
-                        For L = 0 To 15: Input #3, statsZ!(L): Next
-                        For L = 0 To 15: Input #3, statsZ1!(L): Next
+                        For L = 0 To 15: 
+                            Input #3, statsZ!(L)
+                        Next
+
+                        For L = 0 To 15: 
+                            Input #3, statsZ1!(L)
+                        Next
 
                         Close #3
 
                         Open pathCurrentStats$ + statFile$ + "S" For Input As #4
 
-                        Input #4, Ycurr%
+                        Input #4, nbrGamesCurr
 
-                        For I = 1 to NUM_STATRECORDS: Input #4, statO%(I): Next I
-                        For I = 1 to NUM_STATRECORDS: Input #4, statsO$(I): Next I
-                        For I = 1 to NUM_STATRECORDS: Input #4, statsT%(I): Next I
-                        For I = 1 to NUM_STATRECORDS: Input #4, statsH$(I): Next I
+                        For I = 1 to MAX_SCHED_STATS: 
+                            Input #4, teamScore(I)
+                        Next I
+                        
+                        For I = 1 to MAX_SCHED_STATS: 
+                            Input #4, oppName$(I)
+                        Next I
+                        
+                        For I = 1 to MAX_SCHED_STATS: 
+                            Input #4, oppScore(I)
+                        Next I
+                        
+                        For I = 1 to MAX_SCHED_STATS: 
+                            Input #4, locIndicator$(I)
+                        Next I
 
                         Close #4
 
@@ -274,25 +301,28 @@ End Sub
 'newly aggregated results.
 Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
 
-    Shared Ycurr%, Yroad%
+    Shared nbrGamesCurr, nbrGamesRoad
 
-    Shared statPlyrNames$()
+    Shared ORD%(), TRD%()
+    Shared teamScore(), oppScore()
+
+    Shared ARD!(), compareA!()
+
+    Shared statsW0!(), statsW1!()
+    Shared statsZ!(), statsZ1!()
+    Shared W0RD!(), W1RD!()
+    Shared ZRD!(), ZRD1!()
+
     Shared HRD$(), ORD$()
-    Shared statsO$(), statsH$()
+    Shared statPlyrNames$()
+    Shared oppName$(), locIndicator$()
 
-    Shared ARD!()
-    Shared ORD%(), statsT%(), TRD%()
-    Shared statO%(), W0RD!(), W1RD!()
-
-    Shared compareA!(), statsW0!(), statsW1!()
-    Shared statsZ!(), statsZ1!(), ZRD!(), ZRD1!()
-
-    For K = 1 To Yroad%
-        Ycurr% = Ycurr% + 1
-        statO%(Ycurr%) = ORD%(K)
-        statsO$(Ycurr%) = ORD$(K)
-        statsT%(Ycurr%) = TRD%(K)
-        statsH$(Ycurr%) = HRD$(K)
+    For K = 1 To nbrGamesRoad
+        nbrGamesCurr = nbrGamesCurr + 1
+        teamScore(nbrGamesCurr) = ORD%(K)
+        oppName$(nbrGamesCurr) = ORD$(K)
+        oppScore(nbrGamesCurr) = TRD%(K)
+        locIndicator$(nbrGamesCurr) = HRD$(K)
     Next
 
     Locate 18, 20: Color 12: Print "MERGING STAT FILE AND SCHEDULE RESULTS . . . ."
@@ -335,11 +365,11 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
 
     Open pathCurrentStats$ + statFile$ + "S" For Output As #2
 
-    Write #2, Ycurr%
-    For I = 1 to NUM_STATRECORDS: Write #2, statO%(I): Next I
-    For I = 1 to NUM_STATRECORDS: Write #2, statsO$(I): Next I
-    For I = 1 to NUM_STATRECORDS: Write #2, statsT%(I): Next I
-    For I = 1 to NUM_STATRECORDS: Write #2, statsH$(I): Next I
+    Write #2, nbrGamesCurr
+    For I = 1 to MAX_SCHED_STATS: Write #2, teamScore(I): Next I
+    For I = 1 to MAX_SCHED_STATS: Write #2, oppName$(I): Next I
+    For I = 1 to MAX_SCHED_STATS: Write #2, oppScore(I): Next I
+    For I = 1 to MAX_SCHED_STATS: Write #2, locIndicator$(I): Next I
 
     Close #2
 

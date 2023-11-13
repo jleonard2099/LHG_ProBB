@@ -53,12 +53,10 @@ Sub UpdateLeagueStandings (league$)
     Shared RLL(), RWW()
     Shared TLS(), TWS(), WW()
 
-    Shared statO%()
+    Shared teamScore(), oppScore()
 
-    Shared statsO$(), statsH$()
-    Shared TML$(), statsZ1$()
-
-    Dim statsT%(NUM_STATRECORDS)
+    Shared locIndicator$(), oppName$()
+    Shared statsZ1$(), TML$()
 
     Shared div1$, div2$, div3$, div4$, league$
 
@@ -88,10 +86,21 @@ Sub UpdateLeagueStandings (league$)
 
                 Input #2, XX%
 
-                For J = 1 to NUM_STATRECORDS: Input #2, statO%(J): Next
-                For J = 1 to NUM_STATRECORDS: Input #2, statsO$(J): Next
-                For J = 1 to NUM_STATRECORDS: Input #2, statsT%(J): Next
-                For J = 1 to NUM_STATRECORDS: Input #2, statsH$(J): Next
+                For J = 1 to MAX_SCHED_STATS: 
+                    Input #2, teamScore(J)
+                Next
+                
+                For J = 1 to MAX_SCHED_STATS: 
+                    Input #2, oppName$(J)
+                Next
+                
+                For J = 1 to MAX_SCHED_STATS: 
+                    Input #2, oppScore(J)
+                Next
+                
+                For J = 1 to MAX_SCHED_STATS:
+                    Input #2, locIndicator$(J)
+                Next
 
                 Close #2
 
@@ -101,24 +110,28 @@ Sub UpdateLeagueStandings (league$)
                 TLS(YY) = 0
 
                 For I = 1 To XX%
-                    If statO%(I) > statsT%(I) Then WW(YY) = WW(YY) + 1
-                    If statO%(I) > statsT%(I) And statsH$(I) = "V" Then RWW(YY) = RWW(YY) + 1
-                    If statO%(I) > statsT%(I) And statsH$(I) = "V1" Then RWW(YY) = RWW(YY) + 1
-                    If statO%(I) > statsT%(I) And statsH$(I) = "V2" Then RWW(YY) = RWW(YY) + 1
-                    If statO%(I) > statsT%(I) And statsH$(I) = "H" Then HWW(YY) = HWW(YY) + 1
-                    If statO%(I) > statsT%(I) And statsH$(I) = "H1" Then HWW(YY) = HWW(YY) + 1
-                    If statO%(I) > statsT%(I) And statsH$(I) = "H2" Then HWW(YY) = HWW(YY) + 1
-                    If statsT%(I) > statO%(I) Then LL(YY) = LL(YY) + 1
-                    If statsT%(I) > statO%(I) And statsH$(I) = "V" Then RLL(YY) = RLL(YY) + 1
-                    If statsT%(I) > statO%(I) And statsH$(I) = "V1" Then RLL(YY) = RLL(YY) + 1
-                    If statsT%(I) > statO%(I) And statsH$(I) = "V2" Then RLL(YY) = RLL(YY) + 1
-                    If statsT%(I) > statO%(I) And statsH$(I) = "H" Then HLL(YY) = HLL(YY) + 1
-                    If statsT%(I) > statO%(I) And statsH$(I) = "H1" Then HLL(YY) = HLL(YY) + 1
-                    If statsT%(I) > statO%(I) And statsH$(I) = "H2" Then HLL(YY) = HLL(YY) + 1
-                    If statO%(I) > statsT%(I) Then LWS(YY) = LWS(YY) + 1: LLS(YY) = 0
+
+                    If teamScore(I) > oppScore(I) Then WW(YY) = WW(YY) + 1
+                    If teamScore(I) > oppScore(I) And locIndicator$(I) = "V" Then RWW(YY) = RWW(YY) + 1
+                    If teamScore(I) > oppScore(I) And locIndicator$(I) = "V1" Then RWW(YY) = RWW(YY) + 1
+                    If teamScore(I) > oppScore(I) And locIndicator$(I) = "V2" Then RWW(YY) = RWW(YY) + 1
+                    If teamScore(I) > oppScore(I) And locIndicator$(I) = "H" Then HWW(YY) = HWW(YY) + 1
+                    If teamScore(I) > oppScore(I) And locIndicator$(I) = "H1" Then HWW(YY) = HWW(YY) + 1
+                    If teamScore(I) > oppScore(I) And locIndicator$(I) = "H2" Then HWW(YY) = HWW(YY) + 1
+
+                    If oppScore(I) > teamScore(I) Then LL(YY) = LL(YY) + 1
+                    If oppScore(I) > teamScore(I) And locIndicator$(I) = "V" Then RLL(YY) = RLL(YY) + 1
+                    If oppScore(I) > teamScore(I) And locIndicator$(I) = "V1" Then RLL(YY) = RLL(YY) + 1
+                    If oppScore(I) > teamScore(I) And locIndicator$(I) = "V2" Then RLL(YY) = RLL(YY) + 1
+                    If oppScore(I) > teamScore(I) And locIndicator$(I) = "H" Then HLL(YY) = HLL(YY) + 1
+                    If oppScore(I) > teamScore(I) And locIndicator$(I) = "H1" Then HLL(YY) = HLL(YY) + 1
+                    If oppScore(I) > teamScore(I) And locIndicator$(I) = "H2" Then HLL(YY) = HLL(YY) + 1
+
+                    If teamScore(I) > oppScore(I) Then LWS(YY) = LWS(YY) + 1: LLS(YY) = 0
                     If LWS(YY) > TWS(YY) Then TWS(YY) = LWS(YY)
-                    If statO%(I) < statsT%(I) Then LLS(YY) = LLS(YY) + 1: LWS(YY) = 0
+                    If teamScore(I) < oppScore(I) Then LLS(YY) = LLS(YY) + 1: LWS(YY) = 0
                     If LLS(YY) > TLS(YY) Then TLS(YY) = LLS(YY)
+
                 Next I
 
                 If XX% <= 10 Then
@@ -127,8 +140,8 @@ Sub UpdateLeagueStandings (league$)
                     M = XX% - 9
 
                     For J = M To XX%
-                        If statO%(J) > statsT%(J) Then LTW(YY) = LTW(YY) + 1
-                        If statsT%(J) > statO%(J) Then LTL(YY) = LTL(YY) + 1
+                        If teamScore(J) > oppScore(J) Then LTW(YY) = LTW(YY) + 1
+                        If oppScore(J) > teamScore(J) Then LTL(YY) = LTL(YY) + 1
                     Next J
                 End If
 
@@ -163,8 +176,6 @@ Sub ViewNewStandings (league$)
     Shared LTL(), LTW(), LWS()
     Shared RLL(), RWW()
     Shared TLS(), TWS(), WW()
-
-    Shared statO%()
 
     Shared TML$()
 
@@ -267,8 +278,6 @@ Sub PrintNewStandings (league$)
     Shared LTL(), LTW(), LWS()
     Shared RLL(), RWW()
     Shared TLS(), TWS(), WW()
-
-    Shared statO%()
 
     Shared TML$()
 

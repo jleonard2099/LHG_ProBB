@@ -18,7 +18,7 @@ Sub NEWLDR ()
     Shared RLL(), RWW()
     Shared TLS(), TWS(), WW()
 
-    Shared statO%()
+    Shared teamScore()
 
     Shared div1$, div2$, div3$, div4$, league$
 
@@ -181,7 +181,7 @@ End Sub
 'This subroutine calculates the expanded 
 'stats from those previously read in to
 'a variety of arrays.
-Sub UpdateExpandedLeaders (JB, tStats, ttStats)
+Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
     Shared AL$(), statPlyrNames$()
     Shared TMA$(), TT$(), TT1$()
@@ -247,20 +247,20 @@ Sub UpdateExpandedLeaders (JB, tStats, ttStats)
 
                 Close #2
 
-                tStats = tStats + 1
+                plyrTotalStats = plyrTotalStats + 1
 
                 For I = 0 To 14:
-                    TT!(tStats, I) = statsZ!(I)
-                    TT$(tStats, I) = B$
-                    GM!(tStats) = year
+                    TT!(plyrTotalStats, I) = statsZ!(I)
+                    TT$(plyrTotalStats, I) = B$
+                    GM!(plyrTotalStats) = year
                 Next
 
-                ttStats = ttStats + 1
+                teamTotalStats = teamTotalStats + 1
 
                 For I = 0 To 14:
-                    TT1!(ttStats, I) = statsZ1!(I)
-                    TT1$(ttStats, I) = B$
-                    GM1!(ttStats) = year
+                    TT1!(teamTotalStats, I) = statsZ1!(I)
+                    TT1$(teamTotalStats, I) = B$
+                    GM1!(teamTotalStats) = year
                 Next
 
                 For I = 0 To 14
@@ -300,7 +300,7 @@ End Sub
 '----------------------------------------
 'This subroutine compiles the leader files 
 '(.LDS) for the expanded standings modules 
-Sub SAVELEADER (statFile$, JB, tStats, ttStats)
+Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Shared AL$()
     Shared TMA$(), TT$(), TT1$()
@@ -316,7 +316,7 @@ Sub SAVELEADER (statFile$, JB, tStats, ttStats)
 
     Open diskPaths$(1) + statFile$ + ".LDS" For Output As #1
 
-    Write #1, JB, tStats, ttStats
+    Write #1, JB, plyrTotalStats, teamTotalStats
 
     For I = 1 To 600:
 
@@ -378,7 +378,7 @@ End Sub
 '----------------------------------------
 'This subroutine reads in the leader files 
 '(.LDS) for the expanded standings modules 
-Sub READLEADER (statFile$, JB, tStats, ttStats)
+Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Shared AL$()
     Shared TMA$(), TT$(), TT1$()
@@ -406,7 +406,7 @@ Sub READLEADER (statFile$, JB, tStats, ttStats)
 
         Open diskPaths$(1) + statFile$ + ".LDS" For Input As #1
 
-        Input #1, JB, tStats, ttStats
+        Input #1, JB, plyrTotalStats, teamTotalStats
 
         For I = 1 To 600:
 
@@ -472,7 +472,7 @@ End Sub
 'menu for viewing expanded leaders. It then
 'relies on various subroutines for the end
 'user display of those statistics.
-Sub ExpandedLeaders_Menu  (printOrView%, JB, tStats, ttStats)
+Sub ExpandedLeaders_Menu  (printOrView%, JB, plyrTotalStats, teamTotalStats)
 
     ReDim menuChoices$(1 To 3)
 
@@ -510,7 +510,7 @@ Sub ExpandedLeaders_Menu  (printOrView%, JB, tStats, ttStats)
                     Call ViewIndividualLeaders(printOrView%, JB)
 
                 Case 2:
-                    Call ViewTeamLeaders(printOrView%, tStats, ttStats)
+                    Call ViewTeamLeaders(printOrView%, plyrTotalStats, teamTotalStats)
 
             End Select
 
@@ -885,7 +885,7 @@ End Sub
 'This subroutine lets the user choose a
 'team stats category and relies on other
 'routines to sort and display the results.
-Sub ViewTeamLeaders (printOrView%, tStats, ttStats)
+Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
 
     Shared GM!(), GM1!()
     Shared TT!(), TT1!(), TYP!()
@@ -991,17 +991,17 @@ Sub ViewTeamLeaders (printOrView%, tStats, ttStats)
 
                 Case 0 To 1, 3 To 4, 6 To 7, 9, 11, 13 To 17:
 
-                    For I = 1 To tStats
+                    For I = 1 To plyrTotalStats
                         TYP!(I) = TT!(I, X)
                         TMM$(I) = TT$(I, X)
                     Next
 
-                    Call SortTeam(tStats, stpl, sortType%)
+                    Call SortTeam(plyrTotalStats, stpl, sortType%)
                     TVN = 1
-                    maxRecords = tStats
+                    maxRecords = plyrTotalStats
 
                 Case 2, 5, 8:
-                    For I = 1 To tStats
+                    For I = 1 To plyrTotalStats
                         If TT!(I, X1) = 0 Then
                             TMM$(I) = TT$(I, X)
                             TYP!(I) = 0
@@ -1012,52 +1012,52 @@ Sub ViewTeamLeaders (printOrView%, tStats, ttStats)
 
                     Next
 
-                    Call SortTeam(tStats, stpl, sortType%)
+                    Call SortTeam(plyrTotalStats, stpl, sortType%)
                     TVN = 2
-                    maxRecords = tStats
+                    maxRecords = plyrTotalStats
 
                 Case 10:
-                    For I = 1 To tStats
+                    For I = 1 To plyrTotalStats
                         TMM$(I) = TT$(I, X)
                         TYP!(I) = TT!(I, X) - TT!(I, X1)
                     Next
 
-                    Call SortTeam(tStats, stpl, sortType%)
+                    Call SortTeam(plyrTotalStats, stpl, sortType%)
                     TVN = 1
-                    maxRecords = tStats
+                    maxRecords = plyrTotalStats
 
                 Case 12:
-                    For I = 1 To tStats
+                    For I = 1 To plyrTotalStats
                         TMM$(I) = TT$(I, X)
                         TYP!(I) = TT!(I, X) / GM!(I)
                     Next
 
-                    Call SortTeam(ttStats, stpl, sortType%)
+                    Call SortTeam(teamTotalStats, stpl, sortType%)
                     TVN = 3
-                    maxRecords = tStats
+                    maxRecords = plyrTotalStats
 
                 Case 18:
-                    For I = 1 To tStats
+                    For I = 1 To plyrTotalStats
                         TMM$(I) = TT$(I, X)
                         TYP!(I) = ((TT!(I, X) * 2) + TT!(I, X1) + TT!(I, X2)) / GM!(I)
                     Next
 
-                    Call SortTeam(ttStats, stpl, sortType%)
+                    Call SortTeam(teamTotalStats, stpl, sortType%)
                     TVN = 3
-                    maxRecords = tStats
+                    maxRecords = plyrTotalStats
 
                 Case 19 To 20, 22 To 23, 25 To 26, 28, 30, 32 To 36:
-                    For I = 1 To ttStats
+                    For I = 1 To teamTotalStats
                         TMM$(I) = TT1$(I, X)
                         TYP!(I) = TT1!(I, X)
                     Next
 
-                    Call SortTeam(ttStats, stpl, sortType%)
+                    Call SortTeam(teamTotalStats, stpl, sortType%)
                     TVN = 1
-                    maxRecords = ttStats
+                    maxRecords = teamTotalStats
 
                 Case 21, 24, 27:
-                    For I = 1 To ttStats
+                    For I = 1 To teamTotalStats
                         If TT1!(I, X1) = 0 Then
                             TMM$(I) = TT1$(I, X)
                             TYP!(I) = 0
@@ -1067,39 +1067,39 @@ Sub ViewTeamLeaders (printOrView%, tStats, ttStats)
                         End If
                     Next
 
-                    Call SortTeam(ttStats, stpl, sortType%)
+                    Call SortTeam(teamTotalStats, stpl, sortType%)
                     TVN = 2
-                    maxRecords = ttStats
+                    maxRecords = teamTotalStats
 
                 Case 29:
-                    For I = 1 To ttStats
+                    For I = 1 To teamTotalStats
                         TMM$(I) = TT1$(I, X)
                         TYP!(I) = TT1!(I, X) - TT1!(I, X1)
                     Next
 
-                    Call SortTeam(ttStats, stpl, sortType%)
+                    Call SortTeam(teamTotalStats, stpl, sortType%)
                     TVN = 1
-                    maxRecords = ttStats
+                    maxRecords = teamTotalStats
 
                 Case 31:
-                    For I = 1 To ttStats
+                    For I = 1 To teamTotalStats
                         TMM$(I) = TT1$(I, X)
                         TYP!(I) = TT1!(I, X) / GM1!(I)
                     Next
 
-                    Call SortTeam(ttStats, stpl, sortType%)
+                    Call SortTeam(teamTotalStats, stpl, sortType%)
                     TVN = 3
-                    maxRecords = ttStats
+                    maxRecords = teamTotalStats
 
                 Case 37:
-                    For I = 1 To ttStats
+                    For I = 1 To teamTotalStats
                         TMM$(I) = TT1$(I, X)
                         TYP!(I) = ((TT1!(I, X) * 2) + TT1!(I, X1) + TT1!(I, X2)) / GM1!(I)
                     Next
 
-                    Call SortTeam(ttStats, stpl, sortType%)
+                    Call SortTeam(teamTotalStats, stpl, sortType%)
                     TVN = 3
-                    maxRecords = ttStats
+                    maxRecords = teamTotalStats
 
             End Select
 
@@ -1157,7 +1157,7 @@ Sub SortOptions (JB, ZZ, printOrView%, sortType%)
                     Case "V": printOrView% = 1
                     Case "R":
                         If ZZ = 1 Then Call ViewIndividualLeaders(JB, printOrView%)
-                        If ZZ = 3 Then Call ViewTeamLeaders(printOrView%, tStats, ttStats)
+                        If ZZ = 3 Then Call ViewTeamLeaders(printOrView%, plyrTotalStats, teamTotalStats)
                 End Select
 
                 sortType% = 1
@@ -1170,14 +1170,14 @@ Sub SortOptions (JB, ZZ, printOrView%, sortType%)
                     Case "V": printOrView% = 1
                     Case "R":
                         If ZZ = 1 Then Call ViewIndividualLeaders(JB, printOrView%)
-                        If ZZ = 3 Then Call ViewTeamLeaders(printOrView%, tStats, ttStats)
+                        If ZZ = 3 Then Call ViewTeamLeaders(printOrView%, plyrTotalStats, teamTotalStats)
                 End Select
 
                 sortType% = 2
 
             Case "R":
                 If ZZ = 1 Then Call ViewIndividualLeaders(JB, printOrView%)
-                If ZZ = 3 Then Call ViewTeamLeaders(printOrView%, tStats, ttStats)
+                If ZZ = 3 Then Call ViewTeamLeaders(printOrView%, plyrTotalStats, teamTotalStats)
 
         End Select
 
