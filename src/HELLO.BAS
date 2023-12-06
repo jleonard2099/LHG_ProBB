@@ -25,8 +25,6 @@ DefInt A-Z
 '$INCLUDE: 'BoxRoutines.bi'
 '$INCLUDE: 'FileTeamSelection.bi'
 '$INCLUDE: 'Variables.bi'
-
-
 '$INCLUDE: 'MainRoutines.bi'
 '$INCLUDE: 'TITLE.bi'
 
@@ -561,18 +559,18 @@ Sub Replay_Menu ()
 
         _Title "Basketball: The Pro Game - Stats Menu"
 
-        ReDim menuChoices$(1 To 6)
+        ReDim menuChoices$(1 To 5)
 
         menuChoices$(1) = "VIEW / PRINT COMPILED STATS       "
         menuChoices$(2) = "ENCYCLOPEDIA / TEAM REPLAY OPTIONS"
         menuChoices$(3) = "COMPARE REPLAY STATS TO ACTUAL    "
-        menuChoices$(4) = "MODIFY REPLAY STATS               "
-        menuChoices$(5) = "MERGE SEPARATE STATISTICAL FILES  "
-        menuChoices$(6) = "RETURN TO MAIN MENU               "
+        'menuChoices$(4) = "MODIFY REPLAY STATS               "
+        menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES  "
+        menuChoices$(5) = "RETURN TO MAIN MENU               "
         Selection% = 1
-        Count% = 6
+        Count% = 5
         Start% = 1
-        ExitCode% = 6
+        ExitCode% = 5
         FileFGColor% = 15: FileBGColor% = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
@@ -602,10 +600,10 @@ Sub Replay_Menu ()
                     Call COMPARE
 
                 Case 4:
-                    Call EditStats
+                    Call MERGE
 
                 Case 5:
-                    Call MERGE
+                    '
 
             End Select
 
@@ -614,7 +612,7 @@ Sub Replay_Menu ()
         Color 15, 0
         Cls
 
-    Loop Until Selection% = 6 Or ExitCode% = 27
+    Loop Until Selection% = 5 Or ExitCode% = 27
 
 End Sub
 

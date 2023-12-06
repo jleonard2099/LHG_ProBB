@@ -295,8 +295,9 @@ Sub PROHOOP ()
                         If gameLoc > 2 Then gameLoc = 1
 
                     Case 5:
-                        sClockVal = sClockVal + 1
-                        If sClockVal > 2 Then sClockVal = 0
+                        sClockVal = sClockVal + 1                        
+                        If sClockVal > 1 Then sClockVal = 0
+                        'If sClockVal > 2 Then sClockVal = 0
 
                     Case 6:
                         threePtOpt = threePtOpt + 1
@@ -455,25 +456,26 @@ Sub PROHOOP ()
     250 '
 
     If quarter = 2 Then
-        If JB = 0 Then
-            JB = 1
+        If jumpBall = 0 Then
+            jumpBall = 1
         Else
-            If JB = 1 Then JB = 0
+            If jumpBall = 1 Then jumpBall = 0
         End If
     End If
 
     If quarter = 4 Then
-        If JB = 0 Then
-            JB = 1
+        If jumpBall = 0 Then
+            jumpBall = 1
         Else
-            If quarter = 4 And JB = 1 Then JB = 0
+            If quarter = 4 And jumpBall = 1 Then jumpBall = 0
         End If
     End If
 
     '251
     If Not (quarter < 1 And quarter > 5) Then
+        'Determine random team for jump ball
         P = Int(Rnd(1) * 2)
-        JB = P
+        jumpBall = P
     End If
 
     '252
@@ -508,14 +510,14 @@ Sub PROHOOP ()
 
     If quarter = 1 Or quarter > 4 Then
         If pbpOpt = 0 Then
-            pbpString$ = gameTeams$(JB) + " GETS THE JUMP"
+            pbpString$ = gameTeams$(jumpBall) + " GETS THE JUMP"
             Call PBP
         Else
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
                 pbpString$ = " GETS THE JUMP"
                 Call WINDEX
-                Color tmRat_GAME(JB, 33), tmRat_GAME(JB, 34): Print gameTeams$(JB);
+                Color tmRat_GAME(jumpBall, 33), tmRat_GAME(jumpBall, 34): Print gameTeams$(jumpBall);
                 Color 15, 0
                 Print pbpString$
                 Call DELAY
@@ -523,14 +525,14 @@ Sub PROHOOP ()
         End If
     Else
         If pbpOpt = 0 Then
-            pbpString$ = gameTeams$(JB) + " INBOUNDS THE BALL"
+            pbpString$ = gameTeams$(jumpBall) + " INBOUNDS THE BALL"
             Call PBP
         Else
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
                 pbpString$ = " INBOUNDS THE BALL"
                 Call WINDEX
-                Color tmRat_GAME(JB, 33), tmRat_GAME(JB, 34): Print gameTeams$(JB);
+                Color tmRat_GAME(jumpBall, 33), tmRat_GAME(jumpBall, 34): Print gameTeams$(jumpBall);
                 Color 15, 0
                 Print pbpString$
                 Call DELAY
@@ -538,8 +540,8 @@ Sub PROHOOP ()
         End If
     End If
 
-    P9 = JB
-    P = JB
+    P9 = jumpBall
+    P = jumpBall
 
     GoTo 300
 
@@ -811,7 +813,7 @@ Sub PROHOOP ()
 
     'Random ball carrier
     'ballCarrier = Int(Rnd(1) * 5)
-    Call d100(R0)
+    Call d100(RN0)
 
     If playerMode = 0 And coachOpt = 1 Or playerMode = 1 And D = compTeam And coachOpt = 1 Or playerMode = 1 And P = compTeam Or playerMode = 2 Then
 
@@ -819,7 +821,7 @@ Sub PROHOOP ()
 
     Else
 
-        If R0 > 40 Then
+        If RN0 > 40 Then
             'random ball carrier
             ballCarrier = Int(Rnd(1) * 5)
         Else
@@ -878,7 +880,7 @@ Sub PROHOOP ()
 
     If P1 <> 1 Then
 
-        R0 = Int(Rnd(1) * 1000) + 1
+        RN0 = Int(Rnd(1) * 1000) + 1
 
         ' *** BRANCH TO AREA BASED ON DEFENSE ***
         Select Case D2(D)
@@ -886,7 +888,7 @@ Sub PROHOOP ()
             Case 1, 4:
 
                 ' *** SHOT VS REG/TIGHT M-M ***
-                Select Case R0
+                Select Case RN0
 
                     Case 1, 2
                         xFactor = 0
@@ -905,11 +907,11 @@ Sub PROHOOP ()
                     Case 30 + F7%(P, 1) + F7%(D, 2) To 1000
                         P9 = Int(Rnd(1) * 5)
 
-                        If R0 <= 24 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
+                        If RN0 <= 24 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
                             GoTo 513
                         Else
-                            R1 = Int(Rnd(1) * 1000) + 1
-                            If (PASS% <= 3 Or PASS% > 4) And R1 <= 320 + ((JY - 89) * 10) Then 445
+                            RN1 = Int(Rnd(1) * 1000) + 1
+                            If (PASS% <= 3 Or PASS% > 4) And RN1 <= 320 + ((JY - 89) * 10) Then 445
                             If PASS% = 4 Then 445
                             GoTo 437
                         End If
@@ -918,7 +920,7 @@ Sub PROHOOP ()
 
             Case 2, 5
                 ' *** SHOT VS LOOSE/SAG M-M ***
-                Select Case R0
+                Select Case RN0
 
                     Case 1
                         xFactor = 0
@@ -938,11 +940,11 @@ Sub PROHOOP ()
 
                         P9 = Int(Rnd(1) * 5)
 
-                        If R0 <= 8 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
+                        If RN0 <= 8 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
                             GoTo 513
                         Else
-                            R0 = Int(Rnd(1) * 1000) + 1
-                            If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
+                            RN0 = Int(Rnd(1) * 1000) + 1
+                            If (PASS% <= 3 Or PASS% > 4) And RN0 <= 320 + ((JY - 89) * 10) Then 445
                             If PASS% = 4 Then 445
                             GoTo 437
                         End If
@@ -951,7 +953,7 @@ Sub PROHOOP ()
 
             Case 3
                 ' *** SHOT VS TRAP M-M ***
-                Select Case R0
+                Select Case RN0
 
                     Case 1 To 3
                         xFactor = 0
@@ -971,11 +973,11 @@ Sub PROHOOP ()
                     Case 50 + F7%(P, 1) + F7%(D, 2) To 1000
                         P9 = Int(Rnd(1) * 5)
 
-                        If R0 <= 40 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
+                        If RN0 <= 40 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
                             GoTo 513
                         Else
-                            R0 = Int(Rnd(1) * 1000) + 1
-                            If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
+                            RN0 = Int(Rnd(1) * 1000) + 1
+                            If (PASS% <= 3 Or PASS% > 4) And RN0 <= 320 + ((JY - 89) * 10) Then 445
                             If PASS% = 4 Then 445
                             GoTo 437
                         End If
@@ -987,9 +989,9 @@ Sub PROHOOP ()
     Else
 
         P1 = 0
-        R0 = Int(Rnd(1) * 1000) + 1
+        RN0 = Int(Rnd(1) * 1000) + 1
 
-        Select Case R0
+        Select Case RN0
 
             Case 1 To 3
                 xFactor = 0
@@ -1008,11 +1010,11 @@ Sub PROHOOP ()
             Case 50 + F7%(P, 1) + F7%(D, 2) To 1000
                 P9 = Int(Rnd(1) * 5)
 
-                If R0 <= 40 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) Then
+                If RN0 <= 40 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) Then
                     GoTo 513
                 Else
-                    R0 = Int(Rnd(1) * 1000) + 1
-                    If (PASS% <= 3 Or PASS% > 4) And R0 <= 320 + ((JY - 89) * 10) Then 445
+                    RN0 = Int(Rnd(1) * 1000) + 1
+                    If (PASS% <= 3 Or PASS% > 4) And RN0 <= 320 + ((JY - 89) * 10) Then 445
                     If PASS% = 4 Then 445
 
                     GoTo 437
@@ -1074,9 +1076,9 @@ Sub PROHOOP ()
 
         F3S% = 0
 
-        Call d100(RN)
+        Call d100(RN0)
 
-        If RN <= gameRatings!(P, gameB1!(P, ballCarrier), 19) Then
+        If RN0 <= gameRatings!(P, gameB1!(P, ballCarrier), 19) Then
             PZ% = 4
             F3S% = gameRatings!(P, gameB1!(P, ballCarrier), 20) + F7%(D, 4)
             'Adjust shot chance by -3 to 3
@@ -1135,10 +1137,10 @@ Sub PROHOOP ()
     Else
 
         ' *** CHECK PENETRATION SHOT ***
-        Call d100(RN)
+        Call d100(RN1)
         A4 = Int(Rnd(1) * 50) + 1
 
-        If RN <= (plyrRat_GAME(P, gameB1!(P, ballCarrier), 16) + OY%(O0%(P))) * 2 + 1 Then
+        If RN1 <= (plyrRat_GAME(P, gameB1!(P, ballCarrier), 16) + OY%(O0%(P))) * 2 + 1 Then
 
             PZ% = 3
             F = F + A4
@@ -1148,7 +1150,7 @@ Sub PROHOOP ()
 
             ' *** CHECK AVERAGE SHOT ***
             I2 = plyrRat_GAME(P, gameB1!(P, ballCarrier), 16)
-            RN = Int(Rnd(1) * 2)
+            rndTeam = Int(Rnd(1) * 2)
 
             If Left$(players_GAME$(P, gameB1!(P, ballCarrier), 1), 1) = "G" Or Left$(players_GAME$(P, gameB1!(P, ballCarrier), 1), 1) = "F" Then
 
@@ -1163,7 +1165,7 @@ Sub PROHOOP ()
 
             Else
 
-                If RN = 1 Then
+                If rndTeam = 1 Then
                     PZ% = 6
                 Else
                     PZ% = 5
@@ -1171,7 +1173,7 @@ Sub PROHOOP ()
 
             End If
 
-            F = F + GF%(RN, I2)
+            F = F + GF%(rndTeam, I2)
             xFactor = 0
 
         End If
@@ -1199,18 +1201,18 @@ Sub PROHOOP ()
             Print "BALL STOLEN BY "; players_GAME$(D, gameB1!(D, P9), 0); "!"
             Call DELAY
         Else
-            Call d100(RN)
+            Call d100(RN0)
 
-            Select Case RN
+            Select Case RN0
                 Case 1 To 3: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " QUICKLY REACHES IN!"
                 Case 4 To 6: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " SNEAKS IN FROM BEHIND!"
                 Case 7 To 10: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " GETS A HAND ON THE BALL!"
             End Select
 
             Call PBP
-            RN = Int(Rnd(1) * 20) + 1
+            RN0 = Int(Rnd(1) * 20) + 1
 
-            Select Case RN
+            Select Case RN0
                 Case 1: pbpString$ = "PASS INTERCEPTED BY " + players_GAME$(D, gameB1!(D, P9), 0) + "!"
                 Case 2: pbpString$ = "PASS IS PICKED OFF BY " + players_GAME$(D, gameB1!(D, P9), 0) + "!"
                 Case 3: pbpString$ = "BALL IS STOLEN BY " + players_GAME$(D, gameB1!(D, P9), 0) + "!"
@@ -1389,9 +1391,9 @@ Sub PROHOOP ()
 
                 Case 1:
                     If pbpDelay! <> 0 Then
-                        RN = Int(Rnd(1) * 12) + 1
+                        RN0 = Int(Rnd(1) * 12) + 1
 
-                        Select Case RN
+                        Select Case RN0
                             Case 1: pbpString$ = Y2$ + "'S HEAVILY GUARDED"
                             Case 2: pbpString$ = Y2$ + "'S GUARDED"
                             Case 3: pbpString$ = Y2$ + "'S GUARDED BY " + Y3$
@@ -1418,11 +1420,11 @@ Sub PROHOOP ()
                 Case 3:
                     If pbpDelay! <> 0 Then
 
-                        Call d100(RN)
+                        Call d100(RN0)
 
                         If Z3$ = "C" Then
 
-                            Select Case RN
+                            Select Case RN0
                                 Case 1 To 25: pbpString$ = Y2$ + " MAKES A MOVE DOWN LOW":
                                 Case 26 To 50: pbpString$ = Y2$ + " POSITIONS HIMSELF DOWN LOW"
                                 Case 51 To 75: pbpString$ = Y2$ + " POSTS UP UNDERNEATH"
@@ -1436,7 +1438,7 @@ Sub PROHOOP ()
                         End If
 
                         If Z3$ = "F" Then
-                            Select Case RN
+                            Select Case RN0
                                 Case 1 To 17: pbpString$ = Y2$ + " DRIVES THE BASELINE"
                                 Case 18 To 34: pbpString$ = Y2$ + " PENETRATES THE LANE"
                                 Case 35 To 50: pbpString$ = Y2$ + " MOVES INSIDE"
@@ -1451,7 +1453,7 @@ Sub PROHOOP ()
                         End If
 
                         If Z3$ = "G" Then
-                            Select Case RN
+                            Select Case RN0
                                 Case 1 To 25: pbpString$ = Y2$ + " DRIVES THE LANE": Call PBP: pbpString$ = "HE HAS A GOOD SHOT CLOSE IN"
                                 Case 26 To 50: pbpString$ = Y2$ + " DRIVES THROUGH THE KEY": Call PBP: pbpString$ = "HE'S INTO THE LANE": Call PBP: pbpString$ = "HE HAS A GOOD SHOT CLOSE IN"
                                 Case 51 To 75: pbpString$ = Y2$ + " DRIVES TO THE BASKET": Call PBP: pbpString$ = "HE HAS A GOOD SHOT CLOSE IN"
@@ -1736,13 +1738,13 @@ Sub PROHOOP ()
             Call SELECTPBP
 
             If playerMode = 1 And D = compTeam Or playerMode = 2 Then
-                W5 = Int(Rnd(1) * 5)
+                fouler = Int(Rnd(1) * 5)
             Else
 
                 Do
                     I$ = GetKeyPress$
-                    W5 = Val(I$)
-                Loop Until W5 >= 0 And W5 <= 4
+                    fouler = Val(I$)
+                Loop Until fouler >= 0 And fouler <= 4
             End If
 
             Call Fouls(1)
@@ -2152,13 +2154,13 @@ Sub PROHOOP ()
                 Call WINDEX: Print pbpString$: Call DELAY
             Else
 
-                Call d100(RN)
+                Call d100(RN0)
 
-                If RN > 50 Then
+                If RN0 > 50 Then
 
-                    RN = Int(Rnd(1) * 22) + 1
+                    RN1 = Int(Rnd(1) * 22) + 1
 
-                    Select Case RN
+                    Select Case RN1
                         Case 1: pbpString$ = "NOTHING BUT THE BOTTOM OF THE NET!"
                         Case 2: pbpString$ = "Count IT!"
                         Case 3: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " TICKLES THE TWINE!"
@@ -2281,10 +2283,10 @@ Sub PROHOOP ()
 
     '--- Shot Branch 3 ---
     Call d100(RN0)
-    Call d100(I5)
-    I3 = Int(Rnd(1) * 5)
+    Call d100(shotChance)
+    rndDef = Int(Rnd(1) * 5)
 
-    If I5 > gameRatings!(D, gameB1!(D, I3), 6) Then
+    If shotChance > gameRatings!(D, gameB1!(D, rndDef), 6) Then
         545 '
         If pbpOpt = 1 And pbpDelay! <> 0 Then
             Call WINDEX
@@ -2305,22 +2307,22 @@ Sub PROHOOP ()
 
             If pbpOpt = 1 Then
                 Call WINDEX
-                Print "SHOT BLOCKED BY "; players_GAME$(D, gameB1!(D, I3), 0)
+                Print "SHOT BLOCKED BY "; players_GAME$(D, gameB1!(D, rndDef), 0)
                 Call DELAY
             Else
 
-                Call d100(RN)
+                Call d100(RN0)
 
-                Select Case RN
-                    Case 1 To 10: pbpString$ = players_GAME$(D, gameB1!(D, I3), 0) + " STUFFS THE SHOT!!"
-                    Case 11 To 15: pbpString$ = "DENIED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
-                    Case 16 To 20: pbpString$ = "ERASED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
-                    Case 21 To 25: pbpString$ = "EXPUNGED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
-                    Case 26 To 30: pbpString$ = "REBUKED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
-                    Case 31 To 35: pbpString$ = "SHOT BLOCKED CLEANLY BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
-                    Case 36 To 70: pbpString$ = "SHOT BLOCKED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
-                    Case 71 To 90: pbpString$ = "SHOT REJECTED BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
-                    Case 91 To 100: pbpString$ = "SHOT SWATTED OUT BY " + players_GAME$(D, gameB1!(D, I3), 0) + "!!"
+                Select Case RN0
+                    Case 1 To 10: pbpString$ = players_GAME$(D, gameB1!(D, rndDef), 0) + " STUFFS THE SHOT!!"
+                    Case 11 To 15: pbpString$ = "DENIED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
+                    Case 16 To 20: pbpString$ = "ERASED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
+                    Case 21 To 25: pbpString$ = "EXPUNGED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
+                    Case 26 To 30: pbpString$ = "REBUKED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
+                    Case 31 To 35: pbpString$ = "SHOT BLOCKED CLEANLY BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
+                    Case 36 To 70: pbpString$ = "SHOT BLOCKED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
+                    Case 71 To 90: pbpString$ = "SHOT REJECTED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
+                    Case 91 To 100: pbpString$ = "SHOT SWATTED OUT BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
                 End Select
 
                 Call PBP
@@ -2330,7 +2332,7 @@ Sub PROHOOP ()
         End If
 
         554 '
-        gameRatings!(D, gameB1!(D, I3), 15) = gameRatings!(D, gameB1!(D, I3), 15) + 1
+        gameRatings!(D, gameB1!(D, rndDef), 15) = gameRatings!(D, gameB1!(D, rndDef), 15) + 1
         xFactor = 98
 
     End If
@@ -2538,7 +2540,7 @@ Sub PROHOOP ()
     Call Fouls(0)
 
     P2(D) = P2(D) - 1
-    ballCarrier = W5
+    ballCarrier = fouler
 
     If P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then 570
 
@@ -3091,19 +3093,21 @@ Sub PROHOOP ()
 
     Next
 
-    RN = Rnd(1) * RB
+    rbChance = Rnd(1) * RB
 
     For N = 0 To 9
-        If RN <= RB(N) Then skipRandom% = 1: Exit For
+        If rbChance <= RB(N) Then 
+            skipRandom% = 1: Exit For
+        End If
         RB(N + 1) = RB(N + 1) + RB(N)
     Next
 
     If skipRandom% = 0 Then
-        RN1 = Int(Rnd(1) * 10)
+        rndBC = Int(Rnd(1) * 10)
     End If
 
-    If RN1 <= 4 Then 761
-    ballCarrier = RN1 - 5
+    If rndBC <= 4 Then 761
+    ballCarrier = rndBC - 5
 
     GoTo 800
 
