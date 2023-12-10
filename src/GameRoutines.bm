@@ -145,25 +145,23 @@ Sub InitVar ()
 
     'These are for reading in team data
     'Erase gameCoach$, gameMascots$, gameStadium$, players_GAME$
-    'Erase leagRat_GAME, plyrRat_GAME, tmRat_GAME
+    Erase leagRat_GAME, plyrRat_GAME, tmRat_GAME
 
     'Erase C1
-    Erase D1, D8, eventSettings, F1, G4, G5
-    Erase oppScore
+    Erase D1, D8, eventSettings
+    Erase F1, G4, G5, oppScore
     Erase P2, P4, P5, P7
-    Erase pbpFG, pbpBG
-    Erase QQ, QR
+    Erase pbpFG, pbpBG, QQ, QR
     Erase R3, RB, score, schedGame, statTotals, S3
     Erase teamFouls, teamScore, timePlayed, turnovers
     Erase W2, W3, X7, Z5, Z6
 
-    Erase gameRatings!, indRecords!, M9!
-    Erase gameW0!, gameW1!
+    Erase gameRatings!, gameW0!, gameW1!
+    Erase indRecords!, M9!
     Erase statsZ!, statsZ1!, statsZ2!
 
-    Erase gameTeams$
     Erase diskIDs$, diskPaths$
-    Erase locIndicator$, oppName$
+    Erase gameTeams$, locIndicator$, oppName$
     Erase Q$, RC$, SX$
     Erase teamAbbrev$, teamNames$
     Erase Y$
