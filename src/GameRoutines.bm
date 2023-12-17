@@ -5015,13 +5015,11 @@ End Sub
 'boxscore about to be created.
 Sub FoundSpecial (specialCount, specialStat)
 
-    'Beep
-
     'Get count of SPC files to determine
     'number to assign next one
-    Spec$ = diskPaths$(1) + "*.BSS"
+    'Spec$ = diskPaths$(1) + "*.BSS"
+    Spec$ = diskPaths$(1) + "*.SPC"
     specialCount = FileCount%(Spec$)
-
     specialCount = specialCount + 1
     specialStat = 1
 
@@ -5269,7 +5267,7 @@ Sub POSTGAME ()
         'Append special events
         Call BOX2SPC(boxName$)
 
-        Call BOX2FILE(2, boxName$)
+        Call BOX2FILE(2, boxName$, specialStat)
 
     End If
 
@@ -5326,7 +5324,7 @@ Sub BOXOPTIONS (outputChoice)
             End If
 
             'Includes a special option to send to printer when done
-            Call BOX2FILE(outputChoice, boxName$)
+            Call BOX2FILE(outputChoice, boxName$, 0)
 
     End Select
 
@@ -5345,11 +5343,15 @@ End Sub
 'The option to send to printer will first
 'create a temporary file, then loop THROUGH
 'it to print each line.
-Sub BOX2FILE (printChoice, boxName$)
+Sub BOX2FILE (printChoice, boxName$, hasSpecial)
 
     Shared actualAttendance&
 
-    Open diskPaths$(1) + boxName$ For Append As #1
+    If hasSpecial = 1 Then
+        Open (diskPaths$(1) + boxName$) For Append As #1
+    Else
+        Open (diskPaths$(1) + boxName$) For Output As #1
+    End If
 
     If gameLoc = 2 Then
         Print #1, "SITE: NEUTRAL"
@@ -5783,7 +5785,7 @@ End Sub
 ' to a boxscore file
 Sub BOX2SPC (boxName$)
 
-    Open diskPaths$(1) + boxName$ For Append As #1
+    Open diskPaths$(1) + boxName$ For Output As #1
 
     Print #1,
 

@@ -13,30 +13,18 @@ Sub CompileLeague ()
     Shared teamScore(), oppScore()
 
     Shared BRC!()
-    Shared LD!(), O1!(), O2!(), leagS!()
+    Shared DT!(), DL!()
+    Shared LD!(), leagS!()
+    Shared O1!(), O2!(), OT!(), OL!()
     Shared TRC!(), TRC1!(), statsW0!(), statsW1!()
 
     Shared BRC$(), DL$(), H1$()
     Shared N$(), OL$()
-    Shared oppName$(), locIndicator$()
+    Shared locIndicator$(), oppName$()
     Shared statsZ1$(), TRC$(), TRC1$()
     Shared Z2$(), Z3$()
 
-    Shared DT!(), DL!()
-    Shared OT!()
-
-    'Initialize values first
-    TRC!(14) = 19999
-    TRC!(18) = 19999
-
-    'These are defensive record values, so they should be really high
-    'To determine if a "record" was broken, the stat values will be
-    'compared to see if they are lower than this.
-    'If we initialized to 0, the "record" would always be 0
-    For I = 1 To 13: TRC1!(I) = 19999: Next
-    For I = 15 To 17: TRC1!(I) = 19999: Next
-    For I = 19 To 20: TRC1!(I) = 19999: Next
-
+    'Read in any existing records first
     If _FileExists(diskPaths$(1) + "RECORDS.PBB") Then
 
         Open diskPaths$(1) + "RECORDS.PBB" For Input As #1
@@ -59,7 +47,42 @@ Sub CompileLeague ()
 
         Close #1
 
+    Else
+
+        Erase BRC!, TRC!, TRC1!
+        Erase BRC$, TRC$, TRC1$
+
     End If
+
+    'Initialize values first
+
+    'These are defensive record values, so they should be really high
+    'To determine if a "record" was broken, the stat values will be
+    'compared to see if they are lower than this.
+    'If we initialized to 0, the "record" would always be 0
+    TRC!(14) = 19999
+    TRC!(18) = 19999
+
+    For I = 1 To 13:
+        TRC1!(I) = 19999
+    Next
+
+    For I = 15 To 17
+        TRC1!(I) = 19999
+    Next
+
+    For I = 19 To 20:
+        TRC1!(I) = 19999
+    Next
+
+    For X = 1 To TEAMS_PER_CONFERENCE:
+        DL!(X, 19) = 9999
+    Next
+
+    Erase LD!, OL!
+    Erase Z2$, Z3$
+
+    C$ = ","
 
     leagueFile$ = ChooseFile$(diskPaths$(1) + "*.LIB", "LEAGUE", ExitCode%)
 
@@ -83,8 +106,6 @@ Sub CompileLeague ()
         Next
 
         Close #2
-
-        For X = 1 To TEAMS_PER_CONFERENCE: DL!(X, 19) = 9999: Next
 
         For XW = 1 To TEAMS_PER_CONFERENCE
 
@@ -124,7 +145,9 @@ Sub CompileLeague ()
 
                     If confGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
 
-                        Erase leagS!
+                        Erase DT!, OT!
+                        Erase leagS!, statsW0!, statsW1!
+                        Erase N$
 
                         Call ReadStatsPro(H1$(XW), TN$)
                         Call StatsByCategoryPro(TN$, finalUpdate$, fullWins, fullLosses)
@@ -168,15 +191,15 @@ Function FindStatsLeague% (statFile$, totalGames, fullWins, fullLosses)
 
         Input #1, totalGames
 
-        For I = 1 to MAX_SCHED_STATS: 
+        For I = 1 To MAX_SCHED_STATS:
             Input #1, teamScore(I)
         Next I
 
-        For I = 1 to MAX_SCHED_STATS: 
+        For I = 1 To MAX_SCHED_STATS:
             Input #1, oppName$(I)
         Next I
 
-        For I = 1 to MAX_SCHED_STATS: 
+        For I = 1 To MAX_SCHED_STATS:
             Input #1, oppScore(I)
         Next I
 
@@ -207,11 +230,11 @@ Function FindStatsLeague% (statFile$, totalGames, fullWins, fullLosses)
                 If teamScore(I) > oppScore(I) Then fullWins = fullWins + 1
                 If teamScore(I) < oppScore(I) Then fullLosses = fullLosses + 1
             Else
-                If teamScore(I) > oppScore(I) Then 
+                If teamScore(I) > oppScore(I) Then
                     confWins = confWins + 1
                     fullWins = fullWins + 1
                 End If
-                If teamScore(I) < oppScore(I) Then 
+                If teamScore(I) < oppScore(I) Then
                     confLosses = confLosses + 1
                     fullLosses = fullLosses + 1
                 End If
@@ -268,11 +291,11 @@ Sub ReadStatsPro (statFile$, TN$)
 
     Next I
 
-    For L = 1 To 16: 
+    For L = 1 To 16:
         Input #1, OT!(L)
     Next
 
-    For L = 1 To 16: 
+    For L = 1 To 16:
         Input #1, DT!(L)
     Next
 
@@ -353,8 +376,8 @@ Sub CheckStatsPro (TN$, totalGames)
         '-- Must have 300 FGM
         If leagS!(X, 19) > LD!(60, 1) And leagS!(X, 2) >= 300 Then
 
-            LD!(60, 1) = leagS!(X, 19)     'FG%
-            LD!(60, 2) = leagS!(X, 1)      'FGA
+            LD!(60, 1) = leagS!(X, 19) 'FG%
+            LD!(60, 2) = leagS!(X, 1) 'FGA
             Z2$(60) = N$(X)
             Z3$(60) = TN$
 
@@ -378,8 +401,8 @@ Sub CheckStatsPro (TN$, totalGames)
         '-- Must mave 125 FTM
         If leagS!(X, 20) > LD!(80, 1) And (leagS!(X, 4) >= 125) Then
 
-            LD!(80, 1) = leagS!(X, 20)  'FT%
-            LD!(80, 2) = leagS!(X, 3)   'FTA
+            LD!(80, 1) = leagS!(X, 20) 'FT%
+            LD!(80, 2) = leagS!(X, 3) 'FTA
             Z2$(80) = N$(X)
             Z3$(80) = TN$
 
@@ -884,7 +907,7 @@ Sub StatsByCategoryPro (TN$, finalUpdate$, fullWins, fullLosses)
     Shared BRC$(), N$(), TRC$(), TRC1$()
 
     totalGames = fullWins + fullLosses
-    
+
     For I = 0 To 14
 
         leagS!(I, 25) = leagS!(I, 13)
