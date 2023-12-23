@@ -39,12 +39,13 @@ Sub InitVar ()
     Shared avgAttendance&()
     Shared teamScore(), oppScore()
 
-    Shared alpha$()
-    Shared oppName$(), locIndicator$()
-    Shared teamIndicator$()
-
     Shared gameW0!(), gameW1!()
     Shared statsZ!(), statsZ1!(), statsZ2!()
+
+    Shared alpha$()
+    Shared oppName$(), locIndicator$()
+    Shared indRecDesc$(), teamRecDesc$()
+    Shared teamIndicator$()
 
     For I = 0 To 1
         For I1 = 0 To 4
@@ -159,11 +160,12 @@ Sub InitVar ()
     Erase gameRatings!, gameW0!, gameW1!
     Erase indRecords!, M9!
     Erase statsZ!, statsZ1!, statsZ2!
+    Erase teamRecords!
 
-    Erase diskIDs$, diskPaths$
-    Erase gameTeams$, locIndicator$, oppName$
-    Erase Q$, RC$, SX$
-    Erase teamAbbrev$, teamNames$
+    Erase diskIDs$, gameTeams$
+    Erase indRecDesc$, locIndicator$, oppName$
+    Erase Q$, SX$
+    Erase teamAbbrev$, teamNames$, teamRecDesc$
     Erase Y$
 
     Erase F%, F5%, F7%, G9%
@@ -451,6 +453,7 @@ Sub PBP ()
     If pbpDelay! > 0 And pbpOpt = 0 Then
 
         pbpString$ = PadRight$(pbpString$, 38)
+        'Print #11, pbpString$
 
         Locate 8, 1
 
@@ -6234,7 +6237,7 @@ End Function
 Sub pbplog (lineNumber)
 
     Print #11, "Called from line "; lineNumber
-    'Print #11, gameTeams$(0); " vs "; gameTeams$(1)
+    Print #11, gameTeams$(0); " vs "; gameTeams$(1)
     Print #11, pbpString$
     Print #11,
 
@@ -6559,13 +6562,14 @@ End Sub
 'for later updating the files.
 Sub CheckRecords ()
 
-    'Dim RC$(50, 4), indRecords!(50, 2) As Single
-    Dim TRC$(125, 3), TREC(125, 2) As Single
-    Dim V8(1, 14)
-    Dim SITE$(1)
+    Shared indRecDesc$(), teamRecDesc$()
+    Shared indRecords!(), teamRecords!()
 
-    SITE$(0) = "AT"
-    SITE$(1) = "VS."
+    Dim V8(1, 14)
+    Dim VERSUS$(1)
+
+    VERSUS$(0) = "AT"
+    VERSUS$(1) = "VS."
 
     If _FileExists(diskPaths$(1) + "RECORDS.GAM") Then
 
@@ -6576,63 +6580,63 @@ Sub CheckRecords ()
                 Input #2, indRecords!(I, I1)
             Next
             For I1 = 0 To 4
-                Input #2, RC$(I, I1)
+                Input #2, indRecDesc$(I, I1)
             Next
         Next
 
         For I = 0 To 125
             For I1 = 0 To 2
-                Input #2, TREC(I, I1)
+                Input #2, teamRecords!(I, I1)
             Next
             For I1 = 0 To 3
-                Input #2, TRC$(I, I1)
+                Input #2, teamRecDesc$(I, I1)
             Next
         Next
 
         Close #2
     Else
 
-        TREC(2, 0) = 999
-        TREC(4, 0) = 999
-        TREC(7, 0) = 999
-        TREC(9, 0) = 999
-        TREC(11, 0) = 999
-        TREC(13, 0) = 999
-        TREC(15, 0) = 999
-        TREC(17, 0) = 999
-        TREC(19, 0) = 999
-        TREC(21, 0) = 999
-        TREC(23, 0) = 999
-        TREC(25, 0) = 999
-        TREC(27, 0) = 999
-        TREC(29, 0) = 999
-        TREC(31, 0) = 999
-        TREC(33, 0) = 999
-        TREC(35, 0) = 999
-        TREC(37, 0) = 999
-        TREC(43, 0) = 999
-        TREC(45, 0) = 999
-        TREC(61, 0) = 999
-        TREC(63, 0) = 999
-        TREC(65, 0) = 999
-        TREC(67, 0) = 999
-        TREC(73, 0) = 999
-        TREC(75, 0) = 999
-        TREC(81, 0) = 999
-        TREC(83, 0) = 999
-        TREC(87, 0) = 999
-        TREC(89, 0) = 999
-        TREC(92, 0) = 999
-        TREC(94, 0) = 999
-        TREC(97, 0) = 999
-        TREC(99, 0) = 999
-        TREC(105, 0) = 999
-        TREC(107, 0) = 999
-        TREC(113, 0) = 999
-        TREC(115, 0) = 999
-        TREC(120, 0) = 999
-        TREC(123, 0) = 999
-        TREC(125, 0) = 999
+        teamRecords!(2, 0) = 999
+        teamRecords!(4, 0) = 999
+        teamRecords!(7, 0) = 999
+        teamRecords!(9, 0) = 999
+        teamRecords!(11, 0) = 999
+        teamRecords!(13, 0) = 999
+        teamRecords!(15, 0) = 999
+        teamRecords!(17, 0) = 999
+        teamRecords!(19, 0) = 999
+        teamRecords!(21, 0) = 999
+        teamRecords!(23, 0) = 999
+        teamRecords!(25, 0) = 999
+        teamRecords!(27, 0) = 999
+        teamRecords!(29, 0) = 999
+        teamRecords!(31, 0) = 999
+        teamRecords!(33, 0) = 999
+        teamRecords!(35, 0) = 999
+        teamRecords!(37, 0) = 999
+        teamRecords!(43, 0) = 999
+        teamRecords!(45, 0) = 999
+        teamRecords!(61, 0) = 999
+        teamRecords!(63, 0) = 999
+        teamRecords!(65, 0) = 999
+        teamRecords!(67, 0) = 999
+        teamRecords!(73, 0) = 999
+        teamRecords!(75, 0) = 999
+        teamRecords!(81, 0) = 999
+        teamRecords!(83, 0) = 999
+        teamRecords!(87, 0) = 999
+        teamRecords!(89, 0) = 999
+        teamRecords!(92, 0) = 999
+        teamRecords!(94, 0) = 999
+        teamRecords!(97, 0) = 999
+        teamRecords!(99, 0) = 999
+        teamRecords!(105, 0) = 999
+        teamRecords!(107, 0) = 999
+        teamRecords!(113, 0) = 999
+        teamRecords!(115, 0) = 999
+        teamRecords!(120, 0) = 999
+        teamRecords!(123, 0) = 999
+        teamRecords!(125, 0) = 999
 
     End If
 
@@ -6646,33 +6650,33 @@ Sub CheckRecords ()
                 indRecords!(0, 0) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) ' POINTS
                 indRecords!(0, 1) = 1 ' TIMES DONE
                 indRecords!(0, 2) = 0 ' GAME
-                RC$(0, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(0, 1) = gameTeams$(I) ' TEAM
-                RC$(0, 2) = SITE$(I) ' AT/VS
-                RC$(0, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(0, 4) = Date$ ' DATE
+                indRecDesc$(0, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(0, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(0, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(0, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(0, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 1, I1, 13) + QQ(I, 2, I1, 13) > indRecords!(1, 0) Then
                 indRecords!(1, 0) = QQ(I, 1, I1, 13) + QQ(I, 2, I1, 13) ' POINTS
                 indRecords!(1, 1) = 1 ' TIMES DONE
                 indRecords!(1, 2) = 1 ' HALF
-                RC$(1, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(1, 1) = gameTeams$(I) ' TEAM
-                RC$(1, 2) = SITE$(I) ' AT/VS
-                RC$(1, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(1, 4) = Date$ ' DATE
+                indRecDesc$(1, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(1, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(1, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(1, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(1, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 3, I1, 13) + QQ(I, 4, I1, 13) > indRecords!(1, 0) Then
                 indRecords!(1, 0) = QQ(I, 3, I1, 13) + QQ(I, 4, I1, 13) ' POINTS
                 indRecords!(1, 1) = 1 ' TIMES DONE
                 indRecords!(1, 2) = 2 ' HALF
-                RC$(1, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(1, 1) = gameTeams$(I) ' TEAM
-                RC$(1, 2) = SITE$(I) ' AT/VS
-                RC$(1, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(1, 4) = Date$ ' DATE
+                indRecDesc$(1, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(1, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(1, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(1, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(1, 4) = Date$ ' DATE
             End If
 
             For I2 = 1 To 4
@@ -6680,11 +6684,11 @@ Sub CheckRecords ()
                     indRecords!(2, 0) = QQ(I, I2, I1, 13) ' POINTS
                     indRecords!(2, 1) = 1 ' TIMES DONE
                     indRecords!(2, 2) = I2 ' QTR
-                    RC$(2, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(2, 1) = gameTeams$(I) ' TEAM
-                    RC$(2, 2) = SITE$(I) ' AT/VS
-                    RC$(2, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(2, 4) = Date$ ' DATE
+                    indRecDesc$(2, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(2, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(2, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(2, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(2, 4) = Date$ ' DATE
                 End If
             Next I2
 
@@ -6693,11 +6697,11 @@ Sub CheckRecords ()
                     indRecords!(3, 0) = QQ(I, I2, I1, 13) ' POINTS
                     indRecords!(3, 1) = 1 ' TIMES DONE
                     indRecords!(3, 2) = I2 ' QTR
-                    RC$(3, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(3, 1) = gameTeams$(I) ' TEAM
-                    RC$(3, 2) = SITE$(I) ' AT/VS
-                    RC$(3, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(3, 4) = Date$ ' DATE
+                    indRecDesc$(3, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(3, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(3, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(3, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(3, 4) = Date$ ' DATE
                 End If
             Next I2
 
@@ -6707,31 +6711,30 @@ Sub CheckRecords ()
                     indRecords!(4, 0) = gameRatings!(I, I1, 8) / gameRatings!(I, I1, 7) ' PCTG
                     indRecords!(4, 1) = gameRatings!(I, I1, 8) ' FGM
                     indRecords!(4, 2) = gameRatings!(I, I1, 7) ' FGA
-                    RC$(4, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(4, 1) = gameTeams$(I) ' TEAM
-                    RC$(4, 2) = SITE$(I) ' AT/VS
-                    RC$(4, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(4, 4) = Date$ ' DATE
+                    indRecDesc$(4, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(4, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(4, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(4, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(4, 4) = Date$ ' DATE
                 End If
             End If
 
-            900
             If gameRatings!(I, I1, 8) = gameRatings!(I, I1, 7) And gameRatings!(I, I1, 7) > indRecords!(5, 0) Then
                 indRecords!(5, 0) = gameRatings!(I, I1, 7) ' MOST FGM
-                RC$(5, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(5, 1) = gameTeams$(I) ' TEAM
-                RC$(5, 2) = SITE$(I) ' AT/VS
-                RC$(5, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(5, 4) = Date$ ' DATE
+                indRecDesc$(5, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(5, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(5, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(5, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(5, 4) = Date$ ' DATE
             End If
 
             If gameRatings!(I, I1, 8) = 0 And gameRatings!(I, I1, 7) > indRecords!(6, 0) Then
                 indRecords!(6, 0) = gameRatings!(I, I1, 7) ' 0 FGM /FGA
-                RC$(6, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(6, 1) = gameTeams$(I) ' TEAM
-                RC$(6, 2) = SITE$(I) ' AT/VS
-                RC$(6, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(6, 4) = Date$ ' DATE
+                indRecDesc$(6, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(6, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(6, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(6, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(6, 4) = Date$ ' DATE
             End If
 
             ' FIELD GOALS MADE IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
@@ -6739,33 +6742,33 @@ Sub CheckRecords ()
                 indRecords!(7, 0) = gameRatings!(I, I1, 8) ' FGM
                 indRecords!(7, 1) = 1 ' TIMES DONE
                 indRecords!(7, 2) = 0 ' GAME
-                RC$(7, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(7, 1) = gameTeams$(I) ' TEAM
-                RC$(7, 2) = SITE$(I) ' AT/VS
-                RC$(7, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(7, 4) = Date$ ' DATE
+                indRecDesc$(7, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(7, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(7, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(7, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(7, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 1, I1, 2) + QQ(I, 2, I1, 2) > indRecords!(8, 0) Then
                 indRecords!(8, 0) = QQ(I, 1, I1, 2) + QQ(I, 2, I1, 2) ' FGM
                 indRecords!(8, 1) = 1 ' TIMES DONE
                 indRecords!(8, 2) = 1 ' HALF
-                RC$(8, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(8, 1) = gameTeams$(I) ' TEAM
-                RC$(8, 2) = SITE$(I) ' AT/VS
-                RC$(8, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(8, 4) = Date$ ' DATE
+                indRecDesc$(8, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(8, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(8, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(8, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(8, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 3, I1, 2) + QQ(I, 4, I1, 2) > indRecords!(8, 0) Then
                 indRecords!(8, 0) = QQ(I, 3, I1, 2) + QQ(I, 4, I1, 2) ' FGM
                 indRecords!(8, 1) = 1 ' TIMES DONE
                 indRecords!(8, 2) = 2 ' HALF
-                RC$(8, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(8, 1) = gameTeams$(I) ' TEAM
-                RC$(8, 2) = SITE$(I) ' AT/VS
-                RC$(8, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(8, 4) = Date$ ' DATE
+                indRecDesc$(8, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(8, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(8, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(8, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(8, 4) = Date$ ' DATE
             End If
 
             For I2 = 1 To 4
@@ -6773,11 +6776,11 @@ Sub CheckRecords ()
                     indRecords!(9, 0) = QQ(I, I2, I1, 2) ' FGM
                     indRecords!(9, 1) = 1 ' TIMES DONE
                     indRecords!(9, 2) = I2 ' QTR
-                    RC$(9, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(9, 1) = gameTeams$(I) ' TEAM
-                    RC$(9, 2) = SITE$(I) ' AT/VS
-                    RC$(9, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(9, 4) = Date$ ' DATE
+                    indRecDesc$(9, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(9, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(9, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(9, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(9, 4) = Date$ ' DATE
                 End If
             Next I2
 
@@ -6786,11 +6789,11 @@ Sub CheckRecords ()
                     indRecords!(10, 0) = QQ(I, I2, I1, 2) ' FGM
                     indRecords!(10, 1) = 1 ' TIMES DONE
                     indRecords!(10, 2) = I2 ' QTR
-                    RC$(10, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(10, 1) = gameTeams$(I) ' TEAM
-                    RC$(10, 2) = SITE$(I) ' AT/VS
-                    RC$(10, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(10, 4) = Date$ ' DATE
+                    indRecDesc$(10, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(10, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(10, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(10, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(10, 4) = Date$ ' DATE
                 End If
             Next I2
 
@@ -6799,33 +6802,33 @@ Sub CheckRecords ()
                 indRecords!(11, 0) = gameRatings!(I, I1, 7) ' FGA
                 indRecords!(11, 1) = 1 ' TIMES DONE
                 indRecords!(11, 2) = 0 ' GAME
-                RC$(11, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(11, 1) = gameTeams$(I) ' TEAM
-                RC$(11, 2) = SITE$(I) ' AT/VS
-                RC$(11, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(11, 4) = Date$ ' DATE
+                indRecDesc$(11, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(11, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(11, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(11, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(11, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 1, I1, 1) + QQ(I, 2, I1, 1) > indRecords!(12, 0) Then
                 indRecords!(12, 0) = QQ(I, 1, I1, 1) + QQ(I, 2, I1, 1) ' FGA
                 indRecords!(12, 1) = 1 ' TIMES DONE
                 indRecords!(12, 2) = 1 ' HALF
-                RC$(12, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(12, 1) = gameTeams$(I) ' TEAM
-                RC$(12, 2) = SITE$(I) ' AT/VS
-                RC$(12, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(12, 4) = Date$ ' DATE
+                indRecDesc$(12, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(12, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(12, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(12, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(12, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 3, I1, 1) + QQ(I, 4, I1, 1) > indRecords!(12, 0) Then
                 indRecords!(12, 0) = QQ(I, 3, I1, 1) + QQ(I, 4, I1, 1) ' FGA
                 indRecords!(12, 1) = 1 ' TIMES DONE
                 indRecords!(12, 2) = 2 ' HALF
-                RC$(12, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(12, 1) = gameTeams$(I) ' TEAM
-                RC$(12, 2) = SITE$(I) ' AT/VS
-                RC$(12, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(12, 4) = Date$ ' DATE
+                indRecDesc$(12, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(12, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(12, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(12, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(12, 4) = Date$ ' DATE
             End If
 
             For I2 = 1 To 4
@@ -6833,11 +6836,11 @@ Sub CheckRecords ()
                     indRecords!(13, 0) = QQ(I, I2, I1, 1) ' FGA
                     indRecords!(13, 1) = 1 ' TIMES DONE
                     indRecords!(13, 2) = I2 ' QTR
-                    RC$(13, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(13, 1) = gameTeams$(I) ' TEAM
-                    RC$(13, 2) = SITE$(I) ' AT/VS
-                    RC$(13, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(13, 4) = Date$ ' DATE
+                    indRecDesc$(13, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(13, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(13, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(13, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(13, 4) = Date$ ' DATE
                 End If
             Next I2
 
@@ -6846,31 +6849,31 @@ Sub CheckRecords ()
                     indRecords!(14, 0) = QQ(I, I2, I1, 1) ' FGA
                     indRecords!(14, 1) = 1 ' TIMES DONE
                     indRecords!(14, 2) = I2 ' QTR
-                    RC$(14, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(14, 1) = gameTeams$(I) ' TEAM
-                    RC$(14, 2) = SITE$(I) ' AT/VS
-                    RC$(14, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(14, 4) = Date$ ' DATE
+                    indRecDesc$(14, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(14, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(14, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(14, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(14, 4) = Date$ ' DATE
                 End If
             Next I2
 
             ' THREE-POINT FIELD GOALS MOST MADE NO MISSES, MOST ATT NONE MADE
             If W%(I, I1, 0) = W%(I, I1, 1) And W%(I, I1, 0) > indRecords!(15, 0) Then
                 indRecords!(15, 0) = W%(I, I1, 0) ' MOST 3-FGM
-                RC$(15, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(15, 1) = gameTeams$(I) ' TEAM
-                RC$(15, 2) = SITE$(I) ' AT/VS
-                RC$(15, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(15, 4) = Date$ ' DATE
+                indRecDesc$(15, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(15, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(15, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(15, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(15, 4) = Date$ ' DATE
             End If
 
             If W%(I, I1, 0) = 0 And W%(I, I1, 1) > indRecords!(16, 0) Then
                 indRecords!(16, 0) = W%(I, I1, 1) ' 0 3FGM /3FGA
-                RC$(16, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(16, 1) = gameTeams$(I) ' TEAM
-                RC$(16, 2) = SITE$(I) ' AT/VS
-                RC$(16, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(16, 4) = Date$ ' DATE
+                indRecDesc$(16, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(16, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(16, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(16, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(16, 4) = Date$ ' DATE
             End If
 
             ' 3-FIELD GOALS MADE IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
@@ -6878,33 +6881,33 @@ Sub CheckRecords ()
                 indRecords!(17, 0) = W%(I, I1, 0) ' 3FGM
                 indRecords!(17, 1) = 1 ' TIMES DONE
                 indRecords!(17, 2) = 0 ' GAME
-                RC$(17, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(17, 1) = gameTeams$(I) ' TEAM
-                RC$(17, 2) = SITE$(I) ' AT/VS
-                RC$(17, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(17, 4) = Date$ ' DATE
+                indRecDesc$(17, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(17, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(17, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(17, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(17, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 1, I1, 10) + QQ(I, 2, I1, 10) > indRecords!(18, 0) Then
                 indRecords!(18, 0) = QQ(I, 1, I1, 10) + QQ(I, 2, I1, 10) ' 3FGM
                 indRecords!(18, 1) = 1 ' TIMES DONE
                 indRecords!(18, 2) = 1 ' HALF
-                RC$(18, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(18, 1) = gameTeams$(I) ' TEAM
-                RC$(18, 2) = SITE$(I) ' AT/VS
-                RC$(18, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(18, 4) = Date$ ' DATE
+                indRecDesc$(18, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(18, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(18, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(18, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(18, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) > indRecords!(18, 0) Then
                 indRecords!(18, 0) = QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) ' 3FGM
                 indRecords!(18, 1) = 1 ' TIMES DONE
                 indRecords!(18, 2) = 2 ' HALF
-                RC$(18, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(18, 1) = gameTeams$(I) ' TEAM
-                RC$(18, 2) = SITE$(I) ' AT/VS
-                RC$(18, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(18, 4) = Date$ ' DATE
+                indRecDesc$(18, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(18, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(18, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(18, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(18, 4) = Date$ ' DATE
             End If
 
             For I2 = 1 To 4
@@ -6912,11 +6915,11 @@ Sub CheckRecords ()
                     indRecords!(19, 0) = QQ(I, I2, I1, 10) ' 3FGM
                     indRecords!(19, 1) = 1 ' TIMES DONE
                     indRecords!(19, 2) = I2 ' QTR
-                    RC$(19, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(19, 1) = gameTeams$(I) ' TEAM
-                    RC$(19, 2) = SITE$(I) ' AT/VS
-                    RC$(19, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(19, 4) = Date$ ' DATE
+                    indRecDesc$(19, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(19, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(19, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(19, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(19, 4) = Date$ ' DATE
                 End If
             Next I2
 
@@ -6925,11 +6928,11 @@ Sub CheckRecords ()
                     indRecords!(20, 0) = QQ(I, I2, I1, 10) ' 3FGM
                     indRecords!(20, 1) = 1 ' TIMES DONE
                     indRecords!(20, 2) = I2 ' QTR
-                    RC$(20, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(20, 1) = gameTeams$(I) ' TEAM
-                    RC$(20, 2) = SITE$(I) ' AT/VS
-                    RC$(20, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(20, 4) = Date$ ' DATE
+                    indRecDesc$(20, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(20, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(20, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(20, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(20, 4) = Date$ ' DATE
                 End If
             Next I2
 
@@ -6938,52 +6941,52 @@ Sub CheckRecords ()
                 indRecords!(21, 0) = W%(I, I1, 1) ' 3FGA
                 indRecords!(21, 1) = 1 ' TIMES DONE
                 indRecords!(21, 2) = 0 ' GAME
-                RC$(21, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(21, 1) = gameTeams$(I) ' TEAM
-                RC$(21, 2) = SITE$(I) ' AT/VS
-                RC$(21, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(21, 4) = Date$ ' DATE
+                indRecDesc$(21, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(21, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(21, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(21, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(21, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 1, I1, 11) + QQ(I, 2, I1, 11) > indRecords!(22, 0) Then
                 indRecords!(22, 0) = QQ(I, 1, I1, 11) + QQ(I, 2, I1, 11) ' 3FGA
                 indRecords!(22, 1) = 1 ' TIMES DONE
                 indRecords!(22, 2) = 1 ' HALF
-                RC$(22, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(22, 1) = gameTeams$(I) ' TEAM
-                RC$(22, 2) = SITE$(I) ' AT/VS
-                RC$(22, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(22, 4) = Date$ ' DATE
+                indRecDesc$(22, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(22, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(22, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(22, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(22, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 3, I1, 11) + QQ(I, 4, I1, 11) > indRecords!(22, 0) Then
                 indRecords!(22, 0) = QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) ' 3FGA
                 indRecords!(22, 1) = 1 ' TIMES DONE
                 indRecords!(22, 2) = 2 ' HALF
-                RC$(22, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(22, 1) = gameTeams$(I) ' TEAM
-                RC$(22, 2) = SITE$(I) ' AT/VS
-                RC$(22, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(22, 4) = Date$ ' DATE
+                indRecDesc$(22, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(22, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(22, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(22, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(22, 4) = Date$ ' DATE
             End If
 
             ' FREE THROWS -  MOST MADE NO MISSES, MOST ATT NONE MADE
             If gameRatings!(I, I1, 9) = gameRatings!(I, I1, 10) And gameRatings!(I, I1, 9) > indRecords!(23, 0) Then
                 indRecords!(23, 0) = gameRatings!(I, I1, 9) ' MOST FTM
-                RC$(23, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(23, 1) = gameTeams$(I) ' TEAM
-                RC$(23, 2) = SITE$(I) ' AT/VS
-                RC$(23, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(23, 4) = Date$ ' DATE
+                indRecDesc$(23, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(23, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(23, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(23, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(23, 4) = Date$ ' DATE
             End If
 
             If gameRatings!(I, I1, 10) = 0 And gameRatings!(I, I1, 9) > indRecords!(24, 0) Then
                 indRecords!(24, 0) = gameRatings!(I, I1, 10) ' 0 FTM /FTA
-                RC$(24, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(24, 1) = gameTeams$(I) ' TEAM
-                RC$(24, 2) = SITE$(I) ' AT/VS
-                RC$(24, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(24, 4) = Date$ ' DATE
+                indRecDesc$(24, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(24, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(24, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(24, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(24, 4) = Date$ ' DATE
             End If
 
             ' MADE FREE THROWS IN A GAME, HALF, QUARTER
@@ -6991,33 +6994,33 @@ Sub CheckRecords ()
                 indRecords!(25, 0) = gameRatings!(I, I1, 10) ' FTM
                 indRecords!(25, 1) = 1 ' TIMES DONE
                 indRecords!(25, 2) = 0 ' GAME
-                RC$(25, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(25, 1) = gameTeams$(I) ' TEAM
-                RC$(25, 2) = SITE$(I) ' AT/VS
-                RC$(25, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(25, 4) = Date$ ' DATE
+                indRecDesc$(25, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(25, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(25, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(25, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(25, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 1, I1, 4) + QQ(I, 2, I1, 4) > indRecords!(26, 0) Then
                 indRecords!(26, 0) = QQ(I, 1, I1, 4) + QQ(I, 2, I1, 4) ' FTM
                 indRecords!(26, 1) = 1 ' TIMES DONE
                 indRecords!(26, 2) = 1 ' HALF
-                RC$(26, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(26, 1) = gameTeams$(I) ' TEAM
-                RC$(26, 2) = SITE$(I) ' AT/VS
-                RC$(26, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(26, 4) = Date$ ' DATE
+                indRecDesc$(26, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(26, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(26, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(26, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(26, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 3, I1, 4) + QQ(I, 4, I1, 4) > indRecords!(26, 0) Then
                 indRecords!(26, 0) = QQ(I, 3, I1, 4) + QQ(I, 4, I1, 4) ' FTM
                 indRecords!(26, 1) = 1 ' TIMES DONE
                 indRecords!(26, 2) = 2 ' HALF
-                RC$(26, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(26, 1) = gameTeams$(I) ' TEAM
-                RC$(26, 2) = SITE$(I) ' AT/VS
-                RC$(26, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(26, 4) = Date$ ' DATE
+                indRecDesc$(26, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(26, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(26, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(26, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(26, 4) = Date$ ' DATE
             End If
 
             For I2 = 1 To 4
@@ -7025,11 +7028,11 @@ Sub CheckRecords ()
                     indRecords!(27, 0) = QQ(I, I2, I1, 4) ' FTM
                     indRecords!(27, 1) = 1 ' TIMES DONE
                     indRecords!(27, 2) = I2 ' QTR
-                    RC$(27, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(27, 1) = gameTeams$(I) ' TEAM
-                    RC$(27, 2) = SITE$(I) ' AT/VS
-                    RC$(27, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(27, 4) = Date$ ' DATE
+                    indRecDesc$(27, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(27, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(27, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(27, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(27, 4) = Date$ ' DATE
                 End If
             Next I2
 
@@ -7038,33 +7041,33 @@ Sub CheckRecords ()
                 indRecords!(28, 0) = gameRatings!(I, I1, 9) ' FTA
                 indRecords!(28, 1) = 1 ' TIMES DONE
                 indRecords!(28, 2) = 0 ' GAME
-                RC$(28, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(28, 1) = gameTeams$(I) ' TEAM
-                RC$(28, 2) = SITE$(I) ' AT/VS
-                RC$(28, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(28, 4) = Date$ ' DATE
+                indRecDesc$(28, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(28, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(28, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(28, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(28, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 1, I1, 3) + QQ(I, 2, I1, 3) > indRecords!(29, 0) Then
                 indRecords!(29, 0) = QQ(I, 1, I1, 3) + QQ(I, 2, I1, 3) ' FTA
                 indRecords!(29, 1) = 1 ' TIMES DONE
                 indRecords!(29, 2) = 1 ' HALF
-                RC$(29, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(29, 1) = gameTeams$(I) ' TEAM
-                RC$(29, 2) = SITE$(I) ' AT/VS
-                RC$(29, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(29, 4) = Date$ ' DATE
+                indRecDesc$(29, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(29, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(29, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(29, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(29, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 3, I1, 3) + QQ(I, 4, I1, 3) > indRecords!(29, 0) Then
                 indRecords!(29, 0) = QQ(I, 3, I1, 3) + QQ(I, 4, I1, 3) ' FTM
                 indRecords!(29, 1) = 1 ' TIMES DONE
                 indRecords!(29, 2) = 2 ' HALF
-                RC$(29, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(29, 1) = gameTeams$(I) ' TEAM
-                RC$(29, 2) = SITE$(I) ' AT/VS
-                RC$(29, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(29, 4) = Date$ ' DATE
+                indRecDesc$(29, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(29, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(29, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(29, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(29, 4) = Date$ ' DATE
             End If
 
             For I2 = 1 To 4
@@ -7072,11 +7075,11 @@ Sub CheckRecords ()
                     indRecords!(30, 0) = QQ(I, I2, I1, 3) ' FTM
                     indRecords!(30, 1) = 1 ' TIMES DONE
                     indRecords!(30, 2) = I2 ' QTR
-                    RC$(30, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(30, 1) = gameTeams$(I) ' TEAM
-                    RC$(30, 2) = SITE$(I) ' AT/VS
-                    RC$(30, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(30, 4) = Date$ ' DATE
+                    indRecDesc$(30, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(30, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(30, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(30, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(30, 4) = Date$ ' DATE
                 End If
             Next I2
 
@@ -7085,33 +7088,33 @@ Sub CheckRecords ()
                 indRecords!(31, 0) = gameRatings!(I, I1, 11) ' FTA
                 indRecords!(31, 1) = 1 ' TIMES DONE
                 indRecords!(31, 2) = 0 ' GAME
-                RC$(31, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(31, 1) = gameTeams$(I) ' TEAM
-                RC$(31, 2) = SITE$(I) ' AT/VS
-                RC$(31, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(31, 4) = Date$ ' DATE
+                indRecDesc$(31, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(31, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(31, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(31, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(31, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) > indRecords!(32, 0) Then
                 indRecords!(32, 0) = QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) ' RB
                 indRecords!(32, 1) = 1 ' TIMES DONE
                 indRecords!(32, 2) = 1 ' HALF
-                RC$(32, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(32, 1) = gameTeams$(I) ' TEAM
-                RC$(32, 2) = SITE$(I) ' AT/VS
-                RC$(32, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(32, 4) = Date$ ' DATE
+                indRecDesc$(32, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(32, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(32, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(32, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(32, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) > indRecords!(32, 0) Then
                 indRecords!(32, 0) = QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) ' RB
                 indRecords!(32, 1) = 1 ' TIMES DONE
                 indRecords!(32, 2) = 2 ' HALF
-                RC$(32, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(32, 1) = gameTeams$(I) ' TEAM
-                RC$(32, 2) = SITE$(I) ' AT/VS
-                RC$(32, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(32, 4) = Date$ ' DATE
+                indRecDesc$(32, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(32, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(32, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(32, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(32, 4) = Date$ ' DATE
             End If
 
             For I2 = 1 To 4
@@ -7119,11 +7122,11 @@ Sub CheckRecords ()
                     indRecords!(33, 0) = QQ(I, I2, I1, 5) ' RB
                     indRecords!(33, 1) = 1 ' TIMES DONE
                     indRecords!(33, 2) = I2 ' QTR
-                    RC$(33, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(33, 1) = gameTeams$(I) ' TEAM
-                    RC$(33, 2) = SITE$(I) ' AT/VS
-                    RC$(33, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(33, 4) = Date$ ' DATE
+                    indRecDesc$(33, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(33, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(33, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(33, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(33, 4) = Date$ ' DATE
                 End If
             Next I2
 
@@ -7132,33 +7135,33 @@ Sub CheckRecords ()
                 indRecords!(34, 0) = gameRatings!(I, I1, 24) ' FTA
                 indRecords!(34, 1) = 1 ' TIMES DONE
                 indRecords!(34, 2) = 0 ' GAME
-                RC$(34, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(34, 1) = gameTeams$(I) ' TEAM
-                RC$(34, 2) = SITE$(I) ' AT/VS
-                RC$(34, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(34, 4) = Date$ ' DATE
+                indRecDesc$(34, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(34, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(34, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(34, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(34, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12) > indRecords!(35, 0) Then
                 indRecords!(35, 0) = QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12) ' RB
                 indRecords!(35, 1) = 1 ' TIMES DONE
                 indRecords!(35, 2) = 1 ' HALF
-                RC$(35, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(35, 1) = gameTeams$(I) ' TEAM
-                RC$(35, 2) = SITE$(I) ' AT/VS
-                RC$(35, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(35, 4) = Date$ ' DATE
+                indRecDesc$(35, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(35, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(35, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(35, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(35, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12) > indRecords!(35, 0) Then
                 indRecords!(35, 0) = QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12) ' RB
                 indRecords!(35, 1) = 1 ' TIMES DONE
                 indRecords!(35, 2) = 2 ' HALF
-                RC$(35, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(35, 1) = gameTeams$(I) ' TEAM
-                RC$(35, 2) = SITE$(I) ' AT/VS
-                RC$(35, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(35, 4) = Date$ ' DATE
+                indRecDesc$(35, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(35, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(35, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(35, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(35, 4) = Date$ ' DATE
             End If
 
             For I2 = 1 To 4
@@ -7166,11 +7169,11 @@ Sub CheckRecords ()
                     indRecords!(36, 0) = QQ(I, I2, I1, 12) ' RB
                     indRecords!(36, 1) = 1 ' TIMES DONE
                     indRecords!(36, 2) = I2 ' QTR
-                    RC$(36, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(36, 1) = gameTeams$(I) ' TEAM
-                    RC$(36, 2) = SITE$(I) ' AT/VS
-                    RC$(36, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(36, 4) = Date$ ' DATE
+                    indRecDesc$(36, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(36, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(36, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(36, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(36, 4) = Date$ ' DATE
                 End If
             Next I2
 
@@ -7179,33 +7182,33 @@ Sub CheckRecords ()
                 indRecords!(37, 0) = gameRatings!(I, I1, 11) - gameRatings!(I, I1, 24) ' FTA
                 indRecords!(37, 1) = 1 ' TIMES DONE
                 indRecords!(37, 2) = 0 ' GAME
-                RC$(37, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(37, 1) = gameTeams$(I) ' TEAM
-                RC$(37, 2) = SITE$(I) ' AT/VS
-                RC$(37, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(37, 4) = Date$ ' DATE
+                indRecDesc$(37, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(37, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(37, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(37, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(37, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) - (QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12)) > indRecords!(38, 0) Then
                 indRecords!(38, 0) = QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) - (QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12)) ' RB
                 indRecords!(38, 1) = 1 ' TIMES DONE
                 indRecords!(38, 2) = 1 ' HALF
-                RC$(38, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(38, 1) = gameTeams$(I) ' TEAM
-                RC$(38, 2) = SITE$(I) ' AT/VS
-                RC$(38, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(38, 4) = Date$ ' DATE
+                indRecDesc$(38, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(38, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(38, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(38, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(38, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) - (QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12)) > indRecords!(38, 0) Then
                 indRecords!(38, 0) = QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) - (QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12)) ' RB
                 indRecords!(38, 1) = 1 ' TIMES DONE
                 indRecords!(38, 2) = 2 ' HALF
-                RC$(38, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(38, 1) = gameTeams$(I) ' TEAM
-                RC$(38, 2) = SITE$(I) ' AT/VS
-                RC$(38, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(38, 4) = Date$ ' DATE
+                indRecDesc$(38, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(38, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(38, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(38, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(38, 4) = Date$ ' DATE
             End If
 
             For I2 = 1 To 4
@@ -7213,11 +7216,11 @@ Sub CheckRecords ()
                     indRecords!(39, 0) = QQ(I, I2, I1, 5) - QQ(I, I2, I1, 12) ' RB
                     indRecords!(39, 1) = 1 ' TIMES DONE
                     indRecords!(39, 2) = I2 ' QTR
-                    RC$(39, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(39, 1) = gameTeams$(I) ' TEAM
-                    RC$(39, 2) = SITE$(I) ' AT/VS
-                    RC$(39, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(39, 4) = Date$ ' DATE
+                    indRecDesc$(39, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(39, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(39, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(39, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(39, 4) = Date$ ' DATE
                 End If
             Next I2
 
@@ -7226,33 +7229,33 @@ Sub CheckRecords ()
                 indRecords!(40, 0) = gameRatings!(I, I1, 14) ' FTA
                 indRecords!(40, 1) = 1 ' TIMES DONE
                 indRecords!(40, 2) = 0 ' GAME
-                RC$(40, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(40, 1) = gameTeams$(I) ' TEAM
-                RC$(40, 2) = SITE$(I) ' AT/VS
-                RC$(40, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(40, 4) = Date$ ' DATE
+                indRecDesc$(40, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(40, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(40, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(40, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(40, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 1, I1, 8) + QQ(I, 2, I1, 8) > indRecords!(41, 0) Then
                 indRecords!(41, 0) = QQ(I, 1, I1, 8) + QQ(I, 2, I1, 8) ' FTA
                 indRecords!(41, 1) = 1 ' TIMES DONE
                 indRecords!(41, 2) = 1 ' HALF
-                RC$(41, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(41, 1) = gameTeams$(I) ' TEAM
-                RC$(41, 2) = SITE$(I) ' AT/VS
-                RC$(41, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(41, 4) = Date$ ' DATE
+                indRecDesc$(41, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(41, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(41, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(41, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(41, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 3, I1, 8) + QQ(I, 4, I1, 8) > indRecords!(41, 0) Then
                 indRecords!(41, 0) = QQ(I, 3, I1, 8) + QQ(I, 4, I1, 8) ' FTM
                 indRecords!(41, 1) = 1 ' TIMES DONE
                 indRecords!(41, 2) = 2 ' HALF
-                RC$(41, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(41, 1) = gameTeams$(I) ' TEAM
-                RC$(41, 2) = SITE$(I) ' AT/VS
-                RC$(41, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(41, 4) = Date$ ' DATE
+                indRecDesc$(41, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(41, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(41, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(41, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(41, 4) = Date$ ' DATE
             End If
 
             For I2 = 1 To 4
@@ -7260,11 +7263,11 @@ Sub CheckRecords ()
                     indRecords!(42, 0) = QQ(I, I2, I1, 8) ' FTM
                     indRecords!(42, 1) = 1 ' TIMES DONE
                     indRecords!(42, 2) = I2 ' QTR
-                    RC$(42, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(42, 1) = gameTeams$(I) ' TEAM
-                    RC$(42, 2) = SITE$(I) ' AT/VS
-                    RC$(42, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(42, 4) = Date$ ' DATE
+                    indRecDesc$(42, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(42, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(42, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(42, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(42, 4) = Date$ ' DATE
                 End If
             Next I2
 
@@ -7273,33 +7276,33 @@ Sub CheckRecords ()
                 indRecords!(43, 0) = gameRatings!(I, I1, 13) ' FTA
                 indRecords!(43, 1) = 1 ' TIMES DONE
                 indRecords!(43, 2) = 0 ' GAME
-                RC$(43, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(43, 1) = gameTeams$(I) ' TEAM
-                RC$(43, 2) = SITE$(I) ' AT/VS
-                RC$(43, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(43, 4) = Date$ ' DATE
+                indRecDesc$(43, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(43, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(43, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(43, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(43, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 1, I1, 7) + QQ(I, 2, I1, 7) > indRecords!(44, 0) Then
                 indRecords!(44, 0) = QQ(I, 1, I1, 7) + QQ(I, 2, I1, 7) ' FTA
                 indRecords!(44, 1) = 1 ' TIMES DONE
                 indRecords!(44, 2) = 1 ' HALF
-                RC$(44, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(44, 1) = gameTeams$(I) ' TEAM
-                RC$(44, 2) = SITE$(I) ' AT/VS
-                RC$(44, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(44, 4) = Date$ ' DATE
+                indRecDesc$(44, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(44, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(44, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(44, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(44, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 3, I1, 7) + QQ(I, 4, I1, 7) > indRecords!(44, 0) Then
                 indRecords!(44, 0) = QQ(I, 3, I1, 7) + QQ(I, 4, I1, 7) ' FTM
                 indRecords!(44, 1) = 1 ' TIMES DONE
                 indRecords!(44, 2) = 2 ' HALF
-                RC$(44, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(44, 1) = gameTeams$(I) ' TEAM
-                RC$(44, 2) = SITE$(I) ' AT/VS
-                RC$(44, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(44, 4) = Date$ ' DATE
+                indRecDesc$(44, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(44, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(44, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(44, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(44, 4) = Date$ ' DATE
             End If
 
             For I2 = 1 To 4
@@ -7307,11 +7310,11 @@ Sub CheckRecords ()
                     indRecords!(45, 0) = QQ(I, I2, I1, 7) ' FTM
                     indRecords!(45, 1) = 1 ' TIMES DONE
                     indRecords!(45, 2) = I2 ' QTR
-                    RC$(45, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(45, 1) = gameTeams$(I) ' TEAM
-                    RC$(45, 2) = SITE$(I) ' AT/VS
-                    RC$(45, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(45, 4) = Date$ ' DATE
+                    indRecDesc$(45, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(45, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(45, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(45, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(45, 4) = Date$ ' DATE
                 End If
             Next I2
 
@@ -7320,33 +7323,33 @@ Sub CheckRecords ()
                 indRecords!(46, 0) = gameRatings!(I, I1, 15) ' FTA
                 indRecords!(46, 1) = 1 ' TIMES DONE
                 indRecords!(46, 2) = 0 ' GAME
-                RC$(46, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(46, 1) = gameTeams$(I) ' TEAM
-                RC$(46, 2) = SITE$(I) ' AT/VS
-                RC$(46, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(46, 4) = Date$ ' DATE
+                indRecDesc$(46, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(46, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(46, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(46, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(46, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 1, I1, 9) + QQ(I, 2, I1, 9) > indRecords!(47, 0) Then
                 indRecords!(47, 0) = QQ(I, 1, I1, 9) + QQ(I, 2, I1, 9) ' FTA
                 indRecords!(47, 1) = 1 ' TIMES DONE
                 indRecords!(47, 2) = 1 ' HALF
-                RC$(47, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(47, 1) = gameTeams$(I) ' TEAM
-                RC$(47, 2) = SITE$(I) ' AT/VS
-                RC$(47, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(47, 4) = Date$ ' DATE
+                indRecDesc$(47, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(47, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(47, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(47, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(47, 4) = Date$ ' DATE
             End If
 
             If QQ(I, 3, I1, 9) + QQ(I, 4, I1, 9) > indRecords!(47, 0) Then
                 indRecords!(47, 0) = QQ(I, 3, I1, 9) + QQ(I, 4, I1, 9) ' FTM
                 indRecords!(47, 1) = 1 ' TIMES DONE
                 indRecords!(47, 2) = 2 ' HALF
-                RC$(47, 0) = players_GAME$(I, I1, 0) ' NAME
-                RC$(47, 1) = gameTeams$(I) ' TEAM
-                RC$(47, 2) = SITE$(I) ' AT/VS
-                RC$(47, 3) = gameTeams$(1 - I) ' OPPONENT
-                RC$(47, 4) = Date$ ' DATE
+                indRecDesc$(47, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(47, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(47, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(47, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(47, 4) = Date$ ' DATE
             End If
 
             For I2 = 1 To 4
@@ -7354,306 +7357,306 @@ Sub CheckRecords ()
                     indRecords!(48, 0) = QQ(I, I2, I1, 9) ' FTM
                     indRecords!(48, 1) = 1 ' TIMES DONE
                     indRecords!(48, 2) = I2 ' QTR
-                    RC$(48, 0) = players_GAME$(I, I1, 0) ' NAME
-                    RC$(48, 1) = gameTeams$(I) ' TEAM
-                    RC$(48, 2) = SITE$(I) ' AT/VS
-                    RC$(48, 3) = gameTeams$(1 - I) ' OPPONENT
-                    RC$(48, 4) = Date$ ' DATE
+                    indRecDesc$(48, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(48, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(48, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(48, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(48, 4) = Date$ ' DATE
                 End If
             Next I2
         Next
     Next
 
     ' MOST OVERTIME PERIODS
-    If quarter - 5 > TREC(0, 0) Then
-        TREC(0, 0) = quarter - 5
-        TREC(0, 1) = score(0, 0)
-        TREC(0, 2) = score(1, 0)
-        TRC$(0, 0) = gameTeams$(0)
-        TRC$(0, 1) = gameTeams$(1)
-        TRC$(0, 2) = Date$
+    If quarter - 5 > teamRecords!(0, 0) Then
+        teamRecords!(0, 0) = quarter - 5
+        teamRecords!(0, 1) = score(0, 0)
+        teamRecords!(0, 2) = score(1, 0)
+        teamRecDesc$(0, 0) = gameTeams$(0)
+        teamRecDesc$(0, 1) = gameTeams$(1)
+        teamRecDesc$(0, 2) = Date$
     End If
 
     For I = 0 To 1
 
-        If score(I, 0) > TREC(1, 0) Then
-            TREC(1, 0) = score(I, 0)
-            TREC(1, 1) = 1
-            TREC(1, 2) = 0
-            TRC$(1, 0) = gameTeams$(I)
-            TRC$(1, 1) = SITE$(I)
-            TRC$(1, 2) = gameTeams$(1 - I)
-            TRC$(1, 3) = Date$
+        If score(I, 0) > teamRecords!(1, 0) Then
+            teamRecords!(1, 0) = score(I, 0)
+            teamRecords!(1, 1) = 1
+            teamRecords!(1, 2) = 0
+            teamRecDesc$(1, 0) = gameTeams$(I)
+            teamRecDesc$(1, 1) = VERSUS$(I)
+            teamRecDesc$(1, 2) = gameTeams$(1 - I)
+            teamRecDesc$(1, 3) = Date$
         End If
 
-        If score(I, 0) < TREC(2, 0) Then
-            TREC(2, 0) = score(I, 0)
-            TREC(2, 1) = 1
-            TREC(2, 2) = 0
-            TRC$(2, 0) = gameTeams$(I)
-            TRC$(2, 1) = SITE$(I)
-            TRC$(2, 2) = gameTeams$(1 - I)
-            TRC$(2, 3) = Date$
+        If score(I, 0) < teamRecords!(2, 0) Then
+            teamRecords!(2, 0) = score(I, 0)
+            teamRecords!(2, 1) = 1
+            teamRecords!(2, 2) = 0
+            teamRecDesc$(2, 0) = gameTeams$(I)
+            teamRecDesc$(2, 1) = VERSUS$(I)
+            teamRecDesc$(2, 2) = gameTeams$(1 - I)
+            teamRecDesc$(2, 3) = Date$
         End If
 
-        If score(I, 0) + score(1 - I, 0) > TREC(3, 0) Then
-            TREC(3, 0) = score(I, 0) + score(1 - I, 0)
-            TREC(3, 1) = score(I, 0)
-            TREC(3, 2) = score(1 - I, 0)
-            TRC$(3, 0) = gameTeams$(I)
-            TRC$(3, 1) = SITE$(I)
-            TRC$(3, 2) = gameTeams$(1 - I)
-            TRC$(3, 3) = Date$
+        If score(I, 0) + score(1 - I, 0) > teamRecords!(3, 0) Then
+            teamRecords!(3, 0) = score(I, 0) + score(1 - I, 0)
+            teamRecords!(3, 1) = score(I, 0)
+            teamRecords!(3, 2) = score(1 - I, 0)
+            teamRecDesc$(3, 0) = gameTeams$(I)
+            teamRecDesc$(3, 1) = VERSUS$(I)
+            teamRecDesc$(3, 2) = gameTeams$(1 - I)
+            teamRecDesc$(3, 3) = Date$
         End If
 
-        If score(I, 0) + score(1 - I, 0) < TREC(4, 0) Then
-            TREC(4, 0) = score(I, 0) + score(1 - I, 0)
-            TREC(4, 1) = score(I, 0)
-            TREC(4, 2) = score(1 - I, 0)
-            TRC$(4, 0) = gameTeams$(I)
-            TRC$(4, 1) = SITE$(I)
-            TRC$(4, 2) = gameTeams$(1 - I)
-            TRC$(4, 3) = Date$
+        If score(I, 0) + score(1 - I, 0) < teamRecords!(4, 0) Then
+            teamRecords!(4, 0) = score(I, 0) + score(1 - I, 0)
+            teamRecords!(4, 1) = score(I, 0)
+            teamRecords!(4, 2) = score(1 - I, 0)
+            teamRecDesc$(4, 0) = gameTeams$(I)
+            teamRecDesc$(4, 1) = VERSUS$(I)
+            teamRecDesc$(4, 2) = gameTeams$(1 - I)
+            teamRecDesc$(4, 3) = Date$
         End If
 
-        If score(I, 1) + score(I, 2) > TREC(6, 0) Then
-            TREC(6, 0) = score(I, 1) + score(I, 2)
-            TREC(6, 1) = 1
-            TREC(6, 2) = 0
-            TRC$(6, 0) = gameTeams$(I)
-            TRC$(6, 1) = SITE$(I)
-            TRC$(6, 2) = gameTeams$(1 - I)
-            TRC$(6, 3) = Date$
+        If score(I, 1) + score(I, 2) > teamRecords!(6, 0) Then
+            teamRecords!(6, 0) = score(I, 1) + score(I, 2)
+            teamRecords!(6, 1) = 1
+            teamRecords!(6, 2) = 0
+            teamRecDesc$(6, 0) = gameTeams$(I)
+            teamRecDesc$(6, 1) = VERSUS$(I)
+            teamRecDesc$(6, 2) = gameTeams$(1 - I)
+            teamRecDesc$(6, 3) = Date$
         End If
 
-        If score(I, 1) + score(I, 2) < TREC(7, 0) Then
-            TREC(7, 0) = score(I, 1) + score(I, 2)
-            TREC(7, 1) = 1
-            TREC(7, 2) = 0
-            TRC$(7, 0) = gameTeams$(I)
-            TRC$(7, 1) = SITE$(I)
-            TRC$(7, 2) = gameTeams$(1 - I)
-            TRC$(7, 3) = Date$
+        If score(I, 1) + score(I, 2) < teamRecords!(7, 0) Then
+            teamRecords!(7, 0) = score(I, 1) + score(I, 2)
+            teamRecords!(7, 1) = 1
+            teamRecords!(7, 2) = 0
+            teamRecDesc$(7, 0) = gameTeams$(I)
+            teamRecDesc$(7, 1) = VERSUS$(I)
+            teamRecDesc$(7, 2) = gameTeams$(1 - I)
+            teamRecDesc$(7, 3) = Date$
         End If
 
-        If score(I, 1) + score(I, 2) + score(1 - I, 1) + score(1 - I, 2) > TREC(8, 0) Then
-            TREC(8, 0) = score(I, 1) + score(1 - I, 1) + score(I, 2) + score(1 - I, 2)
-            TREC(8, 1) = score(I, 1) + score(I, 2)
-            TREC(8, 2) = score(1 - I, 1) + score(1 - I, 2)
-            TRC$(8, 0) = gameTeams$(I)
-            TRC$(8, 1) = SITE$(I)
-            TRC$(8, 2) = gameTeams$(1 - I)
-            TRC$(8, 3) = Date$
+        If score(I, 1) + score(I, 2) + score(1 - I, 1) + score(1 - I, 2) > teamRecords!(8, 0) Then
+            teamRecords!(8, 0) = score(I, 1) + score(1 - I, 1) + score(I, 2) + score(1 - I, 2)
+            teamRecords!(8, 1) = score(I, 1) + score(I, 2)
+            teamRecords!(8, 2) = score(1 - I, 1) + score(1 - I, 2)
+            teamRecDesc$(8, 0) = gameTeams$(I)
+            teamRecDesc$(8, 1) = VERSUS$(I)
+            teamRecDesc$(8, 2) = gameTeams$(1 - I)
+            teamRecDesc$(8, 3) = Date$
         End If
 
-        If score(I, 1) + score(I, 2) + score(1 - I, 1) + score(1 - I, 2) < TREC(9, 0) Then
-            TREC(9, 0) = score(I, 1) + score(1 - I, 1) + score(I, 2) + score(1 - I, 2)
-            TREC(9, 1) = score(I, 1) + score(I, 2)
-            TREC(9, 2) = score(1 - I, 1) + score(1 - I, 2)
-            TRC$(9, 0) = gameTeams$(I)
-            TRC$(9, 1) = SITE$(I)
-            TRC$(9, 2) = gameTeams$(1 - I)
-            TRC$(9, 3) = Date$
+        If score(I, 1) + score(I, 2) + score(1 - I, 1) + score(1 - I, 2) < teamRecords!(9, 0) Then
+            teamRecords!(9, 0) = score(I, 1) + score(1 - I, 1) + score(I, 2) + score(1 - I, 2)
+            teamRecords!(9, 1) = score(I, 1) + score(I, 2)
+            teamRecords!(9, 2) = score(1 - I, 1) + score(1 - I, 2)
+            teamRecDesc$(9, 0) = gameTeams$(I)
+            teamRecDesc$(9, 1) = VERSUS$(I)
+            teamRecDesc$(9, 2) = gameTeams$(1 - I)
+            teamRecDesc$(9, 3) = Date$
         End If
 
-        If score(I, 3) + score(I, 4) > TREC(10, 0) Then
-            TREC(10, 0) = score(I, 3) + score(I, 4)
-            TREC(10, 1) = 1
-            TREC(10, 2) = 0
-            TRC$(10, 0) = gameTeams$(I)
-            TRC$(10, 1) = SITE$(I)
-            TRC$(10, 2) = gameTeams$(1 - I)
-            TRC$(10, 3) = Date$
+        If score(I, 3) + score(I, 4) > teamRecords!(10, 0) Then
+            teamRecords!(10, 0) = score(I, 3) + score(I, 4)
+            teamRecords!(10, 1) = 1
+            teamRecords!(10, 2) = 0
+            teamRecDesc$(10, 0) = gameTeams$(I)
+            teamRecDesc$(10, 1) = VERSUS$(I)
+            teamRecDesc$(10, 2) = gameTeams$(1 - I)
+            teamRecDesc$(10, 3) = Date$
         End If
 
-        If score(I, 3) + score(I, 4) < TREC(11, 0) Then
-            TREC(11, 0) = score(I, 3) + score(I, 4)
-            TREC(11, 1) = 1
-            TREC(11, 2) = 0
-            TRC$(11, 0) = gameTeams$(I)
-            TRC$(11, 1) = SITE$(I)
-            TRC$(11, 2) = gameTeams$(1 - I)
-            TRC$(11, 3) = Date$
+        If score(I, 3) + score(I, 4) < teamRecords!(11, 0) Then
+            teamRecords!(11, 0) = score(I, 3) + score(I, 4)
+            teamRecords!(11, 1) = 1
+            teamRecords!(11, 2) = 0
+            teamRecDesc$(11, 0) = gameTeams$(I)
+            teamRecDesc$(11, 1) = VERSUS$(I)
+            teamRecDesc$(11, 2) = gameTeams$(1 - I)
+            teamRecDesc$(11, 3) = Date$
         End If
 
-        If score(I, 3) + score(I, 4) + score(1 - I, 3) + score(1 - I, 4) > TREC(12, 0) Then
-            TREC(12, 0) = score(I, 3) + score(1 - I, 3) + score(I, 4) + score(1 - I, 4)
-            TREC(12, 1) = score(I, 3) + score(I, 4)
-            TREC(12, 2) = score(1 - I, 3) + score(1 - I, 4)
-            TRC$(12, 0) = gameTeams$(I)
-            TRC$(12, 1) = SITE$(I)
-            TRC$(12, 2) = gameTeams$(1 - I)
-            TRC$(12, 3) = Date$
+        If score(I, 3) + score(I, 4) + score(1 - I, 3) + score(1 - I, 4) > teamRecords!(12, 0) Then
+            teamRecords!(12, 0) = score(I, 3) + score(1 - I, 3) + score(I, 4) + score(1 - I, 4)
+            teamRecords!(12, 1) = score(I, 3) + score(I, 4)
+            teamRecords!(12, 2) = score(1 - I, 3) + score(1 - I, 4)
+            teamRecDesc$(12, 0) = gameTeams$(I)
+            teamRecDesc$(12, 1) = VERSUS$(I)
+            teamRecDesc$(12, 2) = gameTeams$(1 - I)
+            teamRecDesc$(12, 3) = Date$
         End If
 
-        If score(I, 3) + score(I, 4) + score(1 - I, 3) + score(1 - I, 4) < TREC(13, 0) Then
-            TREC(13, 0) = score(I, 3) + score(1 - I, 3) + score(I, 4) + score(1 - I, 4)
-            TREC(13, 1) = score(I, 3) + score(I, 4)
-            TREC(13, 2) = score(1 - I, 3) + score(1 - I, 4)
-            TRC$(13, 0) = gameTeams$(I)
-            TRC$(13, 1) = SITE$(I)
-            TRC$(13, 2) = gameTeams$(1 - I)
-            TRC$(13, 3) = Date$
+        If score(I, 3) + score(I, 4) + score(1 - I, 3) + score(1 - I, 4) < teamRecords!(13, 0) Then
+            teamRecords!(13, 0) = score(I, 3) + score(1 - I, 3) + score(I, 4) + score(1 - I, 4)
+            teamRecords!(13, 1) = score(I, 3) + score(I, 4)
+            teamRecords!(13, 2) = score(1 - I, 3) + score(1 - I, 4)
+            teamRecDesc$(13, 0) = gameTeams$(I)
+            teamRecDesc$(13, 1) = VERSUS$(I)
+            teamRecDesc$(13, 2) = gameTeams$(1 - I)
+            teamRecDesc$(13, 3) = Date$
         End If
 
-        If score(I, 1) > TREC(14, 0) Then
-            TREC(14, 0) = score(I, 1)
-            TREC(14, 1) = 1
-            TREC(14, 2) = 0
-            TRC$(14, 0) = gameTeams$(I)
-            TRC$(14, 1) = SITE$(I)
-            TRC$(14, 2) = gameTeams$(1 - I)
-            TRC$(14, 3) = Date$
+        If score(I, 1) > teamRecords!(14, 0) Then
+            teamRecords!(14, 0) = score(I, 1)
+            teamRecords!(14, 1) = 1
+            teamRecords!(14, 2) = 0
+            teamRecDesc$(14, 0) = gameTeams$(I)
+            teamRecDesc$(14, 1) = VERSUS$(I)
+            teamRecDesc$(14, 2) = gameTeams$(1 - I)
+            teamRecDesc$(14, 3) = Date$
         End If
 
-        If score(I, 1) < TREC(15, 0) Then
-            TREC(15, 0) = score(I, 1)
-            TREC(15, 1) = 1
-            TREC(15, 2) = 0
-            TRC$(15, 0) = gameTeams$(I)
-            TRC$(15, 1) = SITE$(I)
-            TRC$(15, 2) = gameTeams$(1 - I)
-            TRC$(15, 3) = Date$
+        If score(I, 1) < teamRecords!(15, 0) Then
+            teamRecords!(15, 0) = score(I, 1)
+            teamRecords!(15, 1) = 1
+            teamRecords!(15, 2) = 0
+            teamRecDesc$(15, 0) = gameTeams$(I)
+            teamRecDesc$(15, 1) = VERSUS$(I)
+            teamRecDesc$(15, 2) = gameTeams$(1 - I)
+            teamRecDesc$(15, 3) = Date$
         End If
 
-        If score(I, 1) + score(1 - I, 1) > TREC(16, 0) Then
-            TREC(16, 0) = score(I, 1) + score(1 - I, 1)
-            TREC(16, 1) = score(I, 1)
-            TREC(16, 2) = score(1 - I, 1)
-            TRC$(16, 0) = gameTeams$(I)
-            TRC$(16, 1) = SITE$(I)
-            TRC$(16, 2) = gameTeams$(1 - I)
-            TRC$(16, 3) = Date$
+        If score(I, 1) + score(1 - I, 1) > teamRecords!(16, 0) Then
+            teamRecords!(16, 0) = score(I, 1) + score(1 - I, 1)
+            teamRecords!(16, 1) = score(I, 1)
+            teamRecords!(16, 2) = score(1 - I, 1)
+            teamRecDesc$(16, 0) = gameTeams$(I)
+            teamRecDesc$(16, 1) = VERSUS$(I)
+            teamRecDesc$(16, 2) = gameTeams$(1 - I)
+            teamRecDesc$(16, 3) = Date$
         End If
 
-        If score(I, 1) + score(1 - I, 1) < TREC(17, 0) Then
-            TREC(17, 0) = score(I, 1) + score(1 - I, 1)
-            TREC(17, 1) = score(I, 1)
-            TREC(17, 2) = score(1 - I, 1)
-            TRC$(17, 0) = gameTeams$(I)
-            TRC$(17, 1) = SITE$(I)
-            TRC$(17, 2) = gameTeams$(1 - I)
-            TRC$(17, 3) = Date$
+        If score(I, 1) + score(1 - I, 1) < teamRecords!(17, 0) Then
+            teamRecords!(17, 0) = score(I, 1) + score(1 - I, 1)
+            teamRecords!(17, 1) = score(I, 1)
+            teamRecords!(17, 2) = score(1 - I, 1)
+            teamRecDesc$(17, 0) = gameTeams$(I)
+            teamRecDesc$(17, 1) = VERSUS$(I)
+            teamRecDesc$(17, 2) = gameTeams$(1 - I)
+            teamRecDesc$(17, 3) = Date$
         End If
 
-        If score(I, 2) > TREC(18, 0) Then
-            TREC(18, 0) = score(I, 2)
-            TREC(18, 1) = 1
-            TREC(18, 2) = 0
-            TRC$(18, 0) = gameTeams$(I)
-            TRC$(18, 1) = SITE$(I)
-            TRC$(18, 2) = gameTeams$(1 - I)
-            TRC$(18, 3) = Date$
+        If score(I, 2) > teamRecords!(18, 0) Then
+            teamRecords!(18, 0) = score(I, 2)
+            teamRecords!(18, 1) = 1
+            teamRecords!(18, 2) = 0
+            teamRecDesc$(18, 0) = gameTeams$(I)
+            teamRecDesc$(18, 1) = VERSUS$(I)
+            teamRecDesc$(18, 2) = gameTeams$(1 - I)
+            teamRecDesc$(18, 3) = Date$
         End If
 
-        If score(I, 2) < TREC(19, 0) Then
-            TREC(19, 0) = score(I, 2)
-            TREC(19, 1) = 1
-            TREC(19, 2) = 0
-            TRC$(19, 0) = gameTeams$(I)
-            TRC$(19, 1) = SITE$(I)
-            TRC$(19, 2) = gameTeams$(1 - I)
-            TRC$(19, 3) = Date$
+        If score(I, 2) < teamRecords!(19, 0) Then
+            teamRecords!(19, 0) = score(I, 2)
+            teamRecords!(19, 1) = 1
+            teamRecords!(19, 2) = 0
+            teamRecDesc$(19, 0) = gameTeams$(I)
+            teamRecDesc$(19, 1) = VERSUS$(I)
+            teamRecDesc$(19, 2) = gameTeams$(1 - I)
+            teamRecDesc$(19, 3) = Date$
         End If
 
-        If score(I, 2) + score(1 - I, 2) > TREC(20, 0) Then
-            TREC(20, 0) = score(I, 2) + score(1 - I, 2)
-            TREC(20, 1) = score(I, 2)
-            TREC(20, 2) = score(1 - I, 2)
-            TRC$(20, 0) = gameTeams$(I)
-            TRC$(20, 1) = SITE$(I)
-            TRC$(20, 2) = gameTeams$(1 - I)
-            TRC$(20, 3) = Date$
+        If score(I, 2) + score(1 - I, 2) > teamRecords!(20, 0) Then
+            teamRecords!(20, 0) = score(I, 2) + score(1 - I, 2)
+            teamRecords!(20, 1) = score(I, 2)
+            teamRecords!(20, 2) = score(1 - I, 2)
+            teamRecDesc$(20, 0) = gameTeams$(I)
+            teamRecDesc$(20, 1) = VERSUS$(I)
+            teamRecDesc$(20, 2) = gameTeams$(1 - I)
+            teamRecDesc$(20, 3) = Date$
         End If
 
-        If score(I, 2) + score(1 - I, 2) < TREC(21, 0) Then
-            TREC(21, 0) = score(I, 2) + score(1 - I, 2)
-            TREC(21, 1) = score(I, 2)
-            TREC(21, 2) = score(1 - I, 2)
-            TRC$(21, 0) = gameTeams$(I)
-            TRC$(21, 1) = SITE$(I)
-            TRC$(21, 2) = gameTeams$(1 - I)
-            TRC$(21, 3) = Date$
+        If score(I, 2) + score(1 - I, 2) < teamRecords!(21, 0) Then
+            teamRecords!(21, 0) = score(I, 2) + score(1 - I, 2)
+            teamRecords!(21, 1) = score(I, 2)
+            teamRecords!(21, 2) = score(1 - I, 2)
+            teamRecDesc$(21, 0) = gameTeams$(I)
+            teamRecDesc$(21, 1) = VERSUS$(I)
+            teamRecDesc$(21, 2) = gameTeams$(1 - I)
+            teamRecDesc$(21, 3) = Date$
         End If
 
-        If score(I, 3) > TREC(22, 0) Then
-            TREC(22, 0) = score(I, 3)
-            TREC(22, 1) = 1
-            TREC(22, 2) = 0
-            TRC$(22, 0) = gameTeams$(I)
-            TRC$(22, 1) = SITE$(I)
-            TRC$(22, 2) = gameTeams$(1 - I)
-            TRC$(22, 3) = Date$
+        If score(I, 3) > teamRecords!(22, 0) Then
+            teamRecords!(22, 0) = score(I, 3)
+            teamRecords!(22, 1) = 1
+            teamRecords!(22, 2) = 0
+            teamRecDesc$(22, 0) = gameTeams$(I)
+            teamRecDesc$(22, 1) = VERSUS$(I)
+            teamRecDesc$(22, 2) = gameTeams$(1 - I)
+            teamRecDesc$(22, 3) = Date$
         End If
 
-        If score(I, 3) < TREC(23, 0) Then
-            TREC(23, 0) = score(I, 3)
-            TREC(23, 1) = 1
-            TREC(23, 2) = 0
-            TRC$(23, 0) = gameTeams$(I)
-            TRC$(23, 1) = SITE$(I)
-            TRC$(23, 2) = gameTeams$(1 - I)
-            TRC$(23, 3) = Date$
+        If score(I, 3) < teamRecords!(23, 0) Then
+            teamRecords!(23, 0) = score(I, 3)
+            teamRecords!(23, 1) = 1
+            teamRecords!(23, 2) = 0
+            teamRecDesc$(23, 0) = gameTeams$(I)
+            teamRecDesc$(23, 1) = VERSUS$(I)
+            teamRecDesc$(23, 2) = gameTeams$(1 - I)
+            teamRecDesc$(23, 3) = Date$
         End If
 
-        If score(I, 3) + score(1 - I, 3) > TREC(24, 0) Then
-            TREC(24, 0) = score(I, 3) + score(1 - I, 3)
-            TREC(24, 1) = score(I, 3)
-            TREC(24, 2) = score(1 - I, 3)
-            TRC$(24, 0) = gameTeams$(I)
-            TRC$(24, 1) = SITE$(I)
-            TRC$(24, 2) = gameTeams$(1 - I)
-            TRC$(24, 3) = Date$
+        If score(I, 3) + score(1 - I, 3) > teamRecords!(24, 0) Then
+            teamRecords!(24, 0) = score(I, 3) + score(1 - I, 3)
+            teamRecords!(24, 1) = score(I, 3)
+            teamRecords!(24, 2) = score(1 - I, 3)
+            teamRecDesc$(24, 0) = gameTeams$(I)
+            teamRecDesc$(24, 1) = VERSUS$(I)
+            teamRecDesc$(24, 2) = gameTeams$(1 - I)
+            teamRecDesc$(24, 3) = Date$
         End If
 
-        If score(I, 3) + score(1 - I, 3) < TREC(25, 0) Then
-            TREC(25, 0) = score(I, 3) + score(1 - I, 3)
-            TREC(25, 1) = score(I, 3)
-            TREC(25, 2) = score(1 - I, 3)
-            TRC$(25, 0) = gameTeams$(I)
-            TRC$(25, 1) = SITE$(I)
-            TRC$(25, 2) = gameTeams$(1 - I)
-            TRC$(25, 3) = Date$
+        If score(I, 3) + score(1 - I, 3) < teamRecords!(25, 0) Then
+            teamRecords!(25, 0) = score(I, 3) + score(1 - I, 3)
+            teamRecords!(25, 1) = score(I, 3)
+            teamRecords!(25, 2) = score(1 - I, 3)
+            teamRecDesc$(25, 0) = gameTeams$(I)
+            teamRecDesc$(25, 1) = VERSUS$(I)
+            teamRecDesc$(25, 2) = gameTeams$(1 - I)
+            teamRecDesc$(25, 3) = Date$
         End If
 
-        If score(I, 4) > TREC(26, 0) Then
-            TREC(26, 0) = score(I, 4)
-            TREC(26, 1) = 1
-            TREC(26, 2) = 0
-            TRC$(26, 0) = gameTeams$(I)
-            TRC$(26, 1) = SITE$(I)
-            TRC$(26, 2) = gameTeams$(1 - I)
-            TRC$(26, 3) = Date$
+        If score(I, 4) > teamRecords!(26, 0) Then
+            teamRecords!(26, 0) = score(I, 4)
+            teamRecords!(26, 1) = 1
+            teamRecords!(26, 2) = 0
+            teamRecDesc$(26, 0) = gameTeams$(I)
+            teamRecDesc$(26, 1) = VERSUS$(I)
+            teamRecDesc$(26, 2) = gameTeams$(1 - I)
+            teamRecDesc$(26, 3) = Date$
         End If
 
-        If score(I, 4) < TREC(27, 0) Then
-            TREC(27, 0) = score(I, 4)
-            TREC(27, 1) = 1
-            TREC(27, 2) = 0
-            TRC$(27, 0) = gameTeams$(I)
-            TRC$(27, 1) = SITE$(I)
-            TRC$(27, 2) = gameTeams$(1 - I)
-            TRC$(27, 3) = Date$
+        If score(I, 4) < teamRecords!(27, 0) Then
+            teamRecords!(27, 0) = score(I, 4)
+            teamRecords!(27, 1) = 1
+            teamRecords!(27, 2) = 0
+            teamRecDesc$(27, 0) = gameTeams$(I)
+            teamRecDesc$(27, 1) = VERSUS$(I)
+            teamRecDesc$(27, 2) = gameTeams$(1 - I)
+            teamRecDesc$(27, 3) = Date$
         End If
 
-        If score(I, 4) + score(1 - I, 4) > TREC(28, 0) Then
-            TREC(28, 0) = score(I, 4) + score(1 - I, 4)
-            TREC(28, 1) = score(I, 4)
-            TREC(28, 2) = score(1 - I, 4)
-            TRC$(28, 0) = gameTeams$(I)
-            TRC$(28, 1) = SITE$(I)
-            TRC$(28, 2) = gameTeams$(1 - I)
-            TRC$(28, 3) = Date$
+        If score(I, 4) + score(1 - I, 4) > teamRecords!(28, 0) Then
+            teamRecords!(28, 0) = score(I, 4) + score(1 - I, 4)
+            teamRecords!(28, 1) = score(I, 4)
+            teamRecords!(28, 2) = score(1 - I, 4)
+            teamRecDesc$(28, 0) = gameTeams$(I)
+            teamRecDesc$(28, 1) = VERSUS$(I)
+            teamRecDesc$(28, 2) = gameTeams$(1 - I)
+            teamRecDesc$(28, 3) = Date$
         End If
 
-        If score(I, 4) + score(1 - I, 4) < TREC(29, 0) Then
-            TREC(29, 0) = score(I, 4) + score(1 - I, 4)
-            TREC(29, 1) = score(I, 4)
-            TREC(29, 2) = score(1 - I, 4)
-            TRC$(29, 0) = gameTeams$(I)
-            TRC$(29, 1) = SITE$(I)
-            TRC$(29, 2) = gameTeams$(1 - I)
-            TRC$(29, 3) = Date$
+        If score(I, 4) + score(1 - I, 4) < teamRecords!(29, 0) Then
+            teamRecords!(29, 0) = score(I, 4) + score(1 - I, 4)
+            teamRecords!(29, 1) = score(I, 4)
+            teamRecords!(29, 2) = score(1 - I, 4)
+            teamRecDesc$(29, 0) = gameTeams$(I)
+            teamRecDesc$(29, 1) = VERSUS$(I)
+            teamRecDesc$(29, 2) = gameTeams$(1 - I)
+            teamRecDesc$(29, 3) = Date$
         End If
 
         ' TEAM FIELD GOAL PERCENTAGES
@@ -7679,1011 +7682,1012 @@ Sub CheckRecords ()
             Next
         Next
 
-        If V8(I, 0) / V8(I, 1) > TREC(30, 0) Then
-            TREC(30, 0) = V8(I, 0) / V8(I, 1)
-            TREC(30, 1) = V8(I, 0)
-            TREC(30, 2) = V8(I, 1)
-            TRC$(30, 0) = gameTeams$(I)
-            TRC$(30, 1) = SITE$(I)
-            TRC$(30, 2) = gameTeams$(1 - I)
-            TRC$(30, 3) = Date$
+        If V8(I, 0) / V8(I, 1) > teamRecords!(30, 0) Then
+            teamRecords!(30, 0) = V8(I, 0) / V8(I, 1)
+            teamRecords!(30, 1) = V8(I, 0)
+            teamRecords!(30, 2) = V8(I, 1)
+            teamRecDesc$(30, 0) = gameTeams$(I)
+            teamRecDesc$(30, 1) = VERSUS$(I)
+            teamRecDesc$(30, 2) = gameTeams$(1 - I)
+            teamRecDesc$(30, 3) = Date$
         End If
 
-        If V8(I, 0) / V8(I, 1) < TREC(31, 0) Then
-            TREC(31, 0) = V8(I, 0) / V8(I, 1)
-            TREC(31, 1) = V8(I, 0)
-            TREC(31, 2) = V8(I, 1)
-            TRC$(31, 0) = gameTeams$(I)
-            TRC$(31, 1) = SITE$(I)
-            TRC$(31, 2) = gameTeams$(1 - I)
-            TRC$(31, 3) = Date$
+        If V8(I, 0) / V8(I, 1) < teamRecords!(31, 0) Then
+            teamRecords!(31, 0) = V8(I, 0) / V8(I, 1)
+            teamRecords!(31, 1) = V8(I, 0)
+            teamRecords!(31, 2) = V8(I, 1)
+            teamRecDesc$(31, 0) = gameTeams$(I)
+            teamRecDesc$(31, 1) = VERSUS$(I)
+            teamRecDesc$(31, 2) = gameTeams$(1 - I)
+            teamRecDesc$(31, 3) = Date$
         End If
 
-        If (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1)) > TREC(32, 0) Then
-            TREC(32, 0) = (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1))
-            TREC(32, 1) = V8(I, 0) / V8(I, 1)
-            TREC(32, 2) = V8(1 - I, 0) / V8(1 - I, 1)
-            TRC$(32, 0) = gameTeams$(I)
-            TRC$(32, 1) = SITE$(I)
-            TRC$(32, 2) = gameTeams$(1 - I)
-            TRC$(32, 3) = Date$
+        If (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1)) > teamRecords!(32, 0) Then
+            teamRecords!(32, 0) = (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1))
+            teamRecords!(32, 1) = V8(I, 0) / V8(I, 1)
+            teamRecords!(32, 2) = V8(1 - I, 0) / V8(1 - I, 1)
+            teamRecDesc$(32, 0) = gameTeams$(I)
+            teamRecDesc$(32, 1) = VERSUS$(I)
+            teamRecDesc$(32, 2) = gameTeams$(1 - I)
+            teamRecDesc$(32, 3) = Date$
         End If
 
-        If (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1)) < TREC(33, 0) Then
-            TREC(33, 0) = (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1))
-            TREC(33, 1) = V8(I, 0) / V8(I, 1)
-            TREC(33, 2) = V8(1 - I, 0) / V8(1 - I, 1)
-            TRC$(33, 0) = gameTeams$(I)
-            TRC$(33, 1) = SITE$(I)
-            TRC$(33, 2) = gameTeams$(1 - I)
-            TRC$(33, 3) = Date$
+        If (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1)) < teamRecords!(33, 0) Then
+            teamRecords!(33, 0) = (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1))
+            teamRecords!(33, 1) = V8(I, 0) / V8(I, 1)
+            teamRecords!(33, 2) = V8(1 - I, 0) / V8(1 - I, 1)
+            teamRecDesc$(33, 0) = gameTeams$(I)
+            teamRecDesc$(33, 1) = VERSUS$(I)
+            teamRecDesc$(33, 2) = gameTeams$(1 - I)
+            teamRecDesc$(33, 3) = Date$
         End If
 
         ' TEAM FIELD GOALS MADE
-        If V8(I, 0) > TREC(34, 0) Then
-            TREC(34, 0) = V8(I, 0)
-            TREC(34, 1) = 0
-            TREC(34, 2) = 0
-            TRC$(34, 0) = gameTeams$(I)
-            TRC$(34, 1) = SITE$(I)
-            TRC$(34, 2) = gameTeams$(1 - I)
-            TRC$(34, 3) = Date$
+        If V8(I, 0) > teamRecords!(34, 0) Then
+            teamRecords!(34, 0) = V8(I, 0)
+            teamRecords!(34, 1) = 0
+            teamRecords!(34, 2) = 0
+            teamRecDesc$(34, 0) = gameTeams$(I)
+            teamRecDesc$(34, 1) = VERSUS$(I)
+            teamRecDesc$(34, 2) = gameTeams$(1 - I)
+            teamRecDesc$(34, 3) = Date$
         End If
 
-        If V8(I, 0) < TREC(35, 0) Then
-            TREC(35, 0) = V8(I, 0)
-            TREC(35, 1) = 0
-            TREC(35, 2) = 0
-            TRC$(35, 0) = gameTeams$(I)
-            TRC$(35, 1) = SITE$(I)
-            TRC$(35, 2) = gameTeams$(1 - I)
-            TRC$(35, 3) = Date$
+        If V8(I, 0) < teamRecords!(35, 0) Then
+            teamRecords!(35, 0) = V8(I, 0)
+            teamRecords!(35, 1) = 0
+            teamRecords!(35, 2) = 0
+            teamRecDesc$(35, 0) = gameTeams$(I)
+            teamRecDesc$(35, 1) = VERSUS$(I)
+            teamRecDesc$(35, 2) = gameTeams$(1 - I)
+            teamRecDesc$(35, 3) = Date$
         End If
 
-        If V8(I, 0) + V8(1 - I, 0) > TREC(36, 0) Then
-            TREC(36, 0) = V8(I, 0) + V8(1 - I, 0)
-            TREC(36, 1) = V8(I, 0)
-            TREC(36, 2) = V8(1 - I, 0)
-            TRC$(36, 0) = gameTeams$(I)
-            TRC$(36, 1) = SITE$(I)
-            TRC$(36, 2) = gameTeams$(1 - I)
-            TRC$(36, 3) = Date$
+        If V8(I, 0) + V8(1 - I, 0) > teamRecords!(36, 0) Then
+            teamRecords!(36, 0) = V8(I, 0) + V8(1 - I, 0)
+            teamRecords!(36, 1) = V8(I, 0)
+            teamRecords!(36, 2) = V8(1 - I, 0)
+            teamRecDesc$(36, 0) = gameTeams$(I)
+            teamRecDesc$(36, 1) = VERSUS$(I)
+            teamRecDesc$(36, 2) = gameTeams$(1 - I)
+            teamRecDesc$(36, 3) = Date$
         End If
 
-        If V8(I, 0) + V8(1 - I, 0) < TREC(37, 0) Then
-            TREC(37, 0) = V8(I, 0) + V8(1 - I, 0)
-            TREC(37, 1) = V8(I, 0)
-            TREC(37, 2) = V8(1 - I, 0)
-            TRC$(37, 0) = gameTeams$(I)
-            TRC$(37, 1) = SITE$(I)
-            TRC$(37, 2) = gameTeams$(1 - I)
-            TRC$(37, 3) = Date$
+        If V8(I, 0) + V8(1 - I, 0) < teamRecords!(37, 0) Then
+            teamRecords!(37, 0) = V8(I, 0) + V8(1 - I, 0)
+            teamRecords!(37, 1) = V8(I, 0)
+            teamRecords!(37, 2) = V8(1 - I, 0)
+            teamRecDesc$(37, 0) = gameTeams$(I)
+            teamRecDesc$(37, 1) = VERSUS$(I)
+            teamRecDesc$(37, 2) = gameTeams$(1 - I)
+            teamRecDesc$(37, 3) = Date$
         End If
 
-        If QR(I, 1, 0) + QR(I, 2, 0) > TREC(38, 0) Then
-            TREC(38, 0) = QR(I, 1, 0) + QR(I, 2, 0)
-            TREC(38, 1) = 1
-            TREC(38, 2) = 0
-            TRC$(38, 0) = gameTeams$(I)
-            TRC$(38, 1) = SITE$(I)
-            TRC$(38, 2) = gameTeams$(1 - I)
-            TRC$(38, 3) = Date$
+        If QR(I, 1, 0) + QR(I, 2, 0) > teamRecords!(38, 0) Then
+            teamRecords!(38, 0) = QR(I, 1, 0) + QR(I, 2, 0)
+            teamRecords!(38, 1) = 1
+            teamRecords!(38, 2) = 0
+            teamRecDesc$(38, 0) = gameTeams$(I)
+            teamRecDesc$(38, 1) = VERSUS$(I)
+            teamRecDesc$(38, 2) = gameTeams$(1 - I)
+            teamRecDesc$(38, 3) = Date$
         End If
 
-        If QR(I, 3, 0) + QR(I, 4, 0) > TREC(38, 0) Then
-            TREC(38, 0) = QR(I, 3, 0) + QR(I, 4, 0)
-            TREC(38, 1) = 2
-            TREC(38, 2) = 0
-            TRC$(38, 0) = gameTeams$(I)
-            TRC$(38, 1) = SITE$(I)
-            TRC$(38, 2) = gameTeams$(1 - I)
-            TRC$(38, 3) = Date$
+        If QR(I, 3, 0) + QR(I, 4, 0) > teamRecords!(38, 0) Then
+            teamRecords!(38, 0) = QR(I, 3, 0) + QR(I, 4, 0)
+            teamRecords!(38, 1) = 2
+            teamRecords!(38, 2) = 0
+            teamRecDesc$(38, 0) = gameTeams$(I)
+            teamRecDesc$(38, 1) = VERSUS$(I)
+            teamRecDesc$(38, 2) = gameTeams$(1 - I)
+            teamRecDesc$(38, 3) = Date$
         End If
 
-        If QR(I, 1, 0) + QR(I, 2, 0) + QR(1 - I, 1, 0) + QR(1 - I, 2, 0) > TREC(39, 0) Then
-            TREC(39, 0) = QR(I, 1, 0) + QR(I, 2, 0) + QR(1 - I, 1, 0) + QR(1 - I, 2, 0)
-            TREC(39, 1) = 1
-            TREC(39, 2) = 0
-            TRC$(39, 0) = gameTeams$(I)
-            TRC$(39, 1) = SITE$(I)
-            TRC$(39, 2) = gameTeams$(1 - I)
-            TRC$(39, 3) = Date$
+        If QR(I, 1, 0) + QR(I, 2, 0) + QR(1 - I, 1, 0) + QR(1 - I, 2, 0) > teamRecords!(39, 0) Then
+            teamRecords!(39, 0) = QR(I, 1, 0) + QR(I, 2, 0) + QR(1 - I, 1, 0) + QR(1 - I, 2, 0)
+            teamRecords!(39, 1) = 1
+            teamRecords!(39, 2) = 0
+            teamRecDesc$(39, 0) = gameTeams$(I)
+            teamRecDesc$(39, 1) = VERSUS$(I)
+            teamRecDesc$(39, 2) = gameTeams$(1 - I)
+            teamRecDesc$(39, 3) = Date$
         End If
 
-        If QR(I, 3, 0) + QR(I, 4, 0) + QR(1 - I, 3, 0) + QR(1 - I, 4, 0) > TREC(39, 0) Then
-            TREC(39, 0) = QR(I, 3, 0) + QR(I, 4, 0) + QR(1 - I, 3, 0) + QR(1 - I, 4, 0)
-            TREC(39, 1) = 2
-            TREC(39, 2) = 0
-            TRC$(39, 0) = gameTeams$(I)
-            TRC$(39, 1) = SITE$(I)
-            TRC$(39, 2) = gameTeams$(1 - I)
-            TRC$(39, 3) = Date$
+        If QR(I, 3, 0) + QR(I, 4, 0) + QR(1 - I, 3, 0) + QR(1 - I, 4, 0) > teamRecords!(39, 0) Then
+            teamRecords!(39, 0) = QR(I, 3, 0) + QR(I, 4, 0) + QR(1 - I, 3, 0) + QR(1 - I, 4, 0)
+            teamRecords!(39, 1) = 2
+            teamRecords!(39, 2) = 0
+            teamRecDesc$(39, 0) = gameTeams$(I)
+            teamRecDesc$(39, 1) = VERSUS$(I)
+            teamRecDesc$(39, 2) = gameTeams$(1 - I)
+            teamRecDesc$(39, 3) = Date$
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 0) > TREC(40, 0) Then
-                TREC(40, 0) = QR(I, I2, 0)
-                TREC(40, 1) = I2
-                TREC(40, 2) = 0
-                TRC$(40, 0) = gameTeams$(I)
-                TRC$(40, 1) = SITE$(I)
-                TRC$(40, 2) = gameTeams$(1 - I)
-                TRC$(40, 3) = Date$
+            If QR(I, I2, 0) > teamRecords!(40, 0) Then
+                teamRecords!(40, 0) = QR(I, I2, 0)
+                teamRecords!(40, 1) = I2
+                teamRecords!(40, 2) = 0
+                teamRecDesc$(40, 0) = gameTeams$(I)
+                teamRecDesc$(40, 1) = VERSUS$(I)
+                teamRecDesc$(40, 2) = gameTeams$(1 - I)
+                teamRecDesc$(40, 3) = Date$
             End If
 
-            If QR(I, I2, 0) + QR(1 - I, I2, 0) > TREC(41, 0) Then
-                TREC(41, 0) = QR(I, I2, 0) + QR(1 - I, I2, 0)
-                TREC(41, 1) = I2
-                TREC(41, 2) = QR(I, I2, 0)
-                TRC$(41, 0) = gameTeams$(I)
-                TRC$(41, 1) = SITE$(I)
-                TRC$(41, 2) = gameTeams$(1 - I)
-                TRC$(41, 3) = Date$
+            If QR(I, I2, 0) + QR(1 - I, I2, 0) > teamRecords!(41, 0) Then
+                teamRecords!(41, 0) = QR(I, I2, 0) + QR(1 - I, I2, 0)
+                teamRecords!(41, 1) = I2
+                teamRecords!(41, 2) = QR(I, I2, 0)
+                teamRecDesc$(41, 0) = gameTeams$(I)
+                teamRecDesc$(41, 1) = VERSUS$(I)
+                teamRecDesc$(41, 2) = gameTeams$(1 - I)
+                teamRecDesc$(41, 3) = Date$
             End If
         Next
 
         'TEAM FIELD GOAL ATTEMPTS
-        If V8(I, 1) > TREC(42, 0) Then
-            TREC(42, 0) = V8(I, 1)
-            TREC(42, 1) = 0
-            TREC(42, 2) = 0
-            TRC$(42, 0) = gameTeams$(I)
-            TRC$(42, 1) = SITE$(I)
-            TRC$(42, 2) = gameTeams$(1 - I)
-            TRC$(42, 3) = Date$
+        If V8(I, 1) > teamRecords!(42, 0) Then
+            teamRecords!(42, 0) = V8(I, 1)
+            teamRecords!(42, 1) = 0
+            teamRecords!(42, 2) = 0
+            teamRecDesc$(42, 0) = gameTeams$(I)
+            teamRecDesc$(42, 1) = VERSUS$(I)
+            teamRecDesc$(42, 2) = gameTeams$(1 - I)
+            teamRecDesc$(42, 3) = Date$
         End If
 
-        If V8(I, 1) < TREC(43, 0) Then
-            TREC(43, 0) = V8(I, 1)
-            TREC(43, 1) = 0
-            TREC(43, 2) = 0
-            TRC$(43, 0) = gameTeams$(I)
-            TRC$(43, 1) = SITE$(I)
-            TRC$(43, 2) = gameTeams$(1 - I)
-            TRC$(43, 3) = Date$
+        If V8(I, 1) < teamRecords!(43, 0) Then
+            teamRecords!(43, 0) = V8(I, 1)
+            teamRecords!(43, 1) = 0
+            teamRecords!(43, 2) = 0
+            teamRecDesc$(43, 0) = gameTeams$(I)
+            teamRecDesc$(43, 1) = VERSUS$(I)
+            teamRecDesc$(43, 2) = gameTeams$(1 - I)
+            teamRecDesc$(43, 3) = Date$
         End If
 
-        If V8(I, 1) + V8(1 - I, 1) > TREC(44, 0) Then
-            TREC(44, 0) = V8(I, 1) + V8(1 - I, 1)
-            TREC(44, 1) = V8(I, 1)
-            TREC(44, 2) = V8(1 - I, 1)
-            TRC$(44, 0) = gameTeams$(I)
-            TRC$(44, 1) = SITE$(I)
-            TRC$(44, 2) = gameTeams$(1 - I)
-            TRC$(44, 3) = Date$
+        If V8(I, 1) + V8(1 - I, 1) > teamRecords!(44, 0) Then
+            teamRecords!(44, 0) = V8(I, 1) + V8(1 - I, 1)
+            teamRecords!(44, 1) = V8(I, 1)
+            teamRecords!(44, 2) = V8(1 - I, 1)
+            teamRecDesc$(44, 0) = gameTeams$(I)
+            teamRecDesc$(44, 1) = VERSUS$(I)
+            teamRecDesc$(44, 2) = gameTeams$(1 - I)
+            teamRecDesc$(44, 3) = Date$
         End If
 
-        If V8(I, 1) + V8(1 - I, 1) < TREC(45, 0) Then
-            TREC(45, 0) = V8(I, 1) + V8(1 - I, 1)
-            TREC(45, 1) = V8(I, 1)
-            TREC(45, 2) = V8(1 - I, 1)
-            TRC$(45, 0) = gameTeams$(I)
-            TRC$(45, 1) = SITE$(I)
-            TRC$(45, 2) = gameTeams$(1 - I)
-            TRC$(45, 3) = Date$
+        If V8(I, 1) + V8(1 - I, 1) < teamRecords!(45, 0) Then
+            teamRecords!(45, 0) = V8(I, 1) + V8(1 - I, 1)
+            teamRecords!(45, 1) = V8(I, 1)
+            teamRecords!(45, 2) = V8(1 - I, 1)
+            teamRecDesc$(45, 0) = gameTeams$(I)
+            teamRecDesc$(45, 1) = VERSUS$(I)
+            teamRecDesc$(45, 2) = gameTeams$(1 - I)
+            teamRecDesc$(45, 3) = Date$
         End If
 
-        If QR(I, 1, 1) + QR(I, 2, 1) > TREC(46, 0) Then
-            TREC(46, 0) = QR(I, 1, 1) + QR(I, 2, 1)
-            TREC(46, 1) = 1
-            TREC(46, 2) = 0
-            TRC$(46, 0) = gameTeams$(I)
-            TRC$(46, 1) = SITE$(I)
-            TRC$(46, 2) = gameTeams$(1 - I)
-            TRC$(46, 3) = Date$
+        If QR(I, 1, 1) + QR(I, 2, 1) > teamRecords!(46, 0) Then
+            teamRecords!(46, 0) = QR(I, 1, 1) + QR(I, 2, 1)
+            teamRecords!(46, 1) = 1
+            teamRecords!(46, 2) = 0
+            teamRecDesc$(46, 0) = gameTeams$(I)
+            teamRecDesc$(46, 1) = VERSUS$(I)
+            teamRecDesc$(46, 2) = gameTeams$(1 - I)
+            teamRecDesc$(46, 3) = Date$
         End If
 
-        If QR(I, 3, 1) + QR(I, 4, 1) > TREC(46, 0) Then
-            TREC(46, 0) = QR(I, 3, 1) + QR(I, 4, 1)
-            TREC(46, 1) = 2
-            TREC(46, 2) = 0
-            TRC$(46, 0) = gameTeams$(I)
-            TRC$(46, 1) = SITE$(I)
-            TRC$(46, 2) = gameTeams$(1 - I)
-            TRC$(46, 3) = Date$
+        If QR(I, 3, 1) + QR(I, 4, 1) > teamRecords!(46, 0) Then
+            teamRecords!(46, 0) = QR(I, 3, 1) + QR(I, 4, 1)
+            teamRecords!(46, 1) = 2
+            teamRecords!(46, 2) = 0
+            teamRecDesc$(46, 0) = gameTeams$(I)
+            teamRecDesc$(46, 1) = VERSUS$(I)
+            teamRecDesc$(46, 2) = gameTeams$(1 - I)
+            teamRecDesc$(46, 3) = Date$
         End If
 
-        If QR(I, 1, 1) + QR(I, 2, 1) + QR(1 - I, 1, 1) + QR(1 - I, 2, 1) > TREC(47, 0) Then
-            TREC(47, 0) = QR(I, 1, 1) + QR(I, 2, 1) + QR(1 - I, 1, 1) + QR(1 - I, 2, 1)
-            TREC(47, 1) = 1
-            TREC(47, 2) = QR(I, 1, 1) + QR(I, 2, 1)
-            TRC$(47, 0) = gameTeams$(I)
-            TRC$(47, 1) = SITE$(I)
-            TRC$(47, 2) = gameTeams$(1 - I)
-            TRC$(47, 3) = Date$
+        If QR(I, 1, 1) + QR(I, 2, 1) + QR(1 - I, 1, 1) + QR(1 - I, 2, 1) > teamRecords!(47, 0) Then
+            teamRecords!(47, 0) = QR(I, 1, 1) + QR(I, 2, 1) + QR(1 - I, 1, 1) + QR(1 - I, 2, 1)
+            teamRecords!(47, 1) = 1
+            teamRecords!(47, 2) = QR(I, 1, 1) + QR(I, 2, 1)
+            teamRecDesc$(47, 0) = gameTeams$(I)
+            teamRecDesc$(47, 1) = VERSUS$(I)
+            teamRecDesc$(47, 2) = gameTeams$(1 - I)
+            teamRecDesc$(47, 3) = Date$
         End If
 
-        If QR(I, 3, 1) + QR(I, 4, 1) + QR(1 - I, 3, 1) + QR(1 - I, 4, 1) > TREC(47, 0) Then
-            TREC(47, 0) = QR(I, 3, 1) + QR(I, 4, 1) + QR(1 - I, 3, 1) + QR(1 - I, 4, 1)
-            TREC(47, 1) = 1
-            TREC(47, 2) = QR(I, 3, 1) + QR(I, 4, 1)
-            TRC$(47, 0) = gameTeams$(I)
-            TRC$(47, 1) = SITE$(I)
-            TRC$(47, 2) = gameTeams$(1 - I)
-            TRC$(47, 3) = Date$
+        If QR(I, 3, 1) + QR(I, 4, 1) + QR(1 - I, 3, 1) + QR(1 - I, 4, 1) > teamRecords!(47, 0) Then
+            teamRecords!(47, 0) = QR(I, 3, 1) + QR(I, 4, 1) + QR(1 - I, 3, 1) + QR(1 - I, 4, 1)
+            teamRecords!(47, 1) = 1
+            teamRecords!(47, 2) = QR(I, 3, 1) + QR(I, 4, 1)
+            teamRecDesc$(47, 0) = gameTeams$(I)
+            teamRecDesc$(47, 1) = VERSUS$(I)
+            teamRecDesc$(47, 2) = gameTeams$(1 - I)
+            teamRecDesc$(47, 3) = Date$
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 1) > TREC(48, 0) Then
-                TREC(48, 0) = QR(I, I2, 1)
-                TREC(48, 1) = I2
-                TREC(48, 2) = 0
-                TRC$(48, 0) = gameTeams$(I)
-                TRC$(48, 1) = SITE$(I)
-                TRC$(48, 2) = gameTeams$(1 - I)
-                TRC$(48, 3) = Date$
+            If QR(I, I2, 1) > teamRecords!(48, 0) Then
+                teamRecords!(48, 0) = QR(I, I2, 1)
+                teamRecords!(48, 1) = I2
+                teamRecords!(48, 2) = 0
+                teamRecDesc$(48, 0) = gameTeams$(I)
+                teamRecDesc$(48, 1) = VERSUS$(I)
+                teamRecDesc$(48, 2) = gameTeams$(1 - I)
+                teamRecDesc$(48, 3) = Date$
             End If
 
-            If QR(I, I2, 1) + QR(1 - I, I2, 1) > TREC(49, 0) Then
-                TREC(49, 0) = QR(I, I2, 1) + QR(1 - I, I2, 1)
-                TREC(49, 1) = I2
-                TREC(49, 2) = QR(I, I2, 1)
-                TRC$(49, 0) = gameTeams$(I)
-                TRC$(49, 1) = SITE$(I)
-                TRC$(49, 2) = gameTeams$(1 - I)
-                TRC$(49, 3) = Date$
+            If QR(I, I2, 1) + QR(1 - I, I2, 1) > teamRecords!(49, 0) Then
+                teamRecords!(49, 0) = QR(I, I2, 1) + QR(1 - I, I2, 1)
+                teamRecords!(49, 1) = I2
+                teamRecords!(49, 2) = QR(I, I2, 1)
+                teamRecDesc$(49, 0) = gameTeams$(I)
+                teamRecDesc$(49, 1) = VERSUS$(I)
+                teamRecDesc$(49, 2) = gameTeams$(1 - I)
+                teamRecDesc$(49, 3) = Date$
             End If
         Next
 
         'TEAM FIELD GOAL ATTEMPTS
-        If V8(I, 13) = V8(I, 14) And V8(I, 14) > TREC(50, 0) Then
-            TREC(50, 0) = V8(I, 13)
-            TREC(50, 1) = 0
-            TREC(50, 2) = 0
-            TRC$(50, 0) = gameTeams$(I)
-            TRC$(50, 1) = SITE$(I)
-            TRC$(50, 2) = gameTeams$(1 - I)
-            TRC$(50, 3) = Date$
+        If V8(I, 13) = V8(I, 14) And V8(I, 14) > teamRecords!(50, 0) Then
+            teamRecords!(50, 0) = V8(I, 13)
+            teamRecords!(50, 1) = 0
+            teamRecords!(50, 2) = 0
+            teamRecDesc$(50, 0) = gameTeams$(I)
+            teamRecDesc$(50, 1) = VERSUS$(I)
+            teamRecDesc$(50, 2) = gameTeams$(1 - I)
+            teamRecDesc$(50, 3) = Date$
         End If
 
         'TEAM FIELD GOAL ATTEMPTS MOST MADE
-        If V8(I, 13) = V8(I, 14) And V8(1 - I, 13) = V8(1 - I, 14) And V8(I, 14) + V8(1 - I, 14) > TREC(51, 0) Then
-            TREC(51, 0) = V8(I, 13)
-            TREC(51, 1) = V8(1 - I, 13)
-            TREC(51, 2) = 0
-            TRC$(51, 0) = gameTeams$(I)
-            TRC$(51, 1) = SITE$(I)
-            TRC$(51, 2) = gameTeams$(1 - I)
-            TRC$(51, 3) = Date$
+        If V8(I, 13) = V8(I, 14) And V8(1 - I, 13) = V8(1 - I, 14) And V8(I, 14) + V8(1 - I, 14) > teamRecords!(51, 0) Then
+            teamRecords!(51, 0) = V8(I, 13)
+            teamRecords!(51, 1) = V8(1 - I, 13)
+            teamRecords!(51, 2) = 0
+            teamRecDesc$(51, 0) = gameTeams$(I)
+            teamRecDesc$(51, 1) = VERSUS$(I)
+            teamRecDesc$(51, 2) = gameTeams$(1 - I)
+            teamRecDesc$(51, 3) = Date$
         End If
 
         'TEAM FIELD GOAL ATTEMPTS NONE MADE
-        If V8(I, 13) = 0 And V8(I, 14) > TREC(52, 0) Then
-            TREC(52, 0) = V8(I, 14)
-            TREC(52, 1) = 0
-            TREC(52, 2) = 0
-            TRC$(52, 0) = gameTeams$(I)
-            TRC$(52, 1) = SITE$(I)
-            TRC$(52, 2) = gameTeams$(1 - I)
-            TRC$(52, 3) = Date$
+        If V8(I, 13) = 0 And V8(I, 14) > teamRecords!(52, 0) Then
+            teamRecords!(52, 0) = V8(I, 14)
+            teamRecords!(52, 1) = 0
+            teamRecords!(52, 2) = 0
+            teamRecDesc$(52, 0) = gameTeams$(I)
+            teamRecDesc$(52, 1) = VERSUS$(I)
+            teamRecDesc$(52, 2) = gameTeams$(1 - I)
+            teamRecDesc$(52, 3) = Date$
         End If
 
         'TEAM FIELD GOAL ATTEMPTS NONE MADE
-        If V8(I, 13) > TREC(53, 0) Then
-            TREC(53, 0) = V8(I, 13)
-            TREC(53, 1) = 0
-            TREC(53, 2) = 0
-            TRC$(53, 0) = gameTeams$(I)
-            TRC$(53, 1) = SITE$(I)
-            TRC$(53, 2) = gameTeams$(1 - I)
-            TRC$(53, 3) = Date$
+        If V8(I, 13) > teamRecords!(53, 0) Then
+            teamRecords!(53, 0) = V8(I, 13)
+            teamRecords!(53, 1) = 0
+            teamRecords!(53, 2) = 0
+            teamRecDesc$(53, 0) = gameTeams$(I)
+            teamRecDesc$(53, 1) = VERSUS$(I)
+            teamRecDesc$(53, 2) = gameTeams$(1 - I)
+            teamRecDesc$(53, 3) = Date$
         End If
 
         'TEAM FIELD GOAL ATTEMPTS NONE MADE
-        If V8(I, 13) + V8(1 - I, 13) > TREC(54, 0) Then
-            TREC(54, 0) = V8(I, 13) + V8(1 - I, 13)
-            TREC(54, 1) = V8(I, 13)
-            TREC(54, 2) = V8(1 - I, 13)
-            TRC$(54, 0) = gameTeams$(I)
-            TRC$(54, 1) = SITE$(I)
-            TRC$(54, 2) = gameTeams$(1 - I)
-            TRC$(54, 3) = Date$
+        If V8(I, 13) + V8(1 - I, 13) > teamRecords!(54, 0) Then
+            teamRecords!(54, 0) = V8(I, 13) + V8(1 - I, 13)
+            teamRecords!(54, 1) = V8(I, 13)
+            teamRecords!(54, 2) = V8(1 - I, 13)
+            teamRecDesc$(54, 0) = gameTeams$(I)
+            teamRecDesc$(54, 1) = VERSUS$(I)
+            teamRecDesc$(54, 2) = gameTeams$(1 - I)
+            teamRecDesc$(54, 3) = Date$
         End If
 
-        If QR(I, 1, 13) + QR(I, 2, 13) > TREC(55, 0) Then
-            TREC(55, 0) = QR(I, 1, 13) + QR(I, 2, 13)
-            TREC(55, 1) = 1
-            TREC(55, 2) = 0
-            TRC$(55, 0) = gameTeams$(I)
-            TRC$(55, 1) = SITE$(I)
-            TRC$(55, 2) = gameTeams$(1 - I)
-            TRC$(55, 3) = Date$
+        If QR(I, 1, 13) + QR(I, 2, 13) > teamRecords!(55, 0) Then
+            teamRecords!(55, 0) = QR(I, 1, 13) + QR(I, 2, 13)
+            teamRecords!(55, 1) = 1
+            teamRecords!(55, 2) = 0
+            teamRecDesc$(55, 0) = gameTeams$(I)
+            teamRecDesc$(55, 1) = VERSUS$(I)
+            teamRecDesc$(55, 2) = gameTeams$(1 - I)
+            teamRecDesc$(55, 3) = Date$
         End If
 
-        If QR(I, 3, 13) + QR(I, 4, 13) > TREC(55, 0) Then
-            TREC(55, 0) = QR(I, 3, 13) + QR(I, 4, 13)
-            TREC(55, 1) = 2
-            TREC(55, 2) = 0
-            TRC$(55, 0) = gameTeams$(I)
-            TRC$(55, 1) = SITE$(I)
-            TRC$(55, 2) = gameTeams$(1 - I)
-            TRC$(55, 3) = Date$
+        If QR(I, 3, 13) + QR(I, 4, 13) > teamRecords!(55, 0) Then
+            teamRecords!(55, 0) = QR(I, 3, 13) + QR(I, 4, 13)
+            teamRecords!(55, 1) = 2
+            teamRecords!(55, 2) = 0
+            teamRecDesc$(55, 0) = gameTeams$(I)
+            teamRecDesc$(55, 1) = VERSUS$(I)
+            teamRecDesc$(55, 2) = gameTeams$(1 - I)
+            teamRecDesc$(55, 3) = Date$
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 13) > TREC(56, 0) Then
-                TREC(56, 0) = QR(I, I2, 13)
-                TREC(56, 1) = I2
-                TREC(56, 2) = 0
-                TRC$(56, 0) = gameTeams$(I)
-                TRC$(56, 1) = SITE$(I)
-                TRC$(56, 2) = gameTeams$(1 - I)
-                TRC$(56, 3) = Date$
+            If QR(I, I2, 13) > teamRecords!(56, 0) Then
+                teamRecords!(56, 0) = QR(I, I2, 13)
+                teamRecords!(56, 1) = I2
+                teamRecords!(56, 2) = 0
+                teamRecDesc$(56, 0) = gameTeams$(I)
+                teamRecDesc$(56, 1) = VERSUS$(I)
+                teamRecDesc$(56, 2) = gameTeams$(1 - I)
+                teamRecDesc$(56, 3) = Date$
             End If
         Next
         'TEAM FIELD GOAL ATTEMPTS NONE MADE
-        If V8(I, 14) > TREC(57, 0) Then
-            TREC(57, 0) = V8(I, 14)
-            TREC(57, 1) = 0
-            TREC(57, 2) = 0
-            TRC$(57, 0) = gameTeams$(I)
-            TRC$(57, 1) = SITE$(I)
-            TRC$(57, 2) = gameTeams$(1 - I)
-            TRC$(57, 3) = Date$
+        If V8(I, 14) > teamRecords!(57, 0) Then
+            teamRecords!(57, 0) = V8(I, 14)
+            teamRecords!(57, 1) = 0
+            teamRecords!(57, 2) = 0
+            teamRecDesc$(57, 0) = gameTeams$(I)
+            teamRecDesc$(57, 1) = VERSUS$(I)
+            teamRecDesc$(57, 2) = gameTeams$(1 - I)
+            teamRecDesc$(57, 3) = Date$
         End If
 
         'TEAM FIELD GOAL ATTEMPTS NONE MADE
-        If V8(I, 14) + V8(1 - I, 14) > TREC(58, 0) Then
-            TREC(58, 0) = V8(I, 14) + V8(1 - I, 14)
-            TREC(58, 1) = V8(I, 14)
-            TREC(58, 2) = V8(1 - I, 14)
-            TRC$(58, 0) = gameTeams$(I)
-            TRC$(58, 1) = SITE$(I)
-            TRC$(58, 2) = gameTeams$(1 - I)
-            TRC$(58, 3) = Date$
+        If V8(I, 14) + V8(1 - I, 14) > teamRecords!(58, 0) Then
+            teamRecords!(58, 0) = V8(I, 14) + V8(1 - I, 14)
+            teamRecords!(58, 1) = V8(I, 14)
+            teamRecords!(58, 2) = V8(1 - I, 14)
+            teamRecDesc$(58, 0) = gameTeams$(I)
+            teamRecDesc$(58, 1) = VERSUS$(I)
+            teamRecDesc$(58, 2) = gameTeams$(1 - I)
+            teamRecDesc$(58, 3) = Date$
         End If
 
-        If QR(I, 1, 14) + QR(I, 2, 14) > TREC(59, 0) Then
-            TREC(59, 0) = QR(I, 1, 14) + QR(I, 2, 14)
-            TREC(59, 1) = 1
-            TREC(59, 2) = 0
-            TRC$(59, 0) = gameTeams$(I)
-            TRC$(59, 1) = SITE$(I)
-            TRC$(59, 2) = gameTeams$(1 - I)
-            TRC$(59, 3) = Date$
+        If QR(I, 1, 14) + QR(I, 2, 14) > teamRecords!(59, 0) Then
+            teamRecords!(59, 0) = QR(I, 1, 14) + QR(I, 2, 14)
+            teamRecords!(59, 1) = 1
+            teamRecords!(59, 2) = 0
+            teamRecDesc$(59, 0) = gameTeams$(I)
+            teamRecDesc$(59, 1) = VERSUS$(I)
+            teamRecDesc$(59, 2) = gameTeams$(1 - I)
+            teamRecDesc$(59, 3) = Date$
         End If
 
-        If QR(I, 3, 14) + QR(I, 4, 14) > TREC(59, 0) Then
-            TREC(59, 0) = QR(I, 3, 14) + QR(I, 4, 14)
-            TREC(59, 1) = 2
-            TREC(59, 2) = 0
-            TRC$(59, 0) = gameTeams$(I)
-            TRC$(59, 1) = SITE$(I)
-            TRC$(59, 2) = gameTeams$(1 - I)
-            TRC$(59, 3) = Date$
+        If QR(I, 3, 14) + QR(I, 4, 14) > teamRecords!(59, 0) Then
+            teamRecords!(59, 0) = QR(I, 3, 14) + QR(I, 4, 14)
+            teamRecords!(59, 1) = 2
+            teamRecords!(59, 2) = 0
+            teamRecDesc$(59, 0) = gameTeams$(I)
+            teamRecDesc$(59, 1) = VERSUS$(I)
+            teamRecDesc$(59, 2) = gameTeams$(1 - I)
+            teamRecDesc$(59, 3) = Date$
         End If
 
         ' FREE THROW ATTEMPTS NO MISS
-        If V8(I, 2) = V8(I, 3) And V8(I, 2) > TREC(60, 0) Then
-            TREC(60, 0) = V8(I, 2)
-            TREC(60, 1) = 0
-            TREC(60, 2) = 0
-            TRC$(60, 0) = gameTeams$(I)
-            TRC$(60, 1) = SITE$(I)
-            TRC$(60, 2) = gameTeams$(1 - I)
-            TRC$(60, 3) = Date$
+        If V8(I, 2) = V8(I, 3) And V8(I, 2) > teamRecords!(60, 0) Then
+            teamRecords!(60, 0) = V8(I, 2)
+            teamRecords!(60, 1) = 0
+            teamRecords!(60, 2) = 0
+            teamRecDesc$(60, 0) = gameTeams$(I)
+            teamRecDesc$(60, 1) = VERSUS$(I)
+            teamRecDesc$(60, 2) = gameTeams$(1 - I)
+            teamRecDesc$(60, 3) = Date$
         End If
 
         ' FREE THROW ATTEMPTS LOW %
-        If V8(I, 2) / V8(I, 3) < TREC(61, 0) Then
-            TREC(61, 0) = V8(I, 2) / V8(I, 3)
-            TREC(61, 1) = V8(I, 2)
-            TREC(61, 2) = V8(I, 3)
-            TRC$(61, 0) = gameTeams$(I)
-            TRC$(61, 1) = SITE$(I)
-            TRC$(61, 2) = gameTeams$(1 - I)
-            TRC$(61, 3) = Date$
+        If V8(I, 2) / V8(I, 3) < teamRecords!(61, 0) Then
+            teamRecords!(61, 0) = V8(I, 2) / V8(I, 3)
+            teamRecords!(61, 1) = V8(I, 2)
+            teamRecords!(61, 2) = V8(I, 3)
+            teamRecDesc$(61, 0) = gameTeams$(I)
+            teamRecDesc$(61, 1) = VERSUS$(I)
+            teamRecDesc$(61, 2) = gameTeams$(1 - I)
+            teamRecDesc$(61, 3) = Date$
         End If
 
         ' FREE THROW ATTEMPTS COMBINED HIGH %
-        If (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3)) > TREC(62, 0) Then
-            TREC(62, 0) = (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3))
-            TREC(62, 1) = V8(I, 2) / V8(I, 3)
-            TREC(62, 2) = V8(1 - I, 2) / V8(1 - I, 3)
-            TRC$(62, 0) = gameTeams$(I)
-            TRC$(62, 1) = SITE$(I)
-            TRC$(62, 2) = gameTeams$(1 - I)
-            TRC$(62, 3) = Date$
+        If (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3)) > teamRecords!(62, 0) Then
+            teamRecords!(62, 0) = (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3))
+            teamRecords!(62, 1) = V8(I, 2) / V8(I, 3)
+            teamRecords!(62, 2) = V8(1 - I, 2) / V8(1 - I, 3)
+            teamRecDesc$(62, 0) = gameTeams$(I)
+            teamRecDesc$(62, 1) = VERSUS$(I)
+            teamRecDesc$(62, 2) = gameTeams$(1 - I)
+            teamRecDesc$(62, 3) = Date$
         End If
 
         ' FREE THROW ATTEMPTS COMBINED LOW %
-        If (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3)) < TREC(63, 0) Then
-            TREC(63, 0) = (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3))
-            TREC(63, 1) = V8(I, 2) / V8(I, 3)
-            TREC(63, 2) = V8(1 - I, 2) / V8(1 - I, 3)
-            TRC$(63, 0) = gameTeams$(I)
-            TRC$(63, 1) = SITE$(I)
-            TRC$(63, 2) = gameTeams$(1 - I)
-            TRC$(63, 3) = Date$
+        If (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3)) < teamRecords!(63, 0) Then
+            teamRecords!(63, 0) = (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3))
+            teamRecords!(63, 1) = V8(I, 2) / V8(I, 3)
+            teamRecords!(63, 2) = V8(1 - I, 2) / V8(1 - I, 3)
+            teamRecDesc$(63, 0) = gameTeams$(I)
+            teamRecDesc$(63, 1) = VERSUS$(I)
+            teamRecDesc$(63, 2) = gameTeams$(1 - I)
+            teamRecDesc$(63, 3) = Date$
         End If
 
         ' TEAM FREE THROWS MADE
-        If V8(I, 2) > TREC(64, 0) Then
-            TREC(64, 0) = V8(I, 2)
-            TREC(64, 1) = 0
-            TREC(64, 2) = 0
-            TRC$(64, 0) = gameTeams$(I)
-            TRC$(64, 1) = SITE$(I)
-            TRC$(64, 2) = gameTeams$(1 - I)
-            TRC$(64, 3) = Date$
+        If V8(I, 2) > teamRecords!(64, 0) Then
+            teamRecords!(64, 0) = V8(I, 2)
+            teamRecords!(64, 1) = 0
+            teamRecords!(64, 2) = 0
+            teamRecDesc$(64, 0) = gameTeams$(I)
+            teamRecDesc$(64, 1) = VERSUS$(I)
+            teamRecDesc$(64, 2) = gameTeams$(1 - I)
+            teamRecDesc$(64, 3) = Date$
         End If
 
-        If V8(I, 2) < TREC(65, 0) Then
-            TREC(65, 0) = V8(I, 2)
-            TREC(65, 1) = 0
-            TREC(65, 2) = 0
-            TRC$(65, 0) = gameTeams$(I)
-            TRC$(65, 1) = SITE$(I)
-            TRC$(65, 2) = gameTeams$(1 - I)
-            TRC$(65, 3) = Date$
+        If V8(I, 2) < teamRecords!(65, 0) Then
+            teamRecords!(65, 0) = V8(I, 2)
+            teamRecords!(65, 1) = 0
+            teamRecords!(65, 2) = 0
+            teamRecDesc$(65, 0) = gameTeams$(I)
+            teamRecDesc$(65, 1) = VERSUS$(I)
+            teamRecDesc$(65, 2) = gameTeams$(1 - I)
+            teamRecDesc$(65, 3) = Date$
         End If
 
-        If V8(I, 2) + V8(1 - I, 2) > TREC(66, 0) Then
-            TREC(66, 0) = V8(I, 2) + V8(1 - I, 2)
-            TREC(66, 1) = V8(I, 2)
-            TREC(66, 2) = V8(1 - I, 2)
-            TRC$(66, 0) = gameTeams$(I)
-            TRC$(66, 1) = SITE$(I)
-            TRC$(66, 2) = gameTeams$(1 - I)
-            TRC$(66, 3) = Date$
+        If V8(I, 2) + V8(1 - I, 2) > teamRecords!(66, 0) Then
+            teamRecords!(66, 0) = V8(I, 2) + V8(1 - I, 2)
+            teamRecords!(66, 1) = V8(I, 2)
+            teamRecords!(66, 2) = V8(1 - I, 2)
+            teamRecDesc$(66, 0) = gameTeams$(I)
+            teamRecDesc$(66, 1) = VERSUS$(I)
+            teamRecDesc$(66, 2) = gameTeams$(1 - I)
+            teamRecDesc$(66, 3) = Date$
         End If
 
-        If V8(I, 2) + V8(1 - I, 2) < TREC(67, 0) Then
-            TREC(67, 0) = V8(I, 2) + V8(1 - I, 2)
-            TREC(67, 1) = V8(I, 2)
-            TREC(67, 2) = V8(1 - I, 2)
-            TRC$(67, 0) = gameTeams$(I)
-            TRC$(67, 1) = SITE$(I)
-            TRC$(67, 2) = gameTeams$(1 - I)
-            TRC$(67, 3) = Date$
+        If V8(I, 2) + V8(1 - I, 2) < teamRecords!(67, 0) Then
+            teamRecords!(67, 0) = V8(I, 2) + V8(1 - I, 2)
+            teamRecords!(67, 1) = V8(I, 2)
+            teamRecords!(67, 2) = V8(1 - I, 2)
+            teamRecDesc$(67, 0) = gameTeams$(I)
+            teamRecDesc$(67, 1) = VERSUS$(I)
+            teamRecDesc$(67, 2) = gameTeams$(1 - I)
+            teamRecDesc$(67, 3) = Date$
         End If
 
-        If QR(I, 1, 2) + QR(I, 2, 2) > TREC(68, 0) Then
-            TREC(68, 0) = QR(I, 1, 2) + QR(I, 2, 2)
-            TREC(68, 1) = 1
-            TREC(68, 2) = 0
-            TRC$(68, 0) = gameTeams$(I)
-            TRC$(68, 1) = SITE$(I)
-            TRC$(68, 2) = gameTeams$(1 - I)
-            TRC$(68, 3) = Date$
+        If QR(I, 1, 2) + QR(I, 2, 2) > teamRecords!(68, 0) Then
+            teamRecords!(68, 0) = QR(I, 1, 2) + QR(I, 2, 2)
+            teamRecords!(68, 1) = 1
+            teamRecords!(68, 2) = 0
+            teamRecDesc$(68, 0) = gameTeams$(I)
+            teamRecDesc$(68, 1) = VERSUS$(I)
+            teamRecDesc$(68, 2) = gameTeams$(1 - I)
+            teamRecDesc$(68, 3) = Date$
         End If
 
-        If QR(I, 3, 2) + QR(I, 4, 2) > TREC(68, 0) Then
-            TREC(68, 0) = QR(I, 3, 2) + QR(I, 4, 2)
-            TREC(68, 1) = 2
-            TREC(68, 2) = 0
-            TRC$(68, 0) = gameTeams$(I)
-            TRC$(68, 1) = SITE$(I)
-            TRC$(68, 2) = gameTeams$(1 - I)
-            TRC$(68, 3) = Date$
+        If QR(I, 3, 2) + QR(I, 4, 2) > teamRecords!(68, 0) Then
+            teamRecords!(68, 0) = QR(I, 3, 2) + QR(I, 4, 2)
+            teamRecords!(68, 1) = 2
+            teamRecords!(68, 2) = 0
+            teamRecDesc$(68, 0) = gameTeams$(I)
+            teamRecDesc$(68, 1) = VERSUS$(I)
+            teamRecDesc$(68, 2) = gameTeams$(1 - I)
+            teamRecDesc$(68, 3) = Date$
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 2) > TREC(70, 0) Then
-                TREC(70, 0) = QR(I, I2, 2)
-                TREC(70, 1) = I2
-                TREC(70, 2) = 0
-                TRC$(70, 0) = gameTeams$(I)
-                TRC$(70, 1) = SITE$(I)
-                TRC$(70, 2) = gameTeams$(1 - I)
-                TRC$(70, 3) = Date$
+            If QR(I, I2, 2) > teamRecords!(70, 0) Then
+                teamRecords!(70, 0) = QR(I, I2, 2)
+                teamRecords!(70, 1) = I2
+                teamRecords!(70, 2) = 0
+                teamRecDesc$(70, 0) = gameTeams$(I)
+                teamRecDesc$(70, 1) = VERSUS$(I)
+                teamRecDesc$(70, 2) = gameTeams$(1 - I)
+                teamRecDesc$(70, 3) = Date$
             End If
 
         Next
 
         ' TEAM FREE THROWS ATTEMPTED
-        If V8(I, 3) > TREC(72, 0) Then
-            TREC(72, 0) = V8(I, 3)
-            TREC(72, 1) = 0
-            TREC(72, 2) = 0
-            TRC$(72, 0) = gameTeams$(I)
-            TRC$(72, 1) = SITE$(I)
-            TRC$(72, 2) = gameTeams$(1 - I)
-            TRC$(72, 3) = Date$
+        If V8(I, 3) > teamRecords!(72, 0) Then
+            teamRecords!(72, 0) = V8(I, 3)
+            teamRecords!(72, 1) = 0
+            teamRecords!(72, 2) = 0
+            teamRecDesc$(72, 0) = gameTeams$(I)
+            teamRecDesc$(72, 1) = VERSUS$(I)
+            teamRecDesc$(72, 2) = gameTeams$(1 - I)
+            teamRecDesc$(72, 3) = Date$
         End If
 
-        If V8(I, 3) < TREC(73, 0) Then
-            TREC(73, 0) = V8(I, 3)
-            TREC(73, 1) = 0
-            TREC(73, 2) = 0
-            TRC$(73, 0) = gameTeams$(I)
-            TRC$(73, 1) = SITE$(I)
-            TRC$(73, 2) = gameTeams$(1 - I)
-            TRC$(73, 3) = Date$
+        If V8(I, 3) < teamRecords!(73, 0) Then
+            teamRecords!(73, 0) = V8(I, 3)
+            teamRecords!(73, 1) = 0
+            teamRecords!(73, 2) = 0
+            teamRecDesc$(73, 0) = gameTeams$(I)
+            teamRecDesc$(73, 1) = VERSUS$(I)
+            teamRecDesc$(73, 2) = gameTeams$(1 - I)
+            teamRecDesc$(73, 3) = Date$
         End If
 
-        If V8(I, 3) + V8(1 - I, 3) > TREC(74, 0) Then
-            TREC(74, 0) = V8(I, 3) + V8(1 - I, 3)
-            TREC(74, 1) = V8(I, 3)
-            TREC(74, 2) = V8(1 - I, 3)
-            TRC$(74, 0) = gameTeams$(I)
-            TRC$(74, 1) = SITE$(I)
-            TRC$(74, 2) = gameTeams$(1 - I)
-            TRC$(74, 3) = Date$
+        If V8(I, 3) + V8(1 - I, 3) > teamRecords!(74, 0) Then
+            teamRecords!(74, 0) = V8(I, 3) + V8(1 - I, 3)
+            teamRecords!(74, 1) = V8(I, 3)
+            teamRecords!(74, 2) = V8(1 - I, 3)
+            teamRecDesc$(74, 0) = gameTeams$(I)
+            teamRecDesc$(74, 1) = VERSUS$(I)
+            teamRecDesc$(74, 2) = gameTeams$(1 - I)
+            teamRecDesc$(74, 3) = Date$
         End If
 
-        If V8(I, 3) + V8(1 - I, 3) < TREC(75, 0) Then
-            TREC(75, 0) = V8(I, 3) + V8(1 - I, 3)
-            TREC(75, 1) = V8(I, 3)
-            TREC(75, 2) = V8(1 - I, 3)
-            TRC$(75, 0) = gameTeams$(I)
-            TRC$(75, 1) = SITE$(I)
-            TRC$(75, 2) = gameTeams$(1 - I)
-            TRC$(75, 3) = Date$
+        If V8(I, 3) + V8(1 - I, 3) < teamRecords!(75, 0) Then
+            teamRecords!(75, 0) = V8(I, 3) + V8(1 - I, 3)
+            teamRecords!(75, 1) = V8(I, 3)
+            teamRecords!(75, 2) = V8(1 - I, 3)
+            teamRecDesc$(75, 0) = gameTeams$(I)
+            teamRecDesc$(75, 1) = VERSUS$(I)
+            teamRecDesc$(75, 2) = gameTeams$(1 - I)
+            teamRecDesc$(75, 3) = Date$
         End If
 
-        If QR(I, 1, 3) + QR(I, 2, 3) > TREC(76, 0) Then
-            TREC(76, 0) = QR(I, 1, 3) + QR(I, 2, 3)
-            TREC(76, 1) = 1
-            TREC(76, 2) = 0
-            TRC$(76, 0) = gameTeams$(I)
-            TRC$(76, 1) = SITE$(I)
-            TRC$(76, 2) = gameTeams$(1 - I)
-            TRC$(76, 3) = Date$
+        If QR(I, 1, 3) + QR(I, 2, 3) > teamRecords!(76, 0) Then
+            teamRecords!(76, 0) = QR(I, 1, 3) + QR(I, 2, 3)
+            teamRecords!(76, 1) = 1
+            teamRecords!(76, 2) = 0
+            teamRecDesc$(76, 0) = gameTeams$(I)
+            teamRecDesc$(76, 1) = VERSUS$(I)
+            teamRecDesc$(76, 2) = gameTeams$(1 - I)
+            teamRecDesc$(76, 3) = Date$
         End If
 
-        If QR(I, 3, 3) + QR(I, 4, 3) > TREC(76, 0) Then
-            TREC(76, 0) = QR(I, 3, 3) + QR(I, 4, 3)
-            TREC(76, 1) = 2
-            TREC(76, 2) = 0
-            TRC$(76, 0) = gameTeams$(I)
-            TRC$(76, 1) = SITE$(I)
-            TRC$(76, 2) = gameTeams$(1 - I)
-            TRC$(76, 3) = Date$
+        If QR(I, 3, 3) + QR(I, 4, 3) > teamRecords!(76, 0) Then
+            teamRecords!(76, 0) = QR(I, 3, 3) + QR(I, 4, 3)
+            teamRecords!(76, 1) = 2
+            teamRecords!(76, 2) = 0
+            teamRecDesc$(76, 0) = gameTeams$(I)
+            teamRecDesc$(76, 1) = VERSUS$(I)
+            teamRecDesc$(76, 2) = gameTeams$(1 - I)
+            teamRecDesc$(76, 3) = Date$
         End If
 
-        If QR(I, 1, 3) + QR(I, 2, 3) + QR(1 - I, 1, 3) + QR(1 - I, 2, 3) > TREC(77, 0) Then
-            TREC(77, 0) = QR(I, 1, 3) + QR(I, 2, 3) + QR(1 - I, 1, 3) + QR(1 - I, 2, 3)
-            TREC(77, 1) = 1
-            TREC(77, 2) = QR(I, 1, 3) + QR(I, 2, 3)
-            TRC$(77, 0) = gameTeams$(I)
-            TRC$(77, 1) = SITE$(I)
-            TRC$(77, 2) = gameTeams$(1 - I)
-            TRC$(77, 3) = Date$
+        If QR(I, 1, 3) + QR(I, 2, 3) + QR(1 - I, 1, 3) + QR(1 - I, 2, 3) > teamRecords!(77, 0) Then
+            teamRecords!(77, 0) = QR(I, 1, 3) + QR(I, 2, 3) + QR(1 - I, 1, 3) + QR(1 - I, 2, 3)
+            teamRecords!(77, 1) = 1
+            teamRecords!(77, 2) = QR(I, 1, 3) + QR(I, 2, 3)
+            teamRecDesc$(77, 0) = gameTeams$(I)
+            teamRecDesc$(77, 1) = VERSUS$(I)
+            teamRecDesc$(77, 2) = gameTeams$(1 - I)
+            teamRecDesc$(77, 3) = Date$
         End If
 
-        If QR(I, 3, 3) + QR(I, 4, 3) + QR(1 - I, 3, 3) + QR(1 - I, 4, 3) > TREC(77, 0) Then
-            TREC(77, 0) = QR(I, 3, 3) + QR(I, 4, 3) + QR(1 - I, 3, 3) + QR(1 - I, 4, 3)
-            TREC(77, 1) = 2
-            TREC(77, 2) = QR(I, 3, 3) + QR(I, 4, 3)
-            TRC$(77, 0) = gameTeams$(I)
-            TRC$(77, 1) = SITE$(I)
-            TRC$(77, 2) = gameTeams$(1 - I)
-            TRC$(77, 3) = Date$
-        End If
-
-        For I2 = 1 To 4
-            If QR(I, I2, 3) > TREC(78, 0) Then
-                TREC(78, 0) = QR(I, I2, 3)
-                TREC(78, 1) = I2
-                TREC(78, 2) = 0
-                TRC$(78, 0) = gameTeams$(I)
-                TRC$(78, 1) = SITE$(I)
-                TRC$(78, 2) = gameTeams$(1 - I)
-                TRC$(78, 3) = Date$
-            End If
-
-            If QR(I, I2, 3) + QR(1 - I, I2, 3) > TREC(79, 0) Then
-                TREC(79, 0) = QR(I, I2, 3) + QR(1 - I, I2, 3)
-                TREC(79, 1) = I2
-                TREC(79, 2) = QR(I, I2, 3)
-                TRC$(79, 0) = gameTeams$(I)
-                TRC$(79, 1) = SITE$(I)
-                TRC$(79, 2) = gameTeams$(1 - I)
-                TRC$(79, 3) = Date$
-            End If
-        Next
-
-        If R3(I) > TREC(80, 0) Then
-            TREC(80, 0) = R3(I)
-            TREC(80, 1) = 0
-            TREC(80, 2) = 0
-            TRC$(80, 0) = gameTeams$(I)
-            TRC$(80, 1) = SITE$(I)
-            TRC$(80, 2) = gameTeams$(1 - I)
-            TRC$(80, 3) = Date$
-        End If
-
-        If R3(I) < TREC(81, 0) Then
-            TREC(81, 0) = R3(I)
-            TREC(81, 1) = 0
-            TREC(81, 2) = 0
-            TRC$(81, 0) = gameTeams$(I)
-            TRC$(81, 1) = SITE$(I)
-            TRC$(81, 2) = gameTeams$(1 - I)
-            TRC$(81, 3) = Date$
-        End If
-
-        If R3(I) + R3(1 - I) > TREC(82, 0) Then
-            TREC(82, 0) = R3(I) + R3(1 - I)
-            TREC(82, 1) = R3(I)
-            TREC(82, 2) = R3(1 - I)
-            TRC$(82, 0) = gameTeams$(I)
-            TRC$(82, 1) = SITE$(I)
-            TRC$(82, 2) = gameTeams$(1 - I)
-            TRC$(82, 3) = Date$
-        End If
-
-        If R3(I) + R3(1 - I) < TREC(83, 0) Then
-            TREC(83, 0) = R3(I) + R3(1 - I)
-            TREC(83, 1) = R3(I)
-            TREC(83, 2) = R3(1 - I)
-            TRC$(83, 0) = gameTeams$(I)
-            TRC$(83, 1) = SITE$(I)
-            TRC$(83, 2) = gameTeams$(1 - I)
-            TRC$(83, 3) = Date$
-        End If
-
-        If QR(I, 1, 4) + QR(I, 2, 4) > TREC(84, 0) Then
-            TREC(84, 0) = QR(I, 1, 4) + QR(I, 2, 4)
-            TREC(84, 1) = 1
-            TREC(84, 2) = QR(I, 1, 4) + QR(I, 2, 4)
-            TRC$(84, 0) = gameTeams$(I)
-            TRC$(84, 1) = SITE$(I)
-            TRC$(84, 2) = gameTeams$(1 - I)
-            TRC$(84, 3) = Date$
-        End If
-
-        If QR(I, 3, 4) + QR(I, 4, 4) > TREC(84, 0) Then
-            TREC(84, 0) = QR(I, 3, 4) + QR(I, 4, 4)
-            TREC(84, 1) = 2
-            TREC(84, 2) = QR(I, 3, 4) + QR(I, 4, 4)
-            TRC$(84, 0) = gameTeams$(I)
-            TRC$(84, 1) = SITE$(I)
-            TRC$(84, 2) = gameTeams$(1 - I)
-            TRC$(84, 3) = Date$
+        If QR(I, 3, 3) + QR(I, 4, 3) + QR(1 - I, 3, 3) + QR(1 - I, 4, 3) > teamRecords!(77, 0) Then
+            teamRecords!(77, 0) = QR(I, 3, 3) + QR(I, 4, 3) + QR(1 - I, 3, 3) + QR(1 - I, 4, 3)
+            teamRecords!(77, 1) = 2
+            teamRecords!(77, 2) = QR(I, 3, 3) + QR(I, 4, 3)
+            teamRecDesc$(77, 0) = gameTeams$(I)
+            teamRecDesc$(77, 1) = VERSUS$(I)
+            teamRecDesc$(77, 2) = gameTeams$(1 - I)
+            teamRecDesc$(77, 3) = Date$
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 4) > TREC(85, 0) Then
-                TREC(85, 0) = QR(I, I2, 4)
-                TREC(85, 1) = I2
-                TREC(85, 2) = 0
-                TRC$(85, 0) = gameTeams$(I)
-                TRC$(85, 1) = SITE$(I)
-                TRC$(85, 2) = gameTeams$(1 - I)
-                TRC$(85, 3) = Date$
+            If QR(I, I2, 3) > teamRecords!(78, 0) Then
+                teamRecords!(78, 0) = QR(I, I2, 3)
+                teamRecords!(78, 1) = I2
+                teamRecords!(78, 2) = 0
+                teamRecDesc$(78, 0) = gameTeams$(I)
+                teamRecDesc$(78, 1) = VERSUS$(I)
+                teamRecDesc$(78, 2) = gameTeams$(1 - I)
+                teamRecDesc$(78, 3) = Date$
+            End If
+
+            If QR(I, I2, 3) + QR(1 - I, I2, 3) > teamRecords!(79, 0) Then
+                teamRecords!(79, 0) = QR(I, I2, 3) + QR(1 - I, I2, 3)
+                teamRecords!(79, 1) = I2
+                teamRecords!(79, 2) = QR(I, I2, 3)
+                teamRecDesc$(79, 0) = gameTeams$(I)
+                teamRecDesc$(79, 1) = VERSUS$(I)
+                teamRecDesc$(79, 2) = gameTeams$(1 - I)
+                teamRecDesc$(79, 3) = Date$
             End If
         Next
 
-        If V8(I, 11) > TREC(86, 0) Then
-            TREC(86, 0) = V8(I, 11)
-            TREC(86, 1) = 0
-            TREC(86, 2) = 0
-            TRC$(86, 0) = gameTeams$(I)
-            TRC$(86, 1) = SITE$(I)
-            TRC$(86, 2) = gameTeams$(1 - I)
-            TRC$(86, 3) = Date$
+        If R3(I) > teamRecords!(80, 0) Then
+            teamRecords!(80, 0) = R3(I)
+            teamRecords!(80, 1) = 0
+            teamRecords!(80, 2) = 0
+            teamRecDesc$(80, 0) = gameTeams$(I)
+            teamRecDesc$(80, 1) = VERSUS$(I)
+            teamRecDesc$(80, 2) = gameTeams$(1 - I)
+            teamRecDesc$(80, 3) = Date$
         End If
 
-        If V8(I, 11) + V8(1 - I, 11) > TREC(88, 0) Then
-            TREC(88, 0) = V8(I, 11) + V8(1 - I, 11)
-            TREC(88, 1) = V8(I, 11)
-            TREC(88, 2) = V8(1 - I, 11)
-            TRC$(88, 0) = gameTeams$(I)
-            TRC$(88, 1) = SITE$(I)
-            TRC$(88, 2) = gameTeams$(1 - I)
-            TRC$(88, 3) = Date$
+        If R3(I) < teamRecords!(81, 0) Then
+            teamRecords!(81, 0) = R3(I)
+            teamRecords!(81, 1) = 0
+            teamRecords!(81, 2) = 0
+            teamRecDesc$(81, 0) = gameTeams$(I)
+            teamRecDesc$(81, 1) = VERSUS$(I)
+            teamRecDesc$(81, 2) = gameTeams$(1 - I)
+            teamRecDesc$(81, 3) = Date$
         End If
 
-        If V8(I, 11) + V8(1 - I, 11) < TREC(89, 0) Then
-            TREC(89, 0) = V8(I, 11) + V8(1 - I, 11)
-            TREC(89, 1) = V8(I, 11)
-            TREC(89, 2) = V8(1 - I, 11)
-            TRC$(89, 0) = gameTeams$(I)
-            TRC$(89, 1) = SITE$(I)
-            TRC$(89, 2) = gameTeams$(1 - I)
-            TRC$(89, 3) = Date$
+        If R3(I) + R3(1 - I) > teamRecords!(82, 0) Then
+            teamRecords!(82, 0) = R3(I) + R3(1 - I)
+            teamRecords!(82, 1) = R3(I)
+            teamRecords!(82, 2) = R3(1 - I)
+            teamRecDesc$(82, 0) = gameTeams$(I)
+            teamRecDesc$(82, 1) = VERSUS$(I)
+            teamRecDesc$(82, 2) = gameTeams$(1 - I)
+            teamRecDesc$(82, 3) = Date$
         End If
 
-        If QR(I, 1, 11) + QR(I, 2, 11) > TREC(90, 0) Then
-            TREC(90, 0) = QR(I, 1, 11) + QR(I, 2, 11)
-            TREC(90, 1) = 1
-            TREC(90, 2) = QR(I, 1, 11) + QR(I, 2, 11)
-            TRC$(90, 0) = gameTeams$(I)
-            TRC$(90, 1) = SITE$(I)
-            TRC$(90, 2) = gameTeams$(1 - I)
-            TRC$(90, 3) = Date$
+        If R3(I) + R3(1 - I) < teamRecords!(83, 0) Then
+            teamRecords!(83, 0) = R3(I) + R3(1 - I)
+            teamRecords!(83, 1) = R3(I)
+            teamRecords!(83, 2) = R3(1 - I)
+            teamRecDesc$(83, 0) = gameTeams$(I)
+            teamRecDesc$(83, 1) = VERSUS$(I)
+            teamRecDesc$(83, 2) = gameTeams$(1 - I)
+            teamRecDesc$(83, 3) = Date$
         End If
 
-        If QR(I, 3, 11) + QR(I, 4, 11) > TREC(90, 0) Then
-            TREC(90, 0) = QR(I, 3, 11) + QR(I, 4, 11)
-            TREC(90, 1) = 2
-            TREC(90, 2) = QR(I, 3, 11) + QR(I, 4, 11)
-            TRC$(90, 0) = gameTeams$(I)
-            TRC$(90, 1) = SITE$(I)
-            TRC$(90, 2) = gameTeams$(1 - I)
-            TRC$(90, 3) = Date$
+        If QR(I, 1, 4) + QR(I, 2, 4) > teamRecords!(84, 0) Then
+            teamRecords!(84, 0) = QR(I, 1, 4) + QR(I, 2, 4)
+            teamRecords!(84, 1) = 1
+            teamRecords!(84, 2) = QR(I, 1, 4) + QR(I, 2, 4)
+            teamRecDesc$(84, 0) = gameTeams$(I)
+            teamRecDesc$(84, 1) = VERSUS$(I)
+            teamRecDesc$(84, 2) = gameTeams$(1 - I)
+            teamRecDesc$(84, 3) = Date$
+        End If
+
+        If QR(I, 3, 4) + QR(I, 4, 4) > teamRecords!(84, 0) Then
+            teamRecords!(84, 0) = QR(I, 3, 4) + QR(I, 4, 4)
+            teamRecords!(84, 1) = 2
+            teamRecords!(84, 2) = QR(I, 3, 4) + QR(I, 4, 4)
+            teamRecDesc$(84, 0) = gameTeams$(I)
+            teamRecDesc$(84, 1) = VERSUS$(I)
+            teamRecDesc$(84, 2) = gameTeams$(1 - I)
+            teamRecDesc$(84, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 4) > teamRecords!(85, 0) Then
+                teamRecords!(85, 0) = QR(I, I2, 4)
+                teamRecords!(85, 1) = I2
+                teamRecords!(85, 2) = 0
+                teamRecDesc$(85, 0) = gameTeams$(I)
+                teamRecDesc$(85, 1) = VERSUS$(I)
+                teamRecDesc$(85, 2) = gameTeams$(1 - I)
+                teamRecDesc$(85, 3) = Date$
+            End If
+        Next
+
+        If V8(I, 11) > teamRecords!(86, 0) Then
+            teamRecords!(86, 0) = V8(I, 11)
+            teamRecords!(86, 1) = 0
+            teamRecords!(86, 2) = 0
+            teamRecDesc$(86, 0) = gameTeams$(I)
+            teamRecDesc$(86, 1) = VERSUS$(I)
+            teamRecDesc$(86, 2) = gameTeams$(1 - I)
+            teamRecDesc$(86, 3) = Date$
+        End If
+
+        If V8(I, 11) + V8(1 - I, 11) > teamRecords!(88, 0) Then
+            teamRecords!(88, 0) = V8(I, 11) + V8(1 - I, 11)
+            teamRecords!(88, 1) = V8(I, 11)
+            teamRecords!(88, 2) = V8(1 - I, 11)
+            teamRecDesc$(88, 0) = gameTeams$(I)
+            teamRecDesc$(88, 1) = VERSUS$(I)
+            teamRecDesc$(88, 2) = gameTeams$(1 - I)
+            teamRecDesc$(88, 3) = Date$
+        End If
+
+        If V8(I, 11) + V8(1 - I, 11) < teamRecords!(89, 0) Then
+            teamRecords!(89, 0) = V8(I, 11) + V8(1 - I, 11)
+            teamRecords!(89, 1) = V8(I, 11)
+            teamRecords!(89, 2) = V8(1 - I, 11)
+            teamRecDesc$(89, 0) = gameTeams$(I)
+            teamRecDesc$(89, 1) = VERSUS$(I)
+            teamRecDesc$(89, 2) = gameTeams$(1 - I)
+            teamRecDesc$(89, 3) = Date$
+        End If
+
+        If QR(I, 1, 11) + QR(I, 2, 11) > teamRecords!(90, 0) Then
+            teamRecords!(90, 0) = QR(I, 1, 11) + QR(I, 2, 11)
+            teamRecords!(90, 1) = 1
+            teamRecords!(90, 2) = QR(I, 1, 11) + QR(I, 2, 11)
+            teamRecDesc$(90, 0) = gameTeams$(I)
+            teamRecDesc$(90, 1) = VERSUS$(I)
+            teamRecDesc$(90, 2) = gameTeams$(1 - I)
+            teamRecDesc$(90, 3) = Date$
+        End If
+
+        If QR(I, 3, 11) + QR(I, 4, 11) > teamRecords!(90, 0) Then
+            teamRecords!(90, 0) = QR(I, 3, 11) + QR(I, 4, 11)
+            teamRecords!(90, 1) = 2
+            teamRecords!(90, 2) = QR(I, 3, 11) + QR(I, 4, 11)
+            teamRecDesc$(90, 0) = gameTeams$(I)
+            teamRecDesc$(90, 1) = VERSUS$(I)
+            teamRecDesc$(90, 2) = gameTeams$(1 - I)
+            teamRecDesc$(90, 3) = Date$
         End If
 
         ' ASSISTS
-        If V8(I, 7) > TREC(96, 0) Then
-            TREC(96, 0) = V8(I, 7)
-            TREC(96, 1) = 0
-            TREC(96, 2) = 0
-            TRC$(96, 0) = gameTeams$(I)
-            TRC$(96, 1) = SITE$(I)
-            TRC$(96, 2) = gameTeams$(1 - I)
-            TRC$(96, 3) = Date$
+        If V8(I, 7) > teamRecords!(96, 0) Then
+            teamRecords!(96, 0) = V8(I, 7)
+            teamRecords!(96, 1) = 0
+            teamRecords!(96, 2) = 0
+            teamRecDesc$(96, 0) = gameTeams$(I)
+            teamRecDesc$(96, 1) = VERSUS$(I)
+            teamRecDesc$(96, 2) = gameTeams$(1 - I)
+            teamRecDesc$(96, 3) = Date$
         End If
 
-        If V8(I, 7) < TREC(97, 0) Then
-            TREC(97, 0) = V8(I, 7)
-            TREC(97, 1) = 0
-            TREC(97, 2) = 0
-            TRC$(97, 0) = gameTeams$(I)
-            TRC$(97, 1) = SITE$(I)
-            TRC$(97, 2) = gameTeams$(1 - I)
-            TRC$(97, 3) = Date$
+        If V8(I, 7) < teamRecords!(97, 0) Then
+            teamRecords!(97, 0) = V8(I, 7)
+            teamRecords!(97, 1) = 0
+            teamRecords!(97, 2) = 0
+            teamRecDesc$(97, 0) = gameTeams$(I)
+            teamRecDesc$(97, 1) = VERSUS$(I)
+            teamRecDesc$(97, 2) = gameTeams$(1 - I)
+            teamRecDesc$(97, 3) = Date$
         End If
 
-        If V8(I, 7) + V8(1 - I, 7) > TREC(98, 0) Then
-            TREC(98, 0) = V8(I, 7) + V8(1 - I, 7)
-            TREC(98, 1) = V8(I, 7)
-            TREC(98, 2) = V8(1 - I, 7)
-            TRC$(98, 0) = gameTeams$(I)
-            TRC$(98, 1) = SITE$(I)
-            TRC$(98, 2) = gameTeams$(1 - I)
-            TRC$(98, 3) = Date$
+        If V8(I, 7) + V8(1 - I, 7) > teamRecords!(98, 0) Then
+            teamRecords!(98, 0) = V8(I, 7) + V8(1 - I, 7)
+            teamRecords!(98, 1) = V8(I, 7)
+            teamRecords!(98, 2) = V8(1 - I, 7)
+            teamRecDesc$(98, 0) = gameTeams$(I)
+            teamRecDesc$(98, 1) = VERSUS$(I)
+            teamRecDesc$(98, 2) = gameTeams$(1 - I)
+            teamRecDesc$(98, 3) = Date$
         End If
 
-        If V8(I, 7) + V8(1 - I, 7) < TREC(99, 0) Then
-            TREC(99, 0) = V8(I, 7) + V8(1 - I, 7)
-            TREC(99, 1) = V8(I, 7)
-            TREC(99, 2) = V8(1 - I, 7)
-            TRC$(99, 0) = gameTeams$(I)
-            TRC$(99, 1) = SITE$(I)
-            TRC$(99, 2) = gameTeams$(1 - I)
-            TRC$(99, 3) = Date$
+        If V8(I, 7) + V8(1 - I, 7) < teamRecords!(99, 0) Then
+            teamRecords!(99, 0) = V8(I, 7) + V8(1 - I, 7)
+            teamRecords!(99, 1) = V8(I, 7)
+            teamRecords!(99, 2) = V8(1 - I, 7)
+            teamRecDesc$(99, 0) = gameTeams$(I)
+            teamRecDesc$(99, 1) = VERSUS$(I)
+            teamRecDesc$(99, 2) = gameTeams$(1 - I)
+            teamRecDesc$(99, 3) = Date$
         End If
 
-        If QR(I, 1, 7) + QR(I, 2, 7) > TREC(100, 0) Then
-            TREC(100, 0) = QR(I, 1, 7) + QR(I, 2, 7)
-            TREC(100, 1) = 1
-            TREC(100, 2) = 0
-            TRC$(100, 0) = gameTeams$(I)
-            TRC$(100, 1) = SITE$(I)
-            TRC$(100, 2) = gameTeams$(1 - I)
-            TRC$(100, 3) = Date$
+        If QR(I, 1, 7) + QR(I, 2, 7) > teamRecords!(100, 0) Then
+            teamRecords!(100, 0) = QR(I, 1, 7) + QR(I, 2, 7)
+            teamRecords!(100, 1) = 1
+            teamRecords!(100, 2) = 0
+            teamRecDesc$(100, 0) = gameTeams$(I)
+            teamRecDesc$(100, 1) = VERSUS$(I)
+            teamRecDesc$(100, 2) = gameTeams$(1 - I)
+            teamRecDesc$(100, 3) = Date$
         End If
 
-        If QR(I, 3, 7) + QR(I, 4, 7) > TREC(100, 0) Then
-            TREC(100, 0) = QR(I, 3, 7) + QR(I, 4, 7)
-            TREC(100, 1) = 2
-            TREC(100, 2) = 0
-            TRC$(100, 0) = gameTeams$(I)
-            TRC$(100, 1) = SITE$(I)
-            TRC$(100, 2) = gameTeams$(1 - I)
-            TRC$(100, 3) = Date$
+        If QR(I, 3, 7) + QR(I, 4, 7) > teamRecords!(100, 0) Then
+            teamRecords!(100, 0) = QR(I, 3, 7) + QR(I, 4, 7)
+            teamRecords!(100, 1) = 2
+            teamRecords!(100, 2) = 0
+            teamRecDesc$(100, 0) = gameTeams$(I)
+            teamRecDesc$(100, 1) = VERSUS$(I)
+            teamRecDesc$(100, 2) = gameTeams$(1 - I)
+            teamRecDesc$(100, 3) = Date$
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 7) > TREC(102, 0) Then
-                TREC(102, 0) = QR(I, I2, 7)
-                TREC(102, 1) = I2
-                TREC(102, 2) = 0
-                TRC$(102, 0) = gameTeams$(I)
-                TRC$(102, 1) = SITE$(I)
-                TRC$(102, 2) = gameTeams$(1 - I)
-                TRC$(102, 3) = Date$
+            If QR(I, I2, 7) > teamRecords!(102, 0) Then
+                teamRecords!(102, 0) = QR(I, I2, 7)
+                teamRecords!(102, 1) = I2
+                teamRecords!(102, 2) = 0
+                teamRecDesc$(102, 0) = gameTeams$(I)
+                teamRecDesc$(102, 1) = VERSUS$(I)
+                teamRecDesc$(102, 2) = gameTeams$(1 - I)
+                teamRecDesc$(102, 3) = Date$
             End If
         Next
 
         ' FOULS
-        If V8(I, 6) > TREC(104, 0) Then
-            TREC(104, 0) = V8(I, 6)
-            TREC(104, 1) = 0
-            TREC(104, 2) = 0
-            TRC$(104, 0) = gameTeams$(I)
-            TRC$(104, 1) = SITE$(I)
-            TRC$(104, 2) = gameTeams$(1 - I)
-            TRC$(104, 3) = Date$
+        If V8(I, 6) > teamRecords!(104, 0) Then
+            teamRecords!(104, 0) = V8(I, 6)
+            teamRecords!(104, 1) = 0
+            teamRecords!(104, 2) = 0
+            teamRecDesc$(104, 0) = gameTeams$(I)
+            teamRecDesc$(104, 1) = VERSUS$(I)
+            teamRecDesc$(104, 2) = gameTeams$(1 - I)
+            teamRecDesc$(104, 3) = Date$
         End If
 
-        If V8(I, 6) < TREC(105, 0) Then
-            TREC(105, 0) = V8(I, 6)
-            TREC(105, 1) = 0
-            TREC(105, 2) = 0
-            TRC$(105, 0) = gameTeams$(I)
-            TRC$(105, 1) = SITE$(I)
-            TRC$(105, 2) = gameTeams$(1 - I)
-            TRC$(105, 3) = Date$
+        If V8(I, 6) < teamRecords!(105, 0) Then
+            teamRecords!(105, 0) = V8(I, 6)
+            teamRecords!(105, 1) = 0
+            teamRecords!(105, 2) = 0
+            teamRecDesc$(105, 0) = gameTeams$(I)
+            teamRecDesc$(105, 1) = VERSUS$(I)
+            teamRecDesc$(105, 2) = gameTeams$(1 - I)
+            teamRecDesc$(105, 3) = Date$
         End If
 
-        If V8(I, 6) + V8(1 - I, 6) > TREC(106, 0) Then
-            TREC(106, 0) = V8(I, 6) + V8(1 - I, 6)
-            TREC(106, 1) = V8(I, 6)
-            TREC(106, 2) = V8(1 - I, 6)
-            TRC$(106, 0) = gameTeams$(I)
-            TRC$(106, 1) = SITE$(I)
-            TRC$(106, 2) = gameTeams$(1 - I)
-            TRC$(106, 3) = Date$
+        If V8(I, 6) + V8(1 - I, 6) > teamRecords!(106, 0) Then
+            teamRecords!(106, 0) = V8(I, 6) + V8(1 - I, 6)
+            teamRecords!(106, 1) = V8(I, 6)
+            teamRecords!(106, 2) = V8(1 - I, 6)
+            teamRecDesc$(106, 0) = gameTeams$(I)
+            teamRecDesc$(106, 1) = VERSUS$(I)
+            teamRecDesc$(106, 2) = gameTeams$(1 - I)
+            teamRecDesc$(106, 3) = Date$
         End If
 
-        If V8(I, 6) + V8(1 - I, 6) < TREC(107, 0) Then
-            TREC(107, 0) = V8(I, 6) + V8(1 - I, 6)
-            TREC(107, 1) = V8(I, 6)
-            TREC(107, 2) = V8(1 - I, 6)
-            TRC$(107, 0) = gameTeams$(I)
-            TRC$(107, 1) = SITE$(I)
-            TRC$(107, 2) = gameTeams$(1 - I)
-            TRC$(107, 3) = Date$
+        If V8(I, 6) + V8(1 - I, 6) < teamRecords!(107, 0) Then
+            teamRecords!(107, 0) = V8(I, 6) + V8(1 - I, 6)
+            teamRecords!(107, 1) = V8(I, 6)
+            teamRecords!(107, 2) = V8(1 - I, 6)
+            teamRecDesc$(107, 0) = gameTeams$(I)
+            teamRecDesc$(107, 1) = VERSUS$(I)
+            teamRecDesc$(107, 2) = gameTeams$(1 - I)
+            teamRecDesc$(107, 3) = Date$
         End If
 
-        If QR(I, 1, 6) + QR(I, 2, 6) > TREC(108, 0) Then
-            TREC(108, 0) = QR(I, 1, 6) + QR(I, 2, 6)
-            TREC(108, 1) = 1
-            TREC(108, 2) = 0
-            TRC$(108, 0) = gameTeams$(I)
-            TRC$(108, 1) = SITE$(I)
-            TRC$(108, 2) = gameTeams$(1 - I)
-            TRC$(108, 3) = Date$
+        If QR(I, 1, 6) + QR(I, 2, 6) > teamRecords!(108, 0) Then
+            teamRecords!(108, 0) = QR(I, 1, 6) + QR(I, 2, 6)
+            teamRecords!(108, 1) = 1
+            teamRecords!(108, 2) = 0
+            teamRecDesc$(108, 0) = gameTeams$(I)
+            teamRecDesc$(108, 1) = VERSUS$(I)
+            teamRecDesc$(108, 2) = gameTeams$(1 - I)
+            teamRecDesc$(108, 3) = Date$
         End If
 
-        If QR(I, 3, 6) + QR(I, 4, 6) > TREC(108, 0) Then
-            TREC(108, 0) = QR(I, 3, 6) + QR(I, 4, 6)
-            TREC(108, 1) = 2
-            TREC(108, 2) = 0
-            TRC$(108, 0) = gameTeams$(I)
-            TRC$(108, 1) = SITE$(I)
-            TRC$(108, 2) = gameTeams$(1 - I)
-            TRC$(108, 3) = Date$
+        If QR(I, 3, 6) + QR(I, 4, 6) > teamRecords!(108, 0) Then
+            teamRecords!(108, 0) = QR(I, 3, 6) + QR(I, 4, 6)
+            teamRecords!(108, 1) = 2
+            teamRecords!(108, 2) = 0
+            teamRecDesc$(108, 0) = gameTeams$(I)
+            teamRecDesc$(108, 1) = VERSUS$(I)
+            teamRecDesc$(108, 2) = gameTeams$(1 - I)
+            teamRecDesc$(108, 3) = Date$
         End If
 
-        If QR(I, 1, 6) + QR(I, 2, 6) + QR(1 - I, 1, 6) + QR(1 - I, 2, 6) > TREC(109, 0) Then
-            TREC(109, 0) = QR(I, 1, 6) + QR(I, 2, 6) + QR(1 - I, 1, 6) + QR(1 - I, 2, 6)
-            TREC(109, 1) = 1
-            TREC(109, 2) = QR(I, 1, 6) + QR(I, 2, 6)
-            TRC$(109, 0) = gameTeams$(I)
-            TRC$(109, 1) = SITE$(I)
-            TRC$(109, 2) = gameTeams$(1 - I)
-            TRC$(109, 3) = Date$
+        If QR(I, 1, 6) + QR(I, 2, 6) + QR(1 - I, 1, 6) + QR(1 - I, 2, 6) > teamRecords!(109, 0) Then
+            teamRecords!(109, 0) = QR(I, 1, 6) + QR(I, 2, 6) + QR(1 - I, 1, 6) + QR(1 - I, 2, 6)
+            teamRecords!(109, 1) = 1
+            teamRecords!(109, 2) = QR(I, 1, 6) + QR(I, 2, 6)
+            teamRecDesc$(109, 0) = gameTeams$(I)
+            teamRecDesc$(109, 1) = VERSUS$(I)
+            teamRecDesc$(109, 2) = gameTeams$(1 - I)
+            teamRecDesc$(109, 3) = Date$
         End If
 
-        If QR(I, 3, 6) + QR(I, 4, 6) + QR(1 - I, 3, 6) + QR(1 - I, 4, 6) > TREC(109, 0) Then
-            TREC(109, 0) = QR(I, 3, 6) + QR(I, 4, 6) + QR(1 - I, 3, 6) + QR(1 - I, 4, 6)
-            TREC(109, 1) = 2
-            TREC(109, 2) = QR(I, 3, 6) + QR(I, 4, 6)
-            TRC$(109, 0) = gameTeams$(I)
-            TRC$(109, 1) = SITE$(I)
-            TRC$(109, 2) = gameTeams$(1 - I)
-            TRC$(109, 3) = Date$
+        If QR(I, 3, 6) + QR(I, 4, 6) + QR(1 - I, 3, 6) + QR(1 - I, 4, 6) > teamRecords!(109, 0) Then
+            teamRecords!(109, 0) = QR(I, 3, 6) + QR(I, 4, 6) + QR(1 - I, 3, 6) + QR(1 - I, 4, 6)
+            teamRecords!(109, 1) = 2
+            teamRecords!(109, 2) = QR(I, 3, 6) + QR(I, 4, 6)
+            teamRecDesc$(109, 0) = gameTeams$(I)
+            teamRecDesc$(109, 1) = VERSUS$(I)
+            teamRecDesc$(109, 2) = gameTeams$(1 - I)
+            teamRecDesc$(109, 3) = Date$
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 6) > TREC(110, 0) Then
-                TREC(110, 0) = QR(I, I2, 6)
-                TREC(110, 1) = I2
-                TREC(110, 2) = 0
-                TRC$(110, 0) = gameTeams$(I)
-                TRC$(110, 1) = SITE$(I)
-                TRC$(110, 2) = gameTeams$(1 - I)
-                TRC$(110, 3) = Date$
+            If QR(I, I2, 6) > teamRecords!(110, 0) Then
+                teamRecords!(110, 0) = QR(I, I2, 6)
+                teamRecords!(110, 1) = I2
+                teamRecords!(110, 2) = 0
+                teamRecDesc$(110, 0) = gameTeams$(I)
+                teamRecDesc$(110, 1) = VERSUS$(I)
+                teamRecDesc$(110, 2) = gameTeams$(1 - I)
+                teamRecDesc$(110, 3) = Date$
             End If
 
-            If QR(I, I2, 6) + QR(1 - I, I2, 6) > TREC(111, 0) Then
-                TREC(111, 0) = QR(I, I2, 6) + QR(1 - I, I2, 6)
-                TREC(111, 1) = I2
-                TREC(111, 2) = QR(I, I2, 6)
-                TRC$(111, 0) = gameTeams$(I)
-                TRC$(111, 1) = SITE$(I)
-                TRC$(111, 2) = gameTeams$(1 - I)
-                TRC$(111, 3) = Date$
+            If QR(I, I2, 6) + QR(1 - I, I2, 6) > teamRecords!(111, 0) Then
+                teamRecords!(111, 0) = QR(I, I2, 6) + QR(1 - I, I2, 6)
+                teamRecords!(111, 1) = I2
+                teamRecords!(111, 2) = QR(I, I2, 6)
+                teamRecDesc$(111, 0) = gameTeams$(I)
+                teamRecDesc$(111, 1) = VERSUS$(I)
+                teamRecDesc$(111, 2) = gameTeams$(1 - I)
+                teamRecDesc$(111, 3) = Date$
             End If
         Next
 
         ' STEALS
-        If V8(I, 9) > TREC(112, 0) Then
-            TREC(112, 0) = V8(I, 9)
-            TREC(112, 1) = 0
-            TREC(112, 2) = 0
-            TRC$(112, 0) = gameTeams$(I)
-            TRC$(112, 1) = SITE$(I)
-            TRC$(112, 2) = gameTeams$(1 - I)
-            TRC$(112, 3) = Date$
+        If V8(I, 9) > teamRecords!(112, 0) Then
+            teamRecords!(112, 0) = V8(I, 9)
+            teamRecords!(112, 1) = 0
+            teamRecords!(112, 2) = 0
+            teamRecDesc$(112, 0) = gameTeams$(I)
+            teamRecDesc$(112, 1) = VERSUS$(I)
+            teamRecDesc$(112, 2) = gameTeams$(1 - I)
+            teamRecDesc$(112, 3) = Date$
         End If
 
-        If V8(I, 9) + V8(1 - I, 9) > TREC(114, 0) Then
-            TREC(114, 0) = V8(I, 9) + V8(1 - I, 9)
-            TREC(114, 1) = V8(I, 9)
-            TREC(114, 2) = V8(1 - I, 9)
-            TRC$(114, 0) = gameTeams$(I)
-            TRC$(114, 1) = SITE$(I)
-            TRC$(114, 2) = gameTeams$(1 - I)
-            TRC$(114, 3) = Date$
+        If V8(I, 9) + V8(1 - I, 9) > teamRecords!(114, 0) Then
+            teamRecords!(114, 0) = V8(I, 9) + V8(1 - I, 9)
+            teamRecords!(114, 1) = V8(I, 9)
+            teamRecords!(114, 2) = V8(1 - I, 9)
+            teamRecDesc$(114, 0) = gameTeams$(I)
+            teamRecDesc$(114, 1) = VERSUS$(I)
+            teamRecDesc$(114, 2) = gameTeams$(1 - I)
+            teamRecDesc$(114, 3) = Date$
         End If
 
-        If QR(I, 1, 9) + QR(I, 2, 9) > TREC(116, 0) Then
-            TREC(116, 0) = QR(I, 1, 9) + QR(I, 2, 9)
-            TREC(116, 1) = 1
-            TREC(116, 2) = 0
-            TRC$(116, 0) = gameTeams$(I)
-            TRC$(116, 1) = SITE$(I)
-            TRC$(116, 2) = gameTeams$(1 - I)
-            TRC$(116, 3) = Date$
+        If QR(I, 1, 9) + QR(I, 2, 9) > teamRecords!(116, 0) Then
+            teamRecords!(116, 0) = QR(I, 1, 9) + QR(I, 2, 9)
+            teamRecords!(116, 1) = 1
+            teamRecords!(116, 2) = 0
+            teamRecDesc$(116, 0) = gameTeams$(I)
+            teamRecDesc$(116, 1) = VERSUS$(I)
+            teamRecDesc$(116, 2) = gameTeams$(1 - I)
+            teamRecDesc$(116, 3) = Date$
         End If
 
-        If QR(I, 3, 9) + QR(I, 4, 9) > TREC(116, 0) Then
-            TREC(116, 0) = QR(I, 3, 9) + QR(I, 4, 9)
-            TREC(116, 1) = 2
-            TREC(116, 2) = 0
-            TRC$(116, 0) = gameTeams$(I)
-            TRC$(116, 1) = SITE$(I)
-            TRC$(116, 2) = gameTeams$(1 - I)
-            TRC$(116, 3) = Date$
+        If QR(I, 3, 9) + QR(I, 4, 9) > teamRecords!(116, 0) Then
+            teamRecords!(116, 0) = QR(I, 3, 9) + QR(I, 4, 9)
+            teamRecords!(116, 1) = 2
+            teamRecords!(116, 2) = 0
+            teamRecDesc$(116, 0) = gameTeams$(I)
+            teamRecDesc$(116, 1) = VERSUS$(I)
+            teamRecDesc$(116, 2) = gameTeams$(1 - I)
+            teamRecDesc$(116, 3) = Date$
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 9) > TREC(117, 0) Then
-                TREC(117, 0) = QR(I, I2, 9)
-                TREC(117, 1) = I2
-                TREC(117, 2) = 0
-                TRC$(117, 0) = gameTeams$(I)
-                TRC$(117, 1) = SITE$(I)
-                TRC$(117, 2) = gameTeams$(1 - I)
-                TRC$(117, 3) = Date$
+            If QR(I, I2, 9) > teamRecords!(117, 0) Then
+                teamRecords!(117, 0) = QR(I, I2, 9)
+                teamRecords!(117, 1) = I2
+                teamRecords!(117, 2) = 0
+                teamRecDesc$(117, 0) = gameTeams$(I)
+                teamRecDesc$(117, 1) = VERSUS$(I)
+                teamRecDesc$(117, 2) = gameTeams$(1 - I)
+                teamRecDesc$(117, 3) = Date$
             End If
         Next
 
         ' BLOCKS
-        If V8(I, 8) > TREC(118, 0) Then
-            TREC(118, 0) = V8(I, 8)
-            TREC(118, 1) = 0
-            TREC(118, 2) = 0
-            TRC$(118, 0) = gameTeams$(I)
-            TRC$(118, 1) = SITE$(I)
-            TRC$(118, 2) = gameTeams$(1 - I)
-            TRC$(118, 3) = Date$
+        If V8(I, 8) > teamRecords!(118, 0) Then
+            teamRecords!(118, 0) = V8(I, 8)
+            teamRecords!(118, 1) = 0
+            teamRecords!(118, 2) = 0
+            teamRecDesc$(118, 0) = gameTeams$(I)
+            teamRecDesc$(118, 1) = VERSUS$(I)
+            teamRecDesc$(118, 2) = gameTeams$(1 - I)
+            teamRecDesc$(118, 3) = Date$
         End If
 
-        If V8(I, 8) + V8(1 - I, 8) > TREC(119, 0) Then
-            TREC(119, 0) = V8(I, 8) + V8(1 - I, 8)
-            TREC(119, 1) = V8(I, 8)
-            TREC(119, 2) = V8(1 - I, 8)
-            TRC$(119, 0) = gameTeams$(I)
-            TRC$(119, 1) = SITE$(I)
-            TRC$(119, 2) = gameTeams$(1 - I)
-            TRC$(119, 3) = Date$
+        If V8(I, 8) + V8(1 - I, 8) > teamRecords!(119, 0) Then
+            teamRecords!(119, 0) = V8(I, 8) + V8(1 - I, 8)
+            teamRecords!(119, 1) = V8(I, 8)
+            teamRecords!(119, 2) = V8(1 - I, 8)
+            teamRecDesc$(119, 0) = gameTeams$(I)
+            teamRecDesc$(119, 1) = VERSUS$(I)
+            teamRecDesc$(119, 2) = gameTeams$(1 - I)
+            teamRecDesc$(119, 3) = Date$
         End If
 
         ' TURNOVERS
-        If V8(I, 12) > TREC(122, 0) Then
-            TREC(122, 0) = V8(I, 12)
-            TREC(122, 1) = 0
-            TREC(122, 2) = 0
-            TRC$(122, 0) = gameTeams$(I)
-            TRC$(122, 1) = SITE$(I)
-            TRC$(122, 2) = gameTeams$(1 - I)
-            TRC$(122, 3) = Date$
+        If V8(I, 12) > teamRecords!(122, 0) Then
+            teamRecords!(122, 0) = V8(I, 12)
+            teamRecords!(122, 1) = 0
+            teamRecords!(122, 2) = 0
+            teamRecDesc$(122, 0) = gameTeams$(I)
+            teamRecDesc$(122, 1) = VERSUS$(I)
+            teamRecDesc$(122, 2) = gameTeams$(1 - I)
+            teamRecDesc$(122, 3) = Date$
         End If
 
-        If V8(I, 12) < TREC(123, 0) Then
-            TREC(123, 0) = V8(I, 12)
-            TREC(123, 1) = 0
-            TREC(123, 2) = 0
-            TRC$(123, 0) = gameTeams$(I)
-            TRC$(123, 1) = SITE$(I)
-            TRC$(123, 2) = gameTeams$(1 - I)
-            TRC$(123, 3) = Date$
-        End If
-        If V8(I, 12) + V8(1 - I, 12) > TREC(124, 0) Then
-            TREC(124, 0) = V8(I, 12) + V8(1 - I, 12)
-            TREC(124, 1) = V8(I, 12)
-            TREC(124, 2) = V8(1 - I, 12)
-            TRC$(124, 0) = gameTeams$(I)
-            TRC$(124, 1) = SITE$(I)
-            TRC$(124, 2) = gameTeams$(1 - I)
-            TRC$(124, 3) = Date$
+        If V8(I, 12) < teamRecords!(123, 0) Then
+            teamRecords!(123, 0) = V8(I, 12)
+            teamRecords!(123, 1) = 0
+            teamRecords!(123, 2) = 0
+            teamRecDesc$(123, 0) = gameTeams$(I)
+            teamRecDesc$(123, 1) = VERSUS$(I)
+            teamRecDesc$(123, 2) = gameTeams$(1 - I)
+            teamRecDesc$(123, 3) = Date$
         End If
 
-        If V8(I, 12) + V8(1 - I, 12) < TREC(125, 0) Then
-            TREC(125, 0) = V8(I, 12) + V8(1 - I, 12)
-            TREC(125, 1) = V8(I, 12)
-            TREC(125, 2) = V8(1 - I, 12)
-            TRC$(125, 0) = gameTeams$(I)
-            TRC$(125, 1) = SITE$(I)
-            TRC$(125, 2) = gameTeams$(1 - I)
-            TRC$(125, 3) = Date$
+        If V8(I, 12) + V8(1 - I, 12) > teamRecords!(124, 0) Then
+            teamRecords!(124, 0) = V8(I, 12) + V8(1 - I, 12)
+            teamRecords!(124, 1) = V8(I, 12)
+            teamRecords!(124, 2) = V8(1 - I, 12)
+            teamRecDesc$(124, 0) = gameTeams$(I)
+            teamRecDesc$(124, 1) = VERSUS$(I)
+            teamRecDesc$(124, 2) = gameTeams$(1 - I)
+            teamRecDesc$(124, 3) = Date$
+        End If
+
+        If V8(I, 12) + V8(1 - I, 12) < teamRecords!(125, 0) Then
+            teamRecords!(125, 0) = V8(I, 12) + V8(1 - I, 12)
+            teamRecords!(125, 1) = V8(I, 12)
+            teamRecords!(125, 2) = V8(1 - I, 12)
+            teamRecDesc$(125, 0) = gameTeams$(I)
+            teamRecDesc$(125, 1) = VERSUS$(I)
+            teamRecDesc$(125, 2) = gameTeams$(1 - I)
+            teamRecDesc$(125, 3) = Date$
         End If
 
     Next
@@ -8691,25 +8695,29 @@ Sub CheckRecords ()
     Open diskPaths$(1) + "RECORDS.GAM" For Output As #3
 
     For I = 0 To 48
+
         For I1 = 0 To 2
             Write #3, indRecords!(I, I1)
         Next
+
         For I1 = 0 To 4
-            Write #3, RC$(I, I1)
+            Write #3, indRecDesc$(I, I1)
         Next
+
     Next
 
     For I = 0 To 125
+
         For I1 = 0 To 2
-            Write #3, TREC(I, I1)
+            Write #3, teamRecords!(I, I1)
         Next
+
         For I1 = 0 To 3
-            Write #3, TRC$(I, I1)
+            Write #3, teamRecDesc$(I, I1)
         Next
+
     Next
 
     Close #3
 
 End Sub
-
-

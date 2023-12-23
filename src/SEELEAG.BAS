@@ -1,7 +1,7 @@
 '----------------------------------------
 '           SEELEAG Subroutine
 '----------------------------------------
-'This subroutine lets the user choose a 
+'This subroutine lets the user choose a
 'league stat file to view, then calls
 'other routines to both load the Stats
 'and then provide options for display
@@ -9,7 +9,7 @@ Sub SEELEAG ()
 
     _Title "Basketball: The Pro Game - View League Stats"
 
-    leaderFile$ = ChooseFile$ (diskPaths$(1) + "*.LDR", "LEADER", ExitCode%)
+    leaderFile$ = ChooseFile$(diskPaths$(1) + "*.LDR", "LEADER", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
@@ -96,7 +96,7 @@ Sub StatOptions ()
         Cls
         Call TITLE_STATS
 
-		Call MenuBox (8, 8, 61, 5, 15, 1)
+        Call MenuBox(8, 8, 61, 5, 15, 1)
 
         Do
 
@@ -136,7 +136,7 @@ Sub StatOptions ()
             Color 15, 0
             Cls
 
-            Call box0 (6, 8, 11, 70, 2, 15, 1)
+            Call box0(6, 8, 11, 70, 2, 15, 1)
 
             Do
                 Color 15, 1
@@ -167,7 +167,7 @@ Sub ReportFilePrompt_League (reportFile$)
         Color 15, 0
         Cls
 
-		Call MenuBox (6, 8, 61, 7, 15, 1)
+        Call MenuBox(6, 8, 61, 7, 15, 1)
 
         Locate 7, 32
 
@@ -373,7 +373,7 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 31 To 40
-    
+
         If leagT$(P) <> "" And leagT$(P) <> "*" Then
             D1 = O1!(31) - O2!(31)
             D = O1!(P) - O2!(P)
@@ -939,7 +939,7 @@ End Sub
 '----------------------------------------
 'This subroutine formats the previously
 'loaded stats and outputs them to a file.
-'This file can then be looped through to 
+'This file can then be looped through to
 'send to the default printer
 
 'Destination

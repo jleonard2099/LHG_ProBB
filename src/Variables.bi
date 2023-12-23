@@ -165,12 +165,12 @@ Dim TT$(40, 15), TT1$(40, 15)
 '----------------------------------------
 ' Used in RECORD routines
 '----------------------------------------
-Dim teamRecords$(20), indRecords$(25)
-Dim BRC$(25, 1), TRC$(21), TRC1$(21)
-Dim BRC!(1 To 25), TRC!(21), TRC1!(21)
+Dim plyrRecords!(1 To 25), offRecords!(1 to 21), defRecords!(1 to 21)
+Dim plyrRecDesc$(25, 1), offRecDesc$(1 to 21), defRecDesc$(1 to 21)
 
-Dim indRecCategory$(50, 4), teamRecCategory$(125, 3)
-Dim allRecords!(50, 2), teamRecords!(125, 2)
+Dim indRecords!(50, 2), teamRecords!(125, 2)
+Dim indRecords$(25), teamRecords$(20)
+Dim indRecDesc$(50, 4), teamRecDesc$(125, 3)
 
 
 '----------------------------------------
@@ -232,12 +232,11 @@ Dim Shared statTotals(14), pbpFG(9), pbpBG(9), W2(1, 14), W3(1, 14)
 Dim Shared X7(1), Z5(1), Z6(1)
 
 Dim Shared gameB1!(0 To 1, 0 To 4), gameRatings!(0 To 1, 0 To 14, 0 To 25)
-Dim Shared indRecords!(50, 2), M9!(1)
+Dim Shared M9!(1)
 Dim gameW0!(1, 14), gameW1!(1, 14)
 
 Dim Shared defenseStyles$(5), diskIDs$(0 To 1)
 Dim Shared gameCoach$(3), gameMascots$(3), gameStadium$(3), gameTeams$(3)
 Dim Shared offenseStyles$(2), pbpType$(1), players_GAME$(1, 14, 1), posnName$(0 To 4)
-Dim Shared RC$(50, 4), SX$(32, 1)
+Dim Shared SX$(32, 1)
 Dim Shared teamAbbrev$(3), Y$(1)
-

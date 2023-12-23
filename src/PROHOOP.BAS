@@ -13,8 +13,6 @@ Sub PROHOOP ()
 
     _Title "Basketball: The Pro Game v" + GAME_VERSION$ + " - HOOPS!"
 
-    'Open "pbplog" For Output As #11
-
     Shared scheduleFile$
     Shared tickerStart
 
@@ -415,6 +413,10 @@ Sub PROHOOP ()
 
     Call ChangeContributions
 
+    Call LOADSTATS
+
+    If autoPlay = 1 Then gameLoc = NG%(2)
+
     'Determine attendance
     If gameLoc = 2 Or avgAttendance&(1) = 0 Then
         'Neutral Site
@@ -424,10 +426,6 @@ Sub PROHOOP ()
         'Average attendance +/ 5,000
         actualAttendance& = Int(Rnd(1) * 10000) + avgAttendance&(1) - 5000
     End If
-
-    Call LOADSTATS
-
-    If autoPlay = 1 Then gameLoc = NG%(2)
 
     LS = 0
 
@@ -454,7 +452,6 @@ Sub PROHOOP ()
 
 
     250 '
-
     If quarter = 2 Then
         If jumpBall = 0 Then
             jumpBall = 1
