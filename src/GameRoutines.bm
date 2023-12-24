@@ -41,6 +41,7 @@ Sub InitVar ()
 
     Shared gameW0!(), gameW1!()
     Shared statsZ!(), statsZ1!(), statsZ2!()
+    Shared indRecords!(), teamRecords!()
 
     Shared alpha$()
     Shared oppName$(), locIndicator$()
@@ -158,9 +159,9 @@ Sub InitVar ()
     Erase W2, W3, X7, Z5, Z6
 
     Erase gameRatings!, gameW0!, gameW1!
-    Erase indRecords!, M9!
+    Erase M9!
     Erase statsZ!, statsZ1!, statsZ2!
-    Erase teamRecords!
+    Erase indRecords!, teamRecords!
 
     Erase diskIDs$, gameTeams$
     Erase indRecDesc$, locIndicator$, oppName$
