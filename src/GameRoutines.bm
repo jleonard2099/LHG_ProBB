@@ -154,8 +154,9 @@ Sub InitVar ()
     Erase F1, G4, G5, oppScore
     Erase P2, P4, P5, P7
     Erase pbpFG, pbpBG, QQ, QR
-    Erase R3, RB, score, schedGame, statTotals, S3
-    Erase teamFouls, teamScore, timePlayed, turnovers
+    Erase rebRatings, score, schedGame, statTotals, S3
+    Erase teamFouls, teamScore, timePlayed
+    Erase totRebounds, turnovers
     Erase W2, W3, X7, Z5, Z6
 
     Erase gameRatings!, gameW0!, gameW1!
@@ -467,9 +468,6 @@ Sub PBP ()
         If nbrLines = 7 Then G1$ = pbpString$
         If nbrLines = 8 Then H1$ = pbpString$
 
-        pbpFG(nbrLines) = tmRat_GAME(P, 33)
-        pbpBG(nbrLines) = tmRat_GAME(P, 34)
-
         If nbrLines > 8 Then
 
             A1$ = B1$
@@ -488,6 +486,11 @@ Sub PBP ()
 
             pbpFG(8) = tmRat_GAME(P, 33)
             pbpBG(8) = tmRat_GAME(P, 34)
+
+        Else
+
+            pbpFG(nbrLines) = tmRat_GAME(P, 33)
+            pbpBG(nbrLines) = tmRat_GAME(P, 34)
 
         End If
 
@@ -2290,6 +2293,8 @@ End Sub
 'team on both offense and defense.
 Sub PlayStyle ()
 
+    Shared yesNoText$()
+
     Call LINEUPS
 
     Locate 19, 1
@@ -2577,7 +2582,8 @@ Sub PlayItSafe ()
         End If
 
         If gameRatings!(P9, gameB1!(P9, ZZ), 22) = 50 And SW = 1 And S2 < 6 Then
-            Locate S2 + 3, 1: Print S2; "-"; players_GAME$(P9, gameB1!(P9, ZZ), 0)
+            Locate S2 + 3, 1
+            Print S2; "-"; players_GAME$(P9, gameB1!(P9, ZZ), 0)
             P5(A) = S2
             P4(A) = ZZ
             S2 = S2 + 1
@@ -2674,6 +2680,7 @@ Sub PlayItSafe ()
             Print "Z - CONTINUE"
 
             Do
+
                 I$ = GetKeyPress$
 
                 P6 = Val(I$)
@@ -2699,7 +2706,7 @@ Sub PlayItSafe ()
 
                 End If
 
-            Loop Until P6 >= 1 And P6 <= (S2 + 1)
+            Loop Until P6 >= 1 And P6 <= (S2 + 1) Or UCase$(I$) = "Z"
 
         End If
 
@@ -2739,9 +2746,17 @@ Sub WHOGETSBALL
 
                     M8 = Int(plyrRat_GAME(P, gameB1!(P, I), 2) / plyrRat_GAME(P, gameB1!(P, I), 0) + .5) - gameRatings!(P, gameB1!(P, I), 7)
 
-                    If M8 <= 0 Then M8 = 0
-                    If M8 <= 0 And gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12) > 0 Then M8 = gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12)
-                    If M8 >= M9 Then ballCarrier = I: M9 = M8
+                    If M8 <= 0 Then
+                        M8 = 0
+                        If gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12) > 0 Then
+                            M8 = gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12)
+                        End If
+                    End If
+
+                    If M8 >= M9 Then
+                        ballCarrier = I
+                        M9 = M8
+                    End If
 
                 Next I
 
@@ -2836,7 +2851,7 @@ Sub CreditAssists ()
             If skipM8% = 0 Then M8 = Int(Rnd(1) * 5)
 
             totalAssisst = M8
-            
+
             Locate 7, 25
 
             If players_GAME$(P, gameB1!(P, ballCarrier), 0) <> players_GAME$(P, gameB1!(P, M8), 0) Then
@@ -2862,44 +2877,41 @@ Sub CreditAssists ()
 End Sub
 
 '----------------------------------------
-'       ReboundRoutine1 Subroutine
+'       ReboundOffense Subroutine
 '----------------------------------------
 'This subroutine determines something to
 'do with rebounds for one team (Offense?)
-Sub ReboundRoutine1 ()
+Sub ReboundOffense ()
 
     790 '
     RB = 0
 
     For I = 0 To 4:
 
-        RB(I) = 0
-
-        'ReboundRoutine2 is practically identical in
-        'everyway except the reference below to array
-        'index 21 is 2, and it's clearly operating for
-        'the other team as P is replaced by 1-P
-        ' (switching 1 to 0, and vice versa)
+        rebRatings(I) = 0
         XZ = gameRatings!(P, gameB1!(P, I), 21)
 
         If Not (quarter > 2 Or quarter = 2 And gameClock! <= 120) Then
-            'This line, referencing P, is the other one changed
-            'between the 2 routines
-            If gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12) <= 0 Then XZ = XZ * .5
+
+            If gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12) <= 0 Then
+                XZ = XZ * .5
+            End If
+
         End If
 
-        RB(I) = RB(I) + XZ
+        rebRatings(I) = rebRatings(I) + XZ
         RB = RB + XZ
+
     Next
 
-    RN = Rnd(1) * RB
+    rndReb = Rnd(1) * RB
 
     For ballCarrier = 0 To 4
-        If RN <= RB(ballCarrier) Then
+        If rndReb <= rebRatings(ballCarrier) Then
             skipRandom% = 1
             Exit For
         Else
-            RB(ballCarrier + 1) = RB(ballCarrier + 1) + RB(ballCarrier)
+            rebRatings(ballCarrier + 1) = rebRatings(ballCarrier + 1) + rebRatings(ballCarrier)
         End If
     Next
 
@@ -2910,36 +2922,39 @@ Sub ReboundRoutine1 ()
 End Sub
 
 '----------------------------------------
-'       ReboundRoutine2 Subroutine
+'       ReboundDefense Subroutine
 '----------------------------------------
 'This subroutine determines something to
 'do with rebounds for one team (Defense?)
-Sub ReboundRoutine2 ()
+Sub ReboundDefense ()
 
     795 '
     RB = 0
 
     For I = 0 To 4
 
-        RB(I) = 0
+        rebRatings(I) = 0
         XZ = gameRatings!(1 - P, gameB1!(1 - P, I), 2)
 
         If Not (quarter > 2 Or quarter = 2 And gameClock! <= 120) Then
-            If gameRatings!(1 - P, gameB1!(1 - P, I), 3) - gameRatings!(1 - P, gameB1!(1 - P, I), 7) - gameRatings!(1 - P, gameB1!(1 - P, I), 11) - gameRatings!(1 - P, gameB1!(1 - P, I), 12) <= 0 Then XZ = XZ * .5
+            If gameRatings!(1 - P, gameB1!(1 - P, I), 3) - gameRatings!(1 - P, gameB1!(1 - P, I), 7) - gameRatings!(1 - P, gameB1!(1 - P, I), 11) - gameRatings!(1 - P, gameB1!(1 - P, I), 12) <= 0 Then
+                XZ = XZ * .5
+            End If
         End If
 
-        RB(I) = RB(I) + XZ
+        rebRatings(I) = rebRatings(I) + XZ
         RB = RB + XZ
+
     Next
 
-    RN = Rnd(1) * RB
+    rndReb = Rnd(1) * RB
 
     For ballCarrier = 0 To 4
-        If RN <= RB(ballCarrier) Then
+        If rndReb <= rebRatings(ballCarrier) Then
             skipRandom% = 1
             Exit For
         Else
-            RB(ballCarrier + 1) = RB(ballCarrier + 1) + RB(ballCarrier)
+            rebRatings(ballCarrier + 1) = rebRatings(ballCarrier + 1) + rebRatings(ballCarrier)
         End If
     Next
 
@@ -2998,8 +3013,10 @@ Sub Choices ()
     Else
 
         Call CLEARPBPBOX
+        Color 14, 0
+        Print "<ENTER>";
         Color 15, 0
-        Print "<ENTER>-CONTINUE"
+        Print "-CONTINUE"
         Print "1-TIMEOUT "; gameTeams$(P); " -"; timeouts(P)
 
         Do
@@ -3023,7 +3040,7 @@ Sub Choices ()
 
         Loop Until Not (P3 = 1 And timeouts(P) <= 0 Or P3 = 1 And P = compTeam And playerMode = 1)
 
-        Call CLEARPBPBOX
+        Call WINDEX
 
     End If
 
@@ -3083,8 +3100,10 @@ Sub Substitutions ()
             'At least 1 human
             Call SCOREBOARD
             Locate 10, 1
+            Color 14, 0
+            Print "<ENTER>";
             Color 15, 0
-            Print "<ENTER>-CONTINUE"
+            Print "-CONTINUE"
             Print "1-SUB "; gameTeams$(P)
             Print "2-SUB "; gameTeams$(D)
 
@@ -3135,6 +3154,8 @@ Sub Substitutions ()
 
             End If 'Done checking parameters
 
+            Call WINDEX
+
         End If 'Done checking computer control
 
     Loop Until LC% = 0 Or playerMode = 2
@@ -3152,7 +3173,7 @@ End Sub
 Sub Fouls (skipRandom%)
 
     If skipRandom% = 0 Then
-    
+
         fouler = 0
         M9 = Int(Rnd(1) * F5%(D, 0)) + 1
 
@@ -3370,7 +3391,7 @@ Sub SCOREBOARD ()
     Color 14, 0
     Locate 4, 60: Print Using "###"; score(1, 0)
 
-    'TO / RB / TF
+    'Turnovers
     Color 7
     Locate 3, 35
     Print Using "##  "; turnovers(0);
@@ -3378,10 +3399,12 @@ Sub SCOREBOARD ()
     Color 7
     Print Using "##"; turnovers(1)
 
-    Locate , 35: Print Using "##  "; R3(0);
+    'Rebounds
+    Locate , 35: Print Using "##  "; totRebounds(0);
     Color 12: Print "RB  ";
-    Color 7: Print Using "##"; R3(1)
+    Color 7: Print Using "##"; totRebounds(1)
 
+    'Fouls
     Locate , 35: Print Using "##  "; P2(0);
     Color 12: Print "TF  ";: Color 7
     Print Using "##"; P2(1);
@@ -3450,10 +3473,12 @@ Sub SCOREBOARD ()
     'Team 1 Roster
     For I1 = 0 To 4
 
+        '#
         Color 2: Print Using "# "; I1;
 
         Color 3
 
+        'Name
         Color 15: Print Left$(players_GAME$(0, gameB1!(0, I1), 0), 12);
         Locate , 16
 
@@ -3461,9 +3486,12 @@ Sub SCOREBOARD ()
 
         If J <= 0 Then J = 0
 
+        'FG
         Print Using "##"; gameRatings!(0, gameB1!(0, I1), 0);
+        'FT
         Print Using "### "; gameRatings!(0, gameB1!(0, I1), 1);
 
+        'RB
         If P = 0 Then
             Print Using "##"; gameRatings!(0, gameB1!(0, I1), 21) * 2 / 10;
         Else
@@ -3986,19 +4014,23 @@ Sub SETUPRATINGS ()
                     gameRatings!(I, I1, 1) = Int(plyrRat_GAME(I, I1, 5) / plyrRat_GAME(I, I1, 4) * 100 + .5)
                 End If
 
-                'Def Reb / Minute
+                'Def Reb / Game
                 X3! = plyrRat_GAME(I, I1, 7) / plyrRat_GAME(I, I1, 1) * 48
 
                 'Opp Reb / 29.3 Mins / (Avg Reb / G * .677) * ( (Team FGA + Opp FGA) / (Games Played * 2) / Avg FGA/G )
                 X3! = X3! * 29.3 / (leagRat_GAME(I, 2) * .677) * ((tmRat_GAME(I, 5) + tmRat_GAME(I, 19)) / (tmRat_GAME(I, 0) * 2) / leagRat_GAME(I, 1))
                 X3! = Int(X3! * 10 + .5)
+
                 gameRatings!(I, I1, 2) = X3!
 
-                'Off Reb / Minute
+                'Off Reb / Game
                 X3! = plyrRat_GAME(I, I1, 6) / plyrRat_GAME(I, I1, 1) * 48
-                'Off Reb / 14 Mins / (Avg Reb / G * .323) * ( (Team FGA + Opp FGA) /  (Games Played * 2) / Avg FGA/G )
-                X3! = X3! * 14! / (leagRat_GAME(I, 2) * .323) * ((tmRat_GAME(I, 5) + tmRat_GAME(I, 19)) / (tmRat_GAME(I, 0) * 2) / leagRat_GAME(I, 1))
+
+                'Off Reb * 14 / (Avg Reb / G * .323) * ( (Team FGA + Opp FGA) / (Games Played * 2) / Avg FGA/G )
+                'Off Reb / Game * 14 Players * (Avg Games / Reb) * Expected FGA / Game)
+                X3! = X3! * 14 / (leagRat_GAME(I, 2) * .323) * ((tmRat_GAME(I, 5) + tmRat_GAME(I, 19)) / (tmRat_GAME(I, 0) * 2) / leagRat_GAME(I, 1))
                 X3! = Int(X3! * 10 + .5)
+
                 gameRatings!(I, I1, 21) = X3!
 
                 '### ASSISTS ###
@@ -4021,6 +4053,7 @@ Sub SETUPRATINGS ()
                 '### BLOCKS ###
                 'Player Blocks / Game
                 gameRatings!(I, I1, 6) = plyrRat_GAME(I, I1, 12) / plyrRat_GAME(I, I1, 1) * 48
+
                 '(Player Blocks / Game) / (((Opp FGA - Opp 3FGA - Team FGM + Team 3FGM) / Games Played) / 5)
                 gameRatings!(I, I1, 6) = gameRatings!(I, I1, 6) / ((tmRat_GAME(I, 19) - tmRat_GAME(I, 31) - tmRat_GAME(I, 20) + tmRat_GAME(I, 32)) / tmRat_GAME(I, 0) / 5)
                 gameRatings!(I, I1, 6) = Int(gameRatings!(I, I1, 6) * .93 * 100 + .5)
@@ -4270,6 +4303,8 @@ End Sub
 'This subroutine presents the user a menu
 'for changing both Def / Off strategy
 Sub CHANGESTRATEGY (I$)
+
+    Shared yesNoText$()
 
     If Not (UCase$(I$) = "Z" And playerMode = 1 And compTeam = 0 Or playerMode = 2) Then
 
@@ -4652,7 +4687,7 @@ Sub LINEUPS ()
     Print Using "##"; tmRat_GAME(P9, 2) + tmRat_GAME(P9, 4)
 
     Color 14
-    Print "# NAME         PS GP MG FG 3FG %3A FT  ORB  DRB  A  S  ballCarrier CX CN PT F  FC  PPG"
+    Print "# NAME         PS GP MG FG 3FG %3A FT  ORB  DRB  A  S  B CX CN PT F  FC  PPG"
 
     Locate 3, 1
 
@@ -4662,22 +4697,36 @@ Sub LINEUPS ()
 
             Color 2
 
-            If R1 <= 9 Then Print Using "# "; R1;
-            If R1 > 9 Then Print alpha$(R1 - 10);
+            '#
+            If R1 <= 9 Then
+                Print Using "# "; R1;
+            Else
+                Print alpha$(R1 - 10);
+            End If
 
             Color 15
 
+            'Name
             Print Left$(players_GAME$(P9, R1, 0), 12);: Locate , 16
 
+            'Position
             If Len(players_GAME$(P9, R1, 1)) = 1 Then Print players_GAME$(P9, R1, 1);
             If Len(players_GAME$(P9, R1, 1)) > 1 Then Print Left$(players_GAME$(P9, R1, 1), 1); Right$(players_GAME$(P9, R1, 1), 1);
 
-            L = 0: Locate , 19: L = gameRatings!(P9, R1, 7) + gameRatings!(P9, R1, 11) + gameRatings!(P9, R1, 12)
+            L = 0
+            Locate , 19
+            L = gameRatings!(P9, R1, 7) + gameRatings!(P9, R1, 11) + gameRatings!(P9, R1, 12)
 
+            'GP MG
             Print Using "## ##"; plyrRat_GAME(P9, R1, 0); plyrRat_GAME(P9, R1, 1) / plyrRat_GAME(P9, R1, 0);
+
+            'FG  3FG  %3A  FT  ORB  DRB A  S  B
             Print Using "### ### ## ### ##.# ##.# ## ## ##"; gameRatings!(P9, R1, 0); gameRatings!(P9, R1, 20); gameRatings!(P9, R1, 19); gameRatings!(P9, R1, 1); gameRatings!(P9, R1, 21) / 10; gameRatings!(P9, R1, 2) / 10; gameRatings!(P9, R1, 4) / 10; gameRatings!(P9, R1, 5); gameRatings!(P9, R1, 6);
+
+            'CX
             Print Using "### "; gameRatings!(P9, R1, 3) - L;
 
+            'CN
             J = (gameRatings!(P9, R1, 3)) - gameRatings!(P9, R1, 7) - gameRatings!(P9, R1, 11) - gameRatings!(P9, R1, 12)
 
             If quarter <= 3 And J / gameRatings!(P9, R1, 3) < .25 Then Locate , 61: Print " T";
@@ -4686,7 +4735,9 @@ Sub LINEUPS ()
             If gameRatings!(P9, R1, 3) - gameRatings!(P9, R1, 7) - gameRatings!(P9, R1, 11) - gameRatings!(P9, R1, 12) <= 0 Then Locate , 61: Print "EX";
             If quarter > 4 Or quarter = 4 And gameClock! <= 120 And gameClock! <> 0 Then Locate , 61: Print "  ";
 
+            'PT F  FC  PPG
             Locate , 63: Print Using "### # ### ##.#"; gameRatings!(P9, R1, 8) * 2 + gameRatings!(P9, R1, 10) + W%(P9, R1, 0); gameRatings!(P9, R1, 12); gameRatings!(P9, R1, 17); (plyrRat_GAME(P9, R1, 3) * 2 + plyrRat_GAME(P9, R1, 5) + plyrRat_GAME(P9, R1, 14)) / plyrRat_GAME(P9, R1, 0)
+
         End If
 
     Next R1
@@ -4965,13 +5016,13 @@ Sub EVENTS (specialCount, specialStat)
             If score(1, 0) + score(0, 0) > eventSettings(2) Then
                 checkSpecial% = 1
             Else
-                If R3(0) + R3(1) > eventSettings(3) Then
+                If totRebounds(0) + totRebounds(1) > eventSettings(3) Then
                     checkSpecial% = 1
                 Else
                     If score(1, 0) > eventSettings(4) Or score(0, 0) > eventSettings(4) Then
                         checkSpecial% = 1
                     Else
-                        If R3(1) > eventSettings(5) Or R3(0) > eventSettings(5) Then
+                        If totRebounds(1) > eventSettings(5) Or totRebounds(0) > eventSettings(5) Then
                             checkSpecial% = 1
                         End If
                     End If
@@ -5068,8 +5119,10 @@ Sub UPDATESCREEN ()
     Color 7
     Locate 3, 35: Print Using "##  "; turnovers(0);
     Color 12: Print "TO  ";: Color 7: Print Using "##"; turnovers(1)
-    Locate , 35: Print Using "##  "; R3(0);
-    Color 12: Print "RB  ";: Color 7: Print Using "##"; R3(1)
+
+    Locate , 35: Print Using "##  "; totRebounds(0);
+    Color 12: Print "RB  ";: Color 7: Print Using "##"; totRebounds(1)
+
     Locate , 35: Print Using "##  "; P2(0);
     Color 12: Print "TF  ";: Color 7: Print Using "##"; P2(1);
 
@@ -5131,6 +5184,8 @@ Sub UPDATESCREEN ()
             Print Using "# "; I1;
 
             Color 15
+
+            'Name
             Print Left$(players_GAME$(0, gameB1!(0, I1), 0), 12); Tab(16);
             J = (gameRatings!(0, gameB1!(0, I1), 3)) - gameRatings!(0, gameB1!(0, I1), 7) - gameRatings!(0, gameB1!(0, I1), 11) - gameRatings!(0, gameB1!(0, I1), 12)
 
@@ -5176,7 +5231,12 @@ Sub UPDATESCREEN ()
 
             If gameRatings!(1, gameB1!(1, I1), 1) >= 100 Then gameRatings!(1, gameB1!(1, I1), 1) = 99
             Print Using "## ## "; gameRatings!(1, gameB1!(1, I1), 0); gameRatings!(1, gameB1!(1, I1), 1);
-            If P = 1 Then Print Using "##"; gameRatings!(1, gameB1!(1, I1), 21) * 2 / 10; Else Print Using "##"; gameRatings!(1, gameB1!(1, I1), 2) * 2 / 10;
+
+            If P = 1 Then
+                Print Using "##"; gameRatings!(1, gameB1!(1, I1), 21) * 2 / 10;
+            Else
+                Print Using "##"; gameRatings!(1, gameB1!(1, I1), 2) * 2 / 10;
+            End If
 
             If J <= 0 And (quarter = 1 Or quarter = 2 Or quarter = 3 Or quarter = 4 And gameClock! > 120) Then Color 12
             Print Using "### "; J;
@@ -5501,7 +5561,7 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
 
         Print #1,
         Print #1, "TOTAL TURNOVERS -"; turnovers(I)
-        Print #1, "TOTAL REBOUNDS  -"; R3(I)
+        Print #1, "TOTAL REBOUNDS  -"; totRebounds(I)
 
     Next I
 
@@ -5713,7 +5773,7 @@ Sub STATS2SCREEN
                 Print "-";
                 Print Using "##"; gameRatings!(I, I1, 9);
 
-                'Rebounds / PT / F / A /  B / S / TO
+                'ORB RB / PT / F / A /  B / S / TO
                 Print Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; gameRatings!(I, I1, 24); gameRatings!(I, I1, 11); gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0); gameRatings!(I, I1, 12); gameRatings!(I, I1, 14); gameRatings!(I, I1, 15); gameRatings!(I, I1, 13); gameRatings!(I, I1, 23);
 
                 If timePlayed(I, I1) = 0 Then Locate , 15: Print "DNP" Else Print
@@ -5770,7 +5830,7 @@ Sub STATS2SCREEN
         Color 15: Print turnovers(I)
 
         Color 14: Print "TOTAL REBOUNDS  -";
-        Color 15: Print R3(I)
+        Color 15: Print totRebounds(I)
 
         If Not (autoPlay = 1 And playerMode = 2) Then
             Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
@@ -5796,11 +5856,11 @@ Sub BOX2SPC (boxName$)
     'Output any special events
     If quarter - 1 > eventSettings(1) Then Print #1, Using "MORE THAN ## QUARTERS"; eventSettings(1)
     If score(1, 0) + score(0, 0) > eventSettings(2) Then Print #1, Using "MORE THAN ### COMBINED POINTS"; eventSettings(2)
-    If R3(0) + R3(1) > eventSettings(3) Then Print #1, Using "MORE THAN ### COMBINED REBOUNDS"; eventSettings(3)
+    If totRebounds(0) + totRebounds(1) > eventSettings(3) Then Print #1, Using "MORE THAN ### COMBINED REBOUNDS"; eventSettings(3)
     If score(0, 0) > eventSettings(4) Then Print #1, gameTeams$(0);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
     If score(1, 0) > eventSettings(4) Then Print #1, gameTeams$(1);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
-    If R3(0) > eventSettings(5) Then Print #1, gameTeams$(0);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
-    If R3(1) > eventSettings(5) Then Print #1, gameTeams$(1);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
+    If totRebounds(0) > eventSettings(5) Then Print #1, gameTeams$(0);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
+    If totRebounds(1) > eventSettings(5) Then Print #1, gameTeams$(1);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
 
     For I = 0 To 1
         For I1 = 0 To 14
@@ -6029,14 +6089,14 @@ Sub COMPILESTATFILES (compileOpt)
                 Next
             Next
 
-            statsZ!(15) = statsZ!(15) + R3(teamIdx) - statTotals(teamIdx)
-            statsZ1!(15) = statsZ1!(15) + R3(1 - teamIdx) - statTotals(1 - teamIdx)
+            statsZ!(15) = statsZ!(15) + totRebounds(teamIdx) - statTotals(teamIdx)
+            statsZ1!(15) = statsZ1!(15) + totRebounds(1 - teamIdx) - statTotals(1 - teamIdx)
 
             statsZ!(6) = statsZ!(6) + teamFouls(teamIdx)
             statsZ1!(6) = statsZ1!(6) + teamFouls(1 - teamIdx)
 
-            statsZ!(5) = statsZ!(5) + R3(teamIdx)
-            statsZ1!(5) = statsZ1!(5) + R3(1 - teamIdx)
+            statsZ!(5) = statsZ!(5) + totRebounds(teamIdx)
+            statsZ1!(5) = statsZ1!(5) + totRebounds(1 - teamIdx)
 
             statsZ!(11) = statsZ!(11) + turnovers(teamIdx)
             statsZ1!(11) = statsZ1!(11) + turnovers(1 - teamIdx)
@@ -6237,9 +6297,10 @@ End Function
 'issues are happening in a game.
 Sub pbplog (lineNumber)
 
-    Print #11, "Called from line "; lineNumber
+    Print #11, "Called from line # "; lineNumber
+    'Print #11, "Called with random # "; randoNum
     Print #11, gameTeams$(0); " vs "; gameTeams$(1)
-    Print #11, pbpString$
+    'Print #11, pbpString$
     Print #11,
 
 End Sub
@@ -8278,8 +8339,8 @@ Sub CheckRecords ()
             End If
         Next
 
-        If R3(I) > teamRecords!(80, 0) Then
-            teamRecords!(80, 0) = R3(I)
+        If totRebounds(I) > teamRecords!(80, 0) Then
+            teamRecords!(80, 0) = totRebounds(I)
             teamRecords!(80, 1) = 0
             teamRecords!(80, 2) = 0
             teamRecDesc$(80, 0) = gameTeams$(I)
@@ -8288,8 +8349,8 @@ Sub CheckRecords ()
             teamRecDesc$(80, 3) = Date$
         End If
 
-        If R3(I) < teamRecords!(81, 0) Then
-            teamRecords!(81, 0) = R3(I)
+        If totRebounds(I) < teamRecords!(81, 0) Then
+            teamRecords!(81, 0) = totRebounds(I)
             teamRecords!(81, 1) = 0
             teamRecords!(81, 2) = 0
             teamRecDesc$(81, 0) = gameTeams$(I)
@@ -8298,20 +8359,20 @@ Sub CheckRecords ()
             teamRecDesc$(81, 3) = Date$
         End If
 
-        If R3(I) + R3(1 - I) > teamRecords!(82, 0) Then
-            teamRecords!(82, 0) = R3(I) + R3(1 - I)
-            teamRecords!(82, 1) = R3(I)
-            teamRecords!(82, 2) = R3(1 - I)
+        If totRebounds(I) + totRebounds(1 - I) > teamRecords!(82, 0) Then
+            teamRecords!(82, 0) = totRebounds(I) + totRebounds(1 - I)
+            teamRecords!(82, 1) = totRebounds(I)
+            teamRecords!(82, 2) = totRebounds(1 - I)
             teamRecDesc$(82, 0) = gameTeams$(I)
             teamRecDesc$(82, 1) = VERSUS$(I)
             teamRecDesc$(82, 2) = gameTeams$(1 - I)
             teamRecDesc$(82, 3) = Date$
         End If
 
-        If R3(I) + R3(1 - I) < teamRecords!(83, 0) Then
-            teamRecords!(83, 0) = R3(I) + R3(1 - I)
-            teamRecords!(83, 1) = R3(I)
-            teamRecords!(83, 2) = R3(1 - I)
+        If totRebounds(I) + totRebounds(1 - I) < teamRecords!(83, 0) Then
+            teamRecords!(83, 0) = totRebounds(I) + totRebounds(1 - I)
+            teamRecords!(83, 1) = totRebounds(I)
+            teamRecords!(83, 2) = totRebounds(1 - I)
             teamRecDesc$(83, 0) = gameTeams$(I)
             teamRecDesc$(83, 1) = VERSUS$(I)
             teamRecDesc$(83, 2) = gameTeams$(1 - I)
@@ -8722,3 +8783,5 @@ Sub CheckRecords ()
     Close #3
 
 End Sub
+
+

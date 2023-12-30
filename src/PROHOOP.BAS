@@ -127,9 +127,9 @@ Sub PROHOOP ()
 
         Close #6
 
-        'currGame = schedGame(0) + schedGame(2)
+        currGame = schedGame(0) + schedGame(2)
 
-        'Open "pbplog" + Str$(currGame) For Append As #11
+        Open "pbplog" + Str$(currGame) For Append As #11
 
         Open diskPaths$(0) + scheduleFile$ For Random As #7 Len = 48
 
@@ -158,7 +158,7 @@ Sub PROHOOP ()
 
     Else
 
-        'Open "pbplog" For Append As #11
+        Open "pbplog" For Append As #11
 
     End If
 
@@ -293,7 +293,7 @@ Sub PROHOOP ()
                         If gameLoc > 2 Then gameLoc = 1
 
                     Case 5:
-                        sClockVal = sClockVal + 1                        
+                        sClockVal = sClockVal + 1
                         If sClockVal > 1 Then sClockVal = 0
                         'If sClockVal > 2 Then sClockVal = 0
 
@@ -449,7 +449,6 @@ Sub PROHOOP ()
     Call RATINGTABLES
     Call CheckGameClock
     Call RATINGTABLES
-
 
     250 '
     If quarter = 2 Then
@@ -731,7 +730,7 @@ Sub PROHOOP ()
 
     End If
 
-    'Close #11
+    Close #11
 
     If UCase$(I$) = "Y" Or (autoPlay = 1 And endAllGames <> 1) Then
 
@@ -809,18 +808,19 @@ Sub PROHOOP ()
     P3 = 0
 
     'Random ball carrier
-    'ballCarrier = Int(Rnd(1) * 5)
     Call d100(RN0)
 
-    If playerMode = 0 And coachOpt = 1 Or playerMode = 1 And D = compTeam And coachOpt = 1 Or playerMode = 1 And P = compTeam Or playerMode = 2 Then
+    If (playerMode = 0 And coachOpt = 1) Or (playerMode = 1 And D = compTeam And coachOpt = 1) Or (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
 
         Call WHOGETSBALL
 
     Else
 
         If RN0 > 40 Then
+
             'random ball carrier
             ballCarrier = Int(Rnd(1) * 5)
+
         Else
 
             Do
@@ -2446,6 +2446,7 @@ Sub PROHOOP ()
     Call CheckGameClock
     If gameClock! = 0 Then 170
 
+    'Rebound after missed FT
     If S > FX% Then 650
 
     'GoSub 3000
@@ -2764,28 +2765,37 @@ Sub PROHOOP ()
 
     Call d100(RN0)
 
-    If quarter > 3 And gameClock! < 30 And score(D, 0) - score(P, 0) = 2 And RN0 <= 12 Or quarter > 3 And gameClock! < 30 And score(D, 0) - score(P, 0) = 0 And RN0 <= 12 Then
-        Call ReboundRoutine1
+    scoreDiff = score(D, 0) - score(P, 0)
+    If (quarter > 3 And gameClock! < 30 And RN0 <= 12) And (scoreDiff = 2 Or scoreDiff = 0) Then
+
+        Call ReboundOffense
+        Call pbplog(3753)
         GoTo 760
+
+    Else
+
+        Call d100(RN1)
+
+        Select Case RN1
+
+            Case 1 To 11:
+                foulOnReb = 1
+                Call pbplog(3764)
+                GoTo 770
+
+            Case 12 To 19:
+                Call pbplog(3768)
+                Call ReboundOffense
+                GoTo 760
+
+            Case 20 To 100:
+                Call pbplog(3773)
+                Call ReboundDefense
+                GoTo 800
+
+        End Select
+
     End If
-
-    Call d100(RN0)
-
-    Select Case RN0
-
-        Case 1 To 11:
-            FF% = 1
-            GoTo 770
-
-        Case 12 To 19:
-            Call ReboundRoutine1
-            GoTo 760
-
-        Case 20 To 100:
-            Call ReboundRoutine2
-            GoTo 800
-
-    End Select
 
 
     '----- NOODLE -----
@@ -2807,315 +2817,372 @@ Sub PROHOOP ()
 
     Call d100(RN0)
 
-    GG = score(D, 0) - score(P, 0)
+    scoreDiff = score(D, 0) - score(P, 0)
+    Call pbplog(3802)
 
-    If RN0 <= 12 And quarter > 3 And gameClock! < 30 And (GG = 2 Or GG = 0) Then 700
-    '-- End Loop
+    If RN0 <= 12 And quarter > 3 And gameClock! < 30 And (scoreDiff = 2 Or scoreDiff = 0) Then
 
-    Select Case RN0
+        Call pbplog(3806)
+        GoTo 700
 
-        Case 1
+    Else
 
-            If xFactor = 98 Then 700
+        Select Case RN0
 
-            turnovers(P) = turnovers(P) + 1
-            pbpString$ = "OFFENSIVE GOAL TENDING"
-            If pbpOpt = 0 Then
-                Call PBP
-            Else
-                'pbpOpt = 1
-                If pbpDelay! <> 0 Then
-                    Call WINDEX
-                    Print pbpString$
-                    Call DELAY
-                End If
-            End If
+            Case 1
 
-            pbpString$ = "BALL GOES TO " + gameTeams$(D)
-            If pbpOpt = 0 Then
-                Call PBP
-            Else
-                'pbpOpt = 1
-                If pbpDelay! <> 0 Then
-                    Call WINDEX
-                    Print pbpString$
-                    Call DELAY
-                End If
-            End If
-
-            Call DELAY
-
-            prevBall$ = ""
-
-            If P = 1 Then
-                P = 0
-                D = 1
-                P9 = 0
-                C1 = 2
-            Else
-                'P = 0
-                P = 1
-                D = 0
-                P9 = 1
-                C1 = 2
-            End If
-
-            Call Substitutions
-
-            GoTo 300
-
-        Case 2 To 11
-            FF% = 1
-            GoTo 770
-
-        Case 12 To 19
-
-            Call d100(RN0)
-
-            If RN0 <= 32 Then
-
-                R3(P) = R3(P) + 1
-
-                Call UPDATESCREEN
-
-                pbpString$ = "RB KNOCKED O.B. TO " + gameTeams$(P)
-
-                If pbpOpt = 0 Then
-                    Call PBP
+                If xFactor = 98 Then
+                    Call pbplog(3815)
+                    GoTo 700
                 Else
-                    'pbpOpt = 1
-                    If pbpDelay! <> 0 Then
-                        Call WINDEX
-                        Print pbpString$
-                        Call DELAY
-                    End If
-                End If
 
-                Call DELAY
-                Call Substitutions
-
-                GoTo 520
-
-            End If
-
-            R3(D) = R3(D) + 1
-            Call UPDATESCREEN
-
-            pbpString$ = "RB KNOCKED O.B. TO " + gameTeams$(D)
-            If pbpOpt = 0 Then
-                Call PBP
-            Else
-                'pbpOpt = 1
-                If pbpDelay! <> 0 Then
-                    Call WINDEX
-                    Print pbpString$
-                    Call DELAY
-                End If
-            End If
-
-            Call DELAY
-
-            Call Substitutions
-
-            prevBall$ = ""
-
-            If P = 1 Then
-                P = 0
-                D = 1
-                P9 = 0
-                C1 = 2
-            Else
-                'P = 0
-                P = 1
-                D = 0
-                P9 = 1
-                C1 = 2
-            End If
-
-            C1 = 2
-            P9 = P
-
-            GoTo 300
-
-        Case 20 To 22
-
-            If xFactor = 99 Then 700
-
-            Call ReboundRoutine1
-
-            gameRatings!(P, gameB1!(P, ballCarrier), 7) = gameRatings!(P, gameB1!(P, ballCarrier), 7) + 1
-            gameRatings!(P, gameB1!(P, ballCarrier), 8) = gameRatings!(P, gameB1!(P, ballCarrier), 8) + 1
-            gameRatings!(P, gameB1!(P, ballCarrier), 11) = gameRatings!(P, gameB1!(P, ballCarrier), 11) + 1
-            R3(P) = R3(P) + 1
-            score(P, quarter) = score(P, quarter) + 2
-            score(P, 0) = score(P, 0) + 2
-
-            Call UPDATESCREEN
-
-            If pbpOpt = 1 Then
-                If pbpDelay! <> 0 Then
-                    Call WINDEX
-                    Print "TIPPED IN BY "; players_GAME$(P, gameB1!(P, ballCarrier), 0); "!!!"
-                    Call DELAY
-                End If
-            Else
-                'pbpOpt = 0
-                pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " TIPS IT IN!!!"
-                Call PBP
-            End If
-
-            Call DELAY
-
-            prevBall$ = ""
-            If P = 1 Then
-                P = 0
-                D = 1
-                P9 = 0
-                C1 = 2
-            Else
-                'P = 0;
-                P = 1
-                D = 0
-                P9 = 1
-                C1 = 2
-            End If
-
-            pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
-            Locate 8, 41: Print Space$(12)
-
-            If pbpOpt = 0 Then
-                Call PBP
-            Else
-                'pbpOpt = 1
-                If pbpDelay! <> 0 Then Print pbpString$: Call DELAY
-            End If
-
-            Call Choices
-
-            If pbpDelay! <> 0 Then
-                For I = 8 To 15
-                    Locate I, 1
-                    Print Space$(38)
-                Next I
-            End If
-
-            Locate 8, 1
-
-            If P7(D) = 1 Then
-
-                If pbpOpt = 0 Then
-                    pbpString$ = gameTeams$(D) + " IS PRESSING"
-                    Call PBP
-                Else
-                    'pbpOpt = 1
-                    If pbpDelay! <> 0 Then
-                        Call WINDEX
-                        Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print gameTeams$(D);
-                        Color 15, 0: Print " IS PRESSING"
-                        Call DELAY
+                    turnovers(P) = turnovers(P) + 1
+                    pbpString$ = "OFFENSIVE GOAL TENDING"
+                    If pbpOpt = 0 Then
+                        Call PBP
+                    Else
+                        'pbpOpt = 1
+                        If pbpDelay! <> 0 Then
+                            Call WINDEX
+                            Print pbpString$
+                            Call DELAY
+                        End If
                     End If
 
-                    P1 = 1
-                End If
-
-            End If
-
-            GoTo 300
-
-        Case 23:
-
-            If P6 <> 4 Then
-
-                If xFactor = 99 Then 700
-
-                pbpString$ = "DEFENSIVE GOAL TENDING"
-
-                If pbpOpt = 0 Then
-                    Call PBP
-                Else
-                    'pbpOpt = 1
-                    If pbpDelay! <> 0 Then
-                        Call WINDEX
-                        Print pbpString$
-                        Call DELAY
+                    pbpString$ = "BALL GOES TO " + gameTeams$(D)
+                    If pbpOpt = 0 Then
+                        Call PBP
+                    Else
+                        'pbpOpt = 1
+                        If pbpDelay! <> 0 Then
+                            Call WINDEX
+                            Print pbpString$
+                            Call DELAY
+                        End If
                     End If
+
                     Call DELAY
+
+                    prevBall$ = ""
+
+                    If P = 1 Then
+                        P = 0
+                        D = 1
+                        P9 = 0
+                        C1 = 2
+                    Else
+                        'P = 0
+                        P = 1
+                        D = 0
+                        P9 = 1
+                        C1 = 2
+                    End If
+
+                    Call Substitutions
+
+                    Call pbplog(3863)
+                    GoTo 300
+
                 End If
 
-            End If
+            Case 2 To 11
+                foulOnReb = 1
+                Call pbplog(3870)
+                GoTo 770
 
-            GoTo 560
+            Case 12 To 19
 
+                Call d100(RN1)
 
-    End Select
+                If RN1 <= 32 Then
 
-    ' Case 24 to 100
-    '
-    770 '
-    RB = 0
+                    'Increase total rebounds
+                    totRebounds(P) = totRebounds(P) + 1
 
-    Erase RB
+                    Call UPDATESCREEN
 
-    For I = 0 To 4
+                    pbpString$ = "RB KNOCKED O.B. TO " + gameTeams$(P)
 
-        If quarter > 4 Or quarter = 4 And gameClock! <= 120 Then
-            RB(I) = RB(I) + gameRatings!(P, gameB1!(P, I), 21)
-            RB = RB + gameRatings!(P, gameB1!(P, I), 21)
-        Else
-            If gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12) <= 0 Then
-                RB(I) = RB(I) + gameRatings!(P, gameB1!(P, I), 21) * .65
-                RB = RB + gameRatings!(P, gameB1!(P, I), 21) * .65
-            Else
-                RB(I) = RB(I) + gameRatings!(P, gameB1!(P, I), 21)
-                RB = RB + gameRatings!(P, gameB1!(P, I), 21)
-            End If
-        End If
+                    If pbpOpt = 0 Then
+                        Call PBP
+                    Else
+                        'pbpOpt = 1
+                        If pbpDelay! <> 0 Then
+                            Call WINDEX
+                            Print pbpString$
+                            Call DELAY
+                        End If
+                    End If
 
-    Next
+                    Call DELAY
+                    Call Substitutions
 
-    For I = 0 To 4
+                    Call pbplog(3900)
+                    GoTo 520
 
-        If quarter > 4 Or quarter = 4 And gameClock! <= 120 Then
-            RB(I + 5) = RB(I + 5) + gameRatings!(1 - P, gameB1!(1 - P, I), 2)
-            RB = RB + gameRatings!(1 - P, gameB1!(1 - P, I), 2)
-        Else
-            If gameRatings!(1 - P, gameB1!(1 - P, I), 3) - gameRatings!(1 - P, gameB1!(1 - P, I), 7) - gameRatings!(1 - P, gameB1!(1 - P, I), 11) - gameRatings!(1 - P, gameB1!(1 - P, I), 12) <= 0 Then
-                RB(I + 5) = RB(I + 5) + gameRatings!(1 - P, gameB1!(1 - P, I), 2) * .5
-                RB = RB + gameRatings!(1 - P, gameB1!(1 - P, I), 2) * .5
-            Else
-                RB(I + 5) = RB(I + 5) + gameRatings!(1 - P, gameB1!(1 - P, I), 2)
-                RB = RB + gameRatings!(1 - P, gameB1!(1 - P, I), 2)
-            End If
-        End If
+                Else
 
-    Next
+                    'Increase total rebounds
+                    totRebounds(D) = totRebounds(D) + 1
 
-    rbChance = Rnd(1) * RB
+                    Call UPDATESCREEN
 
-    For N = 0 To 9
-        If rbChance <= RB(N) Then 
-            skipRandom% = 1: Exit For
-        End If
-        RB(N + 1) = RB(N + 1) + RB(N)
-    Next
+                    pbpString$ = "RB KNOCKED O.B. TO " + gameTeams$(D)
 
-    If skipRandom% = 0 Then
-        rndBC = Int(Rnd(1) * 10)
+                    If pbpOpt = 0 Then
+                        Call PBP
+                    Else
+                        'pbpOpt = 1
+                        If pbpDelay! <> 0 Then
+                            Call WINDEX
+                            Print pbpString$
+                            Call DELAY
+                        End If
+                    End If
+
+                    Call DELAY
+                    Call Substitutions
+
+                    prevBall$ = ""
+
+                    If P = 1 Then
+                        P = 0
+                        D = 1
+                        P9 = 0
+                        C1 = 2
+                    Else
+                        'P = 0
+                        P = 1
+                        D = 0
+                        P9 = 1
+                        C1 = 2
+                    End If
+
+                    C1 = 2
+                    P9 = P
+
+                    Call pbplog(3944)
+                    GoTo 300
+
+                End If
+
+            Case 20 To 22
+
+                If xFactor = 99 Then
+
+                    Call pbplog(3953)
+                    GoTo 700
+
+                Else
+
+                    Call ReboundOffense
+
+                    gameRatings!(P, gameB1!(P, ballCarrier), 7) = gameRatings!(P, gameB1!(P, ballCarrier), 7) + 1
+                    gameRatings!(P, gameB1!(P, ballCarrier), 8) = gameRatings!(P, gameB1!(P, ballCarrier), 8) + 1
+
+                    'Increase Total rebounds
+                    gameRatings!(P, gameB1!(P, ballCarrier), 11) = gameRatings!(P, gameB1!(P, ballCarrier), 11) + 1
+                    totRebounds(P) = totRebounds(P) + 1
+
+                    score(P, quarter) = score(P, quarter) + 2
+                    score(P, 0) = score(P, 0) + 2
+
+                    Call UPDATESCREEN
+
+                    If pbpOpt = 1 Then
+                        If pbpDelay! <> 0 Then
+                            Call WINDEX
+                            Print "TIPPED IN BY "; players_GAME$(P, gameB1!(P, ballCarrier), 0); "!!!"
+                            Call DELAY
+                        End If
+                    Else
+                        'pbpOpt = 0
+                        pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " TIPS IT IN!!!"
+                        Call PBP
+                    End If
+
+                    Call DELAY
+
+                    prevBall$ = ""
+                    If P = 1 Then
+                        P = 0
+                        D = 1
+                        P9 = 0
+                        C1 = 2
+                    Else
+                        'P = 0
+                        P = 1
+                        D = 0
+                        P9 = 1
+                        C1 = 2
+                    End If
+
+                    pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
+                    Locate 8, 41: Print Space$(12)
+
+                    If pbpOpt = 0 Then
+                        Call PBP
+                    Else
+                        'pbpOpt = 1
+                        If pbpDelay! <> 0 Then Print pbpString$: Call DELAY
+                    End If
+
+                    Call Choices
+
+                    If pbpDelay! <> 0 Then
+                        For I = 8 To 15
+                            Locate I, 1
+                            Print Space$(38)
+                        Next I
+                    End If
+
+                    Locate 8, 1
+
+                    If P7(D) = 1 Then
+
+                        If pbpOpt = 0 Then
+                            pbpString$ = gameTeams$(D) + " IS PRESSING"
+                            Call PBP
+                        Else
+                            'pbpOpt = 1
+                            If pbpDelay! <> 0 Then
+                                Call WINDEX
+                                Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print gameTeams$(D);
+                                Color 15, 0: Print " IS PRESSING"
+                                Call DELAY
+                            End If
+
+                            P1 = 1
+                        End If
+
+                    End If
+
+                    Call pbplog(4040)
+                    GoTo 300
+
+                End If
+
+            Case 23:
+
+                If P6 <> 4 Then
+
+                    If xFactor = 99 Then
+
+                        Call pbplog(4051)
+                        GoTo 700
+
+                    Else
+                        pbpString$ = "DEFENSIVE GOAL TENDING"
+
+                        If pbpOpt = 0 Then
+                            Call PBP
+                        Else
+                            'pbpOpt = 1
+                            If pbpDelay! <> 0 Then
+                                Call WINDEX
+                                Print pbpString$
+                                Call DELAY
+                            End If
+                            Call DELAY
+                        End If
+
+                    End If
+
+                    Call pbplog(4071)
+                    GoTo 560
+
+                End If
+
+            Case 24 To 100
+
+                770 '
+                'Calculate rebound contributions
+                '-- RB is a total of "rebound ratings" for both teams
+                '-- rebRatings is an array to track "rebound ratings" for each player
+                '   0 - 4 is for team 1; 5 - 9 is for team 2
+                RB = 0
+
+                Erase rebRatings
+
+                'Team 1
+                For I = 0 To 4
+
+                    If quarter > 4 Or quarter = 4 And gameClock! <= 120 Then
+                        rebRatings(I) = rebRatings(I) + gameRatings!(P, gameB1!(P, I), 21)
+                        RB = RB + gameRatings!(P, gameB1!(P, I), 21)
+                    Else
+                        If gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12) <= 0 Then
+                            rebRatings(I) = rebRatings(I) + gameRatings!(P, gameB1!(P, I), 21) * .65
+                            RB = RB + gameRatings!(P, gameB1!(P, I), 21) * .65
+                        Else
+                            rebRatings(I) = rebRatings(I) + gameRatings!(P, gameB1!(P, I), 21)
+                            RB = RB + gameRatings!(P, gameB1!(P, I), 21)
+                        End If
+                    End If
+
+                Next
+
+                'Team 2
+                For I = 0 To 4
+
+                    If quarter > 4 Or quarter = 4 And gameClock! <= 120 Then
+                        rebRatings(I + 5) = rebRatings(I + 5) + gameRatings!(1 - P, gameB1!(1 - P, I), 2)
+                        RB = RB + gameRatings!(1 - P, gameB1!(1 - P, I), 2)
+                    Else
+                        If gameRatings!(1 - P, gameB1!(1 - P, I), 3) - gameRatings!(1 - P, gameB1!(1 - P, I), 7) - gameRatings!(1 - P, gameB1!(1 - P, I), 11) - gameRatings!(1 - P, gameB1!(1 - P, I), 12) <= 0 Then
+                            rebRatings(I + 5) = rebRatings(I + 5) + gameRatings!(1 - P, gameB1!(1 - P, I), 2) * .5
+                            RB = RB + gameRatings!(1 - P, gameB1!(1 - P, I), 2) * .5
+                        Else
+                            rebRatings(I + 5) = rebRatings(I + 5) + gameRatings!(1 - P, gameB1!(1 - P, I), 2)
+                            RB = RB + gameRatings!(1 - P, gameB1!(1 - P, I), 2)
+                        End If
+                    End If
+
+                Next
+
+                rbChance = Rnd(1) * RB
+
+                skipRandom% = 0
+
+                For ballCarrier = 0 To 9
+
+                    If rbChance <= rebRatings(ballCarrier) Then
+                        Call pbplog(4131)
+                        skipRandom% = 1
+                        Exit For
+                    End If
+
+                    rebRatings(ballCarrier + 1) = rebRatings(ballCarrier + 1) + rebRatings(ballCarrier)
+
+                Next
+
+                'ballCarrier was rndBC
+                If skipRandom% = 0 Then
+                    ballCarrier = Int(Rnd(1) * 10)
+                End If
+
+                If ballCarrier <= 4 Then
+                    foulOnReb = 0
+                    Call pbplog(4147)
+                    '-- GoTo 761 is implied
+                Else
+                    ballCarrier = ballCarrier - 5
+                    Call pbplog(4151)
+                    GoTo 800
+                End If
+
+        End Select
+
     End If
 
-    If rndBC <= 4 Then 761
-    ballCarrier = rndBC - 5
-
-    GoTo 800
 
     '----- NOODLE -----
-
+    'Offensive Rebound
 
     760 '
+    If foulOnReb = 1 Then
 
-    If FF% = 1 Then
-
-        FF% = 0
+        foulOnReb = 0
 
         pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " HAS THE OFFENSIVE REBOUND"
 
@@ -3144,22 +3211,36 @@ Sub PROHOOP ()
 
         Call DELAY
 
+        'Increase Off rebounds
         gameRatings!(P, gameB1!(P, ballCarrier), 24) = gameRatings!(P, gameB1!(P, ballCarrier), 24) + 1
+
+        'Increase Total rebounds
         gameRatings!(P, gameB1!(P, ballCarrier), 11) = gameRatings!(P, gameB1!(P, ballCarrier), 11) + 1
-        R3(P) = R3(P) + 1
+        totRebounds(P) = totRebounds(P) + 1
 
         Call UPDATESCREEN
         Call Fouls(0)
 
+        Call pbplog(4206)
         GoTo 570
 
     Else
 
         761 '
+
+        '-- Offensive Rebound
+
+        'Increase Off rebounds
         gameRatings!(P, gameB1!(P, ballCarrier), 24) = gameRatings!(P, gameB1!(P, ballCarrier), 24) + 1
+
+        'Call pbplog(4195)
+
+        'Increase Total rebounds
         gameRatings!(P, gameB1!(P, ballCarrier), 11) = gameRatings!(P, gameB1!(P, ballCarrier), 11) + 1
-        R3(P) = R3(P) + 1
+        totRebounds(P) = totRebounds(P) + 1
+
         Call UPDATESCREEN
+
         pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " HAS THE OFFENSIVE REBOUND"
 
         If pbpDelay! <> 0 Then
@@ -3193,6 +3274,7 @@ Sub PROHOOP ()
             If gameRatings!(P, gameB1!(P, ballCarrier), 3) - gameRatings!(P, gameB1!(P, ballCarrier), 7) - gameRatings!(P, gameB1!(P, ballCarrier), 11) - gameRatings!(P, gameB1!(P, ballCarrier), 12) <= 0 Then F = F * .6
         End If
 
+        Call pbplog(4259)
         If RN0 <= 8 Then
             PZ% = 9
             GoTo 537
@@ -3202,13 +3284,15 @@ Sub PROHOOP ()
 
     End If
 
+
     '----- NOODLE -----
+    'Defensive Rebound
 
     800 '
 
-    If FF% = 1 Then
+    If foulOnReb = 1 Then
 
-        FF% = 0
+        foulOnReb = 0
 
         If pbpDelay! <> 0 Then
             If pbpOpt = 1 Then
@@ -3225,13 +3309,13 @@ Sub PROHOOP ()
             End If
         End If
 
-        'Increase foul count
-        gameRatings!(D, gameB1!(D, ballCarrier), 11) = gameRatings!(D, gameB1!(D, ballCarrier), 11) + 1
-        R3(D) = R3(D) + 1
-        Call UPDATESCREEN
+        Call pbplog(4263)
 
-        'GoSub 3000
-        'AKA ChangePosession
+        'Increase Total rebounds
+        gameRatings!(D, gameB1!(D, ballCarrier), 11) = gameRatings!(D, gameB1!(D, ballCarrier), 11) + 1
+        totRebounds(D) = totRebounds(D) + 1
+
+        Call UPDATESCREEN
         prevBall$ = ""
 
         If P = 1 Then
@@ -3251,10 +3335,13 @@ Sub PROHOOP ()
 
     Else
 
-        gameRatings!(D, gameB1!(D, ballCarrier), 11) = gameRatings!(D, gameB1!(D, ballCarrier), 11) + 1
-        R3(D) = R3(D) + 1
-        Call UPDATESCREEN
+        Call pbplog(4289)
 
+        'Increase Total rebounds
+        gameRatings!(D, gameB1!(D, ballCarrier), 11) = gameRatings!(D, gameB1!(D, ballCarrier), 11) + 1
+        totRebounds(D) = totRebounds(D) + 1
+
+        Call UPDATESCREEN
         pbpString$ = players_GAME$(D, gameB1!(D, ballCarrier), 0) + " HAS THE DEFENSIVE REBOUND"
 
         If pbpDelay! <> 0 Then

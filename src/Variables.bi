@@ -165,8 +165,8 @@ Dim TT$(40, 15), TT1$(40, 15)
 '----------------------------------------
 ' Used in RECORD routines
 '----------------------------------------
-Dim plyrRecords!(1 To 25), offRecords!(1 to 21), defRecords!(1 to 21)
-Dim plyrRecDesc$(25, 1), offRecDesc$(1 to 21), defRecDesc$(1 to 21)
+Dim plyrRecords!(1 To 25), offRecords!(1 To 21), defRecords!(1 To 21)
+Dim plyrRecDesc$(25, 1), offRecDesc$(1 To 21), defRecDesc$(1 To 21)
 
 Dim indRecords!(50, 2), teamRecords!(125, 2)
 Dim indRecords$(25), teamRecords$(20)
@@ -222,13 +222,13 @@ Dim Shared TOA%(33), TOF%(1), W%(1, 14, 1), YR%(1)
 
 'Dim Shared C1(1, 14)
 Dim Shared D1(1), D2(1), D8(6, 6), F1(14), G4(14), G5(14)
-Dim Shared leagRat_GAME(1, 6), plyrRat_GAME(1, 14, 19)
-Dim Shared P2(1), P4(5), P5(5), P7(1), QQ(1, 8, 14, 14), QR(1, 7, 14)
-Dim Shared R3(1), RB(0 To 10), S3(14), scSettings(0 To 2)
+Dim Shared leagRat_GAME(1, 6), offRebounds(0 To 10), plyrRat_GAME(1, 14, 19)
+Dim Shared P2(1), P4(5), P5(5), P7(0 To 1), QQ(1, 8, 14, 14), QR(1, 7, 14)
+Dim Shared S3(14), scSettings(0 To 2)
 Dim Shared score(1, 14), schedGame(2)
 Dim Shared teamFouls(1), timePlayed(2, 14), timeouts(1)
-Dim Shared tmRat_GAME(1, 34), turnovers(1)
-Dim Shared statTotals(14), pbpFG(9), pbpBG(9), W2(1, 14), W3(1, 14)
+Dim Shared tmRat_GAME(0 To 1, 0 To 34), totRebounds(1), turnovers(1)
+Dim Shared statTotals(14), pbpFG(1 To 8), pbpBG(1 To 8), W2(1, 14), W3(1, 14)
 Dim Shared X7(1), Z5(1), Z6(1)
 
 Dim Shared gameB1!(0 To 1, 0 To 4), gameRatings!(0 To 1, 0 To 14, 0 To 25)
@@ -240,3 +240,4 @@ Dim Shared gameCoach$(3), gameMascots$(3), gameStadium$(3), gameTeams$(3)
 Dim Shared offenseStyles$(2), pbpType$(1), players_GAME$(1, 14, 1), posnName$(0 To 4)
 Dim Shared SX$(32, 1)
 Dim Shared teamAbbrev$(3), Y$(1)
+
