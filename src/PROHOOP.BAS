@@ -8,10 +8,10 @@
 'disable, etc.
 Sub PROHOOP ()
 
+    _Title "Basketball: The Pro Game v" + GAME_VERSION$ + " - HOOPS!"
+
     Shared actualAttendance&
     Shared avgAttendance&()
-
-    _Title "Basketball: The Pro Game v" + GAME_VERSION$ + " - HOOPS!"
 
     Shared scheduleFile$
     Shared tickerStart
@@ -438,12 +438,14 @@ Sub PROHOOP ()
 
     'Determine subs / play parameters
     For P9 = 0 To 1
+    
         If playerMode = 1 And P9 = compTeam Or playerMode = 2 Then
             Call COMPUTERSUBS
         Else
             Call PlayStyle
             Call PlayItSafe
         End If
+        
     Next P9
 
     Call RATINGTABLES
@@ -762,6 +764,7 @@ Sub PROHOOP ()
 
     If shotClock > 0 And sClockVal < 2 And shotClock < scSettings(sClockVal) Then
         shotClock = shotClock - 5
+        
     Else
 
         Select Case sClockVal
@@ -808,6 +811,7 @@ Sub PROHOOP ()
     P3 = 0
 
     'Random ball carrier
+    'B = Int(Rnd(1) * 5)
     Call d100(RN0)
 
     If (playerMode = 0 And coachOpt = 1) Or (playerMode = 1 And D = compTeam And coachOpt = 1) Or (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
@@ -840,6 +844,7 @@ Sub PROHOOP ()
                     End If
 
                     Do
+
                         I$ = GetKeyPress$
 
                         Select Case UCase$(I$)
@@ -940,8 +945,8 @@ Sub PROHOOP ()
                         If RN0 <= 8 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
                             GoTo 513
                         Else
-                            RN0 = Int(Rnd(1) * 1000) + 1
-                            If (PASS% <= 3 Or PASS% > 4) And RN0 <= 320 + ((JY - 89) * 10) Then 445
+                            RN1 = Int(Rnd(1) * 1000) + 1
+                            If (PASS% <= 3 Or PASS% > 4) And RN1 <= 320 + ((JY - 89) * 10) Then 445
                             If PASS% = 4 Then 445
                             GoTo 437
                         End If
@@ -973,8 +978,8 @@ Sub PROHOOP ()
                         If RN0 <= 40 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
                             GoTo 513
                         Else
-                            RN0 = Int(Rnd(1) * 1000) + 1
-                            If (PASS% <= 3 Or PASS% > 4) And RN0 <= 320 + ((JY - 89) * 10) Then 445
+                            RN1 = Int(Rnd(1) * 1000) + 1
+                            If (PASS% <= 3 Or PASS% > 4) And RN1 <= 320 + ((JY - 89) * 10) Then 445
                             If PASS% = 4 Then 445
                             GoTo 437
                         End If
@@ -1010,8 +1015,8 @@ Sub PROHOOP ()
                 If RN0 <= 40 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) Then
                     GoTo 513
                 Else
-                    RN0 = Int(Rnd(1) * 1000) + 1
-                    If (PASS% <= 3 Or PASS% > 4) And RN0 <= 320 + ((JY - 89) * 10) Then 445
+                    RN1 = Int(Rnd(1) * 1000) + 1
+                    If (PASS% <= 3 Or PASS% > 4) And RN1 <= 320 + ((JY - 89) * 10) Then 445
                     If PASS% = 4 Then 445
 
                     GoTo 437
@@ -1042,6 +1047,7 @@ Sub PROHOOP ()
             Case 3
                 F = 36
         End Select
+
     Else
 
         Select Case RN0
@@ -1088,7 +1094,7 @@ Sub PROHOOP ()
 
         If P6 = 4 Then
 
-            Call d100(RN0)
+            Call d100(RN1)
 
             If RN0 <= 20 Then
                 GoTo 437
@@ -1125,19 +1131,19 @@ Sub PROHOOP ()
 
     A4 = Int(Rnd(1) * 41)
     RN0 = Int(Rnd(1) * F5%(P, 4)) + 1
-    RN = Int(.17 * F5%(P, 4) + .5)
+    RN1 = Int(.17 * F5%(P, 4) + .5)
 
-    If RN >= RN0 Then
+    If RN1 >= RN0 Then
         F = F + A4
         PZ% = 2
         xFactor = 0
     Else
 
         ' *** CHECK PENETRATION SHOT ***
-        Call d100(RN1)
+        Call d100(RN2)
         A4 = Int(Rnd(1) * 50) + 1
 
-        If RN1 <= (plyrRat_GAME(P, gameB1!(P, ballCarrier), 16) + OY%(O0%(P))) * 2 + 1 Then
+        If RN2 <= (plyrRat_GAME(P, gameB1!(P, ballCarrier), 16) + OY%(O0%(P))) * 2 + 1 Then
 
             PZ% = 3
             F = F + A4
@@ -1183,7 +1189,6 @@ Sub PROHOOP ()
 
     '-- Without the GoTo 300, this could be a subroutine
     '-- Perhaps it still could be if we add the GoTo 300 after each call
-
     513 '
 
     Call LastShot
@@ -2127,10 +2132,12 @@ Sub PROHOOP ()
             If pbpOpt = 0 Then
                 PT% = 2
                 Call MAKEPBP
-                pbpString$ = "STUFF BY " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + " !!!": DK% = 0
+                pbpString$ = "STUFF BY " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + " !!!"
+                DK% = 0
             Else
                 'pbpOpt = 1
-                pbpString$ = "STUFF BY " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + " !!!": DK% = 0
+                pbpString$ = "STUFF BY " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + " !!!"
+                DK% = 0
             End If
         Else
             If pbpOpt = 0 And PZ% = 8 Then
@@ -2308,9 +2315,9 @@ Sub PROHOOP ()
                 Call DELAY
             Else
 
-                Call d100(RN0)
+                Call d100(RN1)
 
-                Select Case RN0
+                Select Case RN1
                     Case 1 To 10: pbpString$ = players_GAME$(D, gameB1!(D, rndDef), 0) + " STUFFS THE SHOT!!"
                     Case 11 To 15: pbpString$ = "DENIED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
                     Case 16 To 20: pbpString$ = "ERASED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
@@ -2797,7 +2804,6 @@ Sub PROHOOP ()
 
     End If
 
-
     '----- NOODLE -----
 
     670 '
@@ -2818,7 +2824,6 @@ Sub PROHOOP ()
     Call d100(RN0)
 
     scoreDiff = score(D, 0) - score(P, 0)
-    Call pbplog(3802)
 
     If RN0 <= 12 And quarter > 3 And gameClock! < 30 And (scoreDiff = 2 Or scoreDiff = 0) Then
 
@@ -2834,6 +2839,7 @@ Sub PROHOOP ()
                 If xFactor = 98 Then
                     Call pbplog(3815)
                     GoTo 700
+
                 Else
 
                     turnovers(P) = turnovers(P) + 1
@@ -3086,10 +3092,10 @@ Sub PROHOOP ()
                             Call DELAY
                         End If
 
-                    End If
+                        Call pbplog(4071)
+                        GoTo 560
 
-                    Call pbplog(4071)
-                    GoTo 560
+                    End If
 
                 End If
 
@@ -3156,7 +3162,6 @@ Sub PROHOOP ()
 
                 Next
 
-                'ballCarrier was rndBC
                 If skipRandom% = 0 Then
                     ballCarrier = Int(Rnd(1) * 10)
                 End If
@@ -3233,8 +3238,6 @@ Sub PROHOOP ()
         'Increase Off rebounds
         gameRatings!(P, gameB1!(P, ballCarrier), 24) = gameRatings!(P, gameB1!(P, ballCarrier), 24) + 1
 
-        'Call pbplog(4195)
-
         'Increase Total rebounds
         gameRatings!(P, gameB1!(P, ballCarrier), 11) = gameRatings!(P, gameB1!(P, ballCarrier), 11) + 1
         totRebounds(P) = totRebounds(P) + 1
@@ -3284,12 +3287,10 @@ Sub PROHOOP ()
 
     End If
 
-
     '----- NOODLE -----
     'Defensive Rebound
 
     800 '
-
     If foulOnReb = 1 Then
 
         foulOnReb = 0
@@ -3309,13 +3310,12 @@ Sub PROHOOP ()
             End If
         End If
 
-        Call pbplog(4263)
-
         'Increase Total rebounds
         gameRatings!(D, gameB1!(D, ballCarrier), 11) = gameRatings!(D, gameB1!(D, ballCarrier), 11) + 1
         totRebounds(D) = totRebounds(D) + 1
 
         Call UPDATESCREEN
+
         prevBall$ = ""
 
         If P = 1 Then
@@ -3334,8 +3334,6 @@ Sub PROHOOP ()
         GoTo 565
 
     Else
-
-        Call pbplog(4289)
 
         'Increase Total rebounds
         gameRatings!(D, gameB1!(D, ballCarrier), 11) = gameRatings!(D, gameB1!(D, ballCarrier), 11) + 1

@@ -1,4 +1,4 @@
-'Did I finally nail this?
+'Just adding a line
 '----------------------------------------
 '            INFO Subroutine
 '----------------------------------------
@@ -2763,9 +2763,9 @@ Sub WHOGETSBALL
 
             M9 = 0
             ballCarrier = Int(Rnd(1) * 5)
-            Call d100(RN0)
+            Call d100(xFactor)
 
-            If RN0 > 30 Then
+            If xFactor > 30 Then
 
                 For I = 0 To 4
 
@@ -3523,7 +3523,10 @@ Sub SCOREBOARD ()
             Print Using "##"; gameRatings!(0, gameB1!(0, I1), 2) * 2 / 10;
         End If
 
+
         If J <= 0 And (quarter = 1 Or quarter = 2 Or quarter = 3 Or quarter = 4 And gameClock! > 120) Then Color 12
+
+        test2! = gameRatings!(0, gameB1!(0, I1), 5)
 
         Print Using "### "; J;
         Color 15
@@ -3843,11 +3846,9 @@ End Sub
 'This subroutine lets the user choose the
 'play style of teams (based on era) and
 'adjust contribution ratings for players
-'Everyting to do with pacing shots is
-'in this routine.
 Sub SETUPRATINGS ()
 
-    Dim FTF!, JX!, X3!
+    Dim FTF!, X3!
 
     For I = 0 To 1
 
@@ -3867,17 +3868,10 @@ Sub SETUPRATINGS ()
                 FTF! = 1
 
                 'This is arbitrary / temporary!
-                 '-- have been testing 1.37
-           Case Is >= 2010
+            Case Is >= 2010
                 FTF! = 1
 
         End Select
-
-        For I1 = 0 To 14
-            'FTA / FTM
-            plyrRat_GAME(I, I1, 4) = plyrRat_GAME(I, I1, 4) * FTF!
-            plyrRat_GAME(I, I1, 5) = plyrRat_GAME(I, I1, 5) * FTF!
-        Next I1
 
         'Team FTM
         tmRat_GAME(I, 8) = tmRat_GAME(I, 8) * FTF!
@@ -3889,6 +3883,7 @@ Sub SETUPRATINGS ()
         tmRat_GAME(I, 21) = tmRat_GAME(I, 21) * FTF!
 
         Select Case YR%(I)
+            'YR%(I) - 60
 
             Case Is <= 1959
                 TOF%(I) = 59
@@ -3933,27 +3928,43 @@ Sub SETUPRATINGS ()
             Loop Until I >= 0 And I <= 2
         End If
 
+        'If we chose 0 or 1
         If I <> 2 Then
-
             HN% = 1
             HM% = I
 
             'Adjust FGA / G for different eras; favors the team chosen
-            JX! = (tmRat_GAME(0, 5) + tmRat_GAME(0, 19) + tmRat_GAME(1, 5) + tmRat_GAME(1, 19)) * (leagRat_GAME(I, 1) / leagRat_GAME(1 - I, 1)) / ((tmRat_GAME(1, 0) + tmRat_GAME(0, 0)) * 2) * 2 - (leagRat_GAME(I, 1) + leagRat_GAME(I, 1)) / 2
-            JY = JX!
-        
+            JY = (tmRat_GAME(0, 5) + tmRat_GAME(0, 19) + tmRat_GAME(1, 5) + tmRat_GAME(1, 19)) * (leagRat_GAME(I, 1) / leagRat_GAME(1 - I, 1)) / ((tmRat_GAME(1, 0) + tmRat_GAME(0, 0)) * 2)
+            JY = 2 * JY - (leagRat_GAME(I, 1) + leagRat_GAME(I, 1)) / 2
+
         End If
 
     Else
 
         'Adjust FGA / G for both teams evenly
-        JX! = (tmRat_GAME(0, 5) + tmRat_GAME(0, 19)) / ((tmRat_GAME(1, 0) + tmRat_GAME(0, 0)) * 2) + (tmRat_GAME(1, 5) + tmRat_GAME(1, 19)) / ((tmRat_GAME(1, 0) + tmRat_GAME(0, 0)) * 2)
-        JY = JX! * 2 - (leagRat_GAME(0, 1) + leagRat_GAME(1, 1)) / 2
+        FY%(0) = (tmRat_GAME(0, 5) + tmRat_GAME(0, 19)) / (2 * (tmRat_GAME(1, 0) + tmRat_GAME(0, 0)))
+        FY%(1) = (tmRat_GAME(1, 5) + tmRat_GAME(1, 19)) / (2 * (tmRat_GAME(1, 0) + tmRat_GAME(0, 0)))
+        JY! = 2 * ((FY%(0) + FY%(1)) - (leagRat_GAME(0, 1) + leagRat_GAME(1, 1)) / 2)
 
-        If playoffOpt = 1 Then JY = JY - 7
+        If playoffOpt = 1 Then JY! = JY! - 7
 
     End If 'Done checking for different eras
 
+    'Select Case sClockVal
+
+    '    Case 0
+    '24 Sec Shot Clock
+    'JY = 39 + Int(((JY - 66) * .8) + .5)
+
+    '    Case 1
+    '30 Sec Shot Clock
+    'JY = 39 + Int(((JY - 62) * .8) + .5)
+
+    '    Case 2
+    'No Shot Clock
+    'JY = 39 + Int(((JY - 52) * .8) + .5)
+
+    'End Select
 
     For I = 0 To 1
 
@@ -3966,9 +3977,6 @@ Sub SETUPRATINGS ()
         X7(I) = X7(I) / 25
 
         ' ???
-        F7%(I, 5) = Int(((tmRat_GAME(I, 5) + tmRat_GAME(I, 19)) / (tmRat_GAME(I, 0) * 2)) + .5)
-
-        '(Def TOs - Off Steals) / Game / (adjustment) - TOF%
         F7%(I, 0) = Int(((tmRat_GAME(I, 28) / tmRat_GAME(I, 0)) / (X7(I) * 5) * 1000) + .5) - 41
 
         '(Off TOs - Def Steals) / Game  / (adjustment)
@@ -4071,7 +4079,7 @@ Sub SETUPRATINGS ()
                     Case 0
                         X3! = plyrRat_GAME(I, I1, 4) - (plyrRat_GAME(I, I1, 3) * .1) - 1.58 * plyrRat_GAME(I, I1, 1) / 48
                     Case 1
-                        X3! = plyrRat_GAME(I, I1, 4) * 0.9 - (plyrRat_GAME(I, I1, 3) * .1) - 1.58 * plyrRat_GAME(I, I1, 1) / 48
+                        X3! = 0.9 * plyrRat_GAME(I, I1, 4) - (plyrRat_GAME(I, I1, 3) * .1) - 1.58 * plyrRat_GAME(I, I1, 1) / 48
                 End Select
 
                 X3! = X3! / 2
@@ -6270,6 +6278,29 @@ Sub COMPILESTATFILES (compileOpt)
     Loop Until teamIdx = 2
 
 End Sub
+
+
+'----------------------------------------
+'          GetTeamYear Function
+'----------------------------------------
+'This subroutine determines the 4-digit
+'team year from the team loaded by the
+'file. It uses the 2 digit year to make
+'assumptions. (00 to 24 are year 2000.)
+'The NBL was formed in 1937 and became
+'part of the NBA in 1949. Any teams from
+'00 to 37 are safe to assume are from 2000's
+Function GetTeamYear% (yearFromName$)
+
+    teamYear% = Val(yearFromName$)
+
+    If teamYear% >= 0 And teamYear% < 37 Then
+        GetTeamYear% = 2000 + teamYear%
+    Else
+        GetTeamYear% = 1900 + teamYear%
+    End If
+
+End Function
 
 
 '----------------------------------------
@@ -8770,26 +8801,4 @@ Sub CheckRecords ()
 
 End Sub
 
-
-'----------------------------------------
-'          GetTeamYear Function
-'----------------------------------------
-'This subroutine determines the 4-digit
-'team year from the team loaded by the
-'file. It uses the 2 digit year to make
-'assumptions. (00 to 24 are year 2000.)
-'The NBL was formed in 1937 and became
-'part of the NBA in 1949. Any teams from
-'00 to 37 are safe to assume are from 2000's
-Function GetTeamYear% (yearFromName$)
-
-    teamYear% = Val(yearFromName$)
-
-    If teamYear% >= 0 And teamYear% < 37 Then
-        GetTeamYear% = 2000 + teamYear%
-    Else
-        GetTeamYear% = 1900 + teamYear%
-    End If
-
-End Function
 
