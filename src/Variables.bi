@@ -222,7 +222,7 @@ Dim Shared TOA%(33), TOF%(1), W%(1, 14, 1), YR%(1)
 
 'Dim Shared C1(1, 14)
 Dim Shared D1(1), D2(1), D8(6, 6), F1(14), G4(14), G5(14)
-Dim Shared leagRat_GAME(1, 6), offRebounds(0 To 10), plyrRat_GAME(1, 14, 19)
+Dim Shared leagRat_GAME(1, 6), rebRatings(0 To 10), plyrRat_GAME(1, 14, 19)
 Dim Shared P2(1), P4(5), P5(5), P7(0 To 1), QQ(1, 8, 14, 14), QR(1, 7, 14)
 Dim Shared S3(14), scSettings(0 To 2)
 Dim Shared score(1, 14), schedGame(2)
