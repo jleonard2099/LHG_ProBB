@@ -14,6 +14,7 @@ Sub PROHOOP ()
     Shared avgAttendance&()
 
     Shared scheduleFile$
+
     Shared tickerStart
 
     Shared coachMode$(), foulOption$(), freeThrowOpt$()
