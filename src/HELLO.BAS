@@ -667,7 +667,7 @@ Sub Leaders_Menu ()
             Select Case Selection%
 
                 Case 1:
-                    Call CREATPRO
+                    Call CREATLEAG
 
                 Case 2:
                     Call CompileLeague
@@ -676,7 +676,7 @@ Sub Leaders_Menu ()
                     Call SEELEAG
 
                 Case 4:
-                    Call HD2HDPRO
+                    Call HD2HDLEAG
 
                 Case 5:
                     Call Records_Menu
@@ -712,10 +712,10 @@ End Sub
 '$INCLUDE: 'CARVIEW.BAS'
 '$INCLUDE: 'COMPARE.BAS'
 '$INCLUDE: 'COMPLEAG.BAS'
-'$INCLUDE: 'CREATPRO.BAS'
+'$INCLUDE: 'CREATLEAG.BAS'
 '$INCLUDE: 'DRAFT.BAS'
 '$INCLUDE: 'GPMIN.BAS'
-'$INCLUDE: 'HD2HDPRO.BAS'
+'$INCLUDE: 'HD2HDLEAG.BAS'
 '$INCLUDE: 'LOOKY.BAS'
 '$INCLUDE: 'MERGE.BAS'
 '$INCLUDE: 'NEWLDR.BAS'

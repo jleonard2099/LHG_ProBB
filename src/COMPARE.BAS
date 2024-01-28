@@ -8,7 +8,7 @@ Sub COMPARE ()
 
     _Title "Basketball: The Pro Game - Stats Comparison"
 
-    Shared AL%, AW%, HL%, HW%
+    Shared roadLosses, roadWins, homeLosses, homeWins
 
     Shared leagueRatings%(), teamRatings%()
     Shared teamScore(), oppScore()
@@ -106,16 +106,16 @@ Sub COMPARE ()
 
                 Close #2
 
-                HW% = 0
-                HL% = 0
-                AW% = 0
-                AL% = 0
+                homeWins = 0
+                homeLosses = 0
+                roadWins = 0
+                roadLosses = 0
 
                 For I = 1 To Y
-                    If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then HL% = HL% + 1
-                    If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then HW% = HW% + 1
-                    If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then AL% = AL% + 1
-                    If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then AW% = AW% + 1
+                    If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then homeLosses = homeLosses + 1
+                    If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then homeWins = homeWins + 1
+                    If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then roadLosses = roadLosses + 1
+                    If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then roadWins = roadWins + 1
                 Next
 
                 Color 15, 0
@@ -303,7 +303,7 @@ End Sub
 'are output to the end user display
 Sub TeamComparisons_Screen (teamName$)
 
-    Shared AL%, AW%, HL%, HW%
+    Shared roadLosses, roadWins, homeLosses, homeWins
 
     Shared statPlyrNames$()
     Shared playerRatings%(), teamRatings%()
@@ -396,8 +396,8 @@ Sub TeamComparisons_Screen (teamName$)
     Locate 6, 45: Print Using "####"; teamRatings%(2);: Print " ";
 
     Color 14, 0
-    Locate 7, 41: Print Using "####"; HW%;
-    Locate 7, 45: Print Using "####"; HL%;: Print " ";
+    Locate 7, 41: Print Using "####"; homeWins;
+    Locate 7, 45: Print Using "####"; homeLosses;: Print " ";
 
     Color 3, 0
     Locate 4, 10: Print Using "######"; teamRatings%(6);
@@ -458,8 +458,8 @@ Sub TeamComparisons_Screen (teamName$)
     Locate 16, 45: Print Using "####"; teamRatings%(4);: Print " ";
 
     Color 14, 0
-    Locate 17, 41: Print Using "####"; AW%;
-    Locate 17, 45: Print Using "####"; AL%;: Print " ";
+    Locate 17, 41: Print Using "####"; roadWins;
+    Locate 17, 45: Print Using "####"; roadLosses;: Print " ";
     Locate 4, 16: Print Using "#########"; statsZ!(2);
     Locate 5, 16: Print Using "#########"; statsZ!(1);
 
@@ -794,7 +794,7 @@ End Sub
 'are output to the default printer
 Sub TeamComparisons_Printer (teamName$)
 
-    Shared AL%, AW%, HL%, HW%
+    Shared roadLosses, roadWins, homeLosses, homeWins
 
     Shared statPlyrNames$()
     Shared playerRatings%(), teamRatings%()
@@ -863,8 +863,8 @@ Sub TeamComparisons_Printer (teamName$)
     Print #1, Tab(16); Using "#########"; statsZ!(4);
 
     Print #1, Tab(30); "  REPLAY   ";
-    Print #1, Tab(41); Using "####"; HW%;
-    Print #1, Tab(45); Using "####"; HL%;
+    Print #1, Tab(41); Using "####"; homeWins;
+    Print #1, Tab(45); Using "####"; homeLosses;
 
     Print #1, Tab(55); " FTM   ";
     Print #1, Tab(62); Using "######"; teamRatings%(22);
@@ -973,8 +973,8 @@ Sub TeamComparisons_Printer (teamName$)
     Print #1, Tab(16); Using "#########"; statsZ!(9);
 
     Print #1, Tab(30); "  REPLAY   ";
-    Print #1, Tab(41); Using "####"; AW%;
-    Print #1, Tab(45); Using "####"; AL%;
+    Print #1, Tab(41); Using "####"; roadWins;
+    Print #1, Tab(45); Using "####"; roadLosses;
 
     Print #1, Tab(55); " BLK   ";
     Print #1, Tab(62); Using "######"; teamRatings%(30);
@@ -1044,7 +1044,7 @@ End Sub
 'are output to the end user display
 Sub AllComparisons_Printer (teamName$, posn$())
 
-    Shared AL%, AW%, HL%, HW%
+    Shared roadLosses, roadWins, homeLosses, homeWins
 
     Shared statPlyrNames$()
 
@@ -1122,8 +1122,8 @@ Sub AllComparisons_Printer (teamName$, posn$())
     Print #1, Tab(16); Using "#########"; statsZ!(4);
 
     Print #1, Tab(30); "  REPLAY   ";
-    Print #1, Tab(41); Using "####"; HW%;
-    Print #1, Tab(45); Using "####"; HL%;
+    Print #1, Tab(41); Using "####"; homeWins;
+    Print #1, Tab(45); Using "####"; homeLosses;
 
     Print #1, Tab(55); " FTM   ";
     Print #1, Tab(62); Using "######"; teamRatings%(22);
@@ -1231,8 +1231,8 @@ Sub AllComparisons_Printer (teamName$, posn$())
     Print #1, Tab(16); Using "#########"; statsZ!(9);
 
     Print #1, Tab(30); "  REPLAY   ";
-    Print #1, Tab(41); Using "####"; AW%;
-    Print #1, Tab(45); Using "####"; AL%;
+    Print #1, Tab(41); Using "####"; roadWins;
+    Print #1, Tab(45); Using "####"; roadLosses;
 
     Print #1, Tab(55); " BLK   ";
     Print #1, Tab(62); Using "######"; teamRatings%(30);

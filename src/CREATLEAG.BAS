@@ -1,10 +1,10 @@
 '----------------------------------------
-'         CREATPRO Subroutine
+'         CREATLEAG Subroutine
 '----------------------------------------
 'This subroutine provides a menu for the
 'user to choose options related to the
 'creation and editing of leagues
-Sub CREATPRO ()
+Sub CREATLEAG ()
 
     _Title "Basketball: The Pro Game - Manage Leagues"
 

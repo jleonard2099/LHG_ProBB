@@ -18,8 +18,9 @@ Sub CompileLeague ()
     Shared O1!(), O2!(), OT!(), OL!()
     Shared offRecords!(), defRecords!(), statsW0!(), statsW1!()
 
-    Shared plyrRecDesc$(), DL$(), H1$()
-    Shared N$(), OL$()
+    Shared plyrRecDesc$()
+    Shared DL$(), H1$(), OL$()
+    Shared statPlyrNames$()
     Shared locIndicator$(), oppName$()
     Shared statsZ1$(), offRecDesc$(), defRecDesc$()
     Shared Z2$(), Z3$()
@@ -147,7 +148,7 @@ Sub CompileLeague ()
 
                         Erase DT!, OT!
                         Erase leagS!, statsW0!, statsW1!
-                        Erase N$
+                        Erase statPlyrNames$
 
                         Call ReadStatsPro(H1$(XW), TN$)
                         Call StatsByCategoryPro(TN$, finalUpdate$, fullWins, fullLosses)
@@ -272,7 +273,7 @@ Sub ReadStatsPro (statFile$, TN$)
     Shared DT!(), leagS!(), OT!()
     Shared statsW0!(), statsW1!()
 
-    Shared N$()
+    Shared statPlyrNames$()
 
     Open diskPaths$(1) + statFile$ For Input As #1
 
@@ -280,7 +281,7 @@ Sub ReadStatsPro (statFile$, TN$)
 
     For I = 0 To 14
 
-        Input #1, N$(I)
+        Input #1, statPlyrNames$(I)
 
         For J = 0 To 13:
             Input #1, leagS!(I, J)
@@ -316,13 +317,15 @@ Sub CheckStatsPro (TN$, totalGames)
     Shared LD!(), leagS!()
     Shared statsW0!(), statsW1!()
 
-    Shared DL$(), N$(), OL$()
+    Shared DL$(), OL$(), statPlyrNames$()
     Shared Z2$(), Z3$()
 
     For X = 0 To 14:
 
+        'Color 14
         Print "CHECKING STATS OF ";
-        Print N$(X)
+        Color 15
+        Print statPlyrNames$(X)
 
         'Pts / Game
         '--- Must have played 70% of team's games
@@ -330,7 +333,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(20, 1) = leagS!(X, 22)
             LD!(20, 2) = 0
-            Z2$(20) = N$(X)
+            Z2$(20) = statPlyrNames$(X)
             Z3$(20) = TN$
 
             For Z = 1 To 19
@@ -353,7 +356,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(40, 1) = leagS!(X, 12)
             LD!(40, 2) = 0
-            Z2$(40) = N$(X)
+            Z2$(40) = statPlyrNames$(X)
             Z3$(40) = TN$
 
             For Z = 21 To 39
@@ -378,7 +381,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(60, 1) = leagS!(X, 19) 'FG%
             LD!(60, 2) = leagS!(X, 1) 'FGA
-            Z2$(60) = N$(X)
+            Z2$(60) = statPlyrNames$(X)
             Z3$(60) = TN$
 
             For Z = 41 To 59
@@ -403,7 +406,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(80, 1) = leagS!(X, 20) 'FT%
             LD!(80, 2) = leagS!(X, 3) 'FTA
-            Z2$(80) = N$(X)
+            Z2$(80) = statPlyrNames$(X)
             Z3$(80) = TN$
 
             For Z = 61 To 79
@@ -428,7 +431,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(90, 1) = leagS!(X, 15)
             LD!(90, 2) = leagS!(X, 7)
-            Z2$(90) = N$(X)
+            Z2$(90) = statPlyrNames$(X)
             Z3$(90) = TN$
 
             For Z = 81 To 89
@@ -453,7 +456,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(100, 1) = leagS!(X, 7)
             LD!(100, 2) = 0
-            Z2$(100) = N$(X)
+            Z2$(100) = statPlyrNames$(X)
             Z3$(100) = TN$
 
             For Z = 91 To 99
@@ -477,7 +480,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(110, 1) = leagS!(X, 16)
             LD!(110, 2) = leagS!(X, 8)
-            Z2$(110) = N$(X)
+            Z2$(110) = statPlyrNames$(X)
             Z3$(110) = TN$
 
             For Z = 101 To 109
@@ -502,7 +505,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(120, 1) = leagS!(X, 8)
             LD!(120, 2) = leagS!(X, 8)
-            Z2$(120) = N$(X)
+            Z2$(120) = statPlyrNames$(X)
             Z3$(120) = TN$
 
             For Z = 111 To 119
@@ -527,7 +530,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(130, 1) = leagS!(X, 21)
             LD!(130, 2) = statsW1!(X)
-            Z2$(130) = N$(X)
+            Z2$(130) = statPlyrNames$(X)
             Z3$(130) = TN$
 
             For Z = 121 To 129
@@ -551,7 +554,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(140, 1) = statsW0!(X)
             LD!(140, 2) = 0
-            Z2$(140) = N$(X)
+            Z2$(140) = statPlyrNames$(X)
             Z3$(140) = TN$
 
             For Z = 131 To 139
@@ -576,7 +579,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(150, 1) = leagS!(X, 18)
             LD!(150, 2) = 0
-            Z2$(150) = N$(X)
+            Z2$(150) = statPlyrNames$(X)
             Z3$(150) = TN$
 
             For Z = 141 To 149
@@ -601,7 +604,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(160, 1) = leagS!(X, 10) / 60
             LD!(160, 2) = 0
-            Z2$(160) = N$(X)
+            Z2$(160) = statPlyrNames$(X)
             Z3$(160) = TN$
 
             For Z = 151 To 159
@@ -626,7 +629,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(170, 1) = leagS!(X, 13)
             LD!(170, 2) = leagS!(X, 5)
-            Z2$(170) = N$(X)
+            Z2$(170) = statPlyrNames$(X)
             Z3$(170) = TN$
 
             For Z = 161 To 169
@@ -651,7 +654,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(180, 1) = leagS!(X, 5)
             LD!(18, 2) = 0
-            Z2$(180) = N$(X)
+            Z2$(180) = statPlyrNames$(X)
             Z3$(180) = TN$
 
             For Z = 171 To 179
@@ -676,7 +679,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(190, 1) = leagS!(X, 17)
             LD!(190, 2) = 0
-            Z2$(190) = N$(X)
+            Z2$(190) = statPlyrNames$(X)
             Z3$(190) = TN$
 
             For Z = 181 To 189
@@ -701,7 +704,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(200, 1) = leagS!(X, 9)
             LD!(200, 2) = 0
-            Z2$(200) = N$(X)
+            Z2$(200) = statPlyrNames$(X)
             Z3$(200) = TN$
 
             For Z = 191 To 199
@@ -724,7 +727,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(210, 1) = leagS!(X, 2)
             LD!(210, 2) = 0
-            Z2$(210) = N$(X)
+            Z2$(210) = statPlyrNames$(X)
             Z3$(210) = TN$
 
             For Z = 201 To 209
@@ -748,7 +751,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(220, 1) = leagS!(X, 4)
             LD!(220, 2) = 0
-            Z2$(220) = N$(X)
+            Z2$(220) = statPlyrNames$(X)
             Z3$(220) = TN$
 
             For Z = 211 To 219
@@ -772,7 +775,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(230, 1) = leagS!(X, 14)
             LD!(230, 2) = 0
-            Z2$(230) = N$(X)
+            Z2$(230) = statPlyrNames$(X)
             Z3$(230) = TN$
 
             For Z = 221 To 229
@@ -796,7 +799,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(240, 1) = leagS!(X, 6)
             LD!(240, 2) = 0
-            Z2$(240) = N$(X)
+            Z2$(240) = statPlyrNames$(X)
             Z3$(240) = TN$
 
             For Z = 231 To 239
@@ -820,7 +823,7 @@ Sub CheckStatsPro (TN$, totalGames)
 
             LD!(250, 1) = leagS!(X, 24)
             LD!(250, 2) = 0
-            Z2$(250) = N$(X)
+            Z2$(250) = statPlyrNames$(X)
             Z3$(250) = TN$
 
             For Z = 241 To 249
@@ -904,7 +907,7 @@ Sub StatsByCategoryPro (TN$, finalUpdate$, fullWins, fullLosses)
     Shared DT!(), plyrRecords!(), leagS!(), OT!()
     Shared statsW0!(), statsW1!(), offRecords!(), defRecords!()
 
-    Shared plyrRecDesc$(), N$(), offRecDesc$(), defRecDesc$()
+    Shared plyrRecDesc$(), statPlyrNames$(), offRecDesc$(), defRecDesc$()
 
     totalGames = fullWins + fullLosses
 
@@ -937,37 +940,37 @@ Sub StatsByCategoryPro (TN$, finalUpdate$, fullWins, fullLosses)
             End If
 
             leagS!(I, 22) = leagS!(I, 12) / leagS!(I, 0): ' *** PTS/G ***
-            If leagS!(I, 0) > plyrRecords!(1) Then plyrRecords!(1) = leagS!(I, 0): plyrRecDesc$(1, 0) = N$(I): plyrRecDesc$(1, 1) = TN$
-            If leagS!(I, 1) > plyrRecords!(2) Then plyrRecords!(2) = leagS!(I, 1): plyrRecDesc$(2, 0) = N$(I): plyrRecDesc$(2, 1) = TN$
-            If leagS!(I, 2) > plyrRecords!(3) Then plyrRecords!(3) = leagS!(I, 2): plyrRecDesc$(3, 0) = N$(I): plyrRecDesc$(3, 1) = TN$
-            If leagS!(I, 19) > plyrRecords!(4) And UCase$(finalUpdate$) = "Y" And leagS!(I, 2) / leagS!(I, 0) >= 3.65 Then plyrRecords!(4) = leagS!(I, 19): plyrRecDesc$(4, 0) = N$(I): plyrRecDesc$(4, 1) = TN$
+            If leagS!(I, 0) > plyrRecords!(1) Then plyrRecords!(1) = leagS!(I, 0): plyrRecDesc$(1, 0) = statPlyrNames$(I): plyrRecDesc$(1, 1) = TN$
+            If leagS!(I, 1) > plyrRecords!(2) Then plyrRecords!(2) = leagS!(I, 1): plyrRecDesc$(2, 0) = statPlyrNames$(I): plyrRecDesc$(2, 1) = TN$
+            If leagS!(I, 2) > plyrRecords!(3) Then plyrRecords!(3) = leagS!(I, 2): plyrRecDesc$(3, 0) = statPlyrNames$(I): plyrRecDesc$(3, 1) = TN$
+            If leagS!(I, 19) > plyrRecords!(4) And UCase$(finalUpdate$) = "Y" And leagS!(I, 2) / leagS!(I, 0) >= 3.65 Then plyrRecords!(4) = leagS!(I, 19): plyrRecDesc$(4, 0) = statPlyrNames$(I): plyrRecDesc$(4, 1) = TN$
 
-            If statsW1!(I) > plyrRecords!(5) Then plyrRecords!(5) = statsW1!(I): plyrRecDesc$(5, 0) = N$(I): plyrRecDesc$(5, 1) = TN$
-            If statsW0!(I) > plyrRecords!(6) Then plyrRecords!(6) = statsW0!(I): plyrRecDesc$(6, 0) = N$(I): plyrRecDesc$(6, 1) = TN$
-            If leagS!(I, 21) > plyrRecords!(7) And UCase$(finalUpdate$) = "Y" And statsW0!(I) / leagS!(I, 0) >= .3 Then plyrRecords!(7) = leagS!(I, 21): plyrRecDesc$(7, 0) = N$(I): plyrRecDesc$(7, 1) = TN$
+            If statsW1!(I) > plyrRecords!(5) Then plyrRecords!(5) = statsW1!(I): plyrRecDesc$(5, 0) = statPlyrNames$(I): plyrRecDesc$(5, 1) = TN$
+            If statsW0!(I) > plyrRecords!(6) Then plyrRecords!(6) = statsW0!(I): plyrRecDesc$(6, 0) = statPlyrNames$(I): plyrRecDesc$(6, 1) = TN$
+            If leagS!(I, 21) > plyrRecords!(7) And UCase$(finalUpdate$) = "Y" And statsW0!(I) / leagS!(I, 0) >= .3 Then plyrRecords!(7) = leagS!(I, 21): plyrRecDesc$(7, 0) = statPlyrNames$(I): plyrRecDesc$(7, 1) = TN$
 
-            If leagS!(I, 3) > plyrRecords!(8) Then plyrRecords!(8) = leagS!(I, 3): plyrRecDesc$(8, 0) = N$(I): plyrRecDesc$(8, 1) = TN$
-            If leagS!(I, 4) > plyrRecords!(9) Then plyrRecords!(9) = leagS!(I, 4): plyrRecDesc$(9, 0) = N$(I): plyrRecDesc$(9, 1) = TN$
-            If leagS!(I, 20) > plyrRecords!(10) And UCase$(finalUpdate$) = "Y" And leagS!(I, 4) / leagS!(I, 0) >= 1.52 Then plyrRecords!(10) = leagS!(I, 20): plyrRecDesc$(10, 0) = N$(I): plyrRecDesc$(10, 1) = TN$
+            If leagS!(I, 3) > plyrRecords!(8) Then plyrRecords!(8) = leagS!(I, 3): plyrRecDesc$(8, 0) = statPlyrNames$(I): plyrRecDesc$(8, 1) = TN$
+            If leagS!(I, 4) > plyrRecords!(9) Then plyrRecords!(9) = leagS!(I, 4): plyrRecDesc$(9, 0) = statPlyrNames$(I): plyrRecDesc$(9, 1) = TN$
+            If leagS!(I, 20) > plyrRecords!(10) And UCase$(finalUpdate$) = "Y" And leagS!(I, 4) / leagS!(I, 0) >= 1.52 Then plyrRecords!(10) = leagS!(I, 20): plyrRecDesc$(10, 0) = statPlyrNames$(I): plyrRecDesc$(10, 1) = TN$
 
-            If leagS!(I, 10) / 60 > plyrRecords!(11) Then plyrRecords!(11) = leagS!(I, 10) / 60: plyrRecDesc$(11, 0) = N$(I): plyrRecDesc$(11, 1) = TN$
-            If leagS!(I, 12) > plyrRecords!(12) Then plyrRecords!(12) = leagS!(I, 12): plyrRecDesc$(12, 0) = N$(I): plyrRecDesc$(12, 1) = TN$
-            If leagS!(I, 22) > plyrRecords!(13) And UCase$(finalUpdate$) = "Y" Then plyrRecords!(13) = leagS!(I, 22): plyrRecDesc$(13, 0) = N$(I): plyrRecDesc$(13, 1) = TN$
+            If leagS!(I, 10) / 60 > plyrRecords!(11) Then plyrRecords!(11) = leagS!(I, 10) / 60: plyrRecDesc$(11, 0) = statPlyrNames$(I): plyrRecDesc$(11, 1) = TN$
+            If leagS!(I, 12) > plyrRecords!(12) Then plyrRecords!(12) = leagS!(I, 12): plyrRecDesc$(12, 0) = statPlyrNames$(I): plyrRecDesc$(12, 1) = TN$
+            If leagS!(I, 22) > plyrRecords!(13) And UCase$(finalUpdate$) = "Y" Then plyrRecords!(13) = leagS!(I, 22): plyrRecDesc$(13, 0) = statPlyrNames$(I): plyrRecDesc$(13, 1) = TN$
 
-            If leagS!(I, 25) > plyrRecords!(14) Then plyrRecords!(14) = leagS!(I, 25): plyrRecDesc$(14, 0) = N$(I): plyrRecDesc$(14, 1) = TN$
-            If leagS!(I, 26) > plyrRecords!(15) Then plyrRecords!(15) = leagS!(I, 26): plyrRecDesc$(15, 0) = N$(I): plyrRecDesc$(15, 1) = TN$
-            If leagS!(I, 5) - leagS!(I, 26) > plyrRecords!(16) Then plyrRecords!(16) = leagS!(I, 5) - leagS!(I, 26): plyrRecDesc$(16, 0) = N$(I): plyrRecDesc$(16, 1) = TN$
-            If leagS!(I, 5) > plyrRecords!(17) Then plyrRecords!(17) = leagS!(I, 5): plyrRecDesc$(17, 0) = N$(I): plyrRecDesc$(17, 1) = TN$
-            If leagS!(I, 13) > plyrRecords!(18) And UCase$(finalUpdate$) = "Y" Then plyrRecords!(18) = leagS!(I, 13): plyrRecDesc$(18, 0) = N$(I): plyrRecDesc$(18, 1) = TN$
+            If leagS!(I, 25) > plyrRecords!(14) Then plyrRecords!(14) = leagS!(I, 25): plyrRecDesc$(14, 0) = statPlyrNames$(I): plyrRecDesc$(14, 1) = TN$
+            If leagS!(I, 26) > plyrRecords!(15) Then plyrRecords!(15) = leagS!(I, 26): plyrRecDesc$(15, 0) = statPlyrNames$(I): plyrRecDesc$(15, 1) = TN$
+            If leagS!(I, 5) - leagS!(I, 26) > plyrRecords!(16) Then plyrRecords!(16) = leagS!(I, 5) - leagS!(I, 26): plyrRecDesc$(16, 0) = statPlyrNames$(I): plyrRecDesc$(16, 1) = TN$
+            If leagS!(I, 5) > plyrRecords!(17) Then plyrRecords!(17) = leagS!(I, 5): plyrRecDesc$(17, 0) = statPlyrNames$(I): plyrRecDesc$(17, 1) = TN$
+            If leagS!(I, 13) > plyrRecords!(18) And UCase$(finalUpdate$) = "Y" Then plyrRecords!(18) = leagS!(I, 13): plyrRecDesc$(18, 0) = statPlyrNames$(I): plyrRecDesc$(18, 1) = TN$
 
-            If leagS!(I, 6) > plyrRecords!(19) Then plyrRecords!(19) = leagS!(I, 6): plyrRecDesc$(19, 0) = N$(I): plyrRecDesc$(19, 1) = TN$
-            If leagS!(I, 7) > plyrRecords!(20) Then plyrRecords!(20) = leagS!(I, 7): plyrRecDesc$(20, 0) = N$(I): plyrRecDesc$(20, 1) = TN$
-            If leagS!(I, 8) > plyrRecords!(21) Then plyrRecords!(21) = leagS!(I, 8): plyrRecDesc$(21, 0) = N$(I): plyrRecDesc$(21, 1) = TN$
-            If leagS!(I, 9) > plyrRecords!(22) Then plyrRecords!(22) = leagS!(I, 9): plyrRecDesc$(22, 0) = N$(I): plyrRecDesc$(22, 1) = TN$
-            If leagS!(I, 11) > plyrRecords!(23) Then plyrRecords!(23) = leagS!(I, 11): plyrRecDesc$(23, 0) = N$(I): plyrRecDesc$(23, 1) = TN$
-            If leagS!(I, 18) > plyrRecords!(24) And UCase$(finalUpdate$) = "Y" Then plyrRecords!(24) = leagS!(I, 18): plyrRecDesc$(24, 0) = N$(I): plyrRecDesc$(24, 1) = TN$
+            If leagS!(I, 6) > plyrRecords!(19) Then plyrRecords!(19) = leagS!(I, 6): plyrRecDesc$(19, 0) = statPlyrNames$(I): plyrRecDesc$(19, 1) = TN$
+            If leagS!(I, 7) > plyrRecords!(20) Then plyrRecords!(20) = leagS!(I, 7): plyrRecDesc$(20, 0) = statPlyrNames$(I): plyrRecDesc$(20, 1) = TN$
+            If leagS!(I, 8) > plyrRecords!(21) Then plyrRecords!(21) = leagS!(I, 8): plyrRecDesc$(21, 0) = statPlyrNames$(I): plyrRecDesc$(21, 1) = TN$
+            If leagS!(I, 9) > plyrRecords!(22) Then plyrRecords!(22) = leagS!(I, 9): plyrRecDesc$(22, 0) = statPlyrNames$(I): plyrRecDesc$(22, 1) = TN$
+            If leagS!(I, 11) > plyrRecords!(23) Then plyrRecords!(23) = leagS!(I, 11): plyrRecDesc$(23, 0) = statPlyrNames$(I): plyrRecDesc$(23, 1) = TN$
+            If leagS!(I, 18) > plyrRecords!(24) And UCase$(finalUpdate$) = "Y" Then plyrRecords!(24) = leagS!(I, 18): plyrRecDesc$(24, 0) = statPlyrNames$(I): plyrRecDesc$(24, 1) = TN$
 
-            If leagS!(I, 24) > plyrRecords!(25) Then plyrRecords!(25) = leagS!(I, 24): plyrRecDesc$(25, 0) = N$(I): plyrRecDesc$(25, 1) = TN$
+            If leagS!(I, 24) > plyrRecords!(25) Then plyrRecords!(25) = leagS!(I, 24): plyrRecDesc$(25, 0) = statPlyrNames$(I): plyrRecDesc$(25, 1) = TN$
 
         End If 'Done checking leagS!(I, 0)
 

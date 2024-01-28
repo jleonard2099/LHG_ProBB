@@ -135,10 +135,13 @@ Dim values!(0 To 14, 0 To 24)
 
 Dim categories$(0 To 25), statPlyrNames$(0 To 14)
 
-Dim DL$(40), N$(14), Z2$(260), Z3$(260)
+Dim DL$(40), Z2$(260), Z3$(260)
 Dim H1$(40), OL$(40), leagT$(40)
 
-Dim AL%, AW%, HL%, HW%, L%, NL%, NW%, VL%, VW%, W%, Z%
+Dim Z%
+
+Dim homeLosses, homeWins, neutralLosses, neutralWins
+Dim roadLosses, roadWins, totalLosses, totalWins
 
 '----------------------------------------
 ' Used in LEADER routines

@@ -1,11 +1,11 @@
 '----------------------------------------
-'          HD2HDPRO Subroutine
+'          HD2HDLEAG Subroutine
 '----------------------------------------
 'This subroutine reads in stats from the
 'selected team and then presents the user
 'a menu of options for viewing Head-to-Head
 'team comparisons.
-Sub HD2HDPRO ()
+Sub HD2HDLEAG ()
 
     _Title "Basketball: The Pro Game - Head-to-Head Stats"
 
