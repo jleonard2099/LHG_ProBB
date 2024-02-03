@@ -45,6 +45,7 @@ Dim Shared BO%
 
 Dim compareA!(15, 14)
 
+
 '----------------------------------------
 ' Used in ALIGN / MERGE routines
 '----------------------------------------
@@ -111,7 +112,7 @@ Dim tradeB1!(2, 14, 14), tradeT!(1)
 Dim tradeW0!(2, 14), tradeW1!(2, 14)
 
 Dim B1$(2, 14), A1$(1)
-Dim statFiles$(1), statTeam$(1)
+Dim statFiles$(TEAMS_PER_CONFERENCE), statTeam$(1)
 
 
 '----------------------------------------
@@ -124,24 +125,29 @@ Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
 
 Dim league$, div1$, div2$, div3$, div4$
 
+
 '----------------------------------------
 ' Used in STAT / INPUT routines
 '----------------------------------------
-Dim DL!(40, 20), LD!(250, 2), leagS!(14, 26)
-Dim DT!(21), OT!(21)
-Dim O1!(40), O2!(40), OL!(40, 20)
+Dim defLeaders!(40, 20), leaderVals!(250, 2), leagS!(14, 26)
+Dim defTotals!(21), offTotals!(21)
+Dim O1!(40), O2!(40), offLeaders!(40, 20)
 Dim seeZ!(260), seeZ1!(260)
 Dim values!(0 To 14, 0 To 24)
 
 Dim categories$(0 To 25), statPlyrNames$(0 To 14)
 
 Dim DL$(40), Z2$(260), Z3$(260)
-Dim H1$(40), OL$(40), leagT$(40)
+Dim OL$(40), leagT$(40)
 
 Dim Z%
 
+' reduce things here
+'Dim confWins, confLosses
+Dim fullWins, fullLosses
 Dim homeLosses, homeWins, neutralLosses, neutralWins
 Dim roadLosses, roadWins, totalLosses, totalWins
+
 
 '----------------------------------------
 ' Used in LEADER routines

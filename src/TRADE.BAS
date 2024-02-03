@@ -46,8 +46,6 @@ End Sub
 'the stats are loaded from the team stats.
 Sub LoadStatsForTrade (tradeTeam)
 
-    Shared statFiles$()
-
     Shared teamSettings%(), plyrRat_TRADE(), leagRat_TRADE()
     Shared tradeZZ(), tradeZZ1()
 
@@ -79,9 +77,9 @@ Sub LoadStatsForTrade (tradeTeam)
 
     Else
 
-        statFiles$(tradeTeam) = nameStatFile$(statTeam$(tradeTeam))
+        statFile$ = nameStatFile$(statTeam$(tradeTeam))
 
-        If Not _FileExists(diskPaths$(1) + statFiles$(tradeTeam)) Then
+        If Not _FileExists(diskPaths$(1) + statFile$) Then
 
             haveStats(tradeTeam) = 1
             MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
@@ -94,7 +92,7 @@ Sub LoadStatsForTrade (tradeTeam)
 
         Else
 
-            Open diskPaths$(1) + statFiles$(tradeTeam) For Input As #1
+            Open diskPaths$(1) + statFile$ For Input As #1
 
             Input #1, A1$(tradeTeam)
 
@@ -318,7 +316,7 @@ Sub SaveTrades ()
     Shared tradeB1!(), haveStats(), tradeT!()
     Shared tradeW0!(), tradeW1!()
 
-    Shared B1$(), teamYears$(), statFiles$()
+    Shared B1$(), statTeam$(), teamYears$()
     Shared A1$(), tmInfo_TRADE$(), players_TRADE$()
 
     For J = 0 To 1
@@ -386,7 +384,9 @@ Sub SaveTrades ()
 
         If haveStats(J) <> 1 Then
 
-            Open diskPaths$(1) + RTrim$(statFiles$(J)) For Output As #2
+            statFile$ = nameStatFile$(statTeam$(tradeTeam))
+
+            Open diskPaths$(1) + statFile$ For Output As #2
 
             Print #2, A1$(J)
 

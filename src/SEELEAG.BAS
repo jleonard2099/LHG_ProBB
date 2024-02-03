@@ -30,7 +30,7 @@ End Sub
 Sub LoadLeaderFiles_Pro (targetFile$)
 
     Shared O1!(), O2!()
-    Shared DL!(), OL!()
+    Shared defLeaders!(), offLeaders!()
     Shared seeZ!(), seeZ1!()
 
     Shared DL$(), OL$()
@@ -66,14 +66,14 @@ Sub LoadLeaderFiles_Pro (targetFile$)
     For X = 1 To TEAMS_PER_CONFERENCE
         Input #2, OL$(X)
         For M = 1 To 20
-            Input #2, OL!(X, M)
+            Input #2, offLeaders!(X, M)
         Next
     Next
 
     For X = 1 To TEAMS_PER_CONFERENCE
         Input #2, DL$(X)
         For M = 1 To 20
-            Input #2, DL!(X, M)
+            Input #2, defLeaders!(X, M)
         Next
     Next
 
@@ -202,10 +202,10 @@ Sub LeaderStats_Screen ()
 
     Shared O1!(), O2!()
 
-    Shared DL!(), OL!()
+    Shared defLeaders!(), offLeaders!()
     Shared seeZ!(), seeZ1!()
 
-    Shared DL$(), OL$(), OL!()
+    Shared DL$(), OL$(), offLeaders!()
     Shared leagT$(), Z2$(), Z3$()
 
     Shared LG$, div1$, div2$, div3$, div4$
@@ -770,29 +770,29 @@ Sub LeaderStats_Screen ()
             'Team
             Print Left$(OL$(X), 11); Tab(13);
             'G
-            Print Using "##"; OL!(X, 16);: Print Tab(16);
+            Print Using "##"; offLeaders!(X, 16);: Print Tab(16);
             'FGA
-            Print Using "#####"; OL!(X, 2);: Print Tab(21);
+            Print Using "#####"; offLeaders!(X, 2);: Print Tab(21);
             'FGM
-            Print Using "#####"; OL!(X, 3);: Print Tab(26);
+            Print Using "#####"; offLeaders!(X, 3);: Print Tab(26);
             'FG PCT
-            Print Using ".###"; OL!(X, 17);: Print Tab(31);
+            Print Using ".###"; offLeaders!(X, 17);: Print Tab(31);
             'FTA / FTM / FT PCT
-            Print Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);: Print Tab(46);
+            Print Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);: Print Tab(46);
             'REB
-            Print Using "####"; OL!(X, 6);: Print Tab(51);
+            Print Using "####"; offLeaders!(X, 6);: Print Tab(51);
             'AST
-            Print Using "####"; OL!(X, 9);: Print Tab(56);
+            Print Using "####"; offLeaders!(X, 9);: Print Tab(56);
             'Personal Fouls
-            Print Using "####"; OL!(X, 7);: Print Tab(61);
+            Print Using "####"; offLeaders!(X, 7);: Print Tab(61);
             'STL
-            Print Using "###"; OL!(X, 8);: Print Tab(65);
+            Print Using "###"; offLeaders!(X, 8);: Print Tab(65);
             'BLK
-            Print Using "###"; OL!(X, 10);: Print Tab(69);
+            Print Using "###"; offLeaders!(X, 10);: Print Tab(69);
             'PTS
-            Print Using "#####"; OL!(X, 20);: Print Tab(75);
+            Print Using "#####"; offLeaders!(X, 20);: Print Tab(75);
             'AVG
-            Print Using "###.#"; OL!(X, 19)
+            Print Using "###.#"; offLeaders!(X, 19)
 
         End If
 
@@ -818,29 +818,29 @@ Sub LeaderStats_Screen ()
         If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
             Print Left$(OL$(X), 11); Tab(13);
             'G
-            Print Using "##"; OL!(X, 16);: Print Tab(16);
+            Print Using "##"; offLeaders!(X, 16);: Print Tab(16);
             'FGA
-            Print Using "#####"; OL!(X, 2);: Print Tab(21);
+            Print Using "#####"; offLeaders!(X, 2);: Print Tab(21);
             'FGM
-            Print Using "#####"; OL!(X, 3);: Print Tab(26);
+            Print Using "#####"; offLeaders!(X, 3);: Print Tab(26);
             'FG PCT
-            Print Using ".###"; OL!(X, 17);: Print Tab(31);
+            Print Using ".###"; offLeaders!(X, 17);: Print Tab(31);
             'FTA / FTM / FT PCT
-            Print Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);: Print Tab(46);
+            Print Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);: Print Tab(46);
             'REB
-            Print Using "####"; OL!(X, 6);: Print Tab(51);
+            Print Using "####"; offLeaders!(X, 6);: Print Tab(51);
             'AST
-            Print Using "####"; OL!(X, 9);: Print Tab(56);
+            Print Using "####"; offLeaders!(X, 9);: Print Tab(56);
             'Personal Fouls
-            Print Using "####"; OL!(X, 7);: Print Tab(61);
+            Print Using "####"; offLeaders!(X, 7);: Print Tab(61);
             'STL
-            Print Using "###"; OL!(X, 8);: Print Tab(65);
+            Print Using "###"; offLeaders!(X, 8);: Print Tab(65);
             'BLK
-            Print Using "###"; OL!(X, 10);: Print Tab(69);
+            Print Using "###"; offLeaders!(X, 10);: Print Tab(69);
             'PTS
-            Print Using "#####"; OL!(X, 20);: Print Tab(75);
+            Print Using "#####"; offLeaders!(X, 20);: Print Tab(75);
             'AVG
-            Print Using "###.#"; OL!(X, 19)
+            Print Using "###.#"; offLeaders!(X, 19)
         End If
 
     Next
@@ -866,27 +866,27 @@ Sub LeaderStats_Screen ()
             'Team
             Print Left$(DL$(X), 11); Tab(13);
             'Games
-            Print Using "##"; DL!(X, 16);: Print Tab(16);
+            Print Using "##"; defLeaders!(X, 16);: Print Tab(16);
             'FGA
-            Print Using "####"; DL!(X, 2);: Print Tab(21);
+            Print Using "####"; defLeaders!(X, 2);: Print Tab(21);
             'FGM
-            Print Using "####"; DL!(X, 3);: Print Tab(26);
+            Print Using "####"; defLeaders!(X, 3);: Print Tab(26);
             'FG PCT
-            Print Using ".###"; DL!(X, 17);: Print Tab(31);
+            Print Using ".###"; defLeaders!(X, 17);: Print Tab(31);
             'FTA / FTM / FT PCT
-            Print Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);: Print Tab(46);
+            Print Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);: Print Tab(46);
             'REB / AST
-            Print Using "#### ####"; DL!(X, 6); DL!(X, 9);: Print Tab(56);
+            Print Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);: Print Tab(56);
             'Fouls
-            Print Using "####"; DL!(X, 7);: Print Tab(61);
+            Print Using "####"; defLeaders!(X, 7);: Print Tab(61);
             'STL
-            Print Using "###"; DL!(X, 8);: Print Tab(65);
+            Print Using "###"; defLeaders!(X, 8);: Print Tab(65);
             'BLK
-            Print Using "###"; DL!(X, 10);: Print Tab(69);
+            Print Using "###"; defLeaders!(X, 10);: Print Tab(69);
             'PTS
-            Print Using "#####"; DL!(X, 20);: Print Tab(75);
+            Print Using "#####"; defLeaders!(X, 20);: Print Tab(75);
             'AVG
-            Print Using "###.#"; DL!(X, 19)
+            Print Using "###.#"; defLeaders!(X, 19)
 
         End If
 
@@ -910,17 +910,17 @@ Sub LeaderStats_Screen ()
     For X = 21 To 40
 
         If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
-            Print Left$(DL$(X), 11); Tab(13);: Print Using "##"; DL!(X, 16);
-            Print Tab(16);: Print Using "####"; DL!(X, 2);
-            Print Tab(21);: Print Using "####"; DL!(X, 3);
-            Print Tab(26);: Print Using ".###"; DL!(X, 17);
-            Print Tab(31);: Print Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);
-            Print Tab(46);: Print Using "#### ####"; DL!(X, 6); DL!(X, 9);
-            Print Tab(56);: Print Using "####"; DL!(X, 7);
-            Print Tab(61);: Print Using "###"; DL!(X, 8);
-            Print Tab(65);: Print Using "###"; DL!(X, 10);
-            Print Tab(69);: Print Using "#####"; DL!(X, 20);
-            Print Tab(75);: Print Using "###.#"; DL!(X, 19)
+            Print Left$(DL$(X), 11); Tab(13);: Print Using "##"; defLeaders!(X, 16);
+            Print Tab(16);: Print Using "####"; defLeaders!(X, 2);
+            Print Tab(21);: Print Using "####"; defLeaders!(X, 3);
+            Print Tab(26);: Print Using ".###"; defLeaders!(X, 17);
+            Print Tab(31);: Print Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);
+            Print Tab(46);: Print Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);
+            Print Tab(56);: Print Using "####"; defLeaders!(X, 7);
+            Print Tab(61);: Print Using "###"; defLeaders!(X, 8);
+            Print Tab(65);: Print Using "###"; defLeaders!(X, 10);
+            Print Tab(69);: Print Using "#####"; defLeaders!(X, 20);
+            Print Tab(75);: Print Using "###.#"; defLeaders!(X, 19)
         End If
 
     Next
@@ -948,7 +948,7 @@ End Sub
 Sub SavePrintLeagueLeaders (statFile$, destination)
 
     Shared O1!(), O2!()
-    Shared DL!(), OL!()
+    Shared defLeaders!(), offLeaders!()
     Shared seeZ!(), seeZ1!()
 
     Shared OL$(), DL$(), leagT$()
@@ -1334,19 +1334,19 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
 
         If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
             Print #1, Left$(OL$(X), 11); Tab(13);
-            Print #1, Using "##"; OL!(X, 16);: Print #1, Tab(16);
-            Print #1, Using "####"; OL!(X, 2);: Print #1, Tab(21);
-            Print #1, Using "####"; OL!(X, 3);: Print #1, Tab(26);
-            Print #1, Using ".###"; OL!(X, 17);: Print #1, Tab(31);
-            Print #1, Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);
+            Print #1, Using "##"; offLeaders!(X, 16);: Print #1, Tab(16);
+            Print #1, Using "####"; offLeaders!(X, 2);: Print #1, Tab(21);
+            Print #1, Using "####"; offLeaders!(X, 3);: Print #1, Tab(26);
+            Print #1, Using ".###"; offLeaders!(X, 17);: Print #1, Tab(31);
+            Print #1, Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);
             Print #1, Tab(46);
-            Print #1, Using "####"; OL!(X, 6);: Print #1, Tab(51);
-            Print #1, Using "####"; OL!(X, 9);: Print #1, Tab(56);
-            Print #1, Using "####"; OL!(X, 7);: Print #1, Tab(61);
-            Print #1, Using "###"; OL!(X, 8);: Print #1, Tab(65);
-            Print #1, Using "###"; OL!(X, 10);: Print #1, Tab(69);
-            Print #1, Using "#####"; OL!(X, 20);
-            Print #1, Tab(75);: Print #1, Using "###.#"; OL!(X, 19)
+            Print #1, Using "####"; offLeaders!(X, 6);: Print #1, Tab(51);
+            Print #1, Using "####"; offLeaders!(X, 9);: Print #1, Tab(56);
+            Print #1, Using "####"; offLeaders!(X, 7);: Print #1, Tab(61);
+            Print #1, Using "###"; offLeaders!(X, 8);: Print #1, Tab(65);
+            Print #1, Using "###"; offLeaders!(X, 10);: Print #1, Tab(69);
+            Print #1, Using "#####"; offLeaders!(X, 20);
+            Print #1, Tab(75);: Print #1, Using "###.#"; offLeaders!(X, 19)
         End If
 
     Next
@@ -1360,18 +1360,18 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
 
         If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
             Print #1, Left$(DL$(X), 11); Tab(13);
-            Print #1, Using "##"; DL!(X, 16);: Print #1, Tab(16);
-            Print #1, Using "####"; DL!(X, 2);: Print #1, Tab(21);
-            Print #1, Using "####"; DL!(X, 3);: Print #1, Tab(26);
-            Print #1, Using ".###"; DL!(X, 17);: Print #1, Tab(31);
-            Print #1, Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);
+            Print #1, Using "##"; defLeaders!(X, 16);: Print #1, Tab(16);
+            Print #1, Using "####"; defLeaders!(X, 2);: Print #1, Tab(21);
+            Print #1, Using "####"; defLeaders!(X, 3);: Print #1, Tab(26);
+            Print #1, Using ".###"; defLeaders!(X, 17);: Print #1, Tab(31);
+            Print #1, Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);
             Print #1, Tab(46);
-            Print #1, Using "#### ####"; DL!(X, 6); DL!(X, 9);: Print #1, Tab(56);
-            Print #1, Using "####"; DL!(X, 7);: Print #1, Tab(61);
-            Print #1, Using "###"; DL!(X, 8);: Print #1, Tab(65);
-            Print #1, Using "###"; DL!(X, 10);: Print #1, Tab(69);
-            Print #1, Using "#####"; DL!(X, 20);
-            Print #1, Tab(75);: Print #1, Using "###.#"; DL!(X, 19)
+            Print #1, Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);: Print #1, Tab(56);
+            Print #1, Using "####"; defLeaders!(X, 7);: Print #1, Tab(61);
+            Print #1, Using "###"; defLeaders!(X, 8);: Print #1, Tab(65);
+            Print #1, Using "###"; defLeaders!(X, 10);: Print #1, Tab(69);
+            Print #1, Using "#####"; defLeaders!(X, 20);
+            Print #1, Tab(75);: Print #1, Using "###.#"; defLeaders!(X, 19)
         End If
 
     Next

@@ -1670,7 +1670,7 @@ Sub PROHOOP ()
             GoTo 350
 
         Case 2
-            'Shoot!
+            'Shoot it!
             GoTo 537
 
         Case 3
@@ -1829,7 +1829,7 @@ Sub PROHOOP ()
     '--- technically this branch ends here ---
 
     537 '
-    ' *** SHOOT!!! ***
+    ' *** SHOOT !!! ***
 
     PT% = 3
     Call MAKEPBP
@@ -2319,7 +2319,7 @@ Sub PROHOOP ()
                 Call d100(RN1)
 
                 Select Case RN1
-                    Case 1 To 10: pbpString$ = players_GAME$(D, gameB1!(D, rndDef), 0) + " STUFFS THE SHOT!!"
+                    Case 1 To 10: pbpString$ = players_GAME$(D, gameB1!(D, rndDef), 0) + " STUFFS THE SHoffTotals!!"
                     Case 11 To 15: pbpString$ = "DENIED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
                     Case 16 To 20: pbpString$ = "ERASED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
                     Case 21 To 25: pbpString$ = "EXPUNGED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
