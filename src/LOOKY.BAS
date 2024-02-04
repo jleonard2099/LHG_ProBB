@@ -8,7 +8,7 @@ Sub LOOKY ()
 
     _Title "Basketball: The Pro Game - View Stats"
 
-    Shared categories$(), statPlyrNames$()
+    Shared statCategoryAbbr$(), statPlyrNames$()
 
     Do
 
@@ -59,7 +59,7 @@ Sub LoadTeamStats (statFile$, team$, totalGames%)
 
     Shared teamScore(), oppScore()
 
-    Shared categories$(), statPlyrNames$()
+    Shared statCategoryAbbr$(), statPlyrNames$()
     Shared oppName$(), locIndicator$()
 
     Shared statsZ!(), statsZ1!()
@@ -180,7 +180,7 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
     Shared teamScore(), oppScore()
 
-    Shared categories$()
+    Shared statCategoryAbbr$()
     Shared oppName$(), locIndicator$()
 
     Color , 0
@@ -295,7 +295,7 @@ End Sub
 'team's player stats to the user display
 Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
-    Shared categories$(), statPlyrNames$()
+    Shared statCategoryAbbr$(), statPlyrNames$()
 
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
@@ -327,7 +327,7 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
         Print Space$(53);
 
         Color 12, 0
-        Locate 2, 1: Print "SORT BY: "; categories$(categoryPick); Tab(40)
+        Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40)
 
         Color 14: Print teamName$
         
@@ -487,14 +487,14 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
                     categoryPick = categoryPick + 1
                     If categoryPick > 12 Then categoryPick = 1
                     Color 12
-                    Locate 2, 1: Print "SORT BY: "; categories$(categoryPick); Tab(40);
+                    Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
                     'Left Arrow
                 Case Chr$(0) + "K"
                     categoryPick = categoryPick - 1
                     If categoryPick < 1 Then categoryPick = 12
                     Color 12
-                    Locate 2, 1: Print "SORT BY: "; categories$(categoryPick); Tab(40);
+                    Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
                     'Enter
                 Case Chr$(13)
@@ -528,7 +528,7 @@ End Sub
 'team's OFF/DEF stats to the user display
 Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
-    Shared categories$(), statPlyrNames$()
+    Shared statCategoryAbbr$(), statPlyrNames$()
 
     Shared statsZ!(), statsZ1!()
     Shared statsW0!(), statsW1!()
@@ -560,7 +560,7 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
         Print Space$(51);
 
         Color 3, 0
-        Locate 2, 1: Print "SORT BY: "; categories$(categoryPick); Tab(40);
+        Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
         'Player Stats
         Locate 3, 1
@@ -644,14 +644,14 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
                     categoryPick = categoryPick + 1
                     If categoryPick > 25 Then categoryPick = 13
                     Color 3
-                    Locate 2, 1: Print "SORT BY: "; categories$(categoryPick); Tab(40);
+                    Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
                     'Left Arrow
                 Case Chr$(0) + "K":
                     categoryPick = categoryPick - 1
                     If categoryPick < 13 Then categoryPick = 25
                     Color 3
-                    Locate 2, 1: Print "SORT BY: "; categories$(categoryPick); Tab(40);
+                    Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
                 Case Chr$(13):
                     Call SortStats(categoryPick)
@@ -686,7 +686,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
     Shared oppScore(), teamScore()
 
-    Shared categories$()
+    Shared statCategoryAbbr$()
     Shared oppName$(), locIndicator$()
 
     Color , 0

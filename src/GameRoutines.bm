@@ -59,9 +59,9 @@ Sub InitVar ()
     teamIndicator$(0) = "VISITING TEAM"
     teamIndicator$(1) = "HOME TEAM"
 
-    offenseStyles$(0) = "NORMAL      "
-    offenseStyles$(1) = "AGGRESSIVE  "
-    offenseStyles$(2) = "SAFE        "
+    offStyleDesc$(0) = "NORMAL      "
+    offStyleDesc$(1) = "AGGRESSIVE  "
+    offStyleDesc$(2) = "SAFE        "
 
     alpha$(0) = "A "
     alpha$(1) = "B "
@@ -92,8 +92,8 @@ Sub InitVar ()
     OX%(1) = 10
     OX%(2) = -10
 
-    D2(0) = 1
-    D2(1) = 1
+    defStyles(0) = 1
+    defStyles(1) = 1
 
     autoPlay = 0
     ballCarrier = 0
@@ -107,7 +107,7 @@ Sub InitVar ()
     JY = 0
     nbrLines = 1
     P = 0
-    P7 = 0
+    fullCtOpt = 0
     P9 = 0
     quarter = 1
     shotClock = 0
@@ -119,9 +119,8 @@ Sub InitVar ()
     gameClock! = 720
 
     DK% = 0
-    FB% = 0
+    fastBreak = 0
     FT% = 0
-    GF% = 0
     HH% = 0
     NM% = 0
     OX% = 0
@@ -139,7 +138,6 @@ Sub InitVar ()
     F1$ = ""
     G1$ = ""
     H1$ = ""
-    P7$ = ""
     pbpString$ = ""
     prevBall$ = ""
     scheduleFile$ = ""
@@ -154,7 +152,7 @@ Sub InitVar ()
     'Erase C1
     Erase D1, D8, eventSettings
     Erase F1, G4, G5, oppScore
-    Erase P2, P4, P5, P7
+    Erase P2, P4, P5, fullCtOpt
     Erase pbpFG, pbpBG, QQ, QR
     Erase rebRatings, score, schedGame, statTotals, S3
     Erase teamFouls, teamScore, timePlayed
@@ -173,7 +171,7 @@ Sub InitVar ()
     Erase Y$
 
     Erase F%, F5%, F7%, G9%
-    Erase N0%, NG%, O0%, PF%
+    Erase N0%, NG%, offStyles, PF%
     Erase ST%, SX%
     Erase TOF%, teamIndex%, W%
 
@@ -1261,7 +1259,7 @@ Sub MAKEPBP ()
 
             Case 7
                 'FAST BREAK SCORE
-                FB% = 0
+                fastBreak = 0
                 RN1 = Int(Rnd(1) * 39) + 1
 
                 Select Case RN1
@@ -1317,7 +1315,7 @@ Sub MAKEPBP ()
                 If PZ% = 8 Then
 
                     PZ% = 0
-                    FB% = 0
+                    fastBreak = 0
                     pbpString$ = "HE "
 
                     Select Case RN0
@@ -2307,17 +2305,17 @@ Sub PlayStyle ()
     Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
     Locate 21, 32: Color 15: Print "O";
     Color 3: Print "FFENSE STYLE-";
-    Color 7: Print offenseStyles$(O0%(P9))
+    Color 7: Print offStyleDesc$(offStyles(P9))
 
     Locate 22, 32: Color 3: Print "DE";
     Color 15: Print "F";
     Color 3: Print "ENSE STYLE-";
-    Color 7: Print defenseStyles$(D2(P9))
+    Color 7: Print defStyleDesc$(defStyles(P9))
 
     Locate 23, 32: Color 3: Print "FULL COURT ";
     Color 15: Print "P";
     Color 3: Print "RESS-";
-    Color 7: Print yesNoText$(P7(P9))
+    Color 7: Print yesNoText$(fullCtOpt(P9))
 
     If C1 = 1 Then
 
@@ -2383,17 +2381,17 @@ Sub PlayStyle ()
                 If J = 15 Then
 
                     If UCase$(I$) = "P" Then
-                        P7(P9) = 1 - P7(P9)
+                        fullCtOpt(P9) = 1 - fullCtOpt(P9)
                     End If
 
                     If UCase$(I$) = "F" Then
-                        D2(P9) = D2(P9) + 1
-                        If D2(P9) > 5 Then D2(P9) = 1
+                        defStyles(P9) = defStyles(P9) + 1
+                        If defStyles(P9) > 5 Then defStyles(P9) = 1
                     End If
 
                     If UCase$(I$) = "O" Then
-                        O0%(P9) = O0%(P9) + 1
-                        If O0%(P9) > 2 Then O0%(P9) = 0
+                        offStyles(P9) = offStyles(P9) + 1
+                        If offStyles(P9) > 2 Then offStyles(P9) = 0
                     End If
 
                     Color 14
@@ -2402,19 +2400,19 @@ Sub PlayStyle ()
                     Locate 21, 32
                     Color 15: Print "O";
                     Color 3: Print "FFENSE STYLE-";
-                    Color 7: Print offenseStyles$(O0%(P9))
+                    Color 7: Print offStyleDesc$(offStyles(P9))
 
                     Locate 22, 32
                     Color 3: Print "DE";
                     Color 15: Print "F";
                     Color 3: Print "ENSE STYLE-";
-                    Color 7: Print defenseStyles$(D2(P9))
+                    Color 7: Print defStyleDesc$(defStyles(P9))
 
                     Locate 23, 32
                     Color 3: Print "FULL COURT ";
                     Color 15: Print "P";
                     Color 3: Print "RESS-";
-                    Color 7: Print yesNoText$(P7(P9))
+                    Color 7: Print yesNoText$(fullCtOpt(P9))
 
                 Else
 
@@ -2467,9 +2465,9 @@ Sub PlayStyle ()
         Loop Until I1 >= 0 And I1 <= 4 Or I1 = 6
 
         If I1 = 5 Then
-            If UCase$(I$) = "P" Then P7(P9) = 1 - P7(P9) ': GoSub 105
-            If UCase$(I$) = "F" Then D2(P9) = D2(P9) + 1: If D2(P9) > 5 Then D2(P9) = 1
-            If UCase$(I$) = "O" Then O0%(P9) = O0%(P9) + 1: If O0%(P9) > 2 Then O0%(P9) = 0
+            If UCase$(I$) = "P" Then fullCtOpt(P9) = 1 - fullCtOpt(P9) ': GoSub 105
+            If UCase$(I$) = "F" Then defStyles(P9) = defStyles(P9) + 1: If defStyles(P9) > 5 Then defStyles(P9) = 1
+            If UCase$(I$) = "O" Then offStyles(P9) = offStyles(P9) + 1: If offStyles(P9) > 2 Then offStyles(P9) = 0
 
             '105
             Color 14
@@ -2478,19 +2476,19 @@ Sub PlayStyle ()
             Locate 21, 32
             Color 15: Print "O";
             Color 3: Print "FFENSE STYLE-";
-            Color 7: Print offenseStyles$(O0%(P9))
+            Color 7: Print offStyleDesc$(offStyles(P9))
 
             Locate 22, 32
             Color 3: Print "DE";
             Color 15: Print "F";
             Color 3: Print "ENSE STYLE-";
-            Color 7: Print defenseStyles$(D2(P9))
+            Color 7: Print defStyleDesc$(defStyles(P9))
 
             Locate 23, 32
             Color 3: Print "FULL COURT ";
             Color 15: Print "P";
             Color 3: Print "RESS-";
-            Color 7: Print yesNoText$(P7(P9))
+            Color 7: Print yesNoText$(fullCtOpt(P9))
 
         End If
 
@@ -2541,9 +2539,9 @@ Sub PlayStyle ()
                     End Select
 
                     If J = 15 Then
-                        If UCase$(I$) = "P" Then P7(P9) = 1 - P7(P9) ': GoSub 105
-                        If UCase$(I$) = "F" Then D2(P9) = D2(P9) + 1: If D2(P9) > 5 Then D2(P9) = 1
-                        If UCase$(I$) = "O" Then O0%(P9) = O0%(P9) + 1: If O0%(P9) > 2 Then O0%(P9) = 0
+                        If UCase$(I$) = "P" Then fullCtOpt(P9) = 1 - fullCtOpt(P9) ': GoSub 105
+                        If UCase$(I$) = "F" Then defStyles(P9) = defStyles(P9) + 1: If defStyles(P9) > 5 Then defStyles(P9) = 1
+                        If UCase$(I$) = "O" Then offStyles(P9) = offStyles(P9) + 1: If offStyles(P9) > 2 Then offStyles(P9) = 0
                     Else
 
                         If J >= 0 And J <= 14 And gameRatings!(P9, J, 12) < 6 And players_GAME$(P9, J, 0) <> "XXX" And plyrRat_GAME(P9, J, 18) = 0 Then
@@ -3454,9 +3452,9 @@ Sub SCOREBOARD ()
 
     'Team strategies / decisions
     Locate 8, 58
-    Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print "DEF - "; defenseStyles$(D2(D))
+    Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print "DEF - "; defStyleDesc$(defStyles(D))
     Locate , 58
-    Color tmRat_GAME(P, 33), tmRat_GAME(P, 34): Print "OFF - "; offenseStyles$(O0%(P))
+    Color tmRat_GAME(P, 33), tmRat_GAME(P, 34): Print "OFF - "; offStyleDesc$(offStyles(P))
 
     Color 15, 0
 
@@ -4333,7 +4331,7 @@ Sub CHANGESTRATEGY (I$)
                 Locate , 14: Print "0 - RETURN TO GAME"
                 Locate , 14: Print "1 - SELECT OFFENSIVE STYLE OF PLAY"
                 Locate , 14: Print "2 - SELECT DEFENSIVE STYLE OF PLAY"
-                Locate , 14: Print "3 - FULL COURT PRESS "; yesNoText$(P7(TS%))
+                Locate , 14: Print "3 - FULL COURT PRESS "; yesNoText$(fullCtOpt(TS%))
 
                 Do
                     I$ = GetKeyPress$
@@ -4357,7 +4355,7 @@ Sub CHANGESTRATEGY (I$)
                             I1 = Val(I$)
                         Loop Until I1 >= 0 And I1 <= 2
 
-                        O0%(TS%) = I1
+                        offStyles(TS%) = I1
 
                     Case 2:
                         'DEFENSE
@@ -4377,10 +4375,10 @@ Sub CHANGESTRATEGY (I$)
                             I1 = Val(I$)
                         Loop Until I1 >= 1 And I1 <= 5
 
-                        D2(TS%) = I1
+                        defStyles(TS%) = I1
 
                     Case 3
-                        P7(TS%) = 1 - P7(TS%)
+                        fullCtOpt(TS%) = 1 - fullCtOpt(TS%)
 
                 End Select
 
@@ -4409,43 +4407,43 @@ Sub COMPUTERCOACH ()
 
         I5 = score(I6, 0) - score(P9, 0)
 
-        If quarter <= 2 Then D2(P9) = 1: P7(P9) = 0
-        If quarter = 3 And I5 > 20 Then D2(P9) = 1: P7(P9) = 0
-        If quarter = 3 And I5 >= 10 And I5 < 20 Then D2(P9) = 1: P7(P9) = 1
-        If quarter = 3 And I5 < 10 Then D2(P9) = 1: P7(P9) = 0
-        If quarter = 4 And gameClock! >= 120 And I5 > 20 Then D2(P9) = 1: P7(P9) = 0
-        If quarter = 4 And gameClock! >= 120 And I5 > 10 And I5 < 20 Then D2(P9) = 3: P7(P9) = 1
-        If quarter = 4 And gameClock! >= 120 And I5 <= 10 Then D2(P9) = 1: P7(P9) = 1
-        If quarter = 4 And gameClock! < 120 And I5 > 10 Then D2(P9) = 1: P7(P9) = 0
-        If quarter = 4 And gameClock! < 120 And I5 <= 10 And I5 > 4 Then D2(P9) = 3: P7(P9) = 1
-        If quarter = 4 And gameClock! < 120 And I5 <= 4 Then D2(P9) = 1: P7(P9) = 1
-        If quarter > 4 Then D2(P9) = 1: P7(P9) = 1
+        If quarter <= 2 Then defStyles(P9) = 1: fullCtOpt(P9) = 0
+        If quarter = 3 And I5 > 20 Then defStyles(P9) = 1: fullCtOpt(P9) = 0
+        If quarter = 3 And I5 >= 10 And I5 < 20 Then defStyles(P9) = 1: fullCtOpt(P9) = 1
+        If quarter = 3 And I5 < 10 Then defStyles(P9) = 1: fullCtOpt(P9) = 0
+        If quarter = 4 And gameClock! >= 120 And I5 > 20 Then defStyles(P9) = 1: fullCtOpt(P9) = 0
+        If quarter = 4 And gameClock! >= 120 And I5 > 10 And I5 < 20 Then defStyles(P9) = 3: fullCtOpt(P9) = 1
+        If quarter = 4 And gameClock! >= 120 And I5 <= 10 Then defStyles(P9) = 1: fullCtOpt(P9) = 1
+        If quarter = 4 And gameClock! < 120 And I5 > 10 Then defStyles(P9) = 1: fullCtOpt(P9) = 0
+        If quarter = 4 And gameClock! < 120 And I5 <= 10 And I5 > 4 Then defStyles(P9) = 3: fullCtOpt(P9) = 1
+        If quarter = 4 And gameClock! < 120 And I5 <= 4 Then defStyles(P9) = 1: fullCtOpt(P9) = 1
+        If quarter > 4 Then defStyles(P9) = 1: fullCtOpt(P9) = 1
 
     Else
 
         Call d100(RN0)
-        P7(P9) = 0
+        fullCtOpt(P9) = 0
 
-        If quarter <= 4 And RN0 >= 41 Then D2(P9) = 1
-        If quarter <= 4 And RN0 > 20 And RN0 <= 40 Then D2(P9) = 4
-        If quarter <= 4 And RN0 <= 20 Then D2(P9) = 2
-        If quarter = 3 And RN0 >= 50 Then D2(P9) = 1
-        If quarter = 3 And RN0 > 25 And RN0 < 50 Then D2(P9) = 4
-        If quarter = 3 And RN0 <= 25 Then D2(P9) = 2
-        If quarter = 4 And RN0 >= 70 Then D2(P9) = 1
-        If quarter = 4 And RN0 >= 35 And RN0 < 70 Then D2(P9) = 2
-        If quarter = 4 And RN0 < 35 Then D2(P9) = 4
-        If quarter > 4 And RN0 >= 50 Then D2(P9) = 1
-        If quarter > 4 And RN0 >= 25 And RN0 < 50 Then D2(P9) = 2
-        If quarter > 4 And RN0 < 25 Then D2(P9) = 4
+        If quarter <= 4 And RN0 >= 41 Then defStyles(P9) = 1
+        If quarter <= 4 And RN0 > 20 And RN0 <= 40 Then defStyles(P9) = 4
+        If quarter <= 4 And RN0 <= 20 Then defStyles(P9) = 2
+        If quarter = 3 And RN0 >= 50 Then defStyles(P9) = 1
+        If quarter = 3 And RN0 > 25 And RN0 < 50 Then defStyles(P9) = 4
+        If quarter = 3 And RN0 <= 25 Then defStyles(P9) = 2
+        If quarter = 4 And RN0 >= 70 Then defStyles(P9) = 1
+        If quarter = 4 And RN0 >= 35 And RN0 < 70 Then defStyles(P9) = 2
+        If quarter = 4 And RN0 < 35 Then defStyles(P9) = 4
+        If quarter > 4 And RN0 >= 50 Then defStyles(P9) = 1
+        If quarter > 4 And RN0 >= 25 And RN0 < 50 Then defStyles(P9) = 2
+        If quarter > 4 And RN0 < 25 Then defStyles(P9) = 4
 
     End If
 
-    O0%(P9) = 0
+    offStyles(P9) = 0
 
-    If quarter < 3 Then O0%(P9) = 0
-    If quarter >= 3 And score(P9, 0) - score(I6, 0) < 0 And Int(Rnd(1) * 2) = 1 Then O0%(P9) = 1
-    If quarter >= 3 And score(P9, 0) - score(I6, 0) >= 0 And Int(Rnd(1) * 2) = 1 Then O0%(P9) = 2
+    If quarter < 3 Then offStyles(P9) = 0
+    If quarter >= 3 And score(P9, 0) - score(I6, 0) < 0 And Int(Rnd(1) * 2) = 1 Then offStyles(P9) = 1
+    If quarter >= 3 And score(P9, 0) - score(I6, 0) >= 0 And Int(Rnd(1) * 2) = 1 Then offStyles(P9) = 2
 
 End Sub
 
@@ -5167,9 +5165,9 @@ Sub UPDATESCREEN ()
 
         'Team Play Styles
         Locate 8, 58
-        Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print "DEF - "; defenseStyles$(D2(D))
+        Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print "DEF - "; defStyleDesc$(defStyles(D))
         Locate , 58
-        Color tmRat_GAME(P, 33), tmRat_GAME(P, 34): Print "OFF - "; offenseStyles$(O0%(P))
+        Color tmRat_GAME(P, 33), tmRat_GAME(P, 34): Print "OFF - "; offStyleDesc$(offStyles(P))
 
         Color 15, 0
         Locate , 41: Color 14: Print "(1) ";

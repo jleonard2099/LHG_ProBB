@@ -886,7 +886,7 @@ Sub PROHOOP ()
         RN0 = Int(Rnd(1) * 1000) + 1
 
         ' *** BRANCH TO AREA BASED ON DEFENSE ***
-        Select Case D2(D)
+        Select Case defStyles(D)
 
             Case 1, 4:
 
@@ -910,7 +910,7 @@ Sub PROHOOP ()
                     Case 30 + F7%(P, 1) + F7%(D, 2) To 1000
                         P9 = Int(Rnd(1) * 5)
 
-                        If RN0 <= 24 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
+                        If RN0 <= 24 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(offStyles(P)) Then
                             GoTo 513
                         Else
                             RN1 = Int(Rnd(1) * 1000) + 1
@@ -943,7 +943,7 @@ Sub PROHOOP ()
 
                         P9 = Int(Rnd(1) * 5)
 
-                        If RN0 <= 8 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
+                        If RN0 <= 8 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(offStyles(P)) Then
                             GoTo 513
                         Else
                             RN1 = Int(Rnd(1) * 1000) + 1
@@ -976,7 +976,7 @@ Sub PROHOOP ()
                     Case 50 + F7%(P, 1) + F7%(D, 2) To 1000
                         P9 = Int(Rnd(1) * 5)
 
-                        If RN0 <= 40 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(O0%(P)) Then
+                        If RN0 <= 40 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(offStyles(P)) Then
                             GoTo 513
                         Else
                             RN1 = Int(Rnd(1) * 1000) + 1
@@ -1144,7 +1144,7 @@ Sub PROHOOP ()
         Call d100(RN2)
         A4 = Int(Rnd(1) * 50) + 1
 
-        If RN2 <= (plyrRat_GAME(P, gameB1!(P, ballCarrier), 16) + OY%(O0%(P))) * 2 + 1 Then
+        If RN2 <= (plyrRat_GAME(P, gameB1!(P, ballCarrier), 16) + OY%(offStyles(P))) * 2 + 1 Then
 
             PZ% = 3
             F = F + A4
@@ -1270,7 +1270,7 @@ Sub PROHOOP ()
         C1 = 2
     End If
 
-    FB% = 1
+    fastBreak = 1
 
     GoTo 300
 
@@ -1350,7 +1350,7 @@ Sub PROHOOP ()
 
     If pbpDelay! <> 0 Then
 
-        If F > 70 And FB% = 1 And PASS% = 1 Then
+        If F > 70 And fastBreak = 1 And PASS% = 1 Then
             PT% = 6
             PZ% = 8
             Call MAKEPBP
@@ -1700,7 +1700,7 @@ Sub PROHOOP ()
 
                 Locate 8, 1
 
-                If P7(D) = 1 Then
+                If fullCtOpt(D) = 1 Then
                     If pbpOpt = 0 Then
                         pbpString$ = gameTeams$(D) + " IS PRESSING"
                         Call PBP
@@ -2106,7 +2106,7 @@ Sub PROHOOP ()
         Locate 8, 1
 
         'PRESSING
-        If P7(D) = 1 Then
+        If fullCtOpt(D) = 1 Then
             If pbpOpt = 0 Then
                 pbpString$ = gameTeams$(D) + " IS PRESSING"
                 Call PBP
@@ -2265,7 +2265,7 @@ Sub PROHOOP ()
 
         Locate 8, 1
 
-        If P7(D) = 1 Then
+        If fullCtOpt(D) = 1 Then
             If pbpOpt = 0 Then
                 pbpString$ = gameTeams$(D) + " IS PRESSING"
                 Call PBP
@@ -2489,7 +2489,7 @@ Sub PROHOOP ()
 
     Locate 8, 1
 
-    If P7(D) = 1 Then
+    If fullCtOpt(D) = 1 Then
         If pbpOpt = 0 Then
             pbpString$ = gameTeams$(D) + " IS PRESSING"
             Call PBP
@@ -2594,7 +2594,7 @@ Sub PROHOOP ()
 
     Locate 8, 1
 
-    If P7(D) = 1 Then
+    If fullCtOpt(D) = 1 Then
 
         If pbpOpt = 0 Then
             pbpString$ = gameTeams$(D) + " IS PRESSING"
@@ -2736,7 +2736,7 @@ Sub PROHOOP ()
     End If
 
     Locate 8, 1
-    If P7(D) = 1 Then
+    If fullCtOpt(D) = 1 Then
 
         If pbpOpt = 0 Then
             pbpString$ = gameTeams$(D) + " IS PRESSING"
@@ -3045,7 +3045,7 @@ Sub PROHOOP ()
 
                     Locate 8, 1
 
-                    If P7(D) = 1 Then
+                    If fullCtOpt(D) = 1 Then
 
                         If pbpOpt = 0 Then
                             pbpString$ = gameTeams$(D) + " IS PRESSING"
@@ -3374,7 +3374,7 @@ Sub PROHOOP ()
             C1 = 2
         End If
 
-        FB% = 1
+        fastBreak = 1
 
         GoTo 300
 

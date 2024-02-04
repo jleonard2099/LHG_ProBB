@@ -135,7 +135,7 @@ Dim O1!(40), O2!(40), offLeaders!(40, 20)
 Dim seeZ!(260), seeZ1!(260)
 Dim values!(0 To 14, 0 To 24)
 
-Dim categories$(0 To 25), statPlyrNames$(0 To 14)
+Dim statCategoryAbbr$(0 To 25), statPlyrNames$(0 To 14)
 
 Dim DL$(40), Z2$(260), Z3$(260)
 Dim OL$(40), leagT$(40)
@@ -166,7 +166,7 @@ Dim W0L!(600), W1L!(600)
 
 Dim AL$(600)
 Dim TMA$(600), TML$(TEAMS_PER_CONFERENCE)
-Dim TP$(0 To 31), TP1$(0 To 38)
+Dim expIndCategory$(0 To 31), expTeamCategory$(0 To 38)
 Dim TPP$(600), TMM$(600)
 Dim TT$(40, 15), TT1$(40, 15)
 
@@ -178,7 +178,7 @@ Dim plyrRecords!(1 To 25), offRecords!(1 To 21), defRecords!(1 To 21)
 Dim plyrRecDesc$(25, 1), offRecDesc$(1 To 21), defRecDesc$(1 To 21)
 
 Dim indRecords!(50, 2), teamRecords!(125, 2)
-Dim indRecords$(25), teamRecords$(20)
+Dim indRecords$(25), teamRecordDesc$(20)
 Dim indRecDesc$(50, 4), teamRecDesc$(125, 3)
 
 
@@ -208,31 +208,31 @@ Dim alpha$(4), tickerPeriod$(14)
 Dim Shared autoPlay, ballCarrier, bonusFoulNum, coachOpt, compTeam
 Dim Shared D, endGame, endAllGames, ftRulesOpt, F3, freeThrowVal
 Dim Shared gameLoc, halfTime, JY, nbrLines
-Dim Shared P, P7, P9, playerMode, playerOpt, playoffOpt, pbpOpt
+Dim Shared P, fullCtOpt, P9, playerMode, playerOpt, playoffOpt, pbpOpt
 Dim Shared quarter, sClockVal, shotClock, shotPctOpt
 
 'I have no clue what xFactor (previously "X") does
 Dim Shared threePtOpt, T1, TMT, xFactor
 
-Dim Shared DK%, FB%, FT%, GF%, HH%
+Dim Shared DK%, fastBreak, FT%, GF%, HH%
 Dim Shared NM%, OX%, OY%, PT%, PZ%
 
 Dim Shared gameClock!, pbpDelay!, timeElapsed!
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
-Dim Shared P7$, prevBall$, TS$, pbpString$, Y2$, Z3$
+Dim Shared prevBall$, TS$, pbpString$, Y2$, Z3$
 
 Dim Shared CF%(1, 9), eventSettings(13)
 Dim Shared F%(1, 9), F5%(1, 4), F7%(1, 9), FY%(0 To 1), G9%(1), GF%(2, 9)
 Dim Shared NG%(18), N0%(2, 2, 4)
-Dim Shared OX%(2), OY%(2), O0%(1)
+Dim Shared OX%(2), OY%(2), offStyles(1)
 Dim Shared PF%(1), PFA%(33), ST%(32), SX%(32, 1, 14)
 Dim Shared TOA%(33), TOF%(1), W%(1, 14, 1), YR%(1)
 
 'Dim Shared C1(1, 14)
-Dim Shared D1(1), D2(1), D8(6, 6), F1(14), G4(14), G5(14)
+Dim Shared D1(1), defStyles(1), D8(6, 6), F1(14), G4(14), G5(14)
 Dim Shared leagRat_GAME(1, 6), rebRatings(0 To 10), plyrRat_GAME(1, 14, 19)
-Dim Shared P2(1), P4(5), P5(5), P7(0 To 1), QQ(1, 8, 14, 14), QR(1, 7, 14)
+Dim Shared P2(1), P4(5), P5(5), fullCtOpt(0 To 1), QQ(1, 8, 14, 14), QR(1, 7, 14)
 Dim Shared S3(14), scSettings(0 To 2)
 Dim Shared score(1, 14), schedGame(2)
 Dim Shared teamFouls(1), timePlayed(2, 14), timeouts(1)
@@ -244,9 +244,9 @@ Dim Shared gameB1!(0 To 1, 0 To 4), gameRatings!(0 To 1, 0 To 14, 0 To 25)
 Dim Shared M9!(1)
 Dim gameW0!(1, 14), gameW1!(1, 14)
 
-Dim Shared defenseStyles$(5), diskIDs$(0 To 1)
+Dim Shared defStyleDesc$(5), diskIDs$(0 To 1)
 Dim Shared gameCoach$(3), gameMascots$(3), gameStadium$(3), gameTeams$(3)
-Dim Shared offenseStyles$(2), pbpType$(1), players_GAME$(1, 14, 1), posnName$(0 To 4)
+Dim Shared offStyleDesc$(2), pbpType$(1), players_GAME$(1, 14, 1), posnName$(0 To 4)
 Dim Shared SX$(32, 1)
 Dim Shared teamAbbrev$(3), Y$(1)
 

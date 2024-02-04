@@ -537,7 +537,7 @@ Sub ViewIndividualLeaders (printOrView%, JB)
     Shared AL$()
 
     Shared TMA$(), TT$(), TT1$()
-    Shared TMM$(), TP$(), TP1$(), TPP$()
+    Shared TMM$(), expIndCategory$(), expTeamCategory$(), TPP$()
 
     Do
 
@@ -571,13 +571,13 @@ Sub ViewIndividualLeaders (printOrView%, JB)
                 Color 14
                 Locate I + 3, 8: Print Using "##"; I;
                 Print " ";
-                Color 0: Print TP$(I);
+                Color 0: Print expIndCategory$(I);
 
                 Color 14
                 Print Tab(40); Using "##"; I + 16;
                 Print " ";
                 Color 0
-                Print TP$(I + 16)
+                Print expIndCategory$(I + 16)
             Next
 
             Print
@@ -889,7 +889,7 @@ Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
 
     Shared GM!(), GM1!()
     Shared TT!(), TT1!(), TYP!()
-    Shared TMM$(), TP1$(), TT$(), TT1$()
+    Shared TMM$(), expTeamCategory$(), TT$(), TT1$()
 
     Do
 
@@ -921,7 +921,7 @@ Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
             Locate I + 2, 8
             Print Using "##"; I;
             Print " ";
-            Color 0: Print TP1$(I)
+            Color 0: Print expTeamCategory$(I)
         Next
 
         For I = 20 To 38:
@@ -929,7 +929,7 @@ Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
             Locate I - 18, 38:
             Print Using "##"; I;
             Print " ";
-            Color 0: Print TP1$(I)
+            Color 0: Print expTeamCategory$(I)
         Next
 
         Do
@@ -1309,7 +1309,7 @@ End Sub
 Sub DisplayLeaders (TVN, maxRecords, categoryId)
 
     Shared TYP!()
-    Shared TMM$(), TPP$(), TP$()
+    Shared TMM$(), TPP$(), expIndCategory$()
 
     userExit% = 0
 
@@ -1317,7 +1317,7 @@ Sub DisplayLeaders (TVN, maxRecords, categoryId)
 
         Color 14, 0
         Cls
-        Print "     PLAYER                  TEAM                     "; TP$(categoryId)
+        Print "     PLAYER                  TEAM                     "; expIndCategory$(categoryId)
 
         For W = 1 To maxRecords
 
@@ -1334,7 +1334,7 @@ Sub DisplayLeaders (TVN, maxRecords, categoryId)
                 Else
                     Color 14, 0
                     Cls
-                    Print "     PLAYER                  TEAM                     "; TP$(categoryId)
+                    Print "     PLAYER                  TEAM                     "; expIndCategory$(categoryId)
                 End If
 
             End If
@@ -1403,7 +1403,7 @@ End Sub
 Sub DisplayTeamView (printOrView%, TVN, maxRecords, categoryId)
 
     Shared TYP!()
-    Shared TMM$(), TP1$()
+    Shared TMM$(), expTeamCategory$()
 
     userExit% = 0
 
@@ -1416,7 +1416,7 @@ Sub DisplayTeamView (printOrView%, TVN, maxRecords, categoryId)
                 Color 14, 0
                 Cls
 
-                Print "     TEAM                     "; TP1$(categoryId)
+                Print "     TEAM                     "; expTeamCategory$(categoryId)
 
                 For W = 1 To maxRecords
 
@@ -1435,7 +1435,7 @@ Sub DisplayTeamView (printOrView%, TVN, maxRecords, categoryId)
                             Color 14, 0
                             Cls
 
-                            Print "     TEAM                     "; TP1$(categoryId)
+                            Print "     TEAM                     "; expTeamCategory$(categoryId)
 
                         End If
 
@@ -1495,7 +1495,7 @@ Sub DisplayTeamView (printOrView%, TVN, maxRecords, categoryId)
 
             Color 0, 15
 
-            LPrint "     TEAM                     "; TP1$(categoryId)
+            LPrint "     TEAM                     "; expTeamCategory$(categoryId)
 
             For W = 1 To maxRecords
 
@@ -1533,18 +1533,18 @@ End Sub
 Sub PrintLeaders (TVN, maxRecords, categoryId)
 
     Shared TYP!()
-    Shared TMM$(), TP$(), TPP$()
+    Shared TMM$(), expIndCategory$(), TPP$()
 
     Color 0, 15
     Cls
 
-    LPrint "     PLAYER                  TEAM                     "; TP$(categoryId)
+    LPrint "     PLAYER                  TEAM                     "; expIndCategory$(categoryId)
 
     For W = 1 To maxRecords
 
         If (W <> 1 And W Mod 50 = 1) Then
             LPrint Chr$(12)
-            LPrint "     PLAYER                  TEAM                     "; TP$(categoryId)
+            LPrint "     PLAYER                  TEAM                     "; expIndCategory$(categoryId)
         End If
 
         LPrint Using "###"; W;

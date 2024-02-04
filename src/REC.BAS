@@ -10,7 +10,7 @@ Sub Records_Menu ()
 
     ReDim menuChoices$(1 To 7)
 
-    Shared teamRecords$(), indRecords$()
+    Shared teamRecordDesc$(), indRecords$()
     Shared plyrRecDesc$(), offRecDesc$(), defRecDesc$()
     Shared plyrRecords!(), offRecords!(), defRecords!()
 
@@ -121,7 +121,7 @@ End Sub
 'viewing the records on the default display
 Sub ViewSeasonRecords ()
 
-    Shared teamRecords$(), indRecords$()
+    Shared teamRecordDesc$(), indRecords$()
     Shared plyrRecDesc$(), offRecDesc$(), defRecDesc$()
     Shared plyrRecords!(), offRecords!(), defRecords!()
 
@@ -270,30 +270,30 @@ Sub ViewSeasonRecords ()
 
     Color 14
     'Field Goal Attempts
-    Locate , 4: Print teamRecords$(1); Tab(33); offRecDesc$(1); Tab(53); Using "####"; offRecords!(1)
+    Locate , 4: Print teamRecordDesc$(1); Tab(33); offRecDesc$(1); Tab(53); Using "####"; offRecords!(1)
     'Field Goals Made
-    Locate , 4: Print teamRecords$(2); Tab(33); offRecDesc$(2); Tab(53); Using "####"; offRecords!(2)
+    Locate , 4: Print teamRecordDesc$(2); Tab(33); offRecDesc$(2); Tab(53); Using "####"; offRecords!(2)
     'Field Goal %
-    Locate , 4: Print teamRecords$(3); Tab(33); offRecDesc$(3); Tab(53); Using "##.#"; offRecords!(3) * 100
+    Locate , 4: Print teamRecordDesc$(3); Tab(33); offRecDesc$(3); Tab(53); Using "##.#"; offRecords!(3) * 100
     '3 Field Goal Attempts
-    Locate , 4: Print teamRecords$(4); Tab(33); offRecDesc$(4); Tab(53); Using "####"; offRecords!(4)
+    Locate , 4: Print teamRecordDesc$(4); Tab(33); offRecDesc$(4); Tab(53); Using "####"; offRecords!(4)
     '3 Field Goals Made
-    Locate , 4: Print teamRecords$(5); Tab(33); offRecDesc$(5); Tab(53); Using "####"; offRecords!(5)
+    Locate , 4: Print teamRecordDesc$(5); Tab(33); offRecDesc$(5); Tab(53); Using "####"; offRecords!(5)
     '3 Field Goal %
-    Locate , 4: Print teamRecords$(6); Tab(33); offRecDesc$(6); Tab(53); Using "##.#"; offRecords!(6) * 100
+    Locate , 4: Print teamRecordDesc$(6); Tab(33); offRecDesc$(6); Tab(53); Using "##.#"; offRecords!(6) * 100
     'Free Throw Attempts
-    Locate , 4: Print teamRecords$(7); Tab(33); offRecDesc$(7); Tab(53); Using "####"; offRecords!(7)
+    Locate , 4: Print teamRecordDesc$(7); Tab(33); offRecDesc$(7); Tab(53); Using "####"; offRecords!(7)
     'Free Throws Made
-    Locate , 4: Print teamRecords$(8); Tab(33); offRecDesc$(8); Tab(53); Using "####"; offRecords!(8)
+    Locate , 4: Print teamRecordDesc$(8); Tab(33); offRecDesc$(8); Tab(53); Using "####"; offRecords!(8)
     'Free Throw %
-    Locate , 4: Print teamRecords$(9); Tab(33); offRecDesc$(9); Tab(53); Using "##.#"; offRecords!(9) * 100
+    Locate , 4: Print teamRecordDesc$(9); Tab(33); offRecDesc$(9); Tab(53); Using "##.#"; offRecords!(9) * 100
 
-    Locate , 4: Print teamRecords$(10); Tab(33); offRecDesc$(10); Tab(53); Using "####"; offRecords!(10)
-    Locate , 4: Print teamRecords$(11); Tab(33); offRecDesc$(11); Tab(53); Using "####"; offRecords!(11)
-    Locate , 4: Print teamRecords$(12); Tab(33); offRecDesc$(12); Tab(53); Using "####"; offRecords!(12)
-    Locate , 4: Print teamRecords$(13); Tab(33); offRecDesc$(13); Tab(53); Using "##.#"; offRecords!(13)
-    Locate , 4: Print teamRecords$(14); Tab(33); offRecDesc$(14); Tab(53); Using "####"; offRecords!(14)
-    Locate , 4: Print teamRecords$(15); Tab(33); offRecDesc$(15); Tab(53); Using "####"; offRecords!(15)
+    Locate , 4: Print teamRecordDesc$(10); Tab(33); offRecDesc$(10); Tab(53); Using "####"; offRecords!(10)
+    Locate , 4: Print teamRecordDesc$(11); Tab(33); offRecDesc$(11); Tab(53); Using "####"; offRecords!(11)
+    Locate , 4: Print teamRecordDesc$(12); Tab(33); offRecDesc$(12); Tab(53); Using "####"; offRecords!(12)
+    Locate , 4: Print teamRecordDesc$(13); Tab(33); offRecDesc$(13); Tab(53); Using "##.#"; offRecords!(13)
+    Locate , 4: Print teamRecordDesc$(14); Tab(33); offRecDesc$(14); Tab(53); Using "####"; offRecords!(14)
+    Locate , 4: Print teamRecordDesc$(15); Tab(33); offRecDesc$(15); Tab(53); Using "####"; offRecords!(15)
 
     Color 15
     Locate 22, 30: Print "HIT ANY KEY TO CONTINUE"
@@ -332,11 +332,11 @@ Sub ViewSeasonRecords ()
     Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 
     Color 14
-    Locate , 4: Print teamRecords$(16); Tab(33); offRecDesc$(16); Tab(53); Using "####"; offRecords!(16)
-    Locate , 4: Print teamRecords$(17); Tab(33); offRecDesc$(17); Tab(53); Using "####"; offRecords!(17)
-    Locate , 4: Print teamRecords$(18); Tab(33); offRecDesc$(18); Tab(53); Using "####"; offRecords!(18)
-    Locate , 4: Print teamRecords$(19); Tab(33); offRecDesc$(19); Tab(52); Using "#####"; offRecords!(19)
-    Locate , 4: Print teamRecords$(20); Tab(33); offRecDesc$(20); Tab(52); Using "###.#"; offRecords!(20)
+    Locate , 4: Print teamRecordDesc$(16); Tab(33); offRecDesc$(16); Tab(53); Using "####"; offRecords!(16)
+    Locate , 4: Print teamRecordDesc$(17); Tab(33); offRecDesc$(17); Tab(53); Using "####"; offRecords!(17)
+    Locate , 4: Print teamRecordDesc$(18); Tab(33); offRecDesc$(18); Tab(53); Using "####"; offRecords!(18)
+    Locate , 4: Print teamRecordDesc$(19); Tab(33); offRecDesc$(19); Tab(52); Using "#####"; offRecords!(19)
+    Locate , 4: Print teamRecordDesc$(20); Tab(33); offRecDesc$(20); Tab(52); Using "###.#"; offRecords!(20)
     Locate , 4: Print "WINS"; Tab(33); offRecDesc$(21); Tab(53); Using "####"; offRecords!(21)
     Color 7
 
@@ -379,30 +379,30 @@ Sub ViewSeasonRecords ()
 
     Color 15
     'Field Goal Attempts
-    Locate , 4: Print teamRecords$(1); Tab(33); defRecDesc$(1); Tab(53); Using "####"; defRecords!(1)
+    Locate , 4: Print teamRecordDesc$(1); Tab(33); defRecDesc$(1); Tab(53); Using "####"; defRecords!(1)
     'Field Goals Made
-    Locate , 4: Print teamRecords$(2); Tab(33); defRecDesc$(2); Tab(53); Using "####"; defRecords!(2)
+    Locate , 4: Print teamRecordDesc$(2); Tab(33); defRecDesc$(2); Tab(53); Using "####"; defRecords!(2)
     'Field Goal %
-    Locate , 4: Print teamRecords$(3); Tab(33); defRecDesc$(3); Tab(53); Using "##.#"; defRecords!(3) * 100
+    Locate , 4: Print teamRecordDesc$(3); Tab(33); defRecDesc$(3); Tab(53); Using "##.#"; defRecords!(3) * 100
     '3 Field Goal Attempts
-    Locate , 4: Print teamRecords$(4); Tab(33); defRecDesc$(4); Tab(53); Using "####"; defRecords!(4)
+    Locate , 4: Print teamRecordDesc$(4); Tab(33); defRecDesc$(4); Tab(53); Using "####"; defRecords!(4)
     '3 Field Goals Made
-    Locate , 4: Print teamRecords$(5); Tab(33); defRecDesc$(5); Tab(53); Using "####"; defRecords!(5)
+    Locate , 4: Print teamRecordDesc$(5); Tab(33); defRecDesc$(5); Tab(53); Using "####"; defRecords!(5)
     '3 Field Goal %
-    Locate , 4: Print teamRecords$(6); Tab(33); defRecDesc$(6); Tab(53); Using "##.#"; defRecords!(6) * 100
+    Locate , 4: Print teamRecordDesc$(6); Tab(33); defRecDesc$(6); Tab(53); Using "##.#"; defRecords!(6) * 100
     'Free Throw Attempts
-    Locate , 4: Print teamRecords$(7); Tab(33); defRecDesc$(7); Tab(53); Using "####"; defRecords!(7)
+    Locate , 4: Print teamRecordDesc$(7); Tab(33); defRecDesc$(7); Tab(53); Using "####"; defRecords!(7)
     'Free Throws Made
-    Locate , 4: Print teamRecords$(8); Tab(33); defRecDesc$(8); Tab(53); Using "####"; defRecords!(8)
+    Locate , 4: Print teamRecordDesc$(8); Tab(33); defRecDesc$(8); Tab(53); Using "####"; defRecords!(8)
     'Free Throw %
-    Locate , 4: Print teamRecords$(9); Tab(33); defRecDesc$(9); Tab(53); Using "##.#"; defRecords!(9) * 100
+    Locate , 4: Print teamRecordDesc$(9); Tab(33); defRecDesc$(9); Tab(53); Using "##.#"; defRecords!(9) * 100
 
-    Locate , 4: Print teamRecords$(10); Tab(33); defRecDesc$(10); Tab(53); Using "####"; defRecords!(10)
-    Locate , 4: Print teamRecords$(11); Tab(33); defRecDesc$(11); Tab(53); Using "####"; defRecords!(11)
-    Locate , 4: Print teamRecords$(12); Tab(33); defRecDesc$(12); Tab(53); Using "####"; defRecords!(12)
-    Locate , 4: Print teamRecords$(13); Tab(33); defRecDesc$(13); Tab(53); Using "##.#"; defRecords!(13)
-    Locate , 4: Print teamRecords$(14); Tab(33); defRecDesc$(14); Tab(53); Using "####"; defRecords!(14)
-    Locate , 4: Print teamRecords$(15); Tab(33); defRecDesc$(15); Tab(53); Using "####"; defRecords!(15)
+    Locate , 4: Print teamRecordDesc$(10); Tab(33); defRecDesc$(10); Tab(53); Using "####"; defRecords!(10)
+    Locate , 4: Print teamRecordDesc$(11); Tab(33); defRecDesc$(11); Tab(53); Using "####"; defRecords!(11)
+    Locate , 4: Print teamRecordDesc$(12); Tab(33); defRecDesc$(12); Tab(53); Using "####"; defRecords!(12)
+    Locate , 4: Print teamRecordDesc$(13); Tab(33); defRecDesc$(13); Tab(53); Using "##.#"; defRecords!(13)
+    Locate , 4: Print teamRecordDesc$(14); Tab(33); defRecDesc$(14); Tab(53); Using "####"; defRecords!(14)
+    Locate , 4: Print teamRecordDesc$(15); Tab(33); defRecDesc$(15); Tab(53); Using "####"; defRecords!(15)
 
     Color 15
     Locate 22, 30: Print "HIT ANY KEY TO CONTINUE"
@@ -440,11 +440,11 @@ Sub ViewSeasonRecords ()
     Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 
     Color 15
-    Locate , 4: Print teamRecords$(16); Tab(33); defRecDesc$(16); Tab(53); Using "####"; defRecords!(16)
-    Locate , 4: Print teamRecords$(17); Tab(33); defRecDesc$(17); Tab(53); Using "####"; defRecords!(17)
-    Locate , 4: Print teamRecords$(18); Tab(33); defRecDesc$(18); Tab(53); Using "####"; defRecords!(18)
-    Locate , 4: Print teamRecords$(19); Tab(33); defRecDesc$(19); Tab(52); Using "#####"; defRecords!(19)
-    Locate , 4: Print teamRecords$(20); Tab(33); defRecDesc$(20); Tab(52); Using "###.#"; defRecords!(20)
+    Locate , 4: Print teamRecordDesc$(16); Tab(33); defRecDesc$(16); Tab(53); Using "####"; defRecords!(16)
+    Locate , 4: Print teamRecordDesc$(17); Tab(33); defRecDesc$(17); Tab(53); Using "####"; defRecords!(17)
+    Locate , 4: Print teamRecordDesc$(18); Tab(33); defRecDesc$(18); Tab(53); Using "####"; defRecords!(18)
+    Locate , 4: Print teamRecordDesc$(19); Tab(33); defRecDesc$(19); Tab(52); Using "#####"; defRecords!(19)
+    Locate , 4: Print teamRecordDesc$(20); Tab(33); defRecDesc$(20); Tab(52); Using "###.#"; defRecords!(20)
     Locate , 4: Print "LOSSES"; Tab(33); defRecDesc$(21); Tab(53); Using "####"; defRecords!(21)
     Color 7
 
@@ -465,7 +465,7 @@ End Sub
 'viewing the records on the default printer
 Sub PrintSeasonRecords ()
 
-    Shared teamRecords$(), indRecords$()
+    Shared teamRecordDesc$(), indRecords$()
     Shared plyrRecDesc$(), offRecDesc$(), defRecDesc$()
     Shared plyrRecords!(), offRecords!(), defRecords!()
 
@@ -503,51 +503,51 @@ Sub PrintSeasonRecords ()
     LPrint Tab(23); "*******  OFFENSIVE TEAM RECORDS *******"
     LPrint
     LPrint "CATEGORY                        TEAM             RECORD            "
-    LPrint teamRecords$(1); Tab(33); offRecDesc$(1); Tab(53); Using "####"; offRecords!(1)
-    LPrint teamRecords$(2); Tab(33); offRecDesc$(2); Tab(53); Using "####"; offRecords!(2)
-    LPrint teamRecords$(3); Tab(33); offRecDesc$(3); Tab(53); Using "##.#"; offRecords!(3) * 100
-    LPrint teamRecords$(4); Tab(33); offRecDesc$(4); Tab(53); Using "####"; offRecords!(4)
-    LPrint teamRecords$(5); Tab(33); offRecDesc$(5); Tab(53); Using "####"; offRecords!(5)
-    LPrint teamRecords$(6); Tab(33); offRecDesc$(6); Tab(53); Using "##.#"; offRecords!(6) * 100
-    LPrint teamRecords$(7); Tab(33); offRecDesc$(7); Tab(53); Using "####"; offRecords!(7)
-    LPrint teamRecords$(8); Tab(33); offRecDesc$(8); Tab(53); Using "####"; offRecords!(8)
-    LPrint teamRecords$(9); Tab(33); offRecDesc$(9); Tab(53); Using "##.#"; offRecords!(9) * 100
-    LPrint teamRecords$(10); Tab(33); offRecDesc$(10); Tab(53); Using "####"; offRecords!(10)
-    LPrint teamRecords$(11); Tab(33); offRecDesc$(11); Tab(53); Using "####"; offRecords!(11)
-    LPrint teamRecords$(12); Tab(33); offRecDesc$(12); Tab(53); Using "####"; offRecords!(12)
-    LPrint teamRecords$(13); Tab(33); offRecDesc$(13); Tab(53); Using "##.#"; offRecords!(13)
-    LPrint teamRecords$(14); Tab(33); offRecDesc$(14); Tab(53); Using "####"; offRecords!(14)
-    LPrint teamRecords$(15); Tab(33); offRecDesc$(15); Tab(53); Using "####"; offRecords!(15)
-    LPrint teamRecords$(16); Tab(33); offRecDesc$(16); Tab(53); Using "####"; offRecords!(16)
-    LPrint teamRecords$(17); Tab(33); offRecDesc$(17); Tab(53); Using "####"; offRecords!(17)
-    LPrint teamRecords$(18); Tab(33); offRecDesc$(18); Tab(53); Using "####"; offRecords!(18)
-    LPrint teamRecords$(19); Tab(33); offRecDesc$(19); Tab(52); Using "#####"; offRecords!(19)
-    LPrint teamRecords$(20); Tab(33); offRecDesc$(20); Tab(52); Using "###.#"; offRecords!(20)
+    LPrint teamRecordDesc$(1); Tab(33); offRecDesc$(1); Tab(53); Using "####"; offRecords!(1)
+    LPrint teamRecordDesc$(2); Tab(33); offRecDesc$(2); Tab(53); Using "####"; offRecords!(2)
+    LPrint teamRecordDesc$(3); Tab(33); offRecDesc$(3); Tab(53); Using "##.#"; offRecords!(3) * 100
+    LPrint teamRecordDesc$(4); Tab(33); offRecDesc$(4); Tab(53); Using "####"; offRecords!(4)
+    LPrint teamRecordDesc$(5); Tab(33); offRecDesc$(5); Tab(53); Using "####"; offRecords!(5)
+    LPrint teamRecordDesc$(6); Tab(33); offRecDesc$(6); Tab(53); Using "##.#"; offRecords!(6) * 100
+    LPrint teamRecordDesc$(7); Tab(33); offRecDesc$(7); Tab(53); Using "####"; offRecords!(7)
+    LPrint teamRecordDesc$(8); Tab(33); offRecDesc$(8); Tab(53); Using "####"; offRecords!(8)
+    LPrint teamRecordDesc$(9); Tab(33); offRecDesc$(9); Tab(53); Using "##.#"; offRecords!(9) * 100
+    LPrint teamRecordDesc$(10); Tab(33); offRecDesc$(10); Tab(53); Using "####"; offRecords!(10)
+    LPrint teamRecordDesc$(11); Tab(33); offRecDesc$(11); Tab(53); Using "####"; offRecords!(11)
+    LPrint teamRecordDesc$(12); Tab(33); offRecDesc$(12); Tab(53); Using "####"; offRecords!(12)
+    LPrint teamRecordDesc$(13); Tab(33); offRecDesc$(13); Tab(53); Using "##.#"; offRecords!(13)
+    LPrint teamRecordDesc$(14); Tab(33); offRecDesc$(14); Tab(53); Using "####"; offRecords!(14)
+    LPrint teamRecordDesc$(15); Tab(33); offRecDesc$(15); Tab(53); Using "####"; offRecords!(15)
+    LPrint teamRecordDesc$(16); Tab(33); offRecDesc$(16); Tab(53); Using "####"; offRecords!(16)
+    LPrint teamRecordDesc$(17); Tab(33); offRecDesc$(17); Tab(53); Using "####"; offRecords!(17)
+    LPrint teamRecordDesc$(18); Tab(33); offRecDesc$(18); Tab(53); Using "####"; offRecords!(18)
+    LPrint teamRecordDesc$(19); Tab(33); offRecDesc$(19); Tab(52); Using "#####"; offRecords!(19)
+    LPrint teamRecordDesc$(20); Tab(33); offRecDesc$(20); Tab(52); Using "###.#"; offRecords!(20)
     LPrint "WINS"; Tab(33); offRecDesc$(21); Tab(53); Using "####"; offRecords!(21)
     LPrint
     LPrint Tab(23); "*******  DEFENSIVE TEAM RECORDS *******"
     LPrint
     LPrint "CATEGORY                        TEAM             RECORD            "
-    LPrint teamRecords$(1); Tab(33); defRecDesc$(1); Tab(53); Using "####"; defRecords!(1)
-    LPrint teamRecords$(2); Tab(33); defRecDesc$(2); Tab(53); Using "####"; defRecords!(2)
-    LPrint teamRecords$(3); Tab(33); defRecDesc$(3); Tab(53); Using "##.#"; defRecords!(3) * 100
-    LPrint teamRecords$(4); Tab(33); defRecDesc$(4); Tab(53); Using "####"; defRecords!(4)
-    LPrint teamRecords$(5); Tab(33); defRecDesc$(5); Tab(53); Using "####"; defRecords!(5)
-    LPrint teamRecords$(6); Tab(33); defRecDesc$(6); Tab(53); Using "##.#"; defRecords!(6) * 100
-    LPrint teamRecords$(7); Tab(33); defRecDesc$(7); Tab(53); Using "####"; defRecords!(7)
-    LPrint teamRecords$(8); Tab(33); defRecDesc$(8); Tab(53); Using "####"; defRecords!(8)
-    LPrint teamRecords$(9); Tab(33); defRecDesc$(9); Tab(53); Using "##.#"; defRecords!(9) * 100
-    LPrint teamRecords$(10); Tab(33); defRecDesc$(10); Tab(53); Using "####"; defRecords!(10)
-    LPrint teamRecords$(11); Tab(33); defRecDesc$(11); Tab(53); Using "####"; defRecords!(11)
-    LPrint teamRecords$(12); Tab(33); defRecDesc$(12); Tab(53); Using "####"; defRecords!(12)
-    LPrint teamRecords$(13); Tab(33); defRecDesc$(13); Tab(53); Using "##.#"; defRecords!(13)
-    LPrint teamRecords$(14); Tab(33); defRecDesc$(14); Tab(53); Using "####"; defRecords!(14)
-    LPrint teamRecords$(15); Tab(33); defRecDesc$(15); Tab(53); Using "####"; defRecords!(15)
-    LPrint teamRecords$(16); Tab(33); defRecDesc$(16); Tab(53); Using "####"; defRecords!(16)
-    LPrint teamRecords$(17); Tab(33); defRecDesc$(17); Tab(53); Using "####"; defRecords!(17)
-    LPrint teamRecords$(18); Tab(33); defRecDesc$(18); Tab(53); Using "####"; defRecords!(18)
-    LPrint teamRecords$(19); Tab(33); defRecDesc$(19); Tab(52); Using "#####"; defRecords!(19)
-    LPrint teamRecords$(20); Tab(33); defRecDesc$(20); Tab(52); Using "###.#"; defRecords!(20)
+    LPrint teamRecordDesc$(1); Tab(33); defRecDesc$(1); Tab(53); Using "####"; defRecords!(1)
+    LPrint teamRecordDesc$(2); Tab(33); defRecDesc$(2); Tab(53); Using "####"; defRecords!(2)
+    LPrint teamRecordDesc$(3); Tab(33); defRecDesc$(3); Tab(53); Using "##.#"; defRecords!(3) * 100
+    LPrint teamRecordDesc$(4); Tab(33); defRecDesc$(4); Tab(53); Using "####"; defRecords!(4)
+    LPrint teamRecordDesc$(5); Tab(33); defRecDesc$(5); Tab(53); Using "####"; defRecords!(5)
+    LPrint teamRecordDesc$(6); Tab(33); defRecDesc$(6); Tab(53); Using "##.#"; defRecords!(6) * 100
+    LPrint teamRecordDesc$(7); Tab(33); defRecDesc$(7); Tab(53); Using "####"; defRecords!(7)
+    LPrint teamRecordDesc$(8); Tab(33); defRecDesc$(8); Tab(53); Using "####"; defRecords!(8)
+    LPrint teamRecordDesc$(9); Tab(33); defRecDesc$(9); Tab(53); Using "##.#"; defRecords!(9) * 100
+    LPrint teamRecordDesc$(10); Tab(33); defRecDesc$(10); Tab(53); Using "####"; defRecords!(10)
+    LPrint teamRecordDesc$(11); Tab(33); defRecDesc$(11); Tab(53); Using "####"; defRecords!(11)
+    LPrint teamRecordDesc$(12); Tab(33); defRecDesc$(12); Tab(53); Using "####"; defRecords!(12)
+    LPrint teamRecordDesc$(13); Tab(33); defRecDesc$(13); Tab(53); Using "##.#"; defRecords!(13)
+    LPrint teamRecordDesc$(14); Tab(33); defRecDesc$(14); Tab(53); Using "####"; defRecords!(14)
+    LPrint teamRecordDesc$(15); Tab(33); defRecDesc$(15); Tab(53); Using "####"; defRecords!(15)
+    LPrint teamRecordDesc$(16); Tab(33); defRecDesc$(16); Tab(53); Using "####"; defRecords!(16)
+    LPrint teamRecordDesc$(17); Tab(33); defRecDesc$(17); Tab(53); Using "####"; defRecords!(17)
+    LPrint teamRecordDesc$(18); Tab(33); defRecDesc$(18); Tab(53); Using "####"; defRecords!(18)
+    LPrint teamRecordDesc$(19); Tab(33); defRecDesc$(19); Tab(52); Using "#####"; defRecords!(19)
+    LPrint teamRecordDesc$(20); Tab(33); defRecDesc$(20); Tab(52); Using "###.#"; defRecords!(20)
     LPrint "LOSSES"; Tab(33); defRecDesc$(21); Tab(53); Using "####"; defRecords!(21)
 
     LPrint Chr$(12)
