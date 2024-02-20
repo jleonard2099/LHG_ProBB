@@ -83,7 +83,7 @@ Dim statNames$(TEAMS_PER_CONFERENCE)
 ' Used in DRAFT routines
 '----------------------------------------
 Dim leagRat_DRAFT%(0 To 1, 0 To 6), leagTot_DRAFT(0 To 14, 0 To 34)
-Dim plyrRat_DRAFT%(0 To 1, 0 To 14, 0 To 19), tmRat_DRAFT%(0 To 1, 0 To 34)
+Dim plyrRat_DRAFT%(0 To 1, 0 To 14, 0 To 19), teamRat_DRAFT%(0 To 1, 0 To 34)
 
 Dim players_DRAFT$(1, 14, 1), tmInfo_DRAFT$(1, 4)
 
@@ -236,7 +236,7 @@ Dim Shared P2(1), P4(5), P5(5), fullCtOpt(0 To 1), QQ(1, 8, 14, 14), QR(1, 7, 14
 Dim Shared S3(14), scSettings(0 To 2)
 Dim Shared score(1, 14), schedGame(2)
 Dim Shared teamFouls(1), timePlayed(2, 14), timeouts(1)
-Dim Shared tmRat_GAME(0 To 1, 0 To 34), totRebounds(1), turnovers(1)
+Dim Shared teamRat_GAME(0 To 1, 0 To 34), totRebounds(1), turnovers(1)
 Dim Shared statTotals(14), pbpFG(1 To 8), pbpBG(1 To 8), W2(1, 14), W3(1, 14)
 Dim Shared X7(1), Z5(1), Z6(1)
 

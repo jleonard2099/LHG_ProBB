@@ -299,7 +299,7 @@ Sub NewSchedule (scheduleFile$)
                     scheduleYN$(targetGame%, X) = scheduleYN$(targetGame% - 1, X)
                 Next
 
-                DT$ = "10-01-91"
+                DT$ = "10-01-23"
                 TM$ = "07:30P"
                 Call NewGame(V$, H$, YN$, DT$, TM$, NTMS, targetGame%)
 
@@ -625,6 +625,7 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
 
                 Case 2, 3:
 
+                    teamNbr = 0
                     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
                     If teamNbr <> 0 Then
@@ -788,6 +789,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
 
             If I$ <> Chr$(27) Or scheduleAction% = 4 Then
 
+                T1 = 0
                 Call ChooseTeam(YN$, numberTeams, T1, teamName$)
 
                 If T1 <> 0 Then

@@ -57,7 +57,7 @@ End Sub
 '----------------------------------------
 'This subroutine assists the user with
 'processing the chosen action from the
-'menu 
+'menu
 Sub DoTheInput (action%)
 
     Shared playerRatings%(), leagueRatings%(), teamRatings%()
@@ -184,7 +184,7 @@ Sub DoTheInput (action%)
         Case 2:
 
             Call ChooseTeam(YN$, NTMS, teamNbr, team$)
-            
+
             If teamNbr <> 0 Then
                 Call InputEditTeam(2, YN$, teamNbr, ST, BK)
                 Call SaveTeamFile(YN$, teamNbr, action%)
@@ -770,7 +770,7 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
 
         Color 14
         Print "TEAM STATISTICS"
-        Locate 3,15: Print "OFFENSE"; Tab (30); "DEFENSE"
+        Locate 3, 15: Print "OFFENSE"; Tab(30); "DEFENSE"
         Color 15
         Locate 4: Print " 1. FGM ";
         Locate 4, 14: Input teamRatings%(6)
@@ -847,7 +847,7 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
 
         Color 14
         Print "CHANGE TEAM STATISTICS"
-        Locate 3,15: Print "OFFENSE"; Tab (30); "DEFENSE"
+        Locate 3, 15: Print "OFFENSE"; Tab(30); "DEFENSE"
         Color 15
 
         Print " 1. FGM "; Tab(15); teamRatings%(6); Tab(30); teamRatings%(20)
@@ -990,7 +990,8 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
             Print
 
             Do
-                Print "# TO CHANGE (1-15) (0 TO CONTINUE) ";: Input idx
+                Print "# TO CHANGE (1-15) (0 TO CONTINUE) ";
+                Input idx
                 Locate 1, 1
 
                 If idx <> 0 Then
@@ -1007,13 +1008,13 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
 
         'Calculate Steals/Blocks if missing
         'Def Steals
-        If teamRatings%(28) = 0 And haveSteals = 0 Then teamRatings%(28) = teamRatings%(5) * .1     'Off FGA / 10
+        If teamRatings%(28) = 0 And haveSteals = 0 Then teamRatings%(28) = teamRatings%(5) * .1 'Off FGA / 10
         'Off Steals
-        If teamRatings%(14) = 0 And haveSteals = 0 Then teamRatings%(14) = teamRatings%(19) * .1    'Def FGA / 10
+        If teamRatings%(14) = 0 And haveSteals = 0 Then teamRatings%(14) = teamRatings%(19) * .1 'Def FGA / 10
         'Def Blocks
-        If teamRatings%(30) = 0 And haveBlocks = 0 Then teamRatings%(30) = teamRatings%(5) * .06    'Off FGA / ~16
+        If teamRatings%(30) = 0 And haveBlocks = 0 Then teamRatings%(30) = teamRatings%(5) * .06 'Off FGA / ~16
         'Off Blocks
-        If teamRatings%(16) = 0 And haveBlocks = 0 Then teamRatings%(16) = teamRatings%(19) * .06   'Def FGA / ~16
+        If teamRatings%(16) = 0 And haveBlocks = 0 Then teamRatings%(16) = teamRatings%(19) * .06 'Def FGA / ~16
 
         'Input team
         For I = 0 To 14
@@ -1107,8 +1108,8 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
                 Locate 17: Input "16. 3-FGM "; playerRatings%(I, 14)
                 Locate 18: Input "17. 3-FGA "; playerRatings%(I, 13)
                 Locate 19: Input "18. HI-GAME "; playerRatings%(I, 15)
-                LOCATE 20:INPUT "19. PENETRATION (1-9) ";playerRatings%(I,16)
-                LOCATE 21:INPUT "20. DEF ADJ (-5 TO 5) ";playerRatings%(I,17)
+                Locate 20: Input "19. PENETRATION (1-9) "; playerRatings%(I, 16)
+                Locate 21: Input "20. DEF ADJ (-5 TO 5) "; playerRatings%(I, 17)
                 Locate 22: Input "21. ACTIVE FLAG (0-YES 1-NO) "; playerRatings%(I, 18)
 
                 Call EditPlayer(I, inputAction%)
@@ -1126,7 +1127,7 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
     For J = I To 14
         playerNames$(J, 0) = "XXX"
         playerNames$(J, 1) = "X"
-        For I1 = 0 To 19: 
+        For I1 = 0 To 19:
             playerRatings%(J, I1) = -1
         Next
     Next
@@ -1139,7 +1140,7 @@ End Sub
 '----------------------------------------
 'This subroutine gives thet user an inter-
 'face for editing stats for a single player
-Sub EditPlayer (J, action)
+Sub EditPlayer (playerIdx, action)
 
     Shared playerRatings%()
 
@@ -1153,27 +1154,27 @@ Sub EditPlayer (J, action)
 
     If action = 2 Then
 
-        Print " 1. NAME (XXX TO QUIT) "; playerNames$(J, 0)
-        Print " 2. POSITION "; playerNames$(J, 1)
-        Print " 3. GAMES "; playerRatings%(J, 0)
-        Print " 4. MINUTES "; playerRatings%(J, 1)
-        Print " 5. FGM "; playerRatings%(J, 3)
-        Print " 6. FGA "; playerRatings%(J, 2)
-        Print " 7. FTM "; playerRatings%(J, 5)
-        Print " 8. FTA "; playerRatings%(J, 4)
-        Print " 9. OFF REB "; playerRatings%(J, 6)
-        Print "10. DEF REB "; playerRatings%(J, 7)
-        Print "11. ASSISTS "; playerRatings%(J, 8)
-        Print "12. FOULS "; playerRatings%(J, 9)
-        Print "13. DISQ "; playerRatings%(J, 10)
-        Print "14. STEALS "; playerRatings%(J, 11)
-        Print "15. BLOCKS "; playerRatings%(J, 12)
-        Print "16. 3-FGM "; playerRatings%(J, 14)
-        Print "17. 3-FGA "; playerRatings%(J, 13)
-        Print "18. HI-GAME "; playerRatings%(J, 15)
-        PRINT "19. PENETRATION (1-9) ";playerRatings%(I,16)
-        PRINT "20. DEF ADJ (-5 TO 5) ";playerRatings%(I,17)
-        Print "21. ACTIVE FLAG (0-YES 1-NO) "; playerRatings%(J, 18)
+        Print " 1. NAME (XXX TO QUIT) "; playerNames$(playerIdx, 0)
+        Print " 2. POSITION "; playerNames$(playerIdx, 1)
+        Print " 3. GAMES "; playerRatings%(playerIdx, 0)
+        Print " 4. MINUTES "; playerRatings%(playerIdx, 1)
+        Print " 5. FGM "; playerRatings%(playerIdx, 3)
+        Print " 6. FGA "; playerRatings%(playerIdx, 2)
+        Print " 7. FTM "; playerRatings%(playerIdx, 5)
+        Print " 8. FTA "; playerRatings%(playerIdx, 4)
+        Print " 9. OFF REB "; playerRatings%(playerIdx, 6)
+        Print "10. DEF REB "; playerRatings%(playerIdx, 7)
+        Print "11. ASSISTS "; playerRatings%(playerIdx, 8)
+        Print "12. FOULS "; playerRatings%(playerIdx, 9)
+        Print "13. DISQ "; playerRatings%(playerIdx, 10)
+        Print "14. STEALS "; playerRatings%(playerIdx, 11)
+        Print "15. BLOCKS "; playerRatings%(playerIdx, 12)
+        Print "16. 3-FGM "; playerRatings%(playerIdx, 14)
+        Print "17. 3-FGA "; playerRatings%(playerIdx, 13)
+        Print "18. HI-GAME "; playerRatings%(playerIdx, 15)
+        Print "19. PENETRATION (1-9) "; playerRatings%(playerIdx, 16)
+        Print "20. DEF ADJ (-5 TO 5) "; playerRatings%(playerIdx, 17)
+        Print "21. ACTIVE FLAG (0-YES 1-NO) "; playerRatings%(playerIdx, 18)
     End If
 
     Do
@@ -1186,76 +1187,76 @@ Sub EditPlayer (J, action)
         Select Case B9
 
             Case 1
-                Locate 2: Input " 1. NAME (XXX TO QUIT) "; playerNames$(I, 0)
+                Locate 2: Input " 1. NAME (XXX TO QUIT) "; playerNames$(playerIdx, 0)
 
             Case 2
-                Locate 3: Input " 2. POSITION "; playerNames$(I, 1)
+                Locate 3: Input " 2. POSITION "; playerNames$(playerIdx, 1)
 
             Case 3
-                Locate 4: Input " 3. GAMES "; playerRatings%(I, 0)
+                Locate 4: Input " 3. GAMES "; playerRatings%(playerIdx, 0)
 
             Case 4
-                Locate 5: Input " 4. MINUTES "; playerRatings%(I, 1)
+                Locate 5: Input " 4. MINUTES "; playerRatings%(playerIdx, 1)
 
             Case 5
-                Locate 6: Input " 5. FGM "; playerRatings%(I, 3)
+                Locate 6: Input " 5. FGM "; playerRatings%(playerIdx, 3)
 
             Case 6
-                Locate 7: Input " 6. FGA "; playerRatings%(I, 2)
+                Locate 7: Input " 6. FGA "; playerRatings%(playerIdx, 2)
 
             Case 7
-                Locate 8: Input " 7. FTM "; playerRatings%(I, 5)
+                Locate 8: Input " 7. FTM "; playerRatings%(playerIdx, 5)
 
             Case 8
-                Locate 9: Input " 8. FTA "; playerRatings%(I, 4)
+                Locate 9: Input " 8. FTA "; playerRatings%(playerIdx, 4)
 
             Case 9
-                Locate 10: Input " 9. OFF REB "; playerRatings%(I, 6)
+                Locate 10: Input " 9. OFF REB "; playerRatings%(playerIdx, 6)
 
             Case 10
-                Locate 11: Input "10. DEF REB "; playerRatings%(I, 7)
+                Locate 11: Input "10. DEF REB "; playerRatings%(playerIdx, 7)
 
                 'Calculate Rebounds if missing
-                If playerRatings%(I, 6) = 0 And RB = 0 Then
+                If playerRatings%(playerIdx, 6) = 0 And RB = 0 Then
                     'Off Rebounds = ~ Def Rebounds / 3
-                    playerRatings%(I, 6) = .32 * playerRatings%(I, 7)
-                    playerRatings%(I, 7) = playerRatings%(I, 7) - playerRatings%(I, 6)
-                    Locate 10: Print " 9. OFF REB "; playerRatings%(I, 6)
-                    Locate 11: Print "10. DEF REB "; playerRatings%(I, 7)
+                    playerRatings%(playerIdx, 6) = .32 * playerRatings%(playerIdx, 7)
+                    playerRatings%(playerIdx, 7) = playerRatings%(playerIdx, 7) - playerRatings%(playerIdx, 6)
+                    Locate 10: Print " 9. OFF REB "; playerRatings%(playerIdx, 6)
+                    Locate 11: Print "10. DEF REB "; playerRatings%(playerIdx, 7)
                 End If
 
             Case 11
-                Locate 12: Input "11. ASSISTS "; playerRatings%(I, 8)
+                Locate 12: Input "11. ASSISTS "; playerRatings%(playerIdx, 8)
 
             Case 12
-                Locate 13: Input "12. FOULS "; playerRatings%(I, 9)
+                Locate 13: Input "12. FOULS "; playerRatings%(playerIdx, 9)
 
             Case 13
-                Locate 14: Input "13. DISQ "; playerRatings%(I, 10)
+                Locate 14: Input "13. DISQ "; playerRatings%(playerIdx, 10)
 
             Case 14
-                Locate 15: Input "14. STEALS   "; playerRatings%(I, 11)
+                Locate 15: Input "14. STEALS   "; playerRatings%(playerIdx, 11)
 
             Case 15
-                Locate 16: Input "15. BLOCKS "; playerRatings%(I, 12)
+                Locate 16: Input "15. BLOCKS "; playerRatings%(playerIdx, 12)
 
             Case 16
-                Locate 17: Input "16. 3-FGM "; playerRatings%(I, 14)
+                Locate 17: Input "16. 3-FGM "; playerRatings%(playerIdx, 14)
 
             Case 17
-                Locate 18: Input "17. 3-FGA "; playerRatings%(I, 13)
+                Locate 18: Input "17. 3-FGA "; playerRatings%(playerIdx, 13)
 
             Case 18
-                Locate 19: Input "18. HI-GAME "; playerRatings%(I, 15)
+                Locate 19: Input "18. HI-GAME "; playerRatings%(playerIdx, 15)
 
             Case 19:
-                LOCATE 20:INPUT "19. PENETRATION (1-9) ";playerRatings%(I,16)
+                Locate 20: Input "19. PENETRATION (1-9) "; playerRatings%(playerIdx, 16)
 
             Case 20:
-                LOCATE 21:INPUT "20. DEF ADJ (-5 TO 5) ";playerRatings%(I,17)
+                Locate 21: Input "20. DEF ADJ (-5 TO 5) "; playerRatings%(playerIdx, 17)
 
             Case 21:
-                Locate 22: Input "21. ACTIVE FLAG (0-YES 1-NO) "; playerRatings%(I, 18)
+                Locate 22: Input "21. ACTIVE FLAG (0-YES 1-NO) "; playerRatings%(playerIdx, 18)
 
         End Select
 
@@ -1316,7 +1317,7 @@ Sub SaveTeamFile (yearNumber$, teamIdx, action%)
 
     LSet Q$(9) = MKI$(999)
 
-    For I = 0 To 34: 
+    For I = 0 To 34:
         LSet Q$(I + 10) = MKI$(teamRatings%(I))
     Next
 

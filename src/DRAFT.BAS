@@ -8,7 +8,7 @@ Sub DRAFT ()
     _Title "Basketball: The Pro Game - Team Draft"
 
 
-    Shared leagTot_DRAFT(), leagRat_DRAFT%(), plyrRat_DRAFT%(), tmRat_DRAFT%()
+    Shared leagTot_DRAFT(), leagRat_DRAFT%(), plyrRat_DRAFT%(), teamRat_DRAFT%()
 
     Shared draftYears$(), players_DRAFT$(), teamYears$(), tmInfo_DRAFT$()
 
@@ -107,7 +107,7 @@ Sub DRAFT ()
                         Next
 
                         For I = 0 To 34
-                            tmRat_DRAFT%(0, I) = 0
+                            teamRat_DRAFT%(0, I) = 0
                         Next
 
                         Erase leagTot_DRAFT, tmTotal_DRAFT
@@ -150,7 +150,7 @@ End Sub
 Sub NewTeamParameters (teamYear$, teamName$, normYrIdx)
 
     Shared tmInfo_DRAFT$(), teamYears$()
-    Shared leagRat_DRAFT%(), leagueAverages%(), tmRat_DRAFT%()
+    Shared leagRat_DRAFT%(), leagueAverages%(), teamRat_DRAFT%()
 
     Color 15, 0
     Cls
@@ -181,11 +181,11 @@ Sub NewTeamParameters (teamYear$, teamName$, normYrIdx)
     Locate 6: Input "4. TEAM ABBREV (IE. BOS) "; tmInfo_DRAFT$(0, 2)
     Locate 7: Input "5. COACH'S NAME "; tmInfo_DRAFT$(0, 3)
     Locate 8: Input "6. ARENA NAME "; tmInfo_DRAFT$(0, 4)
-    Locate 9: Input "7. TEXT COLOR (0-15) "; tmRat_DRAFT%(0, 33)
-    Locate 10: Input "8. BCKGRND COLOR (0-7) "; tmRat_DRAFT%(0, 34)
+    Locate 9: Input "7. TEXT COLOR (0-15) "; teamRat_DRAFT%(0, 33)
+    Locate 10: Input "8. BCKGRND COLOR (0-7) "; teamRat_DRAFT%(0, 34)
     Locate 12
     Print "TEAM APPEARANCE";
-    Color tmRat_DRAFT%(0, 33), tmRat_DRAFT%(0, 34)
+    Color teamRat_DRAFT%(0, 33), teamRat_DRAFT%(0, 34)
     Print RTrim$(teamName$) + " " + RTrim$(tmInfo_DRAFT$(0, 1))
     Color 15, 0
 
@@ -219,18 +219,18 @@ Sub NewTeamParameters (teamYear$, teamName$, normYrIdx)
                     Locate 8: Input "6. ARENA NAME "; tmInfo_DRAFT$(0, 4)
 
                 Case 7
-                    Locate 9: Input "7. TEXT COLOR (0-15) "; tmRat_DRAFT%(0, 33)
+                    Locate 9: Input "7. TEXT COLOR (0-15) "; teamRat_DRAFT%(0, 33)
                     Locate 12
                     Print "TEAM APPEARANCE";
-                    Color tmRat_DRAFT%(0, 33), tmRat_DRAFT%(0, 34)
+                    Color teamRat_DRAFT%(0, 33), teamRat_DRAFT%(0, 34)
                     Print RTrim$(teamName$) + " " + RTrim$(tmInfo_DRAFT$(0, 1))
                     Color 15, 0
 
                 Case 8
-                    Locate 10: Input "8. BCKGRND COLOR (0-7) "; tmRat_DRAFT%(0, 34)
+                    Locate 10: Input "8. BCKGRND COLOR (0-7) "; teamRat_DRAFT%(0, 34)
                     Locate 12
                     Print "TEAM APPEARANCE";
-                    Color tmRat_DRAFT%(0, 33), tmRat_DRAFT%(0, 34)
+                    Color teamRat_DRAFT%(0, 33), teamRat_DRAFT%(0, 34)
                     Print RTrim$(teamName$) + " " + RTrim$(tmInfo_DRAFT$(0, 1))
                     Color 15, 0
 
@@ -259,27 +259,27 @@ Sub NewTeamParameters_OffDef ()
     Print "TEAM OFFENSIVE INFORMATION"
     Color 15
 
-    Locate 3: Input " 1. FGM "; tmRat_DRAFT%(0, 6)
-    Locate 4: Input " 2. FGA "; tmRat_DRAFT%(0, 5)
-    Locate 5: Input " 3. FTM "; tmRat_DRAFT%(0, 8)
-    Locate 6: Input " 4. FTA "; tmRat_DRAFT%(0, 7)
-    Locate 7: Input " 5. OFF REB "; tmRat_DRAFT%(0, 9)
-    Locate 8: Input " 6. DEF REB "; tmRat_DRAFT%(0, 10)
+    Locate 3: Input " 1. FGM "; teamRat_DRAFT%(0, 6)
+    Locate 4: Input " 2. FGA "; teamRat_DRAFT%(0, 5)
+    Locate 5: Input " 3. FTM "; teamRat_DRAFT%(0, 8)
+    Locate 6: Input " 4. FTA "; teamRat_DRAFT%(0, 7)
+    Locate 7: Input " 5. OFF REB "; teamRat_DRAFT%(0, 9)
+    Locate 8: Input " 6. DEF REB "; teamRat_DRAFT%(0, 10)
 
-    If tmRat_DRAFT%(0, 9) = 0 And RB = 0 Then
-        tmRat_DRAFT%(0, 9) = .32 * tmRat_DRAFT%(0, 10): tmRat_DRAFT%(0, 10) = tmRat_DRAFT%(0, 10) - tmRat_DRAFT%(0, 9)
-        Locate 7: Print " 5. OFF REB "; tmRat_DRAFT%(0, 9)
-        Locate 8: Print " 6. DEF REB "; tmRat_DRAFT%(0, 10)
+    If teamRat_DRAFT%(0, 9) = 0 And RB = 0 Then
+        teamRat_DRAFT%(0, 9) = .32 * teamRat_DRAFT%(0, 10): teamRat_DRAFT%(0, 10) = teamRat_DRAFT%(0, 10) - teamRat_DRAFT%(0, 9)
+        Locate 7: Print " 5. OFF REB "; teamRat_DRAFT%(0, 9)
+        Locate 8: Print " 6. DEF REB "; teamRat_DRAFT%(0, 10)
     End If
 
-    Locate 9: Input " 7. ASSISTS "; tmRat_DRAFT%(0, 11)
-    Locate 10: Input " 8. FOULS "; tmRat_DRAFT%(0, 12)
-    Locate 11: Input " 9. DISQ "; tmRat_DRAFT%(0, 13)
-    Locate 12: Input "10. STEALS "; tmRat_DRAFT%(0, 14)
-    Locate 13: Input "11. TURNOVERS "; tmRat_DRAFT%(0, 15)
-    Locate 14: Input "12. BLK SHOTS "; tmRat_DRAFT%(0, 16)
-    Locate 15: Input "13. 3-FGM "; tmRat_DRAFT%(0, 18)
-    Locate 16: Input "14. 3-FGA "; tmRat_DRAFT%(0, 17)
+    Locate 9: Input " 7. ASSISTS "; teamRat_DRAFT%(0, 11)
+    Locate 10: Input " 8. FOULS "; teamRat_DRAFT%(0, 12)
+    Locate 11: Input " 9. DISQ "; teamRat_DRAFT%(0, 13)
+    Locate 12: Input "10. STEALS "; teamRat_DRAFT%(0, 14)
+    Locate 13: Input "11. TURNOVERS "; teamRat_DRAFT%(0, 15)
+    Locate 14: Input "12. BLK SHOTS "; teamRat_DRAFT%(0, 16)
+    Locate 15: Input "13. 3-FGM "; teamRat_DRAFT%(0, 18)
+    Locate 16: Input "14. 3-FGA "; teamRat_DRAFT%(0, 17)
 
     Do
 
@@ -293,55 +293,55 @@ Sub NewTeamParameters_OffDef ()
             Select Case B9
 
                 Case 1
-                    Locate 3: Input " 1. FGM "; tmRat_DRAFT%(0, 6)
+                    Locate 3: Input " 1. FGM "; teamRat_DRAFT%(0, 6)
 
                 Case 2
-                    Locate 4: Input " 2. FGA "; tmRat_DRAFT%(0, 5)
+                    Locate 4: Input " 2. FGA "; teamRat_DRAFT%(0, 5)
 
                 Case 3
-                    Locate 5: Input " 3. FTM "; tmRat_DRAFT%(0, 8)
+                    Locate 5: Input " 3. FTM "; teamRat_DRAFT%(0, 8)
 
                 Case 4
-                    Locate 6: Input " 4. FTA "; tmRat_DRAFT%(0, 7)
+                    Locate 6: Input " 4. FTA "; teamRat_DRAFT%(0, 7)
 
                 Case 5
-                    Locate 7: Input " 5. OFF REB "; tmRat_DRAFT%(0, 9)
+                    Locate 7: Input " 5. OFF REB "; teamRat_DRAFT%(0, 9)
 
                 Case 6
-                    Locate 8: Input " 6. DEF REB "; tmRat_DRAFT%(0, 10)
+                    Locate 8: Input " 6. DEF REB "; teamRat_DRAFT%(0, 10)
 
                     'Calculate Rebounds if missing
-                    If tmRat_DRAFT%(0, 9) = 0 And RB = 0 Then
+                    If teamRat_DRAFT%(0, 9) = 0 And RB = 0 Then
                         'Off Rebounds = ~ Def Rebounds / 3
-                        tmRat_DRAFT%(0, 9) = .32 * tmRat_DRAFT%(0, 10)
-                        tmRat_DRAFT%(0, 10) = tmRat_DRAFT%(0, 10) - tmRat_DRAFT%(0, 9)
-                        Locate 7: Print " 5. OFF REB "; tmRat_DRAFT%(0, 9)
-                        Locate 8: Print " 6. DEF REB "; tmRat_DRAFT%(0, 10)
+                        teamRat_DRAFT%(0, 9) = .32 * teamRat_DRAFT%(0, 10)
+                        teamRat_DRAFT%(0, 10) = teamRat_DRAFT%(0, 10) - teamRat_DRAFT%(0, 9)
+                        Locate 7: Print " 5. OFF REB "; teamRat_DRAFT%(0, 9)
+                        Locate 8: Print " 6. DEF REB "; teamRat_DRAFT%(0, 10)
                     End If
 
                 Case 7
-                    Locate 9: Input " 7. ASSISTS "; tmRat_DRAFT%(0, 11)
+                    Locate 9: Input " 7. ASSISTS "; teamRat_DRAFT%(0, 11)
 
                 Case 8
-                    Locate 10: Input " 8. FOULS "; tmRat_DRAFT%(0, 12)
+                    Locate 10: Input " 8. FOULS "; teamRat_DRAFT%(0, 12)
 
                 Case 9
-                    Locate 11: Input " 9. DISQ "; tmRat_DRAFT%(0, 13)
+                    Locate 11: Input " 9. DISQ "; teamRat_DRAFT%(0, 13)
 
                 Case 10
-                    Locate 12: Input "10. STEALS "; tmRat_DRAFT%(0, 14)
+                    Locate 12: Input "10. STEALS "; teamRat_DRAFT%(0, 14)
 
                 Case 11
-                    Locate 13: Input "11. TURNOVERS "; tmRat_DRAFT%(0, 15)
+                    Locate 13: Input "11. TURNOVERS "; teamRat_DRAFT%(0, 15)
 
                 Case 12
-                    Locate 14: Input "12. BLK SHOTS "; tmRat_DRAFT%(0, 16)
+                    Locate 14: Input "12. BLK SHOTS "; teamRat_DRAFT%(0, 16)
 
                 Case 13
-                    Locate 15: Input "13. 3-FGM "; tmRat_DRAFT%(0, 18)
+                    Locate 15: Input "13. 3-FGM "; teamRat_DRAFT%(0, 18)
 
                 Case 14
-                    Locate 16: Input "14. 3-FGA "; tmRat_DRAFT%(0, 17)
+                    Locate 16: Input "14. 3-FGA "; teamRat_DRAFT%(0, 17)
 
             End Select
 
@@ -357,28 +357,28 @@ Sub NewTeamParameters_OffDef ()
     Print "TEAM DEFENSIVE INFORMATION"
     Color 15
 
-    Locate 3: Input " 1. FGM "; tmRat_DRAFT%(0, 20)
-    Locate 4: Input " 2. FGA "; tmRat_DRAFT%(0, 19)
-    Locate 5: Input " 3. FTM "; tmRat_DRAFT%(0, 22)
-    Locate 6: Input " 4. FTA "; tmRat_DRAFT%(0, 21)
-    Locate 7: Input " 5. OFF REB "; tmRat_DRAFT%(0, 23)
-    Locate 8: Input " 6. DEF REB "; tmRat_DRAFT%(0, 24)
+    Locate 3: Input " 1. FGM "; teamRat_DRAFT%(0, 20)
+    Locate 4: Input " 2. FGA "; teamRat_DRAFT%(0, 19)
+    Locate 5: Input " 3. FTM "; teamRat_DRAFT%(0, 22)
+    Locate 6: Input " 4. FTA "; teamRat_DRAFT%(0, 21)
+    Locate 7: Input " 5. OFF REB "; teamRat_DRAFT%(0, 23)
+    Locate 8: Input " 6. DEF REB "; teamRat_DRAFT%(0, 24)
 
-    If tmRat_DRAFT%(0, 23) = 0 And RB = 0 Then
-        tmRat_DRAFT%(0, 23) = .35 * tmRat_DRAFT%(0, 24)
-        tmRat_DRAFT%(0, 24) = tmRat_DRAFT%(0, 24) - tmRat_DRAFT%(0, 23)
-        Locate 7: Print " 5. OFF REB "; tmRat_DRAFT%(0, 23)
-        Locate 8: Print " 6. DEF REB "; tmRat_DRAFT%(0, 24)
+    If teamRat_DRAFT%(0, 23) = 0 And RB = 0 Then
+        teamRat_DRAFT%(0, 23) = .35 * teamRat_DRAFT%(0, 24)
+        teamRat_DRAFT%(0, 24) = teamRat_DRAFT%(0, 24) - teamRat_DRAFT%(0, 23)
+        Locate 7: Print " 5. OFF REB "; teamRat_DRAFT%(0, 23)
+        Locate 8: Print " 6. DEF REB "; teamRat_DRAFT%(0, 24)
     End If
 
-    Locate 9: Input " 7. ASSISTS "; tmRat_DRAFT%(0, 25)
-    Locate 10: Input " 8. FOULS "; tmRat_DRAFT%(0, 26)
-    Locate 11: Input " 9. DISQ "; tmRat_DRAFT%(0, 27)
-    Locate 12: Input "10. STEALS "; tmRat_DRAFT%(0, 28)
-    Locate 13: Input "11. TURNOVERS "; tmRat_DRAFT%(0, 29)
-    Locate 14: Input "12. BLK SHOTS "; tmRat_DRAFT%(0, 30)
-    Locate 15: Input "13. 3-FGM "; tmRat_DRAFT%(0, 32)
-    Locate 16: Input "14. 3-FGA "; tmRat_DRAFT%(0, 31)
+    Locate 9: Input " 7. ASSISTS "; teamRat_DRAFT%(0, 25)
+    Locate 10: Input " 8. FOULS "; teamRat_DRAFT%(0, 26)
+    Locate 11: Input " 9. DISQ "; teamRat_DRAFT%(0, 27)
+    Locate 12: Input "10. STEALS "; teamRat_DRAFT%(0, 28)
+    Locate 13: Input "11. TURNOVERS "; teamRat_DRAFT%(0, 29)
+    Locate 14: Input "12. BLK SHOTS "; teamRat_DRAFT%(0, 30)
+    Locate 15: Input "13. 3-FGM "; teamRat_DRAFT%(0, 32)
+    Locate 16: Input "14. 3-FGA "; teamRat_DRAFT%(0, 31)
 
     Do
 
@@ -392,55 +392,55 @@ Sub NewTeamParameters_OffDef ()
             Select Case B9
 
                 Case 1
-                    Locate 3: Input " 1. FGM "; tmRat_DRAFT%(0, 20)
+                    Locate 3: Input " 1. FGM "; teamRat_DRAFT%(0, 20)
 
                 Case 2
-                    Locate 4: Input " 2. FGA "; tmRat_DRAFT%(0, 19)
+                    Locate 4: Input " 2. FGA "; teamRat_DRAFT%(0, 19)
 
                 Case 3
-                    Locate 5: Input " 3. FTM "; tmRat_DRAFT%(0, 22)
+                    Locate 5: Input " 3. FTM "; teamRat_DRAFT%(0, 22)
 
                 Case 4
-                    Locate 6: Input " 4. FTA "; tmRat_DRAFT%(0, 21)
+                    Locate 6: Input " 4. FTA "; teamRat_DRAFT%(0, 21)
 
                 Case 5
-                    Locate 7: Input " 5. OFF REB "; tmRat_DRAFT%(0, 23)
+                    Locate 7: Input " 5. OFF REB "; teamRat_DRAFT%(0, 23)
 
                 Case 6
-                    Locate 8: Input " 6. DEF REB "; tmRat_DRAFT%(0, 24)
+                    Locate 8: Input " 6. DEF REB "; teamRat_DRAFT%(0, 24)
 
                     'Calculate Rebounds if missing
-                    If tmRat_DRAFT%(0, 23) = 0 And RB = 0 Then
+                    If teamRat_DRAFT%(0, 23) = 0 And RB = 0 Then
                         'Off Rebounds = ~ Def Rebounds / 3
-                        tmRat_DRAFT%(0, 23) = .35 * tmRat_DRAFT%(0, 24)
-                        tmRat_DRAFT%(0, 24) = tmRat_DRAFT%(0, 24) - tmRat_DRAFT%(0, 23)
-                        Locate 7: Print " 5. OFF REB "; tmRat_DRAFT%(0, 23)
-                        Locate 8: Print " 6. DEF REB "; tmRat_DRAFT%(0, 24)
+                        teamRat_DRAFT%(0, 23) = .35 * teamRat_DRAFT%(0, 24)
+                        teamRat_DRAFT%(0, 24) = teamRat_DRAFT%(0, 24) - teamRat_DRAFT%(0, 23)
+                        Locate 7: Print " 5. OFF REB "; teamRat_DRAFT%(0, 23)
+                        Locate 8: Print " 6. DEF REB "; teamRat_DRAFT%(0, 24)
                     End If
 
                 Case 7
-                    Locate 9: Input " 7. ASSISTS "; tmRat_DRAFT%(0, 25)
+                    Locate 9: Input " 7. ASSISTS "; teamRat_DRAFT%(0, 25)
 
                 Case 8
-                    Locate 10: Input " 8. FOULS "; tmRat_DRAFT%(0, 26)
+                    Locate 10: Input " 8. FOULS "; teamRat_DRAFT%(0, 26)
 
                 Case 9
-                    Locate 11: Input " 9. DISQ "; tmRat_DRAFT%(0, 27)
+                    Locate 11: Input " 9. DISQ "; teamRat_DRAFT%(0, 27)
 
                 Case 10
-                    Locate 12: Input "10. STEALS "; tmRat_DRAFT%(0, 28)
+                    Locate 12: Input "10. STEALS "; teamRat_DRAFT%(0, 28)
 
                 Case 11
-                    Locate 13: Input "11. TURNOVERS "; tmRat_DRAFT%(0, 29)
+                    Locate 13: Input "11. TURNOVERS "; teamRat_DRAFT%(0, 29)
 
                 Case 12
-                    Locate 14: Input "12. BLK SHOTS "; tmRat_DRAFT%(0, 30)
+                    Locate 14: Input "12. BLK SHOTS "; teamRat_DRAFT%(0, 30)
 
                 Case 13
-                    Locate 15: Input "13. 3-FGM "; tmRat_DRAFT%(0, 32)
+                    Locate 15: Input "13. 3-FGM "; teamRat_DRAFT%(0, 32)
 
                 Case 14
-                    Locate 16: Input "14. 3-FGA "; tmRat_DRAFT%(0, 31)
+                    Locate 16: Input "14. 3-FGA "; teamRat_DRAFT%(0, 31)
 
             End Select
 
@@ -451,11 +451,11 @@ Sub NewTeamParameters_OffDef ()
     'This is ripped from the Team Input routine
     'ST / BK / T0 represent whether the user has
     'Steals / Blocks / Turnover data to enter
-    'If tmRat_DRAFT%(0, 28) = 0 And ST = 0 Then tmRat_DRAFT%(0, 28) = tmRat_DRAFT%(0, 5) * .1
-    'If tmRat_DRAFT%(0, 14) = 0 And ST = 0 Then tmRat_DRAFT%(0, 14) = tmRat_DRAFT%(0, 19) * .1
-    'If tmRat_DRAFT%(0, 16) = 0 And BK = 0 Then tmRat_DRAFT%(0, 16) = tmRat_DRAFT%(0, 19) * .06
-    'If tmRat_DRAFT%(0, 30) = 0 And BK = 0 Then tmRat_DRAFT%(0, 30) = tmRat_DRAFT%(0, 5) * .06
-    'If tmRat_DRAFT%(0, 29) = 0 And T0 = 0 Then tmRat_DRAFT%(0, 29) = 18 * leagRat_DRAFT%(0, 0): tmRat_DRAFT%(0, 15) = tmRat_DRAFT%(0, 29)
+    'If teamRat_DRAFT%(0, 28) = 0 And ST = 0 Then teamRat_DRAFT%(0, 28) = teamRat_DRAFT%(0, 5) * .1
+    'If teamRat_DRAFT%(0, 14) = 0 And ST = 0 Then teamRat_DRAFT%(0, 14) = teamRat_DRAFT%(0, 19) * .1
+    'If teamRat_DRAFT%(0, 16) = 0 And BK = 0 Then teamRat_DRAFT%(0, 16) = teamRat_DRAFT%(0, 19) * .06
+    'If teamRat_DRAFT%(0, 30) = 0 And BK = 0 Then teamRat_DRAFT%(0, 30) = teamRat_DRAFT%(0, 5) * .06
+    'If teamRat_DRAFT%(0, 29) = 0 And T0 = 0 Then teamRat_DRAFT%(0, 29) = 18 * leagRat_DRAFT%(0, 0): teamRat_DRAFT%(0, 15) = teamRat_DRAFT%(0, 29)
 
 
 End Sub
@@ -476,13 +476,13 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT(), normYrIdx)
     Dim nbrPlayers
 
     Shared tmInfo_DRAFT$(), players_DRAFT$(), teamYears$()
-    Shared plyrRat_DRAFT%(), leagRat_DRAFT%(), leagueAverages%(), leagTot_DRAFT(), tmRat_DRAFT%()
+    Shared plyrRat_DRAFT%(), leagRat_DRAFT%(), leagueAverages%(), leagTot_DRAFT(), teamRat_DRAFT%()
 
     Do
 
         Color 0, 0
         Cls
-        Color tmRat_DRAFT%(0, 33), tmRat_DRAFT%(0, 34): Print tmInfo_DRAFT$(0, 0);
+        Color teamRat_DRAFT%(0, 33), teamRat_DRAFT%(0, 34): Print tmInfo_DRAFT$(0, 0);
 
         Color 14, 0
         Print "     (DRAFTING)"
@@ -519,7 +519,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT(), normYrIdx)
 
                 Color , 0
                 Cls
-                Color tmRat_DRAFT%(1, 33), tmRat_DRAFT%(1, 34): Print tmInfo_DRAFT$(draftIdx, 0)
+                Color teamRat_DRAFT%(1, 33), teamRat_DRAFT%(1, 34): Print tmInfo_DRAFT$(draftIdx, 0)
                 Color 14, 0
 
                 Print
@@ -547,7 +547,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT(), normYrIdx)
                 Next
 
                 For I = 0 To 34:
-                    leagTot_DRAFT(B, I) = tmRat_DRAFT%(1, I)
+                    leagTot_DRAFT(B, I) = teamRat_DRAFT%(1, I)
                 Next
 
                 plyrRat_DRAFT%(0, B, 2) = plyrRat_DRAFT%(0, B, 2) * (leagueAverages%(normYrIdx, 1) / leagRat_DRAFT%(1, 1))
@@ -566,15 +566,15 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT(), normYrIdx)
                 leagTot_DRAFT(B, 23) = leagTot_DRAFT(B, 23) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT%(1, 2))
                 leagTot_DRAFT(B, 24) = leagTot_DRAFT(B, 24) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT%(1, 2))
 
-                FG = Int(tmRat_DRAFT%(1, 6) / tmRat_DRAFT%(1, 5) * 100 + .5)
+                FG = Int(teamRat_DRAFT%(1, 6) / teamRat_DRAFT%(1, 5) * 100 + .5)
                 FG = FG * (leagueAverages%(normYrIdx, 3) / leagRat_DRAFT%(1, 3))
 
-                tmRat_DRAFT%(0, 6) = FG / 100 * tmRat_DRAFT%(0, 5)
+                teamRat_DRAFT%(0, 6) = FG / 100 * teamRat_DRAFT%(0, 5)
 
-                FG = Int(tmRat_DRAFT%(1, 20) / tmRat_DRAFT%(1, 19) * 100 + .5)
+                FG = Int(teamRat_DRAFT%(1, 20) / teamRat_DRAFT%(1, 19) * 100 + .5)
                 FG = FG * (leagueAverages%(normYrIdx, 3) / leagRat_DRAFT%(1, 3))
 
-                tmRat_DRAFT%(0, 20) = FG / 100 * tmRat_DRAFT%(0, 19)
+                teamRat_DRAFT%(0, 20) = FG / 100 * teamRat_DRAFT%(0, 19)
 
             Case 2
 
@@ -597,7 +597,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT(), normYrIdx)
 
                 For I1 = 0 To 32
                     tmTotal_DRAFT(I1) = tmTotal_DRAFT(I1) / nbrPlayers
-                    tmRat_DRAFT%(0, I1) = tmTotal_DRAFT(I1)
+                    teamRat_DRAFT%(0, I1) = tmTotal_DRAFT(I1)
                 Next
 
                 Call SaveTeamDraft(draftNew, teamYears$(0), teamIdx)
@@ -639,7 +639,7 @@ End Sub
 '  1 = New Team
 Sub SaveTeamDraft (draftNew, yearNumber$, teamIdx)
 
-    Shared plyrRat_DRAFT%(), leagRat_DRAFT%(), tmRat_DRAFT%()
+    Shared plyrRat_DRAFT%(), leagRat_DRAFT%(), teamRat_DRAFT%()
 
     Shared tmInfo_DRAFT$(), players_DRAFT$()
 
@@ -682,7 +682,7 @@ Sub SaveTeamDraft (draftNew, yearNumber$, teamIdx)
 
     LSet Q$(9) = MKI$(999)
 
-    For I = 0 To 34: LSet Q$(I + 10) = MKI$(tmRat_DRAFT%(0, I)): Next
+    For I = 0 To 34: LSet Q$(I + 10) = MKI$(teamRat_DRAFT%(0, I)): Next
 
     For I = 0 To 14
 
@@ -714,7 +714,7 @@ End Sub
 'choosing the team to draft players from
 Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
 
-    Shared tmRat_DRAFT%()
+    Shared teamRat_DRAFT%()
 
     Shared previousYear$
 
@@ -806,7 +806,7 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
 
                     Do
                         Locate 2, 33
-                        Color tmRat_DRAFT%(draftIdx, 33), tmRat_DRAFT%(draftIdx, 34): Print teamName$
+                        Color teamRat_DRAFT%(draftIdx, 33), teamRat_DRAFT%(draftIdx, 34): Print teamName$
 
                         Color 15, 4
                         Locate 3, 32: Print "ANY CHANGE? (Y/N)";
@@ -885,7 +885,7 @@ End Sub
 Sub ReadDraftTeam (teamYear$, teamIdx, draftIdx)
 
     Shared tmInfo_DRAFT$(), players_DRAFT$(), teamYears$()
-    Shared plyrRat_DRAFT%(), leagRat_DRAFT%(), tmRat_DRAFT%()
+    Shared plyrRat_DRAFT%(), leagRat_DRAFT%(), teamRat_DRAFT%()
 
     Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
 
@@ -920,7 +920,7 @@ Sub ReadDraftTeam (teamYear$, teamIdx, draftIdx)
     Next
 
     For I = 0 To 34
-        tmRat_DRAFT%(draftIdx, I) = CVI(Q$(I + 10))
+        teamRat_DRAFT%(draftIdx, I) = CVI(Q$(I + 10))
     Next
 
     For I = 0 To 14

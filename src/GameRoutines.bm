@@ -147,7 +147,7 @@ Sub InitVar ()
 
     'These are for reading in team data
     'Erase gameCoach$, gameMascots$, gameStadium$, players_GAME$
-    Erase leagRat_GAME, plyrRat_GAME, tmRat_GAME
+    Erase leagRat_GAME, plyrRat_GAME, teamRat_GAME
 
     'Erase C1
     Erase D1, D8, eventSettings
@@ -247,7 +247,7 @@ End Sub
 Sub TEAMBOX (boxHeight, teamIdx)
 
     Locate 6, 8
-    Color tmRat_GAME(teamIdx, 33), tmRat_GAME(teamIdx, 34)
+    Color teamRat_GAME(teamIdx, 33), teamRat_GAME(teamIdx, 34)
 
     'Print box top
     Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
@@ -278,7 +278,7 @@ End Sub
 Sub FRAMEOPTION (boxHeight, teamIdx)
 
     Locate 8, 8
-    Color tmRat_GAME(teamIdx, 33), tmRat_GAME(teamIdx, 34)
+    Color teamRat_GAME(teamIdx, 33), teamRat_GAME(teamIdx, 34)
 
     'Print box top
     Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
@@ -348,7 +348,7 @@ Sub DISABLEPLAYERS (P9)
 
         Cls
         Print "TEAM ROSTER FOR ";
-        Color tmRat_GAME(P9, 33), tmRat_GAME(P9, 34): Print gameTeams$(P9)
+        Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34): Print gameTeams$(P9)
         Color 15, 0
         '-- Print "# NAME              POS GP"
         Print "# NAME              GP"
@@ -367,11 +367,11 @@ Sub DISABLEPLAYERS (P9)
             'Automatically disable "non-existent" players
             If players_GAME$(P9, I, 0) = "XXX" Then
                 plyrRat_GAME(P9, I, 18) = -1
-                Color tmRat_GAME(P9, 33), tmRat_GAME(P9, 34)
+                Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34)
             End If
 
             'Color players who have been disabled
-            If plyrRat_GAME(P9, I, 18) <> 0 Then Color tmRat_GAME(P9, 33), tmRat_GAME(P9, 34)
+            If plyrRat_GAME(P9, I, 18) <> 0 Then Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34)
 
             'Print player name
             Print players_GAME$(P9, I, 0);
@@ -397,7 +397,7 @@ Sub DISABLEPLAYERS (P9)
                     plyrRat_GAME(P9, I1, 18) = -1
                     DX% = DX% + 1
                     Locate 3 + I1, 3
-                    Color tmRat_GAME(P9, 33), tmRat_GAME(P9, 34): Print players_GAME$(P9, I1, 0)
+                    Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34): Print players_GAME$(P9, I1, 0)
                     Color 15, 0
                 Else
                     If plyrRat_GAME(P9, I1, 18) = -1 Then
@@ -484,13 +484,13 @@ Sub PBP ()
                 pbpBG(I) = pbpBG(I + 1)
             Next
 
-            pbpFG(8) = tmRat_GAME(P, 33)
-            pbpBG(8) = tmRat_GAME(P, 34)
+            pbpFG(8) = teamRat_GAME(P, 33)
+            pbpBG(8) = teamRat_GAME(P, 34)
 
         Else
 
-            pbpFG(nbrLines) = tmRat_GAME(P, 33)
-            pbpBG(nbrLines) = tmRat_GAME(P, 34)
+            pbpFG(nbrLines) = teamRat_GAME(P, 33)
+            pbpBG(nbrLines) = teamRat_GAME(P, 34)
 
         End If
 
@@ -2338,7 +2338,7 @@ Sub PlayStyle ()
 
             Print players_GAME$(P9, Z, 0);
             Locate Z + 3 - CV%, 3
-            Color tmRat_GAME(P9, 33), tmRat_GAME(P9, 34)
+            Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34)
             Print Left$(players_GAME$(P9, Z, 0), 12)
             Color 15, 0
 
@@ -2440,7 +2440,7 @@ Sub PlayStyle ()
 
             Print players_GAME$(P9, J, 0);
             Locate J + 3 - CV%, 3
-            Color tmRat_GAME(P9, 33), tmRat_GAME(P9, 34): Print Left$(players_GAME$(P9, J, 0), 12)
+            Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34): Print Left$(players_GAME$(P9, J, 0), 12)
             Color 15, 0
 
         Next
@@ -2566,7 +2566,7 @@ Sub PlayStyle ()
 
                 Print players_GAME$(P9, J, 0);
                 Locate J + 3 - CV%, 3
-                Color tmRat_GAME(P9, 33), tmRat_GAME(P9, 34): Print Left$(players_GAME$(P9, J, 0), 12)
+                Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34): Print Left$(players_GAME$(P9, J, 0), 12)
                 Color 15, 0
 
             End If
@@ -3382,7 +3382,7 @@ Sub SCOREBOARD ()
     'Team 1
     Locate 2, 1
     Locate , 9
-    Color tmRat_GAME(0, 33), tmRat_GAME(0, 34): Print gameTeams$(0);
+    Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0);
 
     'Game Clock - Minutes
     Color 15, 0
@@ -3399,7 +3399,7 @@ Sub SCOREBOARD ()
 
     'Team 2
     Locate 2, 56
-    Color tmRat_GAME(1, 33), tmRat_GAME(1, 34): Print gameTeams$(1)
+    Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1)
 
     'Score Team 1
     Color 14, 0
@@ -3452,9 +3452,9 @@ Sub SCOREBOARD ()
 
     'Team strategies / decisions
     Locate 8, 58
-    Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print "DEF - "; defStyleDesc$(defStyles(D))
+    Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print "DEF - "; defStyleDesc$(defStyles(D))
     Locate , 58
-    Color tmRat_GAME(P, 33), tmRat_GAME(P, 34): Print "OFF - "; offStyleDesc$(offStyles(P))
+    Color teamRat_GAME(P, 33), teamRat_GAME(P, 34): Print "OFF - "; offStyleDesc$(offStyles(P))
 
     Color 15, 0
 
@@ -3487,7 +3487,7 @@ Sub SCOREBOARD ()
 
     'Team 1 Overview
     Locate 17, 1
-    Color tmRat_GAME(0, 33), tmRat_GAME(0, 34): Print gameTeams$(0);
+    Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0);
 
     'Win/Loss record from current stats files
     Print Using " [##"; Z5(0);: Print "-";: Print Using "##]"; Z6(0)
@@ -3537,7 +3537,7 @@ Sub SCOREBOARD ()
 
     'Team 2 Overview
     Locate 17, 40
-    Color tmRat_GAME(1, 33), tmRat_GAME(1, 34): Print gameTeams$(1);
+    Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1);
 
     'Win/Loss record from current stats files
     Print Using " [##"; Z5(1);: Print "-";: Print Using "##]"; Z6(1)
@@ -3591,6 +3591,46 @@ Sub SCOREBOARD ()
     Color 7, 0
 
 End Sub
+
+
+'----------------------------------------
+'         ColorChange Subroutine
+'----------------------------------------
+'This routine checks to see if both teams
+'have conflicting primary colors. 
+'If so, it will substitute the secondary 
+'color with white/grey and reverse them.
+'In essence, it's the digital equivalent 
+'of assigning an alternate jersey color.
+Sub ColorChange ()
+
+    If teamRat_GAME(1, 33) = 15 And teamRat_GAME(1, 34) = 4 Then 
+        teamRat_GAME(1, 33) = 4
+        teamRat_GAME(1, 34) = 7
+    End If
+
+    If teamRat_GAME(1, 33) = 15 And teamRat_GAME(1, 34) = 1 Then 
+        teamRat_GAME(1, 33) = 1
+        teamRat_GAME(1, 34) = 7
+    End If
+
+    If teamRat_GAME(1, 33) = 0 And teamRat_GAME(1, 34) = 4 Then 
+        teamRat_GAME(1, 33) = 12
+        teamRat_GAME(1, 34) = 0
+    End If
+
+    If teamRat_GAME(1, 33) = 1 And teamRat_GAME(1, 34) = 7 Then 
+        teamRat_GAME(1, 33) = 15
+        teamRat_GAME(1, 34) = 1
+    End If
+
+    If teamRat_GAME(1, 33) = 4 And teamRat_GAME(1, 34) = 7 Then 
+        teamRat_GAME(1, 33) = 15
+        teamRat_GAME(1, 34) = 4
+    End If
+
+End Sub
+
 
 '----------------------------------------
 '        QUARTERTOTAL Subroutine
@@ -3813,20 +3853,20 @@ Sub SCOUTREPORT ()
     Locate 7, 32
 
     Print "SCOUTING REPORT"
-    Locate 8, 14: Color tmRat_GAME(0, 33), tmRat_GAME(0, 34): Print gameTeams$(0);
-    Locate , 52: Color tmRat_GAME(1, 33), tmRat_GAME(1, 34): Print gameTeams$(1)
+    Locate 8, 14: Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0);
+    Locate , 52: Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1)
     Color 0, 7
-    Locate , 18: Print Using "###           POINTS PER GAME         ###"; (tmRat_GAME(0, 6) * 2 + tmRat_GAME(0, 8) + tmRat_GAME(0, 18)) / tmRat_GAME(0, 0); (tmRat_GAME(1, 6) * 2 + tmRat_GAME(1, 8) + tmRat_GAME(1, 18)) / tmRat_GAME(1, 0)
-    Locate , 18: Print Using " ##             FIELD GOAL %           ##"; tmRat_GAME(0, 6) / tmRat_GAME(0, 5) * 100 + D1(1); tmRat_GAME(1, 6) / tmRat_GAME(1, 5) * 100 + D1(0)
-    Locate , 18: Print Using " ##             FREE THROW %           ##"; tmRat_GAME(0, 8) / tmRat_GAME(0, 7) * 100; tmRat_GAME(1, 8) / tmRat_GAME(1, 7) * 100
-    Locate , 18: Print Using " ##          REBOUNDS PER GAME         ##"; (tmRat_GAME(0, 9) + tmRat_GAME(0, 10)) / tmRat_GAME(0, 0); (tmRat_GAME(1, 9) + tmRat_GAME(1, 10)) / tmRat_GAME(1, 0)
-    Locate , 18: Print Using " ##      TURNOVERS FORCED PER GAME     ##"; tmRat_GAME(0, 29) / tmRat_GAME(0, 0); tmRat_GAME(1, 29) / tmRat_GAME(1, 0)
-    Locate , 18: Print Using " ##    TURNOVERS COMMITTED PER GAME    ##"; tmRat_GAME(0, 15) / tmRat_GAME(0, 0); tmRat_GAME(1, 15) / tmRat_GAME(1, 0)
-    Locate , 18: Print Using " ##          STEALS PER GAME           ##"; tmRat_GAME(0, 14) / tmRat_GAME(0, 0); tmRat_GAME(1, 14) / tmRat_GAME(1, 0)
-    Locate , 18: Print Using " ##      PERSONAL FOULS PER GAME       ##"; tmRat_GAME(0, 12) / tmRat_GAME(0, 0); tmRat_GAME(1, 12) / tmRat_GAME(1, 0)
-    Locate , 18: Print Using " ##          ASSISTS PER GAME          ##"; tmRat_GAME(0, 11) / tmRat_GAME(0, 0); tmRat_GAME(1, 11) / tmRat_GAME(1, 0)
-    Locate , 18: Print Using " ##          BLOCKS PER GAME           ##"; tmRat_GAME(0, 16) / tmRat_GAME(0, 0); tmRat_GAME(1, 16) / tmRat_GAME(1, 0)
-    Locate , 18: Print Using " ##             3 POINT FG%            ##"; tmRat_GAME(0, 18) / (tmRat_GAME(0, 17) + 1) * 100 + F%(1, 4); tmRat_GAME(1, 18) / (tmRat_GAME(1, 17) + 1) * 100 + F%(0, 4)
+    Locate , 18: Print Using "###           POINTS PER GAME         ###"; (teamRat_GAME(0, 6) * 2 + teamRat_GAME(0, 8) + teamRat_GAME(0, 18)) / teamRat_GAME(0, 0); (teamRat_GAME(1, 6) * 2 + teamRat_GAME(1, 8) + teamRat_GAME(1, 18)) / teamRat_GAME(1, 0)
+    Locate , 18: Print Using " ##             FIELD GOAL %           ##"; teamRat_GAME(0, 6) / teamRat_GAME(0, 5) * 100 + D1(1); teamRat_GAME(1, 6) / teamRat_GAME(1, 5) * 100 + D1(0)
+    Locate , 18: Print Using " ##             FREE THROW %           ##"; teamRat_GAME(0, 8) / teamRat_GAME(0, 7) * 100; teamRat_GAME(1, 8) / teamRat_GAME(1, 7) * 100
+    Locate , 18: Print Using " ##          REBOUNDS PER GAME         ##"; (teamRat_GAME(0, 9) + teamRat_GAME(0, 10)) / teamRat_GAME(0, 0); (teamRat_GAME(1, 9) + teamRat_GAME(1, 10)) / teamRat_GAME(1, 0)
+    Locate , 18: Print Using " ##      TURNOVERS FORCED PER GAME     ##"; teamRat_GAME(0, 29) / teamRat_GAME(0, 0); teamRat_GAME(1, 29) / teamRat_GAME(1, 0)
+    Locate , 18: Print Using " ##    TURNOVERS COMMITTED PER GAME    ##"; teamRat_GAME(0, 15) / teamRat_GAME(0, 0); teamRat_GAME(1, 15) / teamRat_GAME(1, 0)
+    Locate , 18: Print Using " ##          STEALS PER GAME           ##"; teamRat_GAME(0, 14) / teamRat_GAME(0, 0); teamRat_GAME(1, 14) / teamRat_GAME(1, 0)
+    Locate , 18: Print Using " ##      PERSONAL FOULS PER GAME       ##"; teamRat_GAME(0, 12) / teamRat_GAME(0, 0); teamRat_GAME(1, 12) / teamRat_GAME(1, 0)
+    Locate , 18: Print Using " ##          ASSISTS PER GAME          ##"; teamRat_GAME(0, 11) / teamRat_GAME(0, 0); teamRat_GAME(1, 11) / teamRat_GAME(1, 0)
+    Locate , 18: Print Using " ##          BLOCKS PER GAME           ##"; teamRat_GAME(0, 16) / teamRat_GAME(0, 0); teamRat_GAME(1, 16) / teamRat_GAME(1, 0)
+    Locate , 18: Print Using " ##             3 POINT FG%            ##"; teamRat_GAME(0, 18) / (teamRat_GAME(0, 17) + 1) * 100 + F%(1, 4); teamRat_GAME(1, 18) / (teamRat_GAME(1, 17) + 1) * 100 + F%(0, 4)
 
     I$ = GetKeyPress$
 
@@ -3879,13 +3919,13 @@ Sub SETUPRATINGS ()
         Next I1
 
         'Team FTM
-        tmRat_GAME(I, 8) = tmRat_GAME(I, 8) * FTF!
+        teamRat_GAME(I, 8) = teamRat_GAME(I, 8) * FTF!
         'Team FTA
-        tmRat_GAME(I, 7) = tmRat_GAME(I, 7) * FTF!
+        teamRat_GAME(I, 7) = teamRat_GAME(I, 7) * FTF!
         'Opp FTM
-        tmRat_GAME(I, 22) = tmRat_GAME(I, 22) * FTF!
+        teamRat_GAME(I, 22) = teamRat_GAME(I, 22) * FTF!
         'Opp FTA
-        tmRat_GAME(I, 21) = tmRat_GAME(I, 21) * FTF!
+        teamRat_GAME(I, 21) = teamRat_GAME(I, 21) * FTF!
 
         Select Case YR%(I)
 
@@ -3918,10 +3958,10 @@ Sub SETUPRATINGS ()
             Print
             Print "PLAY STYLE OF:"
             Print
-            Color 14: Print "(0) - ";: Color tmRat_GAME(0, 33), tmRat_GAME(0, 34): Print gameTeams$(0)
+            Color 14: Print "(0) - ";: Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0)
             Color , 0
             Print
-            Color 14: Print "(1) - ";: Color tmRat_GAME(1, 33), tmRat_GAME(1, 34): Print gameTeams$(1)
+            Color 14: Print "(1) - ";: Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1)
             Color , 0
             Print
             Color 14: Print "(2) - ";: Color 3: Print "MAKE NO ADJUSTMENT"
@@ -3938,7 +3978,7 @@ Sub SETUPRATINGS ()
             HM% = I
 
             'Adjust FGA / G for different eras; favors the team chosen
-            JX! = (tmRat_GAME(0, 5) + tmRat_GAME(0, 19) + tmRat_GAME(1, 5) + tmRat_GAME(1, 19)) * (leagRat_GAME(I, 1) / leagRat_GAME(1 - I, 1)) / ((tmRat_GAME(1, 0) + tmRat_GAME(0, 0)) * 2) * 2 - (leagRat_GAME(I, 1) + leagRat_GAME(I, 1)) / 2
+            JX! = (teamRat_GAME(0, 5) + teamRat_GAME(0, 19) + teamRat_GAME(1, 5) + teamRat_GAME(1, 19)) * (leagRat_GAME(I, 1) / leagRat_GAME(1 - I, 1)) / ((teamRat_GAME(1, 0) + teamRat_GAME(0, 0)) * 2) * 2 - (leagRat_GAME(I, 1) + leagRat_GAME(I, 1)) / 2
             JY = JX!
         
         End If
@@ -3946,7 +3986,7 @@ Sub SETUPRATINGS ()
     Else
 
         'Adjust FGA / G for both teams evenly
-        JX! = (tmRat_GAME(0, 5) + tmRat_GAME(0, 19)) / ((tmRat_GAME(1, 0) + tmRat_GAME(0, 0)) * 2) + (tmRat_GAME(1, 5) + tmRat_GAME(1, 19)) / ((tmRat_GAME(1, 0) + tmRat_GAME(0, 0)) * 2)
+        JX! = (teamRat_GAME(0, 5) + teamRat_GAME(0, 19)) / ((teamRat_GAME(1, 0) + teamRat_GAME(0, 0)) * 2) + (teamRat_GAME(1, 5) + teamRat_GAME(1, 19)) / ((teamRat_GAME(1, 0) + teamRat_GAME(0, 0)) * 2)
         JY = JX! * 2 - (leagRat_GAME(0, 1) + leagRat_GAME(1, 1)) / 2
 
         If playoffOpt = 1 Then JY = JY - 7
@@ -3957,47 +3997,47 @@ Sub SETUPRATINGS ()
     For I = 0 To 1
 
         '       FG % - League FG%
-        D1(I) = Int(tmRat_GAME(I, 20) / tmRat_GAME(I, 19) * 100 + .5) - leagRat_GAME(I, 3)
+        D1(I) = Int(teamRat_GAME(I, 20) / teamRat_GAME(I, 19) * 100 + .5) - leagRat_GAME(I, 3)
 
         '1440 - ((Team FGA / G + Opp FGA / Game) * 2)
         '1440 = 24 * 60 (seconds in a half
-        X7(I) = 1440 - ((tmRat_GAME(I, 5) / tmRat_GAME(I, 0)) + (tmRat_GAME(I, 19) / tmRat_GAME(I, 0))) * 2
+        X7(I) = 1440 - ((teamRat_GAME(I, 5) / teamRat_GAME(I, 0)) + (teamRat_GAME(I, 19) / teamRat_GAME(I, 0))) * 2
         X7(I) = X7(I) / 25
 
         ' ???
-        F7%(I, 5) = Int(((tmRat_GAME(I, 5) + tmRat_GAME(I, 19)) / (tmRat_GAME(I, 0) * 2)) + .5)
+        F7%(I, 5) = Int(((teamRat_GAME(I, 5) + teamRat_GAME(I, 19)) / (teamRat_GAME(I, 0) * 2)) + .5)
 
         '(Def TOs - Off Steals) / Game / (adjustment) - TOF%
-        F7%(I, 0) = Int(((tmRat_GAME(I, 28) / tmRat_GAME(I, 0)) / (X7(I) * 5) * 1000) + .5) - 41
+        F7%(I, 0) = Int(((teamRat_GAME(I, 28) / teamRat_GAME(I, 0)) / (X7(I) * 5) * 1000) + .5) - 41
 
         '(Off TOs - Def Steals) / Game  / (adjustment)
-        F7%(I, 1) = Int(((tmRat_GAME(I, 15) - tmRat_GAME(I, 28)) / tmRat_GAME(I, 0)) / (X7(I) * 5) * 1000 + .5)
+        F7%(I, 1) = Int(((teamRat_GAME(I, 15) - teamRat_GAME(I, 28)) / teamRat_GAME(I, 0)) / (X7(I) * 5) * 1000 + .5)
 
         '(Def TOs - Off Steals) / Game / (adjustment) - TOF%
-        F7%(I, 2) = Int(((tmRat_GAME(I, 29) - tmRat_GAME(I, 14)) / tmRat_GAME(I, 0)) / (X7(I) * 5) * 1000 + .5) - TOF%(I)
+        F7%(I, 2) = Int(((teamRat_GAME(I, 29) - teamRat_GAME(I, 14)) / teamRat_GAME(I, 0)) / (X7(I) * 5) * 1000 + .5) - TOF%(I)
 
         'Def 3FGA
-        If tmRat_GAME(I, 31) > 0 Then
+        If teamRat_GAME(I, 31) > 0 Then
             'Def 3FGA% - League 3FGA%
-            F7%(I, 4) = Int(tmRat_GAME(I, 32) / tmRat_GAME(I, 31) * 100 + .5) - leagRat_GAME(I, 5)
+            F7%(I, 4) = Int(teamRat_GAME(I, 32) / teamRat_GAME(I, 31) * 100 + .5) - leagRat_GAME(I, 5)
         End If
 
-        If tmRat_GAME(I, 31) = 0 Then
+        If teamRat_GAME(I, 31) = 0 Then
             F7%(I, 4) = 0 - leagRat_GAME(I, 5)
         End If
 
         'FGM / Game
-        F7%(I, 6) = Int(tmRat_GAME(I, 6) / tmRat_GAME(I, 0) + .5)
+        F7%(I, 6) = Int(teamRat_GAME(I, 6) / teamRat_GAME(I, 0) + .5)
 
         '(Opp FTA - Opp FGM)/10 - 7.9 * Games Played
-        X3! = (tmRat_GAME(I, 21) - tmRat_GAME(I, 20) * .1) - 7.9 * tmRat_GAME(I, 0)
+        X3! = (teamRat_GAME(I, 21) - teamRat_GAME(I, 20) * .1) - 7.9 * teamRat_GAME(I, 0)
         X3! = X3! / 2
 
         'X3! / (Opp FGA + X3!) - PF%
-        F7%(I, 3) = Int(X3! / (tmRat_GAME(I, 19) + X3!) * 100 + .5) - PF%(I)
+        F7%(I, 3) = Int(X3! / (teamRat_GAME(I, 19) + X3!) * 100 + .5) - PF%(I)
 
         'Off Assists / FGM
-        F7%(I, 7) = Int(tmRat_GAME(I, 11) / tmRat_GAME(I, 6) * 100 + .5)
+        F7%(I, 7) = Int(teamRat_GAME(I, 11) / teamRat_GAME(I, 6) * 100 + .5)
 
     Next
 
@@ -4028,7 +4068,7 @@ Sub SETUPRATINGS ()
                 X3! = plyrRat_GAME(I, I1, 7) / plyrRat_GAME(I, I1, 1) * 48
 
                 'Opp Reb / 29.3 Mins / (Avg Reb / G * .677) * ( (Team FGA + Opp FGA) / (Games Played * 2) / Avg FGA/G )
-                X3! = X3! * 29.3 / (leagRat_GAME(I, 2) * .677) * ((tmRat_GAME(I, 5) + tmRat_GAME(I, 19)) / (tmRat_GAME(I, 0) * 2) / leagRat_GAME(I, 1))
+                X3! = X3! * 29.3 / (leagRat_GAME(I, 2) * .677) * ((teamRat_GAME(I, 5) + teamRat_GAME(I, 19)) / (teamRat_GAME(I, 0) * 2) / leagRat_GAME(I, 1))
                 X3! = Int(X3! * 10 + .5)
 
                 gameRatings!(I, I1, 2) = X3!
@@ -4038,7 +4078,7 @@ Sub SETUPRATINGS ()
 
                 'Off Reb * 14 / (Avg Reb / G * .323) * ( (Team FGA + Opp FGA) / (Games Played * 2) / Avg FGA/G )
                 'Off Reb / Game * 14 Players * (Avg Games / Reb) * Expected FGA / Game)
-                X3! = X3! * 14 / (leagRat_GAME(I, 2) * .323) * ((tmRat_GAME(I, 5) + tmRat_GAME(I, 19)) / (tmRat_GAME(I, 0) * 2) / leagRat_GAME(I, 1))
+                X3! = X3! * 14 / (leagRat_GAME(I, 2) * .323) * ((teamRat_GAME(I, 5) + teamRat_GAME(I, 19)) / (teamRat_GAME(I, 0) * 2) / leagRat_GAME(I, 1))
                 X3! = Int(X3! * 10 + .5)
 
                 gameRatings!(I, I1, 21) = X3!
@@ -4049,7 +4089,7 @@ Sub SETUPRATINGS ()
                 gameRatings!(I, I1, 25) = Int(X3! * 10 + .5)
 
                 '(Player Assists / Game) * 26  * (Games Played / Team Assists)
-                X3! = X3! * 26 * tmRat_GAME(I, 0) / tmRat_GAME(I, 11)
+                X3! = X3! * 26 * teamRat_GAME(I, 0) / teamRat_GAME(I, 11)
                 gameRatings!(I, I1, 4) = Int(X3! * 10 + .5)
 
                 '### STEALS ###
@@ -4062,7 +4102,7 @@ Sub SETUPRATINGS ()
                 gameRatings!(I, I1, 6) = plyrRat_GAME(I, I1, 12) / plyrRat_GAME(I, I1, 1) * 48
 
                 '(Player Blocks / Game) / (((Opp FGA - Opp 3FGA - Team FGM + Team 3FGM) / Games Played) / 5)
-                gameRatings!(I, I1, 6) = gameRatings!(I, I1, 6) / ((tmRat_GAME(I, 19) - tmRat_GAME(I, 31) - tmRat_GAME(I, 20) + tmRat_GAME(I, 32)) / tmRat_GAME(I, 0) / 5)
+                gameRatings!(I, I1, 6) = gameRatings!(I, I1, 6) / ((teamRat_GAME(I, 19) - teamRat_GAME(I, 31) - teamRat_GAME(I, 20) + teamRat_GAME(I, 32)) / teamRat_GAME(I, 0) / 5)
                 gameRatings!(I, I1, 6) = Int(gameRatings!(I, I1, 6) * .93 * 100 + .5)
 
                 'Player FTA - Player FGM - 1.58 * Player Mins / Game
@@ -4124,9 +4164,9 @@ Sub SETUPRATINGS ()
 
     For I = 0 To 1
         'Tm FGA + Opp FGA + Off Reb + Team Reb / (Games Played * 2)
-        M9!(I) = (tmRat_GAME(I, 5) + tmRat_GAME(I, 19) + tmRat_GAME(I, 9) + tmRat_GAME(I, 10)) / (tmRat_GAME(I, 0) * 2)
+        M9!(I) = (teamRat_GAME(I, 5) + teamRat_GAME(I, 19) + teamRat_GAME(I, 9) + teamRat_GAME(I, 10)) / (teamRat_GAME(I, 0) * 2)
         'ADD Opp Off Reb + Opp Def Reb + Team Fouls + Opp Fouls / (Games Played * 2)
-        M9!(I) = M9!(I) + (tmRat_GAME(I, 23) + tmRat_GAME(I, 24) + tmRat_GAME(I, 12) + tmRat_GAME(I, 26)) / (tmRat_GAME(I, 0) * 2)
+        M9!(I) = M9!(I) + (teamRat_GAME(I, 23) + teamRat_GAME(I, 24) + teamRat_GAME(I, 12) + teamRat_GAME(I, 26)) / (teamRat_GAME(I, 0) * 2)
         '               * 2 - (League FGA/G + League Reb/G + League PF/G)
         M9!(I) = M9!(I) * 2 - (leagRat_GAME(I, 1) + leagRat_GAME(I, 2) + leagRat_GAME(I, 4))
     Next I
@@ -4190,10 +4230,10 @@ Sub ChangeContributions
             Cls
             Print "EDIT CONTRIBUTION PERCENTAGES OF PLAYERS FROM:"
             Print
-            Color 14: Print "(0) - ";: Color tmRat_GAME(0, 33), tmRat_GAME(0, 34)
+            Color 14: Print "(0) - ";: Color teamRat_GAME(0, 33), teamRat_GAME(0, 34)
             Print gameTeams$(0): Color , 0
             Print
-            Color 14: Print "(1) - ";: Color tmRat_GAME(1, 33), tmRat_GAME(1, 34)
+            Color 14: Print "(1) - ";: Color teamRat_GAME(1, 33), teamRat_GAME(1, 34)
             Print gameTeams$(1)
             Color , 0
             Print
@@ -4226,7 +4266,7 @@ Sub ChangeContributions
 
                     Locate 2, 1
                     Print "CONTRIBUTION RATINGS FOR ";
-                    Color tmRat_GAME(I, 33), tmRat_GAME(I, 34): Print gameTeams$(I)
+                    Color teamRat_GAME(I, 33), teamRat_GAME(I, 34): Print gameTeams$(I)
                     Color 15, 0
                     Print
                     Print " #  PLAYER-POS         CX"
@@ -4685,14 +4725,14 @@ Sub LINEUPS ()
 
     Cls
 
-    Color tmRat_GAME(P9, 33), tmRat_GAME(P9, 34): Print gameTeams$(P9);
+    Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34): Print gameTeams$(P9);
 
     Color 15, 0
     Print " TEAM ROSTER   COACH: "; gameCoach$(P9); "     ";
     Print "  RECORD: ";
-    Print Using "##"; tmRat_GAME(P9, 1) + tmRat_GAME(P9, 3);
+    Print Using "##"; teamRat_GAME(P9, 1) + teamRat_GAME(P9, 3);
     Print "-";
-    Print Using "##"; tmRat_GAME(P9, 2) + tmRat_GAME(P9, 4)
+    Print Using "##"; teamRat_GAME(P9, 2) + teamRat_GAME(P9, 4)
 
     Color 14
     Print "# NAME         PS GP MG FG 3FG %3A FT  ORB  DRB  A  S  B CX CN PT F  FC  PPG"
@@ -5165,9 +5205,9 @@ Sub UPDATESCREEN ()
 
         'Team Play Styles
         Locate 8, 58
-        Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print "DEF - "; defStyleDesc$(defStyles(D))
+        Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print "DEF - "; defStyleDesc$(defStyles(D))
         Locate , 58
-        Color tmRat_GAME(P, 33), tmRat_GAME(P, 34): Print "OFF - "; offStyleDesc$(offStyles(P))
+        Color teamRat_GAME(P, 33), teamRat_GAME(P, 34): Print "OFF - "; offStyleDesc$(offStyles(P))
 
         Color 15, 0
         Locate , 41: Color 14: Print "(1) ";
@@ -5699,7 +5739,7 @@ Sub ScoreSummary ()
 
     For I = 0 To 1:
         Locate 5 + I,
-        Color tmRat_GAME(I, 33), tmRat_GAME(I, 34)
+        Color teamRat_GAME(I, 33), teamRat_GAME(I, 34)
         Print gameTeams$(I);
 
         Color 15, 0
@@ -5745,7 +5785,7 @@ Sub STATS2SCREEN
 
         Cls
 
-        Color tmRat_GAME(I, 33), tmRat_GAME(I, 34)
+        Color teamRat_GAME(I, 33), teamRat_GAME(I, 34)
         Print gameTeams$(I)
 
         Color 14, 0
@@ -5945,9 +5985,9 @@ Sub SAVESTATS ()
             Print
             Color 14: Print "(0) ";: Color 15: Print "BOTH TEAMS"
             Print
-            Color 14: Print "(1) ";: Color tmRat_GAME(0, 33), tmRat_GAME(0, 34): Print gameTeams$(0); " ONLY"
+            Color 14: Print "(1) ";: Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0); " ONLY"
             Color , 0: Print
-            Color 14: Print "(2) ";: Color tmRat_GAME(1, 33), tmRat_GAME(1, 34): Print gameTeams$(1); " ONLY"
+            Color 14: Print "(2) ";: Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1); " ONLY"
             Color , 0: Print
 
             Do
@@ -6430,7 +6470,7 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
 
                     Do
                         Locate 2, 33
-                        Color tmRat_GAME(gameIdx, 33), tmRat_GAME(gameIdx, 34): Print gameTeams$(gameIdx)
+                        Color teamRat_GAME(gameIdx, 33), teamRat_GAME(gameIdx, 34): Print gameTeams$(gameIdx)
 
                         Color 15, 4
                         Locate 3, 32: Print "ANY CHANGE? (Y/N)";
@@ -6547,7 +6587,7 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx)
     Next
 
     For I = 0 To 34
-        tmRat_GAME(gameIdx, I) = CVI(Q$(I + 10))
+        teamRat_GAME(gameIdx, I) = CVI(Q$(I + 10))
     Next
 
     For I = 0 To 14

@@ -186,10 +186,10 @@ Sub PROHOOP ()
             Print "(1) ";: Color 15: Print playMode$(playerOpt)
             Locate 3, 2: Color 14
             Print "(2) ";: Color 15: Print "VISITING TEAM: ";
-            Color tmRat_GAME(0, 33), tmRat_GAME(0, 34): Print gameTeams$(0)
+            Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0)
             Locate 4, 2: Color 14, 0
             Print "(3) ";: Color 15: Print "HOME TEAM: ";
-            Color tmRat_GAME(1, 33), tmRat_GAME(1, 34): Print gameTeams$(1)
+            Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1)
             Locate 5, 2: Color 14, 0
             Print "(4) ";: Color 15: Print "GAME LOCATION: "; location$(gameLoc)
             Locate 6, 2: Color 14
@@ -516,7 +516,7 @@ Sub PROHOOP ()
             If pbpDelay! <> 0 Then
                 pbpString$ = " GETS THE JUMP"
                 Call WINDEX
-                Color tmRat_GAME(jumpBall, 33), tmRat_GAME(jumpBall, 34): Print gameTeams$(jumpBall);
+                Color teamRat_GAME(jumpBall, 33), teamRat_GAME(jumpBall, 34): Print gameTeams$(jumpBall);
                 Color 15, 0
                 Print pbpString$
                 Call DELAY
@@ -531,7 +531,7 @@ Sub PROHOOP ()
             If pbpDelay! <> 0 Then
                 pbpString$ = " INBOUNDS THE BALL"
                 Call WINDEX
-                Color tmRat_GAME(jumpBall, 33), tmRat_GAME(jumpBall, 34): Print gameTeams$(jumpBall);
+                Color teamRat_GAME(jumpBall, 33), teamRat_GAME(jumpBall, 34): Print gameTeams$(jumpBall);
                 Color 15, 0
                 Print pbpString$
                 Call DELAY
@@ -1294,7 +1294,7 @@ Sub PROHOOP ()
     If pbpOpt = 1 And pbpDelay! <> 0 Then
         Call WINDEX
         Print "TURNOVER BY ";
-        Color tmRat_GAME(P, 33), tmRat_GAME(P, 34): Print gameTeams$(P)
+        Color teamRat_GAME(P, 33), teamRat_GAME(P, 34): Print gameTeams$(P)
         Call DELAY
         Color 15, 0
     End If
@@ -1500,7 +1500,7 @@ Sub PROHOOP ()
         If pbpOpt = 1 Then
             Call WINDEX
             Print "PASS TO "; players_GAME$(P, gameB1!(P, ballCarrier), 0); " OF ";
-            Color tmRat_GAME(P, 33), tmRat_GAME(P, 34)
+            Color teamRat_GAME(P, 33), teamRat_GAME(P, 34)
             Print gameTeams$(P)
             Color 15, 0
         End If
@@ -1708,7 +1708,7 @@ Sub PROHOOP ()
                         'pbpOpt = 1
                         If pbpDelay! <> 0 Then
                             Call WINDEX
-                            Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print gameTeams$(D);
+                            Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print gameTeams$(D);
                             Color 15, 0
                             Print " IS PRESSING"
                             Call DELAY
@@ -2114,7 +2114,7 @@ Sub PROHOOP ()
 
             If pbpOpt = 1 And pbpDelay! <> 0 Then
                 Call WINDEX
-                Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print gameTeams$(D);
+                Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print gameTeams$(D);
                 Color 15, 0: Print " IS PRESSING"
                 Call DELAY
             End If
@@ -2214,7 +2214,7 @@ Sub PROHOOP ()
 
         If pbpOpt = 1 And pbpDelay! <> 0 Then
             Locate 9, 1
-            Color tmRat_GAME(D, 33), tmRat_GAME(D, 34)
+            Color teamRat_GAME(D, 33), teamRat_GAME(D, 34)
             Print gameTeams$(D);: Color 15, 0
             Print " BALL AFTER SCORE"
             Call DELAY
@@ -2273,7 +2273,7 @@ Sub PROHOOP ()
                 'pbpOpt = 1
                 If pbpDelay! <> 0 Then
                     Call WINDEX
-                    Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print gameTeams$(D);
+                    Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print gameTeams$(D);
                     Color 15, 0
                     Print " IS PRESSING"
                     Call DELAY
@@ -2396,7 +2396,7 @@ Sub PROHOOP ()
         Else
 
             Call WINDEX
-            Color tmRat_GAME(P, 33), tmRat_GAME(P, 34): Print gameTeams$(P)
+            Color teamRat_GAME(P, 33), teamRat_GAME(P, 34): Print gameTeams$(P)
             Color 15, 0
 
             Print "1 FT: "; players_GAME$(P, gameB1!(P, ballCarrier), 0); " "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
@@ -2415,7 +2415,7 @@ Sub PROHOOP ()
             Call PBP
         Else
             Call WINDEX
-            Color tmRat_GAME(P, 33), tmRat_GAME(P, 34): Print gameTeams$(P)
+            Color teamRat_GAME(P, 33), teamRat_GAME(P, 34): Print gameTeams$(P)
             Color 15, 0
             Print "1 FT: "; players_GAME$(P, gameB1!(P, ballCarrier), 0); " "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
         End If
@@ -2497,7 +2497,7 @@ Sub PROHOOP ()
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
                 Call WINDEX
-                Color tmRat_GAME(D, 33), tmRat_GAME(D, 34)
+                Color teamRat_GAME(D, 33), teamRat_GAME(D, 34)
                 Print gameTeams$(D);: Color 15, 0
                 Print " IS PRESSING"
                 Call DELAY
@@ -2603,7 +2603,7 @@ Sub PROHOOP ()
             'pbpOpt = 1
             If pbpDelay! <> 0 Then
                 Call WINDEX
-                Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print gameTeams$(D);
+                Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print gameTeams$(D);
                 Color 15, 0: Print " IS PRESSING"
                 Call DELAY
             End If
@@ -2745,7 +2745,7 @@ Sub PROHOOP ()
 
         If pbpOpt = 1 And pbpDelay! <> 0 Then
             Call WINDEX
-            Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print gameTeams$(D);
+            Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print gameTeams$(D);
             Color 15, 0
             Print " IS PRESSING"
             Call DELAY
@@ -3054,7 +3054,7 @@ Sub PROHOOP ()
                             'pbpOpt = 1
                             If pbpDelay! <> 0 Then
                                 Call WINDEX
-                                Color tmRat_GAME(D, 33), tmRat_GAME(D, 34): Print gameTeams$(D);
+                                Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print gameTeams$(D);
                                 Color 15, 0: Print " IS PRESSING"
                                 Call DELAY
                             End If
