@@ -1,6 +1,6 @@
 $Debug
 
-Const GAME_VERSION$ = "4.37"
+Const GAME_VERSION$ = "4.38"
 Const MAX_SCHEDULE_GAMES = 1500
 Const MAX_TEAMS = 1000
 Const MAX_FILES = 10240
