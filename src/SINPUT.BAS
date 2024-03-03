@@ -14,6 +14,7 @@ Sub EditStats ()
     Dim statPlyrNames$(14)
     Dim inputZ2!(0 To 14, 0 To 13)
 
+    teamNbr = 0
     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
     statFile$ = nameStatFile$(team$)
 

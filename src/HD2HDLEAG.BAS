@@ -23,6 +23,7 @@ Sub HD2HDLEAG ()
 
     Dim Z2$(TEAMS_PER_CONFERENCE)
 
+    teamNbr = 0
     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
     statFile$ = nameStatFile$(team$)
 

@@ -416,6 +416,8 @@ Sub PROHOOP ()
 
     Call LOADSTATS
 
+    If teamRat_GAME(0, 33) = teamRat_GAME(1, 33) And teamRat_GAME(0, 34) = teamRat_GAME(1, 34) Then Call ColorChange
+
     If autoPlay = 1 Then gameLoc = NG%(2)
 
     'Determine attendance
@@ -1634,6 +1636,13 @@ Sub PROHOOP ()
 
     Select Case UCase$(I$)
 
+        Case "B"
+            Call BOXOPTIONS(0)
+            Call SCOREBOARD
+
+        Case "O"
+            Call OPTIONS
+
         Case "S"
             Call SCOUTREPORT
 
@@ -1643,23 +1652,29 @@ Sub PROHOOP ()
         Case "Q"
             Exit Sub
 
-        Case "O"
-            Call OPTIONS
-
         Case "Z", "/"
             Call CHANGESTRATEGY(I$)
 
     End Select
 
-    If Val(I$) = 3 And (playerMode = 0 Or playerMode = 1 And P = compTeam) And quarter >= 4 And gameClock! < 240 Then P6 = 3
-    If Val(I$) = 2 And (playerMode = 0 Or playerMode = 1 And D = compTeam) And timeouts(P) > 0 Then P6 = 2
+    If Val(I$) = 3 And (playerMode = 0 Or playerMode = 1 And P = compTeam) And quarter >= 4 And gameClock! < 240 Then 
+        P6 = 3
+    End If
+
+    If Val(I$) = 2 And (playerMode = 0 Or playerMode = 1 And D = compTeam) And timeouts(P) > 0 Then 
+        P6 = 2
+    End If
 
     P3 = P6
 
-    If P6 = 2 And timeouts(P) = 0 Then 530
-    If P6 = 3 And quarter < 4 Or P6 = 3 And playerMode = 1 And D = compTeam Then 530
-    If P6 = 3 And quarter = 4 And gameClock! > 240 Then 530
-    If (P6 = 1 Or P6 = 4) And PZ% = 4 Then P6 = 4
+    If (P6 = 2 And timeouts(P) = 0) Or (P6 = 3 And quarter = 4 And gameClock! > 240) Or (P6 = 3 And quarter < 4) Or (P6 = 3 And playerMode = 1 And D = compTeam) Then 
+        'Take shot with no timeous | Timeout with more than 4 mins left | Timeout before Q4 | Timeout with PC on Defense
+        GoTo 530
+    End If
+
+    If (P6 = 1 Or P6 = 4) And PZ% = 4 Then 
+        P6 = 4
+    End If
 
     caseVar = P6 + 1
 
@@ -2319,7 +2334,7 @@ Sub PROHOOP ()
                 Call d100(RN1)
 
                 Select Case RN1
-                    Case 1 To 10: pbpString$ = players_GAME$(D, gameB1!(D, rndDef), 0) + " STUFFS THE SHoffTotals!!"
+                    Case 1 To 10: pbpString$ = players_GAME$(D, gameB1!(D, rndDef), 0) + " STUFFS THE SHOT!!"
                     Case 11 To 15: pbpString$ = "DENIED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
                     Case 16 To 20: pbpString$ = "ERASED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
                     Case 21 To 25: pbpString$ = "EXPUNGED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"

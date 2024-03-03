@@ -182,7 +182,7 @@ Sub DoTheInput (action%)
 
             '2 = CHANGE OR EDIT AN EXISTING TEAM
         Case 2:
-
+            teamNbr = 0
             Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
             If teamNbr <> 0 Then
@@ -192,7 +192,7 @@ Sub DoTheInput (action%)
 
             '3 = PRINT A TEAM ROSTER
         Case 3:
-
+            teamNbr = 0
             Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
             If teamNbr <> 0 Then
@@ -201,7 +201,7 @@ Sub DoTheInput (action%)
 
             '4 = VIEW A TEAM ROSTER
         Case 4:
-
+            teamNbr = 0
             Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
             If teamNbr <> 0 Then

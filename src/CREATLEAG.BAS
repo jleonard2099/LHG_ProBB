@@ -262,6 +262,7 @@ Sub ReviewEditLeague (league$, div1$, div2$, div3$, div4$)
 
             If choice = 1 Then
                 'Add team
+                teamNbr = 0
                 Call ChooseTeam(memberYears$(B), NTMS, intZ1%(B), memberTeams$(B))
             Else
                 'Remove team
