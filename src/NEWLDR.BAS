@@ -10,7 +10,7 @@ Sub NEWLDR ()
 
     ReDim menuChoices$(1 To 5)
 
-    Dim printOrView%
+    Dim printOrView
 
     Shared HLL(), HWW()
     Shared LL(), LLS()
@@ -57,7 +57,7 @@ Sub NEWLDR ()
 
         If ExitCode% <> 27 Then
 
-            printOrView% = 0
+            printOrView = 0
 
             Select Case Selection%
 
@@ -90,7 +90,7 @@ Sub NEWLDR ()
 
                     If FileExit% <> 27 And FileExit% <> 0 Then
                         Call READLEADER(leaderFile$, JB, TS, TTS)
-                        Call ExpandedLeaders_Menu (printOrView%, JB, TS, TTS)
+                        Call ExpandedLeaders_Menu (printOrView, JB, TS, TTS)
                     End If
 
                 Case 3:
@@ -140,13 +140,13 @@ End Sub
 'orized menu to use for reviewing them
 Sub ViewExpandedStats ()
 
-    Dim printOrView%
+    Dim printOrView
 
     Shared div1$, div2$, div3$, div4$, league$
 
     Shared statsZ1$()
 
-    printOrView% = 0
+    printOrView = 0
 
     For X = 1 To TEAMS_PER_CONFERENCE
         statsZ1$(X) = "XXX"
@@ -472,7 +472,7 @@ End Sub
 'menu for viewing expanded leaders. It then
 'relies on various subroutines for the end
 'user display of those statistics.
-Sub ExpandedLeaders_Menu  (printOrView%, JB, plyrTotalStats, teamTotalStats)
+Sub ExpandedLeaders_Menu  (printOrView, JB, plyrTotalStats, teamTotalStats)
 
     ReDim menuChoices$(1 To 3)
 
@@ -507,10 +507,10 @@ Sub ExpandedLeaders_Menu  (printOrView%, JB, plyrTotalStats, teamTotalStats)
             Select Case Selection%
 
                 Case 1:
-                    Call ViewIndividualLeaders(printOrView%, JB)
+                    Call ViewIndividualLeaders(printOrView, JB)
 
                 Case 2:
-                    Call ViewTeamLeaders(printOrView%, plyrTotalStats, teamTotalStats)
+                    Call ViewTeamLeaders(printOrView, plyrTotalStats, teamTotalStats)
 
             End Select
 
@@ -525,7 +525,7 @@ End Sub
 '    ViewIndividualLeaders Subroutine
 '----------------------------------------
 '... explain here ...
-Sub ViewIndividualLeaders (printOrView%, JB)
+Sub ViewIndividualLeaders (printOrView, JB)
 
     Shared plyrStatLeaders!()
     Shared GM!(), GM1!()
@@ -584,6 +584,7 @@ Sub ViewIndividualLeaders (printOrView%, JB)
             Locate , 23: Input "SELECT NUMBER TO VIEW"; B9
 
             stpl = 0
+            newCategory = 0
 
             Select Case B9
 
@@ -624,255 +625,259 @@ Sub ViewIndividualLeaders (printOrView%, JB)
 
         If B9 <> 31 Then
 
-            Call SortOptions(JB, ZZ, printOrView%, sortType%)
+            Call SortOptions(printOrView, sortType, newCategory)
 
-            Cls
+            If newCategory = 0  Then
 
-            PPP = 0
+                Cls
 
-            Select Case B9
+                PPP = 0
 
-                Case 0, 2 To 3, 8 To 9, 13 To 14, 16, 18 To 22:
+                Select Case B9
 
-                    For I = 1 To JB
+                    Case 0, 2 To 3, 8 To 9, 13 To 14, 16, 18 To 22:
 
-                        If plyrStatLeaders!(I, X) <> 0 Then
-                            PPP = PPP + 1
-                            Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = plyrStatLeaders!(I, X)
-                        End If
+                        For I = 1 To JB
 
-                    Next I
+                            If plyrStatLeaders!(I, X) <> 0 Then
+                                PPP = PPP + 1
+                                Locate 1, 5: Print "CHANGING PLAYER "; PPP
+                                TPP$(PPP) = AL$(I)
+                                TMM$(PPP) = TMA$(I)
+                                TYP!(PPP) = plyrStatLeaders!(I, X)
+                            End If
 
-                    Call SortPlayer(PPP, stpl, sortType%)
-                    TVN = 1
+                        Next I
 
-                Case 1:
+                        Call SortPlayer(PPP, stpl, sortType)
+                        TVN = 1
 
-                    For I = 1 To JB
+                    Case 1:
 
-                        If plyrStatLeaders!(I, X) <> 0 Then
-                            PPP = PPP + 1
-                            Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (plyrStatLeaders!(I, X) + 30) / 60
-                        End If
+                        For I = 1 To JB
 
-                    Next I
+                            If plyrStatLeaders!(I, X) <> 0 Then
+                                PPP = PPP + 1
+                                Locate 1, 5: Print "CHANGING PLAYER "; PPP
+                                TPP$(PPP) = AL$(I)
+                                TMM$(PPP) = TMA$(I)
+                                TYP!(PPP) = (plyrStatLeaders!(I, X) + 30) / 60
+                            End If
 
-                    Call SortPlayer(PPP, stpl, sortType%)
-                    TVN = 1
+                        Next I
 
-                Case 4:
+                        Call SortPlayer(PPP, stpl, sortType)
+                        TVN = 1
 
-                    For I = 1 To JB
+                    Case 4:
 
-                        If plyrStatLeaders!(I, X) >= GMA!(I) * 3.65 Then
-                            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = plyrStatLeaders!(I, X) / plyrStatLeaders!(I, X1)
-                        End If
+                        For I = 1 To JB
 
-                    Next I
+                            If plyrStatLeaders!(I, X) >= GMA!(I) * 3.65 Then
+                                PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+                                TPP$(PPP) = AL$(I)
+                                TMM$(PPP) = TMA$(I)
+                                TYP!(PPP) = plyrStatLeaders!(I, X) / plyrStatLeaders!(I, X1)
+                            End If
 
-                    Call SortPlayer(PPP, stpl, sortType%)
-                    TVN = 2
-                    Call DisplayLeaders(TVN, QW, B9)
+                        Next I
 
-                Case 5:
+                        Call SortPlayer(PPP, stpl, sortType)
+                        TVN = 2
+                        Call DisplayLeaders(TVN, QW, B9)
 
-                    For I = 1 To JB
+                    Case 5:
 
-                        If W0L!(I) <> 0 Then
-                            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = W0L!(I)
-                        End If
+                        For I = 1 To JB
 
-                    Next I
+                            If W0L!(I) <> 0 Then
+                                PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+                                TPP$(PPP) = AL$(I)
+                                TMM$(PPP) = TMA$(I)
+                                TYP!(PPP) = W0L!(I)
+                            End If
 
-                    Call SortPlayer(PPP, stpl, sortType%)
-                    TVN = 1
+                        Next I
 
-                Case 6:
+                        Call SortPlayer(PPP, stpl, sortType)
+                        TVN = 1
 
-                    For I = 1 To JB
+                    Case 6:
 
-                        If W1L!(I) <> 0 Then
-                            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = W1L!(I)
-                        End If
+                        For I = 1 To JB
 
-                    Next I
+                            If W1L!(I) <> 0 Then
+                                PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+                                TPP$(PPP) = AL$(I)
+                                TMM$(PPP) = TMA$(I)
+                                TYP!(PPP) = W1L!(I)
+                            End If
 
-                    Call SortPlayer(PPP, stpl, sortType%)
-                    TVN = 1
+                        Next I
 
-                Case 7:
+                        Call SortPlayer(PPP, stpl, sortType)
+                        TVN = 1
 
-                    For I = 1 To JB
+                    Case 7:
 
-                        If W0L!(I) >= GMA!(I) * .3 Then
-                            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = W0L!(I) / W1L!(I)
-                        End If
+                        For I = 1 To JB
 
-                    Next I
+                            If W0L!(I) >= GMA!(I) * .3 Then
+                                PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+                                TPP$(PPP) = AL$(I)
+                                TMM$(PPP) = TMA$(I)
+                                TYP!(PPP) = W0L!(I) / W1L!(I)
+                            End If
 
-                    Call SortPlayer(PPP, stpl, sortType%)
-                    TVN = 2
+                        Next I
 
-                Case 10
+                        Call SortPlayer(PPP, stpl, sortType)
+                        TVN = 2
 
-                    For I = 1 To JB
+                    Case 10
 
-                        If plyrStatLeaders!(I, X) >= GMA!(I) * 1.52 Then
-                            PPP = PPP + 1
-                            Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = plyrStatLeaders!(I, X) / plyrStatLeaders!(I, X1)
-                        End If
+                        For I = 1 To JB
 
-                    Next I
+                            If plyrStatLeaders!(I, X) >= GMA!(I) * 1.52 Then
+                                PPP = PPP + 1
+                                Locate 1, 5: Print "CHANGING PLAYER "; PPP
+                                TPP$(PPP) = AL$(I)
+                                TMM$(PPP) = TMA$(I)
+                                TYP!(PPP) = plyrStatLeaders!(I, X) / plyrStatLeaders!(I, X1)
+                            End If
 
-                    Call SortPlayer(PPP, stpl, sortType%)
-                    TVN = 2
+                        Next I
 
-                Case 11:
-                    For I = 1 To JB
-                        If (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I) <> 0 Then
-                            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I)
-                        End If
-                    Next I
+                        Call SortPlayer(PPP, stpl, sortType)
+                        TVN = 2
 
-                    Call SortPlayer(PPP, stpl, sortType%)
-                    TVN = 1
+                    Case 11:
+                        For I = 1 To JB
+                            If (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I) <> 0 Then
+                                PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+                                TPP$(PPP) = AL$(I)
+                                TMM$(PPP) = TMA$(I)
+                                TYP!(PPP) = (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I)
+                            End If
+                        Next I
 
-                Case 12:
+                        Call SortPlayer(PPP, stpl, sortType)
+                        TVN = 1
 
-                    For I = 1 To JB
+                    Case 12:
 
-                        If Not ((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I) = 0 Or plyrStatLeaders!(I, X2) = 0) Then
-                            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = ((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I)) / plyrStatLeaders!(I, X2)
-                        End If
+                        For I = 1 To JB
 
-                    Next I
+                            If Not ((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I) = 0 Or plyrStatLeaders!(I, X2) = 0) Then
+                                PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+                                TPP$(PPP) = AL$(I)
+                                TMM$(PPP) = TMA$(I)
+                                TYP!(PPP) = ((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I)) / plyrStatLeaders!(I, X2)
+                            End If
 
-                    Call SortPlayer(PPP, stpl, sortType%)
-                    TVN = 3
+                        Next I
 
-                Case 15:
+                        Call SortPlayer(PPP, stpl, sortType)
+                        TVN = 3
 
-                    For I = 1 To JB
+                    Case 15:
 
-                        If plyrStatLeaders!(I, X) - plyrStatLeaders!(I, X1) <> 0 Then
-                            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = plyrStatLeaders!(I, X) - plyrStatLeaders!(I, X1)
-                        End If
+                        For I = 1 To JB
 
-                    Next I
+                            If plyrStatLeaders!(I, X) - plyrStatLeaders!(I, X1) <> 0 Then
+                                PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+                                TPP$(PPP) = AL$(I)
+                                TMM$(PPP) = TMA$(I)
+                                TYP!(PPP) = plyrStatLeaders!(I, X) - plyrStatLeaders!(I, X1)
+                            End If
 
-                    Call SortPlayer(PPP, stpl, sortType%)
-                    TVN = 1
+                        Next I
 
-                Case 17:
+                        Call SortPlayer(PPP, stpl, sortType)
+                        TVN = 1
 
-                    For I = 1 To JB
+                    Case 17:
 
-                        If plyrStatLeaders!(I, X) <> 0 Then
-                            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = plyrStatLeaders!(I, X) / plyrStatLeaders!(I, X1)
-                        End If
+                        For I = 1 To JB
 
-                    Next I
+                            If plyrStatLeaders!(I, X) <> 0 Then
+                                PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+                                TPP$(PPP) = AL$(I)
+                                TMM$(PPP) = TMA$(I)
+                                TYP!(PPP) = plyrStatLeaders!(I, X) / plyrStatLeaders!(I, X1)
+                            End If
 
-                    Call SortPlayer(PPP, stpl, sortType%)
-                    TVN = 3
+                        Next I
 
-                Case 23:
+                        Call SortPlayer(PPP, stpl, sortType)
+                        TVN = 3
 
-                    For I = 1 To JB
+                    Case 23:
 
-                        If Not ((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I) = 0 Or plyrStatLeaders!(I, X2) = 0) Then
-                            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I))) * 48 / ((plyrStatLeaders!(I, X2) + 30) / 60)
-                        End If
+                        For I = 1 To JB
 
-                    Next I
+                            If Not ((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I) = 0 Or plyrStatLeaders!(I, X2) = 0) Then
+                                PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+                                TPP$(PPP) = AL$(I)
+                                TMM$(PPP) = TMA$(I)
+                                TYP!(PPP) = (((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I))) * 48 / ((plyrStatLeaders!(I, X2) + 30) / 60)
+                            End If
 
-                    Call SortPlayer(PPP, stpl, sortType%)
-                    TVN = 3
+                        Next I
 
-                Case 24 To 29:
+                        Call SortPlayer(PPP, stpl, sortType)
+                        TVN = 3
 
-                    For I = 1 To JB
+                    Case 24 To 29:
 
-                        If Not (plyrStatLeaders!(I, X) = 0 Or plyrStatLeaders!(I, X1) = 0) Then
-                            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (plyrStatLeaders!(I, X)) * 48 / ((plyrStatLeaders!(I, X1) + 30) / 60)
-                        End If
+                        For I = 1 To JB
 
-                    Next I
+                            If Not (plyrStatLeaders!(I, X) = 0 Or plyrStatLeaders!(I, X1) = 0) Then
+                                PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+                                TPP$(PPP) = AL$(I)
+                                TMM$(PPP) = TMA$(I)
+                                TYP!(PPP) = (plyrStatLeaders!(I, X)) * 48 / ((plyrStatLeaders!(I, X1) + 30) / 60)
+                            End If
 
-                    Call SortPlayer(PPP, stpl, sortType%)
-                    TVN = 3
+                        Next I
 
-                Case 30:
+                        Call SortPlayer(PPP, stpl, sortType)
+                        TVN = 3
 
-                    For I = 1 To JB
+                    Case 30:
 
-                        If Not (plyrStatLeaders!(I, X) = 0 Or plyrStatLeaders!(I, X1) = 0) Then
-                            PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = ((plyrStatLeaders!(I, X) + 30) / 60) / plyrStatLeaders!(I, X1)
-                        End If
+                        For I = 1 To JB
 
-                    Next I
+                            If Not (plyrStatLeaders!(I, X) = 0 Or plyrStatLeaders!(I, X1) = 0) Then
+                                PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+                                TPP$(PPP) = AL$(I)
+                                TMM$(PPP) = TMA$(I)
+                                TYP!(PPP) = ((plyrStatLeaders!(I, X) + 30) / 60) / plyrStatLeaders!(I, X1)
+                            End If
 
-                    Call SortPlayer(PPP, stpl, sortType%)
-                    TVN = 3
+                        Next I
 
-            End Select
+                        Call SortPlayer(PPP, stpl, sortType)
+                        TVN = 3
 
-            QW = PPP
+                End Select
 
-            Select Case printOrView%
+                QW = PPP
 
-                Case 1
-                    Call DisplayLeaders(TVN, QW, B9)
+                Select Case printOrView
 
-                Case 2
-                    Call GetListLength(printOrView%, LG, QW)
-                    Call PrintLeaders(TVN, LG, B9)
+                    Case 1
+                        Call DisplayLeaders(TVN, QW, B9)
 
-            End Select
+                    Case 2
+                        Call GetListLength(printOrView, LG, QW)
+                        Call PrintLeaders(TVN, LG, B9)
 
-        End If 'Done checking for exit
+                End Select
+
+            End If 'Done checking for exit
+
+        End If
 
     Loop Until B9 = 31 'Done selecting number
 
@@ -885,7 +890,7 @@ End Sub
 'This subroutine lets the user choose a
 'team stats category and relies on other
 'routines to sort and display the results.
-Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
+Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
     Shared GM!(), GM1!()
     Shared TT!(), TT1!(), TYP!()
@@ -983,7 +988,7 @@ Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
             End Select
 
             If B9 <> 38 Then
-                Call SortOptions(JB, ZZ, printOrView%, sortType%)
+                Call SortOptions(printOrView, sortType, newCategory)
                 Cls
             End If
 
@@ -996,7 +1001,7 @@ Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
                         TMM$(I) = TT$(I, X)
                     Next
 
-                    Call SortTeam(plyrTotalStats, stpl, sortType%)
+                    Call SortTeam(plyrTotalStats, stpl, sortType)
                     TVN = 1
                     maxRecords = plyrTotalStats
 
@@ -1012,7 +1017,7 @@ Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
 
                     Next
 
-                    Call SortTeam(plyrTotalStats, stpl, sortType%)
+                    Call SortTeam(plyrTotalStats, stpl, sortType)
                     TVN = 2
                     maxRecords = plyrTotalStats
 
@@ -1022,7 +1027,7 @@ Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
                         TYP!(I) = TT!(I, X) - TT!(I, X1)
                     Next
 
-                    Call SortTeam(plyrTotalStats, stpl, sortType%)
+                    Call SortTeam(plyrTotalStats, stpl, sortType)
                     TVN = 1
                     maxRecords = plyrTotalStats
 
@@ -1032,7 +1037,7 @@ Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
                         TYP!(I) = TT!(I, X) / GM!(I)
                     Next
 
-                    Call SortTeam(teamTotalStats, stpl, sortType%)
+                    Call SortTeam(teamTotalStats, stpl, sortType)
                     TVN = 3
                     maxRecords = plyrTotalStats
 
@@ -1042,7 +1047,7 @@ Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
                         TYP!(I) = ((TT!(I, X) * 2) + TT!(I, X1) + TT!(I, X2)) / GM!(I)
                     Next
 
-                    Call SortTeam(teamTotalStats, stpl, sortType%)
+                    Call SortTeam(teamTotalStats, stpl, sortType)
                     TVN = 3
                     maxRecords = plyrTotalStats
 
@@ -1052,7 +1057,7 @@ Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
                         TYP!(I) = TT1!(I, X)
                     Next
 
-                    Call SortTeam(teamTotalStats, stpl, sortType%)
+                    Call SortTeam(teamTotalStats, stpl, sortType)
                     TVN = 1
                     maxRecords = teamTotalStats
 
@@ -1067,7 +1072,7 @@ Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
                         End If
                     Next
 
-                    Call SortTeam(teamTotalStats, stpl, sortType%)
+                    Call SortTeam(teamTotalStats, stpl, sortType)
                     TVN = 2
                     maxRecords = teamTotalStats
 
@@ -1077,7 +1082,7 @@ Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
                         TYP!(I) = TT1!(I, X) - TT1!(I, X1)
                     Next
 
-                    Call SortTeam(teamTotalStats, stpl, sortType%)
+                    Call SortTeam(teamTotalStats, stpl, sortType)
                     TVN = 1
                     maxRecords = teamTotalStats
 
@@ -1087,7 +1092,7 @@ Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
                         TYP!(I) = TT1!(I, X) / GM1!(I)
                     Next
 
-                    Call SortTeam(teamTotalStats, stpl, sortType%)
+                    Call SortTeam(teamTotalStats, stpl, sortType)
                     TVN = 3
                     maxRecords = teamTotalStats
 
@@ -1097,14 +1102,14 @@ Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
                         TYP!(I) = ((TT1!(I, X) * 2) + TT1!(I, X1) + TT1!(I, X2)) / GM1!(I)
                     Next
 
-                    Call SortTeam(teamTotalStats, stpl, sortType%)
+                    Call SortTeam(teamTotalStats, stpl, sortType)
                     TVN = 3
                     maxRecords = teamTotalStats
 
             End Select
 
             If B9 <> 38 Then
-                Call DisplayTeamView(printOrView%, TVN, maxRecords, B9)
+                Call DisplayTeamView(printOrView, TVN, maxRecords, B9)
             End If
 
         Loop Until B9 >= 0 And B9 <= 38
@@ -1121,31 +1126,40 @@ End Sub
 'different sort options available in the
 '"expanded" stats menus.
 
-'sortType%
+'sortType
 '   1: Sort HIGH to LOW
 '   2: Sort LOW to HIGH
-Sub SortOptions (JB, ZZ, printOrView%, sortType%)
+Sub SortOptions (printOrView, sortType, reselect)
 
     Do
 
         J = 6
-        Locate 8, 8
-        Color 15, 1: Print " " + Chr$(214); String$(57, 196); Chr$(183) + " ";
+
+        Locate 8, 8: Color 15, 1
+        Print " " + Chr$(214); String$(57, 196); Chr$(183) + " ";
 
         For II = 1 To J
             Locate 8 + II, 8
             Print " " + Chr$(186); String$(57, 32); Chr$(186) + " ";
         Next
+
         Locate 9 + J, 8
         Print " " + Chr$(211); String$(57, 196); Chr$(189) + " ";
         Locate 10, 15
 
-        Color 3: Locate , 30: Print "SELECT OPTION:"
-        Locate , 30: Color 15: Print "H";: Color 7: Print "IGHEST TO LOWEST"
-        Locate , 30: Color 15: Print "L";: Color 7: Print "OWEST TO HIGHEST"
-        Locate , 30: Color 15: Print "R";: Color 7: Print "E-SELECT CATEGORY"
+        Color 3
 
-        I$ = GetKeyPress$
+        Locate , 30: Print "SELECT OPTION:"
+        Locate , 30: Color 15: Print "H";
+        Color 7: Print "IGHEST TO LOWEST"
+        Locate , 30: Color 15: Print "L";
+        Color 7: Print "OWEST TO HIGHEST"
+        Locate , 30: Color 15: Print "R";
+        Color 7: Print "E-SELECT CATEGORY"
+
+        Do
+            I$ = GetKeyPress$
+        Loop Until UCase$(I$) = "H" Or UCase$(I$) = "L" Or UCase$(I$) = "R"
 
         Select Case UCase$(I$)
 
@@ -1153,35 +1167,36 @@ Sub SortOptions (JB, ZZ, printOrView%, sortType%)
                 Call PrintViewReselect(I2$)
 
                 Select Case UCase$(I2$)
-                    Case "P": printOrView% = 2
-                    Case "V": printOrView% = 1
+                    Case "P": 
+                        printOrView = 2
+                    Case "V": 
+                        printOrView = 1
                     Case "R":
-                        If ZZ = 1 Then Call ViewIndividualLeaders(JB, printOrView%)
-                        If ZZ = 3 Then Call ViewTeamLeaders(printOrView%, plyrTotalStats, teamTotalStats)
+                        reselect = 1
                 End Select
 
-                sortType% = 1
+                sortType = 1
 
             Case "L":
                 Call PrintViewReselect(I2$)
 
                 Select Case UCase$(I2$)
-                    Case "P": printOrView% = 2
-                    Case "V": printOrView% = 1
+                    Case "P": 
+                        printOrView = 2
+                    Case "V": 
+                        printOrView = 1
                     Case "R":
-                        If ZZ = 1 Then Call ViewIndividualLeaders(JB, printOrView%)
-                        If ZZ = 3 Then Call ViewTeamLeaders(printOrView%, plyrTotalStats, teamTotalStats)
+                        reselect = 1
                 End Select
 
-                sortType% = 2
+                sortType = 2
 
-            Case "R":
-                If ZZ = 1 Then Call ViewIndividualLeaders(JB, printOrView%)
-                If ZZ = 3 Then Call ViewTeamLeaders(printOrView%, plyrTotalStats, teamTotalStats)
+            Case "R", Chr$(27):
+                reselect = 1
 
         End Select
 
-    Loop Until UCase$(I$) = "H" Or UCase$(I$) = "L" Or UCase$(I$) = "R"
+    Loop Until UCase$(I2$) <> "R" Or UCase$(I$) = "R"
 
 End Sub
 
@@ -1227,7 +1242,7 @@ End Sub
 '----------------------------------------
 'This subroutine sorts the players involved
 'in the chosen stat category
-Sub SortPlayer (PPP, stpl, sortType%)
+Sub SortPlayer (PPP, stpl, sortType)
 
     Shared TYP!()
     Shared TMM$(), TPP$()
@@ -1239,7 +1254,7 @@ Sub SortPlayer (PPP, stpl, sortType%)
 
         For J = PPP To I Step -1
 
-            If sortType% = 1 Then
+            If sortType = 1 Then
                 If TYP!(J - 1) < TYP!(J) Then
                     Swap TYP!(J - 1), TYP!(J)
                     Swap TMM$(J - 1), TMM$(J)
@@ -1247,7 +1262,7 @@ Sub SortPlayer (PPP, stpl, sortType%)
                 End If
             End If
 
-            If sortType% = 2 Then
+            If sortType = 2 Then
                 If TYP!(J - 1) > TYP!(J) Then
                     Swap TYP!(J - 1), TYP!(J)
                     Swap TMM$(J - 1), TMM$(J)
@@ -1267,7 +1282,7 @@ End Sub
 '----------------------------------------
 'This subroutine sorts the teams involved
 'in the chosen stat category
-Sub SortTeam (sortMax, stpl, sortType%)
+Sub SortTeam (sortMax, stpl, sortType)
 
     Shared TYP!()
     Shared TMM$()
@@ -1280,14 +1295,14 @@ Sub SortTeam (sortMax, stpl, sortType%)
 
         For J = sortMax To I Step -1
 
-            If sortType% = 1 Then
+            If sortType = 1 Then
                 If TYP!(J - 1) < TYP!(J) Then
                     Swap TYP!(J - 1), TYP!(J)
                     Swap TMM$(J - 1), TMM$(J)
                 End If
             End If
 
-            If sortType% = 2 Then
+            If sortType = 2 Then
                 If TYP!(J - 1) > TYP!(J) Then
                     Swap TYP!(J - 1), TYP!(J)
                     Swap TMM$(J - 1), TMM$(J)
@@ -1400,14 +1415,14 @@ End Sub
 '----------------------------------------
 'This subroutine displays the chosen team
 'stat category to the user display
-Sub DisplayTeamView (printOrView%, TVN, maxRecords, categoryId)
+Sub DisplayTeamView (printOrView, TVN, maxRecords, categoryId)
 
     Shared TYP!()
     Shared TMM$(), expTeamCategory$()
 
     userExit% = 0
 
-    Select Case printOrView%
+    Select Case printOrView
 
         Case 1:
 
@@ -1581,9 +1596,9 @@ End Sub
 'helps the user have a custom view of the
 'categories without needing to page through
 'every result.
-Sub GetListLength (printOrView%, listLength, maxItems)
+Sub GetListLength (printOrView, listLength, maxItems)
 
-    If printOrView% <> 1 Then
+    If printOrView <> 1 Then
         'If printing...
 
         Do
