@@ -63,7 +63,7 @@ Sub NEWLDR ()
 
                 Case 1:
                     Do
-                        leagStatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE STATS", FileExit%)
+                        leagStatFile$ = ChooseFile$(diskPaths$(1) + "*.TMS", "LEAGUE STATS", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
 
@@ -71,7 +71,7 @@ Sub NEWLDR ()
                                 statsZ1$(X) = "XXX"
                             Next
 
-                            Open diskPaths$(2) + leagStatFile$ + ".TMS" For Input As #1
+                            Open diskPaths$(1) + leagStatFile$ + ".TMS" For Input As #1
 
                             Input #1, league$, div1$, div2$, div3$, div4$
 
@@ -90,7 +90,7 @@ Sub NEWLDR ()
 
                 Case 2:
                     Do
-                        leaderFile$ = ChooseFile$ (diskPaths$(2) + "*.LDS", "LEAGUE LEADERS", FileExit%)
+                        leaderFile$ = ChooseFile$ (diskPaths$(1) + "*.LDS", "LEAGUE LEADERS", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
                             Call READLEADER(leaderFile$, JB, TS, TTS)
@@ -101,7 +101,7 @@ Sub NEWLDR ()
 
                 Case 3:
                     Do
-                        leagStatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE STATS", FileExit%)
+                        leagStatFile$ = ChooseFile$(diskPaths$(1) + "*.TMS", "LEAGUE STATS", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
                             Color 15, 0
@@ -113,7 +113,7 @@ Sub NEWLDR ()
 
                 Case 4:
                     Do
-                        standingsFile$ = ChooseFile$ (diskPaths$(2) + "*.STD", "LEAGUE STANDINGS", FileExit%)
+                        standingsFile$ = ChooseFile$ (diskPaths$(1) + "*.STD", "LEAGUE STANDINGS", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
 
@@ -164,11 +164,11 @@ Sub ViewExpandedStats ()
         statsZ1$(X) = "XXX"
     Next
 
-    leagStatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE STATS", ExitCode%)
+    leagStatFile$ = ChooseFile$(diskPaths$(1) + "*.TMS", "LEAGUE STATS", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        Open diskPaths$(2) + leagStatFile$ + ".TMS" For Input As #1
+        Open diskPaths$(1) + leagStatFile$ + ".TMS" For Input As #1
 
         Input #1, league$, div1$, div2$, div3$, div4$
 
@@ -326,7 +326,7 @@ Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Print "SAVING LEADER FILES . . . . PLEASE WAIT"
 
-    Open diskPaths$(2) + statFile$ + ".LDS" For Output As #1
+    Open diskPaths$(1) + statFile$ + ".LDS" For Output As #1
 
     Write #1, JB, plyrTotalStats, teamTotalStats
 
@@ -404,7 +404,7 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     'Print "READING LEADER FILES . . . . PLEASE WAIT"
 
-    If Not _FileExists (diskPaths$(2) + statFile$ + ".LDS") Then
+    If Not _FileExists (diskPaths$(1) + statFile$ + ".LDS") Then
     
         MsgText$ = "NO COMPILED LEADER FILES WERE FOUND. PRESS ANY KEY TO RETURN TO MAIN MENU"
         BoxWidth = 20
@@ -416,7 +416,7 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Else
 
-        Open diskPaths$(2) + statFile$ + ".LDS" For Input As #1
+        Open diskPaths$(1) + statFile$ + ".LDS" For Input As #1
 
         Input #1, JB, plyrTotalStats, teamTotalStats
 
