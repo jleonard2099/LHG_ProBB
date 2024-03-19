@@ -64,7 +64,7 @@ Sub CREATLEAG ()
                 Case 2:
                     Do
 
-                        league$ = ChooseFile$(diskPaths$(2) + "*.LIB", "LEAGUE", FileExit%)
+                        league$ = ChooseFile$(diskPaths$(1) + "*.LIB", "LEAGUE", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
                             Call ReviewEditLeague(league$, div1$, div2$, div3$, div4$)
@@ -191,9 +191,9 @@ Sub ReviewEditLeague (league$, div1$, div2$, div3$, div4$)
 
     Shared memberTeams$(), memberYears$()
 
-    If _FileExists(diskPaths$(2) + league$ + ".LIB") Then
+    If _FileExists(diskPaths$(1) + league$ + ".LIB") Then
 
-        Open diskPaths$(2) + league$ + ".LIB" For Input As #1
+        Open diskPaths$(1) + league$ + ".LIB" For Input As #1
 
         Input #1, league$, div1$, div2$, div3$, div4$
 
@@ -294,7 +294,7 @@ Sub SaveLeague (league$, div1$, div2$, div3$, div4$)
 
     Shared memberTeams$(), memberYears$(), statNames$()
 
-    Open diskPaths$(2) + league$ + ".LIB" For Output As #1
+    Open diskPaths$(1) + league$ + ".LIB" For Output As #1
 
     Print #1, league$
     Print #1, div1$
@@ -320,7 +320,7 @@ Sub SaveLeague (league$, div1$, div2$, div3$, div4$)
 
     Next X
 
-    Open diskPaths$(2) + league$ + ".TMS" For Output As #2
+    Open diskPaths$(1) + league$ + ".TMS" For Output As #2
 
     Write #2, league$, div1$, div2$, div3$, div4$
 
