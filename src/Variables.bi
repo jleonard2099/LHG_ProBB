@@ -13,7 +13,7 @@ Dim teamScore(0 To MAX_SCHED_STATS), oppScore(0 To MAX_SCHED_STATS)
 
 Dim locIndicator$(0 To MAX_SCHED_STATS), oppName$(MAX_SCHED_STATS)
 
-Dim statsZ1$(TEAMS_PER_CONFERENCE)
+Dim statsZ1$(TEAMS_PER_LEAGUE)
 
 Dim statsW0!(0 To 14), statsW1!(0 To 14)
 Dim statsZ!(0 To 15), statsZ1!(0 To 15), statsZ2!(0 To 14, 0 To 13)
@@ -57,8 +57,8 @@ Dim AN$(0 To 14)
 Dim AN!(15, 14), AR!(15, 14), ARD!(0 To 15, 0 To 14)
 Dim W0N!(15), WN1!(15)
 Dim W0RD!(0 To 15), W1RD!(0 To 15)
-Dim W0R!(15), WR1!(15)
-Dim ZR!(15), ZR1!(15)
+Dim W0R!(15), WhomeScoreTeam!(15)
+Dim ZR!(15), ZhomeScoreTeam!(15)
 Dim ZRD!(0 To 16), ZRD1!(0 To 16)
 
 
@@ -66,17 +66,19 @@ Dim ZRD!(0 To 16), ZRD1!(0 To 16)
 ' Used in CAREER routines
 '----------------------------------------
 '---> should we need these ?!?!
-Dim ars!(15, 62, 15), W0S!(15, 62), W1S!(15, 62)
-Dim AR$(62)
+Dim ars!(15, 62, 15)
+Dim BL!(62), BLYR!(21)
+Dim W0S!(15, 62), W1S!(15, 62)
+Dim AR$(62), BL$(0 To 20)
 
 
 '----------------------------------------
 ' Used in CREATE routines
 '----------------------------------------
-Dim intZ1%(TEAMS_PER_CONFERENCE)
-Dim memberTeams$(TEAMS_PER_CONFERENCE)
-Dim memberYears$(TEAMS_PER_CONFERENCE)
-Dim statNames$(TEAMS_PER_CONFERENCE)
+Dim intZ1%(TEAMS_PER_LEAGUE)
+Dim memberTeams$(TEAMS_PER_LEAGUE)
+Dim memberYears$(TEAMS_PER_LEAGUE)
+Dim statNames$(TEAMS_PER_LEAGUE)
 
 
 '----------------------------------------
@@ -99,7 +101,7 @@ Dim haveStats(1)
 ' ** Team File **
 Dim leagRat_TRADE(0 To 1, 0 To 6)
 Dim plyrRat_TRADE(0 To 1, 0 To 14, 0 To 19)
-Dim teamSettings%(1, 34)
+Dim tmRat_TRADE(1, 34)
 
 Dim players_TRADE$(0 To 1, 0 To 14, 0 To 1)
 Dim tmInfo_TRADE$(1, 6)
@@ -108,22 +110,26 @@ Dim tmInfo_TRADE$(1, 6)
 
 Dim tradeZZ(2, 15), tradeZZ1(2, 15)
 
-Dim tradeB1!(2, 14, 14), tradeT!(1)
+Dim tradeB1!(2, 14, 14), tradeNbrs(1)
 Dim tradeW0!(2, 14), tradeW1!(2, 14)
 
 Dim B1$(2, 14), A1$(1)
-Dim statFiles$(TEAMS_PER_CONFERENCE), statTeam$(1)
+Dim statFiles$(TEAMS_PER_LEAGUE), statTeam$(1)
 
 
 '----------------------------------------
 '   Used in Head-To-Head routines
 '----------------------------------------
-Dim AL!(50), AW!(50), HL!(50), HW!(50)
-Dim R1!(50), R2!(50), R3!(50), R4!(50)
-Dim TAL!(40), TAW!(40), THL!(40), THW!(40)
-Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
+Dim awayLosses(50), awayWins!(50)
+Dim homeLosses!(50),homeWins!(50)
+Dim homeScoreTeam!(50), homeScoreOpp!(50)
+Dim awayScoreTeam!(50), awayScoreOpp!(50)
+Dim totAwayLosses!(40), totAwayWin!(40)
+Dim totHomeLosses!(40), totHomeWin!(40)
+Dim totHomeScoreTeam!(40), totHomeScoreOpp!(40)
+Dim totAwayScoreTeam!(40), totAwayScoreOpp!(40)
 
-Dim league$, div1$, div2$, div3$, div4$
+Dim league$, div1Name$, div2Name$, div3Name$, div4Name$
 
 
 '----------------------------------------
@@ -152,11 +158,11 @@ Dim roadLosses, roadWins, totalLosses, totalWins
 '----------------------------------------
 ' Used in LEADER routines
 '----------------------------------------
-Dim HLL(TEAMS_PER_CONFERENCE), HWW(TEAMS_PER_CONFERENCE)
-Dim LL(TEAMS_PER_CONFERENCE), LLS(TEAMS_PER_CONFERENCE), LWS(TEAMS_PER_CONFERENCE)
-Dim LTL(TEAMS_PER_CONFERENCE), LTW(TEAMS_PER_CONFERENCE)
-Dim RLL(TEAMS_PER_CONFERENCE), RWW(TEAMS_PER_CONFERENCE)
-Dim TLS(TEAMS_PER_CONFERENCE), TWS(TEAMS_PER_CONFERENCE), WW(TEAMS_PER_CONFERENCE)
+Dim HLL(TEAMS_PER_LEAGUE), HWW(TEAMS_PER_LEAGUE)
+Dim LL(TEAMS_PER_LEAGUE), LLS(TEAMS_PER_LEAGUE), LWS(TEAMS_PER_LEAGUE)
+Dim LTL(TEAMS_PER_LEAGUE), LTW(TEAMS_PER_LEAGUE)
+Dim RLL(TEAMS_PER_LEAGUE), RWW(TEAMS_PER_LEAGUE)
+Dim TLS(TEAMS_PER_LEAGUE), TWS(TEAMS_PER_LEAGUE), WW(TEAMS_PER_LEAGUE)
 
 Dim plyrStatLeaders!(600, 14)
 Dim GM!(40), GM1!(40)
@@ -165,7 +171,7 @@ Dim TT!(40, 15), TT1!(40, 15)
 Dim W0L!(600), W1L!(600)
 
 Dim AL$(600)
-Dim TMA$(600), TML$(TEAMS_PER_CONFERENCE)
+Dim TMA$(600), TML$(TEAMS_PER_LEAGUE)
 Dim expIndCategory$(0 To 31), expTeamCategory$(0 To 38)
 Dim TPP$(600), TMM$(600)
 Dim TT$(40, 15), TT1$(40, 15)
@@ -205,11 +211,11 @@ Dim tickerStart
 
 Dim alpha$(4), tickerPeriod$(14)
 
-Dim Shared autoPlay, ballCarrier, bonusFoulNum, coachOpt, compTeam
-Dim Shared D, endGame, endAllGames, ftRulesOpt, F3, freeThrowVal
+Dim Shared A4, autoPlay, ballCarrier, bonusFoulNum, coachOpt, compTeam
+Dim Shared D, endGame, endAllGames, ftRulesOpt, freeThrowNbr, freeThrowVal
 Dim Shared gameLoc, halfTime, JY, nbrLines
 Dim Shared P, fullCtOpt, P9, playerMode, playerOpt, playoffOpt, pbpOpt
-Dim Shared quarter, sClockVal, shotClock, shotPctOpt
+Dim Shared quarter, sClockVal, shotChance, shotClock, shotPctOpt
 
 'I have no clue what xFactor (previously "X") does
 Dim Shared threePtOpt, T1, TMT, xFactor
@@ -227,7 +233,7 @@ Dim Shared F%(1, 9), F5%(1, 4), F7%(1, 9), FY%(0 To 1), G9%(1), GF%(2, 9)
 Dim Shared NG%(18), N0%(2, 2, 4)
 Dim Shared OX%(2), OY%(2), offStyles(1)
 Dim Shared PF%(1), PFA%(33), ST%(32), SX%(32, 1, 14)
-Dim Shared TOA%(33), TOF%(1), W%(1, 14, 1), YR%(1)
+Dim Shared TOA%(33), TOF%(1), threeFG(1, 14, 1), YR%(1)
 
 'Dim Shared C1(1, 14)
 Dim Shared D1(1), defStyles(1), D8(6, 6), F1(14), G4(14), G5(14)

@@ -9,7 +9,7 @@ Sub SEELEAG ()
 
     _Title "Basketball: The Pro Game - View League Stats"
 
-    leaderFile$ = ChooseFile$(diskPaths$(1) + "*.LDR", "LEADER", ExitCode%)
+    leaderFile$ = ChooseFile$(diskPaths$(2) + "*.LDR", "LEADER", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
@@ -36,26 +36,26 @@ Sub LoadLeaderFiles_Pro (targetFile$)
     Shared DL$(), OL$()
     Shared leagT$(), Z2$(), Z3$()
 
-    Shared LG$, div1$, div2$, div3$, div4$
+    Shared LG$, div1Name$, div2Name$, div3Name$, div4Name$
 
-    Open diskPaths$(1) + targetFile$ + ".TMS" For Input As #1
+    Open diskPaths$(2) + targetFile$ + ".TMS" For Input As #1
 
-    Input #1, LG$, div1$, div2$, div3$, div4$
+    Input #1, LG$, div1Name$, div2Name$, div3Name$, div4Name$
 
     Close #1
 
-    div1$ = PadRight$(div1$, 8)
-    div2$ = PadRight$(div2$, 8)
-    div3$ = PadRight$(div3$, 8)
-    div4$ = PadRight$(div4$, 8)
+    div1Name$ = PadRight$(div1Name$, 8)
+    div2Name$ = PadRight$(div2Name$, 8)
+    div3Name$ = PadRight$(div3Name$, 8)
+    div4Name$ = PadRight$(div4Name$, 8)
 
     Cls
 
     Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
 
-    Open diskPaths$(1) + targetFile$ + ".LDR" For Input As #2
+    Open diskPaths$(2) + targetFile$ + ".LDR" For Input As #2
 
-    For X = 1 To TEAMS_PER_CONFERENCE
+    For X = 1 To TEAMS_PER_LEAGUE
         Input #2, leagT$(X), O1!(X), O2!(X)
     Next
 
@@ -63,14 +63,14 @@ Sub LoadLeaderFiles_Pro (targetFile$)
         Input #2, Z2$(X), Z3$(X), seeZ!(X), seeZ1!(X)
     Next
 
-    For X = 1 To TEAMS_PER_CONFERENCE
+    For X = 1 To TEAMS_PER_LEAGUE
         Input #2, OL$(X)
         For M = 1 To 20
             Input #2, offLeaders!(X, M)
         Next
     Next
 
-    For X = 1 To TEAMS_PER_CONFERENCE
+    For X = 1 To TEAMS_PER_LEAGUE
         Input #2, DL$(X)
         For M = 1 To 20
             Input #2, defLeaders!(X, M)
@@ -96,37 +96,38 @@ Sub StatOptions ()
         Cls
         Call TITLE_STATS
 
-        Call MenuBox(8, 8, 61, 5, 15, 1)
+        Call MenuBox(8, 25, 24, 5, 15, 1)
 
         Do
 
-            Locate 10, 15
+            Locate 10
             Color 7, 1
 
-            Locate , 30: Print "STATS TO ";
-            Color 15: Print "S";: Color 7: Print "CREEN"
-
-            Locate , 30: Print "STATS TO ";
-            Color 15: Print "P";: Color 7: Print "RINTER"
-
-            Locate , 30: Print "STATS TO ";
-            Color 15: Print "F";: Color 7: Print "ILE"
+            Locate , 32: Print "SEND TO ";
+            Color 15: Print "F";
+            Color 7: Print "ILE"
+            Locate , 32: Print "SEND TO ";
+            Color 15: Print "P";
+            Color 7: Print "RINTER"
+            Locate , 32: Print "SEND TO ";
+            Color 15: Print "S";
+            Color 7: Print "CREEN"
 
             I$ = GetKeyPress$
             Color 14, 0
 
-        Loop Until UCase$(I$) = "S" Or UCase$(I$) = "P" Or UCase$(I$) = "F" Or I$ = Chr$(27)
+        Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P" Or UCase$(I$) = "S" Or I$ = Chr$(27)
 
         If I$ <> Chr$(27) Then
 
             Select Case UCase$(I$)
 
                 Case "F":
-                    Call ReportFilePrompt_League(SF$)
-                    Call SavePrintLeagueLeaders(SF$, 1)
+                    userFile$ = _SAVEFILEDIALOG$("Save League Report",_CWD$ + "\Report","*.txt","Text File")
+                    Call SavePrintLeagueLeaders(0, userFile$)
 
                 Case "P":
-                    Call SavePrintLeagueLeaders(SF$, 0)
+                    Call SavePrintLeagueLeaders(0, "REPORT")
 
                 Case "S":
                     Call LeaderStats_Screen
@@ -150,44 +151,7 @@ Sub StatOptions ()
 
         End If
 
-    Loop Until UCase$(A$) = "N" Or A$ = Chr$(27)
-
-End Sub
-
-
-'----------------------------------------
-'   ReportFilePrompt_League Subroutine
-'----------------------------------------
-'This subroutine prompts the user for
-'the name of the report file to be saved
-Sub ReportFilePrompt_League (reportFile$)
-
-    Do
-
-        Color 15, 0
-        Cls
-
-        Call MenuBox(6, 8, 61, 7, 15, 1)
-
-        Locate 7, 32
-
-        Locate , 12: Print "ENTER NAME FOR FILE: ": Print
-        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
-        Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
-        Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
-
-        Locate 7, 37: Input reportFile$
-
-        If reportFile$ <> "" Then
-
-            Locate 13, 12: Print "ANY CHANGE? (Y/N) "
-            I$ = GetKeyPress$
-
-        End If
-
-    Loop Until UCase$(I$) = "N" And reportFile$ <> ""
-
-    Color 15, 0
+    Loop Until UCase$(A$) = "N" Or A$ = Chr$(27) Or I$ = Chr$(27)
 
 End Sub
 
@@ -208,7 +172,7 @@ Sub LeaderStats_Screen ()
     Shared DL$(), OL$(), offLeaders!()
     Shared leagT$(), Z2$(), Z3$()
 
-    Shared LG$, div1$, div2$, div3$, div4$
+    Shared LG$, div1Name$, div2Name$, div3Name$, div4Name$
 
     Color 15, 0
     Cls
@@ -220,7 +184,7 @@ Sub LeaderStats_Screen ()
 
     ' Division 1 Standings
     Color 2
-    If div1$ <> "" Then Print "    " + RTrim$(div1$) + " DIVISION"
+    If div1Name$ <> "" Then Print "    " + RTrim$(div1Name$) + " DIVISION"
     Print
 
     Color 14
@@ -269,7 +233,7 @@ Sub LeaderStats_Screen ()
     ' Division 2 Standings
 
     Color 2
-    If div2$ <> "" Then Print "    " + RTrim$(div2$) + " DIVISION"
+    If div2Name$ <> "" Then Print "    " + RTrim$(div2Name$) + " DIVISION"
     Print
 
     Color 14
@@ -318,7 +282,7 @@ Sub LeaderStats_Screen ()
     ' Division 3 Standings
 
     Color 2
-    If div3$ <> "" Then Print "    " + RTrim$(div3$) + " DIVISION"
+    If div3Name$ <> "" Then Print "    " + RTrim$(div3Name$) + " DIVISION"
     Print
 
     Color 14
@@ -365,7 +329,7 @@ Sub LeaderStats_Screen ()
     ' Division 4 Standings
 
     Color 2
-    If div4$ <> "" Then Print "    " + RTrim$(div4$) + " DIVISION"
+    If div4Name$ <> "" Then Print "    " + RTrim$(div4Name$) + " DIVISION"
     Print
 
     Color 14
@@ -943,9 +907,9 @@ End Sub
 'send to the default printer
 
 'Destination
-'   1 = File
-'   !1 = Printer (creates file and prints it)
-Sub SavePrintLeagueLeaders (statFile$, destination)
+'   0 = File
+'   1 = Printer
+Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     Shared O1!(), O2!()
     Shared defLeaders!(), offLeaders!()
@@ -954,20 +918,16 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
     Shared OL$(), DL$(), leagT$()
     Shared Z2$(), Z3$()
 
-    Shared LG$, div1$, div2$, div3$, div4$
-
-    If destination <> 1 Then
-        Open "REPORT" For Output As #1
-    Else
-        Open statFile$ + ".RPT" For Output As #1
-    End If
+    Shared LG$, div1Name$, div2Name$, div3Name$, div4Name$
 
     Color 0, 15
     Cls
 
+	Open destFile$ For Output As #1
+
     Print #1, "                        "; LG$; " LEAGUE STANDINGS"
     Print #1,
-    Print #1, "    "; div1$; " DIVISION"
+    Print #1, "    "; div1Name$; " DIVISION"
     Print #1,
     Print #1, "                   W    L     PCT   GB"
 
@@ -993,7 +953,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
     Next P
 
     Print #1,
-    Print #1, "    "; div2$; " DIVISION"
+    Print #1, "    "; div2Name$; " DIVISION"
     Print #1,
     Print #1, "                   W    L     PCT   GB"
 
@@ -1019,7 +979,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
     Next P
 
     Print #1,
-    Print #1, "    "; div3$; " DIVISION"
+    Print #1, "    "; div3Name$; " DIVISION"
     Print #1,
     Print #1, "                   W    L     PCT   GB"
 
@@ -1046,7 +1006,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
     Next P
 
     Print #1,
-    Print #1, "    "; div4$; " DIVISION"
+    Print #1, "    "; div4Name$; " DIVISION"
     Print #1,
     Print #1, "                   W    L     PCT   GB"
 
@@ -1330,7 +1290,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
     Print #1, "                         OFFENSIVE TOTALS"
     Print #1, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
 
-    For X = 1 To TEAMS_PER_CONFERENCE
+    For X = 1 To TEAMS_PER_LEAGUE
 
         If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
             Print #1, Left$(OL$(X), 11); Tab(13);
@@ -1356,7 +1316,7 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
     Print #1, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
-    For X = 1 To TEAMS_PER_CONFERENCE
+    For X = 1 To TEAMS_PER_LEAGUE
 
         If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
             Print #1, Left$(DL$(X), 11); Tab(13);
@@ -1378,21 +1338,23 @@ Sub SavePrintLeagueLeaders (statFile$, destination)
 
     Close #1
 
-    'Print the file we created
-    If destination <> 1 Then
+	If printDest = 1 Then
 
-        Open "REPORT" For Input As #2
+		Open destFile$ For Input As #2
 
-        Do While Not EOF(2)
-            Line Input #2, X$
-            LPrint X$
-        Loop
+		Do While Not EOF(2)
+			Line Input #2, X$
+			LPrint X$
+		Loop
 
-        Close #2
+		Close #2
 
-        LPrint Chr$(12)
+		LPrint Chr$(12)
 
-    End If
+		Kill destFile$
+
+	End If
 
 End Sub
 
+    

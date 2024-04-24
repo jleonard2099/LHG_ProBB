@@ -54,7 +54,45 @@ Sub GameRecords (menuChoice)
                 Call ViewGameRecords
 
             Case 2:
-                Call PrintGameRecords
+                Color 15, 0
+                Cls
+
+                Call MenuBox(8, 20, 40, 4, 15, 1)
+
+                Do
+
+                    Locate 10
+                    Color 7, 1
+
+                    Locate , 32: Print "SEND TO ";
+                    Color 15: Print "F";
+                    Color 7: Print "ILE"
+                    Locate , 32: Print "SEND TO ";
+                    Color 15: Print "P";
+                    Color 7: Print "RINTER"
+
+                    I$ = GetKeyPress$
+
+                    Color 14, 0
+
+                Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P" Or I$ = Chr$(27)
+
+                If I$ <> Chr$(27) Then
+
+                    Select Case UCase$(I$)
+
+                        Case "F"
+                            userFile$ = _SAVEFILEDIALOG$("Save Records Report",_CWD$ + "\Records","*.txt","Text File")			
+                            If userFile$ <> "" Then
+                                Call PrintGameRecords(0, userFile$)
+                            End If
+
+                        Case "P"
+                            Call PrintGameRecords(1, "RECORDS")
+
+                    End Select
+                
+                End If
 
         End Select
 
@@ -1262,9 +1300,10 @@ End Sub
 '----------------------------------------
 '      PrintGameRecords Subroutine
 '----------------------------------------
-'This subroutine formats and prints the 
-'records on the default printer
-Sub PrintGameRecords ()
+'This subroutine facilitates formatting
+'of the record data to a file, that is
+'subsequently either saved, or printed.
+Sub PrintGameRecords (printDest, destFile$)
 
     Shared indRecDesc$(), teamRecDesc$()
     Shared indRecords!(), teamRecords!()
@@ -1278,10 +1317,11 @@ Sub PrintGameRecords ()
     QTR$(3) = " (3RD QTR)"
     QTR$(4) = " (4TH QTR)"
 
-    Color 0, 15
+	Color 15, 0
+	Cls
 
-    'PRINT ROUTINE
-    Open "RECORDS" For Output As #1
+	Open destFile$ For Output As #1
+
     Print #1, "                            INDIVIDUAL RECORDS"
     Print #1,
 
@@ -2179,16 +2219,22 @@ Sub PrintGameRecords ()
 
     Close #1
 
-    Open "RECORDS" For Input As #2
+	If printDest = 1 Then
+		Open destFile$ For Input As #2
 
-    Do While Not EOF(2)
-        Line Input #2, X$
-        LPrint X$
-    Loop
+		Do While Not EOF(2)
+			Line Input #2, X$
+			LPrint X$
+		Loop
 
-    LPrint Chr$(12)
+		Close #2
 
-    Close #2
+		LPrint Chr$(12)
+
+        Kill destFile$
+
+	End If
+    
 
 End Sub
 

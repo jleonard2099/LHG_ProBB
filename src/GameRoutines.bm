@@ -9,14 +9,14 @@ Sub INFO ()
 
     Color , 1
     Locate 1, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Locate , 33
     Color 14
     Print "GAME OPTIONS MENU"
 
     Locate 24, 1
-    Print Tab(80);
+    Print Tab(80); " ";
     Locate , 1
     Print "    LANCE HAFFNER 1986-2000"; Tab(70); Left$(Time$, 5);
     Locate 3, 1
@@ -102,7 +102,7 @@ Sub InitVar ()
     D = 0
     endAllGames = 0
     endGame = 0
-    F3 = 0
+    freeThrowNbr = 0
     halfTime = 0
     JY = 0
     nbrLines = 1
@@ -173,7 +173,7 @@ Sub InitVar ()
     Erase F%, F5%, F7%, G9%
     Erase N0%, NG%, offStyles, PF%
     Erase ST%, SX%
-    Erase TOF%, teamIndex%, W%
+    Erase TOF%, teamIndex%, threeFG
 
     actualAttendance& = 0
     Erase avgAttendance&
@@ -299,14 +299,27 @@ End Sub
 
 
 '----------------------------------------
+'         Rolld100 Subroutine
+'----------------------------------------
+'This subroutine assigns a random number
+'between 1 and 100 to the variable that
+'it is called with
+Sub Rolld100 (randNumVar)
+
+    randNumVar = Int(Rnd(1) * 100) + 1
+
+End Sub
+
+
+'----------------------------------------
 '            d100 Subroutine
 '----------------------------------------
 'This subroutine assigns a random number
 'between 1 and 100 to the variable that
 'it is called with
-Sub d100 (randNumVar)
+Function d100% ()
 
-    randNumVar = Int(Rnd(1) * 100) + 1
+    d100% = Int(Rnd(1) * 100) + 1
 
 End Sub
 
@@ -546,7 +559,7 @@ Sub MAKEPBP ()
     'PLAY BY PLAY
     If pbpDelay! <> 0 Then
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         Select Case PT%
 
@@ -660,7 +673,7 @@ Sub MAKEPBP ()
                                 Call PBP
                                 pbpString$ = "TAKES IT UP"
 
-                                Call d100(RN1)
+                                Call Rolld100(RN1)
                                 If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 1 Then DK% = 1
                                 If (ballCarrier = 2 Or ballCarrier = 3) And RN1 <= 5 Then DK% = 1
                                 If ballCarrier = 4 And RN0 <= 7 Then DK% = 1
@@ -668,7 +681,7 @@ Sub MAKEPBP ()
                             Case 11 To 20
                                 pbpString$ = "HE TAKES IT TO THE HOLE"
 
-                                Call d100(RN1)
+                                Call Rolld100(RN1)
                                 If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 1 Then DK% = 1
                                 If (ballCarrier = 2 Or ballCarrier = 3) And RN1 <= 5 Then DK% = 1
                                 If ballCarrier = 4 And RN0 <= 7 Then DK% = 1
@@ -676,7 +689,7 @@ Sub MAKEPBP ()
                             Case 21 To 30
                                 pbpString$ = "HE TAKES IT TO THE HOOP"
 
-                                Call d100(RN1)
+                                Call Rolld100(RN1)
                                 If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 1 Then DK% = 1
                                 If (ballCarrier = 2 Or ballCarrier = 3) And RN1 <= 5 Then DK% = 1
                                 If ballCarrier = 4 And RN1 <= 7 Then DK% = 1
@@ -690,7 +703,7 @@ Sub MAKEPBP ()
                             Case 51 To 60
                                 pbpString$ = "HE TAKES IT TO THE BOARD"
 
-                                Call d100(RN0)
+                                Call Rolld100(RN0)
                                 If (ballCarrier = 0 Or ballCarrier = 1) And RN0 <= 1 Then DK% = 1
                                 If (ballCarrier = 2 Or ballCarrier = 3) And RN0 <= 5 Then DK% = 1
                                 If ballCarrier = 4 And RN0 <= 7 Then DK% = 1
@@ -708,7 +721,7 @@ Sub MAKEPBP ()
                             Case 81 To 90
                                 pbpString$ = "HE TAKES IT UP STRONG"
 
-                                Call d100(RN0)
+                                Call Rolld100(RN0)
                                 If (ballCarrier = 0 Or ballCarrier = 1) And RN0 <= 1 Then DK% = 1
                                 If (ballCarrier = 2 Or ballCarrier = 3) And RN0 <= 5 Then DK% = 1
                                 If ballCarrier = 4 And RN0 <= 7 Then DK% = 1
@@ -716,7 +729,7 @@ Sub MAKEPBP ()
                             Case 91 To 95
                                 pbpString$ = "HE POWERS IT UP"
 
-                                Call d100(RN0)
+                                Call Rolld100(RN0)
                                 If (ballCarrier = 0 Or ballCarrier = 1) And RN0 <= 1 Then DK% = 1
                                 If (ballCarrier = 2 Or ballCarrier = 3) And RN0 <= 5 Then DK% = 1
                                 If ballCarrier = 4 And RN0 <= 7 Then DK% = 1
@@ -743,7 +756,7 @@ Sub MAKEPBP ()
 
                                 Case 41 To 58:
                                     pbpString$ = "HE TAKES IT TO THE HOOP"
-                                    Call d100(RN0)
+                                    Call Rolld100(RN0)
                                     If RN0 <= 15 Then DK% = 1
 
                                 Case 59 To 70:
@@ -754,7 +767,7 @@ Sub MAKEPBP ()
                                     Call PBP
 
                                     pbpString$ = "TAKES IT UP"
-                                    Call d100(RN1)
+                                    Call Rolld100(RN1)
                                     If RN1 <= 15 Then DK% = 1
 
                                 Case 73 To 74:
@@ -762,13 +775,13 @@ Sub MAKEPBP ()
                                     Call PBP
                                     pbpString$ = "AND SOARS TO THE HOOP"
 
-                                    Call d100(RN1)
+                                    Call Rolld100(RN1)
                                     If RN1 <= 15 Then DK% = 1
 
                                 Case 75 To 100:
                                     pbpString$ = "HE TAKES IT UP STRONG"
 
-                                    Call d100(RN1)
+                                    Call Rolld100(RN1)
                                     If RN1 <= 15 Then DK% = 1
 
                             End Select
@@ -781,7 +794,7 @@ Sub MAKEPBP ()
 
                                 Case 1 To 16:
                                     pbpString$ = "HE TAKES IT UP"
-                                    Call d100(RN1)
+                                    Call Rolld100(RN1)
                                     If RN1 <= 7 Then DK% = 1
 
                                 Case 17 To 32:
@@ -789,7 +802,7 @@ Sub MAKEPBP ()
                                     Call PBP
                                     pbpString$ = "SHOOTS"
 
-                                    Call d100(RN1)
+                                    Call Rolld100(RN1)
                                     If RN1 <= 7 Then DK% = 1
 
                                 Case 33 To 48:
@@ -797,7 +810,7 @@ Sub MAKEPBP ()
                                     Call PBP
                                     pbpString$ = "TAKES IT UP"
 
-                                    Call d100(RN1)
+                                    Call Rolld100(RN1)
                                     If RN0 <= 7 Then DK% = 1
 
                                 Case 49 To 64:
@@ -809,7 +822,7 @@ Sub MAKEPBP ()
                                     Call PBP
                                     pbpString$ = "TAKES IT UP"
 
-                                    Call d100(RN1)
+                                    Call Rolld100(RN1)
                                     If RN1 <= 7 Then DK% = 1
 
                                 Case 68 To 69:
@@ -818,7 +831,7 @@ Sub MAKEPBP ()
                                     Call PBP
                                     pbpString$ = "AND SOARS TO THE HOOP"
 
-                                    Call d100(RN1)
+                                    Call Rolld100(RN1)
                                     If RN1 <= 7 Then DK% = 1
 
                                 Case 70 To 71:
@@ -827,7 +840,7 @@ Sub MAKEPBP ()
                                     Call PBP
                                     pbpString$ = "SPINS RIGHT AND GOES UP"
 
-                                    Call d100(RN1)
+                                    Call Rolld100(RN1)
                                     If RN1 <= 7 Then DK% = 1
 
                                 Case 72:
@@ -869,7 +882,7 @@ Sub MAKEPBP ()
                                 Case 26 To 50:
                                     pbpString$ = "HE TAKES IT UP UNDER THE BASKET"
 
-                                    Call d100(RN1)
+                                    Call Rolld100(RN1)
                                     If RN1 <= 2 Then DK% = 1
 
                                 Case 51 To 52:
@@ -878,7 +891,7 @@ Sub MAKEPBP ()
                                     Call PBP
                                     pbpString$ = "AND SOARS TO THE HOOP"
 
-                                    Call d100(RN1)
+                                    Call Rolld100(RN1)
                                     If RN1 <= 2 Then DK% = 1
 
                                 Case 53 To 54:
@@ -890,7 +903,7 @@ Sub MAKEPBP ()
                                     Call PBP
                                     pbpString$ = "SPINS RIGHT AND GOES UP"
 
-                                    Call d100(RN1)
+                                    Call Rolld100(RN1)
                                     If RN1 <= 2 Then DK% = 1
 
                                 Case 57:
@@ -1169,7 +1182,7 @@ Sub MAKEPBP ()
 
                         End Select
 
-                        Call d100(RN2)
+                        Call Rolld100(RN2)
                         If ballCarrier = 2 Or ballCarrier = 3 And RN2 <= 7 Then DK% = 1
                         If ballCarrier = 4 And RN2 <= 15 Then DK% = 1
 
@@ -1647,7 +1660,7 @@ Sub TICKER ()
         Color 14, 0
         Cls
 
-        Call d100(RN)
+        Call Rolld100(RN)
 
         If halfTime = 1 Then
 
@@ -1692,15 +1705,19 @@ Sub TICKER ()
             If quarter = 1 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 1
             If quarter = 1 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 2
             If quarter = 1 And gameClock! < 240 Then timeInterval = 3
+
             If quarter = 2 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 4
             If quarter = 2 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 5
             If quarter = 2 And gameClock! < 240 Then timeInterval = 6
+
             If quarter = 3 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 9
             If quarter = 3 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 10
             If quarter = 3 And gameClock! < 240 Then timeInterval = 11
+
             If quarter = 4 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 12
             If quarter = 4 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 13
             If quarter = 4 And gameClock! < 240 Then timeInterval = 14
+
             If quarter = 5 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 15
             If quarter = 5 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 16
             If quarter = 5 And gameClock! < 240 Then timeInterval = 17
@@ -2254,7 +2271,7 @@ Sub TickerSchedule
 
     End If
 
-    Open diskPaths$(0) + scheduleFile$ For Random As #2 Len = 48
+    Open diskPaths$(3) + scheduleFile$ For Random As #2 Len = 48
 
     For X = 0 To 18
         Field #2, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
@@ -2456,6 +2473,7 @@ Sub PlayStyle ()
 
             I$ = GetKeyPress$
             I1 = Val(I$)
+
             Select Case UCase$(I$)
                 Case "O": I1 = 5
                 Case "F": I1 = 5
@@ -2465,11 +2483,20 @@ Sub PlayStyle ()
         Loop Until I1 >= 0 And I1 <= 4 Or I1 = 6
 
         If I1 = 5 Then
-            If UCase$(I$) = "P" Then fullCtOpt(P9) = 1 - fullCtOpt(P9) ': GoSub 105
-            If UCase$(I$) = "F" Then defStyles(P9) = defStyles(P9) + 1: If defStyles(P9) > 5 Then defStyles(P9) = 1
-            If UCase$(I$) = "O" Then offStyles(P9) = offStyles(P9) + 1: If offStyles(P9) > 2 Then offStyles(P9) = 0
+            If UCase$(I$) = "P" Then 
+                fullCtOpt(P9) = 1 - fullCtOpt(P9) ': GoSub 105
+            End If
 
-            '105
+            If UCase$(I$) = "F" Then 
+                defStyles(P9) = defStyles(P9) + 1
+                If defStyles(P9) > 5 Then defStyles(P9) = 1
+            End If
+
+            If UCase$(I$) = "O" Then 
+                offStyles(P9) = offStyles(P9) + 1
+                If offStyles(P9) > 2 Then offStyles(P9) = 0
+            End If
+
             Color 14
             Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
 
@@ -2632,16 +2659,16 @@ Sub PlayItSafe ()
                     If MJ = 0 Then skipSelection% = 1
                     If MJ = 25 Then skipPlaySafe% = 1
                 Else
-                    P6 = Val(I$)
+                    playChoice = Val(I$)
                 End If
 
-            Loop Until P6 <= 1 And P6 <= (S2 + 1) Or UCase$(I$) = "Z"
+            Loop Until playChoice <= 1 And playChoice <= (S2 + 1) Or UCase$(I$) = "Z"
 
             If skipSelection% <> 1 Then
 
-                A = P6
+                A = playChoice
 
-                If P6 = P5(P6) Then
+                If playChoice = P5(playChoice) Then
 
                     gameRatings!(P9, gameB1!(P9, P4(A)), 17) = gameRatings!(P9, gameB1!(P9, P4(A)), 17) * 3
                     gameRatings!(P9, gameB1!(P9, P4(A)), 22) = 0
@@ -2658,7 +2685,7 @@ Sub PlayItSafe ()
 
             End If
 
-        Loop Until P6 <> P5(6) Or UCase$(I$) = "Z"
+        Loop Until playChoice <> P5(6) Or UCase$(I$) = "Z"
 
     End If
 
@@ -2707,13 +2734,13 @@ Sub PlayItSafe ()
 
                 I$ = GetKeyPress$
 
-                P6 = Val(I$)
+                playChoice = Val(I$)
 
                 If UCase$(I$) <> "Z" Then
 
-                    A = P6
+                    A = playChoice
 
-                    If P6 = P5(P6) Then
+                    If playChoice = P5(playChoice) Then
 
                         gameRatings!(P9, gameB1!(P9, P4(A)), 17) = Int((gameRatings!(P9, gameB1!(P9, P4(A)), 17) + 1) / 3)
                         gameRatings!(P9, gameB1!(P9, P4(A)), 22) = 50
@@ -2730,7 +2757,7 @@ Sub PlayItSafe ()
 
                 End If
 
-            Loop Until P6 >= 1 And P6 <= (S2 + 1) Or UCase$(I$) = "Z"
+            Loop Until playChoice >= 1 And playChoice <= (S2 + 1) Or UCase$(I$) = "Z"
 
         End If
 
@@ -2762,7 +2789,7 @@ Sub WHOGETSBALL
 
             M9 = 0
             ballCarrier = Int(Rnd(1) * 5)
-            Call d100(RN0)
+            Call Rolld100(RN0)
 
             If RN0 > 30 Then
 
@@ -2847,7 +2874,7 @@ End Sub
 'a random number.
 Sub CreditAssists ()
 
-    Call d100(RN0)
+    Call Rolld100(RN0)
 
     If RN0 <= F7%(P, 7) Then
 
@@ -3532,7 +3559,7 @@ Sub SCOREBOARD ()
         Print Using "### "; J;
         Color 15
         Print Using "## ##"; gameRatings!(0, gameB1!(0, I1), 4) / 10; gameRatings!(0, gameB1!(0, I1), 5) / 10;
-        Print Using "###  "; gameRatings!(0, gameB1!(0, I1), 8) * 2 + gameRatings!(0, gameB1!(0, I1), 10) + W%(0, gameB1!(0, I1), 0);
+        Print Using "###  "; gameRatings!(0, gameB1!(0, I1), 8) * 2 + gameRatings!(0, gameB1!(0, I1), 10) + threeFG(0, gameB1!(0, I1), 0);
 
         If gameRatings!(0, gameB1!(0, I1), 12) >= 5 Then Color 12
         Print Using "#"; gameRatings!(0, gameB1!(0, I1), 12)
@@ -3577,7 +3604,7 @@ Sub SCOREBOARD ()
         Color 15
 
         Print Using "## ##"; gameRatings!(1, gameB1!(1, I1), 4) / 10; gameRatings!(1, gameB1!(1, I1), 5) / 10;
-        Print Using "###  "; gameRatings!(1, gameB1!(1, I1), 8) * 2 + gameRatings!(1, gameB1!(1, I1), 10) + W%(1, gameB1!(1, I1), 0);
+        Print Using "###  "; gameRatings!(1, gameB1!(1, I1), 8) * 2 + gameRatings!(1, gameB1!(1, I1), 10) + threeFG(1, gameB1!(1, I1), 0);
 
         If gameRatings!(1, gameB1!(1, I1), 12) >= 5 Then Color 12
         Print Using "#"; gameRatings!(1, gameB1!(1, I1), 12)
@@ -3655,9 +3682,9 @@ Sub QUARTERTOTAL ()
             statTotals(2) = statTotals(2) + gameRatings!(I, I1, 10)
             statTotals(3) = statTotals(3) + gameRatings!(I, I1, 9)
             statTotals(4) = statTotals(4) + gameRatings!(I, I1, 11)
-            statTotals(5) = statTotals(5) + (gameRatings!(I, I1, 8) * 2) + gameRatings!(I, I1, 10) + W%(I, I1, 0)
-            statTotals(13) = statTotals(13) + W%(I, I1, 0)
-            statTotals(14) = statTotals(14) + W%(I, I1, 1)
+            statTotals(5) = statTotals(5) + (gameRatings!(I, I1, 8) * 2) + gameRatings!(I, I1, 10) + threeFG(I, I1, 0)
+            statTotals(13) = statTotals(13) + threeFG(I, I1, 0)
+            statTotals(14) = statTotals(14) + threeFG(I, I1, 1)
             statTotals(6) = teamFouls(I)
             statTotals(7) = statTotals(7) + gameRatings!(I, I1, 14)
             statTotals(8) = statTotals(8) + gameRatings!(I, I1, 15)
@@ -3679,10 +3706,10 @@ Sub QUARTERTOTAL ()
                     QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6)
                 Next
 
-                QQ(I, quarter, I1, 10) = W%(I, I1, 0) - QQ(I, quarter - 1, I1, 10)
-                QQ(I, quarter, I1, 11) = W%(I, I1, 1) - QQ(I, quarter - 1, I1, 11)
+                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10)
+                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11)
                 QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12)
-                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, quarter - 1, I1, 13)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13)
                 QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14)
 
             Next
@@ -3701,10 +3728,10 @@ Sub QUARTERTOTAL ()
                     QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6)
                 Next
 
-                QQ(I, quarter, I1, 10) = W%(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10)
-                QQ(I, quarter, I1, 11) = W%(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11)
+                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10)
+                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11)
                 QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12)
-                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13)
                 QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14)
 
             Next
@@ -3723,10 +3750,10 @@ Sub QUARTERTOTAL ()
                     QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6) - QQ(I, quarter - 3, I1, I2 - 6)
                 Next
 
-                QQ(I, quarter, I1, 10) = W%(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10)
-                QQ(I, quarter, I1, 11) = W%(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11)
+                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10)
+                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11)
                 QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12) - QQ(I, quarter - 3, I1, 12)
-                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13)
                 QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14) - QQ(I, quarter - 3, I1, 14)
 
             Next
@@ -3745,10 +3772,10 @@ Sub QUARTERTOTAL ()
                     QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6) - QQ(I, quarter - 3, I1, I2 - 6) - QQ(I, quarter - 4, I1, I2 - 6)
                 Next
 
-                QQ(I, quarter, I1, 10) = W%(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10) - QQ(I, quarter - 4, I1, 10)
-                QQ(I, quarter, I1, 11) = W%(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11) - QQ(I, quarter - 4, I1, 11)
+                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10) - QQ(I, quarter - 4, I1, 10)
+                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11) - QQ(I, quarter - 4, I1, 11)
                 QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12) - QQ(I, quarter - 3, I1, 12) - QQ(I, quarter - 4, I1, 12)
-                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13) - QQ(I, quarter - 4, I1, 13)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13) - QQ(I, quarter - 4, I1, 13)
                 QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14) - QQ(I, quarter - 3, I1, 14) - QQ(I, quarter - 4, I1, 14)
 
             Next
@@ -3765,10 +3792,11 @@ Sub QUARTERTOTAL ()
                 For I2 = 7 To 15
                     QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6) - QQ(I, quarter - 3, I1, I2 - 6) - QQ(I, quarter - 4, I1, I2 - 6) - QQ(I, quarter - 5, I1, I2 - 6)
                 Next
-                QQ(I, quarter, I1, 10) = W%(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10) - QQ(I, quarter - 4, I1, 10) - QQ(I, quarter - 5, I1, 10)
-                QQ(I, quarter, I1, 11) = W%(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11) - QQ(I, quarter - 4, I1, 11) - QQ(I, quarter - 5, I1, 11)
+                
+                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10) - QQ(I, quarter - 4, I1, 10) - QQ(I, quarter - 5, I1, 10)
+                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11) - QQ(I, quarter - 4, I1, 11) - QQ(I, quarter - 5, I1, 11)
                 QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12) - QQ(I, quarter - 3, I1, 12) - QQ(I, quarter - 4, I1, 12) - QQ(I, quarter - 5, I1, 12)
-                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13) - QQ(I, quarter - 4, I1, 13) - QQ(I, quarter - 5, I1, 13)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13) - QQ(I, quarter - 4, I1, 13) - QQ(I, quarter - 5, I1, 13)
                 QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14) - QQ(I, quarter - 3, I1, 14) - QQ(I, quarter - 4, I1, 14) - QQ(I, quarter - 5, I1, 14)
             Next
 
@@ -3786,10 +3814,10 @@ Sub QUARTERTOTAL ()
                     QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6) - QQ(I, quarter - 3, I1, I2 - 6) - QQ(I, quarter - 4, I1, I2 - 6) - QQ(I, quarter - 5, I1, I2 - 6) - QQ(I, quarter - 6, I1, I2 - 6)
                 Next
 
-                QQ(I, quarter, I1, 10) = W%(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10) - QQ(I, quarter - 4, I1, 10) - QQ(I, quarter - 5, I1, 10) - QQ(I, quarter - 6, I1, 10)
-                QQ(I, quarter, I1, 11) = W%(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11) - QQ(I, quarter - 4, I1, 11) - QQ(I, quarter - 5, I1, 11) - QQ(I, quarter - 6, I1, 11)
+                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10) - QQ(I, quarter - 4, I1, 10) - QQ(I, quarter - 5, I1, 10) - QQ(I, quarter - 6, I1, 10)
+                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11) - QQ(I, quarter - 4, I1, 11) - QQ(I, quarter - 5, I1, 11) - QQ(I, quarter - 6, I1, 11)
                 QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12) - QQ(I, quarter - 3, I1, 12) - QQ(I, quarter - 4, I1, 12) - QQ(I, quarter - 5, I1, 12) - QQ(I, quarter - 6, I1, 12)
-                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13) - QQ(I, quarter - 4, I1, 13) - QQ(I, quarter - 5, I1, 13) - QQ(I, quarter - 6, I1, 13)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13) - QQ(I, quarter - 4, I1, 13) - QQ(I, quarter - 5, I1, 13) - QQ(I, quarter - 6, I1, 13)
                 QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14) - QQ(I, quarter - 3, I1, 14) - QQ(I, quarter - 4, I1, 14) - QQ(I, quarter - 5, I1, 14) - QQ(I, quarter - 6, I1, 14)
 
             Next
@@ -4130,10 +4158,17 @@ Sub SETUPRATINGS ()
                 'Active Flag
                 gameRatings!(I, I1, 18) = plyrRat_GAME(I, I1, 18)
 
-                'If Player FGA > 0 Then assign 3FGA / FGA as %
-                If plyrRat_GAME(I, I1, 2) > 0 Then gameRatings!(I, I1, 19) = Int(plyrRat_GAME(I, I1, 13) / plyrRat_GAME(I, I1, 2) * 100 + .5)
-                'If Player 3FGA > 0 Then assign 3FGM %
-                If plyrRat_GAME(I, I1, 13) > 0 Then gameRatings!(I, I1, 20) = Int(plyrRat_GAME(I, I1, 14) / plyrRat_GAME(I, I1, 13) * 100 + .5)
+                'If Player FGA > 0 
+                If plyrRat_GAME(I, I1, 2) > 0 Then 
+                    'Calculate 3FGA frequency
+                    gameRatings!(I, I1, 19) = Int(plyrRat_GAME(I, I1, 13) / plyrRat_GAME(I, I1, 2) * 100 + .5)
+                End If
+
+                'If Player 3FGA > 0
+                If plyrRat_GAME(I, I1, 13) > 0 Then 
+                    'Calculate 3FGM %
+                    gameRatings!(I, I1, 20) = Int(plyrRat_GAME(I, I1, 14) / plyrRat_GAME(I, I1, 13) * 100 + .5)
+                End If
 
                 'Player FGA / (Player FGA + Player FTA) as %
                 X3! = Int(plyrRat_GAME(I, I1, 2) / (plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 4)) * 100 + .5)
@@ -4343,7 +4378,7 @@ End Sub
 'missed FT's when there are 3 attempts.
 Sub BADFT ()
 
-    Select Case F3
+    Select Case freeThrowNbr
         Case 1 
             pbpString$ = "FIRST FREE THROW IS MISSED"
         Case 2
@@ -4458,43 +4493,140 @@ Sub COMPUTERCOACH ()
 
         I5 = score(I6, 0) - score(P9, 0)
 
-        If quarter <= 2 Then defStyles(P9) = 1: fullCtOpt(P9) = 0
-        If quarter = 3 And I5 > 20 Then defStyles(P9) = 1: fullCtOpt(P9) = 0
-        If quarter = 3 And I5 >= 10 And I5 < 20 Then defStyles(P9) = 1: fullCtOpt(P9) = 1
-        If quarter = 3 And I5 < 10 Then defStyles(P9) = 1: fullCtOpt(P9) = 0
-        If quarter = 4 And gameClock! >= 120 And I5 > 20 Then defStyles(P9) = 1: fullCtOpt(P9) = 0
-        If quarter = 4 And gameClock! >= 120 And I5 > 10 And I5 < 20 Then defStyles(P9) = 3: fullCtOpt(P9) = 1
-        If quarter = 4 And gameClock! >= 120 And I5 <= 10 Then defStyles(P9) = 1: fullCtOpt(P9) = 1
-        If quarter = 4 And gameClock! < 120 And I5 > 10 Then defStyles(P9) = 1: fullCtOpt(P9) = 0
-        If quarter = 4 And gameClock! < 120 And I5 <= 10 And I5 > 4 Then defStyles(P9) = 3: fullCtOpt(P9) = 1
-        If quarter = 4 And gameClock! < 120 And I5 <= 4 Then defStyles(P9) = 1: fullCtOpt(P9) = 1
-        If quarter > 4 Then defStyles(P9) = 1: fullCtOpt(P9) = 1
+        If quarter <= 2 Then 
+            defStyles(P9) = 1
+            fullCtOpt(P9) = 0
+        End If
+
+        If quarter = 3 then
+
+            Select Case I5
+                Case Is < 10
+                    defStyles(P9) = 1
+                    fullCtOpt(P9) = 0
+                Case 10 to 20
+                    defStyles(P9) = 1
+                    fullCtOpt(P9) = 1
+                Case Is > 20
+                    defStyles(P9) = 1
+                    fullCtOpt(P9) = 0
+            End Select
+
+        End If
+
+        If quarter = 4 Then
+        
+            If gameClock! >= 120 Then
+
+                Select Case I5
+                    
+                    Case 1 to 10
+                        defStyles(P9) = 1
+                        fullCtOpt(P9) = 1
+
+                    Case 11 to 20
+                        defStyles(P9) = 3
+                        fullCtOpt(P9) = 1
+                
+                    Case Is > 20
+                        defStyles(P9) = 1
+                        fullCtOpt(P9) = 0
+
+                End Select
+                
+            Else
+
+                Select Case I5
+                
+                    Case 1 to 4
+                        defStyles(P9) = 1
+                        fullCtOpt(P9) = 1
+                
+                    Case 5 to 10
+                        defStyles(P9) = 3
+                        fullCtOpt(P9) = 1
+
+                    Case Is > 10
+                        defStyles(P9) = 1
+                        fullCtOpt(P9) = 0
+
+                End Select
+                    
+            End If
+
+        End If
+
+        If quarter > 4 Then 
+            defStyles(P9) = 1
+            fullCtOpt(P9) = 1
+        End If
 
     Else
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
         fullCtOpt(P9) = 0
 
-        If quarter <= 4 And RN0 >= 41 Then defStyles(P9) = 1
-        If quarter <= 4 And RN0 > 20 And RN0 <= 40 Then defStyles(P9) = 4
-        If quarter <= 4 And RN0 <= 20 Then defStyles(P9) = 2
-        If quarter = 3 And RN0 >= 50 Then defStyles(P9) = 1
-        If quarter = 3 And RN0 > 25 And RN0 < 50 Then defStyles(P9) = 4
-        If quarter = 3 And RN0 <= 25 Then defStyles(P9) = 2
-        If quarter = 4 And RN0 >= 70 Then defStyles(P9) = 1
-        If quarter = 4 And RN0 >= 35 And RN0 < 70 Then defStyles(P9) = 2
-        If quarter = 4 And RN0 < 35 Then defStyles(P9) = 4
-        If quarter > 4 And RN0 >= 50 Then defStyles(P9) = 1
-        If quarter > 4 And RN0 >= 25 And RN0 < 50 Then defStyles(P9) = 2
-        If quarter > 4 And RN0 < 25 Then defStyles(P9) = 4
+        If quarter <= 4 Then
+            Select Case RN0
+                Case Is <= 20 
+                    defStyles(P9) = 2
+                Case 21 to 40
+                    defStyles(P9) = 4
+                Case Is >= 41 
+                    defStyles(P9) = 1
+            End Select
+        End If
+
+        If quarter = 3 Then
+           Select Case RN0
+                Case Is <= 25
+                    defStyles(P9) = 2
+                Case 26 to 49
+                    defStyles(P9) = 4
+                Case Is >= 50 
+                    defStyles(P9) = 1
+            End Select
+         End If
+
+        If quarter = 4 Then
+           Select Case RN0
+                Case Is < 35
+                    defStyles(P9) = 4
+                Case 35 to 69
+                    defStyles(P9) = 2
+                Case Is >= 70 
+                    defStyles(P9) = 1
+            End Select
+         End If
+
+        If quarter > 4 Then
+            Select Case RN0
+                Case Is < 25
+                    defStyles(P9) = 4
+                Case 25 to 49
+                    defStyles(P9) = 2
+                Case Is >= 50
+                    defStyles(P9) = 1
+            End Select
+        End If
 
     End If
 
     offStyles(P9) = 0
 
-    If quarter < 3 Then offStyles(P9) = 0
-    If quarter >= 3 And score(P9, 0) - score(I6, 0) < 0 And Int(Rnd(1) * 2) = 1 Then offStyles(P9) = 1
-    If quarter >= 3 And score(P9, 0) - score(I6, 0) >= 0 And Int(Rnd(1) * 2) = 1 Then offStyles(P9) = 2
+    If quarter < 3 Then
+        offStyles(P9) = 0
+    End If
+
+    If quarter >= 3 And Int(Rnd(1) * 2) = 1 Then
+
+        If score(P9, 0) - score(I6, 0) < 0 Then
+            offStyles(P9) = 1
+        Else
+            offStyles(P9) = 2
+        End If
+
+    End If
 
 End Sub
 
@@ -4693,9 +4825,9 @@ Sub MADEFT ()
     gameRatings!(P, gameB1!(P, ballCarrier), 10) = gameRatings!(P, gameB1!(P, ballCarrier), 10) + 1
 
     If pbpDelay! <> 0 Then
-        Locate F3 + 9, 1
+        Locate freeThrowNbr + 9, 1
         Call DELAY
-        Print F3; " GOOD"
+        Print freeThrowNbr; " GOOD"
     End If
 
     score(P, quarter) = score(P, quarter) + 1
@@ -4716,8 +4848,8 @@ Sub MISSFT ()
 
     If pbpDelay! <> 0 Then
         Call DELAY
-        Locate F3 + 9, 1
-        Print F3; " MISSED"
+        Locate freeThrowNbr + 9, 1
+        Print freeThrowNbr; " MISSED"
         Call DELAY
     End If
 
@@ -4795,7 +4927,7 @@ Sub LINEUPS ()
             If quarter > 4 Or quarter = 4 And gameClock! <= 120 And gameClock! <> 0 Then Locate , 61: Print "  ";
 
             'PT F  FC  PPG
-            Locate , 63: Print Using "### # ### ##.#"; gameRatings!(P9, R1, 8) * 2 + gameRatings!(P9, R1, 10) + W%(P9, R1, 0); gameRatings!(P9, R1, 12); gameRatings!(P9, R1, 17); (plyrRat_GAME(P9, R1, 3) * 2 + plyrRat_GAME(P9, R1, 5) + plyrRat_GAME(P9, R1, 14)) / plyrRat_GAME(P9, R1, 0)
+            Locate , 63: Print Using "### # ### ##.#"; gameRatings!(P9, R1, 8) * 2 + gameRatings!(P9, R1, 10) + threeFG(P9, R1, 0); gameRatings!(P9, R1, 12); gameRatings!(P9, R1, 17); (plyrRat_GAME(P9, R1, 3) * 2 + plyrRat_GAME(P9, R1, 5) + plyrRat_GAME(P9, R1, 14)) / plyrRat_GAME(P9, R1, 0)
 
         End If
 
@@ -4813,6 +4945,81 @@ End Sub
 
 
 '----------------------------------------
+'         SHOTPERCENT Subroutine
+'----------------------------------------
+'This subroutine calculates the chance of
+'a shot being made based on the active
+'defense / offense / players.
+Sub SHOTPERCENT
+
+    shotChance = gameRatings!(P, gameB1!(P, ballCarrier), 0) + D1(D)
+
+    'Shift shot chance towards team with homefield advantage
+    If gameLoc = P Then
+        shotChance = shotChance + 2
+    Else
+        If gameLoc <> 2 Then shotChance = shotChance - 2
+    End If
+
+    A4 = Int(Rnd(1) * 41)
+
+    RN0 = Int(Rnd(1) * F5%(P, 4)) + 1
+    RN1 = Int(.17 * F5%(P, 4) + .5)
+
+    If RN1 >= RN0 Then
+        shotChance = shotChance + A4
+        PZ% = 2
+        xFactor = 0
+    Else
+
+        ' *** CHECK PENETRATION SHOT ***
+        Call Rolld100(RN2)
+        A4 = Int(Rnd(1) * 50) + 1
+
+        If RN2 <= (plyrRat_GAME(P, gameB1!(P, ballCarrier), 16) + OY%(offStyles(P))) * 2 + 1 Then
+
+            PZ% = 3
+            shotChance = shotChance + A4
+            xFactor = 0
+
+        Else
+
+            ' *** CHECK AVERAGE SHOT ***
+            I2 = plyrRat_GAME(P, gameB1!(P, ballCarrier), 16)
+            rndTeam = Int(Rnd(1) * 2)
+
+            If Left$(players_GAME$(P, gameB1!(P, ballCarrier), 1), 1) = "G" Or Left$(players_GAME$(P, gameB1!(P, ballCarrier), 1), 1) = "F" Then
+
+                'For a Guard or Forward
+                R2 = Int(Rnd(1) * 3)
+
+                Select Case R2
+                    Case 1: PZ% = 6
+                    Case 2: PZ% = 7
+                    Case 3: PZ% = 5
+                End Select
+
+            Else
+
+                If rndTeam = 1 Then
+                    PZ% = 6
+                Else
+                    PZ% = 5
+                End If
+
+            End If
+
+            shotChance = shotChance + GF%(rndTeam, I2)
+            xFactor = 0
+
+        End If
+
+    End If
+
+End SUB
+
+
+'----------------------------------------
 '           THREEFT Subroutine
 '----------------------------------------
 'This subroutine walks the user through
@@ -4822,9 +5029,9 @@ Sub THREEFT ()
     'Increase FTM
     gameRatings!(P, gameB1!(P, ballCarrier), 10) = gameRatings!(P, gameB1!(P, ballCarrier), 10) + 1
 
-    Call d100(RN)
+    Call Rolld100(RN)
 
-    Select Case F3
+    Select Case freeThrowNbr
 
         Case 1
             If RN <= 50 Then
@@ -5095,10 +5302,10 @@ Sub EVENTS (specialCount, specialStat)
 
                 For I1 = 0 To 14
 
-                    If gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) > eventSettings(6) Then
+                    If gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) > eventSettings(6) Then
                         checkSpecial% = 1
                     Else
-                        If gameRatings!(I, I1, 11) > eventSettings(7) Or gameRatings!(I, I1, 14) > eventSettings(8) Or gameRatings!(I, I1, 15) > eventSettings(9) Or gameRatings!(I, I1, 13) > eventSettings(10) Or W%(I, I1, 0) > eventSettings(11) Then
+                        If gameRatings!(I, I1, 11) > eventSettings(7) Or gameRatings!(I, I1, 14) > eventSettings(8) Or gameRatings!(I, I1, 15) > eventSettings(9) Or gameRatings!(I, I1, 13) > eventSettings(10) Or threeFG(I, I1, 0) > eventSettings(11) Then
                             checkSpecial% = 1
                         End If
                     End If
@@ -5276,7 +5483,7 @@ Sub UPDATESCREEN ()
             Print Using "### "; J;
             Color 15
             Print Using "## ##"; gameRatings!(0, gameB1!(0, I1), 4) / 10; gameRatings!(0, gameB1!(0, I1), 5) / 10;
-            Print Using "###  "; gameRatings!(0, gameB1!(0, I1), 8) * 2 + gameRatings!(0, gameB1!(0, I1), 10) + W%(0, gameB1!(0, I1), 0);
+            Print Using "###  "; gameRatings!(0, gameB1!(0, I1), 8) * 2 + gameRatings!(0, gameB1!(0, I1), 10) + threeFG(0, gameB1!(0, I1), 0);
 
             If gameRatings!(0, gameB1!(0, I1), 12) >= 5 Then Color 12
 
@@ -5314,7 +5521,7 @@ Sub UPDATESCREEN ()
 
             Color 15
             Print Using "## ##"; gameRatings!(1, gameB1!(1, I1), 4) / 10; gameRatings!(1, gameB1!(1, I1), 5) / 10;
-            Print Using "###  "; gameRatings!(1, gameB1!(1, I1), 8) * 2 + gameRatings!(1, gameB1!(1, I1), 10) + W%(1, gameB1!(1, I1), 0);
+            Print Using "###  "; gameRatings!(1, gameB1!(1, I1), 8) * 2 + gameRatings!(1, gameB1!(1, I1), 10) + threeFG(1, gameB1!(1, I1), 0);
 
             If gameRatings!(1, gameB1!(1, I1), 12) >= 5 Then Color 12
             Print Using "#"; gameRatings!(1, gameB1!(1, I1), 12)
@@ -5574,9 +5781,9 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
                 Print #1, Using "##"; gameRatings!(I, I1, 7);
 
                 '3FGM - 3FGA
-                Print #1, Using "  ##"; W%(I, I1, 0);
+                Print #1, Using "  ##"; threeFG(I, I1, 0);
                 Print #1, "-";
-                Print #1, Using "##"; W%(I, I1, 1);
+                Print #1, Using "##"; threeFG(I, I1, 1);
 
                 'FTM - FTA
                 Print #1, Using "  ##"; gameRatings!(I, I1, 10);
@@ -5584,16 +5791,16 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
                 Print #1, Using "##"; gameRatings!(I, I1, 9);
 
                 'ORB / RB / Points / Fouls / Assists / Blocks / Steals / Turnovers
-                Print #1, Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; gameRatings!(I, I1, 24); gameRatings!(I, I1, 11); gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0); gameRatings!(I, I1, 12); gameRatings!(I, I1, 14); gameRatings!(I, I1, 15); gameRatings!(I, I1, 13); gameRatings!(I, I1, 23)
+                Print #1, Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; gameRatings!(I, I1, 24); gameRatings!(I, I1, 11); gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0); gameRatings!(I, I1, 12); gameRatings!(I, I1, 14); gameRatings!(I, I1, 15); gameRatings!(I, I1, 13); gameRatings!(I, I1, 23)
 
                 statTotals(0) = statTotals(0) + gameRatings!(I, I1, 8)
                 statTotals(1) = statTotals(1) + gameRatings!(I, I1, 7)
                 statTotals(2) = statTotals(2) + gameRatings!(I, I1, 10)
                 statTotals(3) = statTotals(3) + gameRatings!(I, I1, 9)
                 statTotals(4) = statTotals(4) + gameRatings!(I, I1, 11)
-                statTotals(5) = statTotals(5) + (gameRatings!(I, I1, 8) * 2) + gameRatings!(I, I1, 10) + W%(I, I1, 0)
-                statTotals(13) = statTotals(13) + W%(I, I1, 0)
-                statTotals(14) = statTotals(14) + W%(I, I1, 1)
+                statTotals(5) = statTotals(5) + (gameRatings!(I, I1, 8) * 2) + gameRatings!(I, I1, 10) + threeFG(I, I1, 0)
+                statTotals(13) = statTotals(13) + threeFG(I, I1, 0)
+                statTotals(14) = statTotals(14) + threeFG(I, I1, 1)
                 statTotals(6) = teamFouls(I)
                 statTotals(7) = statTotals(7) + gameRatings!(I, I1, 14)
                 statTotals(8) = statTotals(8) + gameRatings!(I, I1, 15)
@@ -5824,7 +6031,7 @@ Sub STATS2SCREEN
                 Color 15
 
                 'Name
-                Print players_GAME$(I, I1, 0); Tab(14);
+                Print Left$(players_GAME$(I, I1, 0), 13); Tab(14);
 
                 'Minutes
                 If timePlayed(I, I1) <> 0 Then
@@ -5846,9 +6053,9 @@ Sub STATS2SCREEN
                 Print Using "##"; gameRatings!(I, I1, 7);
 
                 '3FG
-                Print Using "  ##"; W%(I, I1, 0);
+                Print Using "  ##"; threeFG(I, I1, 0);
                 Print "-";
-                Print Using "##"; W%(I, I1, 1);
+                Print Using "##"; threeFG(I, I1, 1);
 
                 'FT
                 Print Using "  ##"; gameRatings!(I, I1, 10);
@@ -5856,7 +6063,7 @@ Sub STATS2SCREEN
                 Print Using "##"; gameRatings!(I, I1, 9);
 
                 'ORB / RB / PT / F / A /  B / S / TO
-                Print Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; gameRatings!(I, I1, 24); gameRatings!(I, I1, 11); gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0); gameRatings!(I, I1, 12); gameRatings!(I, I1, 14); gameRatings!(I, I1, 15); gameRatings!(I, I1, 13); gameRatings!(I, I1, 23);
+                Print Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; gameRatings!(I, I1, 24); gameRatings!(I, I1, 11); gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0); gameRatings!(I, I1, 12); gameRatings!(I, I1, 14); gameRatings!(I, I1, 15); gameRatings!(I, I1, 13); gameRatings!(I, I1, 23);
 
                 If timePlayed(I, I1) = 0 Then Locate , 15: Print "DNP" Else Print
 
@@ -5865,9 +6072,9 @@ Sub STATS2SCREEN
                 statTotals(2) = statTotals(2) + gameRatings!(I, I1, 10)
                 statTotals(3) = statTotals(3) + gameRatings!(I, I1, 9)
                 statTotals(4) = statTotals(4) + gameRatings!(I, I1, 11)
-                statTotals(5) = statTotals(5) + (gameRatings!(I, I1, 8) * 2) + gameRatings!(I, I1, 10) + W%(I, I1, 0)
-                statTotals(13) = statTotals(13) + W%(I, I1, 0)
-                statTotals(14) = statTotals(14) + W%(I, I1, 1)
+                statTotals(5) = statTotals(5) + (gameRatings!(I, I1, 8) * 2) + gameRatings!(I, I1, 10) + threeFG(I, I1, 0)
+                statTotals(13) = statTotals(13) + threeFG(I, I1, 0)
+                statTotals(14) = statTotals(14) + threeFG(I, I1, 1)
                 statTotals(6) = teamFouls(I)
                 statTotals(7) = statTotals(7) + gameRatings!(I, I1, 14)
                 statTotals(8) = statTotals(8) + gameRatings!(I, I1, 15)
@@ -5959,12 +6166,12 @@ Sub BOX2SPC (boxName$)
 
     For I = 0 To 1
         For I1 = 0 To 14
-            If gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) > eventSettings(6) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(6)
+            If gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) > eventSettings(6) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(6)
             If gameRatings!(I, I1, 11) > eventSettings(7) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(7)
             If gameRatings!(I, I1, 14) > eventSettings(8) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " HAD MORE THAN ### ASSISTS"; eventSettings(8)
             If gameRatings!(I, I1, 15) > eventSettings(9) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " BLOCKED MORE THAN ### SHOTS"; eventSettings(9)
             If gameRatings!(I, I1, 13) > eventSettings(10) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " HAD MORE THAN ### STEALS"; eventSettings(10)
-            If W%(I, I1, 0) > eventSettings(11) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " MADE MORE THAN ### 3-PT FIELD GOALS"; eventSettings(11)
+            If threeFG(I, I1, 0) > eventSettings(11) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " MADE MORE THAN ### 3-PT FIELD GOALS"; eventSettings(11)
         Next
     Next
 
@@ -6094,8 +6301,8 @@ Sub COMPILESTATFILES (compileOpt)
                 gameRatings!(PX, I, J) = gameRatings!(PX, I, J + 6)
             Next
 
-            gameW0!(PX, I) = W%(PX, I, 0)
-            gameW1!(PX, I) = W%(PX, I, 1)
+            gameW0!(PX, I) = threeFG(PX, I, 0)
+            gameW1!(PX, I) = threeFG(PX, I, 1)
 
         Next
 
@@ -6428,7 +6635,7 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
 
             If I$ <> Chr$(13) Then
 
-                Locate 7, 27: Print I$;
+                Locate 8, 27: Print I$;
 
                 NY$ = ""
 
@@ -6687,7 +6894,7 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx)
             For I = 0 To 14
                 If plyrRat_GAME(gameIdx, I, 18) = -1 Then plyrRat_GAME(gameIdx, I, 18) = 0
 
-                Call d100(RN)
+                Call Rolld100(RN)
 
                 'Auto disable specific players
                 If UCase$(players_GAME$(gameIdx, I, 0)) = "XXX" Or (plyrRat_GAME(gameIdx, I, 18) = 0 And RN > Int(plyrRat_GAME(gameIdx, I, 0) / leagRat_GAME(gameIdx, 0) * 100 + .5)) Then
@@ -6800,8 +7007,8 @@ Sub CheckRecords ()
         For I1 = 0 To 14
 
             ' SCORING RECORDS FOR POINTS IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
-            If gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) > indRecords!(0, 0) Then
-                indRecords!(0, 0) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + W%(I, I1, 0) ' POINTS
+            If gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) > indRecords!(0, 0) Then
+                indRecords!(0, 0) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) ' POINTS
                 indRecords!(0, 1) = 1 ' TIMES DONE
                 indRecords!(0, 2) = 0 ' GAME
                 indRecDesc$(0, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -7012,8 +7219,8 @@ Sub CheckRecords ()
             Next I2
 
             ' THREE-POINT FIELD GOALS MOST MADE NO MISSES, MOST ATT NONE MADE
-            If W%(I, I1, 0) = W%(I, I1, 1) And W%(I, I1, 0) > indRecords!(15, 0) Then
-                indRecords!(15, 0) = W%(I, I1, 0) ' MOST 3-FGM
+            If threeFG(I, I1, 0) = threeFG(I, I1, 1) And threeFG(I, I1, 0) > indRecords!(15, 0) Then
+                indRecords!(15, 0) = threeFG(I, I1, 0) ' MOST 3-FGM
                 indRecDesc$(15, 0) = players_GAME$(I, I1, 0) ' NAME
                 indRecDesc$(15, 1) = gameTeams$(I) ' TEAM
                 indRecDesc$(15, 2) = VERSUS$(I) ' AT/VS
@@ -7021,8 +7228,8 @@ Sub CheckRecords ()
                 indRecDesc$(15, 4) = Date$ ' DATE
             End If
 
-            If W%(I, I1, 0) = 0 And W%(I, I1, 1) > indRecords!(16, 0) Then
-                indRecords!(16, 0) = W%(I, I1, 1) ' 0 3FGM /3FGA
+            If threeFG(I, I1, 0) = 0 And threeFG(I, I1, 1) > indRecords!(16, 0) Then
+                indRecords!(16, 0) = threeFG(I, I1, 1) ' 0 3FGM /3FGA
                 indRecDesc$(16, 0) = players_GAME$(I, I1, 0) ' NAME
                 indRecDesc$(16, 1) = gameTeams$(I) ' TEAM
                 indRecDesc$(16, 2) = VERSUS$(I) ' AT/VS
@@ -7031,8 +7238,8 @@ Sub CheckRecords ()
             End If
 
             ' 3-FIELD GOALS MADE IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
-            If W%(I, I1, 0) > indRecords!(17, 0) Then
-                indRecords!(17, 0) = W%(I, I1, 0) ' 3FGM
+            If threeFG(I, I1, 0) > indRecords!(17, 0) Then
+                indRecords!(17, 0) = threeFG(I, I1, 0) ' 3FGM
                 indRecords!(17, 1) = 1 ' TIMES DONE
                 indRecords!(17, 2) = 0 ' GAME
                 indRecDesc$(17, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -7091,8 +7298,8 @@ Sub CheckRecords ()
             Next I2
 
             ' 3-FIELD GOALS ATT IN A GAME, HALF
-            If W%(I, I1, 1) > indRecords!(21, 0) Then
-                indRecords!(21, 0) = W%(I, I1, 1) ' 3FGA
+            If threeFG(I, I1, 1) > indRecords!(21, 0) Then
+                indRecords!(21, 0) = threeFG(I, I1, 1) ' 3FGA
                 indRecords!(21, 1) = 1 ' TIMES DONE
                 indRecords!(21, 2) = 0 ' GAME
                 indRecDesc$(21, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -7823,9 +8030,9 @@ Sub CheckRecords ()
                 V8(I2, 2) = V8(I2, 2) + gameRatings!(I2, I1, 10)
                 V8(I2, 3) = V8(I2, 3) + gameRatings!(I2, I1, 9)
                 V8(I2, 4) = V8(I2, 4) + gameRatings!(I2, I1, 11)
-                V8(I2, 5) = V8(I2, 5) + (gameRatings!(I2, I1, 8) * 2) + gameRatings!(I2, I1, 10) + W%(I2, I1, 0)
-                V8(I2, 13) = V8(I2, 13) + W%(I2, I1, 0)
-                V8(I2, 14) = V8(I2, 14) + W%(I2, I1, 1)
+                V8(I2, 5) = V8(I2, 5) + (gameRatings!(I2, I1, 8) * 2) + gameRatings!(I2, I1, 10) + threeFG(I2, I1, 0)
+                V8(I2, 13) = V8(I2, 13) + threeFG(I2, I1, 0)
+                V8(I2, 14) = V8(I2, 14) + threeFG(I2, I1, 1)
                 V8(I2, 6) = teamFouls(I2)
                 V8(I2, 7) = V8(I2, 7) + gameRatings!(I2, I1, 14)
                 V8(I2, 8) = V8(I2, 8) + gameRatings!(I2, I1, 15)

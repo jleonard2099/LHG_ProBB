@@ -132,7 +132,7 @@ Sub PROHOOP ()
 
         Open "pbplog" + Str$(currGame) For Append As #11
 
-        Open diskPaths$(0) + scheduleFile$ For Random As #7 Len = 48
+        Open diskPaths$(3) + scheduleFile$ For Random As #7 Len = 48
 
         For X = 0 To 18
             Field #7, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
@@ -197,7 +197,7 @@ Sub PROHOOP ()
             Locate 7, 2: Color 14
             Print "(6) ";: Color 15: Print "3-POINT SHOT: "; yesNoText$(threePtOpt)
             Locate 8, 2: Color 14
-            Print "(7) ";: Color 15: Print "SHOW SHOT PERCENTAGES: "; yesNoText$(shotPctOpt)
+            Print "(7) ";: Color 15: Print "HUMAN COACHES: "; coachMode$(coachOpt)
             Locate 9, 2: Color 14
             Print "(8) ";: Color 15: Print "GAME TYPE: "; playoffGame$(playoffOpt)
             Locate 10, 2: Color 14
@@ -206,16 +206,14 @@ Sub PROHOOP ()
             Print "(0) ";: Color 15: Print "SAVE SETTINGS"
             Locate 12, 2: Color 14
             Print "(A) ";: Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#"; pbpDelay!
-            Locate 13, 2: Color 14
-            Print "(B) ";: Color 15: Print "HUMAN COACHES: "; coachMode$(coachOpt);
+            Locate 13, 2: Color 14            
+            Print "(B) ";: Color 15: Print "BONUS AFTER FOUL #: "; bonusFoulNum
             Locate 14, 2: Color 14
-            Print "(C) ";: Color 15: Print "BONUS AFTER FOUL #: "; bonusFoulNum
+            Print "(C) ";: Color 15: Print "NUMBER OF FREE THROWS: "; freeThrowOpt$(freeThrowVal)
             Locate 15, 2: Color 14
-            Print "(D) ";: Color 15: Print "NUMBER OF FREE THROWS: "; freeThrowOpt$(freeThrowVal)
+            Print "(D) ";: Color 15: Print "FREE THROW RULES: "; foulOption$(ftRulesOpt)
             Locate 16, 2: Color 14
-            Print "(E) ";: Color 15: Print "FREE THROW RULES: "; foulOption$(ftRulesOpt)
-            Locate 17, 2: Color 14
-            Print "(F) ";: Color 15: Print "PLAY-BY-PLAY STYLE: "; pbpType$(pbpOpt)
+            Print "(E) ";: Color 15: Print "PLAY-BY-PLAY STYLE: "; pbpType$(pbpOpt)
 
             'Locate 18, 2: Color 14
             'Print "NOTE:: ";: Color 15: Print "BONUS WAS ON 7TH FOUL (UNTIL 72-73), 6TH FOUL (72-73 SEASON)"
@@ -303,7 +301,8 @@ Sub PROHOOP ()
                         If threePtOpt > 1 Then threePtOpt = 0
 
                     Case 7:
-                        shotPctOpt = 1 - shotPctOpt
+                        coachOpt = 1 - coachOpt
+                        'shotPctOpt = 1 - shotPctOpt
 
                     Case 8:
                         playoffOpt = 1 - playoffOpt
@@ -318,20 +317,19 @@ Sub PROHOOP ()
                         Loop Until pbpDelay! >= 0
 
                     Case 11:
-                        coachOpt = 1 - coachOpt
-
-                    Case 12:
                         bonusFoulNum = bonusFoulNum + 1
                         If bonusFoulNum > 6 Then bonusFoulNum = 4
 
-                    Case 13:
+                    Case 12:
                         freeThrowVal = 1 - freeThrowVal
 
-                    Case 14:
+                    Case 13:
                         ftRulesOpt = 1 - ftRulesOpt
 
-                    Case 15:
+                    Case 14:
                         pbpOpt = 1 - pbpOpt
+
+                    Case 15:
 
                 End Select
 
@@ -787,10 +785,10 @@ Sub PROHOOP ()
 
     '302
     D6 = 0
-    PASS% = 1
+    PASS = 1
     A4 = 0
     A6 = 0
-    F = 0
+    shotChance = 0
 
     If xFactor <> 90 Then xFactor = 0
 
@@ -800,12 +798,12 @@ Sub PROHOOP ()
 
     350 '
 
-    PASS% = PASS% + 1
-    P6 = 0
     A4 = 0
     D6 = 0
     A6 = 1
-    F = 0
+    PASS = PASS + 1
+    playChoice = 0
+    shotChance = 0
     xFactor = 0
 
     400 '
@@ -815,7 +813,7 @@ Sub PROHOOP ()
 
     'Random ball carrier
     'B = Int(Rnd(1) * 5)
-    Call d100(RN0)
+    Call Rolld100(RN0)
 
     If (playerMode = 0 And coachOpt = 1) Or (playerMode = 1 And D = compTeam And coachOpt = 1) Or (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
 
@@ -916,8 +914,8 @@ Sub PROHOOP ()
                             GoTo 513
                         Else
                             RN1 = Int(Rnd(1) * 1000) + 1
-                            If (PASS% <= 3 Or PASS% > 4) And RN1 <= 320 + ((JY - 89) * 10) Then 445
-                            If PASS% = 4 Then 445
+                            If (PASS <= 3 Or PASS > 4) And RN1 <= 320 + ((JY - 89) * 10) Then 445
+                            If PASS = 4 Then 445
                             GoTo 437
                         End If
 
@@ -949,8 +947,8 @@ Sub PROHOOP ()
                             GoTo 513
                         Else
                             RN1 = Int(Rnd(1) * 1000) + 1
-                            If (PASS% <= 3 Or PASS% > 4) And RN1 <= 320 + ((JY - 89) * 10) Then 445
-                            If PASS% = 4 Then 445
+                            If (PASS <= 3 Or PASS > 4) And RN1 <= 320 + ((JY - 89) * 10) Then 445
+                            If PASS = 4 Then 445
                             GoTo 437
                         End If
 
@@ -982,8 +980,8 @@ Sub PROHOOP ()
                             GoTo 513
                         Else
                             RN1 = Int(Rnd(1) * 1000) + 1
-                            If (PASS% <= 3 Or PASS% > 4) And RN1 <= 320 + ((JY - 89) * 10) Then 445
-                            If PASS% = 4 Then 445
+                            If (PASS <= 3 Or PASS > 4) And RN1 <= 320 + ((JY - 89) * 10) Then 445
+                            If PASS = 4 Then 445
                             GoTo 437
                         End If
 
@@ -1019,8 +1017,8 @@ Sub PROHOOP ()
                     GoTo 513
                 Else
                     RN1 = Int(Rnd(1) * 1000) + 1
-                    If (PASS% <= 3 Or PASS% > 4) And RN1 <= 320 + ((JY - 89) * 10) Then 445
-                    If PASS% = 4 Then 445
+                    If (PASS <= 3 Or PASS > 4) And RN1 <= 320 + ((JY - 89) * 10) Then 445
+                    If PASS = 4 Then 445
 
                     GoTo 437
 
@@ -1034,32 +1032,32 @@ Sub PROHOOP ()
     '----- NOODLE -----
 
     ' ***BAD SHOT ***
-
     437 '
 
     A4 = 0
+
     RN0 = Int(Rnd(1) * 3) + 1
 
     If gameRatings!(P, gameB1!(P, ballCarrier), 0) > 60 Then
 
         Select Case RN0
             Case 1
-                F = 24
+                shotChance = 24
             Case 2
-                F = 30
+                shotChance = 30
             Case 3
-                F = 36
+                shotChance = 36
         End Select
 
     Else
 
         Select Case RN0
             Case 1
-                F = gameRatings!(P, gameB1!(P, ballCarrier), 0) * .4
+                shotChance = gameRatings!(P, gameB1!(P, ballCarrier), 0) * .4
             Case 2
-                F = gameRatings!(P, gameB1!(P, ballCarrier), 0) * .5
+                shotChance = gameRatings!(P, gameB1!(P, ballCarrier), 0) * .5
             Case 3
-                F = gameRatings!(P, gameB1!(P, ballCarrier), 0) * .6
+                shotChance = gameRatings!(P, gameB1!(P, ballCarrier), 0) * .6
         End Select
 
     End If
@@ -1072,40 +1070,43 @@ Sub PROHOOP ()
     '----- NOODLE -----
 
     445 '
-
     If Not (quarter = 4 And gameClock! <= 120 Or quarter > 4) Then
-        If gameRatings!(P, gameB1!(P, ballCarrier), 3) - gameRatings!(P, gameB1!(P, ballCarrier), 7) - gameRatings!(P, gameB1!(P, ballCarrier), 11) - gameRatings!(P, gameB1!(P, ballCarrier), 12) <= 0 Then 437
+        If gameRatings!(P, gameB1!(P, ballCarrier), 3) - gameRatings!(P, gameB1!(P, ballCarrier), 7) - gameRatings!(P, gameB1!(P, ballCarrier), 11) - gameRatings!(P, gameB1!(P, ballCarrier), 12) <= 0 Then 
+            GoTo 437
+        End If
     End If
 
     ' *** CHECKING 3-POINT SHOT ***
-    If threePtOpt <> 0 Then
+    If threePtOpt = 1 Then
 
-        F3S% = 0
+        threePtShotChance = 0
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         If RN0 <= gameRatings!(P, gameB1!(P, ballCarrier), 19) Then
+
             PZ% = 4
-            F3S% = gameRatings!(P, gameB1!(P, ballCarrier), 20) + F7%(D, 4)
-            'Adjust shot chance by -3 to 3
-            F3S% = F3S% + Int(Rnd(1) * 7) - 3
             xFactor = 0
+            threePtShotChance = gameRatings!(P, gameB1!(P, ballCarrier), 20) + F7%(D, 4)
+            threePtShotChance = threePtShotChance + Int(Rnd(1) * 7) - 3
 
             GoTo 520
 
         End If
 
-        If P6 = 4 Then
+        If playChoice = 4 Then
 
-            Call d100(RN1)
+            Call Rolld100(RN1)
 
             If RN0 <= 20 Then
                 GoTo 437
             Else
                 PZ% = 4
                 xFactor = 0
-                F3S% = .4 * gameRatings!(P, gameB1!(P, ballCarrier), 20) + F7%(D, 4)
+                threePtShotChance = .4 * gameRatings!(P, gameB1!(P, ballCarrier), 20) + F7%(D, 4)
+
                 GoTo 520
+
             End If
 
         Else
@@ -1113,7 +1114,7 @@ Sub PROHOOP ()
             If quarter >= 4 And gameClock! < 30 And score(D, 0) - score(P, 0) > 3 And gameRatings!(P, gameB1!(P, ballCarrier), 19) >= 3 Then
                 PZ% = 4
                 xFactor = 0
-                F3S% = gameRatings!(P, gameB1!(P, ballCarrier), 20) + F7%(D, 4)
+                threePtShotChance = gameRatings!(P, gameB1!(P, ballCarrier), 20) + F7%(D, 4)
                 GoTo 520
             End If
 
@@ -1123,69 +1124,8 @@ Sub PROHOOP ()
 
     ' *** CHECKING FOR ASSISTED SHOT ***
 
-    ' *** GET SHOT PCT ***
-    F = gameRatings!(P, gameB1!(P, ballCarrier), 0) + D1(D)
-
-    If gameLoc = P Then
-        F = F + 2
-    Else
-        If gameLoc <> 2 Then F = F - 2
-    End If
-
-    A4 = Int(Rnd(1) * 41)
-    RN0 = Int(Rnd(1) * F5%(P, 4)) + 1
-    RN1 = Int(.17 * F5%(P, 4) + .5)
-
-    If RN1 >= RN0 Then
-        F = F + A4
-        PZ% = 2
-        xFactor = 0
-    Else
-
-        ' *** CHECK PENETRATION SHOT ***
-        Call d100(RN2)
-        A4 = Int(Rnd(1) * 50) + 1
-
-        If RN2 <= (plyrRat_GAME(P, gameB1!(P, ballCarrier), 16) + OY%(offStyles(P))) * 2 + 1 Then
-
-            PZ% = 3
-            F = F + A4
-            xFactor = 0
-
-        Else
-
-            ' *** CHECK AVERAGE SHOT ***
-            I2 = plyrRat_GAME(P, gameB1!(P, ballCarrier), 16)
-            rndTeam = Int(Rnd(1) * 2)
-
-            If Left$(players_GAME$(P, gameB1!(P, ballCarrier), 1), 1) = "G" Or Left$(players_GAME$(P, gameB1!(P, ballCarrier), 1), 1) = "F" Then
-
-                'For a Guard or Forward
-                R2 = Int(Rnd(1) * 3)
-
-                Select Case R2
-                    Case 1: PZ% = 6
-                    Case 2: PZ% = 7
-                    Case 3: PZ% = 5
-                End Select
-
-            Else
-
-                If rndTeam = 1 Then
-                    PZ% = 6
-                Else
-                    PZ% = 5
-                End If
-
-            End If
-
-            F = F + GF%(rndTeam, I2)
-            xFactor = 0
-
-        End If
-
-    End If
-
+    Call SHOTPERCENT
+    
     GoTo 520
 
     '----- NOODLE -----
@@ -1206,7 +1146,7 @@ Sub PROHOOP ()
             Print "BALL STOLEN BY "; players_GAME$(D, gameB1!(D, P9), 0); "!"
             Call DELAY
         Else
-            Call d100(RN0)
+            Call Rolld100(RN0)
 
             Select Case RN0
                 Case 1 To 3: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " QUICKLY REACHES IN!"
@@ -1348,35 +1288,41 @@ Sub PROHOOP ()
     Call CheckGameClock
     If gameClock! = 0 Then 170
 
-    If PZ% = 4 And F3S% <= 0 Then F3S% = 3
+    'Always give at least a 3% chance of making a 3
+    If PZ% = 4 And threePtShotChance <= 0 Then threePtShotChance = 3
 
     If pbpDelay! <> 0 Then
 
-        If F > 70 And fastBreak = 1 And PASS% = 1 Then
+        If shotChance > 70 And fastBreak = 1 And PASS = 1 Then
+
             PT% = 6
             PZ% = 8
             Call MAKEPBP
             Call PBP
+
         Else
 
             If players_GAME$(P, gameB1!(P, ballCarrier), 0) <> prevBall$ Then
+
                 If prevBall$ = "" Then
                     pbpString$ = "PASS TO " + players_GAME$(P, gameB1!(P, ballCarrier), 0)
                 Else
                     PT% = 10
                     Call MAKEPBP
                 End If
+
             Else
-                'players_GAME$(P, gameB1!(P, ballCarrier), 0) = prevBall$
+
                 PT% = 9
                 Call MAKEPBP
+
             End If
 
             Call PBP
 
             If shotClock <= 0 And sClockVal < 2 Then
-                pbpString$ = "SHOT CLOCK HAS EXPIRED!"
                 SV% = 1
+                pbpString$ = "SHOT CLOCK HAS EXPIRED!"
                 GoTo 515
             End If
 
@@ -1425,7 +1371,7 @@ Sub PROHOOP ()
                 Case 3:
                     If pbpDelay! <> 0 Then
 
-                        Call d100(RN0)
+                        Call Rolld100(RN0)
 
                         If Z3$ = "C" Then
 
@@ -1494,42 +1440,41 @@ Sub PROHOOP ()
 
     End If
 
-    If F <= 0 Then F = 1
-    If F >= 100 Then F = 100
+    '529
+    If shotChance <= 0 Then shotChance = 1
+    If shotChance >= 100 Then shotChance = 100
 
     If pbpDelay! <> 0 Then
 
         If pbpOpt = 1 Then
+
             Call WINDEX
             Print "PASS TO "; players_GAME$(P, gameB1!(P, ballCarrier), 0); " OF ";
             Color teamRat_GAME(P, 33), teamRat_GAME(P, 34)
             Print gameTeams$(P)
             Color 15, 0
-        End If
 
-        If pbpOpt = 1 Then
-            If PZ% <> 4 Then
-                Locate 10: Print "SHOT % "; Int(F + .5);
-            Else
-                Locate 10: Print "3 PT SHOT % "; Int(F3S% + .5);
+            If PZ% = 4 Then
+                Locate 10: Print "3 PT SHOT % "; Int(threePtShotChance + .5);
                 Print " *";
                 GoTo 528
-            End If
-        End If
-
-        If pbpOpt = 1 And PZ% >= 2 And PZ% <= 8 Then Print "*";
-
-        If pbpDelay! <> 0 And pbpOpt <> 1 Then
-
-            If PZ% <> 4 Then
-                Locate 8, 41: Print Using "SHOT % ###   "; Int(F + .5);
             Else
-                Locate 8, 41: Print Using "SHOT % ###"; Int(F3S% + .5);
+                Locate 10: Print "SHOT % "; Int(shotChance + .5);
+            End If
+
+            If PZ% >= 2 And PZ% <= 8 Then Print "*";
+
+        Else
+
+            Locate 8, 41
+            If PZ% = 4 Then
+                Print Using "SHOT % ###"; Int(threePtShotChance + .5);
                 Print " *";
                 GoTo 528
+            Else
+                Print Using "SHOT % ###   "; Int(shotChance + .5);
+                If PZ% >= 2 And PZ% <= 8 Then Locate , 52: Print "*";
             End If
-
-            If PZ% >= 2 And PZ% <= 8 Then Locate , 52: Print "*";
 
         End If
 
@@ -1540,9 +1485,44 @@ Sub PROHOOP ()
 
     If pbpOpt = 1 And pbpDelay! <> 0 Then Call DELAY
 
+    ' *** Determine value for playChoice ***
+    'playChoice = play type
+    '0 = Pass
+    '1 = Shoot (2FGA)
+    '2 = Timeout
+    '3 = Foul
+    '4 = Shoot (3FGA)
+
+    'Computer Opponent or "Let Computer Shoot"
+    scoreDiff = score(P, 0) - score(D, 0)
     If playerMode <> 0 Or coachOpt = 1 Then
 
-        If quarter >= 4 And gameClock! <= 240 And score(P, 0) - score(D, 0) > 0 And playerMode = 1 And P = compTeam Then
+        '4th quarter | OT, 4 mins left, offense ahead, computer is offense
+        If NOT (quarter >= 4 And gameClock! <= 240 And scoreDiff > 0 And playerMode = 1 And P = compTeam) Then
+
+            'Computer on defense 
+            If playerMode = 2 Or playerMode = 1 And D = compTeam Then
+
+                '4th quarter | OT, 4 mins left, offense ahead by 10+
+                If quarter >= 4 And gameClock! <= 240 And scoreDiff > 10 Then
+                    'Prompt for choices
+                    If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then 530
+                Else
+                    If quarter >= 4 And gameClock! <= 30 And scoreDiff > 0 Then 
+                        playChoice = 3
+                        GoTo 532
+                    Else
+                        'Human play, coach doesn't select shots
+                        If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then 
+                            'User select play
+                            GoTo 530
+                        End If
+                    End If
+                End If
+
+            End If
+
+        Else
 
             '985
             pbpString$ = Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " FT%  INTENTIONAL FOUL? (Y/N)"
@@ -1551,79 +1531,78 @@ Sub PROHOOP ()
                 I$ = GetKeyPress$
             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = "3"
 
-            If UCase$(I$) = "Y" Or I$ = "3" Then P6 = 3: GoTo 532
-
-        Else
-
-            If playerMode = 2 Or playerMode = 1 And D = compTeam Then
-
-                '980
-                If gameClock! <= 240 And quarter >= 4 And score(P, 0) - score(D, 0) > 10 Then
-                    If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then 530
-                Else
-                    If gameClock! <= 30 And quarter >= 4 And score(P, 0) - score(D, 0) > 0 Then P6 = 3: GoTo 532
-                    If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then 530
-                End If
-
+            If UCase$(I$) = "Y" Or I$ = "3" Then 
+                playChoice = 3
+                GoTo 532
             End If
+
         End If
 
+        'Determine when to shoot
+
         If gameClock! <= 1 Or shotClock <= 6 Then
-            P6 = 1
+            playChoice = 1
         Else
-            If gameClock! <= 8 And score(P, 0) - score(D, 0) <= -3 And quarter >= 4 Then
-                P6 = 1
-            Else
-                If gameClock! <= 20 And score(P, 0) - score(D, 0) <= -5 And quarter >= 4 Then
-                    P6 = 1
+            If quarter >= 4 Then
+
+                If (gameClock! <= 8 And scoreDiff <= -3) Or (gameClock! <= 20 And scoreDiff <= -5) Then
+                    playChoice = 1
                 Else
+
                     If PZ% > 1 Then
-                        P6 = 1
+                        playChoice = 1
                     Else
-                        P6 = 0
+                        playChoice = 0
                     End If
+
                 End If
-            End If
+ 
+           End If
 
         End If
 
         GoTo 532
 
+    Else
+
+        530 '
+        I$ = GetKeyPress$
+
+        Select Case UCase$(I$)
+
+            Case "B"
+                Call BOXOPTIONS(0)
+                Call SCOREBOARD
+
+            Case "O"
+                Call OPTIONS
+
+            Case "S"
+                Call SCOUTREPORT
+                GoTo 530
+
+            Case "T"
+                Call TICKER
+                GoTo 530
+
+            Case "Q"
+                Exit Sub
+
+            Case "Z", "/"
+                Call CHANGESTRATEGY(I$)
+                GoTo 530
+
+            Case Else
+                playChoice = Val(I$)
+
+        End Select
+
+        If playChoice < 1 Or playChoice > 4 Then playChoice = 0
+        If playChoice = 4 Then FT% = 1
+
     End If
 
-    530 '
-    I$ = GetKeyPress$
-
-    Select Case UCase$(I$)
-
-        Case "S"
-            Call SCOUTREPORT
-            GoTo 530
-
-        Case "T"
-            Call TICKER
-            GoTo 530
-
-        Case "Q"
-            Exit Sub
-
-        Case "O"
-            Call OPTIONS
-            GoTo 530
-
-        Case "Z", "/"
-            Call CHANGESTRATEGY(I$)
-            GoTo 530
-
-        Case Else
-            P6 = Val(I$)
-
-    End Select
-
-    'Is this for choosing a designated fouler?
-    'If so then we need to update for looping logic
-    If P6 < 1 Or P6 > 4 Then P6 = 0
-    If P6 = 4 Then FT% = 1
+    'Loop Until playerMode <> 0 Or coachOpt = 1 Or (UCase$(I$) <> "T" And UCase$(I$) <> "D" And UCase$(I$) <> "O")
 
     '----------------------------------------------------
     '--- THIS IS CRITCAL FOR PBP MOVING AUTOMATICALLY ---
@@ -1657,26 +1636,38 @@ Sub PROHOOP ()
 
     End Select
 
+    'Foul was chosen | Computer on offense and last 4 minutes of game
     If Val(I$) = 3 And (playerMode = 0 Or playerMode = 1 And P = compTeam) And quarter >= 4 And gameClock! < 240 Then 
-        P6 = 3
+        playChoice = 3
     End If
 
+    'Timeout
     If Val(I$) = 2 And (playerMode = 0 Or playerMode = 1 And D = compTeam) And timeouts(P) > 0 Then 
-        P6 = 2
+        playChoice = 2
     End If
 
-    P3 = P6
+    P3 = playChoice
 
-    If (P6 = 2 And timeouts(P) = 0) Or (P6 = 3 And quarter = 4 And gameClock! > 240) Or (P6 = 3 And quarter < 4) Or (P6 = 3 And playerMode = 1 And D = compTeam) Then 
+    If (playChoice = 2 And timeouts(P) = 0) Or (playChoice = 3 And quarter = 4 And gameClock! > 240) Or (playChoice = 3 And quarter < 4) Or (playChoice = 3 And playerMode = 1 And D = compTeam) Then 
         'Take shot with no timeous | Timeout with more than 4 mins left | Timeout before Q4 | Timeout with PC on Defense
         GoTo 530
     End If
 
-    If (P6 = 1 Or P6 = 4) And PZ% = 4 Then 
-        P6 = 4
+    ' *** Decide if 3FGA ***
+
+    scoreDiff = score(D, 0) - score(P, 0)
+    'Try for 3 near end of game when down by 3
+    If quarter >= 4 And gameClock! < 30 And scoreDiff = 3 And ((playerMode = 1 And P = compTeam) Or playerMode = 2) Then
+        If threePtOpt = 1 Then playChoice = 4
     End If
 
-    caseVar = P6 + 1
+    'Shoot and in 3 pt range
+    If (playChoice = 1 Or playChoice = 4) And PZ% = 4 Then
+        If threePtOpt = 1 Then playChoice = 4
+    End If
+
+    ' *** Done determining value for playChoice ***
+    caseVar = playChoice + 1
 
     Select Case caseVar
 
@@ -1775,19 +1766,21 @@ Sub PROHOOP ()
             GoTo 566
 
         Case 5
+
+            '3FG Attempt
             359 '
-            Call d100(S)
-            W%(P, gameB1!(P, ballCarrier), 1) = W%(P, gameB1!(P, ballCarrier), 1) + 1
+            Call Rolld100(S)
+
+            threeFG(P, gameB1!(P, ballCarrier), 1) = threeFG(P, gameB1!(P, ballCarrier), 1) + 1
             gameRatings!(P, gameB1!(P, ballCarrier), 7) = gameRatings!(P, gameB1!(P, ballCarrier), 7) + 1
             PT% = 3
 
             Call MAKEPBP
             Call PBP
 
-            If S <= F3S% Then
+            If S <= threePtShotChance Then
 
-                ' MADE 3-POINT FIELD GOAL
-
+                'MADE 3-POINT FIELD GOAL
                 If pbpOpt = 1 And pbpDelay! <> 0 Then
                     Call WINDEX
                     Print "3 PT FG GOOD BY "; players_GAME$(P, gameB1!(P, ballCarrier), 0); " !!!"
@@ -1804,40 +1797,42 @@ Sub PROHOOP ()
 
                 score(P, quarter) = score(P, quarter) + 3
                 score(P, 0) = score(P, 0) + 3
-                W%(P, gameB1!(P, ballCarrier), 0) = W%(P, gameB1!(P, ballCarrier), 0) + 1
-                gameRatings!(P, gameB1!(P, ballCarrier), 8) = gameRatings!(P, gameB1!(P, ballCarrier), 8) + 1
+                threeFG(P, gameB1!(P, ballCarrier), 0) = threeFG(P, gameB1!(P, ballCarrier), 0) + 1
 
+                gameRatings!(P, gameB1!(P, ballCarrier), 8) = gameRatings!(P, gameB1!(P, ballCarrier), 8) + 1
                 Call CreditAssists
                 Call UPDATESCREEN
 
                 GoTo 562
 
+            Else
+
+                If pbpOpt = 1 And pbpDelay! <> 0 Then
+                    Call WINDEX
+                    Print "3 PT FG MISSED BY "; players_GAME$(P, gameB1!(P, ballCarrier), 0)
+                    Call DELAY
+                End If
+
+                If pbpOpt = 0 Then
+                    PT% = 5
+                    Call MAKEPBP
+                    Call PBP
+                End If
+
+                Call ResetShotClock
+
+                gameClock! = gameClock! - 4
+                timeElapsed! = 4
+
+                Call AdjustPlayTime
+                Call CheckGameClock
+                If gameClock! = 0 Then 170
+
+                Call UPDATESCREEN
+
+                GoTo 670
+
             End If
-
-            If pbpOpt = 1 And pbpDelay! <> 0 Then
-                Call WINDEX
-                Print "3 PT FG MISSED BY "; players_GAME$(P, gameB1!(P, ballCarrier), 0)
-                Call DELAY
-            End If
-
-            If pbpOpt = 0 Then
-                PT% = 5
-                Call MAKEPBP
-                Call PBP
-            End If
-
-            Call ResetShotClock
-
-            gameClock! = gameClock! - 4
-            timeElapsed! = 4
-
-            Call AdjustPlayTime
-            Call CheckGameClock
-            If gameClock! = 0 Then 170
-
-            Call UPDATESCREEN
-
-            GoTo 670
 
     End Select
 
@@ -1851,10 +1846,11 @@ Sub PROHOOP ()
     Call PBP
 
     S = 0
-    Call d100(RN0)
+    Call Rolld100(RN0)
     gameRatings!(P, gameB1!(P, ballCarrier), 7) = gameRatings!(P, gameB1!(P, ballCarrier), 7) + 1
 
-    If Not (quarter > 3 And gameClock! <= 30 And score(D, 0) - score(P, 0) = 2 Or quarter > 3 And gameClock! <= 30 And score(D, 0) - score(P, 0) = 0) Then
+    scoreDiff = score(D, 0) - score(P, 0)
+    If Not (quarter > 3 And gameClock! <= 30 And scoreDiff = 2 Or quarter > 3 And gameClock! <= 30 And scoreDiff = 0) Then
 
         If RN0 <= gameRatings!(P, gameB1!(P, ballCarrier), 16) + F7%(D, 3) Then
 
@@ -1902,8 +1898,8 @@ Sub PROHOOP ()
     End If
 
     '540
-    Call d100(S)
-    RN0 = (F - 2) * .1
+    Call Rolld100(S)
+    RN0 = (shotChance - 2) * .1
 
     '--- Shot Branch 1 ---
     If S <= RN0 Then
@@ -1969,12 +1965,12 @@ Sub PROHOOP ()
             End If
         End If
 
-        F3 = 1
+        freeThrowNbr = 1
 
         Call DELAY
         Call CreditAssists
 
-        F3 = 1
+        freeThrowNbr = 1
         score(P, quarter) = score(P, quarter) + 2
         score(P, 0) = score(P, 0) + 2
         gameRatings!(P, gameB1!(P, ballCarrier), 8) = gameRatings!(P, gameB1!(P, ballCarrier), 8) + 1
@@ -2042,17 +2038,17 @@ Sub PROHOOP ()
         NM% = 0
 
         'Two FT Attempts
-        For F3 = 1 To 2
+        For freeThrowNbr = 1 To 2
 
             'Increase FT ATT
             gameRatings!(P, gameB1!(P, ballCarrier), 9) = gameRatings!(P, gameB1!(P, ballCarrier), 9) + 1
 
-            Call d100(S)
+            Call Rolld100(S)
 
             'FT Success Chance
-            FX% = gameRatings!(P, gameB1!(P, ballCarrier), 1)
+            ftShotChance = gameRatings!(P, gameB1!(P, ballCarrier), 1)
 
-            If S <= FX% Then
+            If S <= ftShotChance Then
 
                 If pbpOpt = 0 Then
                     NM% = NM% + 1
@@ -2063,7 +2059,7 @@ Sub PROHOOP ()
                     Call MADEFT
                 End If
             Else
-                'S > FX% And
+                'S > ftShotChance And
                 If pbpOpt = 0 Then
                     Call BADFT
                 Else
@@ -2074,16 +2070,16 @@ Sub PROHOOP ()
             End If
 
             If NM% = 1 Then Exit For
-            If F3 = 1 And (freeThrowVal = 0 Or freeThrowVal = 1 And (P2(D) <= bonusFoulNum And quarter <= 4 Or P2(D) <= 3 And quarter > 4)) Then Exit For
+            If freeThrowNbr = 1 And (freeThrowVal = 0 Or freeThrowVal = 1 And (P2(D) <= bonusFoulNum And quarter <= 4 Or P2(D) <= 3 And quarter > 4)) Then Exit For
 
-        Next F3
+        Next freeThrowNbr
 
         Call CheckGameClock
         If gameClock! = 0 Then 170
 
         xFactor = 99
 
-        If S > FX% Then 670
+        If S > ftShotChance Then 670
 
         'GoSub 3000
         'AKA ChangePosession
@@ -2142,7 +2138,7 @@ Sub PROHOOP ()
     End If
 
     '--- Shot Branch 2 ---
-    If S <= F - 2 Then
+    If S <= shotChance - 2 Then
 
         If DK% = 1 Then
             If pbpOpt = 0 Then
@@ -2174,7 +2170,7 @@ Sub PROHOOP ()
                 Call WINDEX: Print pbpString$: Call DELAY
             Else
 
-                Call d100(RN0)
+                Call Rolld100(RN0)
 
                 If RN0 > 50 Then
 
@@ -2302,8 +2298,8 @@ Sub PROHOOP ()
     End If
 
     '--- Shot Branch 3 ---
-    Call d100(RN0)
-    Call d100(shotChance)
+    Call Rolld100(RN0)
+    Call Rolld100(shotChance)
     rndDef = Int(Rnd(1) * 5)
 
     If shotChance > gameRatings!(D, gameB1!(D, rndDef), 6) Then
@@ -2331,7 +2327,7 @@ Sub PROHOOP ()
                 Call DELAY
             Else
 
-                Call d100(RN1)
+                Call Rolld100(RN1)
 
                 Select Case RN1
                     Case 1 To 10: pbpString$ = players_GAME$(D, gameB1!(D, rndDef), 0) + " STUFFS THE SHOT!!"
@@ -2437,17 +2433,17 @@ Sub PROHOOP ()
     End If
 
     'One FT Attempt
-    F3 = 1
+    freeThrowNbr = 1
 
     'Increase FT ATT
     gameRatings!(P, gameB1!(P, ballCarrier), 9) = gameRatings!(P, gameB1!(P, ballCarrier), 9) + 1
 
-    Call d100(S)
+    Call Rolld100(S)
 
     'FT Success Chance
-    FX% = gameRatings!(P, gameB1!(P, ballCarrier), 1)
+    ftShotChance = gameRatings!(P, gameB1!(P, ballCarrier), 1)
 
-    If S <= FX% Then
+    If S <= ftShotChance Then
         If pbpOpt = 0 Then
             Call THREEFT
         Else
@@ -2455,7 +2451,7 @@ Sub PROHOOP ()
             Call MADEFT
         End If
     Else
-        'S > FX%
+        'S > ftShotChance
         If pbpOpt = 0 Then
             Call BADFT
         Else
@@ -2470,7 +2466,7 @@ Sub PROHOOP ()
     If gameClock! = 0 Then 170
 
     'Rebound after missed FT
-    If S > FX% Then 650
+    If S > ftShotChance Then 650
 
     'GoSub 3000
     'AKA ChangePosession
@@ -2671,17 +2667,17 @@ Sub PROHOOP ()
     NM% = 0
 
     'Three FT Attempts
-    For F3 = 1 To 3
+    For freeThrowNbr = 1 To 3
 
         'Increase FTA
         gameRatings!(P, gameB1!(P, ballCarrier), 9) = gameRatings!(P, gameB1!(P, ballCarrier), 9) + 1
 
-        Call d100(S)
+        Call Rolld100(S)
 
         'FT Success Chance
-        FX% = gameRatings!(P, gameB1!(P, ballCarrier), 1)
+        ftShotChance = gameRatings!(P, gameB1!(P, ballCarrier), 1)
 
-        If S <= FX% Then
+        If S <= ftShotChance Then
             If pbpOpt = 0 Then
                 NM% = NM% + 1
                 Call THREEFT
@@ -2691,7 +2687,7 @@ Sub PROHOOP ()
                 Call MADEFT
             End If
         Else
-            'S > FX%
+            'S > ftShotChance
             If pbpOpt = 0 Then
                 Call BADFT
             Else
@@ -2703,13 +2699,13 @@ Sub PROHOOP ()
         If NM% = 2 Then Exit For
 
         'On 2nd attempt
-        If F3 = 2 Then
+        If freeThrowNbr = 2 Then
             'Modern rules - just exit (only 2 FT)
             '3 to make 2 - if 2 misses then done
             If freeThrowVal = 0 Or (freeThrowVal = 1 And (P2(D) <= bonusFoulNum And quarter <= 4 Or P2(D) <= 3 And quarter > 4)) Then Exit For
         End If
 
-    Next F3
+    Next freeThrowNbr
 
     Call CheckGameClock
 
@@ -2778,7 +2774,7 @@ Sub PROHOOP ()
     650 '
 
     A6 = 1
-    P6 = 0
+    playChoice = 0
     A4 = 0
     D6 = 0
 
@@ -2786,7 +2782,7 @@ Sub PROHOOP ()
 
     S = 0
 
-    Call d100(RN0)
+    Call Rolld100(RN0)
 
     scoreDiff = score(D, 0) - score(P, 0)
     If (quarter > 3 And gameClock! < 30 And RN0 <= 12) And (scoreDiff = 2 Or scoreDiff = 0) Then
@@ -2797,7 +2793,7 @@ Sub PROHOOP ()
 
     Else
 
-        Call d100(RN1)
+        Call Rolld100(RN1)
 
         Select Case RN1
 
@@ -2825,7 +2821,7 @@ Sub PROHOOP ()
     670 '
 
     A6 = 1
-    P6 = 0
+    playChoice = 0
     A4 = 0
     D6 = 0
 
@@ -2837,10 +2833,9 @@ Sub PROHOOP ()
     A4 = 0
     D6 = 0
 
-    Call d100(RN0)
+    Call Rolld100(RN0)
 
     scoreDiff = score(D, 0) - score(P, 0)
-
     If RN0 <= 12 And quarter > 3 And gameClock! < 30 And (scoreDiff = 2 Or scoreDiff = 0) Then
 
         Call pbplog(3806)
@@ -2914,7 +2909,7 @@ Sub PROHOOP ()
 
             Case 12 To 19
 
-                Call d100(RN1)
+                Call Rolld100(RN1)
 
                 If RN1 <= 32 Then
 
@@ -3086,7 +3081,7 @@ Sub PROHOOP ()
 
             Case 23:
 
-                If P6 <> 4 Then
+                If playChoice <> 4 Then
 
                     If xFactor = 99 Then
 
@@ -3281,16 +3276,16 @@ Sub PROHOOP ()
         RN0 = Int(Rnd(1) * 10) + 1
 
         ' *** GET SHOT PCT ***
-        F = gameRatings!(P, gameB1!(P, ballCarrier), 0) + D1(D)
+        shotChance = gameRatings!(P, gameB1!(P, ballCarrier), 0) + D1(D)
 
         If gameLoc = P Then
-            F = F + 2
+            shotChance = shotChance + 2
         Else
-            If gameLoc <> 2 Then F = F - 2
+            If gameLoc <> 2 Then shotChance = shotChance - 2
         End If
 
         If Not (quarter > 4 Or quarter = 4 And gameClock! <= 120) Then
-            If gameRatings!(P, gameB1!(P, ballCarrier), 3) - gameRatings!(P, gameB1!(P, ballCarrier), 7) - gameRatings!(P, gameB1!(P, ballCarrier), 11) - gameRatings!(P, gameB1!(P, ballCarrier), 12) <= 0 Then F = F * .6
+            If gameRatings!(P, gameB1!(P, ballCarrier), 3) - gameRatings!(P, gameB1!(P, ballCarrier), 7) - gameRatings!(P, gameB1!(P, ballCarrier), 11) - gameRatings!(P, gameB1!(P, ballCarrier), 12) <= 0 Then shotChance = shotChance * .6
         End If
 
         Call pbplog(4259)

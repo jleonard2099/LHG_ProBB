@@ -17,8 +17,8 @@ Sub ALIGN ()
     Shared AR!()
     Shared compareA!()
     Shared statsW0!(), statsW1!()
-    Shared W0R!(), WR1!()
-    Shared ZR!(), ZR1!()
+    Shared W0R!(), W0R1!()
+    Shared ZR!(), Z0R1!()
 
     Do
 
@@ -48,13 +48,13 @@ Sub ALIGN ()
                     For J = 0 To 13: Input #1, AR!(I, J): Next
 
                     Input #1, W0R!(I)
-                    Input #1, WR1!(I)
+                    Input #1, W0R1!(I)
 
                 Next
 
                 For L = 0 To 15: Input #1, ZR!(L): Next
 
-                For L = 0 To 15: Input #1, ZR1!(L): Next
+                For L = 0 To 15: Input #1, Z0R1!(L): Next
 
                 Close #1
 
@@ -126,7 +126,7 @@ Sub AlignStats (pathRoadStats$, statFile$)
     Shared AN$()
 
     Shared AR!()
-    Shared W0R!(), WR1!()
+    Shared W0R!(), W0R1!()
 
     Shared AN!()
     Shared W0N!(), WN1!()
@@ -165,7 +165,7 @@ Sub AlignStats (pathRoadStats$, statFile$)
                 For K = 0 To 13
                     AN!(N, K) = AR!(J, K)
                     W0N!(N) = W0R!(J)
-                    WN1!(N) = WR1!(J)
+                    WN1!(N) = W0R1!(J)
                 Next K
 
             End If
@@ -217,7 +217,7 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
 
     Shared AN!()
     Shared W0N!(), WN1!()
-    Shared ZR!(), ZR1!()
+    Shared ZR!(), Z0R1!()
 
     Cls
     Locate 1, 32
@@ -251,7 +251,7 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
 
     For L = 0 To 15: Write #1, ZR!(L): Next
 
-    For L = 0 To 15: Write #1, ZR1!(L): Next
+    For L = 0 To 15: Write #1, Z0R1!(L): Next
 
     Close #1
 

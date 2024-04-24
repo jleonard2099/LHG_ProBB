@@ -44,7 +44,7 @@ Sub CREATLEAG ()
 
         If ExitCode% <> 27 Then
 
-            For X = 1 To TEAMS_PER_CONFERENCE
+            For X = 1 To TEAMS_PER_LEAGUE
                 intZ1%(X) = -1
                 memberTeams$(X) = "XXX"
                 memberYears$(X) = "XXX"
@@ -62,11 +62,15 @@ Sub CREATLEAG ()
                     Call ReviewEditLeague(league$, div1$, div2$, div3$, div4$)
 
                 Case 2:
-                    league$ = ChooseFile$(diskPaths$(1) + "*.LIB", "LEAGUE", FileExit%)
+                    Do
 
-                    If FileExit% <> 27 And FileExit% <> 0 Then
-                        Call ReviewEditLeague(league$, div1$, div2$, div3$, div4$)
-                    End If
+                        league$ = ChooseFile$(diskPaths$(2) + "*.TMI", "LEAGUE", FileExit%)
+
+                        If FileExit% <> 27 And FileExit% <> 0 Then
+                            Call ReviewEditLeague(league$, div1$, div2$, div3$, div4$)
+                        End If
+
+                    Loop Until FileExit% = 27 Or FileExit% = 0
 
             End Select
 
@@ -187,13 +191,13 @@ Sub ReviewEditLeague (league$, div1$, div2$, div3$, div4$)
 
     Shared memberTeams$(), memberYears$()
 
-    If _FileExists(diskPaths$(1) + league$ + ".LIB") Then
+    If _FileExists(diskPaths$(2) + league$ + ".TMI") Then
 
-        Open diskPaths$(1) + league$ + ".LIB" For Input As #1
+        Open diskPaths$(2) + league$ + ".TMI" For Input As #1
 
         Input #1, league$, div1$, div2$, div3$, div4$
 
-        For X = 1 To TEAMS_PER_CONFERENCE
+        For X = 1 To TEAMS_PER_LEAGUE
             Input #1, memberTeams$(X)
             Input #1, intZ1%(X)
             Input #1, memberYears$(X)
@@ -256,9 +260,9 @@ Sub ReviewEditLeague (league$, div1$, div2$, div3$, div4$)
 
             Do
                 Locate 22, 35
-                Print "SLOT # (1-" + Str$(TEAMS_PER_CONFERENCE) + ") ";
+                Print "SLOT # (1-" + Str$(TEAMS_PER_LEAGUE) + ") ";
                 Input B
-            Loop Until B >= 1 And B <= TEAMS_PER_CONFERENCE
+            Loop Until B >= 1 And B <= TEAMS_PER_LEAGUE
 
             If choice = 1 Then
                 'Add team
@@ -283,14 +287,14 @@ End Sub
 '----------------------------------------
 'This subroutine writes the league team
 'memberships and definition to each of
-'the corresponding files (.LIB, .TMS)
+'the corresponding files (.TMI, .TMS)
 Sub SaveLeague (league$, div1$, div2$, div3$, div4$)
 
     Shared intZ1%()
 
     Shared memberTeams$(), memberYears$(), statNames$()
 
-    Open diskPaths$(1) + league$ + ".LIB" For Output As #1
+    Open diskPaths$(2) + league$ + ".TMI" For Output As #1
 
     Print #1, league$
     Print #1, div1$
@@ -298,7 +302,7 @@ Sub SaveLeague (league$, div1$, div2$, div3$, div4$)
     Print #1, div3$
     Print #1, div4$
 
-    For X = 1 To TEAMS_PER_CONFERENCE
+    For X = 1 To TEAMS_PER_LEAGUE
         Print #1, memberTeams$(X)
         Print #1, intZ1%(X)
         Print #1, memberYears$(X)
@@ -306,7 +310,7 @@ Sub SaveLeague (league$, div1$, div2$, div3$, div4$)
 
     Close #1
 
-    For X = 1 To TEAMS_PER_CONFERENCE
+    For X = 1 To TEAMS_PER_LEAGUE
 
         If memberTeams$(X) = "XXX" Then
             statNames$(X) = Chr$(42)
@@ -316,11 +320,11 @@ Sub SaveLeague (league$, div1$, div2$, div3$, div4$)
 
     Next X
 
-    Open diskPaths$(1) + league$ + ".TMS" For Output As #2
+    Open diskPaths$(2) + league$ + ".TMS" For Output As #2
 
     Write #2, league$, div1$, div2$, div3$, div4$
 
-    For X = 1 To TEAMS_PER_CONFERENCE
+    For X = 1 To TEAMS_PER_LEAGUE
         Write #2, statNames$(X)
     Next
 

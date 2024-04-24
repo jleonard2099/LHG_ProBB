@@ -10,7 +10,7 @@ Sub BLANK ()
 
     Shared statFiles$()
 
-	leagueFile$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "LEAGUE", ExitCode%)
+	leagueFile$ = ChooseFile$ (diskPaths$(2) + "*.TMI", "LEAGUE", ExitCode%)
 
 	If ExitCode% <> 27 And ExitCode% <> 0 Then
 
@@ -24,17 +24,17 @@ Sub BLANK ()
 
 		If UCase$(A$) = "Y" Then
 
-        	Open diskPaths$(1) + leagueFile$ + ".TMS" For Input As #1
+        	Open diskPaths$(2) + leagueFile$ + ".TMS" For Input As #1
 
         	Input #1, league$, D1$, D2$, D3$, D4$
 
-        	For XW = 1 To TEAMS_PER_CONFERENCE
+        	For XW = 1 To TEAMS_PER_LEAGUE
         		Input #1, statFiles$(XW)
         	Next
 
         	Close #1
 
-        	For XW = 1 To TEAMS_PER_CONFERENCE
+        	For XW = 1 To TEAMS_PER_LEAGUE
         		If statFiles$(XW) <> Chr$(42) Then
                     statFile$ = diskPaths$(1) + statFiles$(XW)
         			Print "DELETING "; statFiles$(XW); " STATS"

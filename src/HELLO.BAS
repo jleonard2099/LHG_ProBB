@@ -1,14 +1,14 @@
 $Debug
+$Color:32
 
 Const GAME_VERSION$ = "4.38"
 Const MAX_SCHEDULE_GAMES = 1500
 Const MAX_TEAMS = 1000
 Const MAX_FILES = 10240
 'optimium = 1048576 (but slows code)
-Const MAX_CONFERENCES = 40
 Const TEAMS_PER_DIV = 10
-Const DIVS_PER_CONFERENCE = 4
-Const TEAMS_PER_CONFERENCE = 40
+Const DIVS_PER_LEAGUE = 4
+Const TEAMS_PER_LEAGUE = 40
 
 Const MAX_SCHED_STATS = 100
 Const SCHEDULE_SIZE_BYTES = 48
@@ -16,20 +16,20 @@ Const SCHEDULE_SIZE_BYTES = 48
 DefInt A-Z
 
 ' General purpose
-'$INCLUDE: 'KeyInput.bi'
-'$INCLUDE: 'QPProEqu.bi'
-'$INCLUDE: 'PadRight.bi'
-'$INCLUDE: 'QBWRITE.bi'
+'$Include: 'KeyInput.bi'
+'$Include: 'QPProEqu.bi'
+'$Include: 'PadRight.bi'
+'$Include: 'QBWRITE.bi'
 
 ' For Utils
-'$INCLUDE: 'BoxRoutines.bi'
-'$INCLUDE: 'FileTeamSelection.bi'
-'$INCLUDE: 'Variables.bi'
-'$INCLUDE: 'MainRoutines.bi'
-'$INCLUDE: 'TITLE.bi'
+'$Include: 'BoxRoutines.bi'
+'$Include: 'FileTeamSelection.bi'
+'$Include: 'Variables.bi'
+'$Include: 'MainRoutines.bi'
+'$Include: 'TITLE.bi'
 
 ' For Game
-'$INCLUDE: 'GameRoutines.bi'
+'$Include: 'GameRoutines.bi'
 
 
 On Error GoTo Errhandler
@@ -293,7 +293,7 @@ End If
 
 Open "DEV.BAS" For Input As #2
 
-For I = 0 To 1
+For I = 0 To 3
     Input #2, diskPaths$(I)
 Next
 
@@ -306,8 +306,6 @@ Do
     Call Main_Menu(Selection%)
 
 Loop Until Selection% = 7
-
-End
 
 System
 
@@ -341,14 +339,14 @@ Sub Main_Menu (menuSelection%)
 
         ReDim menuChoices$(1 To 7)
 
-        menuChoices$(1) = "PLAY SINGLE GAME                "
-        menuChoices$(2) = "TEAM MANAGEMENT / ORGANIZATION  "
-        menuChoices$(3) = "REPLAY STATISTICS AND REPORTS   "
-        menuChoices$(4) = "LEADERS / STANDINGS / RECORDS   "
-        menuChoices$(5) = "SCHEDULER / AUTOPLAY / BOXSCORES"
-        'menuChoices$(6) = "HARD DRIVE INSTALLATION         "
-        menuChoices$(6) = "CONFIGURE DRIVES FOR TEAMS,STATS"
-        menuChoices$(7) = "EXIT TO DOS                     "
+        menuChoices$(1) = "PLAY SINGLE GAME       "
+        menuChoices$(2) = "TEAM MANAGEMENT        "
+        menuChoices$(3) = "REPLAY ASSESSMENT      "
+        menuChoices$(4) = "LEADERS AND RECORDS    "
+        menuChoices$(5) = "SCHEDULES AND BOXSCORES"
+        'menuChoices$(6) = "HARD DRIVE INSTALLATION  "
+        menuChoices$(6) = "CONFIGURE GAME FOLDERS "
+        menuChoices$(7) = "EXIT PROGRAM           "
 
         menuSelection% = 1
         Count% = 7
@@ -414,7 +412,7 @@ Sub ConfigureDrives ()
     FG = 0
     BG = 7
 
-    For I = 0 To 1
+    For I = 0 To 3
         diskPaths$(I) = Left$(diskPaths$(I), Len(diskPaths$(I)) - 1)
     Next
 
@@ -440,6 +438,10 @@ Sub ConfigureDrives ()
     Locate , 16: QPrint PadRight$(diskPaths$(0), 61), FG, BG, -1
     Locate 9, 1: QPrint "Path for Stats ", 14, 1, -1
     Locate , 16: QPrint PadRight$(diskPaths$(1), 61), FG, BG, -1
+    Locate 11, 1: QPrint "Path for Leaders ", 14, 1, -1
+    Locate , 18: QPrint PadRight$(diskPaths$(2), 59), FG, BG, -1
+    Locate 13, 1: QPrint "Path for Schedules ", 14, 1, -1
+    Locate , 20: QPrint PadRight$(diskPaths$(3), 57), FG, BG, -1
 
     GetDiv1:
     Locate 7, 16 'location of beginning of field
@@ -461,6 +463,25 @@ Sub ConfigureDrives ()
     If XCode = 2 GoTo Done 'all done entering data
     diskPaths$(1) = _Trim$(diskPaths$(1))
 
+    GetDiv3:
+    Locate 11, 18 'location of beginning of field
+    CapsOn = 0
+    NumOnly = 0
+    Max = 50
+    Call TextIn(diskPaths$(2), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+    If XCode = 1 Then GoTo GetDiv2: 'can't back up any more, stay here
+    If XCode = 2 Then GoTo Done 'all done entering data
+    diskPaths$(2) = _Trim$(diskPaths$(2))
+
+    GetDiv4:
+    Locate 13, 20 'location of beginning of field
+    CapsOn = 0
+    NumOnly = 0
+    Max = 50
+    Call TextIn(diskPaths$(3), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+    If XCode = 1 GoTo GetDiv3: 'can't back up any more, stay here
+    diskPaths$(3) = _Trim$(diskPaths$(3))
+
     Done:
     Color 14, 1
     Locate 23, 1
@@ -469,13 +490,13 @@ Sub ConfigureDrives ()
     Call YesNoB(X$, XCode, FG, BG)
     Locate , 1
     ClearEOL 14, 1
-    If XCode = 1 GoTo GetDiv2
+    If XCode = 1 GoTo GetDiv4
     If X$ = "N" GoTo GetDiv1
     If X$ <> "Y" GoTo Done 'insist on either Y or N or up-arrow
 
     Open "DEV.BAS" For Output As #1
 
-    For R = 0 To 1:
+    For R = 0 To 3:
 
         Select Case opSysType$
             Case "[WINDOWS]": diskPaths$(R) = diskPaths$(R) + "\"
@@ -505,14 +526,14 @@ Sub TeamMgt_Menu ()
 
         ReDim menuChoices$(1 To 8)
 
-        menuChoices$(1) = "INPUT A NEW TEAM              "
-        menuChoices$(2) = "EDIT AN EXISTING TEAM         "
-        menuChoices$(3) = "PRINT TEAM ROSTER / REPORT    "
-        menuChoices$(4) = "VIEW TEAM ROSTER / REPORT     "
-        menuChoices$(5) = "DRAFT TO NEW / EXISTING TEAM  "
-        menuChoices$(6) = "TRADE PLAYERS                 "
-        menuChoices$(7) = "ADJUST PLAYING TIME (MIN/GAME)"
-        menuChoices$(8) = "RETURN TO MAIN MENU           "
+        menuChoices$(1) = "INPUT A NEW TEAM          "
+        menuChoices$(2) = "EDIT AN EXISTING TEAM     "
+        menuChoices$(3) = "PRINT TEAM ROSTER / REPORT"
+        menuChoices$(4) = "VIEW TEAM ROSTER / REPORT "
+        menuChoices$(5) = "DRAFT PLAYERS             "
+        menuChoices$(6) = "TRADE PLAYERS             "
+        menuChoices$(7) = "ADJUST PLAYING TIME       "
+        menuChoices$(8) = "RETURN TO MAIN MENU       "
         Count% = 8
         Start% = 1
         ExitCode% = 8
@@ -535,10 +556,10 @@ Sub TeamMgt_Menu ()
 
             Select Case Selection%
 
-                Case 1: Call TINPUT(1)
-                Case 2: Call TINPUT(2)
-                Case 3: Call TINPUT(3)
-                Case 4: Call TINPUT(4)
+                Case 1: Call InputTeam(1)
+                Case 2: Call InputTeam(2)
+                Case 3: Call InputTeam(3)
+                Case 4: Call InputTeam(4)
                 Case 5: Call DRAFT
                 Case 6: Call TRADE
                 Case 7: Call GPMIN
@@ -571,12 +592,12 @@ Sub Replay_Menu ()
 
         ReDim menuChoices$(1 To 5)
 
-        menuChoices$(1) = "VIEW / PRINT COMPILED STATS       "
-        menuChoices$(2) = "ENCYCLOPEDIA / TEAM REPLAY OPTIONS"
-        menuChoices$(3) = "COMPARE REPLAY STATS TO ACTUAL    "
-        'menuChoices$(4) = "MODIFY REPLAY STATS               "
-        menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES  "
-        menuChoices$(5) = "RETURN TO MAIN MENU               "
+        menuChoices$(1) = "VIEW / PRINT COMPILED STATS     "
+        menuChoices$(2) = "TEAM CAREER OPTIONS             "
+        menuChoices$(3) = "COMPARE REPLAY STATS TO ACTUAL  "
+        'menuChoices$(4) = "MODIFY REPLAY STATS             "
+        menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES"
+        menuChoices$(5) = "RETURN TO MAIN MENU             "
         Selection% = 1
         Count% = 5
         Start% = 1
@@ -643,16 +664,14 @@ Sub Leaders_Menu ()
 
         ReDim menuChoices$(1 To 8)
 
-        menuChoices$(1) = "CREATE / EDIT A LEAGUE               "
-        menuChoices$(2) = "UPDATE STATS / STANDINGS FOR A LEAGUE"
-        menuChoices$(3) = "VIEW / PRINT RESULTS FOR A LEAGUE    "
-        'menuChoices$(3) = "VIEW RESULTS FOR A LEAGUE            "
-        'menuChoices$(4) = "PRINT RESULTS FOR A LEAGUE           "
-        menuChoices$(4) = "HEAD-TO-HEAD RESULTS AND STATS       "
-        menuChoices$(5) = "LEAGUE RECORD BOOKS                  "
-        menuChoices$(6) = "EXPANDED LEADERS / STANDINGS         "
-        menuChoices$(7) = "DELETE ALL STATS FOR A LEAGUE        "
-        menuChoices$(8) = "RETURN TO MAIN MENU                  "
+        menuChoices$(1) = "MANAGE LEAGUES                 "
+        menuChoices$(2) = "UPDATE LEAGUE STATS / STANDINGS"
+        menuChoices$(3) = "ACCESS LEAGUE REPORTS          "
+        menuChoices$(4) = "HEAD-TO-HEAD RESULTS           "
+        menuChoices$(5) = "LEAGUE RECORD BOOKS            "
+        menuChoices$(6) = "EXPANDED LEADERS / STANDINGS   "
+        menuChoices$(7) = "DELETE ALL STATS FOR A LEAGUE  "
+        menuChoices$(8) = "RETURN TO MAIN MENU            "
         Selection% = 1
         Count% = 8
         Start% = 1
@@ -707,38 +726,38 @@ End Sub
 
 
 ' General purpose
-'$INCLUDE: 'KeyInput.bm'
-'$INCLUDE: 'QPProEqu.bm'
-'$INCLUDE: 'PadRight.bm'
-'$INCLUDE: 'QBWRITE.bm'
+'$Include: 'KeyInput.bm'
+'$Include: 'QPProEqu.bm'
+'$Include: 'PadRight.bm'
+'$Include: 'QBWRITE.bm'
 
 ' For Utils
-'$INCLUDE: 'BoxRoutines.bm'
-'$INCLUDE: 'FileTeamSelection.bm'
-'$INCLUDE: 'TITLE.bm'
-'$INCLUDE: 'ALIGN.BAS'
-'$INCLUDE: 'BLANK.BAS'
-'$INCLUDE: 'CAREER.BAS'
-'$INCLUDE: 'CARVIEW.BAS'
-'$INCLUDE: 'COMPARE.BAS'
-'$INCLUDE: 'COMPLEAG.BAS'
-'$INCLUDE: 'CREATLEAG.BAS'
-'$INCLUDE: 'DRAFT.BAS'
-'$INCLUDE: 'GPMIN.BAS'
-'$INCLUDE: 'HD2HDLEAG.BAS'
-'$INCLUDE: 'LOOKY.BAS'
-'$INCLUDE: 'MERGE.BAS'
-'$INCLUDE: 'NEWLDR.BAS'
-'$INCLUDE: 'NEWLDRST.BAS'
-'$INCLUDE: 'REC.BAS'
-'$INCLUDE: 'RECORDS.BAS'
-'$INCLUDE: 'SCHEDULE.BAS'
-'$INCLUDE: 'SEELEAG.BAS'
-'$INCLUDE: 'SINPUT.BAS'
-'$INCLUDE: 'TINPUT.BAS'
-'$INCLUDE: 'TRADE.BAS'
+'$Include: 'BoxRoutines.bm'
+'$Include: 'FileTeamSelection.bm'
+'$Include: 'TITLE.bm'
+'$Include: 'ALIGN.BAS'
+'$Include: 'BLANK.BAS'
+'$Include: 'CAREER.BAS'
+'$Include: 'CARVIEW.BAS'
+'$Include: 'COMPARE.BAS'
+'$Include: 'COMPLEAG.BAS'
+'$Include: 'CREATLEAG.BAS'
+'$Include: 'DRAFT.BAS'
+'$Include: 'GPMIN.BAS'
+'$Include: 'HD2HDLEAG.BAS'
+'$Include: 'LOOKY.BAS'
+'$Include: 'MERGE.BAS'
+'$Include: 'NEWLDR.BAS'
+'$Include: 'NEWLDRST.BAS'
+'$Include: 'REC.BAS'
+'$Include: 'RECORDS.BAS'
+'$Include: 'SCHEDULE.BAS'
+'$Include: 'SEELEAG.BAS'
+'$Include: 'SINPUT.BAS'
+'$Include: 'TINPUT.BAS'
+'$Include: 'TRADE.BAS'
 
 ' For Game
-'$INCLUDE: 'PROHOOP.BAS'
-'$INCLUDE: 'GameRoutines.bm'
+'$Include: 'PROHOOP.BAS'
+'$Include: 'GameRoutines.bm'
 

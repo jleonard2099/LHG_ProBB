@@ -1,51 +1,12 @@
-'----------------------------------------
-'     NewStandingOptions Subroutine
-'----------------------------------------
-'This subroutine lets the user choose a
-'league for viewing "Expanded" standings,
-'then reads in the data from the League
-'stats file (.TMS). It then presents the
-'display options and calls separate routines
-'for handling each choice.
-Sub NewStandingOptions ()
-
-    _Title "Basketball: The Pro Game - League Standings"
-
-    Cls
-
-    Do
-        Locate 15, 10
-        Color 12: Print "V";: Color 7: Print "iew or ";
-        Color 12: Print "P";: Color 7: Print "rint"
-        I$ = GetKeyPress$
-    Loop Until UCase$(I$) = "P" Or UCase$(I$) = "V"
-
-    'I started passing league$ as a parameter
-    'To start working towards removing the need
-    'for Dim Shared in so many places. However
-    'it has not been consistently done, so I
-    'realize it's currently awkward there.
-    Select Case UCase$(I$)
-
-        Case "V":
-            Call ViewNewStandings(league$)
-
-        Case "P"
-            Call PrintNewStandings(league$)
-
-    End Select
-
-End Sub
-
 
 '----------------------------------------
-'    UpdateLeagueStandings Subroutine
+'    UpdateExpandedStandings Subroutine
 '----------------------------------------
 'This subroutine takes the stats read in
 'for a league, then calculates the standings
 'for that league and writes a  corresponding
 '.STD file.
-Sub UpdateLeagueStandings (league$)
+Sub UpdateExpandedStandings (league$)
 
     Shared HLL(), HWW()
     Shared LL(), LLS()
@@ -58,12 +19,12 @@ Sub UpdateLeagueStandings (league$)
     Shared locIndicator$(), oppName$()
     Shared statsZ1$(), TML$()
 
-    Shared div1$, div2$, div3$, div4$, league$
+    Shared div1Name$, div2Name$, div3Name$, div4Name$, league$
 
     TMR = 40
     YY = 0
 
-    For KK = 1 To TEAMS_PER_CONFERENCE
+    For KK = 1 To TEAMS_PER_LEAGUE
 
         YY = YY + 1
         Color 14
@@ -153,9 +114,9 @@ Sub UpdateLeagueStandings (league$)
 
     Open diskPaths$(1) + league$ + ".STD" For Output As #3
 
-    Write #3, league$, div1$, div2$, div3$, div4$
+    Write #3, league$, div1Name$, div2Name$, div3Name$, div4Name$
 
-    For I = 1 To TEAMS_PER_CONFERENCE
+    For I = 1 To TEAMS_PER_LEAGUE
         Write #3, WW(I), HWW(I), RWW(I), LL(I), HLL(I), RLL(I), LTW(I), LTL(I), TML$(I)
     Next
 
@@ -164,12 +125,12 @@ Sub UpdateLeagueStandings (league$)
 End Sub
 
 '----------------------------------------
-'       ViewNewStandings Subroutine
+'       NewStandings_Screen Subroutine
 '----------------------------------------
 'This subroutine sorts the expanded league
 'standings and outputs them to the user
 'display in a formatted view
-Sub ViewNewStandings (league$)
+Sub NewStandings_Screen (league$)
 
     Shared HLL(), HWW()
     Shared LL(), LLS()
@@ -179,13 +140,13 @@ Sub ViewNewStandings (league$)
 
     Shared TML$()
 
-    Shared div1$, div2$, div3$, div4$
+    Shared div1Name$, div2Name$, div3Name$, div4Name$
 
     MJ = 0
 
     For NT = 1 To 4
 
-        AA = (NT * 10) - 9
+        AA = ((NT - 1) * 10) + 1
         ZZ = NT * 10
 
         Call SortStandings(AA, ZZ)
@@ -198,10 +159,21 @@ Sub ViewNewStandings (league$)
         Locate 2: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
         Locate 3
 
-        If NT = 1 Then Print div1$;
-        If NT = 2 Then Print div2$;
-        If NT = 3 Then Print div3$;
-        If NT = 4 Then Print div4$;
+        Select Case NT
+
+            Case 1
+                Print #1, div1Name$;
+
+            Case 2
+                Print #1, div2Name$;
+
+            Case 3
+                Print #1, div3Name$;
+
+            Case 4
+                Print #1, div4Name$;
+
+        End Select
 
         Print Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
 
@@ -265,13 +237,12 @@ End Sub
 
 
 '----------------------------------------
-'       PrintNewStandings Subroutine
+'       NewStandings_Report Subroutine
 '----------------------------------------
 'This subroutine sorts the expanded league
 'standings and outputs them to the default
 'printer in a formatted view
-'...explanation...
-Sub PrintNewStandings (league$)
+Sub NewStandings_Report (printDest, destFile$, league$)
 
     Shared HLL(), HWW()
     Shared LL(), LLS()
@@ -281,77 +252,108 @@ Sub PrintNewStandings (league$)
 
     Shared TML$()
 
-    Shared div1$, div2$, div3$, div4$
+    Shared div1Name$, div2Name$, div3Name$, div4Name$
 
     MJ = 0
 
+	Color 15, 0
+	Cls
+
+	Open destFile$ For Output As #1
+
     For NT = 1 To 4
 
-        AA = (NT * 10) - 9
+        AA = ((NT - 1) * 10) + 1
         ZZ = NT * 10
 
         Call SortStandings(AA, ZZ)
 
-        LPrint league$
-        LPrint Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
+        Print #1, league$
+        Print #1, Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
 
-        If NT = 1 Then LPrint div1$;
-        If NT = 2 Then LPrint div2$;
-        If NT = 3 Then LPrint div3$;
-        If NT = 4 Then LPrint div4$;
+        Select Case NT
 
-        LPrint Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
+            Case 1
+                Print #1, div1Name$;
+
+            Case 2
+                Print #1, div2Name$;
+
+            Case 3
+                Print #1, div3Name$;
+
+            Case 4
+                Print #1, div4Name$;
+
+        End Select
+
+        Print #1, Tab(20); "G   W   L   PCT   GB  #  LWS LLS  W- L    W- L     W- L "
 
         For I = AA To ZZ
 
             If TML$(I) <> "" And TML$(I) <> "*" Then
 
-                LPrint TML$(I);
-                LPrint Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
+                Print #1, TML$(I);
+                Print #1, Tab(18); Using "### ### ###"; WW(I) + LL(I); WW(I); LL(I); Tab(30);
 
                 'PCT
                 If LL(I) = 0 And LL(I) + WW(I) <> 0 Then
-                    LPrint "1.000";
+                    Print #1, "1.000";
                 Else
                     If WW(I) = 0 Then
-                        LPrint " .000";
+                        Print #1, " .000";
                     Else
                         If WW(I) + LL(I) = 0 Then
-                            LPrint " .000";
+                            Print #1, " .000";
                         Else
                             wlPCT! = WW(I) / (WW(I) + LL(I))
-                            LPrint Using " .###"; wlPCT!;
+                            Print #1, Using " .###"; wlPCT!;
                         End If
                     End If
                 End If
 
-                'GB
+                'Games Behind?
                 If ((WW(AA) - WW(I)) + (LL(I) - LL(AA))) / 2 = 0 Then
-                    LPrint Tab(36); " ---";
+                    Print #1, Tab(36); " ---";
                 Else
-                    LPrint Tab(36); Using "##.#"; ((WW(AA) - WW(I)) + (LL(I) - LL(AA))) / 2;
+                    Print #1, Tab(36); Using "##.#"; ((WW(AA) - WW(I)) + (LL(I) - LL(AA))) / 2;
                 End If
 
-                'MJ
+                'Magic Number?
                 If I = AA Then
                     MJ = 83 - WW(AA) - LL(AA + 1)
                     If MJ < 0 Then MJ = 0
-                    LPrint Tab(42); Using "##"; MJ;
+                    Print #1, Tab(42); Using "##"; MJ;
                 End If
 
-                LPrint Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
-                LPrint Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
+                Print #1, Tab(45); Using "##"; TWS(I); Tab(49); TLS(I);
+                Print #1, Tab(53); Using "##"; HWW(I); Tab(56); HLL(I); Tab(61); RWW(I); Tab(64); RLL(I); Tab(70); LTW(I); Tab(73); LTL(I)
 
             End If
 
         Next
 
-        LPrint
-        LPrint
+        Print #1,
+        Print #1,
 
     Next NT
 
-    LPrint Chr$(12)
+	If printDest = 1 Then
+
+		Open destFile$ For Input As #2
+
+		Do While Not EOF(2)
+			Line Input #2, X$
+			LPrint X$
+		Loop
+
+		Close #2
+
+		LPrint Chr$(12)
+
+		Kill destFile$
+
+	End If
 
 End Sub
 

@@ -12,13 +12,13 @@ Sub TRADE ()
 
     _Title "Basketball: The Pro Game - Trade Players"
 
-    Shared tradeT!()
+    Shared tradeNbrs()
 
     Shared teamYears$(), tmInfo_TRADE$()
 
     tradeIdx = 0
     Call ChooseTradeTeam(teamYears$(tradeIdx), NTMS, teamNbr, tmInfo_TRADE$(tradeIdx, 0), tradeIdx)
-    tradeT!(tradeIdx) = teamNbr
+    tradeNbrs(tradeIdx) = teamNbr
 
     If teamNbr > 0 Then
 
@@ -26,7 +26,7 @@ Sub TRADE ()
 
         tradeIdx = 1
         Call ChooseTradeTeam(teamYears$(tradeIdx), NTMS, teamNbr, tmInfo_TRADE$(tradeIdx, 0), tradeIdx)
-        tradeT!(tradeIdx) = teamNbr
+        tradeNbrs(tradeIdx) = teamNbr
         Call LoadStatsForTrade(tradeIdx)
 
         'Teams / Stats are loaded
@@ -46,10 +46,10 @@ End Sub
 'the stats are loaded from the team stats.
 Sub LoadStatsForTrade (tradeTeam)
 
-    Shared teamSettings%(), plyrRat_TRADE(), leagRat_TRADE()
+    Shared tmRat_TRADE(), plyrRat_TRADE(), leagRat_TRADE()
     Shared tradeZZ(), tradeZZ1()
 
-    Shared haveStats(), tradeT!()
+    Shared haveStats()
     Shared tradeB1!(), tradeW0!(), tradeW1!()
 
     Shared B1$(), teamYears$(), statTeam$()
@@ -77,6 +77,7 @@ Sub LoadStatsForTrade (tradeTeam)
 
     Else
 
+        statTeam$(tradeTeam) = tmInfo_TRADE$(tradeTeam, 0)
         statFile$ = nameStatFile$(statTeam$(tradeTeam))
 
         If Not _FileExists(diskPaths$(1) + statFile$) Then
@@ -135,11 +136,11 @@ End Sub
 'the trade and then save the changes.
 Sub ContinueTrade ()
 
-    Shared teamSettings%(), plyrRat_TRADE(), leagRat_TRADE()
+    Shared tmRat_TRADE(), plyrRat_TRADE(), leagRat_TRADE()
     Shared tradeZZ(), tradeZZ1()
 
     Shared tradeB1!(), tradeW0!(), tradeW1!()
-    Shared haveStats(), tradeT!()
+    Shared haveStats()
 
     Shared B1$(), teamYears$()
     Shared A1$(), tmInfo_TRADE$(), players_TRADE$()
@@ -201,9 +202,9 @@ Sub ContinueTrade ()
 
                 Cls
                 Locate 3, 1
-                Color teamSettings%(0, 33), teamSettings%(0, 34): Print tmInfo_TRADE$(0, 0);
+                Color tmRat_TRADE(0, 33), tmRat_TRADE(0, 34): Print tmInfo_TRADE$(0, 0);
                 Locate , 20
-                Color teamSettings%(1, 33), teamSettings%(1, 34): Print tmInfo_TRADE$(1, 0)
+                Color tmRat_TRADE(1, 33), tmRat_TRADE(1, 34): Print tmInfo_TRADE$(1, 0)
 
                 For I = 0 To 14
 
@@ -228,7 +229,7 @@ Sub ContinueTrade ()
                         Input I1
                     Loop Until I1 >= 0 And I1 <= 14
 
-                    Color teamSettings%(0, 33), teamSettings%(0, 34): Print players_TRADE$(0, I1, 0)
+                    Color tmRat_TRADE(0, 33), tmRat_TRADE(0, 34): Print players_TRADE$(0, I1, 0)
 
                     Color 3, 0
 
@@ -238,7 +239,7 @@ Sub ContinueTrade ()
                         Input I2
                     Loop Until I2 >= 0 And I2 <= 14
 
-                    Color teamSettings%(1, 33), teamSettings%(1, 34): Print players_TRADE$(1, I2, 0)
+                    Color tmRat_TRADE(1, 33), tmRat_TRADE(1, 34): Print players_TRADE$(1, I2, 0)
                     Color 15, 0
 
                     Do
@@ -304,16 +305,16 @@ End Sub
 
 
 '----------------------------------------
-'           SaveTrades Subroutine
+'         SaveTrades Subroutine
 '----------------------------------------
 'This subroutine saves the modified team
 'data from the trade to the team files.
 Sub SaveTrades ()
 
-    Shared teamSettings%(), plyrRat_TRADE(), leagRat_TRADE()
+    Shared tmRat_TRADE(), plyrRat_TRADE(), leagRat_TRADE()
     Shared tradeZZ(), tradeZZ1()
 
-    Shared tradeB1!(), haveStats(), tradeT!()
+    Shared tradeB1!(), haveStats(), tradeNbrs()
     Shared tradeW0!(), tradeW1!()
 
     Shared B1$(), statTeam$(), teamYears$()
@@ -356,7 +357,7 @@ Sub SaveTrades ()
         LSet Q$(9) = MKI$(999)
 
         For I = 0 To 34:
-            LSet Q$(I + 10) = MKI$(teamSettings%(J, I))
+            LSet Q$(I + 10) = MKI$(tmRat_TRADE(J, I))
         Next
 
         For I = 0 To 14
@@ -374,7 +375,7 @@ Sub SaveTrades ()
         LSet Q$(376) = tmInfo_TRADE$(J, 3)
         LSet Q$(377) = tmInfo_TRADE$(J, 4)
 
-        Put #1, tradeT!(J)
+        Put #1, tradeNbrs(J)
 
         Close #1
 
@@ -429,18 +430,18 @@ End Sub
 Sub PrintTradeSummary (p1Idx, p2Idx)
 
     Shared tradeB1!(), tradeW0!(), tradeW1!()
-    Shared teamSettings%(), plyrRat_TRADE()
+    Shared tmRat_TRADE(), plyrRat_TRADE()
     Shared tmInfo_TRADE$(), players_TRADE$()
 
     Cls
     Locate 3, 1
 
     Locate , 10
-    Color teamSettings%(0, 33), teamSettings%(0, 34)
+    Color tmRat_TRADE(0, 33), tmRat_TRADE(0, 34)
     Print tmInfo_TRADE$(0, 0);
 
     Locate , 50
-    Color teamSettings%(1, 33), teamSettings%(1, 34)
+    Color tmRat_TRADE(1, 33), tmRat_TRADE(1, 34)
     Print tmInfo_TRADE$(1, 0)
 
     Color 15, 0
@@ -494,7 +495,7 @@ End Sub
 'choosing the team to trade players from
 Sub ChooseTradeTeam (yearNumber$, numberTeams, chosenIdx, teamName$, tradeIdx)
 
-    Shared teamSettings%()
+    Shared tmRat_TRADE()
 
     Shared previousYear$
 
@@ -609,7 +610,7 @@ Sub ChooseTradeTeam (yearNumber$, numberTeams, chosenIdx, teamName$, tradeIdx)
 
                     Do
                         Locate 2, 33
-                        Color teamSettings%(tradeIdx, 33), teamSettings%(tradeIdx, 34): Print teamName$
+                        Color tmRat_TRADE(tradeIdx, 33), tmRat_TRADE(tradeIdx, 34): Print teamName$
 
                         Color 15, 4
                         Locate 3, 32: Print "ANY CHANGE? (Y/N)";
@@ -688,31 +689,28 @@ End Sub
 'arrays for the selected team
 Sub ReadTradeTeam (teamYear$, teamIdx, tradeIdx)
 
-    Shared teamSettings%()
-    Shared plyrRat_TRADE(), leagRat_TRADE()
+    Shared plyrRat_TRADE(), leagRat_TRADE(), tmRat_TRADE()
 
-    Shared tradeT!()
-
-    Shared statTeam$(), tmInfo_TRADE$(), players_TRADE$()
+    Shared tmInfo_TRADE$(), players_TRADE$()
 
     Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
 
     Field #1, 15 As Q$(0), 15 As Q$(1)
 
-    For J0 = 0 To 6
-        Field #1, 30 + J0 * 2 As X$, 2 As Q$(J0 + 2)
+    For J = 0 To 6
+        Field #1, 30 + J * 2 As X$, 2 As Q$(J + 2)
     Next
 
     Field #1, 44 As X$, 2 As Q$(9)
 
-    For J0 = 0 To 34
-        Field #1, 46 + J0 * 2 As X$, 2 As Q$(J0 + 10)
+    For J = 0 To 34
+        Field #1, 46 + J * 2 As X$, 2 As Q$(J + 10)
     Next
 
-    For J0 = 0 To 14
-        Field #1, 116 + J0 * 57 As X$, 15 As Q$(J0 * 22 + 45), 2 As Q$(J0 * 22 + 46)
+    For J = 0 To 14
+        Field #1, 116 + J * 57 As X$, 15 As Q$(J * 22 + 45), 2 As Q$(J * 22 + 46)
         For J1 = 0 To 19
-            Field #1, 133 + J0 * 57 + J1 * 2 As X$, 2 As Q$(J0 * 22 + 47 + J1)
+            Field #1, 133 + J * 57 + J1 * 2 As X$, 2 As Q$(J * 22 + 47 + J1)
         Next
     Next
 
@@ -721,8 +719,6 @@ Sub ReadTradeTeam (teamYear$, teamIdx, tradeIdx)
     Get #1, teamIdx
 
     tmInfo_TRADE$(tradeIdx, 0) = RTrim$(Q$(0))
-    statTeam$(tradeIdx) = tmInfo_TRADE$(tradeIdx, 0)
-
     tmInfo_TRADE$(tradeIdx, 1) = RTrim$(Q$(1))
 
     For I = 0 To 6
@@ -730,7 +726,7 @@ Sub ReadTradeTeam (teamYear$, teamIdx, tradeIdx)
     Next
 
     For I = 0 To 34
-        teamSettings%(tradeIdx, I) = CVI(Q$(I + 10))
+        tmRat_TRADE(tradeIdx, I) = CVI(Q$(I + 10))
     Next
 
     For I = 0 To 14

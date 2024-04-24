@@ -78,7 +78,7 @@ Sub CompileLeague ()
         defRecords!(I) = 19999
     Next
 
-    For X = 1 To TEAMS_PER_CONFERENCE:
+    For X = 1 To TEAMS_PER_LEAGUE:
         defLeaders!(X, 19) = 9999
     Next
 
@@ -87,7 +87,7 @@ Sub CompileLeague ()
 
     C$ = ","
 
-    leagueFile$ = ChooseFile$(diskPaths$(1) + "*.LIB", "LEAGUE", ExitCode%)
+    leagueFile$ = ChooseFile$(diskPaths$(2) + "*.TMI", "LEAGUE", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
@@ -99,18 +99,18 @@ Sub CompileLeague ()
             finalUpdate$ = UCase$(I$)
         Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
 
-        Open diskPaths$(1) + leagueFile$ + ".TMS" For Input As #2
+        Open diskPaths$(2) + leagueFile$ + ".TMS" For Input As #2
 
         Input #2, league$, D1$, D2$, D3$, D4$
 
-        For XW = 1 To TEAMS_PER_CONFERENCE
+        For XW = 1 To TEAMS_PER_LEAGUE
             Input #2, statFiles$(XW)
             statsZ1$(XW) = statFiles$(XW)
         Next
 
         Close #2
 
-        For XW = 1 To TEAMS_PER_CONFERENCE
+        For XW = 1 To TEAMS_PER_LEAGUE
 
             'Look for * as terminating char
             If statFiles$(XW) <> Chr$(42) Then
@@ -129,7 +129,7 @@ Sub CompileLeague ()
 
                     nonConfGame = 0
 
-                    For X = 1 To TEAMS_PER_CONFERENCE
+                    For X = 1 To TEAMS_PER_LEAGUE
 
                         If statsZ1$(X) = WT$ Then
 
@@ -221,7 +221,7 @@ Function FindStatsLeague% (statFile$, numberGames)
 
             nonConfGame = 0
 
-            For EC = 1 To TEAMS_PER_CONFERENCE
+            For EC = 1 To TEAMS_PER_LEAGUE
 
                 If statName$ = statFiles$(EC) Then
                     nonConfGame = 1
@@ -368,7 +368,7 @@ Sub CalcStatLeadersPro (teamName$, numberGames)
             Z3$(40) = teamName$
 
             For Z = 21 To 39
-                For Z1 = Z + 1 To TEAMS_PER_CONFERENCE
+                For Z1 = Z + 1 To TEAMS_PER_LEAGUE
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
@@ -861,7 +861,7 @@ Sub CalcStatLeadersPro (teamName$, numberGames)
         OL$(40) = teamName$
 
         For X = 1 To 39
-            For X1 = 1 + X To TEAMS_PER_CONFERENCE
+            For X1 = 1 + X To TEAMS_PER_LEAGUE
 
                 If offLeaders!(X, 19) < offLeaders!(X1, 19) Then
                     Swap OL$(X1), OL$(X)
@@ -885,7 +885,7 @@ Sub CalcStatLeadersPro (teamName$, numberGames)
         DL$(40) = teamName$
 
         For X = 1 To 39
-            For X1 = 1 + X To TEAMS_PER_CONFERENCE
+            For X1 = 1 + X To TEAMS_PER_LEAGUE
 
                 If defLeaders!(X, 19) > defLeaders!(X1, 19) Then
                     Swap DL$(X1), DL$(X)
@@ -1127,11 +1127,11 @@ Sub PostLeadersPro (leaderFile$)
 
     Print
 
-    Open diskPaths$(1) + leaderFile$ + ".LDR" For Output As #1
+    Open diskPaths$(2) + leaderFile$ + ".LDR" For Output As #1
 
     Print "    POSTING NEW "; leaderFile$; " LEADERS"
 
-    For X = 1 To TEAMS_PER_CONFERENCE
+    For X = 1 To TEAMS_PER_LEAGUE
         Write #1, statsZ1$(X), O1!(X), O2!(X)
     Next
 
@@ -1139,14 +1139,14 @@ Sub PostLeadersPro (leaderFile$)
         Write #1, Z2$(X), Z3$(X), leaderVals!(X, 1), leaderVals!(X, 2)
     Next X
 
-    For X = 1 To TEAMS_PER_CONFERENCE:
+    For X = 1 To TEAMS_PER_LEAGUE:
         Write #1, OL$(X)
         For Y = 1 To 20:
             Write #1, offLeaders!(X, Y)
         Next
     Next
 
-    For X = 1 To TEAMS_PER_CONFERENCE:
+    For X = 1 To TEAMS_PER_LEAGUE:
         Write #1, DL$(X)
         For Y = 1 To 20:
             Write #1, defLeaders!(X, Y)
