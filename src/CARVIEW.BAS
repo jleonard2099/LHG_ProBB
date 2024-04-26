@@ -1,7 +1,7 @@
 '----------------------------------------
 '           CARVIEW Subroutine
 '----------------------------------------
-'This routine loads in an existing career 
+'This routine loads in an existing career
 'file (.CAR) and gives the user options
 'for viewing / printing the results
 Sub CARVIEW ()
@@ -52,47 +52,27 @@ Sub CARVIEW ()
 
         Close #1
 
-        Color 15, 0
-        Cls
+        userKey$ = GetOutputOptions$
 
-        Call MenuBox(8, 25, 24, 5, 15, 1)
+        If userKey$ <> Chr$(27) Then
 
-        Do
+            Select Case userKey$
 
-            Locate 10, 32
-            Color 7, 1
+                Case "F"
+                    userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                    If userFile$ <> "" Then
+                        Call CareerToPrinter(0, userFile$, careerPlayers$(), Z$)
+                    End If
 
-            Locate , 32: Print "SEND TO ";
-            Color 15: Print "F";
-            Color 7: Print "ILE"
-            Locate , 32: Print "SEND TO ";
-            Color 15: Print "P";
-            Color 7: Print "RINTER"
-            Locate , 32: Print "SEND TO ";
-            Color 15: Print "S";
-            Color 7: Print "CREEN"
+                Case "P"
+                    Call CareerToPrinter(1, "REPORT", careerPlayers$(), Z$)
+                    
+                Case "S"
+                    Call CareerToScreen(careerPlayers$(), Z$)
 
-            I$ = GetKeyPress$
-
-            Color 14, 0
-
-        Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P" Or UCase$(I$) = "S"
-
-        Select Case UCase$(I$)
-
-            Case "F"
-                userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
-                If userFile$ <> "" Then
-                    Call CareerToPrinter(0, userFile$, careerPlayers$(), Z$)
-                End If
-
-            Case "P"
-                Call CareerToPrinter(1, "REPORT", careerPlayers$(), Z$)
-                
-            Case "S"
-                Call CareerToPrinter(careerPlayers$(), Z$)
-
-        End Select
+            End Select
+            
+        End If
 
     End If 'Done checking for ESC
 
@@ -145,10 +125,10 @@ Sub CareerToPrinter (printDest, destFile$, careerPlayers$(), careerFile$)
 
     PTN = 0
 
-	Color 15, 0
-	Cls
+    Color 15, 0
+    Cls
 
-	Open destFile$ For Output As #1
+    Open destFile$ For Output As #1
 
     Print #1, Tab(59); careerFile$
     Print #1,
@@ -306,22 +286,22 @@ Sub CareerToPrinter (printDest, destFile$, careerPlayers$(), careerFile$)
 
     Next I
 
-	If printDest = 1 Then
+    If printDest = 1 Then
 
-		Open destFile$ For Input As #2
+        Open destFile$ For Input As #2
 
-		Do While Not EOF(2)
-			Line Input #2, X$
-			LPrint X$
-		Loop
+        Do While Not EOF(2)
+            Line Input #2, X$
+            LPrint X$
+        Loop
 
-		Close #2
+        Close #2
 
-		LPrint Chr$(12)
+        LPrint Chr$(12)
 
-		Kill destFile$
+        Kill destFile$
 
-	End If
+    End If
 
 End Sub
 

@@ -127,47 +127,27 @@ Sub NEWLDR ()
 
                             Close #2
 
-                            Color 15, 0
-                            Cls
+                            userKey$ = GetOutputOptions$
 
-                            Call MenuBox(8, 25, 24, 5, 15, 1)
+                            If userKey$ <> Chr$(27) Then
 
-                            Do
+                                Select Case userKey$
 
-                                Locate 10, 32
-                                Color 7, 1
+                                    Case "F"
+                                        userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                                        If userFile$ <> "" Then
+                                            Call NewStandings_Report(0, userFile$, league$)
+                                        End If
 
-                                Locate , 32: Print "SEND TO ";
-                                Color 15: Print "F";
-                                Color 7: Print "ILE"
-                                Locate , 32: Print "SEND TO ";
-                                Color 15: Print "P";
-                                Color 7: Print "RINTER"
-                                Locate , 32: Print "SEND TO ";
-                                Color 15: Print "S";
-                                Color 7: Print "CREEN"
+                                    Case "P"
+                                        Call NewStandings_Report(1, "REPORT", league$)
 
-                                I$ = GetKeyPress$
+                                    Case "S":
+                                        Call NewStandings_Screen(league$)
 
-                                Color 14, 0
-
-                            Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P" Or UCase$(I$) = "S"
-
-                            Select Case UCase$(I$)
-
-                                Case "F"
-                                    userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
-                                    If userFile$ <> "" Then
-                                        Call NewStandings_Report(0, userFile$, league$)
-                                    End If
-
-                                Case "P"
-                                    Call NewStandings_Report(1, "REPORT", league$)
-
-                                Case "S":
-                                    Call NewStandings_Screen(league$)
-
-                            End Select
+                                End Select
+                                
+                            End If
 
                         End If
 
@@ -922,41 +902,24 @@ Sub ViewIndividualLeaders (printOrView, JB)
                 Case 2
                     Call GetListLength(printOrView, LG, QW)
 
-                    Color 15, 0
-                    Cls
+                    userKey$ = GetPrintOptions$
 
-                    Call MenuBox(8, 25, 24, 5, 15, 1)
+                    If userKey$ <> Chr$(27) Then
 
-                    Do
+                        Select Case userKey$
+                        
+                            Case "F"
+                                userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                                If userFile$ <> "" Then
+                                    Call PrintLeaders(0, userFile$, TVN, LG, B9)
+                                End If
 
-                        Locate 10, 32
-                        Color 7, 1
+                            Case "P"
+                                Call PrintLeaders(1, "REPORT", TVN, LG, B9)
 
-                        Locate , 32: Print "SEND TO ";
-                        Color 15: Print "F";
-                        Color 7: Print "ILE"
-                        Locate , 32: Print "SEND TO ";
-                        Color 15: Print "P";
-                        Color 7: Print "RINTER"
-
-                        I$ = GetKeyPress$
-
-                        Color 14, 0
-
-                    Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P"
-
-                    Select Case UCase$(I$)
-
-                        Case "F"
-                            userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
-                            If userFile$ <> "" Then
-                                Call PrintLeaders(0, userFile$, TVN, LG, B9)
-                            End If
-
-                        Case "P"
-                            Call PrintLeaders(1, "REPORT", TVN, LG, B9)
-
-                    End Select
+                        End Select
+                        
+                    End If
 
             End Select
 

@@ -197,41 +197,24 @@ Sub DoTheInput (action%)
 
             If teamNbr <> 0 Then
 
-                Color 15, 0
-                Cls
+                userKey$ = GetPrintOptions$
 
-                Call MenuBox(8, 25, 24, 5, 15, 1)
+                If userKey$ <> Chr$(27) Then
 
-                Do
+                    Select Case userKey$
 
-                    Locate 10, 32
-                    Color 7, 1
+                        Case "F"
+                            userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                            If userFile$ <> "" Then
+                                Call PrintRoster(0, userFile$, YN$)
+                            End If
 
-                    Locate , 32: Print "SEND TO ";
-                    Color 15: Print "F";
-                    Color 7: Print "ILE"
-                    Locate , 32: Print "SEND TO ";
-                    Color 15: Print "P";
-                    Color 7: Print "RINTER"
+                        Case "P"
+                            Call PrintRoster(1, "REPORT", YN$)
 
-                    I$ = GetKeyPress$
-
-                    Color 14, 0
-
-                Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P"
-
-                Select Case UCase$(I$)
-
-                    Case "F"
-                        userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
-                        If userFile$ <> "" Then
-                            Call PrintRoster(0, userFile$, YN$)
-                        End If
-
-                    Case "P"
-                        Call PrintRoster(1, "REPORT", YN$$)
-
-                End Select
+                    End Select
+                    
+                End If
 
             End If
 
@@ -259,10 +242,10 @@ Sub PrintRoster (printDest, destFile$, YN$)
     Shared playerRatings%(), leagueRatings%(), teamRatings%()
     Shared playerNames$(), teamInfo$()
 
-	Color 15, 0
-	Cls
+    Color 15, 0
+    Cls
 
-	Open destFile$ For Output As #1
+    Open destFile$ For Output As #1
 
     Print #1,
     Print #1, "DISK ID:"; YN$
@@ -309,22 +292,22 @@ Sub PrintRoster (printDest, destFile$, YN$)
 
     Next
 
-	If printDest = 1 Then
+    If printDest = 1 Then
 
-		Open destFile$ For Input As #2
+        Open destFile$ For Input As #2
 
-		Do While Not EOF(2)
-			Line Input #2, X$
-			LPrint X$
-		Loop
+        Do While Not EOF(2)
+            Line Input #2, X$
+            LPrint X$
+        Loop
 
-		Close #2
+        Close #2
 
-		LPrint Chr$(12)
+        LPrint Chr$(12)
 
-		Kill destFile$
+        Kill destFile$
 
-	End If
+    End If
 
 End Sub
 

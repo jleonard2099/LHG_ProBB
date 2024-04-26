@@ -322,33 +322,9 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
                 Kill diskPaths$(1) + statFile$ + "S"
 
             Case "P":
-                Color 15, 0
-                Cls
+                userKey$ = GetPrintOptions$
 
-                Call MenuBox(8, 25, 24, 5, 15, 1)
-
-                Do
-
-                    Locate 10, 32
-                    Color 7, 1
-
-                    Locate , 32: Print "SEND TO ";
-                    Color 15: Print "F";
-                    Color 7: Print "ILE"
-                    Locate , 32: Print "SEND TO ";
-                    Color 15: Print "P";
-                    Color 7: Print "RINTER"
-                    Locate , 32: Print "SEND TO ";
-                    Color 15: Print "S";
-                    Color 7: Print "CREEN"
-
-                    I$ = GetKeyPress$
-
-                    Color 14, 0
-
-                Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P"
-
-                Select Case UCase$(I$)
+                Select Case userKey$
 
                     Case "F"
                         userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
@@ -592,46 +568,26 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
                 Case "p", "P"
                     'Print
-                    Color 15, 0
-                    Cls
+                    userKey$ = GetOutputOptions$
 
-                    Call MenuBox(8, 25, 24, 5, 15, 1)
+                    If userKey$ <> Chr$(27) Then
 
-                    Do
+                        Select Case userKey$
 
-                        Locate 10, 32
-                        Color 7, 1
+                            Case "F"
+                                userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                                If userFile$ <> "" Then
+                                    Call StatsSchedule_Report(0, userFile$, teamName$, totalGames%)
+                                    Call StatsSummary_Report(0, userFile$, teamName$, totalGames%)
+                                End If
 
-                        Locate , 32: Print "SEND TO ";
-                        Color 15: Print "F";
-                        Color 7: Print "ILE"
-                        Locate , 32: Print "SEND TO ";
-                        Color 15: Print "P";
-                        Color 7: Print "RINTER"
-                        Locate , 32: Print "SEND TO ";
-                        Color 15: Print "S";
-                        Color 7: Print "CREEN"
+                            Case "P"
+                                Call StatsSchedule_Report(1, "REPORT", teamName$, totalGames%)
+                                Call StatsSummary_Report(1, "REPORT", teamName$, totalGames%)
 
-                        I$ = GetKeyPress$
-
-                        Color 14, 0
-
-                    Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P"
-
-                    Select Case UCase$(I$)
-
-                        Case "F"
-                            userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
-                            If userFile$ <> "" Then
-                                Call StatsSchedule_Report(0, userFile$, teamName$, totalGames%)
-                                Call StatsSummary_Report(0, userFile$, teamName$, totalGames%)
-                            End If
-
-                        Case "P"
-                            Call StatsSchedule_Report(1, "REPORT", teamName$, totalGames%)
-                            Call StatsSummary_Report(1, "REPORT", teamName$, totalGames%)
-
-                    End Select
+                        End Select
+                        
+                    End If
 
             End Select
 
@@ -784,46 +740,26 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
                     Kill diskPaths$(1) + statFile$ + "S"
 
                 Case "P":
-                    Color 15, 0
-                    Cls
+                    userKey$ = GetPrintOptions$
 
-                    Call MenuBox(8, 25, 24, 5, 15, 1)
+                    If userKey$ <> Chr$(27) Then
 
-                    Do
+                        Select Case userKey$
 
-                        Locate 10, 32
-                        Color 7, 1
+                            Case "F"
+                                userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                                If userFile$ <> "" Then
+                                    Call StatsSchedule_Report(0, userFile$, teamName$, totalGames%)
+                                    Call StatsSummary_Report(0, userFile$, teamName$, totalGames%)
+                                End If
 
-                        Locate , 32: Print "SEND TO ";
-                        Color 15: Print "F";
-                        Color 7: Print "ILE"
-                        Locate , 32: Print "SEND TO ";
-                        Color 15: Print "P";
-                        Color 7: Print "RINTER"
-                        Locate , 32: Print "SEND TO ";
-                        Color 15: Print "S";
-                        Color 7: Print "CREEN"
+                            Case "P"
+                                Call StatsSchedule_Report(1, "REPORT", teamName$, totalGames%)
+                                Call StatsSummary_Report(1, "REPORT", teamName$, totalGames%)
 
-                        I$ = GetKeyPress$
+                        End Select
 
-                        Color 14, 0
-
-                    Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P"
-
-                    Select Case UCase$(I$)
-
-                        Case "F"
-                            userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
-                            If userFile$ <> "" Then
-                                Call StatsSchedule_Report(0, userFile$, teamName$, totalGames%)
-                                Call StatsSummary_Report(0, userFile$, teamName$, totalGames%)
-                            End If
-
-                        Case "P"
-                            Call StatsSchedule_Report(1, "REPORT", teamName$, totalGames%)
-                            Call StatsSummary_Report(1, "REPORT", teamName$, totalGames%)
-
-                    End Select
+                    End If
 
             End Select
 
@@ -939,46 +875,26 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
             Case "P":
                 'Print
-                Color 15, 0
-                Cls
+                userKey$ = GetPrintOptions$
 
-                Call MenuBox(8, 25, 24, 5, 15, 1)
+                If userKey$ <> Chr$(27) Then
 
-                Do
+                    Select Case userKey$
 
-                    Locate 10, 32
-                    Color 7, 1
+                        Case "F"
+                            userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                            If userFile$ <> "" Then
+                                Call StatsSchedule_Report(0, userFile$, teamName$, totalGames%)
+                                Call StatsSummary_Report(0, userFile$, teamName$, totalGames%)
+                            End If
 
-                    Locate , 32: Print "SEND TO ";
-                    Color 15: Print "F";
-                    Color 7: Print "ILE"
-                    Locate , 32: Print "SEND TO ";
-                    Color 15: Print "P";
-                    Color 7: Print "RINTER"
-                    Locate , 32: Print "SEND TO ";
-                    Color 15: Print "S";
-                    Color 7: Print "CREEN"
+                        Case "P"
+                            Call StatsSchedule_Report(1, "REPORT", teamName$, totalGames%)
+                            Call StatsSummary_Report(1, "REPORT", teamName$, totalGames%)
 
-                    I$ = GetKeyPress$
-
-                    Color 14, 0
-
-                Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P"
-
-                Select Case UCase$(I$)
-
-                    Case "F"
-                        userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
-                        If userFile$ <> "" Then
-                            Call StatsSchedule_Report(0, userFile$, teamName$, totalGames%)
-                            Call StatsSummary_Report(0, userFile$, teamName$, totalGames%)
-                        End If
-
-                    Case "P"
-                        Call StatsSchedule_Report(1, "REPORT", teamName$, totalGames%)
-                        Call StatsSummary_Report(1, "REPORT", teamName$, totalGames%)
-
-                End Select
+                    End Select
+                    
+                End If
 
         End Select
 

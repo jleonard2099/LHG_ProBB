@@ -90,32 +90,11 @@ Sub Records_Menu ()
                         Call ViewSeasonRecords
 
                     Case 2:
-                        Color 15, 0
-                        Cls
+                        userKey$ = GetPrintOptions$
 
-                        Call MenuBox(8, 8, 61, 4, 15, 1)
+                        If userKey$ <> Chr$(27) Then
 
-                        Do
-
-                            Locate 10, 32
-                            Color 7, 1
-
-                            Locate , 32: Print "SEND TO ";
-                            Color 15: Print "F";
-                            Color 7: Print "ILE"
-                            Locate , 32: Print "SEND TO ";
-                            Color 15: Print "P";
-                            Color 7: Print "RINTER"
-
-                            I$ = GetKeyPress$
-
-                            Color 14, 0
-
-						Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P" Or I$ = Chr$(27)
-
-                        If I$ <> Chr$(27) Then
-
-                            Select Case UCase$(I$)
+                            Select Case userKey$
 
                                 Case "F"
                                     userFile$ = _SAVEFILEDIALOG$("Save Records Report",_CWD$ + "\Records","*.txt","Text File")           
