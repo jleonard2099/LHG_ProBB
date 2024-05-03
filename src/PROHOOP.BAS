@@ -132,13 +132,13 @@ Sub PROHOOP ()
 
         Open "pbplog" + Str$(currGame) For Append As #11
 
-        Open diskPaths$(3) + scheduleFile$ For Random As #7 Len = 48
+        Open diskPaths$(3) + scheduleFile$ For Random As #7 Len = SCHEDULE_SIZE_BYTES
 
         For X = 0 To 18
-            Field #7, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
+            Field #7, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
         Next
 
-        Field #7, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+        Field #7, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
 
         Get #7, schedGame(0) + schedGame(2)
 
