@@ -29,13 +29,13 @@ Sub SCHEDULE ()
 
         Call TITLE_SCHEDULER
 
-        menuChoices$(1) = "ENTER A NEW SCHEDULE                    "
-        menuChoices$(2) = "REVIEW / EDIT AN EXISTING SCHEDULE      "
-        menuChoices$(3) = "EXTRACT TEAM SCHEDULE FROM LEAGUE       "
-        menuChoices$(4) = "CHANGE TEAM'S MODE OF PLAY IN A SCHEDULE"
-        menuChoices$(5) = "MAKE GLOBAL CHANGES TO A SCHEDULE       "
-        menuChoices$(6) = "BOXSCORE MAINTENANCE / PARAMETERS       "
-        menuChoices$(7) = "RETURN TO BB PRO GAME MAIN MENU         "
+        menuChoices$(1) = "ENTER A NEW SCHEDULE              "
+        menuChoices$(2) = "PLAY / EDIT AN EXISTING SCHEDULE  "
+        menuChoices$(3) = "EXTRACT TEAM SCHEDULE             "
+        menuChoices$(4) = "CHANGE TEAM CONTROL FOR A SCHEDULE"
+        menuChoices$(5) = "MAKE GLOBAL CHANGES TO A SCHEDULE "
+        menuChoices$(6) = "BOXSCORE MAINTENANCE / PARAMETERS "
+        menuChoices$(7) = "RETURN TO BB PRO GAME MAIN MENU   "
         Selection% = 1
         Count% = 7
         Start% = 1
@@ -706,9 +706,9 @@ End Sub 'New Game
 'then writes the changes back to the orig-
 'inal schedule file.
 Sub ExtractSchedule (scheduleAction%, scheduleFile$)
-    'scheduleAction% = 3: EXTRACT ONE TEAM'S SCHEDULE FROM LEAGUE SCHEDULE
-    'scheduleAction% = 4: CHANGE THE MODE OF PLAY FOR A TEAM IN A SCHEDULE
-    'scheduleAction% = 5: MAKE GLOBAL CHANGES TO A SCHEDULE
+    'scheduleAction% = 3: "EXTRACT ONE TEAM'S SCHEDULE
+    'scheduleAction% = 4: "CHANGE THE MODE OF PLAY FOR A TEAM
+    'scheduleAction% = 5: "MAKE GLOBAL CHANGES TO A SCHEDULE
     Dim displayPause!
 
     Shared homeScores(), visitorScores()
@@ -748,9 +748,15 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                         Color 15, 0
                         Print " IS TO BE:"
                         Print
-                        Print "(0) MANUALLY CONTROLLED"
+                        Color 12
+                        Print "(0)";
+                        Color 15
+                        Print " MANUALLY CONTROLLED"
                         Print
-                        Print "(1) COMPUTER CONTROLLED"
+                        Color 12
+                        Print "(1)";
+                        Color 15
+                        Print " COMPUTER CONTROLLED"
 
                         Do
                             C$ = GetKeyPress$
@@ -783,7 +789,6 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                                 Open diskPaths$(3) + subSchedFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
 
                                 fileLength& = LOF(1)
-
                                 totalGames = fileLength& / SCHEDULE_SIZE_BYTES
 
                                 For X = 0 To 18
@@ -1000,22 +1005,22 @@ Sub BoxscoreMaintenance ()
                     End If
 
                 Case 3
-                    'Spec$ = diskPaths$(1) + "BOX*."
                     Spec$ = diskPaths$(1) + "*.BS"
+                    'Spec$ = diskPaths$(1) + "BOX*."
                     Call DeleteBoxscores(Selection%, Spec$)
 
                 Case 4
-                    'Spec$ = diskPaths$(1) + "*.SPC"
                     Spec$ = diskPaths$(1) + "*.BSS"
+                    'Spec$ = diskPaths$(1) + "*.SPC"
                     Call DeleteBoxscores(Selection%, Spec$)
 
                 Case 5:
-                    'Spec$ = diskPaths$(1) + "BOX*."
                     Spec$ = diskPaths$(1) + "*.BS"
+                    'Spec$ = diskPaths$(1) + "BOX*."
                     Call DeleteBoxscores(Selection%, Spec$)
 
-                    'Spec$ = diskPaths$(1) + "*.SPC"
                     Spec$ = diskPaths$(1) + "*.BSS"
+                    'Spec$ = diskPaths$(1) + "*.SPC"
                     Call DeleteBoxscores(Selection%, Spec$)
 
             End Select
@@ -1363,7 +1368,6 @@ Sub LoadScheduleInfo (targetFile$)
     Open diskPaths$(3) + targetFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
 
     fileLength& = LOF(1)
-
     scheduleAP%(0) = fileLength& / SCHEDULE_SIZE_BYTES
     BS% = Int((scheduleAP%(0) - 1) / 20)
 

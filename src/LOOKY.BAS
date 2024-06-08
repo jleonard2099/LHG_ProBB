@@ -533,24 +533,24 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
             Select Case I$
 
-                Case Chr$(0) + "Q"
+                Case Chr$(0) + Chr$(81)
                     'Pg Down
                     Call ViewTeamStats(statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
-                Case Chr$(0) + "I"
+                Case Chr$(0) + Chr$(73)
                     'Pg Up
                     Cls
                     Call ViewStatSummary(statFile$, teamName$, totalGames%, menuExit)
                     'Call ExtendedStatSummary(statFile$, teamName$, totalGames%, menuExit)
 
-                Case Chr$(0) + "M"
+                Case Chr$(0) + Chr$(77)
                     'Right Arrow
                     categoryPick = categoryPick + 1
                     If categoryPick > 12 Then categoryPick = 1
                     Color 12
                     Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
-                Case Chr$(0) + "K"
+                Case Chr$(0) + Chr$(75)
                     'Left Arrow
                     categoryPick = categoryPick - 1
                     If categoryPick < 1 Then categoryPick = 12

@@ -18,7 +18,7 @@ Sub INFO ()
     Locate 24, 1
     Print Tab(80); " ";
     Locate , 1
-    Print "    LANCE HAFFNER 1986-2000"; Tab(70); Left$(Time$, 5);
+    Print "    LANCE HAFFNER / JASON LEONARD  1986-2024"; Tab(70); Left$(Time$, 5);
     Locate 3, 1
     Color , 0
 
@@ -2855,7 +2855,7 @@ Sub PlayerCalcs ()
         Next I1
 
         If M3 >= 1 And 5 - M3 < 15 - M1 Or quarter = 4 And gameClock! < 120 Or quarter > 4 Or M4 >= 1 And M2 < 14 Then
-            Call COMPUTERSUBS
+            Call ComputerCoach
         End If
 
     End If
@@ -4480,11 +4480,11 @@ Sub CHANGESTRATEGY (I$)
 End Sub
 
 '----------------------------------------
-'        COMPUTERCOACH Subroutine
+'       ComputerStrategy Subroutine
 '----------------------------------------
 'This subroutine guides the computer AI
 'in how to handle it's strategy.
-Sub COMPUTERCOACH ()
+Sub ComputerStrategy ()
 
     If P9 = 0 Then I6 = 1
     If P9 = 1 Then I6 = 0
@@ -4632,11 +4632,13 @@ End Sub
 
 
 '----------------------------------------
-'        COMPUTERSUBS Subroutine
+'        ComputerCoach Subroutine
 '----------------------------------------
-'This subroutine uses some basic logic to
-'automatically handle player substitution
-Sub COMPUTERSUBS ()
+'This subroutine essentially handles the
+'AI for the computer coach. After an
+'evaluation of substitutions, it then calls
+'another routine to decide on strategies
+Sub ComputerCoach ()
 
     For I2 = 0 To 4
         gameB1!(P9, I2) = -1
@@ -4809,7 +4811,7 @@ Sub COMPUTERSUBS ()
 
     Next
 
-    Call COMPUTERCOACH
+    Call ComputerStrategy
 
 End Sub
 

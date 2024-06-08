@@ -441,7 +441,7 @@ Sub PROHOOP ()
     For P9 = 0 To 1
     
         If playerMode = 1 And P9 = compTeam Or playerMode = 2 Then
-            Call COMPUTERSUBS
+            Call ComputerCoach
         Else
             Call PlayStyle
             Call PlayItSafe
@@ -630,14 +630,14 @@ Sub PROHOOP ()
     If quarter < 5 And playerMode <> 0 Then
         If playerMode = 1 Then
             P9 = compTeam
-            Call COMPUTERSUBS
+            Call ComputerCoach
         End If
 
         If playerMode = 2 Then
             P9 = 0
-            Call COMPUTERSUBS
+            Call ComputerCoach
             P9 = 1
-            Call COMPUTERSUBS
+            Call ComputerCoach
         End If
     End If
 
