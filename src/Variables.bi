@@ -221,7 +221,7 @@ Dim Shared quarter, sClockVal, shotChance, shotClock, shotPctOpt
 Dim Shared threePtOpt, T1, TMT, xFactor
 
 Dim Shared DK%, fastBreak, FT%, GF%, HH%
-Dim Shared NM%, OX%, OY%, PT%, PZ%
+Dim Shared NM%, OX%, OY%, shotType
 
 Dim Shared gameClock!, pbpDelay!, timeElapsed!
 
@@ -254,5 +254,6 @@ Dim Shared defStyleDesc$(5), diskIDs$(0 To 1)
 Dim Shared gameCoach$(3), gameMascots$(3), gameStadium$(3), gameTeams$(3)
 Dim Shared offStyleDesc$(2), pbpType$(1), players_GAME$(1, 14, 1), posnName$(0 To 4)
 Dim Shared SX$(32, 1)
-Dim Shared teamAbbrev$(3), Y$(1)
+Dim Shared teamAbbrev$(3), teamGender$(0 To 1)
+Dim Shared Y$(1)
 

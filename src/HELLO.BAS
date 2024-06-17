@@ -758,6 +758,12512 @@ End Sub
 '$Include: 'TRADE.BAS'
 
 ' For Game
-'$Include: 'PROHOOP.BAS'
-'$Include: 'GameRoutines.bm'
+'Include: 'PROHOOP.BAS'
 
+
+'----------------------------------------
+'           PROHOOP Subroutine
+'----------------------------------------
+'This subroutine serves as the main "source"
+'for the action in the game. It steps the
+'user through choosing game parameters and
+'teams, as well as determining players to
+'disable, etc.
+Sub PROHOOP ()
+
+    _Title "Basketball: The Pro Game v" + GAME_VERSION$ + " - HOOPS!"
+
+    Shared actualAttendance&
+    Shared avgAttendance&()
+
+    Shared scheduleFile$
+
+    Shared tickerStart
+
+    Shared coachMode$(), foulOption$(), freeThrowOpt$()
+    Shared location$()
+    Shared playMode$(), playoffGame$()
+    Shared sClockOpt$(), yesNoText$()
+
+    Color 7, 0
+    Cls
+
+    Randomize Timer
+
+    Call InitVar
+
+    '----------------------------------------
+    '         DETERMINE GAME OPTIONS
+    '----------------------------------------
+
+    If Not _FileExists("DEV.BAS") Then
+
+        Open "DEV.BAS" For Output As #1
+
+        For I = 0 To 1
+            Print #1, _CWD$ + "\"
+        Next
+
+        Close #1
+
+    End If
+
+    Open "DEV.BAS" For Input As #2
+
+    For I = 0 To 1
+        Input #2, diskPaths$(I)
+    Next
+
+    Close #2
+
+    If Not _FileExists("DEFAULT") Then
+
+        Open "DEFAULT" For Output As #3
+
+        For I = 1 To 8:
+            Print #3, 0
+        Next
+
+        Print #3, 4
+
+        For I = 10 To 12:
+            Print #3, 0
+        Next
+
+        Close #3
+
+    End If
+
+    Open "DEFAULT" For Input As #4
+    Input #4, playerOpt
+    Input #4, threePtOpt
+    Input #4, sClockVal
+    Input #4, gameLoc
+    Input #4, playoffOpt
+    Input #4, pbpDelay!
+    Input #4, shotPctOpt
+    Input #4, coachOpt
+    Input #4, bonusFoulNum
+    Input #4, freeThrowVal
+    Input #4, ftRulesOpt
+    Input #4, pbpOpt
+    Close #4
+
+    If _FileExists("TICKER") Then
+
+        Open "TICKER" For Input As #5
+
+        For I = 1 To 32
+            For I1 = 0 To 1
+                For I2 = 1 To 14
+                    Input #5, SX%(I, I1, I2)
+                Next
+            Next
+        Next
+
+        For I = 1 To 32
+            For I1 = 0 To 1
+                Input #5, SX$(I, I1)
+            Next
+        Next
+
+        For I = 1 To 32
+            Input #5, ST%(I)
+        Next
+
+        Close #5
+
+        TMT = 1
+    Else
+        TMT = 0
+    End If
+
+    'Load game in-progress, if there is one
+    If _FileExists("GAME82") Then
+
+        Open "GAME82" For Input As #6
+
+        Input #6, scheduleFile$
+
+        For I = 0 To 2:
+            Input #6, schedGame(I)
+        Next
+
+        Close #6
+
+        currGame = schedGame(0) + schedGame(2)
+
+        Open "pbplog" + Str$(currGame) For Append As #11
+
+        Open diskPaths$(3) + scheduleFile$ For Random As #7 Len = SCHEDULE_SIZE_BYTES
+
+        For X = 0 To 18
+            Field #7, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
+        Next
+
+        Field #7, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
+
+        Get #7, schedGame(0) + schedGame(2)
+
+        For X = 0 To 18:
+            NG%(X) = CVI(Q$(X + 1))
+        Next
+
+        For X = 0 To 1:
+            diskIDs$(X) = Q$(20 + X)
+        Next
+
+        VS% = CVI(Q$(22))
+        HS% = CVI(Q$(23))
+
+        Close #7
+
+        autoPlay = 1
+
+    Else
+
+        Open "pbplog" For Append As #11
+
+    End If
+
+    If autoPlay = 1 Then
+
+        Call AUTOSETUP
+
+    Else
+
+        ' USER SELECTION OF OPTIONS
+        'gameLoc = 1 is neutral site
+        'gameLoc = 0 is not used
+        If gameLoc = 0 Then gameLoc = 1
+
+        Do
+
+            Color 15, 0
+            Cls
+
+            Color 2
+            Print Tab(29); "SELECT OPENING OPTIONS"
+
+            Locate 2, 2: Color 14
+            Print "(1) ";: Color 15: Print playMode$(playerOpt)
+            Locate 3, 2: Color 14
+            Print "(2) ";: Color 15: Print "VISITING TEAM: ";
+            Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0)
+            Locate 4, 2: Color 14, 0
+            Print "(3) ";: Color 15: Print "HOME TEAM: ";
+            Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1)
+            Locate 5, 2: Color 14, 0
+            Print "(4) ";: Color 15: Print "GAME LOCATION: "; location$(gameLoc)
+            Locate 6, 2: Color 14
+            Print "(5) ";: Color 15: Print "SHOT CLOCK: "; sClockOpt$(sClockVal)
+            Locate 7, 2: Color 14
+            Print "(6) ";: Color 15: Print "3-POINT SHOT: "; yesNoText$(threePtOpt)
+            Locate 8, 2: Color 14
+            Print "(7) ";: Color 15: Print "HUMAN COACHES: "; coachMode$(coachOpt)
+            Locate 9, 2: Color 14
+            Print "(8) ";: Color 15: Print "GAME TYPE: "; playoffGame$(playoffOpt)
+            Locate 10, 2: Color 14
+            Print "(9) ";: Color 15: Print "START GAME"
+            Locate 11, 2: Color 14
+            Print "(0) ";: Color 15: Print "SAVE SETTINGS"
+            Locate 12, 2: Color 14
+            Print "(A) ";: Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#"; pbpDelay!
+            Locate 13, 2: Color 14            
+            Print "(B) ";: Color 15: Print "BONUS AFTER FOUL #: "; bonusFoulNum
+            Locate 14, 2: Color 14
+            Print "(C) ";: Color 15: Print "NUMBER OF FREE THROWS: "; freeThrowOpt$(freeThrowVal)
+            Locate 15, 2: Color 14
+            Print "(D) ";: Color 15: Print "FREE THROW RULES: "; foulOption$(ftRulesOpt)
+            Locate 16, 2: Color 14
+            Print "(E) ";: Color 15: Print "PLAY-BY-PLAY STYLE: "; pbpType$(pbpOpt)
+
+            'Locate 18, 2: Color 14
+            'Print "NOTE:: ";: Color 15: Print "BONUS WAS ON 7TH FOUL (UNTIL 72-73), 6TH FOUL (72-73 SEASON)"
+            'Locate , 2: Print "       5TH FOUL (1973-74 TO PRESENT)"
+            'Locate , 2: Color 14
+            'Print "NOTE:: ";: Color 15: Print "UP UNTIL 1972-73, WHEN A TEAM WAS IN THE BONUS, THEY HAD THE CHANCE"
+            'Locate , 2: Print "       TO SHOOT 3 FT TO MAKE 2 OR 2 FT TO MAKE 1"
+            'Locate , 2: Color 14
+            'Print "NOTE:: ";: Color 15: Print "UP UNTIL 1972-73, ALL FOULS WERE SHOT...UNLIKE THE CURRENT RULES"
+            'Locate , 2: Color 14
+            'Print "NOTE:: ";: Color 15: Print "THE 3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 1979-80"
+            'Locate , 2: Color 14
+            'Print "NOTE:: ";: Color 15: Print "THE ABA USED A 30-SEC SHOT CLOCK THROUGH 1973-74";
+
+            Locate 19, 2: Color 14
+            Print "NOTE:: "
+            Color 15
+            Locate , 2: Print "* BONUS ON 7TH FOUL UNTIL 72-73, 6TH FOUL (72-73 SEASON), 5TH FOUL (73-74+)"
+            Locate , 2: Print "* UNTIL 72-73, A TEAM IN BONUS CHOSE 3 FT TO MAKE 2 OR 2 FT TO MAKE 1"
+            Locate , 2: Print "* UNTIL 72-73, ALL FOULS WERE SHOT"
+            Locate , 2: Print "* 3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 79-80"
+            Locate , 2: Print "* ABA HAD 30-SEC SHOT CLOCK THROUGH 73-74; NBA BEGAN 24-SEC SOT CLOCK IN 1954";
+
+            Do
+
+                Color 7
+
+                I$ = GetKeyPress$
+
+                If I$ <> Chr$(27) Then
+                    iVal = Val(I$)
+                    If UCase$(I$) = "A" Then iVal = 10
+                    If UCase$(I$) = "B" Then iVal = 11
+                    If UCase$(I$) = "C" Then iVal = 12
+                    If UCase$(I$) = "D" Then iVal = 13
+                    If UCase$(I$) = "E" Then iVal = 14
+                    If UCase$(I$) = "F" Then iVal = 15
+                End If
+
+            Loop Until iVal >= 0 And iVal <= 15 Or I$ = Chr$(27) Or UCase$(I$) = "Q"
+
+            If I$ <> Chr$(27) And UCase$(I$) <> "Q" Then
+
+                Select Case iVal
+
+                    Case 0:
+                        Open "DEFAULT" For Output As #8
+                        Print #8, playerOpt
+                        Print #8, threePtOpt
+                        Print #8, sClockVal
+                        Print #8, gameLoc
+                        Print #8, playoffOpt
+                        Print #8, pbpDelay!
+                        Print #8, shotPctOpt
+                        Print #8, coachOpt
+                        Print #8, bonusFoulNum
+                        Print #8, freeThrowVal
+                        Print #8, ftRulesOpt
+                        Print #8, pbpOpt
+                        Close #8
+
+                    Case 1:
+                        playerOpt = playerOpt + 1
+                        If playerOpt > 3 Then playerOpt = 0
+
+                    Case 2:
+                        Call ChooseGameTeam(YN$, NTMS, teamNbr, gameTeams$(0), 0)
+                        If teamNbr <> 0 Then Call DISABLEPLAYERS(0)
+
+                    Case 3:
+                        Call ChooseGameTeam(YN$, NTMS, teamNbr, gameTeams$(1), 1)
+                        If teamNbr <> 0 Then Call DISABLEPLAYERS(1)
+
+                    Case 4:
+                        gameLoc = gameLoc + 1
+                        If gameLoc > 2 Then gameLoc = 1
+
+                    Case 5:
+                        sClockVal = sClockVal + 1
+                        If sClockVal > 1 Then sClockVal = 0
+                        'If sClockVal > 2 Then sClockVal = 0
+
+                    Case 6:
+                        threePtOpt = threePtOpt + 1
+                        If threePtOpt > 1 Then threePtOpt = 0
+
+                    Case 7:
+                        coachOpt = 1 - coachOpt
+                        'shotPctOpt = 1 - shotPctOpt
+
+                    Case 8:
+                        playoffOpt = 1 - playoffOpt
+
+                    Case 9:
+                        '
+
+                    Case 10:
+                        Do
+                            Locate 12, 32
+                            Input pbpDelay!
+                        Loop Until pbpDelay! >= 0
+
+                    Case 11:
+                        bonusFoulNum = bonusFoulNum + 1
+                        If bonusFoulNum > 6 Then bonusFoulNum = 4
+
+                    Case 12:
+                        freeThrowVal = 1 - freeThrowVal
+
+                    Case 13:
+                        ftRulesOpt = 1 - ftRulesOpt
+
+                    Case 14:
+                        pbpOpt = 1 - pbpOpt
+
+                    Case 15:
+
+                End Select
+
+            End If
+
+        Loop Until (iVal = 9 And gameTeams$(0) <> "" And gameTeams$(1) <> "") Or I$ = Chr$(27)
+
+        If I$ <> Chr$(27) And UCase$(I$) <> "Q" Then
+
+            'TICKER PROMPT
+            Cls
+            Color 3
+
+            Call TEAMBOX(7, 1)
+
+            Locate 7, 11
+
+            Print "IF YOU ARE USING THE 10 MINUTE TICKER OPTION FOR THIS GAME,"
+            Locate , 11: Print "ENTER STARTING TIME FOR GAME IN THIS FORMAT"
+            Locate , 11: Print "(EXAMPLES: 1:00P, 11:30A). OTHERWISE, JUST HIT ENTER"
+            Print
+            Locate , 11: Input "START TIME: "; startTime$
+
+            L = Len(startTime$)
+
+            If L < 4 Then
+                startTime$ = "1:00P"
+            Else
+                If L = 5 Then HR = Val(Left$(startTime$, 1)): MIN = Val(Mid$(startTime$, 3, 2))
+                If L = 6 Then HR = Val(Left$(startTime$, 2)): MIN = Val(Mid$(startTime$, 4, 2))
+            End If
+
+            tickerMeridian$ = Right$(startTime$, 1)
+
+            If UCase$(tickerMeridian$) = "P" And Left$(startTime$, 2) <> "12" Then HR = HR + 12
+
+            TM = HR * 60 + MIN
+            tickerStart = Int(TM / 30) - 18
+
+        Else
+
+            'End
+            'System
+            Exit Sub
+
+        End If
+
+    End If
+
+    '----------------------------------------
+    '    AUTO-DETERMINE OTHER OPTIONS
+    '----------------------------------------
+
+    ' Determine computer team
+    Select Case playerOpt
+
+        Case 1:
+            playerMode = 1
+            compTeam = 0
+
+        Case 2:
+            playerMode = 1
+            compTeam = 1
+
+        Case 3:
+            playerMode = 2
+
+    End Select
+
+    'playerMode represents the following values:
+    '   0 = Human
+    '   1 = Computer Team
+    '   2 = PC vs. PC
+
+    For I = 0 To 1:
+        YR%(I) = GetTeamYear%(Left$(gameTeams$(I), 2))
+    Next I
+
+    Call SETUPRATINGS
+
+    Call ChangeContributions
+
+    Call LOADSTATS
+
+    If teamRat_GAME(0, 33) = teamRat_GAME(1, 33) And teamRat_GAME(0, 34) = teamRat_GAME(1, 34) Then 
+        Call ColorChange
+    End If
+
+    If autoPlay = 1 Then gameLoc = NG%(2)
+
+    'Determine attendance
+    If gameLoc = 2 Or avgAttendance&(1) = 0 Then
+        'Neutral Site
+        'Random # 12,000 - 22,000
+        actualAttendance& = Int(Rnd(1) * 10000) + 12000
+    Else
+        'Average attendance +/ 5,000
+        actualAttendance& = Int(Rnd(1) * 10000) + avgAttendance&(1) - 5000
+    End If
+
+    LS = 0
+
+    Select Case sClockVal
+        Case 0: shotClock = 24
+        Case 1: shotClock = 30
+    End Select
+
+    If gameClock! < 6 And LT = 4 Then LS = 4
+
+    'Determine subs / play parameters
+    For P9 = 0 To 1
+    
+        If playerMode = 1 And P9 = compTeam Or playerMode = 2 Then
+            Call ComputerCoach
+        Else
+            Call PlayStyle
+            Call PlayItSafe
+        End If
+        
+    Next P9
+
+    Call RATINGTABLES
+    Call CheckGameClock
+    Call RATINGTABLES
+
+    250 '
+    If quarter = 2 Then
+        If jumpBall = 0 Then
+            jumpBall = 1
+        Else
+            jumpBall = 0
+        End If
+    End If
+
+    If quarter = 4 Then
+        If jumpBall = 0 Then
+            jumpBall = 1
+        Else
+            jumpBall = 0
+        End If
+    End If
+
+    '251
+    If Not (quarter < 1 And quarter > 5) Then
+        'Determine random team for jump ball
+        P = Int(Rnd(1) * 2)
+        jumpBall = P
+    End If
+
+    '252
+    'Why do this here if we just change it?
+    'D = 1 - P
+
+    Call ChangePossession
+
+    Call LastShot
+    Call CheckGameClock
+
+    If gameClock! = 0 Then 170
+
+    Call ResetShotClock
+    Call SCOREBOARD
+
+    '----------------------------------------
+    '           Tip Off!
+    '----------------------------------------
+
+    If quarter = 1 Or quarter > 4 Then
+        If pbpOpt = 0 Then
+            pbpString$ = gameTeams$(jumpBall) + " GETS THE JUMP"
+            Call PBP(P)
+        Else
+            'pbpOpt = 1
+            If pbpDelay! <> 0 Then
+                pbpString$ = " GETS THE JUMP"
+                Call WINDEX
+                Color teamRat_GAME(jumpBall, 33), teamRat_GAME(jumpBall, 34): Print gameTeams$(jumpBall);
+                Color 15, 0
+                Print pbpString$
+                Call DELAY
+            End If
+        End If
+    Else
+        If pbpOpt = 0 Then
+            pbpString$ = gameTeams$(jumpBall) + " INBOUNDS THE BALL"
+            Call PBP(P)
+        Else
+            'pbpOpt = 1
+            If pbpDelay! <> 0 Then
+                pbpString$ = " INBOUNDS THE BALL"
+                Call WINDEX
+                Color teamRat_GAME(jumpBall, 33), teamRat_GAME(jumpBall, 34): Print gameTeams$(jumpBall);
+                Color 15, 0
+                Print pbpString$
+                Call DELAY
+            End If
+        End If
+    End If
+
+    P9 = jumpBall
+    P = jumpBall
+
+    GoTo 300
+
+    '----- NOODLE -----
+
+    170 '
+    gameClock! = 0
+    teamFouls(0) = teamFouls(0) + P2(0)
+    teamFouls(1) = teamFouls(1) + P2(1)
+    Call QUARTERTOTAL
+    quarter = quarter + 1
+
+    ' *** ADJUST TIMEOUTS ***
+    If quarter >= 4 Then
+
+        For PG = 0 To 1
+            If timeouts(PG) > 4 Then timeouts(PG) = 4
+            If quarter > 4 Then timeouts(PG) = 3
+        Next
+
+    End If
+
+    XS = 1
+    P2(0) = 0
+    P2(1) = 0
+    xFactor = 0
+
+    pbpString$ = "END OF QUARTER!"
+
+    Select Case pbpOpt
+        Case 0:
+            Color 7, 0
+            Call WINDEX
+            Print pbpString$
+        Case 1:
+            If pbpDelay! > 0 Then Call WINDEX: Print pbpString$ ': Call DELAY
+    End Select
+
+    If quarter = 3 Then
+
+        pbpString$ = "HALFTIME!"
+
+        Select Case pbpOpt
+            Case 0:
+                Color 7, 0
+                Call WINDEX
+                Print pbpString$
+            Case 1:
+                Call WINDEX
+                Print pbpString$
+                Call DELAY
+        End Select
+
+        If Not (autoPlay = 1 And playerMode = 2) Then
+            I$ = GetKeyPress$
+        End If
+
+        halfTime = 1
+        Call BOXOPTIONS(0)
+        endGame = 0
+        Call TICKER
+        halfTime = 0
+
+        For I = 0 To 1
+
+            For I1 = 0 To 14
+                If gameRatings!(I, I1, 22) = 50 Then
+                    gameRatings!(I, I1, 22) = 0
+                    gameRatings!(I, I1, 17) = gameRatings!(I, I1, 17) * 3
+                    D1(I) = D1(I) - 1
+                    MJ = 50
+                End If
+            Next I1
+
+            If MJ = 50 Then
+                MJ = 0
+                F5%(I, 0) = 0
+                For I1 = 0 To 4:
+                    F5%(I, 0) = F5%(I, 0) + gameRatings!(I, gameB1!(I, I1), 17)
+                Next I1
+            End If
+
+        Next I
+
+    End If
+
+    If quarter < 5 And playerMode <> 0 Then
+        If playerMode = 1 Then
+            P9 = compTeam
+            Call ComputerCoach
+        End If
+
+        If playerMode = 2 Then
+            P9 = 0
+            Call ComputerCoach
+            P9 = 1
+            Call ComputerCoach
+        End If
+    End If
+
+    If quarter < 5 Then
+
+        Call CheckGameClock
+
+        Call SCOREBOARD
+
+        ballCarrier = -1
+        Call Substitutions
+        gameClock! = 720
+
+        Call UPDATESCREEN
+
+        GoTo 250
+
+    End If
+
+    Call CheckGameClock
+
+    Call SCOREBOARD
+
+    If quarter = 5 Then
+
+        pbpString$ = "END OF REGULATION"
+
+        Select Case pbpOpt
+            Case 0:
+                Color 7, 0
+                Call WINDEX
+                Print pbpString$
+            Case 1:
+                If pbpDelay! > 0 Then
+                    Call WINDEX
+                    Print pbpString$ ': Call DELAY
+                End If
+        End Select
+
+    End If
+
+    Locate 2, 31: Print "END OF REGULATION"
+
+    If score(0, 0) = score(1, 0) Then
+
+        pbpString$ = "OVERTIME !!!"
+
+        Select Case pbpOpt
+            Case 0:
+                Color 7, 0
+                Call WINDEX: Print pbpString$
+            Case 1:
+                Call WINDEX: Print pbpString$
+                Call DELAY
+        End Select
+
+        timeouts(0) = timeouts(0) + 1
+        timeouts(1) = timeouts(1) + 1
+        gameClock! = 300
+
+        Call UPDATESCREEN
+        ballCarrier = -1
+
+        Call Substitutions
+
+        GoTo 250
+
+    End If
+
+    Call GetKeyWhenNoDelay
+    Call EndOfGame
+
+    Exit Sub
+
+    '----------------------------------------
+    '           END OF GAME!!!
+    '----------------------------------------
+
+    '================================================================================
+    ' Below are all the different GoTo branches for the gameplay
+    ' These have not been worked out into a different flow
+    ' yet for the game's logic.
+    '================================================================================
+
+    300 '
+    'ST = 0
+    FO = 0
+    LS = 0
+    XS = 0
+
+    If shotClock > 0 And sClockVal < 2 And shotClock < scSettings(sClockVal) Then
+        shotClock = shotClock - 5
+        
+    Else
+
+        Select Case sClockVal
+            Case 0: shotClock = 24
+            Case 1: shotClock = 30
+        End Select
+
+        LS = 0
+
+        'GoSub 835
+        D = 1 - P
+
+        If gameClock! < 6 And LT <> 4 Then LS = 4
+
+    End If
+
+    '302
+    D6 = 0
+    PASS = 1
+    A4 = 0
+    A6 = 0
+    shotChance = 0
+
+    If xFactor <> 90 Then xFactor = 0
+
+    GoTo 400
+
+    '----- NOODLE -----
+
+    350 '
+
+    A4 = 0
+    D6 = 0
+    A6 = 1
+    PASS = PASS + 1
+    playChoice = 0
+    shotChance = 0
+    xFactor = 0
+
+    400 '
+    A4 = 0
+    D6 = 0
+    P3 = 0
+
+    'Random ball carrier
+    'B = Int(Rnd(1) * 5)
+    Call Rolld100(RN0)
+
+    If (playerMode = 0 And coachOpt = 1) Or (playerMode = 1 And D = compTeam And coachOpt = 1) Or (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+
+        Call WHOGETSBALL
+
+    Else
+
+        If RN0 > 40 Then
+
+            'random ball carrier
+            ballCarrier = Int(Rnd(1) * 5)
+
+        Else
+
+            Do
+
+                If pbpDelay! <> 0 Then
+
+                    If pbpOpt = 0 Then
+                        pbpString$ = "PASS TO CHOICE (0-4)"
+                        Call PBP(P)
+                    Else
+                        'pbpOpt = 1
+                        If Not (autoPlay = 1 And playerMode = 2 Or pbpDelay! = 0) Then
+                            Call WINDEX
+                            Print "PASS TO CHOICE (0-4)"
+                            Call PBP(P)
+                        End If
+                    End If
+
+                    Do
+
+                        I$ = GetKeyPress$
+
+                        Select Case UCase$(I$)
+
+                            Case "S"
+                                Call SCOUTREPORT
+
+                            Case "T"
+                                Call TICKER
+
+                            Case "Q"
+                                Exit Sub
+
+                            Case "O"
+                                Call OPTIONS
+
+                            Case "Z", "/"
+                                Call CHANGESTRATEGY(I$)
+
+                            Case Else
+                                ballCarrier = Val(I$)
+
+                        End Select
+
+                    Loop Until ballCarrier >= 0 And ballCarrier <= 4
+
+                End If
+
+            Loop Until ballCarrier >= 0 And ballCarrier <= 4
+
+        End If
+
+    End If
+
+
+    If P1 <> 1 Then
+
+        RN0 = Int(Rnd(1) * 1000) + 1
+
+        ' *** BRANCH TO AREA BASED ON DEFENSE ***
+        Select Case defStyles(D)
+
+            Case 1, 4:
+
+                ' *** SHOT VS REG/TIGHT M-M ***
+                Select Case RN0
+
+                    Case 1, 2
+                        xFactor = 0
+                        GoTo 580
+
+                    Case 3 To 30
+                        Call LastShot
+                        Call ResetShotClock
+                        Call UPDATESCREEN
+                        xFactor = 88
+                        GoTo 565
+
+                    Case 31 To 30 + F7%(P, 1) + F7%(D, 2)
+                        GoTo 515
+
+                    Case 30 + F7%(P, 1) + F7%(D, 2) To 1000
+                        P9 = Int(Rnd(1) * 5)
+
+                        If RN0 <= 24 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(offStyles(P)) Then
+                            GoTo 513
+                        Else
+                            RN1 = Int(Rnd(1) * 1000) + 1
+                            If (PASS <= 3 Or PASS > 4) And RN1 <= 320 + ((JY - 89) * 10) Then 445
+                            If PASS = 4 Then 445
+                            GoTo 437
+                        End If
+
+                End Select
+
+            Case 2, 5
+                ' *** SHOT VS LOOSE/SAG M-M ***
+                Select Case RN0
+
+                    Case 1
+                        xFactor = 0
+                        GoTo 580
+
+                    Case 2 To 10
+                        Call LastShot
+                        Call ResetShotClock
+                        Call UPDATESCREEN
+                        xFactor = 88
+                        GoTo 565
+
+                    Case 10 To 10 + F7%(P, 1) + F7%(D, 2)
+                        GoTo 515
+
+                    Case 10 + F7%(P, 1) + F7%(D, 2) To 1000
+
+                        P9 = Int(Rnd(1) * 5)
+
+                        If RN0 <= 8 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(offStyles(P)) Then
+                            GoTo 513
+                        Else
+                            RN1 = Int(Rnd(1) * 1000) + 1
+                            If (PASS <= 3 Or PASS > 4) And RN1 <= 320 + ((JY - 89) * 10) Then 445
+                            If PASS = 4 Then 445
+                            GoTo 437
+                        End If
+
+                End Select
+
+            Case 3
+                ' *** SHOT VS TRAP M-M ***
+                Select Case RN0
+
+                    Case 1 To 3
+                        xFactor = 0
+                        GoTo 580
+
+                    Case 4 To 50
+                        Call LastShot
+                        Call ResetShotClock
+                        Call UPDATESCREEN
+                        xFactor = 88
+
+                        GoTo 565
+
+                    Case 50 To 50 + F7%(P, 1) + F7%(D, 2)
+                        GoTo 515
+
+                    Case 50 + F7%(P, 1) + F7%(D, 2) To 1000
+                        P9 = Int(Rnd(1) * 5)
+
+                        If RN0 <= 40 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) + OX%(offStyles(P)) Then
+                            GoTo 513
+                        Else
+                            RN1 = Int(Rnd(1) * 1000) + 1
+                            If (PASS <= 3 Or PASS > 4) And RN1 <= 320 + ((JY - 89) * 10) Then 445
+                            If PASS = 4 Then 445
+                            GoTo 437
+                        End If
+
+                End Select
+
+        End Select
+
+    Else
+
+        P1 = 0
+        RN0 = Int(Rnd(1) * 1000) + 1
+
+        Select Case RN0
+
+            Case 1 To 3
+                xFactor = 0
+                GoTo 580
+
+            Case 4 To 50
+                Call LastShot
+                Call ResetShotClock
+                Call UPDATESCREEN
+                xFactor = 88
+                GoTo 565
+
+            Case 50 To 50 + F7%(P, 1) + F7%(D, 2)
+                GoTo 515
+
+            Case 50 + F7%(P, 1) + F7%(D, 2) To 1000
+                P9 = Int(Rnd(1) * 5)
+
+                If RN0 <= 40 + F7%(P, 1) + F7%(D, 2) + gameRatings!(D, gameB1!(D, P9), 5) + F7%(P, 0) Then
+                    GoTo 513
+                Else
+                    RN1 = Int(Rnd(1) * 1000) + 1
+                    If (PASS <= 3 Or PASS > 4) And RN1 <= 320 + ((JY - 89) * 10) Then 445
+                    If PASS = 4 Then 445
+
+                    GoTo 437
+
+                End If
+
+        End Select
+
+    End If
+
+
+    '----- NOODLE -----
+
+    ' ***BAD SHOT ***
+    437 '
+
+    A4 = 0
+
+    RN0 = Int(Rnd(1) * 3) + 1
+
+    If gameRatings!(P, gameB1!(P, ballCarrier), 0) > 60 Then
+
+        Select Case RN0
+            Case 1
+                shotChance = 24
+            Case 2
+                shotChance = 30
+            Case 3
+                shotChance = 36
+        End Select
+
+    Else
+
+        Select Case RN0
+            Case 1
+                shotChance = gameRatings!(P, gameB1!(P, ballCarrier), 0) * .4
+            Case 2
+                shotChance = gameRatings!(P, gameB1!(P, ballCarrier), 0) * .5
+            Case 3
+                shotChance = gameRatings!(P, gameB1!(P, ballCarrier), 0) * .6
+        End Select
+
+    End If
+
+    shotType = 1
+    xFactor = 0
+
+    GoTo 520
+
+    '----- NOODLE -----
+
+    445 '
+    If Not (quarter = 4 And gameClock! <= 120 Or quarter > 4) Then
+        If gameRatings!(P, gameB1!(P, ballCarrier), 3) - gameRatings!(P, gameB1!(P, ballCarrier), 7) - gameRatings!(P, gameB1!(P, ballCarrier), 11) - gameRatings!(P, gameB1!(P, ballCarrier), 12) <= 0 Then 
+            GoTo 437
+        End If
+    End If
+
+    ' *** CHECKING 3-POINT SHOT ***
+    If threePtOpt = 1 Then
+
+        threePtShotChance = 0
+
+        Call Rolld100(RN0)
+
+        If RN0 <= gameRatings!(P, gameB1!(P, ballCarrier), 19) Then
+
+            shotType = 4
+            xFactor = 0
+            threePtShotChance = gameRatings!(P, gameB1!(P, ballCarrier), 20) + F7%(D, 4)
+            threePtShotChance = threePtShotChance + Int(Rnd(1) * 7) - 3
+
+            GoTo 520
+
+        End If
+
+        If playChoice = 4 Then
+
+            Call Rolld100(RN1)
+
+            If RN0 <= 20 Then
+                GoTo 437
+            Else
+                shotType = 4
+                xFactor = 0
+                threePtShotChance = .4 * gameRatings!(P, gameB1!(P, ballCarrier), 20) + F7%(D, 4)
+
+                GoTo 520
+
+            End If
+
+        Else
+
+            If quarter >= 4 And gameClock! < 30 And score(D, 0) - score(P, 0) > 3 And gameRatings!(P, gameB1!(P, ballCarrier), 19) >= 3 Then
+                shotType = 4
+                xFactor = 0
+                threePtShotChance = gameRatings!(P, gameB1!(P, ballCarrier), 20) + F7%(D, 4)
+                GoTo 520
+            End If
+
+        End If
+
+    End If
+
+    ' *** CHECKING FOR ASSISTED SHOT ***
+
+    Call SHOTPERCENT
+    
+    GoTo 520
+
+    '----- NOODLE -----
+
+    '-- Without the GoTo 300, this could be a subroutine
+    '-- Perhaps it still could be if we add the GoTo 300 after each call
+    513 '
+
+    Call LastShot
+    Call ResetShotClock
+
+    gameRatings!(P, gameB1!(P, ballCarrier), 23) = gameRatings!(P, gameB1!(P, ballCarrier), 23) + 1
+
+    If pbpDelay! <> 0 Then
+
+        If pbpOpt = 1 Then
+
+            Call WINDEX
+            Print "BALL STOLEN BY "; players_GAME$(D, gameB1!(D, P9), 0); "!"
+            Call DELAY
+
+        Else
+
+            Call Rolld100(RN0)
+
+            Select Case RN0
+
+                Case 1 To 3: 
+                    pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " QUICKLY REACHES IN!"
+
+                Case 4 To 6: 
+                    pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " SNEAKS IN FROM BEHIND!"
+
+                Case 7 To 10: 
+                    pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " GETS A HAND ON THE BALL!"
+
+            End Select
+
+            Call PBP(D)
+            RN0 = Int(Rnd(1) * 20) + 1
+
+            Select Case RN0
+                Case 1: pbpString$ = "PASS INTERCEPTED BY " + players_GAME$(D, gameB1!(D, P9), 0) + "!"
+                Case 2: pbpString$ = "PASS IS PICKED OFF BY " + players_GAME$(D, gameB1!(D, P9), 0) + "!"
+                Case 3: pbpString$ = "BALL IS STOLEN BY " + players_GAME$(D, gameB1!(D, P9), 0) + "!"
+                Case 4: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " WITH THE STEAL!"
+                Case 5: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " TAKES IT AWAY!"
+                Case 6: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " STEALS IT!"
+                Case 7: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " RIPS IT LOOSE!"
+                Case 8: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " TAKES THE BALL AWAY!"
+                Case 9: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " STEALS THE BALL!"
+                Case 10: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " PICKS IT OFF!"
+                Case 11: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " SWIPES THE BALL!"
+                Case 12: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " WITH THE STOLEN BALL!"
+                Case 13: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " STRIPS IT AWAY!"
+                Case 14: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " WITH THE STEAL!"
+                Case 15: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " SWIPES AND STEALS IT!"
+                Case 16: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " SNATCHES IT AWAY!"
+                Case 17: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " QUICKLY REACHES IN!"
+                Case 18: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " TAKES IT THE OTHER WAY!"
+                Case 19: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " POKES IT LOOSE!"
+                Case 20: pbpString$ = players_GAME$(D, gameB1!(D, P9), 0) + " STRIPS IT CLEAN!"
+            End Select
+
+            Call PBP(D)
+
+        End If
+
+    End If
+
+    gameRatings!(D, gameB1!(D, P9), 13) = gameRatings!(D, gameB1!(D, P9), 13) + 1
+    turnovers(P) = turnovers(P) + 1
+
+    Call UPDATESCREEN
+
+    C1 = 2
+
+    Call CheckGameClock
+    If gameClock! = 0 Then 170
+
+    Call ChangePossession
+    P9 = D
+
+    fastBreak = 1
+
+    GoTo 300
+
+    '----- NOODLE -----
+
+    515 '
+
+    Call LastShot
+    Call ResetShotClock
+
+    gameRatings!(P, gameB1!(P, ballCarrier), 23) = gameRatings!(P, gameB1!(P, ballCarrier), 23) + 1
+    turnovers(P) = turnovers(P) + 1
+
+    If SV% <> 1 Then
+        pbpType = 1
+        Call MAKEPBP (pbpType)
+    End If
+
+    SV% = 0
+
+    If pbpOpt = 1 And pbpDelay! <> 0 Then
+        Call WINDEX
+        Print "TURNOVER BY ";
+        Color teamRat_GAME(P, 33), teamRat_GAME(P, 34): Print gameTeams$(P)
+        Call DELAY
+        Color 15, 0
+    End If
+
+    If pbpOpt = 0 Then Call PBP(P)
+    pbpString$ = "BALL OUT OF BOUNDS TO " + gameTeams$(D)
+
+    If pbpOpt = 0 Then
+        Call PBP(P)
+    Else
+        'pbpOpt = 1
+        If pbpDelay! <> 0 Then Print pbpString$: Call DELAY
+    End If
+
+    Call DELAY
+    Call UPDATESCREEN
+
+    Locate 10, 1
+
+    Call CheckGameClock
+    If gameClock! = 0 Then 170
+
+    Call ChangePossession
+
+    Call Substitutions
+
+    GoTo 300
+
+    '----- NOODLE -----
+
+    520 '
+
+    Call LastShot
+    Call CheckGameClock
+    If gameClock! = 0 Then 170
+
+    'Always give at least a 3% chance of making a 3
+    If shotType = 4 And threePtShotChance <= 0 Then threePtShotChance = 3
+
+    If pbpDelay! <> 0 Then
+
+        If shotChance > 70 And fastBreak = 1 And PASS = 1 Then
+
+            pbpType = 6
+            shotType = 8
+            Call MAKEPBP (pbpType)
+            Call PBP(P)
+
+        Else
+
+            If players_GAME$(P, gameB1!(P, ballCarrier), 0) <> prevBall$ Then
+
+                If prevBall$ = "" Then
+                    pbpString$ = "PASS TO " + players_GAME$(P, gameB1!(P, ballCarrier), 0)
+                Else
+                    pbpType = 10
+                    Call MAKEPBP (pbpType)
+                End If
+
+            Else
+
+                pbpType = 9
+                Call MAKEPBP (pbpType)
+
+            End If
+
+            Call PBP(P)
+
+            If shotClock <= 0 And sClockVal < 2 Then
+                SV% = 1
+                pbpString$ = "SHOT CLOCK HAS EXPIRED!"
+                GoTo 515
+            End If
+
+            If shotClock < 5 And sClockVal < 2 Then
+                pbpString$ = "SHOT CLOCK DOWN TO" + Str$(shotClock)
+                Call PBP(P)
+            End If
+
+            prevBall$ = players_GAME$(P, gameB1!(P, ballCarrier), 0)
+            Z3$ = Left$(players_GAME$(P, gameB1!(P, ballCarrier), 1), 1)
+            Y2$ = "HE"
+            Y3$ = players_GAME$(D, gameB1!(D, ballCarrier), 0)
+
+            'On shotType GOTO 521, 522, 523, 524, 525, 526, 527
+
+            Select Case shotType
+
+                Case 1:
+                    If pbpDelay! <> 0 Then
+                        RN0 = Int(Rnd(1) * 12) + 1
+
+                        Select Case RN0
+                            Case 1: pbpString$ = Y2$ + "'S HEAVILY GUARDED"
+                            Case 2: pbpString$ = Y2$ + "'S GUARDED"
+                            Case 3: pbpString$ = Y2$ + "'S GUARDED BY " + Y3$
+                            Case 4: pbpString$ = Y2$ + " HAS A MAN ON HIM"
+                            Case 5: pbpString$ = Y2$ + " HAS A DEFENDER ON HIM"
+                            Case 6: pbpString$ = Y2$ + "'S COVERED"
+                            Case 7: pbpString$ = Y2$ + " CAN'T GET AROUND THE DEFENDER"
+                            Case 8: pbpString$ = Y2$ + "'S PRESSURED"
+                            Case 9: pbpString$ = Y2$ + " HAS NOWHERE TO GO"
+                            Case 10: pbpString$ = Y2$ + " HAS A HAND IN HIS FACE"
+                            Case 11: pbpString$ = Y2$ + "'S WATCHED BY " + Y3$
+                            Case 12: pbpString$ = Y2$ + "'S WORKING ON " + Y3$
+                        End Select
+                    End If
+
+                    Call PBP(P)
+
+                Case 2:
+                    pbpString$ = Y2$ + " WORKS FREE INSIDE"
+                    Call PBP(P)
+                    pbpString$ = "HE HAS AN OPEN SHOT"
+                    Call PBP(P)
+
+                Case 3:
+                    If pbpDelay! <> 0 Then
+
+                        Call Rolld100(RN0)
+
+                        If Z3$ = "C" Then
+
+                            Select Case RN0
+                                Case 1 To 25: pbpString$ = Y2$ + " MAKES A MOVE DOWN LOW":
+                                Case 26 To 50: pbpString$ = Y2$ + " POSITIONS HIMSELF DOWN LOW"
+                                Case 51 To 75: pbpString$ = Y2$ + " POSTS UP UNDERNEATH"
+                                Case 76 To 100: pbpString$ = Y2$ + " BACKS IN AGAINST " + players_GAME$(D, gameB1!(D, 4), 0)
+                            End Select
+
+                            Call PBP(P)
+                            pbpString$ = "HE HAS A GOOD SHOT INSIDE"
+                            Call PBP(P)
+
+                        End If
+
+                        If Z3$ = "F" Then
+                            Select Case RN0
+                                Case 1 To 17: pbpString$ = Y2$ + " DRIVES THE BASELINE"
+                                Case 18 To 34: pbpString$ = Y2$ + " PENETRATES THE LANE"
+                                Case 35 To 50: pbpString$ = Y2$ + " MOVES INSIDE"
+                                Case 51 To 67: pbpString$ = Y2$ + " DRIVES THE LANE"
+                                Case 68 To 84: pbpString$ = Y2$ + " MOVES INTO THE PAINT"
+                                Case 85 To 100: pbpString$ = Y2$ + " DRIVES UNDERNEATH"
+                            End Select
+
+                            Call PBP(P)
+                            pbpString$ = "HE'S GOT A GOOD SHOT UNDERNEATH"
+                            Call PBP(P)
+                        End If
+
+                        If Z3$ = "G" Then
+                            Select Case RN0
+                                Case 1 To 25: pbpString$ = Y2$ + " DRIVES THE LANE": Call PBP(P): pbpString$ = "HE HAS A GOOD SHOT CLOSE IN"
+                                Case 26 To 50: pbpString$ = Y2$ + " DRIVES THROUGH THE KEY": Call PBP(P): pbpString$ = "HE'S INTO THE LANE": Call PBP(P): pbpString$ = "HE HAS A GOOD SHOT CLOSE IN"
+                                Case 51 To 75: pbpString$ = Y2$ + " DRIVES TO THE BASKET": Call PBP(P): pbpString$ = "HE HAS A GOOD SHOT CLOSE IN"
+                            End Select
+
+                            Call PBP(P)
+                        Else
+                            pbpString$ = Y2$ + " DRIVES THROUGH AN OPENING"
+                            Call PBP(P)
+                        End If
+
+                    End If
+
+                Case 4:
+                    pbpString$ = "HE'S OPEN FROM 3-POINT RANGE!"
+                    Call PBP(P)
+
+                Case 5:
+                    pbpString$ = "HE'S OPEN FROM CLOSE RANGE"
+                    Call PBP(P)
+
+                Case 6:
+                    pbpString$ = "HE'S OPEN FROM MEDIUM RANGE"
+                    Call PBP(P)
+
+                Case 7:
+                    pbpString$ = "HE'S OPEN FROM LONG RANGE"
+                    Call PBP(P)
+
+            End Select
+
+        End If
+
+    End If
+
+    '529
+    If shotChance <= 0 Then shotChance = 1
+    If shotChance >= 100 Then shotChance = 100
+
+    If pbpDelay! <> 0 Then
+
+        If pbpOpt = 1 Then
+
+            Call WINDEX
+            Print "PASS TO "; players_GAME$(P, gameB1!(P, ballCarrier), 0); " OF ";
+            Color teamRat_GAME(P, 33), teamRat_GAME(P, 34)
+            Print gameTeams$(P)
+            Color 15, 0
+
+            If shotType = 4 Then
+                Locate 10: Print "3 PT SHOT % "; Int(threePtShotChance + .5);
+                Print " *";
+                GoTo 528
+            Else
+                Locate 10: Print "SHOT % "; Int(shotChance + .5);
+            End If
+
+            If shotType >= 2 And shotType <= 8 Then Print "*";
+
+        Else
+
+            Locate 8, 41
+            If shotType = 4 Then
+                Print Using "SHOT % ###"; Int(threePtShotChance + .5);
+                Print " *";
+                GoTo 528
+            Else
+                Print Using "SHOT % ###   "; Int(shotChance + .5);
+                If shotType >= 2 And shotType <= 8 Then Locate , 52: Print "*";
+            End If
+
+        End If
+
+    End If
+
+    528 '
+    Print
+
+    If pbpOpt = 1 And pbpDelay! <> 0 Then Call DELAY
+
+    ' *** Determine value for playChoice ***
+    'playChoice = play type
+    '0 = Pass
+    '1 = Shoot (2FGA)
+    '2 = Timeout
+    '3 = Foul
+    '4 = Shoot (3FGA)
+
+    'Computer Opponent or "Let Computer Shoot"
+    scoreDiff = score(P, 0) - score(D, 0)
+    If playerMode <> 0 Or coachOpt = 1 Then
+
+        '4th quarter | OT, 4 mins left, offense ahead, computer is offense
+        If NOT (quarter >= 4 And gameClock! <= 240 And scoreDiff > 0 And playerMode = 1 And P = compTeam) Then
+
+            'Computer on defense 
+            If playerMode = 2 Or playerMode = 1 And D = compTeam Then
+
+                '4th quarter | OT, 4 mins left, offense ahead by 10+
+                If quarter >= 4 And gameClock! <= 240 And scoreDiff > 10 Then
+                    'Prompt for choices
+                    If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then 530
+                Else
+                    If quarter >= 4 And gameClock! <= 30 And scoreDiff > 0 Then 
+                        playChoice = 3
+                        GoTo 532
+                    Else
+                        'Human play, coach doesn't select shots
+                        If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then 
+                            'User select play
+                            GoTo 530
+                        End If
+                    End If
+                End If
+
+            End If
+
+        Else
+
+            '985
+            pbpString$ = Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " FT%  INTENTIONAL FOUL? (Y/N)"
+
+            Do
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = "3"
+
+            If UCase$(I$) = "Y" Or I$ = "3" Then 
+                playChoice = 3
+                GoTo 532
+            End If
+
+        End If
+
+        'Determine when to shoot
+
+        If gameClock! <= 1 Or shotClock <= 6 Then
+            playChoice = 1
+        Else
+            If quarter >= 4 Then
+
+                If (gameClock! <= 8 And scoreDiff <= -3) Or (gameClock! <= 20 And scoreDiff <= -5) Then
+                    playChoice = 1
+                Else
+
+                    If shotType > 1 Then
+                        playChoice = 1
+                    Else
+                        playChoice = 0
+                    End If
+
+                End If
+ 
+           End If
+
+        End If
+
+        GoTo 532
+
+    Else
+
+        530 '
+        I$ = GetKeyPress$
+
+        Select Case UCase$(I$)
+
+            Case "B"
+                Call BOXOPTIONS(0)
+                Call SCOREBOARD
+
+            Case "O"
+                Call OPTIONS
+
+            Case "S"
+                Call SCOUTREPORT
+                GoTo 530
+
+            Case "T"
+                Call TICKER
+                GoTo 530
+
+            Case "Q"
+                Exit Sub
+
+            Case "Z", "/"
+                Call CHANGESTRATEGY(I$)
+                GoTo 530
+
+            Case Else
+                playChoice = Val(I$)
+
+        End Select
+
+        If playChoice < 1 Or playChoice > 4 Then playChoice = 0
+        If playChoice = 4 Then FT% = 1
+
+    End If
+
+    'Loop Until playerMode <> 0 Or coachOpt = 1 Or (UCase$(I$) <> "T" And UCase$(I$) <> "D" And UCase$(I$) <> "O")
+
+    '----------------------------------------------------
+    '--- THIS IS CRITCAL FOR PBP MOVING AUTOMATICALLY ---
+    '----------------------------------------------------
+    ' essentially it allows the user to press a key
+    ' during game play to activate certain functions
+    ' or special menus, etc.
+    532 '
+    I$ = InKey$
+
+    Select Case UCase$(I$)
+
+        Case "B"
+            Call BOXOPTIONS(0)
+            Call SCOREBOARD
+
+        Case "O"
+            Call OPTIONS
+
+        Case "S"
+            Call SCOUTREPORT
+
+        Case "T"
+            Call TICKER
+
+        Case "Q"
+            Exit Sub
+
+        Case "Z", "/"
+            Call CHANGESTRATEGY(I$)
+
+    End Select
+
+    'Foul was chosen | Computer on offense and last 4 minutes of game
+    If Val(I$) = 3 And (playerMode = 0 Or playerMode = 1 And P = compTeam) And quarter >= 4 And gameClock! < 240 Then 
+        playChoice = 3
+    End If
+
+    'Timeout
+    If Val(I$) = 2 And (playerMode = 0 Or playerMode = 1 And D = compTeam) And timeouts(P) > 0 Then 
+        playChoice = 2
+    End If
+
+    P3 = playChoice
+
+    If (playChoice = 2 And timeouts(P) = 0) Or (playChoice = 3 And quarter = 4 And gameClock! > 240) Or (playChoice = 3 And quarter < 4) Or (playChoice = 3 And playerMode = 1 And D = compTeam) Then 
+        'Take shot with no timeous | Timeout with more than 4 mins left | Timeout before Q4 | Timeout with PC on Defense
+        GoTo 530
+    End If
+
+    ' *** Decide if 3FGA ***
+
+    scoreDiff = score(D, 0) - score(P, 0)
+    'Try for 3 near end of game when down by 3
+    If quarter >= 4 And gameClock! < 30 And scoreDiff = 3 And ((playerMode = 1 And P = compTeam) Or playerMode = 2) Then
+        If threePtOpt = 1 Then playChoice = 4
+    End If
+
+    'Shoot and in 3 pt range
+    If (playChoice = 1 Or playChoice = 4) And shotType = 4 Then
+        If threePtOpt = 1 Then playChoice = 4
+    End If
+
+    ' *** Done determining value for playChoice ***
+    caseVar = playChoice + 1
+
+    Select Case caseVar
+
+        Case 1
+            'Pass!
+            GoTo 350
+
+        Case 2
+            'Shoot it!
+            GoTo 537
+
+        Case 3
+            'Timeout
+            640 '
+            If timeouts(P) > 0 Then
+                timeouts(P) = timeouts(P) - 1
+                gameClock! = gameClock! + M5
+                timeElapsed! = -M5
+                Call AdjustPlayTime
+                shotClock = shotClock + M5
+                pbpString$ = "TIMEOUT " + gameTeams$(P):
+
+                Call PBP(P)
+                Call DELAY
+                Call Substitutions
+            End If
+
+            If A6 = 0 Then
+
+                If pbpDelay! <> 0 Then
+                    Call WINDEX
+                End If
+
+                If fullCtOpt(D) = 1 Then
+                    If pbpOpt = 0 Then
+                        pbpString$ = gameTeams$(D) + " IS PRESSING"
+                        Call PBP(P)
+                    Else
+                        'pbpOpt = 1
+                        If pbpDelay! <> 0 Then
+                            Call WINDEX
+                            Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print gameTeams$(D);
+                            Color 15, 0
+                            Print " IS PRESSING"
+                            Call DELAY
+                        End If
+                    End If
+                    P1 = 1
+                End If
+
+                GoTo 300
+
+            Else
+
+                GoTo 350
+
+            End If
+
+
+        Case 4
+            'Intentional Foul
+            584 '
+            IN = 99
+
+            Call LastShot
+            Call CheckGameClock
+            If gameClock! = 0 Then 170
+
+            C1 = 2
+            P9 = D
+
+            pbpString$ = "DESIGNATED FOULER (0-4)"
+            Call SELECTPBP(P, 1)
+
+            If playerMode = 1 And D = compTeam Or playerMode = 2 Then
+                fouler = Int(Rnd(1) * 5)
+            Else
+
+                Do
+                    I$ = GetKeyPress$
+                    fouler = Val(I$)
+                Loop Until fouler >= 0 And fouler <= 4
+            End If
+
+            Call Fouls(1)
+
+            Select Case sClockVal
+                Case 0: shotClock = 24
+                Case 1: shotClock = 30
+            End Select
+
+            GoTo 566
+
+        Case 5
+
+            '3FG Attempt
+            359 '
+            Call Rolld100(S)
+
+            threeFG(P, gameB1!(P, ballCarrier), 1) = threeFG(P, gameB1!(P, ballCarrier), 1) + 1
+            gameRatings!(P, gameB1!(P, ballCarrier), 7) = gameRatings!(P, gameB1!(P, ballCarrier), 7) + 1
+            pbpType = 3
+
+            Call MAKEPBP (pbpType)
+            Call PBP(P)
+
+            If S <= threePtShotChance Then
+
+                'MADE 3-POINT FIELD GOAL
+                If pbpOpt = 1 And pbpDelay! <> 0 Then
+                    Call WINDEX
+                    Print "3 PT FG GOOD BY "; players_GAME$(P, gameB1!(P, ballCarrier), 0); " !!!"
+                    Call DELAY
+                End If
+
+                If pbpOpt = 0 Then
+                    pbpType = 4
+                    Call MAKEPBP (pbpType)
+                    Call PBP(P)
+                End If
+
+                Call DELAY
+
+                score(P, quarter) = score(P, quarter) + 3
+                score(P, 0) = score(P, 0) + 3
+                threeFG(P, gameB1!(P, ballCarrier), 0) = threeFG(P, gameB1!(P, ballCarrier), 0) + 1
+
+                gameRatings!(P, gameB1!(P, ballCarrier), 8) = gameRatings!(P, gameB1!(P, ballCarrier), 8) + 1
+                Call CreditAssists
+                Call UPDATESCREEN
+
+                GoTo 562
+
+            Else
+
+                If pbpOpt = 1 And pbpDelay! <> 0 Then
+                    Call WINDEX
+                    Print "3 PT FG MISSED BY "; players_GAME$(P, gameB1!(P, ballCarrier), 0)
+                    Call DELAY
+                End If
+
+                If pbpOpt = 0 Then
+                    pbpType = 5
+                    Call MAKEPBP (pbpType)
+                    Call PBP(P)
+                End If
+
+                Call ResetShotClock
+
+                gameClock! = gameClock! - 4
+                timeElapsed! = 4
+
+                Call AdjustPlayTime
+                Call CheckGameClock
+                If gameClock! = 0 Then 170
+
+                Call UPDATESCREEN
+
+                GoTo 670
+
+            End If
+
+    End Select
+
+    '--- technically this branch ends here ---
+
+    537 '
+    ' *** SHOOT !!! ***
+
+    pbpType = 3
+    Call MAKEPBP (pbpType)
+    Call PBP(P)
+
+    S = 0
+    Call Rolld100(RN0)
+    gameRatings!(P, gameB1!(P, ballCarrier), 7) = gameRatings!(P, gameB1!(P, ballCarrier), 7) + 1
+
+    scoreDiff = score(D, 0) - score(P, 0)
+    If Not (quarter > 3 And gameClock! <= 30 And scoreDiff = 2 Or quarter > 3 And gameClock! <= 30 And scoreDiff = 0) Then
+
+        If RN0 <= gameRatings!(P, gameB1!(P, ballCarrier), 16) + F7%(D, 3) Then
+
+            gameRatings!(P, gameB1!(P, ballCarrier), 7) = gameRatings!(P, gameB1!(P, ballCarrier), 7) - 1
+            Call ResetShotClock
+
+            589 '
+            gameClock! = gameClock! - 4
+            timeElapsed! = 4
+
+            Call AdjustPlayTime
+            Call UPDATESCREEN
+            Call Fouls(0)
+
+            If pbpDelay! <> 0 Then
+
+                If pbpOpt = 0 Then
+                    If freeThrowVal = 1 And P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then
+                        pbpString$ = "3 TO MAKE 2 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
+                        Call PBP(P)
+                    Else
+                        pbpString$ = "2 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
+                        Call PBP(P)
+                    End If
+                Else
+                    'pbpOpt = 1
+                    Call WINDEX
+                    Print gameTeams$(P)
+
+                    If freeThrowVal = 1 And P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then
+                        Print "3 TO MAKE 2 FT: ";
+                        Print players_GAME$(P, gameB1!(P, ballCarrier), 0); "   "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
+                    Else
+                        Print "2 FT: ";
+                        Print players_GAME$(P, gameB1!(P, ballCarrier), 0); "   "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
+                    End If
+                End If
+
+            End If
+
+            GoTo 591
+
+        End If
+
+    End If
+
+    '540
+    Call Rolld100(S)
+    RN0 = (shotChance - 2) * .1
+
+    '--- Shot Branch 1 ---
+    If S <= RN0 Then
+
+        Call ResetShotClock
+
+        gameClock! = gameClock! - 4
+        timeElapsed! = 4
+
+        Call AdjustPlayTime
+        Call UPDATESCREEN
+
+        If DK% = 1 Then
+
+            If pbpOpt = 0 Then
+                pbpType = 2
+                Call MAKEPBP (pbpType)
+                Call PBP(D)
+            Else
+                Call WINDEX
+            End If
+
+            pbpString$ = "STUFF BY " + players_GAME$(P, gameB1!(P, ballCarrier), 0)
+            Call PBP(D)
+            Call DELAY
+            DK% = 0
+            
+        Else
+
+            If shotType = 8 And pbpOpt = 0 Then
+                pbpType = 7
+                Call MAKEPBP (pbpType)
+                shotType = 0
+                Call PBP(P)
+            Else
+
+                If pbpOpt = 0 Then
+                    pbpString$ = "BASKET GOOD BY " + players_GAME$(P, gameB1!(P, ballCarrier), 0)
+                    Call PBP(P)
+                Else
+                    'pbpOpt = 1
+                    If pbpDelay! <> 0 Then
+                        Call WINDEX
+                        Print "BASKET GOOD BY " + players_GAME$(P, gameB1!(P, ballCarrier), 0)
+                        Call DELAY
+                    End If
+                End If
+                
+            End If
+            
+        End if
+
+        617 '
+        pbpString$ = "... AND HE'S FOULED !!!"
+
+        If pbpOpt = 0 Then
+            Call PBP(P)
+        Else
+            'pbpOpt = 1
+            If pbpDelay! <> 0 Then
+                Print pbpString$
+                Call DELAY
+            End If
+        End If
+
+        freeThrowNbr = 1
+
+        Call DELAY
+        Call CreditAssists
+
+        freeThrowNbr = 1
+        score(P, quarter) = score(P, quarter) + 2
+        score(P, 0) = score(P, 0) + 2
+        gameRatings!(P, gameB1!(P, ballCarrier), 8) = gameRatings!(P, gameB1!(P, ballCarrier), 8) + 1
+
+        Call UPDATESCREEN
+        Call Fouls(0)
+
+        If pbpDelay! <> 0 Then
+
+            If pbpOpt = 0 Then
+                If freeThrowVal = 1 And P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then
+                    pbpString$ = "2 TO MAKE 1 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
+                    Call PBP(P)
+                Else
+                    pbpString$ = "1 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
+                    Call PBP(P)
+                End If
+            Else
+                'pbpOpt = 1
+                If freeThrowVal = 1 And P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then
+                    Call WINDEX
+                    Print gameTeams$(P)
+                    pbpString$ = "2 TO MAKE 1 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + "   " + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
+
+                Else
+                    Call WINDEX
+                    Print gameTeams$(P)
+                    Print "1 FT: "; players_GAME$(P, gameB1!(P, ballCarrier), 0); "   "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
+                End If
+
+            End If
+
+        End If
+
+        '620
+        xFactor = 50
+        Call Substitutions
+        xFactor = 0
+
+        If pbpDelay! <> 0 Then
+
+            If pbpOpt = 0 Then
+                If freeThrowVal = 1 And P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then
+                    pbpString$ = "2 TO MAKE 1 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
+                Else
+                    pbpString$ = "1 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
+                End If
+                Call PBP(P)
+            End If
+
+            If pbpOpt = 1 Then
+                Call WINDEX
+                Print gameTeams$(P)
+                If freeThrowVal = 1 And P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then
+                    Print "2 TO MAKE 1 FT: ";
+                    Print players_GAME$(P, gameB1!(P, ballCarrier), 0); "   "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
+                Else
+                    Print "1 FT: "; players_GAME$(P, gameB1!(P, ballCarrier), 0); "   "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
+                End If
+
+            End If
+
+        End If
+
+        NM% = 0
+
+        'Two FT Attempts
+        For freeThrowNbr = 1 To 2
+
+            'Increase FT ATT
+            gameRatings!(P, gameB1!(P, ballCarrier), 9) = gameRatings!(P, gameB1!(P, ballCarrier), 9) + 1
+
+            Call Rolld100(S)
+
+            'FT Success Chance
+            ftShotChance = gameRatings!(P, gameB1!(P, ballCarrier), 1)
+
+            If S <= ftShotChance Then
+
+                If pbpOpt = 0 Then
+                    NM% = NM% + 1
+                    Call THREEFT
+                Else
+                    'pbpOpt = 1
+                    NM% = NM% + 1
+                    Call MADEFT
+                End If
+            Else
+                'S > ftShotChance And
+                If pbpOpt = 0 Then
+                    Call BADFT
+                Else
+                    'pbpOpt = 1
+                    Call MISSFT
+                End If
+
+            End If
+
+            If NM% = 1 Then Exit For
+            If freeThrowNbr = 1 And (freeThrowVal = 0 Or freeThrowVal = 1 And (P2(D) <= bonusFoulNum And quarter <= 4 Or P2(D) <= 3 And quarter > 4)) Then Exit For
+
+        Next freeThrowNbr
+
+        Call CheckGameClock
+        If gameClock! = 0 Then 170
+
+        xFactor = 99
+
+        If S > ftShotChance Then 670
+
+        Call ChangePossession
+        
+        pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
+        Call SELECTPBP(P, 1)
+        'Locate 8, 41: Print Space$(12)
+
+        Call Choices
+
+        ballCarrier = 6
+        xFactor = 0
+
+        If pbpDelay! <> 0 Then
+            Call WINDEX
+        End If
+
+        'PRESSING
+        If fullCtOpt(D) = 1 Then
+            If pbpOpt = 0 Then
+                pbpString$ = gameTeams$(D) + " IS PRESSING"
+                Call PBP(P)
+            End If
+
+            If pbpOpt = 1 And pbpDelay! <> 0 Then
+                Call WINDEX
+                Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print gameTeams$(D);
+                Color 15, 0: Print " IS PRESSING"
+                Call DELAY
+            End If
+
+            P1 = 1
+        End If
+
+        GoTo 300
+
+    End If
+
+    '--- Shot Branch 2 ---
+    If S <= shotChance - 2 Then
+
+        If DK% = 1 Then
+
+            If pbpOpt = 0 Then
+                pbpType = 2
+                Call MAKEPBP(pbpType)
+                Call PBP(P)
+            Else
+                'pbpOpt = 1
+                Call WINDEX
+            End If
+
+            pbpString$ = "STUFF BY " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + " !!!"
+            Call PBP(D)
+            Call DELAY
+            DK% = 0
+
+        Else
+
+            If pbpOpt = 0 And shotType = 8 Then
+
+                pbpType = 7
+                Call MAKEPBP (pbpType)
+                Call PBP(P)
+                shotType = 0
+
+            Else
+
+                pbpString$ = "BASKET BY "
+                pbpString$ = pbpString$ + players_GAME$(P, gameB1!(P, ballCarrier), 0) + " !!!"
+
+                If pbpOpt = 1 And pbpDelay! <> 0 Then
+
+                    Call WINDEX
+                    Print pbpString$
+                    Call DELAY
+
+                Else
+
+                    If d100% > 50 Then
+
+                        RN1 = Int(Rnd(1) * 22) + 1
+
+                        Select Case RN1
+                            Case 1: pbpString$ = "NOTHING BUT THE BOTTOM OF THE NET!"
+                            Case 2: pbpString$ = "Count IT!"
+                            Case 3: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " TICKLES THE TWINE!"
+                            Case 4: pbpString$ = "NO RIM, NO BOARD, JUST CORD!"
+                            Case 5: pbpString$ = "GOOD!"
+                            Case 6: pbpString$ = "YES!"
+                            Case 7: pbpString$ = "COUNT IT!"
+                            Case 8: pbpString$ = "IT'S GOOD!"
+                            Case 9: pbpString$ = "BINGO!"
+                            Case 10: pbpString$ = "IT FALLS!"
+                            Case 11: pbpString$ = "HE DRAINS IT!"
+                            Case 12: pbpString$ = "SWISH!"
+                            Case 13: pbpString$ = "ALL NET!"
+                            Case 14: pbpString$ = "IT'S THERE!"
+                            Case 15: pbpString$ = "HE BURIES IT!"
+                            Case 16: pbpString$ = "IT GOES IN!"
+                            Case 17: pbpString$ = "RING IT UP!"
+                            Case 18: pbpString$ = "IT GOES DOWN!"
+                            Case 19: pbpString$ = "BULLSEYE!"
+                            Case 20: pbpString$ = "HE SCORES!"
+                            Case 21: pbpString$ = "HE HAS IT!"
+                            Case 22: pbpString$ = "HE CONNECTS!"
+                        End Select
+
+                    End If
+
+                    Call PBP(P)
+                    
+                End If
+
+            End If
+
+        End If
+
+        560 '
+        score(P, quarter) = score(P, quarter) + 2
+        score(P, 0) = score(P, 0) + 2
+
+        Call CreditAssists
+
+        Call UPDATESCREEN
+
+        gameRatings!(P, gameB1!(P, ballCarrier), 8) = gameRatings!(P, gameB1!(P, ballCarrier), 8) + 1
+
+        '---> possibly a new sub
+        562 '
+
+        If pbpOpt = 1 And pbpDelay! <> 0 Then
+            Locate 9, 1
+            Color teamRat_GAME(D, 33), teamRat_GAME(D, 34)
+            Print gameTeams$(D);
+            Color 15, 0
+            Print " BALL AFTER SCORE"
+            Call DELAY
+        End If
+
+        If pbpOpt = 0 Then
+            'Locate 8, 41: Print Space$(12)
+            pbpString$ = gameTeams$(D) + " BALL AFTER SCORE"
+            Call PBP(P)
+        End If
+
+        Call ResetShotClock
+        gameClock! = gameClock! - 4
+        timeElapsed! = 4
+
+        Call AdjustPlayTime
+        Call CheckGameClock
+
+        If gameClock! = 0 Then 170
+
+        Call UPDATESCREEN
+
+        Call ChangePossession
+
+        Call Choices
+
+        If pbpDelay! <> 0 Then
+            Call WINDEX
+        End If
+
+        If fullCtOpt(D) = 1 Then
+            If pbpOpt = 0 Then
+                pbpString$ = gameTeams$(D) + " IS PRESSING"
+                Call PBP(P)
+            Else
+                'pbpOpt = 1
+                If pbpDelay! <> 0 Then
+                    Call WINDEX
+                    Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print gameTeams$(D);
+                    Color 15, 0
+                    Print " IS PRESSING"
+                    Call DELAY
+                End If
+            End If
+            P1 = 1
+        End If
+
+        GoTo 300
+
+    End If
+
+    '--- Shot Branch 3 ---
+    Call Rolld100(RN0)
+    Call Rolld100(shotChance)
+    rndDef = Int(Rnd(1) * 5)
+
+    If shotChance > gameRatings!(D, gameB1!(D, rndDef), 6) Then
+        545 '
+        If pbpOpt = 1 And pbpDelay! <> 0 Then
+            Call WINDEX
+            Print "SHOT MISSED BY "; players_GAME$(P, gameB1!(P, ballCarrier), 0)
+            Call DELAY
+        End If
+
+        If pbpOpt = 0 Then
+            pbpType = 8
+            Call MAKEPBP (pbpType)
+            Call PBP(P)
+        End If
+
+        Call ResetShotClock
+
+    Else
+        If pbpDelay! <> 0 Then
+
+            If pbpOpt = 1 Then
+                Call WINDEX
+                Print "SHOT BLOCKED BY "; players_GAME$(D, gameB1!(D, rndDef), 0)
+                Call DELAY
+            Else
+
+                Call Rolld100(RN1)
+
+                Select Case RN1
+                    Case 1 To 10: pbpString$ = players_GAME$(D, gameB1!(D, rndDef), 0) + " STUFFS THE SHOT!!"
+                    Case 11 To 15: pbpString$ = "DENIED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
+                    Case 16 To 20: pbpString$ = "ERASED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
+                    Case 21 To 25: pbpString$ = "EXPUNGED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
+                    Case 26 To 30: pbpString$ = "REBUKED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
+                    Case 31 To 35: pbpString$ = "SHOT BLOCKED CLEANLY BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
+                    Case 36 To 70: pbpString$ = "SHOT BLOCKED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
+                    Case 71 To 90: pbpString$ = "SHOT REJECTED BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
+                    Case 91 To 100: pbpString$ = "SHOT SWATTED OUT BY " + players_GAME$(D, gameB1!(D, rndDef), 0) + "!!"
+                End Select
+
+                Call PBP(D)
+
+            End If
+
+        End If
+
+        554 '
+        gameRatings!(D, gameB1!(D, rndDef), 15) = gameRatings!(D, gameB1!(D, rndDef), 15) + 1
+        xFactor = 98
+
+    End If
+
+    gameClock! = gameClock! - 4
+    timeElapsed! = 4
+
+    Call AdjustPlayTime
+    Call CheckGameClock
+    If gameClock! = 0 Then 170
+
+    Call UPDATESCREEN
+
+    GoTo 670
+
+    '----- NOODLE -----
+
+    565 '
+
+    Call Fouls(0)
+
+    566 '
+    If P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then 570
+
+    Call CheckGameClock
+    If gameClock! = 0 Then 170
+
+    If ftRulesOpt = 0 Then
+
+        Call Substitutions
+
+        If pbpDelay! <> 0 Then
+            Call Windex
+        End If
+
+        pbpString$ = gameTeams$(P) + " BALL AFTER FOUL"
+        Call PBP(P)
+
+        Locate 8, 41: Print Space$(12)
+
+        GoTo 350
+
+    End If
+
+    Call UPDATESCREEN
+
+    If pbpDelay! <> 0 Then
+
+        If pbpOpt = 0 Then
+            pbpString$ = "1 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
+            Call PBP(P)
+        Else
+
+            Call WINDEX
+            Color teamRat_GAME(P, 33), teamRat_GAME(P, 34): Print gameTeams$(P)
+            Color 15, 0
+
+            Print "1 FT: "; players_GAME$(P, gameB1!(P, ballCarrier), 0); " "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
+        End If
+
+    End If
+
+    xFactor = 50
+    Call Substitutions
+    xFactor = 0
+
+    If pbpDelay! <> 0 Then
+
+        If pbpOpt = 0 Then
+            pbpString$ = "1 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
+            Call PBP(P)
+        Else
+            Call WINDEX
+            Color teamRat_GAME(P, 33), teamRat_GAME(P, 34): Print gameTeams$(P)
+            Color 15, 0
+            Print "1 FT: "; players_GAME$(P, gameB1!(P, ballCarrier), 0); " "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
+        End If
+    End If
+
+    'One FT Attempt
+    freeThrowNbr = 1
+
+    'Increase FT ATT
+    gameRatings!(P, gameB1!(P, ballCarrier), 9) = gameRatings!(P, gameB1!(P, ballCarrier), 9) + 1
+
+    Call Rolld100(S)
+
+    'FT Success Chance
+    ftShotChance = gameRatings!(P, gameB1!(P, ballCarrier), 1)
+
+    If S <= ftShotChance Then
+        If pbpOpt = 0 Then
+            Call THREEFT
+        Else
+            'pbpOpt = 1
+            Call MADEFT
+        End If
+    Else
+        'S > ftShotChance
+        If pbpOpt = 0 Then
+            Call BADFT
+        Else
+            'pbpOpt = 1
+            Call MISSFT
+        End If
+    End If
+
+    LT = 0
+
+    Call CheckGameClock
+    If gameClock! = 0 Then 170
+
+    'Rebound after missed FT
+    If S > ftShotChance Then 650
+
+    Call ChangePossession
+
+    pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
+    Call SELECTPBP(P, 1)
+    'Locate 8, 41: Print Space$(12)
+
+    Call Choices
+
+    ballCarrier = 6
+    xFactor = 0
+
+    If pbpDelay! <> 0 Then
+        Call WINDEX
+    End If
+
+    If fullCtOpt(D) = 1 Then
+        If pbpOpt = 0 Then
+            pbpString$ = gameTeams$(D) + " IS PRESSING"
+            Call PBP(P)
+        Else
+            'pbpOpt = 1
+            If pbpDelay! <> 0 Then
+                Call WINDEX
+                Color teamRat_GAME(D, 33), teamRat_GAME(D, 34)
+                Print gameTeams$(D);: Color 15, 0
+                Print " IS PRESSING"
+                Call DELAY
+            End If
+
+            P1 = 1
+        End If
+    End If
+
+    GoTo 300
+
+    '----- NOODLE -----
+
+    570 '
+    If freeThrowVal = 1 And (P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4) Then
+        pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " GETS 3 FT TO MAKE 2..."
+    Else
+        pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " GETS 2 FREE THROWS..."
+    End If
+    Call PBP(P)
+
+    GoTo 591
+
+    '----- NOODLE -----
+
+    580 '
+    Call LastShot
+
+    Call ResetShotClock
+
+    Call ChangePossession
+
+    Call Fouls(0)
+
+    P2(D) = P2(D) - 1
+    ballCarrier = fouler
+
+    If P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then 570
+
+    Call CheckGameClock
+    If gameClock! = 0 Then 170
+
+    pbpString$ = "OFFENSIVE FOUL"
+
+    If pbpOpt = 0 Then
+        Call PBP(P)
+    Else
+        'pbpOpt = 1
+        If pbpDelay! <> 0 Then
+            Call WINDEX
+            Print pbpString$
+            Call DELAY
+        End If
+    End If
+
+    pbpString$ = gameTeams$(P) + " BALL AFTER FOUL"
+    If pbpOpt = 0 Then
+        Call PBP(P)
+    Else
+        'pbpOpt = 1
+        If pbpDelay! <> 0 Then
+            Print pbpString$
+            Call DELAY
+        End If
+    End If
+
+    Locate 8, 41: Print Space$(12)
+
+    ballCarrier = 6
+    Call PBP(P)
+    turnovers(D) = turnovers(D) + 1
+    Call UPDATESCREEN
+    Call Substitutions
+
+    If pbpDelay! <> 0 Then
+        Call WINDEX
+    End If
+
+    If fullCtOpt(D) = 1 Then
+
+        If pbpOpt = 0 Then
+            pbpString$ = gameTeams$(D) + " IS PRESSING"
+            Call PBP(P)
+        Else
+            'pbpOpt = 1
+            If pbpDelay! <> 0 Then
+                Call WINDEX
+                Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print gameTeams$(D);
+                Color 15, 0: Print " IS PRESSING"
+                Call DELAY
+            End If
+        End If
+
+        P1 = 1
+
+    End If
+
+    GoTo 300
+
+    '----- NOODLE -----
+
+    591 '
+
+    xFactor = 50
+    Call Substitutions
+    xFactor = 0
+
+    If pbpDelay! <> 0 Then
+
+        If pbpOpt = 0 Then
+
+            If freeThrowVal = 1 And P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then
+                pbpString$ = "3 TO MAKE 2 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %":
+            Else
+                pbpString$ = "2 FT: " + players_GAME$(P, gameB1!(P, ballCarrier), 0) + Str$(gameRatings!(P, gameB1!(P, ballCarrier), 1)) + " %"
+            End If
+
+            Call PBP(P)
+
+        Else
+            'pbpOpt = 1
+            Call WINDEX
+            Print gameTeams$(P)
+
+            If freeThrowVal = 1 And P2(D) > bonusFoulNum And quarter <= 4 Or P2(D) > 3 And quarter > 4 Then
+                Print "3 TO MAKE 2 FT: ";
+                Print players_GAME$(P, gameB1!(P, ballCarrier), 0); "   "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
+            Else
+                Print "2 FT: ";
+                Print players_GAME$(P, gameB1!(P, ballCarrier), 0); "   "; gameRatings!(P, gameB1!(P, ballCarrier), 1); " %"
+            End If
+
+        End If
+
+    End If
+
+    Call DELAY
+    NM% = 0
+
+    'Three FT Attempts
+    For freeThrowNbr = 1 To 3
+
+        'Increase FTA
+        gameRatings!(P, gameB1!(P, ballCarrier), 9) = gameRatings!(P, gameB1!(P, ballCarrier), 9) + 1
+
+        Call Rolld100(S)
+
+        'FT Success Chance
+        ftShotChance = gameRatings!(P, gameB1!(P, ballCarrier), 1)
+
+        If S <= ftShotChance Then
+            If pbpOpt = 0 Then
+                NM% = NM% + 1
+                Call THREEFT
+            Else
+                'pbpOpt = 1
+                NM% = NM% + 1
+                Call MADEFT
+            End If
+        Else
+            'S > ftShotChance
+            If pbpOpt = 0 Then
+                Call BADFT
+            Else
+                Call MISSFT
+            End If
+        End If
+
+        'Only have to make 2 (3 to make 2 rules)
+        If NM% = 2 Then Exit For
+
+        'On 2nd attempt
+        If freeThrowNbr = 2 Then
+            'Modern rules - just exit (only 2 FT)
+            '3 to make 2 - if 2 misses then done
+            If freeThrowVal = 0 Or (freeThrowVal = 1 And (P2(D) <= bonusFoulNum And quarter <= 4 Or P2(D) <= 3 And quarter > 4)) Then Exit For
+        End If
+
+    Next freeThrowNbr
+
+    Call CheckGameClock
+
+    If gameClock! = 0 Then 170
+
+    If S > gameRatings!(P, gameB1!(P, ballCarrier), 1) Then 650
+
+    Call ChangePossession
+
+    pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
+    Call SELECTPBP(P, 1)
+    'Locate 8, 41: Print Space$(12)
+
+    Call Choices
+
+    ballCarrier = 6
+    xFactor = 0
+
+    If pbpDelay! <> 0 Then
+        Call WINDEX
+    End If
+
+    If fullCtOpt(D) = 1 Then
+
+        If pbpOpt = 0 Then
+            pbpString$ = gameTeams$(D) + " IS PRESSING"
+            Call PBP(P)
+        End If
+
+        If pbpOpt = 1 And pbpDelay! <> 0 Then
+            Call WINDEX
+            Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print gameTeams$(D);
+            Color 15, 0
+            Print " IS PRESSING"
+            Call DELAY
+        End If
+
+        P1 = 1
+
+    End If
+
+    GoTo 300
+
+
+    '----- NOODLE -----
+
+    650 '
+
+    A6 = 1
+    playChoice = 0
+    A4 = 0
+    D6 = 0
+
+    Call ResetShotClock
+
+    S = 0
+
+    Call Rolld100(RN0)
+
+    scoreDiff = score(D, 0) - score(P, 0)
+    If (quarter > 3 And gameClock! < 30 And RN0 <= 12) And (scoreDiff = 2 Or scoreDiff = 0) Then
+
+        Call ReboundOffense
+        Call PBP(P)log(3753)
+        GoTo 760
+
+    Else
+
+        Call Rolld100(RN1)
+
+        Select Case RN1
+
+            Case 1 To 11:
+                foulOnReb = 1
+                Call PBP(P)log(3764)
+                GoTo 770
+
+            Case 12 To 19:
+                Call PBP(P)log(3768)
+                Call ReboundOffense
+                GoTo 760
+
+            Case 20 To 100:
+                Call PBP(P)log(3773)
+                Call ReboundDefense
+                GoTo 800
+
+        End Select
+
+    End If
+
+    '----- NOODLE -----
+
+    670 '
+
+    A6 = 1
+    playChoice = 0
+    A4 = 0
+    D6 = 0
+
+    Call ResetShotClock
+
+    '-- Start Loop
+    700 '
+    S = 0
+    A4 = 0
+    D6 = 0
+
+    Call Rolld100(RN0)
+
+    scoreDiff = score(D, 0) - score(P, 0)
+    If RN0 <= 12 And quarter > 3 And gameClock! < 30 And (scoreDiff = 2 Or scoreDiff = 0) Then
+
+        Call PBP(P)log(3806)
+        GoTo 700
+
+    Else
+
+        Select Case RN0
+
+            Case 1
+
+                If xFactor = 98 Then
+                    Call PBP(P)log(3815)
+                    GoTo 700
+
+                Else
+
+                    turnovers(P) = turnovers(P) + 1
+                    pbpString$ = "OFFENSIVE GOAL TENDING"
+                    If pbpOpt = 0 Then
+                        Call PBP(P)
+                    Else
+                        'pbpOpt = 1
+                        If pbpDelay! <> 0 Then
+                            Call WINDEX
+                            Print pbpString$
+                            Call DELAY
+                        End If
+                    End If
+
+                    pbpString$ = "BALL GOES TO " + gameTeams$(D)
+                    If pbpOpt = 0 Then
+                        Call PBP(P)
+                    Else
+                        'pbpOpt = 1
+                        If pbpDelay! <> 0 Then
+                            Call WINDEX
+                            Print pbpString$
+                            Call DELAY
+                        End If
+                    End If
+
+                    Call DELAY
+
+                    Call ChangePossession
+
+                    Call Substitutions
+
+                    Call PBP(P)log(3863)
+                    GoTo 300
+
+                End If
+
+            Case 2 To 11
+                foulOnReb = 1
+                Call PBP(P)log(3870)
+                GoTo 770
+
+            Case 12 To 19
+
+                Call Rolld100(RN1)
+
+                If RN1 <= 32 Then
+
+                    'Increase total rebounds
+                    totRebounds(P) = totRebounds(P) + 1
+
+                    Call UPDATESCREEN
+
+                    pbpString$ = "RB KNOCKED O.B. TO " + gameTeams$(P)
+
+                    If pbpOpt = 0 Then
+                        Call PBP(P)
+                    Else
+                        'pbpOpt = 1
+                        If pbpDelay! <> 0 Then
+                            Call WINDEX
+                            Print pbpString$
+                            Call DELAY
+                        End If
+                    End If
+
+                    Call DELAY
+                    Call Substitutions
+
+                    Call PBP(P)log(3900)
+                    GoTo 520
+
+                Else
+
+                    'Increase total rebounds
+                    totRebounds(D) = totRebounds(D) + 1
+
+                    Call UPDATESCREEN
+
+                    pbpString$ = "RB KNOCKED O.B. TO " + gameTeams$(D)
+
+                    If pbpOpt = 0 Then
+                        Call PBP(P)
+                    Else
+                        'pbpOpt = 1
+                        If pbpDelay! <> 0 Then
+                            Call WINDEX
+                            Print pbpString$
+                            Call DELAY
+                        End If
+                    End If
+
+                    Call DELAY
+                    Call Substitutions
+
+                    Call ChangePossession
+
+                    Call PBP(P)log(3944)
+                    GoTo 300
+
+                End If
+
+            Case 20 To 22
+
+                If xFactor = 99 Then
+
+                    Call PBP(P)log(3953)
+                    GoTo 700
+
+                Else
+
+                    Call ReboundOffense
+
+                    gameRatings!(P, gameB1!(P, ballCarrier), 7) = gameRatings!(P, gameB1!(P, ballCarrier), 7) + 1
+                    gameRatings!(P, gameB1!(P, ballCarrier), 8) = gameRatings!(P, gameB1!(P, ballCarrier), 8) + 1
+
+                    'Increase Total rebounds
+                    gameRatings!(P, gameB1!(P, ballCarrier), 11) = gameRatings!(P, gameB1!(P, ballCarrier), 11) + 1
+                    totRebounds(P) = totRebounds(P) + 1
+
+                    score(P, quarter) = score(P, quarter) + 2
+                    score(P, 0) = score(P, 0) + 2
+
+                    Call UPDATESCREEN
+
+                    If pbpOpt = 1 Then
+                        If pbpDelay! <> 0 Then
+                            Call WINDEX
+                            Print "TIPPED IN BY "; players_GAME$(P, gameB1!(P, ballCarrier), 0); "!!!"
+                            Call DELAY
+                        End If
+                    Else
+                        'pbpOpt = 0
+                        pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " TIPS IT IN!!!"
+                        Call PBP(P)
+                    End If
+
+                    Call DELAY
+
+                    Call ChangePossession
+
+                    pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
+                    'Locate 8, 41: Print Space$(12)
+
+                    If pbpOpt = 0 Then
+                        Call PBP(P)
+                    Else
+                        'pbpOpt = 1
+                        If pbpDelay! <> 0 Then 
+                            Print pbpString$
+                            Call DELAY
+                        End If
+                    End If
+
+                    Call Choices
+
+                    ' *** We know what routine this is!!!
+                    If pbpDelay! <> 0 Then
+                        Call WINDEX
+                    End If
+
+                    If fullCtOpt(D) = 1 Then
+
+                        If pbpOpt = 0 Then
+                            pbpString$ = gameTeams$(D) + " IS PRESSING"
+                            Call PBP(P)
+                        Else
+                            'pbpOpt = 1
+                            If pbpDelay! <> 0 Then
+                                Call WINDEX
+                                Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print gameTeams$(D);
+                                Color 15, 0: Print " IS PRESSING"
+                                Call DELAY
+                            End If
+
+                            P1 = 1
+                        End If
+
+                    End If
+
+                    Call PBP(P)log(4040)
+                    GoTo 300
+
+                End If
+
+            Case 23:
+
+                If playChoice <> 4 Then
+
+                    If xFactor = 99 Then
+
+                        Call PBP(P)log(4051)
+                        GoTo 700
+
+                    Else
+                        pbpString$ = "DEFENSIVE GOAL TENDING"
+
+                        If pbpOpt = 0 Then
+                            Call PBP(P)
+                        Else
+                            'pbpOpt = 1
+                            If pbpDelay! <> 0 Then
+                                Call WINDEX
+                                Print pbpString$
+                                Call DELAY
+                            End If
+                            Call DELAY
+                        End If
+
+                        Call PBP(P)log(4071)
+                        GoTo 560
+
+                    End If
+
+                End If
+
+            Case 24 To 100
+
+                770 '
+                'Calculate rebound contributions
+                '-- RB is a total of "rebound ratings" for both teams
+                '-- rebRatings is an array to track "rebound ratings" for each player
+                '   0 - 4 is for team 1; 5 - 9 is for team 2
+                RB = 0
+
+                Erase rebRatings
+
+                'Team 1
+                For I = 0 To 4
+
+                    If quarter > 4 Or quarter = 4 And gameClock! <= 120 Then
+                        rebRatings(I) = rebRatings(I) + gameRatings!(P, gameB1!(P, I), 21)
+                        RB = RB + gameRatings!(P, gameB1!(P, I), 21)
+                    Else
+                        If gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12) <= 0 Then
+                            rebRatings(I) = rebRatings(I) + gameRatings!(P, gameB1!(P, I), 21) * .65
+                            RB = RB + gameRatings!(P, gameB1!(P, I), 21) * .65
+                        Else
+                            rebRatings(I) = rebRatings(I) + gameRatings!(P, gameB1!(P, I), 21)
+                            RB = RB + gameRatings!(P, gameB1!(P, I), 21)
+                        End If
+                    End If
+
+                Next
+
+                'Team 2
+                For I = 0 To 4
+
+                    If quarter > 4 Or quarter = 4 And gameClock! <= 120 Then
+                        rebRatings(I + 5) = rebRatings(I + 5) + gameRatings!(1 - P, gameB1!(1 - P, I), 2)
+                        RB = RB + gameRatings!(1 - P, gameB1!(1 - P, I), 2)
+                    Else
+                        If gameRatings!(1 - P, gameB1!(1 - P, I), 3) - gameRatings!(1 - P, gameB1!(1 - P, I), 7) - gameRatings!(1 - P, gameB1!(1 - P, I), 11) - gameRatings!(1 - P, gameB1!(1 - P, I), 12) <= 0 Then
+                            rebRatings(I + 5) = rebRatings(I + 5) + gameRatings!(1 - P, gameB1!(1 - P, I), 2) * .5
+                            RB = RB + gameRatings!(1 - P, gameB1!(1 - P, I), 2) * .5
+                        Else
+                            rebRatings(I + 5) = rebRatings(I + 5) + gameRatings!(1 - P, gameB1!(1 - P, I), 2)
+                            RB = RB + gameRatings!(1 - P, gameB1!(1 - P, I), 2)
+                        End If
+                    End If
+
+                Next
+
+                rbChance = Rnd(1) * RB
+
+                skipRandom% = 0
+
+                For ballCarrier = 0 To 9
+
+                    If rbChance <= rebRatings(ballCarrier) Then
+                        Call PBP(P)log(4131)
+                        skipRandom% = 1
+                        Exit For
+                    End If
+
+                    rebRatings(ballCarrier + 1) = rebRatings(ballCarrier + 1) + rebRatings(ballCarrier)
+
+                Next
+
+                If skipRandom% = 0 Then
+                    ballCarrier = Int(Rnd(1) * 10)
+                End If
+
+                If ballCarrier <= 4 Then
+                    foulOnReb = 0
+                    Call PBP(P)log(4147)
+                    '-- GoTo 761 is implied
+                Else
+                    ballCarrier = ballCarrier - 5
+                    Call PBP(P)log(4151)
+                    GoTo 800
+                End If
+
+        End Select
+
+    End If
+
+
+    '----- NOODLE -----
+    'Offensive Rebound
+
+    760 '
+    If foulOnReb = 1 Then
+
+        foulOnReb = 0
+
+        pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " HAS THE OFFENSIVE REBOUND"
+
+        If pbpOpt = 0 Then
+            Call PBP(P)
+        Else
+            'pbpOpt = 1
+            If pbpDelay! <> 0 Then
+                Call WINDEX
+                Print pbpString$
+                Print "FOR "; gameTeams$(P)
+                Call DELAY
+            End If
+        End If
+
+        pbpString$ = "HE'S FOULED !!!"
+        If pbpOpt = 0 Then
+            Call PBP(P)
+        Else
+            'pbpOpt = 1
+            If pbpDelay! <> 0 Then
+                Print pbpString$
+                Call DELAY
+            End If
+        End If
+
+        Call DELAY
+
+        'Increase Off rebounds
+        gameRatings!(P, gameB1!(P, ballCarrier), 24) = gameRatings!(P, gameB1!(P, ballCarrier), 24) + 1
+
+        'Increase Total rebounds
+        gameRatings!(P, gameB1!(P, ballCarrier), 11) = gameRatings!(P, gameB1!(P, ballCarrier), 11) + 1
+        totRebounds(P) = totRebounds(P) + 1
+
+        Call UPDATESCREEN
+        Call Fouls(0)
+
+        Call PBP(P)log(4206)
+        GoTo 570
+
+    Else
+
+        761 '
+
+        '-- Offensive Rebound
+
+        'Increase Off rebounds
+        gameRatings!(P, gameB1!(P, ballCarrier), 24) = gameRatings!(P, gameB1!(P, ballCarrier), 24) + 1
+
+        'Increase Total rebounds
+        gameRatings!(P, gameB1!(P, ballCarrier), 11) = gameRatings!(P, gameB1!(P, ballCarrier), 11) + 1
+        totRebounds(P) = totRebounds(P) + 1
+
+        Call UPDATESCREEN
+
+        pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " HAS THE OFFENSIVE REBOUND"
+
+        If pbpDelay! <> 0 Then
+            If pbpOpt = 0 Then
+                Call PBP(P)
+            Else
+                'pbpOpt = 1
+                Call WINDEX
+                Print pbpString$
+                Print "FOR " + gameTeams$(P)
+                Call DELAY
+            End If
+        End If
+
+        Call CheckGameClock
+        If gameClock! = 0 Then 170
+
+        prevBall$ = players_GAME$(P, gameB1!(P, ballCarrier), 0)
+        RN0 = Int(Rnd(1) * 10) + 1
+
+        ' *** GET SHOT PCT ***
+        shotChance = gameRatings!(P, gameB1!(P, ballCarrier), 0) + D1(D)
+
+        If gameLoc = P Then
+            shotChance = shotChance + 2
+        Else
+            If gameLoc <> 2 Then shotChance = shotChance - 2
+        End If
+
+        If Not (quarter > 4 Or quarter = 4 And gameClock! <= 120) Then
+            If gameRatings!(P, gameB1!(P, ballCarrier), 3) - gameRatings!(P, gameB1!(P, ballCarrier), 7) - gameRatings!(P, gameB1!(P, ballCarrier), 11) - gameRatings!(P, gameB1!(P, ballCarrier), 12) <= 0 Then shotChance = shotChance * .6
+        End If
+
+        Call PBP(P)log(4259)
+        If RN0 <= 8 Then
+            shotType = 9
+            GoTo 537
+        Else
+            GoTo 520
+        End If
+
+    End If
+
+    800 '
+    If foulOnReb = 1 Then
+
+        foulOnReb = 0
+
+        If pbpDelay! <> 0 Then
+            If pbpOpt = 1 Then
+                Call WINDEX
+                pbpString$ = players_GAME$(D, gameB1!(D, ballCarrier), 0) + " HAS THE DEF REBOUND FOR "
+                Call PBP(D)
+                pbpString = gameTeams$(D) + " AND IS FOULED !!!"
+                Call PBP(D)
+                Call DELAY
+            Else
+                pbpString$ = players_GAME$(D, gameB1!(D, ballCarrier), 0) + " HAS THE DEF REBOUND"
+                Call PBP(D)
+                pbpString$ = "HE'S FOULED !!!"
+                Call PBP(D)
+            End If
+        End If
+
+        'Increase Total rebounds
+        gameRatings!(D, gameB1!(D, ballCarrier), 11) = gameRatings!(D, gameB1!(D, ballCarrier), 11) + 1
+        totRebounds(D) = totRebounds(D) + 1
+
+        Call UPDATESCREEN
+
+        Call ChangePossession
+
+        GoTo 565
+
+    Else
+
+        'Increase Total rebounds
+        gameRatings!(D, gameB1!(D, ballCarrier), 11) = gameRatings!(D, gameB1!(D, ballCarrier), 11) + 1
+        totRebounds(D) = totRebounds(D) + 1
+
+        Call UPDATESCREEN
+        pbpString$ = players_GAME$(D, gameB1!(D, ballCarrier), 0) + " HAS THE DEF REBOUND"
+
+        If pbpDelay! <> 0 Then
+            If pbpOpt = 0 Then
+                Call PBP(D)
+            Else
+                'pbpOpt = 1
+                Call WINDEX
+                Print pbpString$
+                Print "FOR " + gameTeams$(D)
+                Call DELAY
+            End If
+        End If
+
+        'Why do this here when we just change it anyway?
+        prevBall$ = players_GAME$(D, gameB1!(D, ballCarrier), 0)
+
+        Call ChangePossession
+        P9 = D
+
+        fastBreak = 1
+
+        GoTo 300
+
+    End If
+
+End Sub
+
+
+'Include: 'GameRoutines.bm'
+
+'----------------------------------------
+'            INFO Subroutine
+'----------------------------------------
+'This subroutine displays a simple header
+'and footer for the game options menu.
+Sub INFO ()
+
+    Cls
+
+    Color , 1
+    Locate 1, 1
+    Print Tab(80); " ";
+
+    Locate , 33
+    Color 14
+    Print "GAME OPTIONS MENU"
+
+    Locate 24, 1
+    Print Tab(80); " ";
+    Locate , 1
+    Print "    LANCE HAFFNER / JASON LEONARD  1986-2024"; Tab(70); Left$(Time$, 5);
+    Locate 3, 1
+    Color , 0
+
+End Sub
+
+
+'----------------------------------------
+'           InitVar Subroutine
+'----------------------------------------
+' Initializes variables for the game
+' Does not process any that will be read
+' in from file or assigned elsewhere
+Sub InitVar ()
+
+    Shared actualAttendance&
+
+    Shared scheduleFile$
+
+    Shared avgAttendance&()
+
+    Shared teamScore(), oppScore()
+
+    Shared gameW0!(), gameW1!()
+    Shared statsZ!(), statsZ1!(), statsZ2!()
+    Shared indRecords!(), teamRecords!()
+
+    Shared alpha$()
+    Shared oppName$(), locIndicator$()
+    Shared indRecDesc$(), teamRecDesc$()
+    Shared teamIndicator$()
+
+    For I = 0 To 1
+        For I1 = 0 To 4
+            gameB1!(I, I1) = -1
+        Next I1
+    Next I
+
+    teamIndicator$(0) = "VISITING TEAM"
+    teamIndicator$(1) = "HOME TEAM"
+
+    offStyleDesc$(0) = "NORMAL      "
+    offStyleDesc$(1) = "AGGRESSIVE  "
+    offStyleDesc$(2) = "SAFE        "
+
+    alpha$(0) = "A "
+    alpha$(1) = "B "
+    alpha$(2) = "C "
+    alpha$(3) = "D "
+    alpha$(4) = "E "
+
+    pbpType$(0) = "VERBOSE        "
+    pbpType$(1) = "HAFFNER CLASSIC"
+
+    posnName$(0) = "G"
+    posnName$(1) = "G"
+    posnName$(2) = "F"
+    posnName$(3) = "F"
+    posnName$(4) = "C"
+
+    scSettings(0) = 24
+    scSettings(1) = 30
+    scSettings(2) = 0
+
+    ' # of timeouts
+    timeouts(1) = 7
+    timeouts(0) = 7
+
+    OY%(1) = 2
+    OY%(2) = -2
+
+    OX%(1) = 10
+    OX%(2) = -10
+
+    defStyles(0) = 1
+    defStyles(1) = 1
+
+    autoPlay = 0
+    ballCarrier = 0
+    bonusFoulNum = 5
+    compTeam = 0
+    D = 0
+    endAllGames = 0
+    endGame = 0
+    freeThrowNbr = 0
+    halfTime = 0
+    JY = 0
+    nbrLines = 1
+    P = 0
+    fullCtOpt = 0
+    P9 = 0
+    quarter = 1
+    shotClock = 0
+    statSpecial = 0
+    T1 = 0
+    TMT = 0
+    xFactor = 0
+
+    gameClock! = 720
+
+    DK% = 0
+    fastBreak = 0
+    FT% = 0
+    HH% = 0
+    NM% = 0
+    OX% = 0
+    OY% = 0
+    pbpType = 0
+    shotType = 0
+
+    timeElapsed! = 0
+
+    A1$ = ""
+    B1$ = ""
+    C1$ = ""
+    D1$ = ""
+    E1$ = ""
+    F1$ = ""
+    G1$ = ""
+    H1$ = ""
+    pbpString$ = ""
+    prevBall$ = ""
+    scheduleFile$ = ""
+    TS$ = ""
+    Y2$ = ""
+    Z3$ = ""
+
+    'These are for reading in team data
+    'Erase gameCoach$, gameMascots$, gameStadium$, players_GAME$
+    Erase leagRat_GAME, plyrRat_GAME, teamRat_GAME
+
+    'Erase C1
+    Erase D1, D8, eventSettings
+    Erase F1, G4, G5, oppScore
+    Erase P2, P4, P5, fullCtOpt
+    Erase pbpFG, pbpBG, QQ, QR
+    Erase rebRatings, score, schedGame, statTotals, S3
+    Erase teamFouls, teamScore, timePlayed
+    Erase totRebounds, turnovers
+    Erase W2, W3, X7, Z5, Z6
+
+    Erase gameRatings!, gameW0!, gameW1!
+    Erase M9!
+    Erase statsZ!, statsZ1!, statsZ2!
+    Erase indRecords!, teamRecords!
+
+    Erase diskIDs$, gameTeams$
+    Erase indRecDesc$, locIndicator$, oppName$
+    Erase Q$, SX$
+    Erase teamAbbrev$, teamNames$, teamRecDesc$
+    Erase Y$
+
+    Erase F%, F5%, F7%, G9%
+    Erase N0%, NG%, offStyles, PF%
+    Erase ST%, SX%
+    Erase TOF%, teamIndex%, threeFG
+
+    actualAttendance& = 0
+    Erase avgAttendance&
+
+End Sub
+
+
+'----------------------------------------
+'          AUTOSETUP Subroutine
+'----------------------------------------
+'This subroutine auto-assigns game param-
+'eters from a schedule file's data.
+Sub AUTOSETUP
+
+    'AUTO-PLAY OPTIONS
+    gameLoc = NG%(2)
+    threePtOpt = NG%(3)
+    pbpDelay! = NG%(4) / 10
+    playoffOpt = NG%(5)
+    sClockVal = NG%(7)
+    playerOpt = NG%(8)
+    coachOpt = NG%(9)
+    freeThrowVal = NG%(10)
+    ftRulesOpt = NG%(11)
+    tickerStart = NG%(12)
+    bonusFoulNum = NG%(14)
+
+    For gameIdx = 0 To 1
+
+        teamIdx = NG%(gameIdx)
+        Call ReadGameTeam(diskIDs$(gameIdx), gameTeams$(gameIdx), teamIdx, gameIdx)
+        teamGender$(gameIdx) = GetTeamGender$(diskIDs$(gameIdx))
+        
+        NG%(P9) = idx
+
+    Next P9
+
+End Sub
+
+
+'----------------------------------------
+'       LetterToNumber Subroutine
+'----------------------------------------
+'This subroutine converts an alphabetic
+'character to a numeric equivalent,
+'where A = 10, B = 11, etc.
+'This is useful for long menus that have
+'more than 10 options (0 - 9) and a single
+'key is desired for a choice.
+Sub LetterToNumber (promptVal$, J)
+
+    J = Val(promptVal$)
+
+    Select Case UCase$(promptVal$)
+
+        Case "A": J = 10
+        Case "B": J = 11
+        Case "C": J = 12
+        Case "D": J = 13
+        Case "E": J = 14
+        Case "F": J = 15
+        Case "G": J = 16
+        Case "H": J = 17
+
+    End Select
+
+End Sub
+
+
+'----------------------------------------
+'           TEAMBOX Subroutine
+'----------------------------------------
+'This subroutine draws an ASCII box using
+'team colors. The box starts at row 6 and
+'is approx. 60 char's wide. When done, the
+'cursor is set at the first printable row
+'and column inside the box.
+Sub TEAMBOX (boxHeight, teamIdx)
+
+    Locate 6, 8
+    Color teamRat_GAME(teamIdx, 33), teamRat_GAME(teamIdx, 34)
+
+    'Print box top
+    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+    'Print box sides
+    For II = 1 To boxHeight
+        Locate 6 + II, 8
+        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Next
+
+    'Print box bottom
+    Locate 7 + boxHeight, 8
+    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+    Locate 7, 11
+
+End Sub
+
+
+'----------------------------------------
+'         FRAMEOPTION Subroutine
+'----------------------------------------
+'This subroutine draws an ASCII box using
+'team colors. The box starts at row 8 and
+'is approx. 60 char's wide. When done, the
+'cursor is set at the first printable row
+'and column inside the box.
+Sub FRAMEOPTION (boxHeight, teamIdx)
+
+    Locate 8, 8
+    Color teamRat_GAME(teamIdx, 33), teamRat_GAME(teamIdx, 34)
+
+    'Print box top
+    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+    'Print box sides
+    For II = 1 To boxHeight
+        Locate 8 + II, 8
+        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Next
+
+    'Print box bottom
+    Locate 9 + boxHeight, 8
+    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+    Locate 9, 12
+
+End Sub
+
+
+'----------------------------------------
+'         Rolld100 Subroutine
+'----------------------------------------
+'This subroutine assigns a random number
+'between 1 and 100 to the variable that
+'it is called with
+Sub Rolld100 (randNumVar)
+
+    randNumVar = Int(Rnd(1) * 100) + 1
+
+End Sub
+
+
+'----------------------------------------
+'            d100 Subroutine
+'----------------------------------------
+'This subroutine assigns a random number
+'between 1 and 100 to the variable that
+'it is called with
+Function d100% ()
+
+    d100% = Int(Rnd(1) * 100) + 1
+
+End Sub
+
+
+'----------------------------------------
+'       DISABLEPLAYERS Subroutine
+'----------------------------------------
+'This subroutine gives the user an inter-
+'face for disabling team players. It will
+'then take care of updating the associated
+'arrays for the available roster.
+Sub DISABLEPLAYERS (P9)
+
+    Do
+
+        Color 15, 0
+        Cls
+
+        Call TEAMBOX(1, P9)
+
+        pbpString$ = "DISABLE PLAYERS FOR " + gameTeams$(P9) + "? (Y/N)"
+        Locate , (80 - Len(pbpString$)) / 2
+        Print pbpString$
+        Color 15, 0
+
+        Print
+        Print
+        Print "NOTE:: THE COMPUTER WILL AUTOMATICALLY DISABLE PLAYERS BASED ON"
+        Print "       THE RATIO OF GAMES PLAYED FOR EACH PLAYER TO THE TOTAL"
+        Print "       NUMBER OF GAMES PLAYED BY THE TEAM. YOU MAY WANT TO CHECK"
+        Print "       TO ACTIVATE ANY COMPUTER DEACTIVATED PLAYERS"
+        I$ = GetKeyPress$
+
+    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+    If UCase$(I$) = "Y" Then
+
+        DX% = 0
+
+        Cls
+        Print "TEAM ROSTER FOR ";
+        Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34): Print gameTeams$(P9)
+        Color 15, 0
+        '-- Print "# NAME              POS GP"
+        Print "# NAME              GP"
+
+        For I = 0 To 14
+
+            If I <= 9 Then Print Using "#"; I;
+            If I = 10 Then Print "A";
+            If I = 11 Then Print "B";
+            If I = 12 Then Print "C";
+            If I = 13 Then Print "D";
+            If I = 14 Then Print "E";
+
+            Print " ";
+
+            'Automatically disable "non-existent" players
+            If players_GAME$(P9, I, 0) = "XXX" Then
+                plyrRat_GAME(P9, I, 18) = -1
+                Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34)
+            End If
+
+            'Color players who have been disabled
+            If plyrRat_GAME(P9, I, 18) <> 0 Then Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34)
+
+            'Print player name
+            Print players_GAME$(P9, I, 0);
+            Color 15, 0
+
+            'Print player position, GP
+            '-- POSITION = posnName$(gameB1!(P9, I1)) ???
+            Print Tab(20); plyrRat_GAME(P9, I, 0)
+
+        Next
+
+        Do
+            Locate 19, 1: Print "ENTER PLAYER # TO DISABLE/ENABLE (Z=FINISHED)"
+
+            I$ = GetKeyPress$
+
+            If UCase$(I$) <> "Z" Then
+
+                I1 = Val(I$)
+                Call LetterToNumber(I$, I1)
+
+                If plyrRat_GAME(P9, I1, 18) = 0 And DX% < 6 Then
+                    plyrRat_GAME(P9, I1, 18) = -1
+                    DX% = DX% + 1
+                    Locate 3 + I1, 3
+                    Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34): Print players_GAME$(P9, I1, 0)
+                    Color 15, 0
+                Else
+                    If plyrRat_GAME(P9, I1, 18) = -1 Then
+                        plyrRat_GAME(P9, I1, 18) = 0
+                        DX% = DX% - 1
+                        Locate 3 + I1, 3
+                        Color 15, 0
+                        Print " "; players_GAME$(P9, I1, 0)
+                    End If
+                End If
+            End If
+
+        Loop Until UCase$(I$) = "Z"
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'            DELAY Subroutine
+'----------------------------------------
+'This subroutine simply serves as a place-
+'holder for the command to initiate the
+'pbp delay.
+Sub DELAY ()
+
+    _Delay pbpDelay!
+
+End Sub
+
+
+'----------------------------------------
+'             PBP Subroutine
+'----------------------------------------
+'This is the classic Haffner Play-by-play
+'subroutine. Given the target text, it will
+'place it in the correct spot in the pbp
+'text window. No text is placed if the
+'delay is 0.
+Sub PBP ()
+
+    M$ = InKey$
+
+    If UCase$(M$) = "O" Then
+        Call OPTIONS
+    End If
+
+    If UCase$(M$) = "Q" Then
+        Cls
+        End
+    End If
+
+    'Positive delay or Verbose PBP
+    If pbpDelay! > 0 And pbpOpt = 0 Then
+
+        pbpString$ = PadRight$(pbpString$, 38)
+        'Print #11, pbpString$
+
+        Locate 8, 1
+
+        Select Case nbrLines
+            
+            Case 1
+                A1$ = pbpString$
+            
+            Case 2
+                B1$ = pbpString$
+
+            Case 3
+                C1$ = pbpString$
+            
+            Case 4
+                D1$ = pbpString$
+            
+            Case 5
+                E1$ = pbpString$
+                        
+            Case 6
+                F1$ = pbpString$
+                        
+            Case 7
+                G1$ = pbpString$
+                
+            Case 8
+                H1$ = pbpString$
+                
+            Case Is > 8
+                A1$ = B1$
+                B1$ = C1$
+                C1$ = D1$
+                D1$ = E1$
+                E1$ = F1$
+                F1$ = G1$
+                G1$ = H1$
+                H1$ = pbpString$
+
+                For I = 1 To 7
+                    pbpFG(I) = pbpFG(I + 1)
+                    pbpBG(I) = pbpBG(I + 1)
+                Next
+
+        End Select
+
+        If nbrLines < 8 Then
+            pbpFG(nbrLines) = teamRat_GAME(teamIdx, 33)
+            pbpBG(nbrLines) = teamRat_GAME(teamIdx, 34)
+        Else
+            pbpFG(8) = teamRat_GAME(teamIdx, 33)
+            pbpBG(8) = teamRat_GAME(teamIdx, 34)
+        End If
+
+        nbrLines = nbrLines + 1
+
+        Color pbpFG(1), pbpBG(1): Print Left$(A1$, 38)
+        Color pbpFG(2), pbpBG(2): Print Left$(B1$, 38)
+        Color pbpFG(3), pbpBG(3): Print Left$(C1$, 38)
+        Color pbpFG(4), pbpBG(4): Print Left$(D1$, 38)
+        Color pbpFG(5), pbpBG(5): Print Left$(E1$, 38)
+        Color pbpFG(6), pbpBG(6): Print Left$(F1$, 38)
+        Color pbpFG(7), pbpBG(7): Print Left$(G1$, 38)
+        Color pbpFG(8), pbpBG(8): Print Left$(H1$, 38)
+
+        Color pbpFG(1), pbpBG(1): Print Left$(A1$, 38)
+        Color pbpFG(2), pbpBG(2): Print Left$(B1$, 38)
+        Color pbpFG(3), pbpBG(3): Print Left$(C1$, 38)
+        Color pbpFG(4), pbpBG(4): Print Left$(D1$, 38)
+        Color pbpFG(5), pbpBG(5): Print Left$(E1$, 38)
+        Color pbpFG(6), pbpBG(6): Print Left$(F1$, 38)
+        Color pbpFG(7), pbpBG(7): Print Left$(G1$, 38)
+        Color pbpFG(8), pbpBG(8): Print Left$(H1$, 38)
+
+        Color 15, 0
+        Call DELAY
+
+    End If
+
+End Sub
+
+
+
+'----------------------------------------
+'          SELECTPBP Subroutine
+'----------------------------------------
+'This subroutine essentially handles the
+'prep for PBP depending on the style that
+'was chosen for the game (classic / verbose)
+Sub SELECTPBP (teamIdx, clean)
+
+    Select Case pbpOpt
+
+        Case 0:
+            Call PBP(teamIdx)
+
+        Case 1:
+            If pbpDelay! > 0 Then
+                If clean = 1 Then Call WINDEX
+                Print pbpString$
+                Call DELAY
+            End If
+
+    End Select
+
+End Sub
+
+
+'----------------------------------------
+'           MAKEPBP Subroutine
+'----------------------------------------
+'This subroutine helps build strings for
+'the Play-by-Play text, depending on the
+'context given (assigned as pbpType)
+Sub MAKEPBP (pbpType)
+
+    'PLAY BY PLAY
+    If pbpDelay! <> 0 Then
+
+        Call Rolld100(RN0)
+
+        Select Case pbpType
+
+            Case 1
+                'TURNOVER
+                pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0)
+                RN1 = Int(Rnd(1) * 14) + 1
+
+                Select Case RN1
+
+                    Case 1: pbpString$ = pbpString$ + " TURNS THE BALL OVER"
+                    Case 2: pbpString$ = pbpString$ + " THROWS IT AWAY"
+                    Case 3: pbpString$ = pbpString$ + " IS WHISTLED FOR TRAVELING"
+                    Case 4: pbpString$ = pbpString$ + " TURNS IT OVER"
+                    Case 5: pbpString$ = pbpString$ + " LOSES CONTROL OF THE BALL"
+                    Case 6: pbpString$ = pbpString$ + " LOSES IT OUT OF BOUNDS"
+                    Case 7: pbpString$ = pbpString$ + " LOSES THE HANDLE"
+                    Case 8: pbpString$ = pbpString$ + " LOSES IT"
+                    Case 9: pbpString$ = pbpString$ + " IS CALLED FOR STEPS"
+                    Case 10: pbpString$ = pbpString$ + " TRAVELS"
+                    Case 11: pbpString$ = pbpString$ + " WALKS WITH IT"
+                    Case 12: pbpString$ = pbpString$ + " LETS IT GET AWAY"
+                    Case 13: pbpString$ = pbpString$ + " DOUBLE DRIBBLES"
+                    Case 14: pbpString$ = pbpString$ + " LOSES CONTROL"
+
+                End Select
+
+            Case 2
+                'DUNK
+                RN1 = Int(Rnd(1) * 39) + 1
+
+                Select Case RN1
+
+                    Case 1: pbpString$ = "DIPSY-DOO DUNK-A-ROO!!!"
+                    Case 2: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " MAKES IT HAMMER TIME!!!"
+                    Case 3: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " SLAMS IT IN!!!"
+                    Case 4: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 2-HANDED SLAM!!!"
+                    Case 5: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " SLAMS IT HOME!!!"
+                    Case 6: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " JAMS IT HOME!!!"
+                    Case 7: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " THROWS IT DOWN!!!"
+                    Case 8: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " THUNDERSLAM!!!"
+                    Case 9: pbpString$ = "RIM ROCKING JAM!!!"
+                    Case 10: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE MONSTER SLAM!!"
+                    Case 11: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + "POWER SLAMS IT!!!"
+                    Case 12: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 2-HANDED STUFF!!!"
+                    Case 13: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " BACKWARDS JAM!!!"
+                    Case 14: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 1-HANDED SLAM!!!"
+                    Case 15: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE REVERSE SLAM!!!"
+                    Case 16: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE REVERSE JAM!!!"
+                    Case 17: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE WINDMILL JAM!!!"
+                    Case 18: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE WINDMILL SLAM!!!"
+                    Case 19: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE TOMAHAWK SLAM!!!"
+                    Case 20: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 360 SLAM!!!"
+                    Case 21: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE SPINNING SLAM!!!"
+                    Case 22: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE LEFT HANDED DUNK!!!"
+                    Case 23: pbpString$ = "DOUBLE CLUTCH JAM!!!"
+                    Case 24: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " GETS THE FLUSH!!!"
+                    Case 25: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " PUNCHES IT HOME!!!"
+                    Case 26: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + "...DOUBLE PUMP SLAM!!!"
+                    Case 27: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + "...IN YOUR FACE SLAM!!!"
+                    Case 28, 37:
+                        pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " IS UP"
+                        Call PBP(P)
+                        pbpString$ = "HE SPINS"
+                        Call PBP(P)
+                        pbpString$ = "BEHIND THE BACK SLAM!!!"
+                    Case 29: pbpString$ = "HE SLAMS IT HOME!!"
+                    Case 30: pbpString$ = "HE LAYS IT UP AND IN!!"
+                    Case 31: pbpString$ = "HE BANGS IT IN!!"
+                    Case 32: pbpString$ = "HE RAMS IT IN!!"
+                    Case 33: pbpString$ = "HE SLAMS IT IN!!!"
+                    Case 34: pbpString$ = "DIPSY-DOO DUNK-A-ROO!!!"
+                    Case 35: pbpString$ = "HE MAKES IT HAMMER TIME!!!"
+                    Case 36: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 2-HANDED SLAM!!!"
+                    Case 38: pbpString$ = "HE JAMS IT HOME!!!"
+                    Case 39: pbpString$ = "HE HAMMERS IT HOME!"
+
+                End Select
+
+            Case 3
+                'SHOOTS...
+                pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0)
+
+                Select Case shotType
+
+                    Case 1
+                        'BAD
+
+                        Select Case RN0
+
+                            Case 1 To 40: pbpString$ = pbpString$ + " TAKES A TOUGH SHOT"
+                            Case 41 To 45: pbpString$ = pbpString$ + " SHOOTS OFF BALANCE"
+                            Case 46 To 50: pbpString$ = pbpString$ + " FORCES ONE UP"
+                            Case 51 To 60: pbpString$ = pbpString$ + " SHOOTS UNDER PRESSURE"
+                            Case 61 To 65: pbpString$ = pbpString$ + " WITH A BAD SHOT"
+                            Case 66 To 70: pbpString$ = pbpString$ + " SHOOTS IN HEAVY TRAFFIC"
+                            Case 71 To 75: pbpString$ = pbpString$ + " THROWS UP A PRAYER"
+                            Case 76 To 80: pbpString$ = pbpString$ + " TAKES A BAD SHOT"
+                            Case 81 To 85: pbpString$ = pbpString$ + " FORCES THE INSIDE SHOT"
+                            Case 86 To 100: pbpString$ = pbpString$ + " TURNS AND SHOOTS"
+
+                        End Select
+
+                    Case 2
+                        'INSIDE W/ASSIST
+
+                        Select Case RN0
+
+                            Case 1 To 10
+                                pbpString$ = "HE CUTS TO THE BASKET"
+                                Call PBP(P)
+                                pbpString$ = "TAKES IT UP"
+
+                                Call Rolld100(RN1)
+                                If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 1 Then 
+                                    DK% = 1
+                                End If
+                                If (ballCarrier = 2 Or ballCarrier = 3) And RN1 <= 5 Then 
+                                    DK% = 1
+                                End If
+                                If ballCarrier = 4 And RN0 <= 7 Then 
+                                    DK% = 1
+                                End If
+
+                            Case 11 To 20
+                                pbpString$ = "HE TAKES IT TO THE HOLE"
+
+                                Call Rolld100(RN1)
+                                If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 1 Then 
+                                    DK% = 1
+                                End If
+                                If (ballCarrier = 2 Or ballCarrier = 3) And RN1 <= 5 Then 
+                                    DK% = 1
+                                End If
+                                If ballCarrier = 4 And RN0 <= 7 Then 
+                                    DK% = 1
+                                End If
+
+                            Case 21 To 30
+                                pbpString$ = "HE TAKES IT TO THE HOOP"
+
+                                Call Rolld100(RN1)
+                                If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 1 Then 
+                                    DK% = 1
+                                End If
+                                If (ballCarrier = 2 Or ballCarrier = 3) And RN1 <= 5 Then 
+                                    DK% = 1
+                                End If
+                                If ballCarrier = 4 And RN1 <= 7 Then 
+                                    DK% = 1
+                                End If
+
+                            Case 31 To 40
+                                pbpString$ = "HE LEANS IN AND SHOOTS"
+
+                            Case 41 To 50
+                                pbpString$ = "HE PUTS IT UP"
+
+                            Case 51 To 60
+                                pbpString$ = "HE TAKES IT TO THE BOARD"
+
+                                Call Rolld100(RN0)
+                                If (ballCarrier = 0 Or ballCarrier = 1) And RN0 <= 1 Then 
+                                    DK% = 1
+                                End If
+                                If (ballCarrier = 2 Or ballCarrier = 3) And RN0 <= 5 Then 
+                                    DK% = 1
+                                End If
+                                If ballCarrier = 4 And RN0 <= 7 Then 
+                                    DK% = 1
+                                End If
+
+                            Case 61 To 70
+                                pbpString$ = "HE PUTS IT OFF THE GLASS"
+
+                            Case 71 To 80
+                                If ballCarrier = 4 Then
+                                    pbpString$ = "HE SHOOTS THE HOOK"
+                                Else
+                                    pbpString$ = "HE GOES IN FOR THE LAYUP"
+                                End If
+
+                            Case 81 To 90
+                                pbpString$ = "HE TAKES IT UP STRONG"
+
+                                Call Rolld100(RN0)
+                                If (ballCarrier = 0 Or ballCarrier = 1) And RN0 <= 1 Then 
+                                    DK% = 1
+                                End If
+                                If (ballCarrier = 2 Or ballCarrier = 3) And RN0 <= 5 Then 
+                                    DK% = 1
+                                End If
+                                If ballCarrier = 4 And RN0 <= 7 Then 
+                                    DK% = 1
+                                End If
+
+                            Case 91 To 95
+                                pbpString$ = "HE POWERS IT UP"
+
+                                Call Rolld100(RN0)
+                                If (ballCarrier = 0 Or ballCarrier = 1) And RN0 <= 1 Then 
+                                    DK% = 1
+                                End If
+                                If (ballCarrier = 2 Or ballCarrier = 3) And RN0 <= 5 Then 
+                                    DK% = 1
+                                End If
+                                If ballCarrier = 4 And RN0 <= 7 Then 
+                                    DK% = 1
+                                End If
+
+                            Case 96 To 100
+                                pbpString$ = "HE LAYS IT UP"
+
+                        End Select
+
+                    Case 3
+                        'PENETRATE
+                        If Z3$ = "C" Then
+
+                            Select Case RN0
+
+                                Case 1 To 15:
+                                    pbpString$ = "HE PUTS IT OFF THE GLASS"
+
+                                Case 16 To 25:
+                                    pbpString$ = "HE PIVOTS TO THE BASKET"
+
+                                Case 26 To 40:
+                                    pbpString$ = "HE POWERS IT UP"
+
+                                Case 41 To 58:
+                                    pbpString$ = "HE TAKES IT TO THE HOOP"
+                                    Call Rolld100(RN0)
+                                    If RN0 <= 15 Then DK% = 1
+
+                                Case 59 To 70:
+                                    pbpString$ = "HE TAKES THE SHOT"
+
+                                Case 71 To 72:
+                                    pbpString$ = "HE CURLS OFF A PICK IN THE PAINT"
+                                    Call PBP(P)
+
+                                    pbpString$ = "TAKES IT UP"
+                                    Call Rolld100(RN1)
+                                    If RN1 <= 15 Then 
+                                        DK% = 1
+                                    End If
+
+                                Case 73 To 74:
+                                    pbpString$ = "HE MAKES A NICE SPIN MOVE"
+                                    Call PBP(P)
+                                    pbpString$ = "AND SOARS TO THE HOOP"
+
+                                    Call Rolld100(RN1)
+                                    If RN1 <= 15 Then 
+                                        DK% = 1
+                                    End If
+
+                                Case 75 To 100:
+                                    pbpString$ = "HE TAKES IT UP STRONG"
+
+                                    Call Rolld100(RN1)
+                                    If RN1 <= 15 Then 
+                                        DK% = 1
+                                    End If
+
+                            End Select
+
+                        End If
+
+                        If Z3$ = "F" Then
+
+                            Select Case RN0
+
+                                Case 1 To 16:
+                                    pbpString$ = "HE TAKES IT UP"
+                                    Call Rolld100(RN1)
+                                    If RN1 <= 7 Then 
+                                        DK% = 1
+                                    End If
+
+                                Case 17 To 32:
+                                    pbpString$ = "HE SPINS FREE"
+                                    Call PBP(P)
+                                    pbpString$ = "SHOOTS"
+
+                                    Call Rolld100(RN1)
+                                    If RN1 <= 7 Then 
+                                        DK% = 1
+                                    End If
+
+                                Case 33 To 48:
+                                    pbpString$ = "HE GETS LOOSE IN THE PAINT"
+                                    Call PBP(P)
+                                    pbpString$ = "TAKES IT UP"
+
+                                    Call Rolld100(RN1)
+                                    If RN0 <= 7 Then 
+                                        DK% = 1
+                                    End If
+
+                                Case 49 To 64:
+                                    pbpString$ = "HE PUTS IT UP"
+
+                                Case 65 To 67:
+                                    pbpString$ = "HE CURLS OFF A PICK IN THE PAINT"
+
+                                    Call PBP(P)
+                                    pbpString$ = "TAKES IT UP"
+
+                                    Call Rolld100(RN1)
+                                    If RN1 <= 7 Then DK% = 1
+
+                                Case 68 To 69:
+                                    pbpString$ = "HE MAKES A NICE SPIN MOVE"
+
+                                    Call PBP(P)
+                                    pbpString$ = "AND SOARS TO THE HOOP"
+
+                                    Call Rolld100(RN1)
+                                    If RN1 <= 7 Then 
+                                        DK% = 1
+                                    End If
+
+                                Case 70 To 71:
+                                    pbpString$ = "HE DRIVES THE BASELINE"
+
+                                    Call PBP(P)
+                                    pbpString$ = "SPINS RIGHT AND GOES UP"
+
+                                    Call Rolld100(RN1)
+                                    If RN1 <= 7 Then 
+                                        DK% = 1
+                                    End If
+
+                                Case 72:
+                                    pbpString$ = "HE SLICES IN THE HOLE"
+
+                                    Call PBP(P)
+                                    pbpString$ = "UNDERHAND SCOOP SHOT"
+
+                                Case 73:
+                                    pbpString$ = "STRONG CUT ALONG THE BASELINE"
+
+                                    Call PBP(P)
+                                    pbpString$ = "DOUBLE PUMP REVERSE LAYUP"
+
+                                Case 74:
+                                    pbpString$ = "HE PENETRATES"
+
+                                    Call PBP(P)
+                                    pbpString$ = "GORGEOUS FINGER ROLL!"
+
+                                Case 75 To 80:
+                                    pbpString$ = "HE SHOOTS"
+
+                                Case 81 To 100:
+                                    pbpString$ = "HE TAKES THE SHOT"
+
+                            End Select
+
+                        Else
+
+                            Select Case RN0
+
+                                Case 1 To 25:
+                                    pbpString$ = "HE SPINS FREE"
+
+                                    Call PBP(P)
+                                    pbpString$ = "SHOOTS"
+
+                                Case 26 To 50:
+                                    pbpString$ = "HE TAKES IT UP UNDER THE BASKET"
+
+                                    Call Rolld100(RN1)
+                                    If RN1 <= 2 Then 
+                                        DK% = 1
+                                    End If
+
+                                Case 51 To 52:
+                                    pbpString$ = "HE MAKES A NICE SPIN MOVE"
+
+                                    Call PBP(P)
+                                    pbpString$ = "AND SOARS TO THE HOOP"
+
+                                    Call Rolld100(RN1)
+                                    If RN1 <= 2 Then 
+                                        DK% = 1
+                                    End If
+
+                                Case 53 To 54:
+                                    pbpString$ = "HE BLOWS PAST TWO DEFENDERS"
+
+                                Case 55 To 56:
+                                    pbpString$ = "HE DRIVES THE BASELINE"
+
+                                    Call PBP(P)
+                                    pbpString$ = "SPINS RIGHT AND GOES UP"
+
+                                    Call Rolld100(RN1)
+                                    If RN1 <= 2 Then 
+                                        DK% = 1
+                                    End If
+
+                                Case 57:
+                                    pbpString$ = "HE SLICES IN THE HOLE"
+
+                                    Call PBP(P)
+                                    pbpString$ = "UNDERHAND SCOOP SHOT"
+
+                                Case 58:
+                                    pbpString$ = "STRONG CUT ALONG THE BASELINE"
+
+                                    Call PBP(P)
+                                    pbpString$ = "DOUBLE PUMP REVERSE LAYUP"
+
+                                Case 59:
+                                    pbpString$ = "HE PENETRATES"
+
+                                    Call PBP(P)
+                                    pbpString$ = "GORGEOUS FINGER ROLL!"
+
+                                Case 60 To 75:
+                                    pbpString$ = "HE TAKES THE JUMPER"
+
+                                Case 76 To 90:
+                                    pbpString$ = "HE STOPS"
+
+                                    Call PBP(P)
+                                    pbpString$ = "SHOOTS"
+
+                                Case 91:
+                                    pbpString$ = "HE LOOKS TO PASS"
+
+                                    Call PBP(P)
+                                    pbpString$ = "NO ONE IS OPEN"
+
+                                    Call PBP(P)
+                                    pbpString$ = "HE PUTS IT UP"
+
+                                Case 92 To 100:
+                                    pbpString$ = "HE TAKES THE SHOT"
+
+                            End Select
+
+                        End If
+
+                    Case 4
+                        'THREE!
+                        If FT% = 1 Then
+
+                            If RN0 <= 50 Then
+                                pbpString$ = pbpString$ + " THROWS UP A PRAYER"
+                            Else
+                                pbpString$ = pbpString$ + " LAUNCHES A THREE"
+                            End If
+
+                            FT% = 0
+                        Else
+
+                            Select Case RN0
+
+                                Case 1 To 10: pbpString$ = pbpString$ + " TRIES FOR THREE!"
+                                Case 11 To 20: pbpString$ = pbpString$ + " SHOOTS FROM 3-POINT RANGE!"
+                                Case 21 To 30: pbpString$ = pbpString$ + " HOISTS A THREE!"
+                                Case 31 To 40: pbpString$ = pbpString$ + " BOMBS A THREE FROM THE CORNER!"
+                                Case 41 To 50: pbpString$ = pbpString$ + " FIRES FROM THE 3-POINT LINE!"
+                                Case 51 To 60: pbpString$ = pbpString$ + " SHOOTS FOR THREE!"
+                                Case 61 To 70: pbpString$ = pbpString$ + " SHOOTS THE 3-POINTER!"
+                                Case 71 To 80: pbpString$ = pbpString$ + " FOR 3...!"
+                                Case 81 To 90: pbpString$ = pbpString$ + " PUTS UP THE TREY!"
+                                Case 91 To 100: pbpString$ = pbpString$ + " TAKES THE 3-POINTER!"
+
+                            End Select
+
+                        End If
+
+                    Case 5
+                        'SHORT JUMP
+                        RN1 = Int(Rnd(1) * 59) + 1
+
+                        Select Case RN1
+
+                            Case 1: pbpString$ = pbpString$ + " WITH A TWISTING JUMPER"
+
+                            Case 2: pbpString$ = pbpString$ + " SHOOTS THE J"
+
+                            Case 3:
+                                If ballCarrier = 4 Then
+                                    pbpString$ = pbpString$ + " RELEASES THE HOOK"
+                                Else
+                                    pbpString$ = pbpString$ + " TAKES THE SHOT"
+                                End If
+
+                            Case 4: pbpString$ = pbpString$ + " WITH A SHORT JUMPER"
+
+                            Case 5: pbpString$ = pbpString$ + " WITH THE 10 FOOTER"
+
+                            Case 6:
+                                If ballCarrier = 4 Then
+                                    pbpString$ = pbpString$ + " WITH THE RUNNING HOOK"
+                                Else
+                                    pbpString$ = pbpString$ + " WITH THE RUNNER"
+                                End If
+
+                            Case 7:
+                                If ballCarrier = 4 Then
+                                    pbpString$ = pbpString$ + " WITH A SWEEPING HOOK"
+                                Else
+                                    pbpString$ = pbpString$ + " WORKS FREE AND SHOOTS"
+                                End If
+
+                            Case 8:
+                                If ballCarrier = 4 Then
+                                    pbpString$ = pbpString$ + " WITH A BABY HOOK SHOT"
+                                Else
+                                    pbpString$ = pbpString$ + " TAKES THE SHOT"
+                                End If
+
+                            Case 9: pbpString$ = pbpString$ + " LEANS IN AND SHOOTS"
+                            Case 10: pbpString$ = pbpString$ + " SHOOTS"
+                            Case 11: pbpString$ = pbpString$ + " SHOOTS FALLING AWAY"
+                            Case 12: pbpString$ = pbpString$ + " LEANS IN FOR THE SHOT"
+                            Case 13: pbpString$ = pbpString$ + " TAKES THE LEFT HANDER"
+                            Case 14: pbpString$ = pbpString$ + " HARD TO THE HOLE..."
+                            Case 15: pbpString$ = pbpString$ + " FLIPS IT UP"
+                            Case 16: pbpString$ = pbpString$ + " FORCES THE INSIDE SHOT"
+                            Case 17: pbpString$ = pbpString$ + " CUTS TO THE BASKET"
+                            Case 18: pbpString$ = pbpString$ + " TAKES IT IN THE PAINT"
+                            Case 19: pbpString$ = pbpString$ + " FLOATS IT OVER HIS MAN"
+                            Case 20: pbpString$ = pbpString$ + " TAKES HIS MAN INSIDE"
+                            Case 21: pbpString$ = pbpString$ + " WHEELS IN THE LANE"
+                            Case 22: pbpString$ = pbpString$ + " CUTS INSIDE FOR THE SHOT"
+                            Case 23: pbpString$ = pbpString$ + " PENETRATES AND SHOOTS"
+                            Case 24: pbpString$ = pbpString$ + " SLICES INSIDE"
+                            Case 25: pbpString$ = pbpString$ + " LOOKS FOR TWO"
+                            Case 26: pbpString$ = pbpString$ + " DRIVES INTO THE PAINT"
+                            Case 27: pbpString$ = pbpString$ + " HAS THE BASELINE JUMPER"
+                            Case 28: pbpString$ = pbpString$ + " GLIDES TO THE HOLE"
+                            Case 29: pbpString$ = pbpString$ + " GETS INSIDE FOR THE SHOT"
+                            Case 30: pbpString$ = pbpString$ + " SPINS TOWARD THE HOOP"
+                            Case 31: pbpString$ = pbpString$ + " FROM SHORT RANGE"
+                            Case 32: pbpString$ = pbpString$ + " GOES BASELINE"
+                            Case 33: pbpString$ = pbpString$ + " PENETRATES AND SHOOTS"
+                            Case 34: pbpString$ = pbpString$ + " FROM 8 FEET"
+                            Case 35: pbpString$ = pbpString$ + " FROM 6 FEET"
+                            Case 36: pbpString$ = pbpString$ + " FROM 5 FEET"
+                            Case 37: pbpString$ = pbpString$ + " DRIVES TO THE HOLE"
+                            Case 38: pbpString$ = pbpString$ + " GLIDES TO THE HOLE"
+                            Case 39: pbpString$ = pbpString$ + " GETS INSIDE FOR THE SHOT"
+                            Case 40: pbpString$ = pbpString$ + " GOES TO THE HOLE"
+                            Case 41: pbpString$ = pbpString$ + " CUTS INSIDE"
+                            Case 42: pbpString$ = pbpString$ + " SPINS INSIDE"
+                            Case 43: pbpString$ = pbpString$ + " BREAKS INSIDE"
+                            Case 44: pbpString$ = pbpString$ + " SNEAKS INSIDE"
+                            Case 45: pbpString$ = pbpString$ + " SCOOTS INSIDE"
+                            Case 46: pbpString$ = pbpString$ + " WORKS IT INSIDE"
+                            Case 47: pbpString$ = pbpString$ + " KNIFES INSIDE"
+                            Case 48: pbpString$ = pbpString$ + " SCISSORS THROUGH"
+                            Case 49: pbpString$ = pbpString$ + " BANGS INSIDE"
+                            Case 50: pbpString$ = pbpString$ + " SLICES INSIDE"
+                            Case 51: pbpString$ = pbpString$ + " PUMPS AND SHOOTS"
+                            Case 52: pbpString$ = pbpString$ + " DOUBLE PUMPS AND SHOOTS"
+                            Case 53: pbpString$ = pbpString$ + "...ONE HANDED FADE AWAY"
+                            Case 54: pbpString$ = pbpString$ + "...LEFT HANDED FADE AWAY"
+                            Case 55: pbpString$ = pbpString$ + "...HIGH ARCHING SHOT"
+                            Case 56: pbpString$ = pbpString$ + " WITH A RUNNING LEFT HANDER"
+                            Case 57: pbpString$ = pbpString$ + " WITH A RUNNING SCOOP SHOT"
+                            Case 58: pbpString$ = pbpString$ + " WITH THE SCOOP SHOT"
+                            Case 59: pbpString$ = pbpString$ + " WITH THE FINGER ROLL"
+
+                        End Select
+
+                    Case 6, 7
+
+                        RN1 = Int(Rnd(1) * 59) + 1
+
+                        Select Case RN1
+                            Case 1: pbpString$ = pbpString$ + " POPS FROM OUTSIDE"
+                            Case 2: pbpString$ = pbpString$ + " DECIDES TO SHOOT IT"
+                            Case 3: pbpString$ = pbpString$ + " FIRES THE FADE-AWAY"
+                            Case 4: pbpString$ = pbpString$ + " LETS IT FLY"
+                            Case 5: pbpString$ = pbpString$ + " LAUNCHES ONE"
+                            Case 6: pbpString$ = pbpString$ + " WITH THE OUTSIDE SHOT"
+                            Case 7: pbpString$ = pbpString$ + " OUT OF THE CORNER"
+                            Case 8: pbpString$ = pbpString$ + " PUTS IT UP FROM 18"
+                            Case 9: pbpString$ = pbpString$ + " SPOTS UP OUTSIDE"
+                            Case 10: pbpString$ = pbpString$ + " RELEASES THE JUMPER"
+                            Case 11: pbpString$ = pbpString$ + " FROM THE TOP OF THE KEY"
+                            Case 12: pbpString$ = pbpString$ + " FIRES FROM THE LEFT WING"
+                            Case 13: pbpString$ = pbpString$ + " TRIES THE 12 FOOTER"
+                            Case 14: pbpString$ = pbpString$ + " PULLS UP AND POPS"
+                            Case 15: pbpString$ = pbpString$ + " FIRES FROM 15"
+                            Case 16: pbpString$ = pbpString$ + " FROM THE PERIMETER"
+                            Case 17: pbpString$ = pbpString$ + " TURNS AND SHOOTS"
+                            Case 18: pbpString$ = pbpString$ + " SHOOTS OFF THE SCREEN"
+                            Case 19: pbpString$ = pbpString$ + " FAKES AND SHOOTS"
+                            Case 20: pbpString$ = pbpString$ + " FIRES AWAY"
+                            Case 21: pbpString$ = pbpString$ + " POPS FROM THE BASELINE"
+                            Case 22: pbpString$ = pbpString$ + " DRIVES THE LANE"
+                            Case 23: pbpString$ = pbpString$ + " TAKES THE SHOT"
+                            Case 24: pbpString$ = pbpString$ + " WORKS FREE AND FIRES"
+                            Case 25: pbpString$ = pbpString$ + " SHOOTS OVER HIS MAN"
+                            Case 26: pbpString$ = pbpString$ + " SHOOTS FALLING AWAY"
+                            Case 27: pbpString$ = pbpString$ + " FAKES AND SHOOTS"
+                            Case 28: pbpString$ = pbpString$ + " FIRES AWAY"
+                            Case 29: pbpString$ = pbpString$ + " POPS FROM THE BASELINE"
+                            Case 30: pbpString$ = pbpString$ + " DRIVES THE LANE"
+                            Case 31: pbpString$ = pbpString$ + " TAKES THE SHOT"
+                            Case 32: pbpString$ = pbpString$ + " WORKS FREE AND FIRES"
+                            Case 33: pbpString$ = pbpString$ + " SHOOTS FROM 15"
+                            Case 34: pbpString$ = pbpString$ + " SHOOTS"
+                            Case 35: pbpString$ = pbpString$ + " TAKES THE JUMPER"
+                            Case 36: pbpString$ = pbpString$ + " FROM THE RIGHT CORNER"
+                            Case 37: pbpString$ = pbpString$ + " FROM THE LEFT CORNER"
+                            Case 38: pbpString$ = pbpString$ + " FROM THE KEY"
+                            Case 39: pbpString$ = pbpString$ + " FIRES FROM OUTSIDE"
+                            Case 40: pbpString$ = pbpString$ + " PUTS IT UP FROM 16"
+                            Case 41: pbpString$ = pbpString$ + " FROM THE PERIMETER"
+                            Case 42: pbpString$ = pbpString$ + " FAKES AND SHOOTS"
+                            Case 43: pbpString$ = pbpString$ + " FROM AROUND 16 FEET"
+                            Case 44: pbpString$ = pbpString$ + " PUTS IT UP"
+                            Case 45: pbpString$ = pbpString$ + " WITH A RUNNING ONE-HANDER"
+                            Case 46: pbpString$ = pbpString$ + " PULLS UP"
+                            Case 47: pbpString$ = pbpString$ + " KISSES THE GLASS"
+                            Case 48: pbpString$ = pbpString$ + " SPINS AND SHOOTS"
+                            Case 49: pbpString$ = pbpString$ + " PUTS IT UP FROM 16"
+                            Case 50: pbpString$ = pbpString$ + " WITH A LONG JUMPER"
+                            Case 51: pbpString$ = pbpString$ + " PUMPS AND SHOOTS"
+                            Case 52: pbpString$ = pbpString$ + " DOUBLE PUMPS AND SHOOTS"
+                            Case 53: pbpString$ = pbpString$ + "...ONE HANDED FADE AWAY"
+                            Case 54: pbpString$ = pbpString$ + "...LEFT HANDED FADE AWAY"
+                            Case 55: pbpString$ = pbpString$ + "...HIGH ARCHING SHOT"
+                            Case 56: pbpString$ = pbpString$ + " WITH A RUNNING LEFT HANDER"
+                            Case 57: pbpString$ = pbpString$ + " WITH A RUNNING SCOOP SHOT"
+                            Case 58: pbpString$ = pbpString$ + " WITH THE SCOOP SHOT"
+                            Case 59: pbpString$ = pbpString$ + " WITH THE FINGER ROLL"
+
+                        End Select
+
+                    Case 8
+
+                        Select Case RN0
+
+                            Case 1 To 20: pbpString$ = "HE SAILS TO THE HOOP"
+                            Case 21 To 23: pbpString$ = "HE TAKES IT TO THE BUCKET"
+                            Case 24 To 26: pbpString$ = "HE TAKES IT TO THE HOLE"
+                            Case 27 To 29: pbpString$ = "HE SLASHES TO THE HOLE"
+                            Case 30 To 32: pbpString$ = "HE SLASHES TO THE BUCKET"
+                            Case 33 To 35: pbpString$ = "HE SOARS TO THE BUCKET"
+                            Case 36 To 38: pbpString$ = "HE SOARS TO THE HOLE"
+                            Case 39 To 40: pbpString$ = "HE GLIDES TO THE HOLE"
+                            Case 41 To 60: pbpString$ = "HE GOES IN STRONG"
+                            Case 61 To 80: pbpString$ = "HE TAKES IT IN"
+                            Case 81 To 90: pbpString$ = "HE TAKES A DEFENDER WITH HIM"
+                            Case 81 To 100: pbpString$ = "HE GOES UP WITH IT"
+
+                        End Select
+
+                    Case 9
+                        'BACK AFTER REB
+                        pbpString$ = "HE "
+                        RN1 = Int(Rnd(1) * 11) + 1
+
+                        Select Case RN1
+
+                            Case 1: pbpString$ = pbpString$ + "TAKES IT BACK UP"
+                            Case 2: pbpString$ = pbpString$ + "GOES BACK UP WITH IT"
+                            Case 3: pbpString$ = pbpString$ + "POWERS HIS WAY UP WITH IT"
+                            Case 4: pbpString$ = pbpString$ + "GOES STRONG TO THE BASKET"
+                            Case 5: pbpString$ = pbpString$ + "MUSCLES IT UP"
+                            Case 6: pbpString$ = pbpString$ + "SHOOTS"
+                            Case 7: pbpString$ = pbpString$ + "TAKES IT TO THE GOAL"
+                            Case 8: pbpString$ = pbpString$ + "PUTS IT UP AGAIN"
+                            Case 9: pbpString$ = pbpString$ + "SHOOTS IT AGAIN"
+                            Case 10: pbpString$ = pbpString$ + "CLAWS HIS WAY UP"
+                            Case 11: pbpString$ = pbpString$ + "SHOOTS IN TRAFFIC"
+
+                        End Select
+
+                        Call Rolld100(RN2)
+                        If ballCarrier = 2 Or ballCarrier = 3 And RN2 <= 7 Then 
+                            DK% = 1
+                        End If
+                        If ballCarrier = 4 And RN2 <= 15 Then 
+                            DK% = 1
+                        End If
+
+                End Select
+
+            Case 4
+                'THREE GOOD
+                pbpString$ = "HE "
+
+                Select Case RN0
+
+                    Case 1 To 10: pbpString$ = pbpString$ + "FILLS UP THE BASKET!!!"
+                    Case 11 To 20: pbpString$ = pbpString$ + "HITS THE TREY!!!"
+                    Case 21 To 30: pbpString$ = "IT'S GOOOODD!!"
+                    Case 31 To 40: pbpString$ = pbpString$ + "GETS IT!!!"
+                    Case 41 To 50: pbpString$ = "COUNT IT!!"
+                    Case 51 To 60: pbpString$ = pbpString$ + "RINGS IT UP!!!"
+                    Case 61 To 80: pbpString$ = pbpString$ + "DRAINS IT!!!"
+                    Case 81 To 90: pbpString$ = "HE BURIES IT!!!"
+                    Case 91 To 100: pbpString$ = "IT'S ALL NET!!!"
+
+                End Select
+
+            Case 5
+                'THREE BAD
+                pbpString$ = "HE "
+
+                Select Case RN0
+
+                    Case 1 To 20: pbpString$ = pbpString$ + "GETS NONE"
+                    Case 21 To 25: pbpString$ = "IT NEVER HAD A CHANCE"
+                    Case 26 To 35: pbpString$ = "AIRRRR BALLLL!!"
+                    Case 36 To 40: pbpString$ = pbpString$ + "MISFIRES"
+                    Case 41 To 60: pbpString$ = "IT'S OFF THE RIM...NO GOOD!"
+                    Case 61 To 80: pbpString$ = "IT'S SHORT"
+                    Case 81 To 100: pbpString$ = pbpString$ + "MISSES"
+
+                End Select
+
+            Case 6
+                'FAST BREAK
+                pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0)
+                RN1 = Int(Rnd(1) * 38) + 1
+
+                Select Case RN1
+
+                    Case 1: pbpString$ = pbpString$ + " HAS IT ON THE FAST BREAK!"
+                    Case 2: pbpString$ = pbpString$ + " IS IN TRANSITION!"
+                    Case 3: pbpString$ = pbpString$ + " STARTS THE BREAK!"
+                    Case 4: pbpString$ = pbpString$ + " IS DOWN COURT IN A HURRY!"
+                    Case 5: pbpString$ = pbpString$ + " IS ON THE RUN!"
+                    Case 6: pbpString$ = pbpString$ + " GOES COAST TO COAST!"
+                    Case 7: pbpString$ = pbpString$ + " ON THE BREAK!"
+                    Case 8: pbpString$ = pbpString$ + " ON THE RUN!"
+                    Case 9: pbpString$ = pbpString$ + " ON THE FAST BREAK!"
+                    Case 10: pbpString$ = pbpString$ + " HAS THE FAST BREAK!"
+                    Case 11: pbpString$ = pbpString$ + " BREAKS INTO THE FORECOURT!"
+                    Case 12: pbpString$ = pbpString$ + " FLIES UPCOURT!"
+                    Case 13: pbpString$ = pbpString$ + " STARTS THE FASTBREAK!"
+                    Case 14: pbpString$ = pbpString$ + " ON THE MOVE!"
+                    Case 15: pbpString$ = pbpString$ + " IN TRANSITION!"
+                    Case 16: pbpString$ = pbpString$ + " DOWN COURT IN A HURRY!"
+                    Case 17: pbpString$ = pbpString$ + " CHARGES ACROSS THE LINE!"
+                    Case 18: pbpString$ = pbpString$ + " BREAKS QUICKLY!"
+                    Case 19: pbpString$ = pbpString$ + " BREAKS DOWN COURT!"
+                    Case 20: pbpString$ = pbpString$ + " STARTS THE RUNNING GAME!"
+                    Case 21: pbpString$ = pbpString$ + " FLIES DOWN THE FLOOR!"
+                    Case 22: pbpString$ = pbpString$ + " GOES RIGHT TO WORK!"
+                    Case 23: pbpString$ = pbpString$ + " BACK THE OTHER WAY!"
+                    Case 24: pbpString$ = pbpString$ + " QUICKLY UP THE FLOOR!"
+                    Case 25: pbpString$ = pbpString$ + " PUSHES IT UP COURT!"
+                    Case 26: pbpString$ = pbpString$ + " WASTES NO TIME!"
+                    Case 27: pbpString$ = pbpString$ + " UPS THE TEMPO!"
+                    Case 28: pbpString$ = pbpString$ + " HUSTLES DOWN COURT!"
+                    Case 29: pbpString$ = pbpString$ + " RUSHES UP THE FLOOR!"
+                    Case 30: pbpString$ = pbpString$ + " ON THE MOVE!"
+                    Case 31: pbpString$ = pbpString$ + " STREAKS UP THE COURT!"
+                    Case 32: pbpString$ = pbpString$ + " FLIES DOWN THE COURT!"
+                    Case 33: pbpString$ = pbpString$ + " JETS DOWN COURT!"
+                    Case 34: pbpString$ = pbpString$ + " QUICKLY GETS IT UP COURT!"
+                    Case 35: pbpString$ = pbpString$ + " TAKES IT COAST TO COAST!"
+                    Case 36: pbpString$ = pbpString$ + " IS RUNNING AND GUNNING!"
+                    Case 37: pbpString$ = pbpString$ + " FLIES OVER THE TIME LINE!"
+                    Case 38: pbpString$ = pbpString$ + " RUSHES IT UP THE FLOOR!"
+
+                End Select
+
+            Case 7
+                'FAST BREAK SCORE
+                fastBreak = 0
+                RN1 = Int(Rnd(1) * 39) + 1
+
+                Select Case RN1
+
+                    Case 1: pbpString$ = "DIPSY-DOO DUNK-A-ROO!!!"
+                    Case 2: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " MAKES IT HAMMER TIME!!!"
+                    Case 3: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " SLAMS IT IN!!!"
+                    Case 4: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 2-HANDED SLAM!!!"
+                    Case 5: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " SLAMS IT HOME!!!"
+                    Case 6: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " JAMS IT HOME!!!"
+                    Case 7: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " THROWS IT DOWN!!!"
+                    Case 8: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " THUNDERSLAM!!!"
+                    Case 9: pbpString$ = "RIM ROCKING JAM!!!"
+                    Case 10: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE MONSTER SLAM!!"
+                    Case 11: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + "POWER SLAMS IT!!!"
+                    Case 12: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 2-HANDED STUFF!!!"
+                    Case 13: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " BACKWARDS JAM!!!"
+                    Case 14: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 1-HANDED SLAM!!!"
+                    Case 15: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE REVERSE SLAM!!!"
+                    Case 16: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE REVERSE JAM!!!"
+                    Case 17: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE WINDMILL JAM!!!"
+                    Case 18: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE WINDMILL SLAM!!!"
+                    Case 19: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE TOMAHAWK SLAM!!!"
+                    Case 20: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 360 SLAM!!!"
+                    Case 21: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE SPINNING SLAM!!!"
+                    Case 22: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE LEFT HANDED DUNK!!!"
+                    Case 23: pbpString$ = "DOUBLE CLUTCH JAM!!!"
+                    Case 24: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " GETS THE FLUSH!!!"
+                    Case 25: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " PUNCHES IT HOME!!!"
+                    Case 26: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + "...DOUBLE PUMP SLAM!!!"
+                    Case 27: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + "...IN YOUR FACE SLAM!!!"
+                    Case 28, 37:
+                        pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " IS UP"
+                        Call PBP(P)
+                        pbpString$ = "HE SPINS"
+                        Call PBP(P)
+                        pbpString$ = "BEHIND THE BACK SLAM!!!"
+                    Case 29: pbpString$ = "HE SLAMS IT HOME!!"
+                    Case 30: pbpString$ = "HE LAYS IT UP AND IN!!"
+                    Case 31: pbpString$ = "HE BANGS IT IN!!"
+                    Case 32: pbpString$ = "HE RAMS IT IN!!"
+                    Case 33: pbpString$ = "HE SLAMS IT IN!!!"
+                    Case 34: pbpString$ = "DIPSY-DOO DUNK-A-ROO!!!"
+                    Case 35: pbpString$ = "HE MAKES IT HAMMER TIME!!!"
+                    Case 36: pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " WITH THE 2-HANDED SLAM!!!"
+                    Case 38: pbpString$ = "HE JAMS IT HOME!!!"
+                    Case 39: pbpString$ = "HE HAMMERS IT HOME!"
+
+                End Select
+
+            Case 8
+                'MISS
+                If shotType = 8 Then
+
+                    shotType = 0
+                    fastBreak = 0
+                    pbpString$ = "HE "
+
+                    Select Case RN0
+
+                        Case 1 To 20: pbpString$ = pbpString$ + "MISSES THE EASY BASKET!"
+                        Case 21 To 40: pbpString$ = pbpString$ + "JAMS IT TOO HARD!!"
+                        Case 41 To 60: pbpString$ = pbpString$ + "SLAMS IT OFF THE IRON...NO GOOD!"
+                        Case 61 To 80: pbpString$ = pbpString$ + "CAN'T GET IT DOWN!"
+                        Case 81 To 100: pbpString$ = pbpString$ + "BLOWS THE EASY BASKET!!"
+
+                    End Select
+
+                Else
+
+                    RN1 = Int(Rnd(1) * 50) + 1
+
+                    Select Case RN1
+
+                        Case 1: pbpString$ = "IT RATTLES IN AND OUT...NO GOOD"
+                        Case 2: pbpString$ = "OFF THE IRON"
+                        Case 3: pbpString$ = "IT SPINS IN AND OUT"
+                        Case 4: pbpString$ = "IT'S OFF THE GLASS"
+                        Case 5: pbpString$ = "IT'S NO GOOD"
+                        Case 6: pbpString$ = "IT'S OFF THE MARK"
+                        Case 7: pbpString$ = "IT'S A BRICK"
+                        Case 8: pbpString$ = "OFF THE RIM"
+                        Case 9: pbpString$ = "NOT EVEN CLOSE!"
+                        Case 10: pbpString$ = "NO GOOD"
+                        Case 11: pbpString$ = "HE MISSES"
+                        Case 12: pbpString$ = "DOESN'T GET THE ROLL"
+                        Case 13: pbpString$ = "OFF THE GLASS"
+                        Case 14: pbpString$ = "FALLS SHORT"
+                        Case 15: pbpString$ = "NO GOOD"
+                        Case 16: pbpString$ = "NO"
+                        Case 17: pbpString$ = "HE MISSES"
+                        Case 18: pbpString$ = "IN AND OUT"
+                        Case 19: pbpString$ = "OFF THE RIM"
+                        Case 20: pbpString$ = "OFF THE IRON"
+                        Case 21: pbpString$ = "IT'S NOT THERE"
+                        Case 22: pbpString$ = "OFF TARGET"
+                        Case 23: pbpString$ = "IT RATTLES OUT"
+                        Case 24: pbpString$ = "IT DOESN'T FALL"
+                        Case 25: pbpString$ = "IT BOUNCES OFF"
+                        Case 26: pbpString$ = "IT ROLLS OFF"
+                        Case 27: pbpString$ = "SHORT"
+                        Case 28: pbpString$ = "IT DOESN'T GO DOWN"
+                        Case 29: pbpString$ = "IT'S NO GOOD"
+                        Case 30: pbpString$ = "NO GOOD"
+                        Case 31: pbpString$ = "HE MISSES"
+                        Case 32: pbpString$ = "IT'S A BRICK"
+                        Case 33: pbpString$ = "HE FAILS TO CONNECT"
+                        Case 34: pbpString$ = "OFF THE SIDE OF THE RIM"
+                        Case 35: pbpString$ = "IT COMES UP SHORT"
+                        Case 36: pbpString$ = "IT ROLLS OUT"
+                        Case 37: pbpString$ = "AROUND AND OUT"
+                        Case 38: pbpString$ = "OFF THE BACK OF THE IRON"
+                        Case 39: pbpString$ = "ON THE FRONT RIM...ROLLS OFF"
+                        Case 40: pbpString$ = "IN THE AIR...NO GOOD"
+                        Case 41: pbpString$ = "TOO SHORT"
+                        Case 42: pbpString$ = "NO GOOD"
+                        Case 43: pbpString$ = "IT COMES UP SHORT"
+                        Case 44: pbpString$ = "IT ROLLS OUT"
+                        Case 45: pbpString$ = "IN AND OUT"
+                        Case 46: pbpString$ = "OFF THE FRONT OF THE IRON"
+                        Case 47: pbpString$ = "ON THE RIM...ROLLS OFF"
+                        Case 48: pbpString$ = "OFF THE FRONT OF THE RIM"
+                        Case 49: pbpString$ = "TOO SHORT"
+                        Case 50: pbpString$ = "TOO STRONG"
+
+                    End Select
+
+                End If
+
+            Case 9
+                'NOPASS
+                pbpString$ = players_GAME$(P, gameB1!(P, ballCarrier), 0) + " "
+                RN1 = Int(Rnd(1) * 56) + 1
+
+                Select Case RN1
+
+                    Case 1: pbpString$ = pbpString$ + "LOOKS INSIDE"
+                    Case 2: pbpString$ = pbpString$ + "TRIES TO WORK FREE"
+                    Case 3: pbpString$ = pbpString$ + "SETS UP THE PLAY"
+                    Case 4: pbpString$ = pbpString$ + "LOOKS FOR AN OPENING"
+                    Case 5: pbpString$ = pbpString$ + "DRIBBLES AROUND HIS MAN"
+                    Case 6: pbpString$ = pbpString$ + "SIGNALS THE PLAY"
+                    Case 7: pbpString$ = pbpString$ + "IS IN CONTROL"
+                    Case 8: pbpString$ = pbpString$ + "IS IN POSSESSION"
+                    Case 9: pbpString$ = pbpString$ + "TRIES TO GET OPEN"
+                    Case 10: pbpString$ = pbpString$ + "YO-YO'S OUT TOP"
+                    Case 11: pbpString$ = pbpString$ + "GOES TO WORK"
+                    Case 12: pbpString$ = pbpString$ + "WORKS OFF THE PICK"
+                    Case 13: pbpString$ = pbpString$ + "ON THE DRIBBLE"
+                    Case 14: pbpString$ = pbpString$ + "CUTS TO THE LEFT"
+                    Case 15: pbpString$ = pbpString$ + "CUTS TO THE RIGHT"
+                    Case 16: pbpString$ = pbpString$ + "WHEELS AND DEALS"
+                    Case 17: pbpString$ = pbpString$ + "SETS UP ON TOP"
+                    Case 18: pbpString$ = pbpString$ + "SLIDES RIGHT"
+                    Case 19: pbpString$ = pbpString$ + "SLIDES LEFT"
+                    Case 20: pbpString$ = pbpString$ + "GOES TO WORK"
+                    Case 21: pbpString$ = pbpString$ + "MOVES IT LEFT-SIDE"
+                    Case 22: pbpString$ = pbpString$ + "MOVES IT RIGHT-SIDE"
+                    Case 23: pbpString$ = pbpString$ + "REVERSES THE DRIBBLE"
+                    Case 24: pbpString$ = pbpString$ + "TRIES TO GET OPEN"
+                    Case 25: pbpString$ = pbpString$ + "DRIBBLES TO THE MIDDLE"
+                    Case 26: pbpString$ = pbpString$ + "FAKES THE PASS"
+                    Case 27: pbpString$ = pbpString$ + "SETS UP ON TOP"
+                    Case 28: pbpString$ = pbpString$ + "SLIDES RIGHT"
+                    Case 29: pbpString$ = pbpString$ + "SLIDES LEFT"
+                    Case 30: pbpString$ = pbpString$ + "DRIBBLES IT BEHIND THE BACK"
+                    Case 31: pbpString$ = pbpString$ + "FAKES LEFT...GOES RIGHT"
+                    Case 32: pbpString$ = pbpString$ + "FAKES RIGHT...GOES LEFT"
+                    Case 33: pbpString$ = pbpString$ + "SPINS HARD TO THE LEFT"
+                    Case 34: pbpString$ = pbpString$ + "SPINS HARD TO THE RIGHT"
+                    Case 35: pbpString$ = pbpString$ + "LEANS LEFT...GOES RIGHT"
+                    Case 36: pbpString$ = pbpString$ + "LEANS RIGHT...GOES LEFT"
+                    Case 37: pbpString$ = pbpString$ + "LEANS LEFT...CUTS RIGHT"
+                    Case 38: pbpString$ = pbpString$ + "LEANS RIGHT...CUTS LEFT"
+                    Case 39: pbpString$ = pbpString$ + "DOUBLE REVERSES HIS DRIBBLE"
+                    Case 40: pbpString$ = pbpString$ + "BACKS IN"
+                    Case 41: pbpString$ = pbpString$ + "LEANS FORWARD"
+                    Case 42: pbpString$ = pbpString$ + "CROSSES OVER...SPINS"
+                    Case 43: pbpString$ = pbpString$ + "CUTS LEFT"
+                    Case 44: pbpString$ = pbpString$ + "CUTS RIGHT"
+                    Case 45:
+                        pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
+                        Call PBP(P)
+                        pbpString$ = "HE SPINS LEFT"
+                    Case 46:
+                        pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
+                        Call PBP(P)
+                        pbpString$ = "HE SPINS RIGHT"
+                    Case 47:
+                        pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
+                        Call PBP(P)
+                        pbpString$ = "HE CUTS LEFT"
+                    Case 48:
+                        pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
+                        Call PBP(P)
+                        pbpString$ = "HE CUTS RIGHT"
+                    Case 49:
+                        pbpString$ = pbpString$ + "STUTTER STEPS"
+                        Call PBP(P)
+                        pbpString$ = "HE MOVES LEFT"
+                    Case 50: pbpString$ = pbpString$ + "MAINTAINS HIS DRIBBLE"
+                    Case 51: pbpString$ = pbpString$ + "FAKE SPINS LEFT...GOES RIGHT"
+                    Case 52: pbpString$ = pbpString$ + "FAKE SPINS RIGHT...GOES LEFT"
+                    Case 53:
+                        pbpString$ = pbpString$ + "PALMS THE BALL"
+                        Call PBP(P)
+                        pbpString$ = "HE TAKES IT AND SPINS"
+                    Case 54: pbpString$ = pbpString$ + "SHAKES AND BAKES"
+                    Case 55: pbpString$ = pbpString$ + "DRIBBLES WITH THE LEFT HAND"
+                    Case 56: pbpString$ = pbpString$ + "DRIBBLES WITH THE RIGHT HAND"
+
+                End Select
+
+            Case 10
+                'PASS prevBall$=PREV HANDLER
+                V$ = players_GAME$(P, gameB1!(P, ballCarrier), 0)
+
+                RN1 = Int(Rnd(1) * 60) + 1
+
+                Select Case RN1
+
+                    Case 1: pbpString$ = prevBall$ + " TO " + V$
+                    Case 2:
+                        pbpString$ = prevBall$ + " KICKS IT OUT"
+                        Call PBP(P)
+                        pbpString$ = V$ + " TAKES THE PASS"
+                    Case 3: pbpString$ = prevBall$ + " FEEDS " + V$
+                    Case 4: pbpString$ = prevBall$ + " PASSES TO " + V$
+                    Case 4: pbpString$ = prevBall$ + " DISHES TO " + V$
+                    Case 5: pbpString$ = prevBall$ + " GIVES IT TO " + V$
+                    Case 6: pbpString$ = prevBall$ + " WITH A NICE GIVE TO " + V$
+                    Case 7:
+                        pbpString$ = prevBall$ + " LOOKS"
+                        Call PBP(P)
+                        pbpString$ = "HE GETS IT TO " + V$
+                    Case 8: pbpString$ = prevBall$ + " SENDS IT TO " + V$
+                    Case 9: pbpString$ = prevBall$ + " TO " + V$
+                    Case 10: pbpString$ = prevBall$ + " GETS IT TO " + V$
+                    Case 11: pbpString$ = prevBall$ + " OVER TO " + V$
+                    Case 12: pbpString$ = prevBall$ + " ZIPS IT TO " + V$
+                    Case 13: pbpString$ = prevBall$ + " FINDS " + V$
+                    Case 14: pbpString$ = prevBall$ + " LOOKS FOR " + V$
+                    Case 14: pbpString$ = prevBall$ + " THROWS IT TO " + V$
+                    Case 15: pbpString$ = prevBall$ + " GOES TO " + V$
+                    Case 16: pbpString$ = prevBall$ + " SETS UP " + V$
+                    Case 17: pbpString$ = prevBall$ + " OUT TO " + V$
+                    Case 18: pbpString$ = prevBall$ + " FLIPS IT TO " + V$
+                    Case 19: pbpString$ = "BOUNCE PASS TO " + V$
+                    Case 20: pbpString$ = prevBall$ + " LEAVES IT FOR " + V$
+                    Case 21: pbpString$ = prevBall$ + " LOOPS IT TO " + V$
+                    Case 22: pbpString$ = prevBall$ + " SHOVELS IT OVER TO " + V$
+                    Case 23: pbpString$ = prevBall$ + " GIVES IT BACK TO " + V$
+                    Case 24: pbpString$ = prevBall$ + " FEEDS IT TO " + V$
+                    Case 25: pbpString$ = prevBall$ + " GIVES IT OFF TO " + V$
+                    Case 26: pbpString$ = "PASSES TO " + V$
+                    Case 27: pbpString$ = "DISHES TO " + V$
+                    Case 28: pbpString$ = "GIVES TO " + V$
+                    Case 29: pbpString$ = "OVER TO " + V$
+                    Case 30: pbpString$ = "SENDS IT BACK TO " + V$
+                    Case 31: pbpString$ = "NO-LOOK PASS TO " + V$
+                    Case 32: pbpString$ = "NO-LOOK BOUNCE PASS TO " + V$
+                    Case 33: pbpString$ = "BEHIND THE BACK TO " + V$
+                    Case 34: pbpString$ = prevBall$ + " SWINGS IT TO " + V$
+                    Case 35: pbpString$ = prevBall$ + " FIRES A PASS TO " + V$
+                    Case 36: pbpString$ = prevBall$ + " SNAPS A PASS TO " + V$
+                    Case 37: pbpString$ = prevBall$ + " SWINGS A PASS TO " + V$
+                    Case 38: pbpString$ = "TWO-HANDED PASS TO " + V$
+                    Case 39: pbpString$ = "WRAP AROUND PASS TO " + V$
+                    Case 40: pbpString$ = "OVER THE SHOULDER PASS TO " + V$
+                    Case 41: pbpString$ = "BACKHAND PASS TO " + V$
+                    Case 42: pbpString$ = "BACKHAND DISH TO " + V$
+                    Case 43: pbpString$ = "PASS CONNECTED TO " + V$
+                    Case 44: pbpString$ = prevBall$ + " WIRES IT TO " + V$
+                    Case 45: pbpString$ = prevBall$ + " WIRES A PASS TO " + V$
+                    Case 46: pbpString$ = prevBall$ + " SNAPS A PASS TO " + V$
+                    Case 47: pbpString$ = prevBall$ + " FAKES..PASSES TO " + V$
+                    Case 48: pbpString$ = prevBall$ + " SHUFFLES IT TO " + V$
+                    Case 49: pbpString$ = prevBall$ + " SLINGS IT TO " + V$
+                    Case 50: pbpString$ = prevBall$ + " FLIPS IT TO " + V$
+                    Case 51: pbpString$ = prevBall$ + " WHIPS IT OVER TO " + V$
+                    Case 52: pbpString$ = prevBall$ + " SLINGS A BOUNCE PASS TO " + V$
+                    Case 53: pbpString$ = prevBall$ + " SHOVELS IT TO " + V$
+                    Case 54:
+                        pbpString$ = prevBall$ + " PUMP FAKES A SHOT"
+                        Call PBP(P)
+                        pbpString$ = "HE SWINGS IT TO " + V$
+                    Case 55:
+                        pbpString$ = prevBall$ + " PUMP FAKES A SHOT"
+                        Call PBP(P)
+                        pbpString$ = "HE BOUNCES IT TO " + V$
+                    Case 56:
+                        pbpString$ = prevBall$ + " WITH A FOOT FAKE"
+                        Call PBP(P)
+                        pbpString$ = "HE SPINS AND DUMPS IT TO " + V$
+                    Case 57:
+                        pbpString$ = prevBall$ + " CUTS ACROSS THE LANE"
+                        Call PBP(P)
+                        pbpString$ = "HE DISHES INSIDE TO " + V$
+                    Case 58:
+                        pbpString$ = prevBall$ + " DRIVES THE BASELINE"
+                        Call PBP(P)
+                        pbpString$ = "DISHES UNDERNEATH TO " + V$
+                    Case 59:
+                        pbpString$ = prevBall$ + " FAKES RIGHT...CUTS LEFT"
+                        Call PBP(P)
+                        pbpString$ = "SHUFFLES IT TO " + V$
+                    Case 60:
+                        pbpString$ = prevBall$ + " HEAD FAKES"
+                        Call PBP(P)
+                        pbpString$ = "HE PUSHES IT TO " + V$
+
+                End Select
+
+        End Select
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'           WINDEX Subroutine
+'----------------------------------------
+'This subroutine cleans the "window" used
+'for the play-by-play text.
+Sub WINDEX ()
+
+    For I = 8 To 15
+        Locate I, 1
+        Call BLANKLINE
+    Next I
+
+    Locate 8, 1
+
+End Sub
+
+
+'----------------------------------------
+'       BLANKLINE Subroutine
+'----------------------------------------
+'This subroutine literally prints blank
+'spaces to clear a line of the PBP box.
+Sub BLANKLINE ()
+
+    Print Space$(38)
+
+End Sub
+
+'----------------------------------------
+'         CLEARPBPBOX Subroutine
+'----------------------------------------
+'This subroutine is similar to windex,
+'but only cleans the Play-by-Play area
+'if there is a PBP delay. It also places
+'the cursor further down when done.
+Sub CLEARPBPBOX ()
+
+    If pbpDelay! <> 0 Then
+
+        For I = 8 To 15:
+            Locate I, 1
+            Call BLANKLINE
+        Next I
+
+    End If
+
+    Locate 10
+
+End Sub
+
+
+'----------------------------------------
+'           TICKER Subroutine
+'----------------------------------------
+'This subroutine displays the score of all
+'current games being tracked by the ticker.
+'For each game it will find the score that
+'matches the current game time / period.
+Sub TICKER ()
+
+    Shared tickerPeriod$()
+
+    If autoPlay <> 1 Or playerMode <> 2 Then
+
+        Color 14, 0
+        Cls
+
+        Call Rolld100(RN)
+
+        If halfTime = 1 Then
+
+            If G9 = 0 Then
+                If RN <= 50 Then
+                    Locate , 23: Print "PRUDENTIAL AT THE HALF SCOREBOARD"
+                Else
+                    Locate , 28: Print "RED MAN HALFTIME REPORT"
+                End If
+            Else
+                If RN <= 50 Then
+                    Locate , 29: Print "TOYOTA HALFTIME REPORT"
+                Else
+                    Locate , 29: Print "HONDA HALFTIME REPORT"
+                End If
+            End If
+
+        Else
+
+            If endGame = 1 Then
+
+                If G9 = 0 Then
+                    Locate , 27: Print "CHEVROLET FINAL SCOREBOARD"
+                Else
+                    Select Case RN
+                        Case 1 To 33: Locate , 27: Print "USA TODAY FINAL SCOREBOARD"
+                        Case 34 To 67: Locate , 24: Print "FEDERAL EXPRESS FINAL SCOREBOARD"
+                        Case 67 To 100: Locate , 23: Print "ESPN SPORTSCENTER FINAL SCOREBOARD"
+                    End Select
+                End If
+            Else
+                If halfTime = 0 Then Locate , 30: Print "LANCE HAFFNER GAMES SCOREBOARD"
+            End If
+
+        End If
+
+        Color 15
+
+        If TMT = 0 Then
+            Locate 10, 28: Print "NO OTHER GAMES SCHEDULED"
+        Else
+            If quarter = 1 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 1
+            If quarter = 1 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 2
+            If quarter = 1 And gameClock! < 240 Then timeInterval = 3
+
+            If quarter = 2 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 4
+            If quarter = 2 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 5
+            If quarter = 2 And gameClock! < 240 Then timeInterval = 6
+
+            If quarter = 3 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 9
+            If quarter = 3 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 10
+            If quarter = 3 And gameClock! < 240 Then timeInterval = 11
+
+            If quarter = 4 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 12
+            If quarter = 4 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 13
+            If quarter = 4 And gameClock! < 240 Then timeInterval = 14
+
+            If quarter = 5 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 15
+            If quarter = 5 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 16
+            If quarter = 5 And gameClock! < 240 Then timeInterval = 17
+
+            If oppScore = 1 Then timeInterval = 8
+
+            If Left$(SX$(1, 0), 3) <> "XXX" Then
+                Locate 2, 1
+                X = 1
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(1, 0), 13);
+                Locate , 15: Print Using "### "; SX%(1, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+
+                Print Left$(SX$(1, 1), 13);
+                Locate , 15: Print Using "### #"; SX%(1, 1, tickInterval)
+            End If
+
+            If Left$(SX$(2, 0), 3) <> "XXX" Then
+                Locate 5, 1
+                X = 2
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(2, 0), 13);
+                Locate , 15: Print Using "### "; SX%(2, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+
+                Print Left$(SX$(2, 1), 13);
+                Locate , 15: Print Using "### #"; SX%(2, 1, tickInterval)
+            End If
+
+            If Left$(SX$(3, 0), 3) <> "XXX" Then
+                Locate 8, 1
+                X = 3
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(3, 0), 13);
+                Locate , 15: Print Using "### "; SX%(3, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+
+                Print Left$(SX$(3, 1), 13);
+                Locate , 15: Print Using "### #"; SX%(3, 1, tickInterval)
+            End If
+
+            If Left$(SX$(4, 0), 3) <> "XXX" Then
+                Locate 11, 1
+                X = 4
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(4, 0), 13);
+                Locate , 15: Print Using "### "; SX%(4, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+
+                Print Left$(SX$(4, 1), 13);
+                Locate , 15: Print Using "### #"; SX%(4, 1, tickInterval)
+            End If
+
+            If Left$(SX$(5, 0), 3) <> "XXX" Then
+                Locate 14, 1
+                X = 5
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(5, 0), 13);
+                Locate , 15: Print Using "### "; SX%(5, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+
+                Print Left$(SX$(5, 1), 13);
+                Locate , 15: Print Using "### #"; SX%(5, 1, tickInterval)
+            End If
+
+            If Left$(SX$(6, 0), 3) <> "XXX" Then
+                Locate 17, 1
+                X = 6
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(6, 0), 13);
+                Locate , 15: Print Using "### "; SX%(6, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+
+                Print Left$(SX$(6, 1), 13);
+                Locate , 15: Print Using "### #"; SX%(6, 1, tickInterval)
+            End If
+
+            If Left$(SX$(7, 0), 3) <> "XXX" Then
+                Locate 20, 1
+                X = 7
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(7, 0), 13);
+                Locate , 15: Print Using "### "; SX%(7, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+
+                Print Left$(SX$(7, 1), 13);
+                Locate , 15: Print Using "### #"; SX%(7, 1, tickInterval)
+            End If
+
+            If Left$(SX$(8, 0), 3) <> "XXX" Then
+                Locate 23, 1
+                X = 8
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(8, 0), 13);
+                Locate , 15: Print Using "### "; SX%(8, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+
+                Print Left$(SX$(8, 1), 13);
+                Locate , 15: Print Using "### #"; SX%(8, 1, tickInterval);
+            End If
+
+            If Left$(SX$(9, 0), 3) <> "XXX" Then
+                Locate 2, 21
+                X = 9
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(9, 0), 13);
+                Locate , 35: Print Using "### "; SX%(9, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 21
+
+                Print Left$(SX$(9, 1), 13);
+                Locate , 35: Print Using "### #"; SX%(9, 1, tickInterval)
+            End If
+
+            If Left$(SX$(10, 0), 3) <> "XXX" Then
+                Locate 5, 21
+                X = 10
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(10, 0), 13);
+                Locate , 35: Print Using "### "; SX%(10, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 21
+
+                Print Left$(SX$(10, 1), 13);
+                Locate , 35: Print Using "### #"; SX%(10, 1, tickInterval)
+            End If
+
+            If Left$(SX$(11, 0), 3) <> "XXX" Then
+                Locate 8, 21
+                X = 11
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(11, 0), 13);
+                Locate , 35: Print Using "### "; SX%(11, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 21
+
+                Print Left$(SX$(11, 1), 13);
+                Locate , 35: Print Using "### #"; SX%(11, 1, tickInterval)
+            End If
+
+            If Left$(SX$(12, 0), 3) <> "XXX" Then
+                Locate 11, 21
+                X = 12
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(12, 0), 13);
+                Locate , 35: Print Using "### "; SX%(12, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 21
+
+                Print Left$(SX$(12, 1), 13);
+                Locate , 35: Print Using "### #"; SX%(12, 1, tickInterval)
+            End If
+
+            If Left$(SX$(13, 0), 3) <> "XXX" Then
+                Locate 14, 21
+                X = 13
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(13, 0), 13);
+                Locate , 35: Print Using "### "; SX%(13, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 21
+
+                Print Left$(SX$(13, 1), 13);
+                Locate , 35: Print Using "### #"; SX%(13, 1, tickInterval)
+            End If
+
+            If Left$(SX$(14, 0), 3) <> "XXX" Then
+                Locate 17, 21
+                X = 14
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(14, 0), 13);
+                Locate , 35: Print Using "### "; SX%(14, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 21
+
+                Print Left$(SX$(14, 1), 13);
+                Locate , 35: Print Using "### #"; SX%(14, 1, tickInterval)
+            End If
+
+            If Left$(SX$(15, 0), 3) <> "XXX" Then
+                Locate 20, 21
+                X = 15
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(15, 0), 13);
+                Locate , 35: Print Using "### "; SX%(15, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 21
+
+                Print Left$(SX$(15, 1), 13);
+                Locate , 35: Print Using "### #"; SX%(15, 1, tickInterval)
+            End If
+
+            If Left$(SX$(16, 0), 3) <> "XXX" Then
+                Locate 23, 21
+                X = 16
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(16, 0), 13);
+                Locate , 35: Print Using "### "; SX%(16, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 21
+
+                Print Left$(SX$(16, 1), 13);
+                Locate , 35: Print Using "### #"; SX%(16, 1, tickInterval);
+            End If
+
+            If Left$(SX$(17, 0), 3) <> "XXX" Then
+                Locate 2, 41
+                X = 17
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(17, 0), 13);
+                Locate , 55: Print Using "### "; SX%(17, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 41
+
+                Print Left$(SX$(17, 1), 13);
+                Locate , 55: Print Using "### #"; SX%(17, 1, tickInterval)
+            End If
+
+            If Left$(SX$(18, 0), 3) <> "XXX" Then
+                Locate 5, 41
+                X = 18
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(18, 0), 13);
+                Locate , 55: Print Using "### "; SX%(18, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 41
+
+                Print Left$(SX$(18, 1), 13);
+                Locate , 55: Print Using "### #"; SX%(18, 1, tickInterval)
+            End If
+
+            If Left$(SX$(19, 0), 3) <> "XXX" Then
+                Locate 8, 41
+                X = 19
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(19, 0), 13);
+                Locate , 55: Print Using "### "; SX%(19, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 41
+
+                Print Left$(SX$(19, 1), 13);
+                Locate , 55: Print Using "### #"; SX%(19, 1, tickInterval)
+            End If
+
+            If Left$(SX$(20, 0), 3) <> "XXX" Then
+                Locate 11, 41
+                X = 20
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(20, 0), 13);
+                Locate , 55: Print Using "### "; SX%(20, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 41
+
+                Print Left$(SX$(20, 1), 13);
+                Locate , 55: Print Using "### #"; SX%(20, 1, tickInterval)
+            End If
+
+            If Left$(SX$(21, 0), 3) <> "XXX" Then
+                Locate 14, 41
+                X = 21
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(21, 0), 13);
+                Locate , 55: Print Using "### "; SX%(21, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 41
+                Print Left$(SX$(21, 1), 13);
+                Locate , 55: Print Using "### #"; SX%(21, 1, tickInterval)
+            End If
+
+            If Left$(SX$(22, 0), 3) <> "XXX" Then
+                Locate 17, 41
+                X = 22
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(22, 0), 13);
+                Locate , 55: Print Using "### "; SX%(22, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 41
+
+                Print Left$(SX$(22, 1), 13);
+                Locate , 55: Print Using "### #"; SX%(22, 1, tickInterval)
+            End If
+
+            If Left$(SX$(23, 0), 3) <> "XXX" Then
+                Locate 20, 41
+                X = 23
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(23, 0), 13);
+                Locate , 55: Print Using "### "; SX%(23, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 41
+
+                Print Left$(SX$(23, 1), 13);
+                Locate , 55: Print Using "### #"; SX%(23, 1, tickInterval)
+            End If
+
+            If Left$(SX$(24, 0), 3) <> "XXX" Then
+                Locate 23, 41
+                X = 24
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(24, 0), 13);
+                Locate , 55: Print Using "### "; SX%(24, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 41
+
+                Print Left$(SX$(24, 1), 13);
+                Locate , 55: Print Using "### #"; SX%(24, 1, tickInterval);
+            End If
+
+            If Left$(SX$(25, 0), 3) <> "XXX" Then
+                Locate 2, 61
+                X = 25
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(25, 0), 13);
+                Locate , 75: Print Using "### "; SX%(25, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 61
+
+                Print Left$(SX$(25, 1), 13);
+                Locate , 75: Print Using "### #"; SX%(25, 1, tickInterval)
+            End If
+
+            If Left$(SX$(26, 0), 3) <> "XXX" Then
+                Locate 5, 61
+                X = 26
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(26, 0), 13);
+                Locate , 75: Print Using "### "; SX%(26, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 61
+
+                Print Left$(SX$(26, 1), 13);
+                Locate , 75: Print Using "### #"; SX%(26, 1, tickInterval)
+            End If
+
+            If Left$(SX$(27, 0), 3) <> "XXX" Then
+                Locate 8, 61
+                X = 27
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(27, 0), 13);
+                Locate , 75: Print Using "### "; SX%(27, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 61
+
+                Print Left$(SX$(27, 1), 13);
+                Locate , 75: Print Using "### #"; SX%(27, 1, tickInterval)
+            End If
+
+            If Left$(SX$(28, 0), 3) <> "XXX" Then
+                Locate 11, 61
+                X = 28
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(28, 0), 13);
+                Locate , 75: Print Using "### "; SX%(28, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 61
+
+                Print Left$(SX$(28, 1), 13);
+                Locate , 75: Print Using "### #"; SX%(28, 1, tickInterval)
+            End If
+
+            If Left$(SX$(29, 0), 3) <> "XXX" Then
+                Locate 14, 61
+                X = 29
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(29, 0), 13);
+                Locate , 75: Print Using "### "; SX%(29, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 61
+
+                Print Left$(SX$(29, 1), 13);
+                Locate , 75: Print Using "### #"; SX%(29, 1, tickInterval)
+            End If
+
+            If Left$(SX$(30, 0), 3) <> "XXX" Then
+                Locate 17, 61
+                X = 30
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(30, 0), 13);
+                Locate , 75: Print Using "### "; SX%(30, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 61
+
+                Print Left$(SX$(30, 1), 13);
+                Locate , 75: Print Using "### #"; SX%(30, 1, tickInterval)
+            End If
+
+            If Left$(SX$(31, 0), 3) <> "XXX" Then
+                Locate 20, 61
+                X = 31
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(31, 0), 13);
+                Locate , 75: Print Using "### "; SX%(31, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 61
+
+                Print Left$(SX$(31, 1), 13);
+                Locate , 75: Print Using "### #"; SX%(31, 1, tickInterval)
+            End If
+
+            If Left$(SX$(32, 0), 3) <> "XXX" Then
+                Locate 23, 61
+                X = 32
+                tickInterval = TickerTime%(timeInterval, X)
+
+                Print Left$(SX$(32, 0), 13);
+                Locate , 75: Print Using "### "; SX%(32, 0, tickInterval);
+                Print tickerPeriod$(tickInterval)
+                Locate , 61
+
+                Print Left$(SX$(32, 1), 13);
+                Locate , 75: Print Using "### #"; SX%(32, 1, tickInterval);
+            End If
+
+        End If
+
+        I$ = GetKeyPress$
+
+        Call SCOREBOARD
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'          TickerTime Function
+'----------------------------------------
+'This subroutine determines which of the
+'pre-determined time intervals the ticker
+'display should be using.
+Function TickerTime% (timeInterval, X)
+
+    Shared tickerStart
+
+    tickerIdx = timeInterval + (tickerStart - ST%(X)) * 3
+
+    If tickerIdx < 0 Then tickerIdx = 0
+    If tickerIdx > 14 Then tickerIdx = 14
+    If endGame = 1 Then tickerIdx = 14
+
+    TickerTime% = tickerIdx
+
+End Function
+
+
+'----------------------------------------
+'        TICKERUPDATE Subroutine
+'----------------------------------------
+'This subroutine calculates the updated
+'scores for the ticker games.
+Sub TICKERUPDATE ()
+
+    If autoPlay = 1 And schedGame(2) <= 31 Then
+
+        If quarter = 1 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 1) = -1 Then SX%(1 + schedGame(2), 0, 1) = score(0, 0): SX%(1 + schedGame(2), 1, 1) = score(1, 0): GoTo 2580
+        If quarter = 1 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 2) = -1 Then SX%(1 + schedGame(2), 0, 2) = score(0, 0): SX%(1 + schedGame(2), 1, 2) = score(1, 0): GoTo 2580
+
+        If quarter > 1 And SX%(1 + schedGame(2), 0, 3) = -1 Then SX%(1 + schedGame(2), 0, 3) = score(0, 1): SX%(1 + schedGame(2), 1, 3) = score(1, 1): GoTo 2580
+
+        If quarter = 2 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 4) = -1 Then SX%(1 + schedGame(2), 0, 4) = score(0, 0): SX%(1 + schedGame(2), 1, 4) = score(1, 0): GoTo 2580
+        If quarter = 2 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 5) = -1 Then SX%(1 + schedGame(2), 0, 5) = score(0, 0): SX%(1 + schedGame(2), 1, 5) = score(1, 0): GoTo 2580
+
+        If quarter > 2 And SX%(1 + schedGame(2), 0, 6) = -1 Then For I2 = 6 To 8: SX%(1 + schedGame(2), 0, I2) = score(0, 2) + score(0, 1): SX%(1 + schedGame(2), 1, I2) = score(1, 2) + score(1, 1): Next: GoTo 2580
+
+        If quarter = 3 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 9) = -1 Then SX%(1 + schedGame(2), 0, 9) = score(0, 0): SX%(1 + schedGame(2), 1, 9) = score(1, 0): GoTo 2580
+        If quarter = 3 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 10) = -1 Then SX%(1 + schedGame(2), 0, 10) = score(0, 0): SX%(1 + schedGame(2), 1, 10) = score(1, 0): GoTo 2580
+
+        If quarter > 3 And SX%(1 + schedGame(2), 0, 11) = -1 Then SX%(1 + schedGame(2), 0, 11) = score(0, 3) + score(0, 2) + score(0, 1): SX%(1 + schedGame(2), 1, 11) = score(1, 3) + score(1, 2) + score(1, 1): GoTo 2580
+
+        If quarter = 4 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 12) = -1 Then SX%(1 + schedGame(2), 0, 12) = score(0, 0): SX%(1 + schedGame(2), 1, 12) = score(1, 0): GoTo 2580
+        If quarter = 4 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 13) = -1 Then SX%(1 + schedGame(2), 0, 13) = score(0, 0): SX%(1 + schedGame(2), 1, 13) = score(1, 0): GoTo 2580
+
+        SX%(1 + schedGame(2), 0, 14) = score(0, 0): SX%(1 + schedGame(2), 1, 14) = score(1, 0)
+
+    End If
+
+    2580 '
+
+End Sub
+
+
+'----------------------------------------
+'       TickerSchedule Subroutine
+'----------------------------------------
+'This subroutine reads in the scores from
+'the ticker and uses them to update the
+'corresponding schedule file.
+Sub TickerSchedule
+
+    Shared scheduleFile$
+
+    If schedGame(2) <= 31 Then
+
+        For X = 0 To 1:
+            SX$(schedGame(2) + 1, X) = gameTeams$(X)
+        Next
+
+        Open "TICKER" For Output As #1
+
+        For I = 1 To 32:
+            For I1 = 0 To 1:
+                For I2 = 1 To 14
+                    Print #1, SX%(I, I1, I2)
+                Next
+            Next
+        Next
+
+        For I = 1 To 32:
+            For I1 = 0 To 1:
+                Print #1, SX$(I, I1)
+            Next
+        Next
+
+        For I = 1 To 32:
+            Print #1, ST%(I)
+        Next
+
+        Close #1
+
+    End If
+
+    Open diskPaths$(3) + scheduleFile$ For Random As #2 Len = SCHEDULE_SIZE_BYTES
+
+    For X = 0 To 18
+        Field #2, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
+    Next
+
+    Field #2, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
+
+    NG%(13) = 1
+
+    For X = 0 To 18:
+        LSet Q$(X + 1) = MKI$(NG%(X))
+    Next
+
+    For X = 0 To 1:
+        LSet Q$(20 + X) = diskIDs$(X)
+    Next
+
+    LSet Q$(22) = MKI$(score(0, 0))
+    LSet Q$(23) = MKI$(score(1, 0))
+
+    Put #2, schedGame(0) + schedGame(2)
+
+    Close #2
+
+    schedGame(2) = schedGame(2) + 1
+    autoPlay = 1
+
+End Sub
+
+
+'----------------------------------------
+'          PlayStyle Subroutine
+'----------------------------------------
+'This subroutine walks the user through
+'the selection of play styles for their
+'team on both offense and defense.
+Sub PlayStyle ()
+
+    Shared yesNoText$()
+
+    Call LINEUPS
+
+    Locate 19, 1
+    Color 14, 0
+    Print "STARTING LINEUP"
+
+    Color 14
+    Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
+    Locate 21, 32: Color 15: Print "O";
+    Color 3: Print "FFENSE STYLE-";
+    Color 7: Print offStyleDesc$(offStyles(P9))
+
+    Locate 22, 32: Color 3: Print "DE";
+    Color 15: Print "F";
+    Color 3: Print "ENSE STYLE-";
+    Color 7: Print defStyleDesc$(defStyles(P9))
+
+    Locate 23, 32: Color 3: Print "FULL COURT ";
+    Color 15: Print "P";
+    Color 3: Print "RESS-";
+    Color 7: Print yesNoText$(fullCtOpt(P9))
+
+    If C1 = 1 Then
+
+        For M = 0 To 4
+
+            Locate M + 20, 1
+            Color 2, 0
+            Print Using "# "; M;
+            Color 15, 0
+            Print "ENTER "; posnName$(M); " # ";
+
+            Z = gameB1!(P9, M)
+            CV% = 0
+
+            For IP% = 0 To Z
+                '-- College BB also checks for player Name
+                '   ... Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX"
+                If plyrRat_GAME(P9, IP%, 18) <> 0 Then CV% = CV% + 1
+            Next
+
+            Print players_GAME$(P9, Z, 0);
+            Locate Z + 3 - CV%, 3
+            Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34)
+            Print Left$(players_GAME$(P9, Z, 0), 12)
+            Color 15, 0
+
+        Next
+
+    Else
+
+        For I = 0 To 4
+
+            Do
+                Locate I + 20, 1
+                Color 2, 0: Print Using "# "; I;
+                Color 15: Print "ENTER "; posnName$(I); " # ";
+
+                I$ = GetKeyPress$
+                J = Val(I$)
+
+                Select Case UCase$(I$)
+
+                    Case "A"
+                        J = 10
+
+                    Case "B"
+                        J = 11
+
+                    Case "C"
+                        J = 12
+
+                    Case "D"
+                        J = 13
+
+                    Case "E"
+                        J = 14
+
+                    Case "F", "O", "P"
+                        J = 15
+
+                End Select
+
+                If J = 15 Then
+
+                    If UCase$(I$) = "P" Then
+                        fullCtOpt(P9) = 1 - fullCtOpt(P9)
+                    End If
+
+                    If UCase$(I$) = "F" Then
+                        defStyles(P9) = defStyles(P9) + 1
+                        If defStyles(P9) > 5 Then defStyles(P9) = 1
+                    End If
+
+                    If UCase$(I$) = "O" Then
+                        offStyles(P9) = offStyles(P9) + 1
+                        If offStyles(P9) > 2 Then offStyles(P9) = 0
+                    End If
+
+                    Color 14
+                    Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
+
+                    Locate 21, 32
+                    Color 15: Print "O";
+                    Color 3: Print "FFENSE STYLE-";
+                    Color 7: Print offStyleDesc$(offStyles(P9))
+
+                    Locate 22, 32
+                    Color 3: Print "DE";
+                    Color 15: Print "F";
+                    Color 3: Print "ENSE STYLE-";
+                    Color 7: Print defStyleDesc$(defStyles(P9))
+
+                    Locate 23, 32
+                    Color 3: Print "FULL COURT ";
+                    Color 15: Print "P";
+                    Color 3: Print "RESS-";
+                    Color 7: Print yesNoText$(fullCtOpt(P9))
+
+                Else
+
+                    If J >= 0 And J <= 14 And gameRatings!(P9, J, 12) < 6 And players_GAME$(P9, J, 0) <> "XXX" And plyrRat_GAME(P9, J, 18) = 0 Then
+                        For I2 = 0 To 4
+                            If gameB1!(P9, I2) = J Then Exit For
+                        Next I2
+                    End If
+
+                End If
+
+            Loop Until J >= 0 And J <= 14
+
+            gameB1!(P9, I) = J
+            Z = J
+            CV% = 0
+
+            For IP% = 0 To Z
+                '--College BB also checks for player name
+                '    Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX"
+                If plyrRat_GAME(P9, IP%, 18) <> 0 Then
+                    CV% = CV% + 1
+                End If
+            Next
+
+            Print players_GAME$(P9, J, 0);
+            Locate J + 3 - CV%, 3
+            Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34): Print Left$(players_GAME$(P9, J, 0), 12)
+            Color 15, 0
+
+        Next
+
+    End If
+
+    Do
+
+        Do
+            Locate 25, 1
+            Color 12, 0: Print "# TO CHANGE (0-4) 6=NONE";
+            Locate 1, 1
+
+            I$ = GetKeyPress$
+            I1 = Val(I$)
+
+            Select Case UCase$(I$)
+                Case "O": I1 = 5
+                Case "F": I1 = 5
+                Case "P": I1 = 5
+            End Select
+
+        Loop Until I1 >= 0 And I1 <= 4 Or I1 = 6
+
+        If I1 = 5 Then
+            If UCase$(I$) = "P" Then 
+                fullCtOpt(P9) = 1 - fullCtOpt(P9) ': GoSub 105
+            End If
+
+            If UCase$(I$) = "F" Then 
+                defStyles(P9) = defStyles(P9) + 1
+                If defStyles(P9) > 5 Then defStyles(P9) = 1
+            End If
+
+            If UCase$(I$) = "O" Then 
+                offStyles(P9) = offStyles(P9) + 1
+                If offStyles(P9) > 2 Then offStyles(P9) = 0
+            End If
+
+            Color 14
+            Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
+
+            Locate 21, 32
+            Color 15: Print "O";
+            Color 3: Print "FFENSE STYLE-";
+            Color 7: Print offStyleDesc$(offStyles(P9))
+
+            Locate 22, 32
+            Color 3: Print "DE";
+            Color 15: Print "F";
+            Color 3: Print "ENSE STYLE-";
+            Color 7: Print defStyleDesc$(defStyles(P9))
+
+            Locate 23, 32
+            Color 3: Print "FULL COURT ";
+            Color 15: Print "P";
+            Color 3: Print "RESS-";
+            Color 7: Print yesNoText$(fullCtOpt(P9))
+
+        End If
+
+        If I1 <= 4 Then
+
+            If xFactor = 50 And I1 = ballCarrier And P9 = P Then
+
+                Locate 20, 29
+                Color 14, 0: Print players_GAME$(P9, gameB1!(P9, I1), 0); " IS AT THE FT LINE"
+
+            Else
+
+                Locate 25, 1: Print Space$(25);
+
+                J = gameB1!(P9, I1)
+                Z = J
+                CV% = 0
+
+                For IP% = 0 To Z:
+                    '-- College BB also checks for player Name
+                    '   ... Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX"
+                    If plyrRat_GAME(P9, IP%, 18) <> 0 Then CV% = CV% + 1
+                Next
+
+                Locate J + 3 - CV%, 3
+                Color 15, 0: Print Left$(players_GAME$(P9, J, 0), 12)
+
+                Do
+
+                    Locate I1 + 20, 1: Print Space$(26);
+
+                    gameB1!(P9, I1) = -1
+
+                    Locate , 1
+                    Color 2: Print Using "# "; I1;
+                    Color 15: Print "ENTER "; posnName$(I1); " # ";
+
+                    I$ = GetKeyPress$
+                    J = Val(I$)
+
+                    Select Case UCase$(I$)
+                        Case "A": J = 10
+                        Case "B": J = 11
+                        Case "C": J = 12
+                        Case "D": J = 13
+                        Case "E": J = 14
+                        Case "F", "O", "P": J = 15
+                    End Select
+
+                    If J = 15 Then
+                        If UCase$(I$) = "P" Then fullCtOpt(P9) = 1 - fullCtOpt(P9) ': GoSub 105
+                        If UCase$(I$) = "F" Then defStyles(P9) = defStyles(P9) + 1: If defStyles(P9) > 5 Then defStyles(P9) = 1
+                        If UCase$(I$) = "O" Then offStyles(P9) = offStyles(P9) + 1: If offStyles(P9) > 2 Then offStyles(P9) = 0
+                    Else
+
+                        If J >= 0 And J <= 14 And gameRatings!(P9, J, 12) < 6 And players_GAME$(P9, J, 0) <> "XXX" And plyrRat_GAME(P9, J, 18) = 0 Then
+                            For I2 = 0 To 4:
+                                If gameB1!(P9, I2) = J Then Exit For
+                            Next I2
+                        End If
+
+                    End If
+
+                Loop Until J >= 0 And J <= 14
+
+                gameB1!(P9, I1) = J
+                Z = J
+                CV% = 0
+
+                For IP% = 0 To Z
+                    '-- College BB also checks for player Name
+                    '   ... Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX"
+                    If plyrRat_GAME(P9, IP%, 18) <> 0 Then CV% = CV% + 1
+                Next
+
+                Print players_GAME$(P9, J, 0);
+                Locate J + 3 - CV%, 3
+                Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34): Print Left$(players_GAME$(P9, J, 0), 12)
+                Color 15, 0
+
+            End If
+
+        End If
+
+    Loop Until I1 = 6
+
+    'Cls
+
+End Sub
+
+
+'----------------------------------------
+'         PlayItSafe Subroutine
+'----------------------------------------
+'This subroutine lets the user review all
+'players who are taking it safe on defense
+'and determine if they should play normal.
+Sub PlayItSafe ()
+
+    skipSelection% = 0
+    skipPlaySafe% = 0
+
+    Cls
+
+    A = 0
+    S2 = 1
+    S3 = 1
+    SW = 0
+
+    For ZZ = 0 To 4
+
+        If gameRatings!(P9, gameB1!(P9, ZZ), 22) = 50 Then
+            A = A + 1
+            If SW = 0 Then Print: Print "THE FOLLOWING PLAYER(S) ARE PLAYING SAFE BUT CAN NOW PLAY NORMAL IF YOU WISH": SW = 1
+        End If
+
+        If gameRatings!(P9, gameB1!(P9, ZZ), 22) = 50 And SW = 1 And S2 < 6 Then
+            Locate S2 + 3, 1
+            Print S2; "-"; players_GAME$(P9, gameB1!(P9, ZZ), 0)
+            P5(A) = S2
+            P4(A) = ZZ
+            S2 = S2 + 1
+            S3 = S3 + 1
+        End If
+
+    Next ZZ
+
+    If SW <> 0 Then
+
+        A = 1
+        Print
+        Print "Z - CONTINUE"
+
+        Do
+
+            Do
+
+                I$ = GetKeyPress$
+
+                If UCase$(I$) = "Z" Then
+                    If MJ = 0 Then skipSelection% = 1
+                    If MJ = 25 Then skipPlaySafe% = 1
+                Else
+                    playChoice = Val(I$)
+                End If
+
+            Loop Until playChoice <= 1 And playChoice <= (S2 + 1) Or UCase$(I$) = "Z"
+
+            If skipSelection% <> 1 Then
+
+                A = playChoice
+
+                If playChoice = P5(playChoice) Then
+
+                    gameRatings!(P9, gameB1!(P9, P4(A)), 17) = gameRatings!(P9, gameB1!(P9, P4(A)), 17) * 3
+                    gameRatings!(P9, gameB1!(P9, P4(A)), 22) = 0
+
+                    Locate P5(A) + 3, 20
+                    Print players_GAME$(P9, gameB1!(P9, P4(A)), 0); " WILL NOW PLAY NORMAL DEFENSE!"
+                    Call RATINGTABLES
+
+                    D1(P9) = D1(P9) - 1
+                    A = A + 1
+                    MJ = 25
+
+                End If
+
+            End If
+
+        Loop Until playChoice <> P5(6) Or UCase$(I$) = "Z"
+
+    End If
+
+    If skipPlaySafe% <> 1 Then
+
+        A = 0
+        S2 = 1
+        skipKey% = 0
+
+        For ZZ = 0 To 4
+
+            If quarter <= 2 And gameRatings!(P9, gameB1!(P9, ZZ), 12) >= 3 And gameRatings!(P9, gameB1!(P9, ZZ), 22) = 0 Or gameRatings!(P9, gameB1!(P9, ZZ), 12) = 5 And gameRatings!(P9, gameB1!(P9, ZZ), 22) = 0 Then
+
+                A = A + 1
+
+                If S2 = 1 Then
+                    Cls
+                    Print
+                    Print "THE FOLLOWING PLAYER(S) CAN BE MADE TO PLAY SAFE IF YOU WISH"
+                    Print
+                End If
+
+            End If
+
+            If A = 0 And ZZ > 3 Then
+                skipKey% = 1
+            Else
+                If S2 = A And S2 < 6 Then
+                    Print S2; "- "; players_GAME$(P9, gameB1!(P9, ZZ), 0)
+                    P5(A) = S2
+                    P4(A) = ZZ
+                    S2 = S2 + 1
+                    S3 = S3 + 1
+                End If
+            End If
+
+        Next ZZ
+
+        If skipKey% <> 1 Then
+
+            A = 1
+            Print
+            Print "Z - CONTINUE"
+
+            Do
+
+                I$ = GetKeyPress$
+
+                playChoice = Val(I$)
+
+                If UCase$(I$) <> "Z" Then
+
+                    A = playChoice
+
+                    If playChoice = P5(playChoice) Then
+
+                        gameRatings!(P9, gameB1!(P9, P4(A)), 17) = Int((gameRatings!(P9, gameB1!(P9, P4(A)), 17) + 1) / 3)
+                        gameRatings!(P9, gameB1!(P9, P4(A)), 22) = 50
+
+                        Locate P5(A) + 3, 20
+                        Print players_GAME$(P9, gameB1!(P9, P4(A)), 0); " WILL NOW PLAY SAFE!"
+                        Call RATINGTABLES
+
+                        D1(P9) = D1(P9) + 1
+                        A = A + 1
+                        S3 = S3 + 1
+
+                    End If
+
+                End If
+
+            Loop Until playChoice >= 1 And playChoice <= (S2 + 1) Or UCase$(I$) = "Z"
+
+        End If
+
+    End If
+
+    'Cls
+    MJ = 0
+    FO = 99
+
+    If quarter = 1 And gameClock! = 720 Then FO = 0
+
+End Sub
+
+
+'----------------------------------------
+'         WHOGESTBALL Subroutine
+'----------------------------------------
+'This subroutine essentially calculates
+'who receives the ball during a pass.
+Sub WHOGETSBALL
+
+    CNT% = 0
+
+    While (CNT% < 4)
+
+        CNT% = CNT% + 1
+
+        If CNT% <> 4 Then
+
+            M9 = 0
+            ballCarrier = Int(Rnd(1) * 5)
+            Call Rolld100(RN0)
+
+            If RN0 > 30 Then
+
+                For I = 0 To 4
+
+                    M8 = Int(plyrRat_GAME(P, gameB1!(P, I), 2) / plyrRat_GAME(P, gameB1!(P, I), 0) + .5) - gameRatings!(P, gameB1!(P, I), 7)
+
+                    If M8 <= 0 Then
+                        M8 = 0
+                        If gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12) > 0 Then
+                            M8 = gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12)
+                        End If
+                    End If
+
+                    If M8 >= M9 Then
+                        ballCarrier = I
+                        M9 = M8
+                    End If
+
+                Next I
+
+            End If
+
+        End If
+
+    Wend
+
+End Sub
+
+
+'----------------------------------------
+'         PlayerCalcs Subroutine
+'----------------------------------------
+'This subroutine does some kind of changes
+'to players related to substitutions.
+Sub PlayerCalcs ()
+
+    M1 = 0
+    M2 = 0
+    M3 = 0
+    M4 = 0
+
+    'This translates close to, but not exactly:
+    'If human player on offense and xFactor = 50
+    If Not (playerMode = 1 And P9 = compTeam And xFactor = 50 Or playerMode = 2 And P9 = P And xFactor = 50) Then
+
+        For I1 = 0 To 14
+
+            M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
+
+            If quarter < 4 And M6 <= 0 Or quarter = 4 And gameClock! > 120 And M6 <= 0 Then M1 = M1 + 1
+
+            If players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or quarter = 1 And gameRatings!(P9, I1, 12) >= 2 Or quarter = 2 And gameRatings!(P9, I1, 12) >= 4 Or quarter = 3 And gameRatings!(P9, I1, 12) >= 5 Or quarter = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5 Then M2 = M2 + 1
+
+            If I1 <= 4 Then
+                M6 = gameRatings!(P9, gameB1!(P9, I1), 3) - gameRatings!(P9, gameB1!(P9, I1), 7) - gameRatings!(P9, gameB1!(P9, I1), 11) - gameRatings!(P9, gameB1!(P9, I1), 12)
+
+                If M6 <= 0 And quarter < 4 Or M6 <= 0 And quarter = 4 And gameClock! > 120 Then M3 = M3 + 1
+
+                If players_GAME$(P9, gameB1!(P9, I1), 0) = "XXX" Or gameRatings!(P9, gameB1!(P9, I1), 12) >= 6 Or plyrRat_GAME(P9, gameB1!(P9, I1), 18) <> 0 Or quarter = 1 And gameRatings!(P9, gameB1!(P9, I1), 12) >= 2 Or quarter = 2 And gameRatings!(P9, gameB1!(P9, I1), 12) >= 4 Or quarter = 3 And gameRatings!(P9, gameB1!(P9, I1), 12) >= 5 Or quarter = 4 And gameClock! > 300 And gameRatings!(P9, gameB1!(P9, I1), 12) = 5 Then M4 = M4 + 1
+
+            End If
+        Next I1
+
+        If M3 >= 1 And 5 - M3 < 15 - M1 Or quarter = 4 And gameClock! < 120 Or quarter > 4 Or M4 >= 1 And M2 < 14 Then
+            Call ComputerCoach
+        End If
+
+    End If
+
+    If quarter = 4 And gameClock! <= 120 Then G9%(P9) = 1
+
+End Sub
+
+
+'----------------------------------------
+'        CreditAssists Subroutine
+'----------------------------------------
+'This subroutine almost certainly does
+'something to credit players with assists,
+'but it's not clear why it needs to use
+'a random number.
+Sub CreditAssists ()
+
+    Call Rolld100(RN0)
+
+    If RN0 <= F7%(P, 7) Then
+
+        iterations = 0
+
+        Do
+
+            skipM8% = 0
+
+            totalAssisst = 0
+
+            RN1 = Int(Rnd(1) * F5%(P, 2)) + 1
+
+            For M8 = 0 To 4
+
+                totalAssisst = totalAssisst + gameRatings!(P, gameB1!(P, M8), 25)
+
+                If RN1 <= totalAssisst Then
+                    skipM8% = 1
+                    Exit For
+                End If
+
+            Next M8
+
+            If skipM8% = 0 Then M8 = Int(Rnd(1) * 5)
+
+            totalAssisst = M8
+
+            Locate 7, 25
+
+            If players_GAME$(P, gameB1!(P, ballCarrier), 0) <> players_GAME$(P, gameB1!(P, M8), 0) Then
+                gameRatings!(P, gameB1!(P, M8), 14) = gameRatings!(P, gameB1!(P, M8), 14) + 1
+            End If
+
+            iterations = iterations + 1
+
+            '-- Currently I'm preventing an infinite loop by counting iterations
+            '-- Infinite loops happen very rarely: about 0.5% of games. However,
+            '-- regardless of what causes the issue, there's no reason it should
+            '-- take more than 5 passes through this. (there are 5 ball carriers)
+
+            '-- In the future I hope to find the root cause of the loops.
+            '-- Currently I know it's because this loop condition below is not met.
+            '-- That is, M8 stays as value 0 when the ball carrier is 0, so the
+            '-- player names are never different.
+
+        Loop Until players_GAME$(P, gameB1!(P, ballCarrier), 0) <> players_GAME$(P, gameB1!(P, M8), 0) Or iterations = 5
+
+    End If
+
+End Sub
+
+'----------------------------------------
+'       ReboundOffense Subroutine
+'----------------------------------------
+'This subroutine determines something to
+'do with rebounds for one team (Offense?)
+Sub ReboundOffense ()
+
+    790 '
+    RB = 0
+
+    For I = 0 To 4:
+
+        rebRatings(I) = 0
+        XZ = gameRatings!(P, gameB1!(P, I), 21)
+
+        If Not (quarter > 2 Or quarter = 2 And gameClock! <= 120) Then
+
+            If gameRatings!(P, gameB1!(P, I), 3) - gameRatings!(P, gameB1!(P, I), 7) - gameRatings!(P, gameB1!(P, I), 11) - gameRatings!(P, gameB1!(P, I), 12) <= 0 Then
+                XZ = XZ * .5
+            End If
+
+        End If
+
+        rebRatings(I) = rebRatings(I) + XZ
+        RB = RB + XZ
+
+    Next
+
+    rndReb = Rnd(1) * RB
+
+    For ballCarrier = 0 To 4
+        If rndReb <= rebRatings(ballCarrier) Then
+            skipRandom% = 1
+            Exit For
+        Else
+            rebRatings(ballCarrier + 1) = rebRatings(ballCarrier + 1) + rebRatings(ballCarrier)
+        End If
+    Next
+
+    If skipRandom% = 0 Then
+        ballCarrier = Int(Rnd(1) * 5)
+    End If
+
+End Sub
+
+'----------------------------------------
+'       ReboundDefense Subroutine
+'----------------------------------------
+'This subroutine determines something to
+'do with rebounds for one team (Defense?)
+Sub ReboundDefense ()
+
+    795 '
+    RB = 0
+
+    For I = 0 To 4
+
+        rebRatings(I) = 0
+        XZ = gameRatings!(1 - P, gameB1!(1 - P, I), 2)
+
+        If Not (quarter > 2 Or quarter = 2 And gameClock! <= 120) Then
+            If gameRatings!(1 - P, gameB1!(1 - P, I), 3) - gameRatings!(1 - P, gameB1!(1 - P, I), 7) - gameRatings!(1 - P, gameB1!(1 - P, I), 11) - gameRatings!(1 - P, gameB1!(1 - P, I), 12) <= 0 Then
+                XZ = XZ * .5
+            End If
+        End If
+
+        rebRatings(I) = rebRatings(I) + XZ
+        RB = RB + XZ
+
+    Next
+
+    rndReb = Rnd(1) * RB
+
+    For ballCarrier = 0 To 4
+        If rndReb <= rebRatings(ballCarrier) Then
+            skipRandom% = 1
+            Exit For
+        Else
+            rebRatings(ballCarrier + 1) = rebRatings(ballCarrier + 1) + rebRatings(ballCarrier)
+        End If
+    Next
+
+    If skipRandom% = 0 Then
+        ballCarrier = Int(Rnd(1) * 5)
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'           Choices Subroutine
+'----------------------------------------
+'This subroutine is tied into the change
+'of possession for a team. It is notable
+'that it clears Play-by-Play text strings,
+'checks the game clocks, clears Play-by-
+'play and sets values to some other var-
+'iables.
+Sub Choices ()
+
+    810 '
+    nbrLines = 1
+    A1$ = ""
+    B1$ = ""
+    C1$ = ""
+    D1$ = ""
+    E1$ = ""
+    F1$ = ""
+    G1$ = ""
+    H1$ = ""
+
+    If playerMode <> 0 Then
+
+        If playerMode = 2 Then
+            P9 = 0
+            Call PlayerCalcs
+            P9 = 1
+            Call PlayerCalcs
+        End If
+
+        If playerMode = 1 Then
+            P9 = compTeam
+            Call PlayerCalcs
+        End If
+
+    End If
+
+    If playerMode = 2 Or playerMode = 1 And P = compTeam Then
+
+        S2 = 0
+        P9 = P
+        C1 = 2
+        Call CheckGameClock
+
+    Else
+
+        Call CLEARPBPBOX
+        Color 14, 0
+        Print "<ENTER>";
+        Color 15, 0
+        Print "-CONTINUE"
+        Print "1-TIMEOUT "; gameTeams$(P); " -"; timeouts(P)
+
+        Do
+
+            I$ = GetKeyPress$
+            P3 = Val(I$)
+
+            If P3 <> 1 Then
+                S2 = 0
+                P9 = P
+                C1 = 2
+                Call CheckGameClock
+            Else
+                If Not (timeouts(P) <= 0 Or P3 = 1 And P = compTeam And playerMode = 1) Then
+                    timeouts(P) = timeouts(P) - 1
+                    Color 15, 0
+                    Call Substitutions
+                End If
+                'Exit Do
+            End If
+
+        Loop Until Not (P3 = 1 And timeouts(P) <= 0 Or P3 = 1 And P = compTeam And playerMode = 1)
+
+        Call WINDEX
+
+    End If
+
+End Sub
+
+'----------------------------------------
+'        Substitutions Subroutine
+'----------------------------------------
+'This subroutine seems very similar to
+'"Choices", but is different in other
+'ways. The names were given very much
+'without knowing anything of what the
+'routine was doing.
+Sub Substitutions ()
+
+    Do
+
+        nbrLines = 1
+        A1$ = ""
+        B1$ = ""
+        C1$ = ""
+        D1$ = ""
+        E1$ = ""
+        F1$ = ""
+        G1$ = ""
+        H1$ = ""
+
+        If playerMode = 2 Then
+            'Computer vs. Computer
+            P9 = 0
+            Call PlayerCalcs
+            P9 = 1
+            Call PlayerCalcs
+        End If
+
+        If playerMode = 1 Then
+            'Computer vs. Human
+            P9 = compTeam
+            Call PlayerCalcs
+        End If
+
+        FO = 0
+
+        Call CLEARPBPBOX
+
+        If playerMode = 2 Then
+            'Computer vs. Computer
+            S2 = 0
+            P9 = P
+            C1 = 2
+
+            Call CheckGameClock
+            Call RATINGTABLES
+
+        Else
+
+            'At least 1 human
+            Call SCOREBOARD
+            Locate 10, 1
+            Color 14, 0
+            Print "<ENTER>";
+            Color 15, 0
+            Print "-CONTINUE"
+            Print "1-SUB "; gameTeams$(P)
+            Print "2-SUB "; gameTeams$(D)
+
+            Do
+                I$ = GetKeyPress$
+                P3 = Val(I$)
+            Loop Until P3 >= 1 And P3 <= 2 Or I$ = Chr$(13)
+
+            If P3 < 1 Or P3 > 2 Or playerMode = 1 And P3 = 1 And P = compTeam Or playerMode = 1 And P3 = 2 And D = compTeam Then
+
+                S2 = 0
+                P9 = P
+                C1 = 2
+
+                Call CheckGameClock
+                Call RATINGTABLES
+
+                If LC% = 1 Then
+
+                    LC% = 0
+                    Call CheckGameClock
+                    Call SCOREBOARD
+
+                    If pbpDelay! <> 0 Then
+                        Call WINDEX
+                    End If
+
+                End If
+
+            Else
+
+                If P3 = 1 Then 
+                    S2 = P
+                End If
+                If P3 = 2 Then 
+                    S2 = D
+                End If
+
+                C1 = 1
+                P9 = S2
+
+                Call PlayStyle
+                Call PlayItSafe
+
+                P9 = P
+                LC% = 1
+
+            End If 'Done checking parameters
+
+            Call WINDEX
+
+        End If 'Done checking computer control
+
+    Loop Until LC% = 0 Or playerMode = 2
+
+End Sub
+
+'----------------------------------------
+'            Fouls Subroutine
+'----------------------------------------
+'This subroutine handles calculations and
+'Play-by-Play for fouls. It also tries to
+'determine if players have fouled out.
+'Finally, it handles the aftermath of a
+'foul / posession change.
+Sub Fouls (skipRandom%)
+
+    If skipRandom% = 0 Then
+
+        fouler = 0
+        M9 = Int(Rnd(1) * F5%(D, 0)) + 1
+
+        For M8 = 0 To 4:
+            fouler = fouler + gameRatings!(D, gameB1!(D, M8), 17)
+            If M9 <= fouler Then
+                Exit For
+            End If
+        Next M8
+
+        If M8 < 0 Or M8 > 4 Then M8 = Int(Rnd(1) * 5)
+
+        fouler = M8
+
+    End If
+
+    gameRatings!(D, gameB1!(D, fouler), 12) = gameRatings!(D, gameB1!(D, fouler), 12) + 1
+    P2(D) = P2(D) + 1
+
+    Call UPDATESCREEN
+
+    If gameRatings!(D, gameB1!(D, fouler), 3) - gameRatings!(D, gameB1!(D, fouler), 7) - gameRatings!(D, gameB1!(D, fouler), 11) - gameRatings!(D, gameB1!(D, fouler), 12) = 0 Then 
+        gameRatings!(D, gameB1!(D, fouler), 3) = gameRatings!(D, gameB1!(D, fouler), 3) + 1
+    End If
+
+    If gameRatings!(D, gameB1!(D, fouler), 12) < 6 Then
+
+        If pbpOpt = 0 Then
+            pbpString$ = "FOUL NUMBER" + Str$(gameRatings!(D, gameB1!(D, fouler), 12)) + " CALLED ON " + players_GAME$(D, gameB1!(D, fouler), 0)
+            Call PBP(P)
+        Else
+            'pbpOpt = 1
+            If pbpDelay! <> 0 Then
+                Call WINDEX
+                Print "FOUL ON "; players_GAME$(D, gameB1!(D, fouler), 0)
+                Call DELAY
+                Print "HE HAS "; gameRatings!(D, gameB1!(D, fouler), 12)
+                Call DELAY
+            End If
+        End If
+
+        Call DELAY
+
+    Else
+        'gameRatings!(D, gameB1!(D, fouler), 12) >= 6
+        M9 = 0
+
+        For I3 = 0 To 14
+            If I3 <> gameB1!(D, fouler) And players_GAME$(D, I3, 1) <> "XXX" And plyrRat_GAME(D, I3, 18) = 0 Then
+                M9 = M9 + 1
+            End If
+        Next
+
+        For I3 = 0 To 14
+            If I3 <> gameB1!(D, fouler) And players_GAME$(D, I3, 1) <> "XXX" And plyrRat_GAME(D, I3, 18) = 0 Then
+                If gameRatings!(D, I3, 0) <= gameRatings!(D, gameB1!(D, fouler), 0) Then gameRatings!(D, I3, 3) = gameRatings!(D, I3, 3) + Int((gameRatings!(D, gameB1!(D, fouler), 3) / M9) + .5)
+            End If
+        Next I3
+
+        If pbpOpt = 0 Then
+            pbpString$ = "FOUL CALLED ON " + players_GAME$(D, gameB1!(D, fouler), 0)
+            Call PBP(P)
+        Else
+            'pbpOpt = 1
+            If pbpDelay! <> 0 Then
+                Call WINDEX
+                Print "FOUL ON "; players_GAME$(D, gameB1!(D, fouler), 0)
+                Call DELAY
+            End If
+        End If
+
+        pbpString$ = "HE HAS JUST FOULED OUT !!!"
+
+        If pbpDelay! <> 0 Then 
+            If pbpOpt = 0 Then
+                Call PBP(P)
+            Else
+                Print pbpString$
+            End If
+        End If
+
+        Call DELAY
+        C9 = 9
+
+        If P2(D) > bonusFoulNum Then 
+            xFactor = 50
+        End If
+
+        P3 = 1
+
+        ' *** we need to disable player from roster
+
+        If playerMode = 0 Or playerMode = 1 And D = 1 - compTeam Then
+            P9 = D
+            C1 = 1
+            Call PlayStyle
+            Call PlayItSafe
+            Call Substitutions
+            Call SCOREBOARD
+        End If
+
+        Call CheckGameClock
+
+        xFactor = 0
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'          LOADSTATS Subroutine
+'----------------------------------------
+'This subroutine loads team schedule stats
+'data into arrays for each team from their
+'corresponding stat file.
+Sub LOADSTATS ()
+
+    Dim nbrStats
+
+    Shared teamScore(), oppScore()
+    Shared oppName$(), locIndicator$()
+
+    For I = 0 To 1
+
+        Cls
+
+        statFile$ = nameStatFile$(gameTeams$(I))
+
+        If _FileExists(diskPaths$(1) + statFile$ + "S") Then
+
+            Open diskPaths$(1) + statFile$ + "S" For Input As #1
+
+            Input #1, nbrStats
+
+            For I1 = 1 To MAX_SCHED_STATS:
+                Input #1, teamScore(I1)
+            Next
+
+            For I1 = 1 To MAX_SCHED_STATS:
+                Input #1, oppName$(I1)
+            Next
+
+            For I1 = 1 To MAX_SCHED_STATS:
+                Input #1, oppScore(I1)
+            Next
+
+            For I1 = 1 To MAX_SCHED_STATS:
+                Input #1, locIndicator$(I1)
+            Next
+
+            Close #1
+
+            For I1 = 1 To nbrStats
+                If teamScore(I1) > oppScore(I1) Then Z5(I) = Z5(I) + 1
+                If teamScore(I1) < oppScore(I1) Then Z6(I) = Z6(I) + 1
+            Next
+
+        End If
+
+    Next
+
+End Sub
+
+
+'----------------------------------------
+'          SCOREBOARD Subroutine
+'----------------------------------------
+'This subroutine draws up the main screen
+'for the game interface, including a frame,
+'scoreboard, team options and rosters
+Sub SCOREBOARD ()
+
+    Cls
+
+    Call TICKERUPDATE
+
+    'Frames
+    Color 9, 0
+
+    Locate 3, 11: Print Chr$(218); String$(5, 196); Chr$(191)
+    Locate , 11: Print Chr$(179);: Locate , 17: Print Chr$(179)
+    Locate , 11: Print Chr$(192); String$(5, 196); Chr$(217)
+
+    Locate 3, 58: Print Chr$(218); String$(5, 196); Chr$(191)
+    Locate , 58: Print Chr$(179);: Locate , 64: Print Chr$(179)
+    Locate , 58: Print Chr$(192); String$(5, 196); Chr$(217)
+
+    'Team 1
+    Locate 2, 1
+    Locate , 9
+    Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0);
+
+    'Game Clock - Minutes
+    Color 15, 0
+    Locate 1, 37
+    Print Using "##"; Int(gameClock! / 60);: Print ":";
+
+    'Game Clock - Seconds
+    If gameClock! - Int(gameClock! / 60) * 60 < 10 Then
+        Print "0";
+        Print Using "#"; gameClock! - Int(gameClock! / 60) * 60;
+    Else
+        Print Using "##"; gameClock! - Int(gameClock! / 60) * 60;
+    End If
+
+    'Team 2
+    Locate 2, 56
+    Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1)
+
+    'Score Team 1
+    Color 14, 0
+    Locate 4, 13: Print Using "###"; score(0, 0);
+
+
+    'Period Designation
+    Locate 2, 35
+    Print Using " PERIOD #"; quarter;
+    If quarter > 4 Then Locate , 35: Print Using "OVERTIME #"; quarter - 4
+
+    'Score Team 2
+    Color 14, 0
+    Locate 4, 60: Print Using "###"; score(1, 0)
+
+    'Turnovers
+    Color 7
+    Locate 3, 35
+    Print Using "##  "; turnovers(0);
+    Color 12: Print "TO  ";
+    Color 7
+    Print Using "##"; turnovers(1)
+
+    'Rebounds
+    Locate , 35: Print Using "##  "; totRebounds(0);
+    Color 12: Print "RB  ";
+    Color 7: Print Using "##"; totRebounds(1)
+
+    'Fouls
+    Locate , 35: Print Using "##  "; P2(0);
+    Color 12: Print "TF  ";: Color 7
+    Print Using "##"; P2(1);
+
+    'Bonus
+    If P2(0) > bonusFoulNum - 1 And quarter <= 4 Or P2(0) > 2 And quarter > 4 Then
+        Color 0, 2
+        Locate , 46: Print "BONUS";
+        Color 7, 0
+    End If
+
+    If P2(1) > bonusFoulNum - 1 And quarter <= 4 Or P2(1) > 2 And quarter > 4 Then
+        Color 0, 2
+        Locate , 29: Print "BONUS"
+        Color 7, 0
+    End If
+
+    'Timeouts
+    Locate 6, 9: Print "TIMEOUTS:"; timeouts(0);
+    Locate , 56: Print "TIMEOUTS:"; timeouts(1)
+
+    'Team strategies / decisions
+    Locate 8, 58
+    Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print "DEF - "; defStyleDesc$(defStyles(D))
+    Locate , 58
+    Color teamRat_GAME(P, 33), teamRat_GAME(P, 34): Print "OFF - "; offStyleDesc$(offStyles(P))
+
+    Color 15, 0
+
+    Locate , 41
+    Color 14: Print "(1) ";
+    Color 15: Print "SHOOT        ";
+    Color 14: Print "ENTER";
+    Color 15: Print "-PASS"
+    Locate , 41: 
+    Color 14: Print "(2) ";
+    Color 15: Print gameTeams$(P); " CALL TIMEOUT     "
+    Locate , 41: 
+    Color 14: Print "(3) ";
+    Color 15: Print "COMMIT INTL FOUL (LAST 4 MIN)"
+    Locate , 41
+    Color 14: Print "(4) ";
+    Color 15: Print "SHOOT A FORCED 3-POINTER"
+    Locate , 41: 
+    Color 14: Print "(S) ";
+    Color 15: Print "SCOUT REPORT ";
+    Color 14: Print "(T) ";
+    Color 15: Print "10 MIN TICKER"
+    Locate , 41
+    Color 14: Print "(Z) ";
+    Color 15: Print "LEFT TM STGY ";
+    Color 14: Print "(/) ";
+    Color 15: Print "RIGHT TM STGY"
+
+    Locate 7, 1
+    Color 9, 0: Print String$(38, 205); Chr$(203); String$(38, 205)
+
+    Locate 8, 1
+
+    For I = 1 To 8: Locate , 39: Print Chr$(186): Next
+
+    'Team 1 Overview
+    Locate 17, 1
+    Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0);
+
+    'Win/Loss record from current stats files
+    Print Using " [##"; Z5(0);: Print "-";: Print Using "##]"; Z6(0)
+
+    Color 14, 0: Print "# NAME         FG FT RB CX PA DF PT  F"
+
+    'Team 1 Roster
+    For I1 = 0 To 4
+
+        '#
+        Color 2: Print Using "# "; I1;
+
+        Color 3
+
+        'Name
+        Color 15: Print Left$(players_GAME$(0, gameB1!(0, I1), 0), 12);
+        Locate , 16
+
+        J = (gameRatings!(0, gameB1!(0, I1), 3)) - gameRatings!(0, gameB1!(0, I1), 7) - gameRatings!(0, gameB1!(0, I1), 11) - gameRatings!(0, gameB1!(0, I1), 12)
+
+        If J <= 0 Then J = 0
+
+        'FG
+        Print Using "##"; gameRatings!(0, gameB1!(0, I1), 0);
+        'FT
+        Print Using "### "; gameRatings!(0, gameB1!(0, I1), 1);
+
+        'RB
+        If P = 0 Then
+            Print Using "##"; gameRatings!(0, gameB1!(0, I1), 21) * 2 / 10;
+        Else
+            Print Using "##"; gameRatings!(0, gameB1!(0, I1), 2) * 2 / 10;
+        End If
+
+        If J <= 0 And (quarter = 1 Or quarter = 2 Or quarter = 3 Or quarter = 4 And gameClock! > 120) Then Color 12
+
+        Print Using "### "; J;
+        Color 15
+        Print Using "## ##"; gameRatings!(0, gameB1!(0, I1), 4) / 10; gameRatings!(0, gameB1!(0, I1), 5) / 10;
+        Print Using "###  "; gameRatings!(0, gameB1!(0, I1), 8) * 2 + gameRatings!(0, gameB1!(0, I1), 10) + threeFG(0, gameB1!(0, I1), 0);
+
+        If gameRatings!(0, gameB1!(0, I1), 12) >= 5 Then Color 12
+        Print Using "#"; gameRatings!(0, gameB1!(0, I1), 12)
+        Color 15
+
+    Next I1
+
+    'Team 2 Overview
+    Locate 17, 40
+    Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1);
+
+    'Win/Loss record from current stats files
+    Print Using " [##"; Z5(1);: Print "-";: Print Using "##]"; Z6(1)
+
+    Color 14, 0
+    Locate , 40: Print "# NAME          FG FT RB CX PA DF PT  F"
+
+    'Team 2 Roster
+    For I1 = 0 To 4: Locate , 40: Color 2: Print Using "# "; I1;
+
+        Color 15
+        Print Left$(players_GAME$(1, gameB1!(1, I1), 0), 12);
+        Locate , 56
+
+        J = (gameRatings!(1, gameB1!(1, I1), 3)) - gameRatings!(1, gameB1!(1, I1), 7) - gameRatings!(1, gameB1!(1, I1), 11) - gameRatings!(1, gameB1!(1, I1), 12)
+
+        If J <= 0 Then J = 0
+
+        Print Using "##"; gameRatings!(1, gameB1!(1, I1), 0);
+        Print Using "### "; gameRatings!(1, gameB1!(1, I1), 1);
+
+        If P = 1 Then
+            Print Using "##"; gameRatings!(1, gameB1!(1, I1), 21) * 2 / 10;
+        Else
+            Print Using "##"; gameRatings!(1, gameB1!(1, I1), 2) * 2 / 10;
+        End If
+
+        If J <= 0 And (quarter = 1 Or quarter = 2 Or quarter = 3 Or quarter = 4 And gameClock! > 120) Then Color 12
+
+        Print Using "### "; J;
+
+        Color 15
+
+        Print Using "## ##"; gameRatings!(1, gameB1!(1, I1), 4) / 10; gameRatings!(1, gameB1!(1, I1), 5) / 10;
+        Print Using "###  "; gameRatings!(1, gameB1!(1, I1), 8) * 2 + gameRatings!(1, gameB1!(1, I1), 10) + threeFG(1, gameB1!(1, I1), 0);
+
+        If gameRatings!(1, gameB1!(1, I1), 12) >= 5 Then Color 12
+        Print Using "#"; gameRatings!(1, gameB1!(1, I1), 12)
+        Color 15
+
+    Next I1
+
+    Color 9, 0
+    For I = 1 To 9:
+        Locate 14 + I, 39: Print Chr$(186)
+    Next
+
+    'Color 9, 0
+    Locate 16, 1: Print String$(79, 205)
+    Locate 16, 39: Print Chr$(206)
+    Color 7, 0
+
+End Sub
+
+
+'----------------------------------------
+'         ColorChange Subroutine
+'----------------------------------------
+'This routine checks to see if both teams
+'have conflicting primary colors. 
+'If so, it will substitute the secondary 
+'color with white/grey and reverse them.
+'In essence, it's the digital equivalent 
+'of assigning an alternate jersey color.
+Sub ColorChange ()
+
+    If teamRat_GAME(1, 33) = 15 And teamRat_GAME(1, 34) = 4 Then 
+        teamRat_GAME(1, 33) = 4
+        teamRat_GAME(1, 34) = 7
+    End If
+
+    If teamRat_GAME(1, 33) = 15 And teamRat_GAME(1, 34) = 1 Then 
+        teamRat_GAME(1, 33) = 1
+        teamRat_GAME(1, 34) = 7
+    End If
+
+    If teamRat_GAME(1, 33) = 0 And teamRat_GAME(1, 34) = 4 Then 
+        teamRat_GAME(1, 33) = 12
+        teamRat_GAME(1, 34) = 0
+    End If
+
+    If teamRat_GAME(1, 33) = 1 And teamRat_GAME(1, 34) = 7 Then 
+        teamRat_GAME(1, 33) = 15
+        teamRat_GAME(1, 34) = 1
+    End If
+
+    If teamRat_GAME(1, 33) = 4 And teamRat_GAME(1, 34) = 7 Then 
+        teamRat_GAME(1, 33) = 15
+        teamRat_GAME(1, 34) = 4
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'        QUARTERTOTAL Subroutine
+'----------------------------------------
+'This subroutine calculates quarter totals
+'for all stat categories right before the
+'period end
+Sub QUARTERTOTAL ()
+
+    For I = 0 To 1
+
+        Erase statTotals
+
+        For I1 = 0 To 14
+            statTotals(0) = statTotals(0) + gameRatings!(I, I1, 8)
+            statTotals(1) = statTotals(1) + gameRatings!(I, I1, 7)
+            statTotals(2) = statTotals(2) + gameRatings!(I, I1, 10)
+            statTotals(3) = statTotals(3) + gameRatings!(I, I1, 9)
+            statTotals(4) = statTotals(4) + gameRatings!(I, I1, 11)
+            statTotals(5) = statTotals(5) + (gameRatings!(I, I1, 8) * 2) + gameRatings!(I, I1, 10) + threeFG(I, I1, 0)
+            statTotals(13) = statTotals(13) + threeFG(I, I1, 0)
+            statTotals(14) = statTotals(14) + threeFG(I, I1, 1)
+            statTotals(6) = teamFouls(I)
+            statTotals(7) = statTotals(7) + gameRatings!(I, I1, 14)
+            statTotals(8) = statTotals(8) + gameRatings!(I, I1, 15)
+            statTotals(9) = statTotals(9) + gameRatings!(I, I1, 13)
+            statTotals(11) = statTotals(11) + gameRatings!(I, I1, 24)
+            statTotals(12) = statTotals(12) + gameRatings!(I, I1, 23)
+            statTotals(10) = statTotals(10) + timePlayed(I, I1)
+        Next
+
+        If quarter = 1 Or quarter = 2 Then
+
+            For I2 = 0 To 14
+                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2)
+            Next
+
+            For I1 = 0 To 14
+
+                For I2 = 7 To 15
+                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6)
+                Next
+
+                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10)
+                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11)
+                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13)
+                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14)
+
+            Next
+
+        End If
+
+        If quarter = 3 Then
+
+            For I2 = 0 To 14
+                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2) - QR(I, quarter - 2, I2)
+            Next
+
+            For I1 = 0 To 14
+
+                For I2 = 7 To 15
+                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6)
+                Next
+
+                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10)
+                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11)
+                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13)
+                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14)
+
+            Next
+
+        End If
+
+        If quarter = 4 Then
+
+            For I2 = 0 To 14
+                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2) - QR(I, quarter - 2, I2) - QR(I, quarter - 3, I2)
+            Next
+
+            For I1 = 0 To 14
+
+                For I2 = 7 To 15
+                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6) - QQ(I, quarter - 3, I1, I2 - 6)
+                Next
+
+                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10)
+                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11)
+                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12) - QQ(I, quarter - 3, I1, 12)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13)
+                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14) - QQ(I, quarter - 3, I1, 14)
+
+            Next
+
+        End If
+
+        If quarter = 5 Then
+
+            For I2 = 0 To 14
+                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2) - QR(I, quarter - 2, I2) - QR(I, quarter - 3, I2) - QR(I, quarter - 4, I2)
+            Next
+
+            For I1 = 0 To 14
+
+                For I2 = 7 To 15
+                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6) - QQ(I, quarter - 3, I1, I2 - 6) - QQ(I, quarter - 4, I1, I2 - 6)
+                Next
+
+                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10) - QQ(I, quarter - 4, I1, 10)
+                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11) - QQ(I, quarter - 4, I1, 11)
+                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12) - QQ(I, quarter - 3, I1, 12) - QQ(I, quarter - 4, I1, 12)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13) - QQ(I, quarter - 4, I1, 13)
+                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14) - QQ(I, quarter - 3, I1, 14) - QQ(I, quarter - 4, I1, 14)
+
+            Next
+
+        End If
+
+        If quarter = 6 Then
+
+            For I2 = 0 To 14
+                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2) - QR(I, quarter - 2, I2) - QR(I, quarter - 3, I2) - QR(I, quarter - 4, I2) - QR(I, quarter - 5, I2)
+            Next
+
+            For I1 = 0 To 14
+                For I2 = 7 To 15
+                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6) - QQ(I, quarter - 3, I1, I2 - 6) - QQ(I, quarter - 4, I1, I2 - 6) - QQ(I, quarter - 5, I1, I2 - 6)
+                Next
+                
+                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10) - QQ(I, quarter - 4, I1, 10) - QQ(I, quarter - 5, I1, 10)
+                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11) - QQ(I, quarter - 4, I1, 11) - QQ(I, quarter - 5, I1, 11)
+                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12) - QQ(I, quarter - 3, I1, 12) - QQ(I, quarter - 4, I1, 12) - QQ(I, quarter - 5, I1, 12)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13) - QQ(I, quarter - 4, I1, 13) - QQ(I, quarter - 5, I1, 13)
+                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14) - QQ(I, quarter - 3, I1, 14) - QQ(I, quarter - 4, I1, 14) - QQ(I, quarter - 5, I1, 14)
+            Next
+
+        End If
+
+        If quarter = 7 Then
+
+            For I2 = 0 To 14
+                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2) - QR(I, quarter - 2, I2) - QR(I, quarter - 3, I2) - QR(I, quarter - 4, I2) - QR(I, quarter - 5, I2) - QR(I, quarter - 6, I2)
+            Next
+
+            For I1 = 0 To 14
+
+                For I2 = 7 To 15
+                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6) - QQ(I, quarter - 3, I1, I2 - 6) - QQ(I, quarter - 4, I1, I2 - 6) - QQ(I, quarter - 5, I1, I2 - 6) - QQ(I, quarter - 6, I1, I2 - 6)
+                Next
+
+                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10) - QQ(I, quarter - 4, I1, 10) - QQ(I, quarter - 5, I1, 10) - QQ(I, quarter - 6, I1, 10)
+                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11) - QQ(I, quarter - 4, I1, 11) - QQ(I, quarter - 5, I1, 11) - QQ(I, quarter - 6, I1, 11)
+                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12) - QQ(I, quarter - 3, I1, 12) - QQ(I, quarter - 4, I1, 12) - QQ(I, quarter - 5, I1, 12) - QQ(I, quarter - 6, I1, 12)
+                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13) - QQ(I, quarter - 4, I1, 13) - QQ(I, quarter - 5, I1, 13) - QQ(I, quarter - 6, I1, 13)
+                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14) - QQ(I, quarter - 3, I1, 14) - QQ(I, quarter - 4, I1, 14) - QQ(I, quarter - 5, I1, 14) - QQ(I, quarter - 6, I1, 14)
+
+            Next
+
+        End If
+
+    Next
+
+    Erase statTotals
+
+End Sub
+
+'----------------------------------------
+'        RATINGTABLES Subroutine
+'----------------------------------------
+' ...explanation...
+Sub RATINGTABLES ()
+
+    For I = 0 To 1
+
+        F5%(I, 0) = 0
+        F5%(I, 1) = 0
+        F5%(I, 2) = 0
+        F5%(I, 3) = 0
+        F5%(I, 4) = 0
+
+        For I1 = 0 To 4
+            F5%(I, 0) = F5%(I, 0) + gameRatings!(I, gameB1!(I, I1), 17)
+            F5%(I, 1) = F5%(I, 1) + plyrRat_GAME(I, gameB1!(I, I1), 18)
+            F5%(I, 2) = F5%(I, 2) + gameRatings!(I, gameB1!(I, I1), 25)
+            F5%(I, 3) = F5%(I, 3) + gameRatings!(I, gameB1!(I, I1), 5)
+            F5%(I, 4) = F5%(I, 4) + gameRatings!(I, gameB1!(I, I1), 4) / 10
+        Next I1
+
+        F5%(I, 4) = Int((F5%(I, 4) / (F7%(I, 6) * .9)) * 100 + .5)
+
+    Next
+
+End Sub
+
+
+'----------------------------------------
+'         SCOUTREPORT Subroutine
+'----------------------------------------
+'This subroutine clears the screen so it
+'can print a quick scouting report
+Sub SCOUTREPORT ()
+
+    JJ = 13
+
+    Locate 6, 8
+    Color 0, 7
+
+    ' Top of box
+    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+    ' Sides of box
+    For II = 1 To JJ: Locate 6 + II, 8
+        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Next
+
+    ' Bottom of box
+    Locate 7 + JJ, 8
+    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+    Locate 7, 32
+
+    Print "SCOUTING REPORT"
+    Locate 8, 14: Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0);
+    Locate , 52: Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1)
+    Color 0, 7
+    Locate , 18: Print Using "###           POINTS PER GAME         ###"; (teamRat_GAME(0, 6) * 2 + teamRat_GAME(0, 8) + teamRat_GAME(0, 18)) / teamRat_GAME(0, 0); (teamRat_GAME(1, 6) * 2 + teamRat_GAME(1, 8) + teamRat_GAME(1, 18)) / teamRat_GAME(1, 0)
+    Locate , 18: Print Using " ##             FIELD GOAL %           ##"; teamRat_GAME(0, 6) / teamRat_GAME(0, 5) * 100 + D1(1); teamRat_GAME(1, 6) / teamRat_GAME(1, 5) * 100 + D1(0)
+    Locate , 18: Print Using " ##             FREE THROW %           ##"; teamRat_GAME(0, 8) / teamRat_GAME(0, 7) * 100; teamRat_GAME(1, 8) / teamRat_GAME(1, 7) * 100
+    Locate , 18: Print Using " ##          REBOUNDS PER GAME         ##"; (teamRat_GAME(0, 9) + teamRat_GAME(0, 10)) / teamRat_GAME(0, 0); (teamRat_GAME(1, 9) + teamRat_GAME(1, 10)) / teamRat_GAME(1, 0)
+    Locate , 18: Print Using " ##      TURNOVERS FORCED PER GAME     ##"; teamRat_GAME(0, 29) / teamRat_GAME(0, 0); teamRat_GAME(1, 29) / teamRat_GAME(1, 0)
+    Locate , 18: Print Using " ##    TURNOVERS COMMITTED PER GAME    ##"; teamRat_GAME(0, 15) / teamRat_GAME(0, 0); teamRat_GAME(1, 15) / teamRat_GAME(1, 0)
+    Locate , 18: Print Using " ##          STEALS PER GAME           ##"; teamRat_GAME(0, 14) / teamRat_GAME(0, 0); teamRat_GAME(1, 14) / teamRat_GAME(1, 0)
+    Locate , 18: Print Using " ##      PERSONAL FOULS PER GAME       ##"; teamRat_GAME(0, 12) / teamRat_GAME(0, 0); teamRat_GAME(1, 12) / teamRat_GAME(1, 0)
+    Locate , 18: Print Using " ##          ASSISTS PER GAME          ##"; teamRat_GAME(0, 11) / teamRat_GAME(0, 0); teamRat_GAME(1, 11) / teamRat_GAME(1, 0)
+    Locate , 18: Print Using " ##          BLOCKS PER GAME           ##"; teamRat_GAME(0, 16) / teamRat_GAME(0, 0); teamRat_GAME(1, 16) / teamRat_GAME(1, 0)
+    Locate , 18: Print Using " ##             3 POINT FG%            ##"; teamRat_GAME(0, 18) / (teamRat_GAME(0, 17) + 1) * 100 + F%(1, 4); teamRat_GAME(1, 18) / (teamRat_GAME(1, 17) + 1) * 100 + F%(0, 4)
+
+    I$ = GetKeyPress$
+
+    Color 7, 0
+
+    Call SCOREBOARD
+
+End Sub
+
+'----------------------------------------
+'        SETUPRATINGS Subroutine
+'----------------------------------------
+'This subroutine lets the user choose the
+'play style of teams (based on era) and
+'adjust contribution ratings for players
+'Everyting to do with pacing shots is
+'in this routine.
+Sub SETUPRATINGS ()
+
+    Dim FTF!, JX!, X3!
+
+    For I = 0 To 1
+
+        'Adjust Free Throw Frequency
+        Select Case YR%(I)
+
+            Case 1938 To 1954
+                FTF! = .83
+
+            Case 1954 To 1968
+                FTF! = .83
+
+            Case 1969 To 1972
+                FTF! = .91
+
+            Case 1973 To 2009
+                FTF! = 1
+
+                'This is arbitrary / temporary!
+                 '-- have been testing 1.37
+           Case Is >= 2010
+                FTF! = 1
+
+        End Select
+
+        For I1 = 0 To 14
+            'FTA / FTM
+            plyrRat_GAME(I, I1, 4) = plyrRat_GAME(I, I1, 4) * FTF!
+            plyrRat_GAME(I, I1, 5) = plyrRat_GAME(I, I1, 5) * FTF!
+        Next I1
+
+        'Team FTM
+        teamRat_GAME(I, 8) = teamRat_GAME(I, 8) * FTF!
+        'Team FTA
+        teamRat_GAME(I, 7) = teamRat_GAME(I, 7) * FTF!
+        'Opp FTM
+        teamRat_GAME(I, 22) = teamRat_GAME(I, 22) * FTF!
+        'Opp FTA
+        teamRat_GAME(I, 21) = teamRat_GAME(I, 21) * FTF!
+
+        Select Case YR%(I)
+
+            Case Is <= 1959
+                TOF%(I) = 59
+                PF%(I) = 11
+
+            Case 1960 To 1992
+                TOF%(I) = TOA%(YR%(I) - 1960)
+                PF%(I) = PFA%(YR%(I) - 1960)
+
+            Case Is >= 1993
+                TOF%(I) = 34
+                PF%(I) = 8
+
+        End Select
+
+    Next
+
+    'Handle game play for different eras
+    If YR%(0) <> YR%(1) Then
+
+        If autoPlay = 1 Then
+            I = NG%(6)
+        Else
+            Color 15, 0
+            Cls
+            Print "THESE TWO TEAMS MAY HAVE PLAYED DURING DIFFERENT ERAS AND"
+            Print "PLAYED DIFFERENT STYLES OF BASKETBALL"
+            Print
+            Print "PLAY STYLE OF:"
+            Print
+            Color 14: Print "(0) - ";: Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0)
+            Color , 0
+            Print
+            Color 14: Print "(1) - ";: Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1)
+            Color , 0
+            Print
+            Color 14: Print "(2) - ";: Color 3: Print "MAKE NO ADJUSTMENT"
+            Color 15, 0
+            Do
+                I$ = GetKeyPress$
+                I = Val(I$)
+            Loop Until I >= 0 And I <= 2
+        End If
+
+        If I <> 2 Then
+
+            HN% = 1
+            HM% = I
+
+            'Adjust FGA / G for different eras; favors the team chosen
+            JX! = (teamRat_GAME(0, 5) + teamRat_GAME(0, 19) + teamRat_GAME(1, 5) + teamRat_GAME(1, 19)) * (leagRat_GAME(I, 1) / leagRat_GAME(1 - I, 1)) / ((teamRat_GAME(1, 0) + teamRat_GAME(0, 0)) * 2) * 2 - (leagRat_GAME(I, 1) + leagRat_GAME(I, 1)) / 2
+            JY = JX!
+        
+        End If
+
+    Else
+
+        'Adjust FGA / G for both teams evenly
+        JX! = (teamRat_GAME(0, 5) + teamRat_GAME(0, 19)) / ((teamRat_GAME(1, 0) + teamRat_GAME(0, 0)) * 2) + (teamRat_GAME(1, 5) + teamRat_GAME(1, 19)) / ((teamRat_GAME(1, 0) + teamRat_GAME(0, 0)) * 2)
+        JY = JX! * 2 - (leagRat_GAME(0, 1) + leagRat_GAME(1, 1)) / 2
+
+        If playoffOpt = 1 Then JY = JY - 7
+
+    End If 'Done checking for different eras
+
+
+    For I = 0 To 1
+
+        '       FG % - League FG%
+        D1(I) = Int(teamRat_GAME(I, 20) / teamRat_GAME(I, 19) * 100 + .5) - leagRat_GAME(I, 3)
+
+        '1440 - ((Team FGA / G + Opp FGA / Game) * 2)
+        '1440 = 24 * 60 (seconds in a half
+        X7(I) = 1440 - ((teamRat_GAME(I, 5) / teamRat_GAME(I, 0)) + (teamRat_GAME(I, 19) / teamRat_GAME(I, 0))) * 2
+        X7(I) = X7(I) / 25
+
+        ' ???
+        F7%(I, 5) = Int(((teamRat_GAME(I, 5) + teamRat_GAME(I, 19)) / (teamRat_GAME(I, 0) * 2)) + .5)
+
+        '(Def TOs - Off Steals) / Game / (adjustment) - TOF%
+        F7%(I, 0) = Int(((teamRat_GAME(I, 28) / teamRat_GAME(I, 0)) / (X7(I) * 5) * 1000) + .5) - 41
+
+        '(Off TOs - Def Steals) / Game  / (adjustment)
+        F7%(I, 1) = Int(((teamRat_GAME(I, 15) - teamRat_GAME(I, 28)) / teamRat_GAME(I, 0)) / (X7(I) * 5) * 1000 + .5)
+
+        '(Def TOs - Off Steals) / Game / (adjustment) - TOF%
+        F7%(I, 2) = Int(((teamRat_GAME(I, 29) - teamRat_GAME(I, 14)) / teamRat_GAME(I, 0)) / (X7(I) * 5) * 1000 + .5) - TOF%(I)
+
+        'Def 3FGA
+        If teamRat_GAME(I, 31) > 0 Then
+            'Def 3FGA% - League 3FGA%
+            F7%(I, 4) = Int(teamRat_GAME(I, 32) / teamRat_GAME(I, 31) * 100 + .5) - leagRat_GAME(I, 5)
+        End If
+
+        If teamRat_GAME(I, 31) = 0 Then
+            F7%(I, 4) = 0 - leagRat_GAME(I, 5)
+        End If
+
+        'FGM / Game
+        F7%(I, 6) = Int(teamRat_GAME(I, 6) / teamRat_GAME(I, 0) + .5)
+
+        '(Opp FTA - Opp FGM)/10 - 7.9 * Games Played
+        X3! = (teamRat_GAME(I, 21) - teamRat_GAME(I, 20) * .1) - 7.9 * teamRat_GAME(I, 0)
+        X3! = X3! / 2
+
+        'X3! / (Opp FGA + X3!) - PF%
+        F7%(I, 3) = Int(X3! / (teamRat_GAME(I, 19) + X3!) * 100 + .5) - PF%(I)
+
+        'Off Assists / FGM
+        F7%(I, 7) = Int(teamRat_GAME(I, 11) / teamRat_GAME(I, 6) * 100 + .5)
+
+    Next
+
+    For I = 0 To 1
+
+        For I1 = 0 To 14
+
+            'Active Flag = YES
+            '-- don't ask me why 0 was chosen for YES
+            If plyrRat_GAME(I, I1, 18) = 0 Then
+
+                'Start assignment of player ratings
+                If plyrRat_GAME(I, I1, 2) - plyrRat_GAME(I, I1, 13) > 0 Then
+                    '(FGM - 3FGM) / (FGA - 3FGA), as a %
+                    gameRatings!(I, I1, 0) = Int((plyrRat_GAME(I, I1, 3) - plyrRat_GAME(I, I1, 14)) / (plyrRat_GAME(I, I1, 2) - plyrRat_GAME(I, I1, 13)) * 100 + .5)
+                End If
+
+                If playoffOpt = 1 Then
+                    gameRatings!(I, I1, 0) = gameRatings!(I, I1, 0) - 2
+                End If
+
+                If plyrRat_GAME(I, I1, 4) > 0 Then
+                    'FT %
+                    gameRatings!(I, I1, 1) = Int(plyrRat_GAME(I, I1, 5) / plyrRat_GAME(I, I1, 4) * 100 + .5)
+                End If
+
+                'Def Reb / Game
+                X3! = plyrRat_GAME(I, I1, 7) / plyrRat_GAME(I, I1, 1) * 48
+
+                'Opp Reb / 29.3 Mins / (Avg Reb / G * .677) * ( (Team FGA + Opp FGA) / (Games Played * 2) / Avg FGA/G )
+                X3! = X3! * 29.3 / (leagRat_GAME(I, 2) * .677) * ((teamRat_GAME(I, 5) + teamRat_GAME(I, 19)) / (teamRat_GAME(I, 0) * 2) / leagRat_GAME(I, 1))
+                X3! = Int(X3! * 10 + .5)
+
+                gameRatings!(I, I1, 2) = X3!
+
+                'Off Reb / Game
+                X3! = plyrRat_GAME(I, I1, 6) / plyrRat_GAME(I, I1, 1) * 48
+
+                'Off Reb * 14 / (Avg Reb / G * .323) * ( (Team FGA + Opp FGA) / (Games Played * 2) / Avg FGA/G )
+                'Off Reb / Game * 14 Players * (Avg Games / Reb) * Expected FGA / Game)
+                X3! = X3! * 14 / (leagRat_GAME(I, 2) * .323) * ((teamRat_GAME(I, 5) + teamRat_GAME(I, 19)) / (teamRat_GAME(I, 0) * 2) / leagRat_GAME(I, 1))
+                X3! = Int(X3! * 10 + .5)
+
+                gameRatings!(I, I1, 21) = X3!
+
+                '### ASSISTS ###
+                'Player Assists / Game
+                X3! = plyrRat_GAME(I, I1, 8) / plyrRat_GAME(I, I1, 1) * 48
+                gameRatings!(I, I1, 25) = Int(X3! * 10 + .5)
+
+                '(Player Assists / Game) * 26  * (Games Played / Team Assists)
+                X3! = X3! * 26 * teamRat_GAME(I, 0) / teamRat_GAME(I, 11)
+                gameRatings!(I, I1, 4) = Int(X3! * 10 + .5)
+
+                '### STEALS ###
+                'Player Steals / Game
+                gameRatings!(I, I1, 5) = plyrRat_GAME(I, I1, 11) / plyrRat_GAME(I, I1, 1) * 48
+                gameRatings!(I, I1, 5) = Int(gameRatings!(I, I1, 5) / X7(I) * 1000 + .5)
+
+                '### BLOCKS ###
+                'Player Blocks / Game
+                gameRatings!(I, I1, 6) = plyrRat_GAME(I, I1, 12) / plyrRat_GAME(I, I1, 1) * 48
+
+                '(Player Blocks / Game) / (((Opp FGA - Opp 3FGA - Team FGM + Team 3FGM) / Games Played) / 5)
+                gameRatings!(I, I1, 6) = gameRatings!(I, I1, 6) / ((teamRat_GAME(I, 19) - teamRat_GAME(I, 31) - teamRat_GAME(I, 20) + teamRat_GAME(I, 32)) / teamRat_GAME(I, 0) / 5)
+                gameRatings!(I, I1, 6) = Int(gameRatings!(I, I1, 6) * .93 * 100 + .5)
+
+                'Player FTA - Player FGM - 1.58 * Player Mins / Game
+                Select Case ftRulesOpt
+                    Case 0
+                        X3! = plyrRat_GAME(I, I1, 4) - (plyrRat_GAME(I, I1, 3) * .1) - 1.58 * plyrRat_GAME(I, I1, 1) / 48
+                    Case 1
+                        X3! = plyrRat_GAME(I, I1, 4) * 0.9 - (plyrRat_GAME(I, I1, 3) * .1) - 1.58 * plyrRat_GAME(I, I1, 1) / 48
+                End Select
+
+                X3! = X3! / 2
+
+                'X3! / FGA + X3!, as %
+                gameRatings!(I, I1, 16) = Int(X3! / (plyrRat_GAME(I, I1, 2) + X3!) * 100 + .5)
+                If gameRatings!(I, I1, 16) < 0 Then gameRatings!(I, I1, 16) = 0
+
+                'Player Fouls / 10 Minutes
+                gameRatings!(I, I1, 17) = Int(plyrRat_GAME(I, I1, 9) / plyrRat_GAME(I, I1, 1) * 48 * 10 + .5)
+
+                'Active Flag
+                gameRatings!(I, I1, 18) = plyrRat_GAME(I, I1, 18)
+
+                'If Player FGA > 0 
+                If plyrRat_GAME(I, I1, 2) > 0 Then 
+                    'Calculate 3FGA frequency
+                    gameRatings!(I, I1, 19) = Int(plyrRat_GAME(I, I1, 13) / plyrRat_GAME(I, I1, 2) * 100 + .5)
+                End If
+
+                'If Player 3FGA > 0
+                If plyrRat_GAME(I, I1, 13) > 0 Then 
+                    'Calculate 3FGM %
+                    gameRatings!(I, I1, 20) = Int(plyrRat_GAME(I, I1, 14) / plyrRat_GAME(I, I1, 13) * 100 + .5)
+                End If
+
+                'Player FGA / (Player FGA + Player FTA) as %
+                X3! = Int(plyrRat_GAME(I, I1, 2) / (plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 4)) * 100 + .5)
+
+                'Calculate penetration rating
+                If Left$(players_GAME$(I, I1, 1), 1) <> "F" And Left$(players_GAME$(I, I1, 1), 1) <> "C" Then
+                    If X3! >= 86 Then plyrRat_GAME(I, I1, 16) = 1
+                    If X3! = 84 Or X3! = 85 Then plyrRat_GAME(I, I1, 16) = 2
+                    If X3! = 82 Or X3! = 83 Then plyrRat_GAME(I, I1, 16) = 3
+                    If X3! = 80 Or X3! = 81 Then plyrRat_GAME(I, I1, 16) = 4
+                    If X3! >= 77 And X3! <= 79 Then plyrRat_GAME(I, I1, 16) = 5
+                    If X3! = 75 Or X3! = 76 Then plyrRat_GAME(I, I1, 16) = 6
+                    If X3! = 73 Or X3! = 74 Then plyrRat_GAME(I, I1, 16) = 7
+                    If X3! = 71 Or X3! = 72 Then plyrRat_GAME(I, I1, 16) = 8
+                    If X3! <= 70 Then plyrRat_GAME(I, I1, 16) = 9
+                Else
+                    If X3! >= 81 Then plyrRat_GAME(I, I1, 16) = 1
+                    If X3! = 79 Or X3! = 80 Then plyrRat_GAME(I, I1, 16) = 2
+                    If X3! = 77 Or X3! = 78 Then plyrRat_GAME(I, I1, 16) = 3
+                    If X3! = 75 Or X3! = 76 Then plyrRat_GAME(I, I1, 16) = 4
+                    If X3! >= 72 And X3! <= 74 Then plyrRat_GAME(I, I1, 16) = 5
+                    If X3! = 70 Or X3! = 71 Then plyrRat_GAME(I, I1, 16) = 6
+                    If X3! = 68 Or X3! = 69 Then plyrRat_GAME(I, I1, 16) = 7
+                    If X3! = 66 Or X3! = 67 Then plyrRat_GAME(I, I1, 16) = 8
+                    If X3! <= 65 Then plyrRat_GAME(I, I1, 16) = 9
+                End If
+
+            End If
+
+        Next I1
+
+    Next I
+
+    For I = 0 To 1
+        'Tm FGA + Opp FGA + Off Reb + Team Reb / (Games Played * 2)
+        M9!(I) = (teamRat_GAME(I, 5) + teamRat_GAME(I, 19) + teamRat_GAME(I, 9) + teamRat_GAME(I, 10)) / (teamRat_GAME(I, 0) * 2)
+        'ADD Opp Off Reb + Opp Def Reb + Team Fouls + Opp Fouls / (Games Played * 2)
+        M9!(I) = M9!(I) + (teamRat_GAME(I, 23) + teamRat_GAME(I, 24) + teamRat_GAME(I, 12) + teamRat_GAME(I, 26)) / (teamRat_GAME(I, 0) * 2)
+        '               * 2 - (League FGA/G + League Reb/G + League PF/G)
+        M9!(I) = M9!(I) * 2 - (leagRat_GAME(I, 1) + leagRat_GAME(I, 2) + leagRat_GAME(I, 4))
+    Next I
+
+    If HN% = 1 Then
+
+        I = HM%
+
+        F7%(1 - I, 1) = F7%(1 - I, 1) * TOF%(I) / TOF%(1 - I)
+        M9!(1 - I) = M9!(1 - I) * (leagRat_GAME(I, 1) + leagRat_GAME(I, 2) + leagRat_GAME(I, 4)) / (leagRat_GAME(1 - I, 1) + leagRat_GAME(1 - I, 2) + leagRat_GAME(1 - I, 4))
+
+        For I1 = 0 To 14
+            'ADD League FG% (for both teams) - League Power Adj (for both teams)
+            gameRatings!(1 - I, I1, 0) = gameRatings!(1 - I, I1, 0) + leagRat_GAME(I, 3) - leagRat_GAME(1 - I, 3) - leagRat_GAME(1 - I, 6) + leagRat_GAME(I, 6)
+        Next
+
+    End If
+
+    S9 = Int((M9!(0) + M9!(1)) / 2 + .5)
+
+    If playoffOpt = 1 Then S9 = S9 - 11
+
+    Erase M9!
+
+    For I = 0 To 1:
+        For I1 = 0 To 14
+            If plyrRat_GAME(I, I1, 18) = 0 Then
+                'ADD Player FGA + Player Off Reb + Player Def Reb + Player Fouls / Player Minutes
+                M9!(I) = M9!(I) + Int((plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 6) + plyrRat_GAME(I, I1, 7) + plyrRat_GAME(I, I1, 9)) / plyrRat_GAME(I, I1, 0) + .5)
+            End If
+        Next I1
+    Next I
+
+    For I = 0 To 1
+        For I1 = 0 To 14
+            If plyrRat_GAME(I, I1, 18) = 0 Then
+                'Player FGA + Player Off Reb + Player Def RB + Player Fouls / (Minutes / (M9(I) * S9))
+                gameRatings!(I, I1, 3) = Int(((plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 6) + plyrRat_GAME(I, I1, 7) + plyrRat_GAME(I, I1, 9)) / plyrRat_GAME(I, I1, 0)) / M9!(I) * S9 + .5)
+                If gameRatings!(I, I1, 3) = 0 Then gameRatings!(I, I1, 3) = 1
+            End If
+        Next I1
+    Next I
+
+    X3! = 0
+
+End Sub
+
+
+'----------------------------------------
+'     ChangeContributions Subroutine
+'----------------------------------------
+'This subroutine lets the user adjust the
+'contribution ratings for players
+Sub ChangeContributions
+
+    If autoPlay <> 1 Or playerMode <> 2 Then
+
+        Do
+
+            Color 15, 0
+            Cls
+            Print "EDIT CONTRIBUTION PERCENTAGES OF PLAYERS FROM:"
+            Print
+            Color 14: Print "(0) - ";: Color teamRat_GAME(0, 33), teamRat_GAME(0, 34)
+            Print gameTeams$(0): Color , 0
+            Print
+            Color 14: Print "(1) - ";: Color teamRat_GAME(1, 33), teamRat_GAME(1, 34)
+            Print gameTeams$(1)
+            Color , 0
+            Print
+            Color 14: Print "(2) - ";: Color 3: Print "PROCEED TO GAME"
+            Color 15, 0
+            Print
+            Print "NOTE:: THE CONTRIBUTION RATING CONSISTS OF THE PLAYER'S"
+            Print "       FREQUENCY TO SHOOT, REBOUND, AND COMMIT FOULS."
+
+            Do
+                I$ = GetKeyPress$
+                I = Val(I$)
+            Loop Until I >= 0 And I <= 2
+
+            If I <> 2 Then
+
+                Cls
+
+                TX = 0
+
+                For I1 = 0 To 14:
+                    TX = TX + gameRatings!(I, I1, 3)
+                Next
+
+                For I1 = 0 To 14:
+                    gameRatings!(I, I1, 3) = gameRatings!(I, I1, 3) / TX * 100
+                Next
+
+                Do
+
+                    Locate 2, 1
+                    Print "CONTRIBUTION RATINGS FOR ";
+                    Color teamRat_GAME(I, 33), teamRat_GAME(I, 34): Print gameTeams$(I)
+                    Color 15, 0
+                    Print
+                    Print " #  PLAYER-POS         CX"
+                    TY% = 0
+
+                    For I1 = 0 To 14:
+
+                        TY% = TY% + gameRatings!(I, I1, 3)
+
+                        Print Using "## "; I1 + 1;
+                        Print players_GAME$(I, I1, 0); "-"; players_GAME$(I, I1, 1);
+                        Locate , 24: Print Using "##"; gameRatings!(I, I1, 3)
+
+                    Next
+
+                    Locate , 23: Print Using "###"; TY%
+
+                    Input "SELECT PLAYER TO CHANGE (0 TO CONTINUE)"; I1
+                    I1 = I1 - 1
+
+                    If I1 <= 14 And I1 >= 0 Then
+                        Locate 22, 1
+                        Print "ENTER NEW CX RATING FOR "; players_GAME$(I, I1, 0); " ";
+                        Input gameRatings!(I, I1, 3)
+                        Locate 22, 1: Print Space$(52)
+                    Else
+
+                        If TY% <> 100 Then
+                            Locate 22, 1
+                            Print "TOTAL MUST ADD UP TO 100%! PRESS ANY KEY"
+                            I$ = GetKeyPress$
+                            Locate 22, 1: Print Space$(52)
+                        End If
+
+                    End If
+
+                Loop Until I1 < 0
+
+                For I1 = 0 To 14:
+                    gameRatings!(I, I1, 3) = gameRatings!(I, I1, 3) / 100 * TX
+                Next
+
+            End If
+
+        Loop Until I = 2
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'           ADJFOUL Subroutine
+'----------------------------------------
+' ...explanation...
+Sub ADJFOUL ()
+
+    For I = 0 To 14
+        If gameRatings!(P9, I, 12) >= 6 Then gameRatings!(P9, I, 12) = 5: Exit For
+    Next
+
+End Sub
+
+
+'----------------------------------------
+'            BADFT Subroutine
+'----------------------------------------
+'This subroutine handles Play-by-Play for
+'missed FT's when there are 3 attempts.
+Sub BADFT ()
+
+    Select Case freeThrowNbr
+        Case 1 
+            pbpString$ = "FIRST FREE THROW IS MISSED"
+        Case 2
+            pbpString$ = "SECOND FREE THROW IS MISSED"
+        Case 3
+            pbpString$ = "THIRD FREE THROW IS MISSED"
+    End Select
+
+    Call PBP(P)
+
+End Sub
+
+'----------------------------------------
+'       CHANGESTRATEGY Subroutine
+'----------------------------------------
+'This subroutine presents the user a menu
+'for changing both Def / Off strategy
+Sub CHANGESTRATEGY (I$)
+
+    Shared yesNoText$()
+
+    If Not (UCase$(I$) = "Z" And playerMode = 1 And compTeam = 0 Or playerMode = 2) Then
+
+        If Not (I$ = "/" And playerMode = 1 And compTeam = 1 Or playerMode = 2) Then
+
+            TS% = 1
+
+            If UCase$(I$) = "Z" Then TS% = 0
+
+            Do
+                Call FRAMEOPTION(8, TS%)
+                Locate 10, 15
+                Print gameTeams$(TS%); " SELECT STRATEGY:"
+
+                Locate 12, 14
+                Locate , 14: Print "0 - RETURN TO GAME"
+                Locate , 14: Print "1 - SELECT OFFENSIVE STYLE OF PLAY"
+                Locate , 14: Print "2 - SELECT DEFENSIVE STYLE OF PLAY"
+                Locate , 14: Print "3 - FULL COURT PRESS "; yesNoText$(fullCtOpt(TS%))
+
+                Do
+                    I$ = GetKeyPress$
+                    I1 = Val(I$)
+                Loop Until I1 >= 0 And I1 <= 3
+
+                Select Case I1
+                    Case 1:
+                        'DEFENSE
+                        Call FRAMEOPTION(8, TS%)
+                        Locate 10, 15
+                        Print gameTeams$(TS%); " SELECT OFFENSE:"
+
+                        Locate 12, 14
+                        Locate , 14: Print "0 - NORMAL"
+                        Locate , 14: Print "1 - AGGRESSIVE"
+                        Locate , 14: Print "2 - SAFE"
+
+                        Do
+                            I$ = GetKeyPress$
+                            I1 = Val(I$)
+                        Loop Until I1 >= 0 And I1 <= 2
+
+                        offStyles(TS%) = I1
+
+                    Case 2:
+                        'DEFENSE
+                        Call FRAMEOPTION(10, TS%)
+                        Locate 10, 15
+                        Print gameTeams$(TS%); " SELECT DEFENSE:"
+
+                        Locate 12, 14
+                        Locate , 14: Print "1 - REGULAR MAN-TO-MAN"
+                        Locate , 14: Print "2 - SAGGING MAN-TO-MAN"
+                        Locate , 14: Print "3 - TRAPPING MAN-TO-MAN"
+                        Locate , 14: Print "4 - TIGHT MAN-TO-MAN"
+                        Locate , 14: Print "5 - LOOSE MAN-TO-MAN"
+
+                        Do
+                            I$ = GetKeyPress$
+                            I1 = Val(I$)
+                        Loop Until I1 >= 1 And I1 <= 5
+
+                        defStyles(TS%) = I1
+
+                    Case 3
+                        fullCtOpt(TS%) = 1 - fullCtOpt(TS%)
+
+                End Select
+
+            Loop Until I1 = 0
+
+        End If
+
+    End If
+
+    Color 7, 0
+    Call SCOREBOARD
+
+End Sub
+
+
+'----------------------------------------
+'       ComputerStrategy Subroutine
+'----------------------------------------
+'This subroutine guides the computer AI
+'in how to handle it's strategy.
+Sub ComputerStrategy ()
+
+    If P9 = 0 Then I6 = 1
+    If P9 = 1 Then I6 = 0
+
+    If score(P9, 0) - score(I6, 0) < 0 Then
+
+        I5 = score(I6, 0) - score(P9, 0)
+
+        If quarter <= 2 Then 
+            defStyles(P9) = 1
+            fullCtOpt(P9) = 0
+        End If
+
+        If quarter = 3 then
+
+            Select Case I5
+                Case Is < 10
+                    defStyles(P9) = 1
+                    fullCtOpt(P9) = 0
+                Case 10 to 20
+                    defStyles(P9) = 1
+                    fullCtOpt(P9) = 1
+                Case Is > 20
+                    defStyles(P9) = 1
+                    fullCtOpt(P9) = 0
+            End Select
+
+        End If
+
+        If quarter = 4 Then
+        
+            If gameClock! >= 120 Then
+
+                Select Case I5
+                    
+                    Case 1 to 10
+                        defStyles(P9) = 1
+                        fullCtOpt(P9) = 1
+
+                    Case 11 to 20
+                        defStyles(P9) = 3
+                        fullCtOpt(P9) = 1
+                
+                    Case Is > 20
+                        defStyles(P9) = 1
+                        fullCtOpt(P9) = 0
+
+                End Select
+                
+            Else
+
+                Select Case I5
+                
+                    Case 1 to 4
+                        defStyles(P9) = 1
+                        fullCtOpt(P9) = 1
+                
+                    Case 5 to 10
+                        defStyles(P9) = 3
+                        fullCtOpt(P9) = 1
+
+                    Case Is > 10
+                        defStyles(P9) = 1
+                        fullCtOpt(P9) = 0
+
+                End Select
+                    
+            End If
+
+        End If
+
+        If quarter > 4 Then 
+            defStyles(P9) = 1
+            fullCtOpt(P9) = 1
+        End If
+
+    Else
+
+        Call Rolld100(RN0)
+        fullCtOpt(P9) = 0
+
+        If quarter <= 4 Then
+            Select Case RN0
+                Case Is <= 20 
+                    defStyles(P9) = 2
+                Case 21 to 40
+                    defStyles(P9) = 4
+                Case Is >= 41 
+                    defStyles(P9) = 1
+            End Select
+        End If
+
+        If quarter = 3 Then
+           Select Case RN0
+                Case Is <= 25
+                    defStyles(P9) = 2
+                Case 26 to 49
+                    defStyles(P9) = 4
+                Case Is >= 50 
+                    defStyles(P9) = 1
+            End Select
+         End If
+
+        If quarter = 4 Then
+           Select Case RN0
+                Case Is < 35
+                    defStyles(P9) = 4
+                Case 35 to 69
+                    defStyles(P9) = 2
+                Case Is >= 70 
+                    defStyles(P9) = 1
+            End Select
+         End If
+
+        If quarter > 4 Then
+            Select Case RN0
+                Case Is < 25
+                    defStyles(P9) = 4
+                Case 25 to 49
+                    defStyles(P9) = 2
+                Case Is >= 50
+                    defStyles(P9) = 1
+            End Select
+        End If
+
+    End If
+
+    offStyles(P9) = 0
+
+    If quarter < 3 Then
+        offStyles(P9) = 0
+    End If
+
+    If quarter >= 3 And Int(Rnd(1) * 2) = 1 Then
+
+        If score(P9, 0) - score(I6, 0) < 0 Then
+            offStyles(P9) = 1
+        Else
+            offStyles(P9) = 2
+        End If
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'        ComputerCoach Subroutine
+'----------------------------------------
+'This subroutine essentially handles the
+'AI for the computer coach. After an
+'evaluation of substitutions, it then calls
+'another routine to decide on strategies
+Sub ComputerCoach ()
+
+    For I2 = 0 To 4
+        gameB1!(P9, I2) = -1
+    Next
+
+    For I2 = 0 To 1
+
+        P$ = "G"
+
+        8781 '
+        For I1 = 14 To 0 Step -1:
+
+            M6 = 0
+            M7 = 0
+
+            If Left$(players_GAME$(P9, I1, 1), 1) = P$ Or Right$(players_GAME$(P9, I1, 1), 1) = P$ Then
+
+                If Not (players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or quarter = 1 And gameRatings!(P9, I1, 12) >= 2 + FS% Or quarter = 2 And gameRatings!(P9, I1, 12) >= 4 + FS% Or quarter = 3 And gameRatings!(P9, I1, 12) >= 5 Or quarter = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5) Then
+
+                    M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
+
+                    If gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3) - gameRatings!(P9, gameB1!(P9, I2), 7) - gameRatings!(P9, gameB1!(P9, I2), 11) - gameRatings!(P9, gameB1!(P9, I2), 12)
+
+                    If quarter = 4 And gameClock! < 120 Or quarter > 4 Then M6 = gameRatings!(P9, I1, 3)
+
+                    If (quarter = 4 And gameClock! < 120 Or quarter > 4) And gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3)
+
+                    If I2 <> 1 Or gameB1!(P9, 0) <> I1 Then
+                        If gameB1!(P9, I2) = -1 Or M6 >= M7 Then gameB1!(P9, I2) = I1
+                    End If
+
+                End If
+
+            End If
+
+        Next I1
+
+        If gameB1!(P9, I2) = -1 And FS% <> 1 Then
+
+            If P$ = "G" Then
+                P$ = "F"
+            Else
+                If P$ = "F" Then
+                    P$ = "C"
+                Else
+                    'Condition: P$ = "C"
+                    P$ = "G"
+                    FS% = 1
+                End If
+            End If
+
+            GoTo 8781
+
+        Else
+            FS% = 0
+        End If
+
+        'Loop Until FS% = 1 And gameB1!(P9, I2) <> -1
+
+    Next I2
+
+    For I2 = 2 To 3
+
+        P$ = "F"
+
+        8783 '
+        For I1 = 14 To 0 Step -1:
+
+            M6 = 0
+            M7 = 0
+
+            If Left$(players_GAME$(P9, I1, 1), 1) = P$ Or Right$(players_GAME$(P9, I1, 1), 1) = P$ Then
+
+                If Not (players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or quarter = 1 And gameRatings!(P9, I1, 12) >= 2 + FS% Or quarter = 2 And gameRatings!(P9, I1, 12) >= 4 + FS% Or quarter = 3 And gameRatings!(P9, I1, 12) >= 5 Or quarter = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5) Then
+
+                    M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
+
+                    If gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3) - gameRatings!(P9, gameB1!(P9, I2), 7) - gameRatings!(P9, gameB1!(P9, I2), 11) - gameRatings!(P9, gameB1!(P9, I2), 12)
+                    If quarter = 4 And gameClock! < 120 Or quarter > 4 Then M6 = gameRatings!(P9, I1, 3)
+                    If (quarter = 4 And gameClock! < 120 Or quarter > 4) And gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3)
+
+                    If Not (I2 = 2 And (gameB1!(P9, 0) = I1 Or gameB1!(P9, 1) = I1)) Then
+                        If Not (I2 = 3 And (gameB1!(P9, 0) = I1 Or gameB1!(P9, 1) = I1 Or gameB1!(P9, 2) = I1)) Then
+                            If gameB1!(P9, I2) = -1 Or M6 >= M7 Then gameB1!(P9, I2) = I1
+                        End If
+                    End If
+
+                End If
+
+            End If
+
+        8784 Next I1
+
+        If gameB1!(P9, I2) = -1 And FS% <> 1 Then
+            If P$ = "F" Then P$ = "C": GoTo 8783
+
+            If P$ = "C" Then
+                P$ = "G": GoTo 8783
+            Else
+                FS% = 1
+                P$ = "F"
+                GoTo 8783
+            End If
+        End If
+
+        FS% = 0
+
+    Next I2
+
+    P$ = "C"
+
+    8785 '
+    For I1 = 14 To 0 Step -1
+
+        M6 = 0
+        M7 = 0
+
+        If Left$(players_GAME$(P9, I1, 1), 1) = P$ Or Right$(players_GAME$(P9, I1, 1), 1) = P$ Then
+
+            If Not (players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or quarter = 1 And gameRatings!(P9, I1, 12) >= 2 + FS% Or quarter = 2 And gameRatings!(P9, I1, 12) >= 4 + FS% Or quarter = 3 And gameRatings!(P9, I1, 12) >= 5 Or quarter = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5) Then
+
+                M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
+                If gameB1!(P9, 4) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, 4), 3) - gameRatings!(P9, gameB1!(P9, 4), 7) - gameRatings!(P9, gameB1!(P9, 4), 11) - gameRatings!(P9, gameB1!(P9, 4), 12)
+                If quarter = 4 And gameClock! < 120 Or quarter > 4 Then M6 = gameRatings!(P9, I1, 3)
+                If (quarter = 4 And gameClock! < 120 Or quarter > 4) And gameB1!(P9, I2) > -1 Then M7 = gameRatings!(P9, gameB1!(P9, I2), 3)
+
+                If Not (gameB1!(P9, 0) = I1 Or gameB1!(P9, 1) = I1 Or gameB1!(P9, 2) = I1 Or gameB1!(P9, 3) = I1) Then
+                    If gameB1!(P9, 4) = -1 Or M6 >= M7 Then gameB1!(P9, 4) = I1
+                End If
+
+            End If
+
+        End If
+
+    Next I1
+
+    If gameB1!(P9, I2) = -1 And FS% <> 1 Then
+
+        If P$ = "C" Then P$ = "F": GoTo 8785
+
+        If P$ = "F" Then
+            P$ = "G": GoTo 8785
+        Else
+            FS% = 1
+            P$ = "F"
+            GoTo 8785
+        End If
+
+    End If
+
+    FS% = 0
+
+    For I2 = 0 To 4
+
+        If gameB1!(P9, I2) = -1 Then
+            8790 '
+            I = 15
+
+            For I2 = 0 To 4
+                8795 '
+                I = I - 1
+                If I < 0 Then Call ADJFOUL: GoTo 8790
+                If plyrRat_GAME(P9, I, 18) <> 0 Or players_GAME$(P9, I, 0) = "XXX" Or gameRatings!(P9, I, 12) >= 6 Then 8795
+                gameB1!(P9, I2) = I
+            Next I2
+
+            Exit For
+
+        End If
+
+    Next
+
+    Call ComputerStrategy
+
+End Sub
+
+
+'----------------------------------------
+'           MADEFT Subroutine
+'----------------------------------------
+'This subroutine handles score, stats and
+'Play-by-Play for a successful free throw
+Sub MADEFT ()
+
+    'Increase FTM
+    gameRatings!(P, gameB1!(P, ballCarrier), 10) = gameRatings!(P, gameB1!(P, ballCarrier), 10) + 1
+
+    If pbpDelay! <> 0 Then
+        Locate freeThrowNbr + 9, 1
+        Call DELAY
+        Print freeThrowNbr; " GOOD"
+    End If
+
+    score(P, quarter) = score(P, quarter) + 1
+    score(P, 0) = score(P, 0) + 1
+
+    Call UPDATESCREEN
+    Call DELAY
+
+End Sub
+
+
+'----------------------------------------
+'           MISSFT Subroutine
+'----------------------------------------
+'This subroutine handles Play-by-Play
+'for a missed free throw
+Sub MISSFT ()
+
+    If pbpDelay! <> 0 Then
+        Call DELAY
+        Locate freeThrowNbr + 9, 1
+        Print freeThrowNbr; " MISSED"
+        Call DELAY
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'           LINEUPS Subroutine
+'----------------------------------------
+'This subroutine displays the starting
+'lineup for each team and gives the user
+'an interface for changing the lineup
+Sub LINEUPS ()
+
+    Shared alpha$()
+
+    Cls
+
+    Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34): Print gameTeams$(P9);
+
+    Color 15, 0
+    Print " TEAM ROSTER   COACH: "; gameCoach$(P9); "     ";
+    Print "  RECORD: ";
+    Print Using "##"; teamRat_GAME(P9, 1) + teamRat_GAME(P9, 3);
+    Print "-";
+    Print Using "##"; teamRat_GAME(P9, 2) + teamRat_GAME(P9, 4)
+
+    Color 14
+    Print "# NAME         PS GP MG FG 3FG %3A FT  ORB  DRB  A  S  B CX CN PT F  FC  PPG"
+
+    Locate 3, 1
+
+    For R1 = 0 To 14
+
+        If plyrRat_GAME(P9, R1, 18) <> 0 Or players_GAME$(P9, R1, 0) <> "XXX" Then
+
+            Color 2
+
+            '#
+            If R1 <= 9 Then
+                Print Using "# "; R1;
+            Else
+                Print alpha$(R1 - 10);
+            End If
+
+            Color 15
+
+            'Name
+            Print Left$(players_GAME$(P9, R1, 0), 12);: Locate , 16
+
+            'Position
+            If Len(players_GAME$(P9, R1, 1)) = 1 Then Print players_GAME$(P9, R1, 1);
+            If Len(players_GAME$(P9, R1, 1)) > 1 Then Print Left$(players_GAME$(P9, R1, 1), 1); Right$(players_GAME$(P9, R1, 1), 1);
+
+            L = 0
+            Locate , 19
+            L = gameRatings!(P9, R1, 7) + gameRatings!(P9, R1, 11) + gameRatings!(P9, R1, 12)
+
+            'GP MG
+            Print Using "## ##"; plyrRat_GAME(P9, R1, 0); plyrRat_GAME(P9, R1, 1) / plyrRat_GAME(P9, R1, 0);
+
+            'FG  3FG  %3A  FT  ORB  DRB A  S  B
+            Print Using "### ### ## ### ##.# ##.# ## ## ##"; gameRatings!(P9, R1, 0); gameRatings!(P9, R1, 20); gameRatings!(P9, R1, 19); gameRatings!(P9, R1, 1); gameRatings!(P9, R1, 21) / 10; gameRatings!(P9, R1, 2) / 10; gameRatings!(P9, R1, 4) / 10; gameRatings!(P9, R1, 5); gameRatings!(P9, R1, 6);
+
+            'CX
+            Print Using "### "; gameRatings!(P9, R1, 3) - L;
+
+            'CN
+            J = (gameRatings!(P9, R1, 3)) - gameRatings!(P9, R1, 7) - gameRatings!(P9, R1, 11) - gameRatings!(P9, R1, 12)
+
+            If quarter <= 3 And J / gameRatings!(P9, R1, 3) < .25 Then Locate , 61: Print " T";
+            If J / gameRatings!(P9, R1, 3) < .5 And quarter <= 2 Then Locate , 61: Print " T";
+            If quarter = 4 And gameClock! > 200 And J / gameRatings!(P9, R1, 3) <= gameClock! / 2880 Then Locate , 61: Print " T";
+            If gameRatings!(P9, R1, 3) - gameRatings!(P9, R1, 7) - gameRatings!(P9, R1, 11) - gameRatings!(P9, R1, 12) <= 0 Then Locate , 61: Print "EX";
+            If quarter > 4 Or quarter = 4 And gameClock! <= 120 And gameClock! <> 0 Then Locate , 61: Print "  ";
+
+            'PT F  FC  PPG
+            Locate , 63: Print Using "### # ### ##.#"; gameRatings!(P9, R1, 8) * 2 + gameRatings!(P9, R1, 10) + threeFG(P9, R1, 0); gameRatings!(P9, R1, 12); gameRatings!(P9, R1, 17); (plyrRat_GAME(P9, R1, 3) * 2 + plyrRat_GAME(P9, R1, 5) + plyrRat_GAME(P9, R1, 14)) / plyrRat_GAME(P9, R1, 0)
+
+        End If
+
+    Next R1
+
+    Locate 18, 1
+    Color 9, 0
+    Print String$(27, 205); Chr$(203); String$(51, 205)
+
+    For R1 = 1 To 7:
+        Locate R1 + 18, 28: Print Chr$(186);
+    Next
+
+End Sub
+
+
+'----------------------------------------
+'         SHOTPERCENT Subroutine
+'----------------------------------------
+'This subroutine calculates the chance of
+'a shot being made based on the active
+'defense / offense / players.
+Sub SHOTPERCENT
+
+    shotChance = gameRatings!(P, gameB1!(P, ballCarrier), 0) + D1(D)
+
+    'Shift shot chance towards team with homefield advantage
+    If gameLoc = P Then
+        shotChance = shotChance + 2
+    Else
+        If gameLoc <> 2 Then shotChance = shotChance - 2
+    End If
+
+    A4 = Int(Rnd(1) * 41)
+
+    RN0 = Int(Rnd(1) * F5%(P, 4)) + 1
+    RN1 = Int(.17 * F5%(P, 4) + .5)
+
+    If RN1 >= RN0 Then
+        shotChance = shotChance + A4
+        shotType = 2
+        xFactor = 0
+    Else
+
+        ' *** CHECK PENETRATION SHOT ***
+        Call Rolld100(RN2)
+        A4 = Int(Rnd(1) * 50) + 1
+
+        If RN2 <= (plyrRat_GAME(P, gameB1!(P, ballCarrier), 16) + OY%(offStyles(P))) * 2 + 1 Then
+
+            shotType = 3
+            shotChance = shotChance + A4
+            xFactor = 0
+
+        Else
+
+            ' *** CHECK AVERAGE SHOT ***
+            I2 = plyrRat_GAME(P, gameB1!(P, ballCarrier), 16)
+            rndTeam = Int(Rnd(1) * 2)
+
+            If Left$(players_GAME$(P, gameB1!(P, ballCarrier), 1), 1) = "G" Or Left$(players_GAME$(P, gameB1!(P, ballCarrier), 1), 1) = "F" Then
+
+                'For a Guard or Forward
+                R2 = Int(Rnd(1) * 3)
+
+                Select Case R2
+                    Case 1: shotType = 6
+                    Case 2: shotType = 7
+                    Case 3: shotType = 5
+                End Select
+
+            Else
+
+                If rndTeam = 1 Then
+                    shotType = 6
+                Else
+                    shotType = 5
+                End If
+
+            End If
+
+            shotChance = shotChance + GF%(rndTeam, I2)
+            xFactor = 0
+
+        End If
+
+    End If
+
+End SUB
+
+
+'----------------------------------------
+'           THREEFT Subroutine
+'----------------------------------------
+'This subroutine walks the user through
+'taking 3 free throw attempts.
+Sub THREEFT ()
+
+    'Increase FTM
+    gameRatings!(P, gameB1!(P, ballCarrier), 10) = gameRatings!(P, gameB1!(P, ballCarrier), 10) + 1
+
+    Call Rolld100(RN)
+
+    Select Case freeThrowNbr
+
+        Case 1
+            If RN <= 50 Then
+                pbpString$ = "FREE THROW IS GOOD"
+            Else
+                pbpString$ = "HE HITS THE FIRST FREE THROW"
+            End If
+
+        Case 2
+            If RN <= 50 Then
+                pbpString$ = "SECOND FREE THROW IS GOOD"
+            Else
+                pbpString$ = "HE HITS THE SECOND ONE"
+            End If
+
+        Case 3
+            If RN <= 50 Then
+                pbpString$ = "THIRD FREE THROW IS GOOD"
+            Else
+                pbpString$ = "HE HITS THE LAST ONE"
+            End If
+
+    End Select
+
+    Call PBP(P)
+
+    score(P, quarter) = score(P, quarter) + 1
+    score(P, 0) = score(P, 0) + 1
+
+    Call UPDATESCREEN
+
+End Sub
+
+
+'----------------------------------------
+'          LastShot Subroutine
+'----------------------------------------
+'This subroutine handles calculations for
+'the clock and playtime with the last shot.
+Sub LastShot ()
+
+    M5 = 0
+
+    If gameClock! <= 2 Or IN = 99 Then
+        M5 = 2
+    Else
+        If gameClock! > 2 And gameClock! <= 4 Then M5 = 2
+        If gameClock! > 4 And gameClock! <= 16 Then M5 = Int(Rnd(1) * 2) + 3
+        If gameClock! > 16 Then M5 = Int(Rnd(1) * 2) + 4 'CHANGED AFTER DEF RB CHANGE FROM +4 TO +3
+    End If
+
+    timeElapsed! = M5
+
+    Call AdjustPlayTime
+
+    gameClock! = gameClock! - M5
+    If sClockVal < 2 Then shotClock = shotClock - M5
+
+    IN = 0
+
+    Call CheckGameShotClock
+
+End Sub
+
+
+'----------------------------------------
+'       CheckGameClock Subroutine
+'----------------------------------------
+'This subroutine checks the game clock
+'and resets it if expired
+Sub CheckGameClock ()
+
+    If gameClock! <= 0 Then
+
+        timeElapsed! = gameClock!
+
+        Call AdjustPlayTime
+
+        gameClock! = 0
+
+        Call UPDATESCREEN
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'     CheckGameShotClock Subroutine
+'----------------------------------------
+'This subroutine checks if either the game
+'clock and shot clock have expired, and
+'zeros them out if so. UPDATESCREEN is
+'called to update the clock on the board.
+Sub CheckGameShotClock ()
+
+    If gameClock! <= .001 Then
+        timeElapsed! = gameClock!
+        Call AdjustPlayTime
+        gameClock! = 0
+    End If
+
+    If shotClock <= 0 Then shotClock = 0
+
+    Call UPDATESCREEN
+
+End Sub
+
+
+'----------------------------------------
+'       AdjustPlayTime Subroutine
+'----------------------------------------
+'This subroutine increases the play time
+'for each active player
+Sub AdjustPlayTime ()
+
+    ' *** INCREMENT MINUTES ***
+    For I3 = 0 To 1
+
+        For I4 = 0 To 4
+            timePlayed(I3, gameB1!(I3, I4)) = timePlayed(I3, gameB1!(I3, I4)) + timeElapsed!
+        Next
+
+    Next
+
+End Sub
+
+
+'----------------------------------------
+'       ResetShotClock Subroutine
+'----------------------------------------
+'This subroutine resets the shot clock.
+'It uses defined setting value in order
+'to determine how much time to add.
+'A possible rewrite of the function
+'would see it simply accept the amount
+'of time as a parameter instead, but
+'that would be harder to control for any
+'invalid values that might get passed.
+Sub ResetShotClock ()
+
+    If sClockVal < 2 Then
+
+        Select Case sClockVal
+            Case 0: shotClock = 24
+            Case 1: shotClock = 30
+        End Select
+
+        LS = 4
+
+    End If
+
+End Sub
+
+
+
+'----------------------------------------
+'           OPTIONS Subroutine
+'----------------------------------------
+'This subroutine gives you a small menu
+'for changing some of the game options
+'(such as pbp delay, coaching mode) in
+'the middle of game play.
+Sub OPTIONS ()
+
+    Shared coachMode$(), playMode$()
+
+    Screen , , 0, 0
+
+    Call INFO
+
+    Do
+
+        Color , 0
+        Locate 3, 1
+        Color 14: Print "(1) ";
+        Color 15: Print playMode$(playerOpt)
+        Color 14: Print "(2) ";
+        Color 15: Print Using "PLAY-BY-PLAY DELAY: #.# "; pbpDelay!
+        Color 14: Print "(3) ";
+        Color 15: Print "HUMAN COACHES: "; coachMode$(coachOpt)
+
+        Print
+        Color 14: Print "<ENTER> ";
+        Color 15: Print "RETURN TO GAME PLAY"
+
+        Do
+            Color 7, 0
+            'Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
+            I$ = GetKeyPress$
+            I = Val(I$)
+        Loop Until I >= 0 And I <= 3
+
+        Select Case I
+
+            Case 1
+                playerOpt = playerOpt + 1
+                If playerOpt > 3 Then playerOpt = 0
+
+            Case 2
+                Locate 4, 23: Input pbpDelay!
+                
+            Case 3
+                coachOpt = 1 - coachOpt
+
+        End Select
+
+        ' Determine computer team
+        Select Case playerOpt
+
+            Case 1:
+                playerMode = 1
+                compTeam = 0
+
+            Case 2:
+                playerMode = 1
+                compTeam = 1
+
+            Case 3:
+                playerMode = 2
+
+        End Select
+
+    Loop Until I$ = Chr$(13)
+
+    Screen , , 0, 0
+    Call SCOREBOARD
+
+End Sub
+
+
+'----------------------------------------
+'           EVENTS Subroutine
+'----------------------------------------
+'This subroutine works with another to
+'look for any events that meet the limits
+'for "special". If found, it will create
+'a corresponding "special" box score
+Sub EVENTS (specialCount, specialStat)
+
+    If _FileExists("EVENTS.BOX") Then
+
+        Open "EVENTS.BOX" For Input As #1
+
+        For X = 1 To 13
+            Input #1, eventSettings(X)
+        Next
+
+        Close #1
+
+        checkSpecial% = 0
+
+        If quarter - 1 > eventSettings(1) Then
+            checkSpecial% = 1
+        Else
+            '--Combine into multiple Or
+            If score(1, 0) + score(0, 0) > eventSettings(2) Then
+                checkSpecial% = 1
+            Else
+                If totRebounds(0) + totRebounds(1) > eventSettings(3) Then
+                    checkSpecial% = 1
+                Else
+                    If score(1, 0) > eventSettings(4) Or score(0, 0) > eventSettings(4) Then
+                        checkSpecial% = 1
+                    Else
+                        If totRebounds(1) > eventSettings(5) Or totRebounds(0) > eventSettings(5) Then
+                            checkSpecial% = 1
+                        End If
+                    End If
+                End If
+            End If
+        End If
+
+        If checkSpecial% <> 1 Then
+
+            For I = 0 To 1
+
+                For I1 = 0 To 14
+
+                    If gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) > eventSettings(6) Then
+                        checkSpecial% = 1
+                    Else
+                        If gameRatings!(I, I1, 11) > eventSettings(7) Or gameRatings!(I, I1, 14) > eventSettings(8) Or gameRatings!(I, I1, 15) > eventSettings(9) Or gameRatings!(I, I1, 13) > eventSettings(10) Or threeFG(I, I1, 0) > eventSettings(11) Then
+                            checkSpecial% = 1
+                        End If
+                    End If
+
+                    If checkSpecial% = 1 Then Exit For
+
+                Next
+
+            Next 'done checking if special event already found
+
+        End If
+
+    End If 'Done checking EVENTS.BOX file
+
+    If checkSpecial% = 1 Then
+        Call FoundSpecial(specialCount, specialStat)
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'        FoundSpecial Subroutine
+'----------------------------------------
+'This subroutine simply counts how many
+'special boxscore files already exist, so
+'that it an assign a unique number to the
+'boxscore about to be created.
+Sub FoundSpecial (specialCount, specialStat)
+
+    'Get count of SPC files to determine
+    'number to assign next one
+    Spec$ = diskPaths$(1) + "*.BSS"
+    'Spec$ = diskPaths$(1) + "*.SPC"
+    specialCount = FileCount%(Spec$)
+    specialCount = specialCount + 1
+    specialStat = 1
+
+End Sub
+
+
+'----------------------------------------
+'        UPDATESCREEN Subroutine
+'----------------------------------------
+'This subroutine refreshes all the values
+'for the main screen, including the
+'scoreboard, team options and rosters.
+'The frame will have already been drawn
+'by the SCOREBOARD routine.
+Sub UPDATESCREEN ()
+
+    Call TICKERUPDATE
+
+    Color 15, 0
+    Locate 1, 37: Print Using "##"; Int(gameClock! / 60);: Print ":";
+
+    'Game Clock - Minutes
+    If gameClock! - Int(gameClock! / 60) * 60 < 10 Then
+        Print "0";: Print Using "#"; gameClock! - Int(gameClock! / 60) * 60;
+    Else
+        Print Using "##"; gameClock! - Int(gameClock! / 60) * 60;
+    End If
+
+    Color 14, 0
+
+    'Period Designation
+    Locate 4, 13: Print Using "###"; score(0, 0);
+    Locate 2, 35: Print Using " PERIOD #"; quarter;
+    If quarter > 4 Then Locate , 35: Print Using "OVERTIME #"; quarter - 4
+
+    'Color 14, 0
+
+    'Score Team 1
+    Locate 4, 60: Print Using "###"; score(1, 0)
+
+    'TO / RB / TF
+    Color 7
+    Locate 3, 35: Print Using "##  "; turnovers(0);
+    Color 12: Print "TO  ";: Color 7: Print Using "##"; turnovers(1)
+
+    Locate , 35: Print Using "##  "; totRebounds(0);
+    Color 12: Print "RB  ";: Color 7: Print Using "##"; totRebounds(1)
+
+    Locate , 35: Print Using "##  "; P2(0);
+    Color 12: Print "TF  ";: Color 7: Print Using "##"; P2(1);
+
+    'Bonus
+    If P2(0) > bonusFoulNum - 1 And quarter <= 4 Or P2(0) > 2 And quarter > 4 Then
+        Color 0, 2
+        Locate , 46: Print "BONUS";
+        Color 7, 0
+    End If
+
+    If P2(1) > bonusFoulNum - 1 And quarter <= 4 Or P2(1) > 2 And quarter > 4 Then
+        Color 0, 2
+        Locate , 29: Print "BONUS";
+        Color 7, 0
+    End If
+
+    'Timeouts
+    Locate 6, 9: Print "TIMEOUTS:"; timeouts(0);
+    Locate , 56: Print "TIMEOUTS:"; timeouts(1)
+
+    Color 15, 0
+
+    'Shot Clock
+    'If no shot clock, or shot clock expired
+    If sClockVal = 2 Or gameClock! < 24 And shotClock >= gameClock! And sClockVal = 0 Or gameClock! < 30 And shotClock >= gameClock! And sClockVal = 1 Or quarter > 4 And gameClock! = 300 Then
+        Locate 6, 37: Print " :  "
+    Else
+        Locate 6, 37: Print Using " :##"; shotClock
+    End If
+
+    If pbpDelay! <> 0 Then
+
+        'Team Play Styles
+        Locate 8, 58
+        Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print "DEF - "; defStyleDesc$(defStyles(D))
+        Locate , 58
+        Color teamRat_GAME(P, 33), teamRat_GAME(P, 34): Print "OFF - "; offStyleDesc$(offStyles(P))
+
+        Color 15, 0
+        Locate , 41
+        Color 14: Print "(1) ";
+        Color 15: Print "SHOOT        ";
+        Color 14: Print "ENTER";
+        Color 15: Print "-PASS"
+        Locate , 41
+        Color 14: Print "(2) ";
+        Color 15: Print gameTeams$(P); " CALL TIMEOUT     "
+        Locate , 41
+        Color 14: Print "(3) ";
+        Color 15: Print "COMMIT INTL FOUL (LAST 4 MIN)"
+        Locate , 41
+        Color 14: Print "(4) ";
+        Color 15: Print "SHOOT A FORCED 3-POINTER"
+        Locate , 41
+        Color 14: Print "(S) ";
+        Color 15: Print "SCOUT REPORT ";
+        Color 14: Print "(T) ";
+        Color 15: Print "10 MIN TICKER"
+        Locate , 41
+        Color 14: Print "(Z) ";
+        Color 15: Print "LEFT TM STGY ";
+        Color 14: Print "(/) ";
+        Color 15: Print "RIGHT TM STGY"
+        Color 15, 0
+        Locate 19, 1
+
+        'Roster for team 1
+        For I1 = 0 To 4
+
+            Color 2, 0
+            Print Using "# "; I1;
+
+            Color 15
+
+            'Name
+            Print Left$(players_GAME$(0, gameB1!(0, I1), 0), 12); Tab(16);
+            J = (gameRatings!(0, gameB1!(0, I1), 3)) - gameRatings!(0, gameB1!(0, I1), 7) - gameRatings!(0, gameB1!(0, I1), 11) - gameRatings!(0, gameB1!(0, I1), 12)
+
+            If J <= 0 Then J = 0
+            If gameRatings!(0, gameB1!(0, I1), 1) >= 100 Then gameRatings!(0, gameB1!(0, I1), 1) = 99
+
+            Print Using "## ## "; gameRatings!(0, gameB1!(0, I1), 0); gameRatings!(0, gameB1!(0, I1), 1);
+
+            If P = 0 Then
+                Print Using "##"; gameRatings!(0, gameB1!(0, I1), 21) * 2 / 10;
+            Else
+                Print Using "##"; gameRatings!(0, gameB1!(0, I1), 2) * 2 / 10;
+            End If
+
+            If J <= 0 And (quarter = 1 Or quarter = 2 Or quarter = 3 Or quarter = 4 And gameClock! > 120) Then Color 12
+
+            Print Using "### "; J;
+            Color 15
+            Print Using "## ##"; gameRatings!(0, gameB1!(0, I1), 4) / 10; gameRatings!(0, gameB1!(0, I1), 5) / 10;
+            Print Using "###  "; gameRatings!(0, gameB1!(0, I1), 8) * 2 + gameRatings!(0, gameB1!(0, I1), 10) + threeFG(0, gameB1!(0, I1), 0);
+
+            If gameRatings!(0, gameB1!(0, I1), 12) >= 5 Then Color 12
+
+            Print Using "#"; gameRatings!(0, gameB1!(0, I1), 12)
+            Color 15
+
+        Next I1
+
+        Locate 19, 40
+
+        'Roster for team 2
+        For I1 = 0 To 4
+
+            Color 2, 0
+            Locate , 40
+            Print Using "# "; I1;
+
+            Color 15
+            Print Left$(players_GAME$(1, gameB1!(1, I1), 0), 12); Tab(56);
+
+            J = (gameRatings!(1, gameB1!(1, I1), 3)) - gameRatings!(1, gameB1!(1, I1), 7) - gameRatings!(1, gameB1!(1, I1), 11) - gameRatings!(1, gameB1!(1, I1), 12)
+            If J <= 0 Then J = 0
+
+            If gameRatings!(1, gameB1!(1, I1), 1) >= 100 Then gameRatings!(1, gameB1!(1, I1), 1) = 99
+            Print Using "## ## "; gameRatings!(1, gameB1!(1, I1), 0); gameRatings!(1, gameB1!(1, I1), 1);
+
+            If P = 1 Then
+                Print Using "##"; gameRatings!(1, gameB1!(1, I1), 21) * 2 / 10;
+            Else
+                Print Using "##"; gameRatings!(1, gameB1!(1, I1), 2) * 2 / 10;
+            End If
+
+            If J <= 0 And (quarter = 1 Or quarter = 2 Or quarter = 3 Or quarter = 4 And gameClock! > 120) Then Color 12
+            Print Using "### "; J;
+
+            Color 15
+            Print Using "## ##"; gameRatings!(1, gameB1!(1, I1), 4) / 10; gameRatings!(1, gameB1!(1, I1), 5) / 10;
+            Print Using "###  "; gameRatings!(1, gameB1!(1, I1), 8) * 2 + gameRatings!(1, gameB1!(1, I1), 10) + threeFG(1, gameB1!(1, I1), 0);
+
+            If gameRatings!(1, gameB1!(1, I1), 12) >= 5 Then Color 12
+            Print Using "#"; gameRatings!(1, gameB1!(1, I1), 12)
+
+            Color 15
+
+        Next I1
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'          POSTGAME Subroutine
+'----------------------------------------
+'This subroutine processes everything that
+'is necessary after a game is complete.
+'It checks for records / special events,
+'handles a prompt for stats, and saving
+'of stats.
+Sub POSTGAME ()
+
+    Call CheckRecords
+    Call EVENTS(specialCount, specialStat)
+    endGame = 1
+
+    Do
+
+        Color 15, 0
+        Cls
+
+        Color 14: Print "(0) ";
+        Color 15: Print "STATS TO SCREEN"
+        Print
+
+        Color 14: Print "(1) ";
+        Color 15: Print "STATS TO PRINTER"
+        Print
+
+        Color 14: Print "(2) ";
+        Color 15: Print "STATS TO TEXT FILE"
+
+        If autoPlay = 1 And playerMode = 2 Then
+            choice = 2
+        Else
+            Do
+                I$ = GetKeyPress$
+                choice = Val(I$)
+            Loop Until choice >= 0 And choice <= 2
+        End If
+
+        Call BOXOPTIONS(choice)
+        Call TICKER
+
+        'Reset option for next call
+        If choice <> 0 Then choice = 0
+
+        'Prompt to display stats again
+        Color 15, 0
+        Cls
+
+        If Not (autoPlay = 1 And playerMode = 2) Then
+
+            Do
+                'Using Home Team's color for the box
+                Call TEAMBOX(1, 1)
+                pbpString$ = "DISPLAY STATS AGAIN? (Y/N)"
+                Locate 7, (80 - Len(pbpString$)) / 2
+                Print pbpString$
+                Color 15, 0
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+        End If
+
+    Loop Until UCase$(I$) = "N" Or (autoPlay = 1 And playerMode = 2)
+
+    'If we had special events
+    If specialStat = 1 Then
+
+        boxName$ = "BOXSCORE" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".BSS"
+        'boxName$ = "BOX" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".SPC"
+
+        'Append special events
+        Call BOX2SPC(boxName$)
+
+        Call BOX2FILE(2, boxName$, specialStat)
+
+    End If
+
+    Call SAVESTATS
+
+    endGame = 0
+    specialStat = 0
+
+End Sub
+
+
+'----------------------------------------
+'         BOXOPTIONS Subroutine
+'----------------------------------------
+'This subroutine takes appropriate action
+'for the output of the box file, which
+'depends on the choice given to it.
+
+' PARAMETER outputChoice
+'    represents menu choice
+'       0 = Display on screen
+'       1 = Send to printer
+'       2 = Save to file
+
+'The option to send to printer will first
+'create a temporary file, then loop THROUGH
+'it to print each line.
+Sub BOXOPTIONS (outputChoice)
+
+    Shared scheduleFile$
+
+    Select Case outputChoice
+
+        Case 0:
+            Call BOX2SCREEN
+
+        Case 1, 2:
+            If outputChoice = 1 Then
+                'Printer = temporary file
+                boxName$ = "TEMPBOX"
+            Else
+                'File = prompt | auto-create
+                If autoPlay <> 1 Then
+                    Cls
+                    Print "ENTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";
+                    Input boxName$
+                    boxName$ = boxName$ + ".BSS"
+                    'boxName$ = boxName$ + ".SPC"
+                Else
+                    'ScheduleName_GameXXX.BS
+                    boxName$ = Mid$(scheduleFile$, 1, Len(scheduleFile$) - 4) + "_GAME" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2)))) + ".BS"
+                    'boxName$ = "BOX" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2))))
+                End If
+
+            End If
+
+            'Includes a special option to send to printer when done
+            Call BOX2FILE(outputChoice, boxName$, 0)
+
+    End Select
+
+End Sub
+
+
+'----------------------------------------
+'          BOX2FILE Subroutine
+'----------------------------------------
+'This subroutine formats the boxscore for
+'an output file.
+
+' PARAMETER printChoice
+'    choice to print file vs. saving it
+
+'The option to send to printer will first
+'create a temporary file, then loop THROUGH
+'it to print each line.
+Sub BOX2FILE (printChoice, boxName$, hasSpecial)
+
+    Shared actualAttendance&
+
+    If hasSpecial = 1 Then
+        Open (diskPaths$(1) + boxName$) For Append As #1
+    Else
+        Open (diskPaths$(1) + boxName$) For Output As #1
+    End If
+
+    If gameLoc = 2 Then
+        Print #1, "SITE: NEUTRAL"
+    Else
+        Print #1, "SITE: "; gameStadium$(gameLoc)
+    End If
+
+    Print #1, Using "  ATTENDANCE: ###,###"; actualAttendance&
+    Print #1,
+
+    Print #1, ; Tab(17); "P1  P2  P3  P4  ";
+
+    If score(0, 1) + score(0, 2) + score(0, 3) + score(0, 4) = score(1, 1) + score(1, 2) + score(1, 3) + score(1, 4) Then
+        Print #1, ; Tab(33); "OT   ";
+
+        If score(0, 1) + score(0, 2) + score(0, 3) + score(0, 4) + score(0, 5) = score(1, 1) + score(1, 2) + score(1, 3) + score(1, 4) + score(1, 5) Then
+            Print #1, ; Tab(37); "O2"; Tab(42); "GAME"
+        Else
+            Print #1, ; Tab(38); "GAME"
+        End If
+    Else
+        Print #1, ; Tab(34); "GAME"
+    End If
+
+    For I = 0 To 1
+
+        Print #1, gameTeams$(I); Tab(16); Str$(score(I, 1)); Tab(20); Str$(score(I, 2)); Tab(24); Str$(score(I, 3)); Tab(28); Str$(score(I, 4));
+
+        team0Score = score(0, 1) + score(0, 2) + score(0, 3) + score(0, 4)
+        team1Score = score(1, 1) + score(1, 2) + score(1, 3) + score(1, 4)
+
+        If team0Score = team1Score Then
+
+            Print #1, Tab(32); Str$(score(I, 5));
+
+            team0Score_OT = team1Score + score(0, 5)
+            team1Score_OT = team1Score + score(1, 5)
+
+            If team0Score_OT = team1Score_OT Then
+                Print #1, Tab(36); Str$(score(I, 6)); Tab(39); " -  "; score(I, 0)
+            Else
+                'team0Score_OT <> team1Score_OT
+                Print #1, Tab(35); " - "; score(I, 0)
+            End If
+        Else
+            'team0Score <> team1Score
+            Print #1, Tab(31); " - "; score(I, 0)
+
+        End If
+
+    Next I
+
+    For I = 0 To 1
+
+        Print #1,
+        Print #1, gameTeams$(I)
+        Print #1, "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
+
+        Erase statTotals
+
+        For I1 = 0 To 14
+
+            If players_GAME$(I, I1, 0) <> "XXX" Then
+
+                'Player Name
+                Print #1, players_GAME$(I, I1, 0); Tab(14);
+
+                'Player Time
+                If timePlayed(I, I1) = 0 Then
+                    Print #1, Tab(15); "DNP";
+                Else
+                    Print #1, Using "##"; Int(timePlayed(I, I1) / 60);: Print #1, ":";
+
+                    If timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60 > 9 Then
+                        Print #1, Using "##"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
+                    Else
+                        Print #1, "0";: Print #1, Using "#"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
+                    End If
+                End If
+
+                'FGM - FGA
+                Print #1, Tab(21);: Print #1, Using "##"; gameRatings!(I, I1, 8);
+                Print #1, "-";
+                Print #1, Using "##"; gameRatings!(I, I1, 7);
+
+                '3FGM - 3FGA
+                Print #1, Using "  ##"; threeFG(I, I1, 0);
+                Print #1, "-";
+                Print #1, Using "##"; threeFG(I, I1, 1);
+
+                'FTM - FTA
+                Print #1, Using "  ##"; gameRatings!(I, I1, 10);
+                Print #1, "-";
+                Print #1, Using "##"; gameRatings!(I, I1, 9);
+
+                'ORB / RB / Points / Fouls / Assists / Blocks / Steals / Turnovers
+                Print #1, Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; gameRatings!(I, I1, 24); gameRatings!(I, I1, 11); gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0); gameRatings!(I, I1, 12); gameRatings!(I, I1, 14); gameRatings!(I, I1, 15); gameRatings!(I, I1, 13); gameRatings!(I, I1, 23)
+
+                statTotals(0) = statTotals(0) + gameRatings!(I, I1, 8)
+                statTotals(1) = statTotals(1) + gameRatings!(I, I1, 7)
+                statTotals(2) = statTotals(2) + gameRatings!(I, I1, 10)
+                statTotals(3) = statTotals(3) + gameRatings!(I, I1, 9)
+                statTotals(4) = statTotals(4) + gameRatings!(I, I1, 11)
+                statTotals(5) = statTotals(5) + (gameRatings!(I, I1, 8) * 2) + gameRatings!(I, I1, 10) + threeFG(I, I1, 0)
+                statTotals(13) = statTotals(13) + threeFG(I, I1, 0)
+                statTotals(14) = statTotals(14) + threeFG(I, I1, 1)
+                statTotals(6) = teamFouls(I)
+                statTotals(7) = statTotals(7) + gameRatings!(I, I1, 14)
+                statTotals(8) = statTotals(8) + gameRatings!(I, I1, 15)
+                statTotals(9) = statTotals(9) + gameRatings!(I, I1, 13)
+                statTotals(11) = statTotals(11) + gameRatings!(I, I1, 24)
+                statTotals(12) = statTotals(12) + gameRatings!(I, I1, 23)
+                statTotals(10) = statTotals(10) + timePlayed(I, I1)
+
+            End If
+
+        Next I1
+
+        If statTotals(3) = 0 Then statTotals(3) = 1
+
+        Print #1,: Print #1, "TOTALS"; Tab(14); Int(statTotals(10) / 60); Tab(21);
+
+        'FGM - FGA
+        Print #1, Using "##"; statTotals(0);
+        Print #1, "-";
+        Print #1, Using "###"; statTotals(1);
+
+        '3FGM - 3FGA
+        Print #1, Tab(28); Using "##"; statTotals(13);
+        Print #1, "-";
+        Print #1, Using "##"; statTotals(14);
+
+        'FTM - FTA
+        Print #1, Tab(35); Using "##"; statTotals(2);
+        Print #1, "-";
+        Print #1, Using "##"; statTotals(3);
+
+        Print #1, Tab(42);
+        'ORB / RB / Points / Fouls / Assists / Blocks / Steals / Turnovers
+        Print Using "##  ## ### ##  ##  ##  ##  ##"; statTotals(11); statTotals(4); statTotals(5); statTotals(6); statTotals(7); statTotals(8); statTotals(9); statTotals(12)
+
+        'FG %
+        Print #1, ; Tab(22); 
+        If statTotals(1) > 0 Then Print #1, ; Int(((statTotals(0) / statTotals(1)) * 100) + .5); "%"; 
+
+        '3FG %
+        Print #1, ; Tab(28); 
+        If statTotals(14) > 0 Then Print #1, ; Int(((statTotals(13) / statTotals(14)) * 100) + .5); "%";
+
+        'FT %
+        Print #1, ; Tab(35); 
+        If statTotals(3) > 0 Then Print #1, ; Int(((statTotals(2) / statTotals(3)) * 100) + .5); "%"
+
+        Print #1,
+        Print #1, "TOTAL TURNOVERS -"; turnovers(I)
+        Print #1, "TOTAL REBOUNDS  -"; totRebounds(I)
+
+    Next I
+
+    'Print #1,
+    'Print #1, "BENCH WARMERS"
+
+    'For I = 0 To 1
+
+    '    For I1 = 0 To 13
+
+    'Automatically disable "non-existent" players
+    '       If players_GAME$(I, I1, 0) <> "XXX" And plyrRat_GAME(I, I1, 18) = -1 Then
+    '           Print #1, players_GAME$(I, I1, 0); " ["; gameTeams$(I); "]"
+    '       End If
+
+    '   Next I1
+
+    'Next I
+
+    If printChoice = 1 Then Print #1, Chr$(12)
+
+    Close #1
+
+    If printChoice = 1 Then
+
+        Open diskPaths$(1) + boxName$ For Input As #2
+
+        Do
+            Line Input #2, X$
+            LPrint X$
+        Loop While Left$(X$, 1) <> Chr$(12)
+
+        Close #2
+
+        Kill "TEMPBOX"
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'         BOX2SCREEN Subroutine
+'----------------------------------------
+'This subroutine formats the boxscore for
+'output to the end user display.
+Sub BOX2SCREEN ()
+
+    Shared actualAttendance&
+
+    Cls
+
+    Color 14
+    If gameLoc = 2 Then
+        Print "SITE: ";
+        Color 15
+        Print "NEUTRAL"
+    Else
+        Print "SITE: ";
+        Color 15
+        Print gameStadium$(gameLoc)
+    End If
+
+    Color 14
+    Print "ATTENDANCE: ";
+    Color 15
+    Print Using "###,###"; actualAttendance&
+    Print
+
+    Call ScoreSummary
+
+    If Not (autoPlay = 1 And playerMode = 2) Then
+        Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
+        I$ = GetKeyPress$
+    End If
+
+    Call STATS2SCREEN
+
+End Sub
+
+
+'----------------------------------------
+'        ScoreSummary Subroutine
+'----------------------------------------
+'This subroutine prints a score by period
+'for each team.
+Sub ScoreSummary ()
+
+    Locate 4, 17
+    Color 14
+
+    If halfTime = 1 Then
+        Print "P1  P2  "; Tab(35); "GAME"
+    Else
+        Print "P1  P2  P3  P4  ";
+
+        If score(0, 1) + score(0, 2) + score(0, 3) + score(0, 4) = score(1, 1) + score(1, 2) + score(1, 3) + score(1, 4) Then
+
+            Locate , 34
+            Print "OT  ";
+
+            If score(0, 1) + score(0, 2) + score(0, 3) + score(0, 4) + score(0, 5) = score(1, 1) + score(1, 2) + score(1, 3) + score(1, 4) + score(1, 5) Then
+                Locate , 38
+                Print "O2  "
+            Else
+                Locate , 39
+                Print "GAME"
+            End If
+        Else
+            Locate , 35
+            Print "GAME"
+        End If
+
+    End If
+
+    Color 15, 0
+
+    For I = 0 To 1:
+        Locate 5 + I,
+        Color teamRat_GAME(I, 33), teamRat_GAME(I, 34)
+        Print gameTeams$(I);
+
+        Color 15, 0
+
+        If halfTime = 1 Then
+            Print Tab(16); Str$(score(I, 1)); Tab(20); Str$(score(I, 2)); Tab(32); " - "; Str$(score(I, 0))
+
+        Else
+            Print Tab(16); Str$(score(I, 1)); Tab(20); Str$(score(I, 2));
+            Print Tab(24); Str$(score(I, 3)); Tab(28); Str$(score(I, 4));
+
+            If score(0, 1) + score(0, 2) + score(0, 3) + score(0, 4) = score(1, 1) + score(1, 2) + score(1, 3) + score(1, 4) Then
+                Locate , 32: Print Str$(score(I, 5));
+
+                If score(0, 1) + score(0, 2) + score(0, 3) + score(0, 4) + score(0, 5) = score(1, 1) + score(1, 2) + score(1, 3) + score(1, 4) + score(1, 5) Then
+                    Locate , 36: Print Str$(score(I, 6));
+                    Locate , 40: Print " - "; Str$(score(I, 0))
+                Else
+                    Locate , 35: Print " - "; Str$(score(I, 0))
+                End If
+
+            Else
+
+                Locate , 32: Print " - "; Str$(score(I, 0))
+
+            End If
+
+        End If 'Done checking if half time
+
+    Next I
+
+End Sub
+
+
+'----------------------------------------
+'        STATS2SCREEN Subroutine
+'----------------------------------------
+'This subroutine formats the game stats
+'for output to the end user display
+Sub STATS2SCREEN
+
+    For I = 0 To 1:
+
+        Cls
+
+        Color teamRat_GAME(I, 33), teamRat_GAME(I, 34)
+        Print gameTeams$(I)
+
+        Color 14, 0
+        Print "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB REB PTS PF  AST BLK STL TO"
+
+        Erase statTotals
+
+        For I1 = 0 To 14
+
+            If players_GAME$(I, I1, 0) <> "XXX" And timePlayed(I, I1) <> 0 Then
+
+                Color 15
+
+                'Name
+                Print Left$(players_GAME$(I, I1, 0), 13); Tab(14);
+
+                'Minutes
+                If timePlayed(I, I1) <> 0 Then
+                    Print Using "##"; Int(timePlayed(I, I1) / 60);
+                    Print ":";
+                    If timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60 > 9 Then
+                        Print Using "##"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
+                    Else
+                        Print "0";
+                        Print Using "#"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
+                    End If
+                End If
+
+                Locate , 21
+
+                'FG
+                Print Using "##"; gameRatings!(I, I1, 8);
+                Print "-";
+                Print Using "##"; gameRatings!(I, I1, 7);
+
+                '3FG
+                Print Using "  ##"; threeFG(I, I1, 0);
+                Print "-";
+                Print Using "##"; threeFG(I, I1, 1);
+
+                'FT
+                Print Using "  ##"; gameRatings!(I, I1, 10);
+                Print "-";
+                Print Using "##"; gameRatings!(I, I1, 9);
+
+                'ORB / RB / PT / F / A /  B / S / TO
+                Print Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; gameRatings!(I, I1, 24); gameRatings!(I, I1, 11); gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0); gameRatings!(I, I1, 12); gameRatings!(I, I1, 14); gameRatings!(I, I1, 15); gameRatings!(I, I1, 13); gameRatings!(I, I1, 23);
+
+                If timePlayed(I, I1) = 0 Then Locate , 15: Print "DNP" Else Print
+
+                statTotals(0) = statTotals(0) + gameRatings!(I, I1, 8)
+                statTotals(1) = statTotals(1) + gameRatings!(I, I1, 7)
+                statTotals(2) = statTotals(2) + gameRatings!(I, I1, 10)
+                statTotals(3) = statTotals(3) + gameRatings!(I, I1, 9)
+                statTotals(4) = statTotals(4) + gameRatings!(I, I1, 11)
+                statTotals(5) = statTotals(5) + (gameRatings!(I, I1, 8) * 2) + gameRatings!(I, I1, 10) + threeFG(I, I1, 0)
+                statTotals(13) = statTotals(13) + threeFG(I, I1, 0)
+                statTotals(14) = statTotals(14) + threeFG(I, I1, 1)
+                statTotals(6) = teamFouls(I)
+                statTotals(7) = statTotals(7) + gameRatings!(I, I1, 14)
+                statTotals(8) = statTotals(8) + gameRatings!(I, I1, 15)
+                statTotals(9) = statTotals(9) + gameRatings!(I, I1, 13)
+                statTotals(11) = statTotals(11) + gameRatings!(I, I1, 24)
+                statTotals(12) = statTotals(12) + gameRatings!(I, I1, 23)
+                statTotals(10) = statTotals(10) + timePlayed(I, I1)
+
+            End If
+
+        Next I1
+
+        If statTotals(3) = 0 Then statTotals(3) = 1
+
+        Print
+        Color 14
+        Print "TOTALS";
+
+        Color 15
+        'Minutes
+        Print Tab(14); Int(statTotals(10) / 60);
+
+        'FGM / FGA
+        Locate , 21: Print Using "##"; statTotals(0);
+        Print "-";
+        Print Using "###"; statTotals(1);
+
+        '3FGM / 3FGA
+        Locate , 28: Print Using "##"; statTotals(13);
+        Print "-";
+        Print Using "##"; statTotals(14);
+
+        'FTM / FTA
+        Locate , 35: Print Using "##"; statTotals(2);
+        Print "-";
+        Print Using "##"; statTotals(3);
+
+        'ORB / RB / PT / F / A / B / S / TO
+        Locate , 42: Print Using "##  ## ### ##  ##  ##  ##  ##"; statTotals(11); statTotals(4); statTotals(5); statTotals(6); statTotals(7); statTotals(8); statTotals(9); statTotals(12)
+
+        'FG %
+        Print Tab(22);
+        If statTotals(1) > 0 Then Print Int(((statTotals(0) / statTotals(1)) * 100) + .5); "%";
+
+        '3FG %
+        Print Tab(28); 
+        If statTotals(14) > 0 Then Print Int(((statTotals(13) / statTotals(14)) * 100) + .5); "%";
+
+        'FT %
+        Print Tab(35);
+        If statTotals(3) > 0 Then Print Int(((statTotals(2) / statTotals(3)) * 100) + .5); "%"
+
+        Print
+        Color 14: Print "TOTAL TURNOVERS -";
+        Color 15: Print turnovers(I)
+
+        Color 14: Print "TOTAL REBOUNDS  -";
+        Color 15: Print totRebounds(I)
+
+        If Not (autoPlay = 1 And playerMode = 2) Then
+            Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
+            I$ = GetKeyPress$
+        End If
+
+    Next I
+
+End Sub
+
+
+'----------------------------------------
+'           BOX2SPC Subroutine
+'----------------------------------------
+' Adds special event information
+' to a boxscore file
+Sub BOX2SPC (boxName$)
+
+    Open diskPaths$(1) + boxName$ For Output As #1
+
+    Print #1,
+
+    'Output any special events
+    If quarter - 1 > eventSettings(1) Then Print #1, Using "MORE THAN ## QUARTERS"; eventSettings(1)
+    If score(1, 0) + score(0, 0) > eventSettings(2) Then Print #1, Using "MORE THAN ### COMBINED POINTS"; eventSettings(2)
+    If totRebounds(0) + totRebounds(1) > eventSettings(3) Then Print #1, Using "MORE THAN ### COMBINED REBOUNDS"; eventSettings(3)
+    If score(0, 0) > eventSettings(4) Then Print #1, gameTeams$(0);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
+    If score(1, 0) > eventSettings(4) Then Print #1, gameTeams$(1);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
+    If totRebounds(0) > eventSettings(5) Then Print #1, gameTeams$(0);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
+    If totRebounds(1) > eventSettings(5) Then Print #1, gameTeams$(1);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
+
+    For I = 0 To 1
+        For I1 = 0 To 14
+            If gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) > eventSettings(6) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(6)
+            If gameRatings!(I, I1, 11) > eventSettings(7) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(7)
+            If gameRatings!(I, I1, 14) > eventSettings(8) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " HAD MORE THAN ### ASSISTS"; eventSettings(8)
+            If gameRatings!(I, I1, 15) > eventSettings(9) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " BLOCKED MORE THAN ### SHOTS"; eventSettings(9)
+            If gameRatings!(I, I1, 13) > eventSettings(10) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " HAD MORE THAN ### STEALS"; eventSettings(10)
+            If threeFG(I, I1, 0) > eventSettings(11) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " MADE MORE THAN ### 3-PT FIELD GOALS"; eventSettings(11)
+        Next
+    Next
+
+    Print #1,
+
+    Close #1
+
+End Sub
+
+
+
+'----------------------------------------
+'          SAVESTATS Subroutine
+'----------------------------------------
+'This subroutine prompts the user in ORDER
+'to determine which teams to save satts For
+'(autoplay will always save both teams).
+'It also updates the GAME82 progress file,
+'since at this point only can the game be
+'considered fully complete.
+Sub SAVESTATS ()
+
+    Shared scheduleFile$
+
+    Cls
+
+    If autoPlay <> 1 Then
+
+        Call TEAMBOX(1, 1)
+
+        Do
+            pbpString$ = "SAVE STATS FOR EITHER TEAM? (Y/N)"
+            Locate 7, (80 - Len(pbpString$)) / 2
+            Print pbpString$
+            Color 15, 0
+            I$ = GetKeyPress$
+        Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+        If UCase$(I$) = "Y" Then
+            Cls
+            Color 12: Print Tab(30); "COMPILATION OF STATS"
+            Print
+            Color 14: Print "(0) ";: Color 15: Print "BOTH TEAMS"
+            Print
+            Color 14: Print "(1) ";: Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0); " ONLY"
+            Color , 0: Print
+            Color 14: Print "(2) ";: Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1); " ONLY"
+            Color , 0: Print
+
+            Do
+                J$ = GetKeyPress$
+                X1 = Val(J$)
+            Loop Until X1 >= 0 And X1 <= 2
+
+        End If
+
+    End If
+
+    ' Update schedule, ticker, etc.
+    If UCase$(I$) = "Y" Or autoPlay = 1 Then
+
+        If _FileExists("GAME82") Then
+
+            Call TickerSchedule
+
+            If schedGame(1) < schedGame(0) + schedGame(2) Then
+                Kill "GAME82"
+                endAllGames = 1
+            Else
+                Open "GAME82" For Output As #2
+
+                Print #2, scheduleFile$
+
+                For I = 0 To 2:
+                    Print #2, schedGame(I)
+                Next
+
+                Close #2
+
+            End If
+
+        End If
+
+        Call COMPILESTATFILES(X1)
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'      COMPILESTATFILES Subroutine
+'----------------------------------------
+'This subroutine updates the various stat
+'files for the corresponding team based on
+'the stats generated for a completed game.
+Sub COMPILESTATFILES (compileOpt)
+
+    Dim TG!
+
+    Shared teamScore(), oppScore()
+
+    Shared gameW0!(), gameW1!()
+    Shared statsZ!(), statsZ1!(), statsZ2!()
+
+    Shared oppName$(), locIndicator$()
+
+    Cls
+
+    HH% = gameLoc
+
+    For PX = 0 To 1
+
+        For J = 0 To 14
+            gameRatings!(PX, J, 16) = timePlayed(PX, J)
+            gameRatings!(PX, J, 17) = gameRatings!(PX, J, 23)
+            gameRatings!(PX, J, 18) = gameRatings!(PX, J, 24)
+        Next
+
+    Next
+
+    For PX = 0 To 1
+
+        For I = 0 To 14
+
+            For J = 1 To 12
+                gameRatings!(PX, I, J) = gameRatings!(PX, I, J + 6)
+            Next
+
+            gameW0!(PX, I) = threeFG(PX, I, 0)
+            gameW1!(PX, I) = threeFG(PX, I, 1)
+
+        Next
+
+    Next
+
+    teamIdx = 0
+
+    Do
+        C% = 0
+
+        If autoPlay <> 1 Then
+            I$ = "Y"
+
+            If compileOpt = 1 And teamIdx = 1 Or compileOpt = 2 And teamIdx = 0 Then I$ = "N"
+
+            If UCase$(I$) = "N" Then
+                C% = 1
+            Else
+                Cls
+            End If
+        End If
+
+        If C% <> 1 Then
+
+            statFile$ = nameStatFile$(gameTeams$(teamIdx))
+
+            If _FileExists(diskPaths$(1) + statFile$) Then
+
+                Open diskPaths$(1) + statFile$ For Input As #1
+
+                Input #1, gameTeams$(teamIdx)
+
+                For I = 0 To 14:
+
+                    Input #1, players_GAME$(teamIdx, I, 0)
+
+                    For J = 0 To 13:
+                        Input #1, statsZ2!(I, J)
+                    Next J
+
+                    Input #1, W2(teamIdx, I)
+                    Input #1, W3(teamIdx, I)
+
+                Next I
+
+                For L = 0 To 15:
+                    Input #1, statsZ!(L)
+                Next L
+
+                For L = 0 To 15:
+                    Input #1, statsZ1!(L)
+                Next L
+
+                Close #1
+
+            End If
+
+            TG! = 0
+
+            For I = 0 To 14
+
+                If gameRatings!(teamIdx, I, 2) * 2 + gameRatings!(teamIdx, I, 4) + gameW0!(teamIdx, I) > statsZ2!(I, 13) Then statsZ2!(I, 13) = gameRatings!(teamIdx, I, 2) * 2 + gameRatings!(teamIdx, I, 4) + gameW0!(teamIdx, I)
+
+                If gameRatings!(teamIdx, I, 10) > 0 Then statsZ2!(I, 0) = statsZ2!(I, 0) + 1
+
+                For J = 1 To 12
+
+                    statsZ2!(I, J) = statsZ2!(I, J) + gameRatings!(teamIdx, I, J)
+
+                    If Not (J = 5 Or J = 6 Or J = 10 Or J = 11) Then
+                        statsZ!(J) = statsZ!(J) + gameRatings!(teamIdx, I, J)
+                        statsZ1!(J) = statsZ1!(J) + gameRatings!(1 - teamIdx, I, J)
+                    End If
+                Next J
+
+                statsZ!(0) = statsZ!(0) + gameRatings!(teamIdx, I, 10)
+                TG! = TG! + gameRatings!(teamIdx, I, 10)
+
+            Next I
+
+            Erase statTotals
+
+            For I = 0 To 1
+                For I1 = 0 To 14
+                    statTotals(I) = statTotals(I) + gameRatings!(I, I1, 5)
+                Next
+            Next
+
+            statsZ!(15) = statsZ!(15) + totRebounds(teamIdx) - statTotals(teamIdx)
+            statsZ1!(15) = statsZ1!(15) + totRebounds(1 - teamIdx) - statTotals(1 - teamIdx)
+
+            statsZ!(6) = statsZ!(6) + teamFouls(teamIdx)
+            statsZ1!(6) = statsZ1!(6) + teamFouls(1 - teamIdx)
+
+            statsZ!(5) = statsZ!(5) + totRebounds(teamIdx)
+            statsZ1!(5) = statsZ1!(5) + totRebounds(1 - teamIdx)
+
+            statsZ!(11) = statsZ!(11) + turnovers(teamIdx)
+            statsZ1!(11) = statsZ1!(11) + turnovers(1 - teamIdx)
+
+            For J = 0 To 14:
+                statsZ!(13) = statsZ!(13) + gameW0!(teamIdx, J)
+                statsZ!(14) = statsZ!(14) + gameW1!(teamIdx, J)
+                statsZ1!(13) = statsZ1!(13) + gameW0!(1 - teamIdx, J)
+                statsZ1!(14) = statsZ1!(14) + gameW1!(1 - teamIdx, J)
+                W2(teamIdx, J) = W2(teamIdx, J) + gameW0!(teamIdx, J)
+                W3(teamIdx, J) = W3(teamIdx, J) + gameW1!(teamIdx, J)
+            Next J
+
+            statsZ!(10) = statsZ!(10) + score(teamIdx, 0)
+            statsZ1!(10) = statsZ1!(10) + score(1 - teamIdx, 0)
+
+            Call TEAMBOX(1, teamIdx)
+
+            pbpString$ = "SAVING STATS FOR " + gameTeams$(teamIdx)
+            Locate , (80 - Len(pbpString$)) / 2
+            Print pbpString$
+            Color 15, 0
+
+            Open diskPaths$(1) + statFile$ For Output As #2
+
+            Print #2, gameTeams$(teamIdx)
+
+            For I = 0 To 14:
+
+                Print #2, players_GAME$(teamIdx, I, 0)
+
+                For J = 0 To 13:
+                    Print #2, statsZ2!(I, J)
+                Next J
+
+                Print #2, W2(teamIdx, I)
+                Print #2, W3(teamIdx, I)
+
+            Next I
+
+            For L = 0 To 15
+                Print #2, statsZ!(L)
+            Next L
+
+            For L = 0 To 15:
+                Print #2, statsZ1!(L)
+            Next L
+
+            Close #2
+
+            Y% = 0
+
+            If _FileExists(diskPaths$(1) + statFile$ + "S") Then
+
+                Open diskPaths$(1) + statFile$ + "S" For Input As #3
+
+                Input #3, Y%
+
+                For I = 1 To MAX_SCHED_STATS:
+                    Input #3, teamScore(I)
+                Next I
+
+                For I = 1 To MAX_SCHED_STATS:
+                    Input #3, oppName$(I)
+                Next I
+
+                For I = 1 To MAX_SCHED_STATS:
+                    Input #3, oppScore(I)
+                Next I
+
+                For I = 1 To MAX_SCHED_STATS:
+                    Input #3, locIndicator$(I)
+                Next I
+
+                Close #3
+
+            End If
+
+            If Y% < 100 Then Y% = Y% + 1
+
+            Select Case HH%
+                Case 2
+                    Select Case TG!
+                        Case Is < 14500
+                            locIndicator$(Y%) = "N"
+                        Case 14501 To 16000
+                            locIndicator$(Y%) = "N1"
+                        Case 16001 To 17500
+                            locIndicator$(Y%) = "N2"
+                        Case 17501 To 19000
+                            locIndicator$(Y%) = "N3"
+                        Case 19001 To 20500
+                            locIndicator$(Y%) = "N4"
+                    End Select
+
+                Case Is = teamIdx
+                    Select Case TG!
+                        Case Is < 14500
+                            locIndicator$(Y%) = "H"
+                        Case 14501 To 16000
+                            locIndicator$(Y%) = "H1"
+                        Case 16001 To 17500
+                            locIndicator$(Y%) = "H2"
+                        Case 17501 To 19000
+                            locIndicator$(Y%) = "H3"
+                        Case 19001 To 20500
+                            locIndicator$(Y%) = "H4"
+                    End Select
+
+                Case Is <> teamIdx
+                    Select Case TG!
+                        Case Is < 14500
+                            locIndicator$(Y%) = "V"
+                        Case 14501 To 16000
+                            locIndicator$(Y%) = "V1"
+                        Case 16001 To 17500
+                            locIndicator$(Y%) = "V2"
+                        Case 17501 To 19000
+                            locIndicator$(Y%) = "V3"
+                        Case 19001 To 20500
+                            locIndicator$(Y%) = "V4"
+                    End Select
+
+            End Select
+
+            teamScore(Y%) = score(teamIdx, 0)
+            oppName$(Y%) = gameTeams$(1 - teamIdx)
+            oppScore(Y%) = score(1 - teamIdx, 0)
+
+            Open diskPaths$(1) + statFile$ + "S" For Output As #4
+
+            Print #4, Y%
+
+            For I = 1 To MAX_SCHED_STATS:
+                Print #4, teamScore(I)
+            Next I
+
+            For I = 1 To MAX_SCHED_STATS:
+                Print #4, oppName$(I)
+            Next I
+
+            For I = 1 To MAX_SCHED_STATS:
+                Print #4, oppScore(I)
+            Next I
+
+            For I = 1 To MAX_SCHED_STATS:
+                Print #4, locIndicator$(I)
+            Next I
+
+            Close #4
+
+            'Reset arrays for next iteration
+            Erase teamScore, oppScore
+            Erase statsZ!, statsZ1!, statsZ2!
+            Erase locIndicator$, oppName$
+
+        End If
+
+        teamIdx = teamIdx + 1
+        statsZ!(12) = 0
+
+    Loop Until teamIdx = 2
+
+End Sub
+
+
+'----------------------------------------
+'            pbplog Routine
+'----------------------------------------
+'This subroutine is designed to help me
+'print information about where the game
+'is at during the code. The general idea
+'was originally to be called everywhere
+'there is PBP. This helps me debug where
+'issues are happening in a game.
+Sub pbplog (lineNumber)
+
+    Print #11, "Called from line # "; lineNumber
+    'Print #11, "Called with random # "; randoNum
+    Print #11, gameTeams$(0); " vs "; gameTeams$(1)
+    'Print #11, pbpString$
+    Print #11,
+
+End Sub
+
+
+'----------------------------------------
+'       ChooseGameTeam Subroutine
+'----------------------------------------
+'This subroutine provides interface for
+'choosing a team for the game
+Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
+
+    Shared previousYear$
+
+    Shared teamIndicator$()
+
+    Do
+        Color 15, 0
+        Cls
+
+        JJ = 6
+        Locate 6, 8
+        Color 15, 4
+
+        'Print box top
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+        'Print box sides
+        JJ = 9
+        For II = 1 To JJ
+            Locate 6 + II, 8
+            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+        Next
+        Locate 7 + JJ, 8
+
+        'Print box bottom
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+        Locate 7, 32
+
+        Locate , 12: Print teamIndicator$(gameIdx)
+        Locate , 12: Print "ENTER DISK ID: "
+        Print
+        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+        Locate , 12: Print "ABA SEASONS ARE FOLLOWED BY AN 'A' (IE. 75A)."
+        Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
+        Locate 8,
+
+        I$ = GetKeyPress$
+
+        If I$ <> Chr$(27) Then
+
+            If I$ <> Chr$(13) Then
+
+                Locate 8, 27: Print I$;
+
+                NY$ = ""
+
+                Do Until NY$ = Chr$(13)
+
+                    NY$ = GetKeyPress$
+
+                    If NY$ = Chr$(8) And Len(I$) >= 1 Then
+                        col% = Pos(0)
+                        I$ = Left$(I$, (Len(I$) - 1))
+                        Locate , col% - 1
+                        Print " ";
+                        Locate , col% - 1
+                    Else
+                        I$ = I$ + NY$
+                        Print NY$;
+                    End If
+
+                Loop
+
+                I$ = Left$(I$, (Len(I$) - 1))
+
+                If Not (I$ = "" And yearNumber$ <> "") Then
+
+                    yearNumber$ = RTrim$(I$)
+                    Erase teamNames$
+                    numberTeams = 0
+
+                    Cls
+
+                    If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
+
+                        MsgText$ = "NO TEAM FILES WERE FOUND MATCHING THIS ID. PRESS ANY KEY TO RETURN TO MAIN MENU"
+                        BoxWidth = 20
+                        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+                        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+                        I$ = GetKeyPress$
+                        Call CSMsgBox("", 0, Pass)
+                        Exit Sub
+
+                    Else
+
+                        Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$ For Random As #5 Len = TEAM_SIZE_BYTES
+
+                        fileLength& = LOF(5)
+
+                        Field #5, 15 As Q$(0)
+
+                        numberTeams = fileLength& / TEAM_SIZE_BYTES
+
+                        For teamIdx = 1 To numberTeams
+                            Get #5, teamIdx
+                            'numberTeams = numberTeams + 1
+                            teamNames$(teamIdx) = Q$(0)
+                            teamIndex%(teamIdx) = teamIdx
+                        Next teamIdx
+
+                        Close #5
+
+                        previousYear$ = yearNumber$
+
+                    End If 'Done checking if file exists
+
+                End If 'Done checking for blank year number
+
+            Else
+
+                yearNumber$ = previousYear$
+
+            End If 'Done checking for ENTER key
+
+            'Locate 2, 33
+            'Color 31: Print "LOADING..."
+
+            Do
+
+                Call SelectGameTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%, gameIdx)
+
+                If ExitCode% <> 27 And numberTeams <> 0 Then
+
+                    Do
+                        Locate 2, 33
+                        Color teamRat_GAME(gameIdx, 33), teamRat_GAME(gameIdx, 34): Print gameTeams$(gameIdx)
+
+                        Color 15, 4
+                        Locate 3, 32: Print "ANY CHANGE? (Y/N)";
+
+                        J$ = GetKeyPress$
+
+                    Loop Until J$ = Chr$(27) Or UCase$(J$) = "Y" Or UCase$(J$) = "N"
+
+                End If
+
+            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N"
+
+        End If 'Done checking for ESC
+
+    Loop Until UCase$(J$) = "N" Or I$ = Chr$(27) 'Or J$ = Chr$(27)
+
+    If I$ = Chr$(27) Or J$ = Chr$(27) Then chosenIdx = 0
+
+End Sub
+
+
+'----------------------------------------
+'       SelectGameTeam Subroutine
+'----------------------------------------
+'This subroutine provides an interface for
+'selecting a team from the list loaded by
+'the disk ID.
+Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%, gameIdx)
+
+    If numberTeams > 0 Then
+
+        SELECTION% = 1
+        Count% = numberTeams
+        Start% = 1
+        FileFGColor% = 15: FileBGColor% = 4
+        HiLiteFGColor% = 0: HiLiteBGColor% = 7
+        Rows% = 20
+        Columns% = 4
+        Spacing% = 6
+        Row% = 4
+        Column% = 1
+
+        Color , 4
+        Cls
+        Color 14
+        Locate , 33: Print "TEAM SELECTION"
+        Locate 25, 1
+        Color 14: Print "ESC";
+        Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";
+        Color 14: Print "ENTER";
+        Color 15: Print "-SELECTS TEAM";
+
+        _MouseShow "DEFAULT"
+        MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
+        _MouseHide
+
+        If ExitCode% <> 27 Then
+            selectedIdx = teamIndex%(SELECTION%)
+
+            'Locate 2, 33
+            'Color 31: Print "LOADING..."
+
+            Call ReadGameTeam(yearNumber$, teamName$, selectedIdx, gameIdx)
+
+        End If
+
+    End If
+
+End Sub
+
+'----------------------------------------
+'        ReadGameTeam Subroutine
+'----------------------------------------
+'This subroutine reads in the data for the
+'selected tema into each of the data arrays
+'needed by the game.
+Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx)
+
+    'Games Played, Minutes Per Game
+    Dim gamesPlayed, minsPerGame!
+
+    Shared avgAttendance&()
+
+    Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
+
+    Field #1, 15 As Q$(0), 15 As Q$(1)
+
+    For J = 0 To 6
+        Field #1, 30 + J * 2 As X$, 2 As Q$(J + 2)
+    Next
+
+    Field #1, 44 As X$, 2 As Q$(9)
+
+    For J = 0 To 34
+        Field #1, 46 + J * 2 As X$, 2 As Q$(J + 10)
+    Next
+
+    For J = 0 To 14
+        Field #1, 116 + J * 57 As X$, 15 As Q$(J * 22 + 45), 2 As Q$(J * 22 + 46)
+        For J1 = 0 To 19
+            Field #1, 133 + J * 57 + J1 * 2 As X$, 2 As Q$(J * 22 + 47 + J1)
+        Next
+    Next
+
+    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+
+    Get #1, teamIdx
+
+    targetTeam$ = RTrim$(Q$(0))
+
+    'Mascot / Alt Name
+    gameMascots$(gameIdx) = Q$(1)
+
+    For I = 0 To 6
+        leagRat_GAME(gameIdx, I) = CVI(Q$(I + 2))
+    Next
+
+    For I = 0 To 34
+        teamRat_GAME(gameIdx, I) = CVI(Q$(I + 10))
+    Next
+
+    For I = 0 To 14
+
+        players_GAME$(gameIdx, I, 0) = RTrim$(Q$(22 * I + 45))
+        players_GAME$(gameIdx, I, 1) = RTrim$(Q$(22 * I + 46))
+
+        For I1 = 0 To 19
+            plyrRat_GAME(gameIdx, I, I1) = CVI(Q$(22 * I + 47 + I1))
+        Next
+
+    Next
+
+    'Team Abbreviation
+    teamAbbrev$(gameIdx) = RTrim$(Q$(375))
+
+    'Coach
+    gameCoach$(gameIdx) = RTrim$(Q$(376))
+
+    'Arena
+    gameStadium$(gameIdx) = RTrim$(Q$(377))
+
+    'Read in Avg Attendance
+    '-- For now, assign the NBA average from the last 2 decades
+    '-- Then as team files are updated to include this, we can
+    '-- uncomment the RTrim and be set
+    avgAttendance&(gameIdx) = 18000 'RTrim$(Q$(378))
+
+    Close #1
+
+    For I = 0 To 14
+
+        If plyrRat_GAME(gameIdx, I, 16) < 0 And plyrRat_GAME(gameIdx, I, 17) < 0 Then
+
+            gamesPlayed = plyrRat_GAME(gameIdx, I, 16) / plyrRat_GAME(gameIdx, I, 0)
+            minsPerGame! = plyrRat_GAME(gameIdx, I, 17) / plyrRat_GAME(gameIdx, I, 1)
+
+            For I1 = 2 To 14
+                plyrRat_GAME(gameIdx, I, I1) = plyrRat_GAME(gameIdx, I, I1) * gamesPlayed * minsPerGame!
+                plyrRat_GAME(gameIdx, I, 0) = plyrRat_GAME(gameIdx, I, 16) * -1: plyrRat_GAME(gameIdx, I, 1) = plyrRat_GAME(gameIdx, I, 17) * -1
+            Next I1
+
+        End If
+
+    Next I
+
+    If Not (playerMode = 0 Or playerMode = 1 And gameIdx <> compTeam Or autoPlay = 1 And playerMode = 0 Or autoPlay = 1 And playerMode = 1 And gameIdx <> compTeam) Then
+
+        While (CNT% < 10)
+
+            CNT% = 0
+
+            For I = 0 To 14
+                If plyrRat_GAME(gameIdx, I, 18) = -1 Then plyrRat_GAME(gameIdx, I, 18) = 0
+
+                Call Rolld100(RN)
+
+                'Auto disable specific players
+                If UCase$(players_GAME$(gameIdx, I, 0)) = "XXX" Or (plyrRat_GAME(gameIdx, I, 18) = 0 And RN > Int(plyrRat_GAME(gameIdx, I, 0) / leagRat_GAME(gameIdx, 0) * 100 + .5)) Then
+                    plyrRat_GAME(gameIdx, I, 18) = -1
+                End If
+
+            Next
+
+            For I = 0 To 14:
+                If plyrRat_GAME(gameIdx, I, 18) = 0 Then CNT% = CNT% + 1
+            Next
+
+        Wend
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'      GetKeyWhenNoDelay Subroutine
+'----------------------------------------
+'Allows user to silently press a key 
+'(no prompt) when the game is not autoplay
+Sub GetKeyWhenNoDelay ()
+
+    'If we're not in autoplay
+    If Not (autoPlay = 1 And playerMode = 2) Then
+        I$ = GetKeyPress$
+    End If
+
+End Sub
+
+'----------------------------------------
+'          EndOfGame Subroutine
+'----------------------------------------
+'This subroutine serves as the final portion
+'of a post game routine. At this point,
+'stats have been saved and we are simply
+'looking to determine whether a new game
+'should be started.
+Sub EndOfGame
+
+    Call POSTGAME
+
+    If autoPlay <> 1 Then
+
+        Cls
+        
+        'Using Home Team's color for the box
+        Call TEAMBOX(1, 1)
+
+        Do
+            pbpString$ = "PLAY ANOTHER GAME? (Y/N)"
+            Locate 7, (80 - Len(pbpString$)) / 2
+            Print pbpString$
+
+            Color 15, 0
+            I$ = GetKeyPress$
+        Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+    End If
+
+    Close #11
+
+    If UCase$(I$) = "Y" Or (autoPlay = 1 And endAllGames <> 1) Then
+
+        Cls
+        Print "PLEASE WAIT ..."
+        Call PROHOOP
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'        CheckRecords Subroutine
+'----------------------------------------
+'This subroutine checks all stats to see
+'if any records were broken. Any that have
+'been reached will be assigned to arrays
+'for later updating the files.
+Sub CheckRecords ()
+
+    Shared indRecDesc$(), teamRecDesc$()
+    Shared indRecords!(), teamRecords!()
+
+    Dim V8(1, 14)
+    Dim VERSUS$(1)
+
+    VERSUS$(0) = "AT"
+    VERSUS$(1) = "VS."
+
+    If _FileExists(diskPaths$(1) + "RECORDS.GAM") Then
+
+        Open diskPaths$(1) + "RECORDS.GAM" For Input As #2
+
+        For I = 0 To 48
+            For I1 = 0 To 2
+                Input #2, indRecords!(I, I1)
+            Next
+            For I1 = 0 To 4
+                Input #2, indRecDesc$(I, I1)
+            Next
+        Next
+
+        For I = 0 To 125
+            For I1 = 0 To 2
+                Input #2, teamRecords!(I, I1)
+            Next
+            For I1 = 0 To 3
+                Input #2, teamRecDesc$(I, I1)
+            Next
+        Next
+
+        Close #2
+    Else
+
+        teamRecords!(2, 0) = 999
+        teamRecords!(4, 0) = 999
+        teamRecords!(7, 0) = 999
+        teamRecords!(9, 0) = 999
+        teamRecords!(11, 0) = 999
+        teamRecords!(13, 0) = 999
+        teamRecords!(15, 0) = 999
+        teamRecords!(17, 0) = 999
+        teamRecords!(19, 0) = 999
+        teamRecords!(21, 0) = 999
+        teamRecords!(23, 0) = 999
+        teamRecords!(25, 0) = 999
+        teamRecords!(27, 0) = 999
+        teamRecords!(29, 0) = 999
+        teamRecords!(31, 0) = 999
+        teamRecords!(33, 0) = 999
+        teamRecords!(35, 0) = 999
+        teamRecords!(37, 0) = 999
+        teamRecords!(43, 0) = 999
+        teamRecords!(45, 0) = 999
+        teamRecords!(61, 0) = 999
+        teamRecords!(63, 0) = 999
+        teamRecords!(65, 0) = 999
+        teamRecords!(67, 0) = 999
+        teamRecords!(73, 0) = 999
+        teamRecords!(75, 0) = 999
+        teamRecords!(81, 0) = 999
+        teamRecords!(83, 0) = 999
+        teamRecords!(87, 0) = 999
+        teamRecords!(89, 0) = 999
+        teamRecords!(92, 0) = 999
+        teamRecords!(94, 0) = 999
+        teamRecords!(97, 0) = 999
+        teamRecords!(99, 0) = 999
+        teamRecords!(105, 0) = 999
+        teamRecords!(107, 0) = 999
+        teamRecords!(113, 0) = 999
+        teamRecords!(115, 0) = 999
+        teamRecords!(120, 0) = 999
+        teamRecords!(123, 0) = 999
+        teamRecords!(125, 0) = 999
+
+    End If
+
+    'CHECK THE INDIVIDUAL RECORDS
+    For I = 0 To 1
+
+        For I1 = 0 To 14
+
+            ' SCORING RECORDS FOR POINTS IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
+            If gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) > indRecords!(0, 0) Then
+                indRecords!(0, 0) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) ' POINTS
+                indRecords!(0, 1) = 1 ' TIMES DONE
+                indRecords!(0, 2) = 0 ' GAME
+                indRecDesc$(0, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(0, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(0, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(0, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(0, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 1, I1, 13) + QQ(I, 2, I1, 13) > indRecords!(1, 0) Then
+                indRecords!(1, 0) = QQ(I, 1, I1, 13) + QQ(I, 2, I1, 13) ' POINTS
+                indRecords!(1, 1) = 1 ' TIMES DONE
+                indRecords!(1, 2) = 1 ' HALF
+                indRecDesc$(1, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(1, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(1, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(1, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(1, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 3, I1, 13) + QQ(I, 4, I1, 13) > indRecords!(1, 0) Then
+                indRecords!(1, 0) = QQ(I, 3, I1, 13) + QQ(I, 4, I1, 13) ' POINTS
+                indRecords!(1, 1) = 1 ' TIMES DONE
+                indRecords!(1, 2) = 2 ' HALF
+                indRecDesc$(1, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(1, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(1, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(1, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(1, 4) = Date$ ' DATE
+            End If
+
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 13) > indRecords!(2, 0) Then
+                    indRecords!(2, 0) = QQ(I, I2, I1, 13) ' POINTS
+                    indRecords!(2, 1) = 1 ' TIMES DONE
+                    indRecords!(2, 2) = I2 ' QTR
+                    indRecDesc$(2, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(2, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(2, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(2, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(2, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            For I2 = 5 To 8
+                If QQ(I, I2, I1, 13) > indRecords!(3, 0) Then
+                    indRecords!(3, 0) = QQ(I, I2, I1, 13) ' POINTS
+                    indRecords!(3, 1) = 1 ' TIMES DONE
+                    indRecords!(3, 2) = I2 ' QTR
+                    indRecDesc$(3, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(3, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(3, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(3, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(3, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' FIELD GOAL PERCENTAGE RECORDS FOR HIGH %, MOST W/NO MISSES, MOST W/NONE MADE
+            If gameRatings!(I, I1, 8) >= 15 Then
+                If gameRatings!(I, I1, 8) / gameRatings!(I, I1, 7) > indRecords!(4, 0) Then
+                    indRecords!(4, 0) = gameRatings!(I, I1, 8) / gameRatings!(I, I1, 7) ' PCTG
+                    indRecords!(4, 1) = gameRatings!(I, I1, 8) ' FGM
+                    indRecords!(4, 2) = gameRatings!(I, I1, 7) ' FGA
+                    indRecDesc$(4, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(4, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(4, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(4, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(4, 4) = Date$ ' DATE
+                End If
+            End If
+
+            If gameRatings!(I, I1, 8) = gameRatings!(I, I1, 7) And gameRatings!(I, I1, 7) > indRecords!(5, 0) Then
+                indRecords!(5, 0) = gameRatings!(I, I1, 7) ' MOST FGM
+                indRecDesc$(5, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(5, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(5, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(5, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(5, 4) = Date$ ' DATE
+            End If
+
+            If gameRatings!(I, I1, 8) = 0 And gameRatings!(I, I1, 7) > indRecords!(6, 0) Then
+                indRecords!(6, 0) = gameRatings!(I, I1, 7) ' 0 FGM /FGA
+                indRecDesc$(6, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(6, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(6, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(6, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(6, 4) = Date$ ' DATE
+            End If
+
+            ' FIELD GOALS MADE IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
+            If gameRatings!(I, I1, 8) > indRecords!(7, 0) Then
+                indRecords!(7, 0) = gameRatings!(I, I1, 8) ' FGM
+                indRecords!(7, 1) = 1 ' TIMES DONE
+                indRecords!(7, 2) = 0 ' GAME
+                indRecDesc$(7, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(7, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(7, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(7, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(7, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 1, I1, 2) + QQ(I, 2, I1, 2) > indRecords!(8, 0) Then
+                indRecords!(8, 0) = QQ(I, 1, I1, 2) + QQ(I, 2, I1, 2) ' FGM
+                indRecords!(8, 1) = 1 ' TIMES DONE
+                indRecords!(8, 2) = 1 ' HALF
+                indRecDesc$(8, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(8, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(8, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(8, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(8, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 3, I1, 2) + QQ(I, 4, I1, 2) > indRecords!(8, 0) Then
+                indRecords!(8, 0) = QQ(I, 3, I1, 2) + QQ(I, 4, I1, 2) ' FGM
+                indRecords!(8, 1) = 1 ' TIMES DONE
+                indRecords!(8, 2) = 2 ' HALF
+                indRecDesc$(8, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(8, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(8, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(8, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(8, 4) = Date$ ' DATE
+            End If
+
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 2) > indRecords!(9, 0) Then
+                    indRecords!(9, 0) = QQ(I, I2, I1, 2) ' FGM
+                    indRecords!(9, 1) = 1 ' TIMES DONE
+                    indRecords!(9, 2) = I2 ' QTR
+                    indRecDesc$(9, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(9, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(9, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(9, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(9, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            For I2 = 5 To 8
+                If QQ(I, I2, I1, 2) > indRecords!(10, 0) Then
+                    indRecords!(10, 0) = QQ(I, I2, I1, 2) ' FGM
+                    indRecords!(10, 1) = 1 ' TIMES DONE
+                    indRecords!(10, 2) = I2 ' QTR
+                    indRecDesc$(10, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(10, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(10, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(10, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(10, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' FIELD GOAL ATTEMPTS MADE IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
+            If gameRatings!(I, I1, 7) > indRecords!(11, 0) Then
+                indRecords!(11, 0) = gameRatings!(I, I1, 7) ' FGA
+                indRecords!(11, 1) = 1 ' TIMES DONE
+                indRecords!(11, 2) = 0 ' GAME
+                indRecDesc$(11, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(11, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(11, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(11, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(11, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 1, I1, 1) + QQ(I, 2, I1, 1) > indRecords!(12, 0) Then
+                indRecords!(12, 0) = QQ(I, 1, I1, 1) + QQ(I, 2, I1, 1) ' FGA
+                indRecords!(12, 1) = 1 ' TIMES DONE
+                indRecords!(12, 2) = 1 ' HALF
+                indRecDesc$(12, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(12, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(12, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(12, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(12, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 3, I1, 1) + QQ(I, 4, I1, 1) > indRecords!(12, 0) Then
+                indRecords!(12, 0) = QQ(I, 3, I1, 1) + QQ(I, 4, I1, 1) ' FGA
+                indRecords!(12, 1) = 1 ' TIMES DONE
+                indRecords!(12, 2) = 2 ' HALF
+                indRecDesc$(12, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(12, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(12, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(12, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(12, 4) = Date$ ' DATE
+            End If
+
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 1) > indRecords!(13, 0) Then
+                    indRecords!(13, 0) = QQ(I, I2, I1, 1) ' FGA
+                    indRecords!(13, 1) = 1 ' TIMES DONE
+                    indRecords!(13, 2) = I2 ' QTR
+                    indRecDesc$(13, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(13, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(13, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(13, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(13, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            For I2 = 5 To 8
+                If QQ(I, I2, I1, 1) > indRecords!(14, 0) Then
+                    indRecords!(14, 0) = QQ(I, I2, I1, 1) ' FGA
+                    indRecords!(14, 1) = 1 ' TIMES DONE
+                    indRecords!(14, 2) = I2 ' QTR
+                    indRecDesc$(14, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(14, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(14, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(14, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(14, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' THREE-POINT FIELD GOALS MOST MADE NO MISSES, MOST ATT NONE MADE
+            If threeFG(I, I1, 0) = threeFG(I, I1, 1) And threeFG(I, I1, 0) > indRecords!(15, 0) Then
+                indRecords!(15, 0) = threeFG(I, I1, 0) ' MOST 3-FGM
+                indRecDesc$(15, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(15, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(15, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(15, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(15, 4) = Date$ ' DATE
+            End If
+
+            If threeFG(I, I1, 0) = 0 And threeFG(I, I1, 1) > indRecords!(16, 0) Then
+                indRecords!(16, 0) = threeFG(I, I1, 1) ' 0 3FGM /3FGA
+                indRecDesc$(16, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(16, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(16, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(16, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(16, 4) = Date$ ' DATE
+            End If
+
+            ' 3-FIELD GOALS MADE IN A GAME, HALF, QUARTER AND OVERTIME PERIOD
+            If threeFG(I, I1, 0) > indRecords!(17, 0) Then
+                indRecords!(17, 0) = threeFG(I, I1, 0) ' 3FGM
+                indRecords!(17, 1) = 1 ' TIMES DONE
+                indRecords!(17, 2) = 0 ' GAME
+                indRecDesc$(17, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(17, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(17, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(17, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(17, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 1, I1, 10) + QQ(I, 2, I1, 10) > indRecords!(18, 0) Then
+                indRecords!(18, 0) = QQ(I, 1, I1, 10) + QQ(I, 2, I1, 10) ' 3FGM
+                indRecords!(18, 1) = 1 ' TIMES DONE
+                indRecords!(18, 2) = 1 ' HALF
+                indRecDesc$(18, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(18, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(18, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(18, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(18, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) > indRecords!(18, 0) Then
+                indRecords!(18, 0) = QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) ' 3FGM
+                indRecords!(18, 1) = 1 ' TIMES DONE
+                indRecords!(18, 2) = 2 ' HALF
+                indRecDesc$(18, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(18, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(18, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(18, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(18, 4) = Date$ ' DATE
+            End If
+
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 10) > indRecords!(19, 0) Then
+                    indRecords!(19, 0) = QQ(I, I2, I1, 10) ' 3FGM
+                    indRecords!(19, 1) = 1 ' TIMES DONE
+                    indRecords!(19, 2) = I2 ' QTR
+                    indRecDesc$(19, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(19, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(19, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(19, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(19, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            For I2 = 5 To 8
+                If QQ(I, I2, I1, 10) > indRecords!(20, 0) Then
+                    indRecords!(20, 0) = QQ(I, I2, I1, 10) ' 3FGM
+                    indRecords!(20, 1) = 1 ' TIMES DONE
+                    indRecords!(20, 2) = I2 ' QTR
+                    indRecDesc$(20, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(20, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(20, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(20, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(20, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' 3-FIELD GOALS ATT IN A GAME, HALF
+            If threeFG(I, I1, 1) > indRecords!(21, 0) Then
+                indRecords!(21, 0) = threeFG(I, I1, 1) ' 3FGA
+                indRecords!(21, 1) = 1 ' TIMES DONE
+                indRecords!(21, 2) = 0 ' GAME
+                indRecDesc$(21, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(21, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(21, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(21, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(21, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 1, I1, 11) + QQ(I, 2, I1, 11) > indRecords!(22, 0) Then
+                indRecords!(22, 0) = QQ(I, 1, I1, 11) + QQ(I, 2, I1, 11) ' 3FGA
+                indRecords!(22, 1) = 1 ' TIMES DONE
+                indRecords!(22, 2) = 1 ' HALF
+                indRecDesc$(22, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(22, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(22, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(22, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(22, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 3, I1, 11) + QQ(I, 4, I1, 11) > indRecords!(22, 0) Then
+                indRecords!(22, 0) = QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) ' 3FGA
+                indRecords!(22, 1) = 1 ' TIMES DONE
+                indRecords!(22, 2) = 2 ' HALF
+                indRecDesc$(22, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(22, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(22, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(22, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(22, 4) = Date$ ' DATE
+            End If
+
+            ' FREE THROWS -  MOST MADE NO MISSES, MOST ATT NONE MADE
+            If gameRatings!(I, I1, 9) = gameRatings!(I, I1, 10) And gameRatings!(I, I1, 9) > indRecords!(23, 0) Then
+                indRecords!(23, 0) = gameRatings!(I, I1, 9) ' MOST FTM
+                indRecDesc$(23, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(23, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(23, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(23, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(23, 4) = Date$ ' DATE
+            End If
+
+            If gameRatings!(I, I1, 10) = 0 And gameRatings!(I, I1, 9) > indRecords!(24, 0) Then
+                indRecords!(24, 0) = gameRatings!(I, I1, 10) ' 0 FTM /FTA
+                indRecDesc$(24, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(24, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(24, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(24, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(24, 4) = Date$ ' DATE
+            End If
+
+            ' MADE FREE THROWS IN A GAME, HALF, QUARTER
+            If gameRatings!(I, I1, 10) > indRecords!(25, 0) Then
+                indRecords!(25, 0) = gameRatings!(I, I1, 10) ' FTM
+                indRecords!(25, 1) = 1 ' TIMES DONE
+                indRecords!(25, 2) = 0 ' GAME
+                indRecDesc$(25, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(25, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(25, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(25, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(25, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 1, I1, 4) + QQ(I, 2, I1, 4) > indRecords!(26, 0) Then
+                indRecords!(26, 0) = QQ(I, 1, I1, 4) + QQ(I, 2, I1, 4) ' FTM
+                indRecords!(26, 1) = 1 ' TIMES DONE
+                indRecords!(26, 2) = 1 ' HALF
+                indRecDesc$(26, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(26, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(26, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(26, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(26, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 3, I1, 4) + QQ(I, 4, I1, 4) > indRecords!(26, 0) Then
+                indRecords!(26, 0) = QQ(I, 3, I1, 4) + QQ(I, 4, I1, 4) ' FTM
+                indRecords!(26, 1) = 1 ' TIMES DONE
+                indRecords!(26, 2) = 2 ' HALF
+                indRecDesc$(26, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(26, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(26, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(26, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(26, 4) = Date$ ' DATE
+            End If
+
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 4) > indRecords!(27, 0) Then
+                    indRecords!(27, 0) = QQ(I, I2, I1, 4) ' FTM
+                    indRecords!(27, 1) = 1 ' TIMES DONE
+                    indRecords!(27, 2) = I2 ' QTR
+                    indRecDesc$(27, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(27, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(27, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(27, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(27, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' FREE THROWS ATTEMPTS IN A GAME, HALF, QUARTER
+            If gameRatings!(I, I1, 9) > indRecords!(28, 0) Then
+                indRecords!(28, 0) = gameRatings!(I, I1, 9) ' FTA
+                indRecords!(28, 1) = 1 ' TIMES DONE
+                indRecords!(28, 2) = 0 ' GAME
+                indRecDesc$(28, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(28, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(28, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(28, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(28, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 1, I1, 3) + QQ(I, 2, I1, 3) > indRecords!(29, 0) Then
+                indRecords!(29, 0) = QQ(I, 1, I1, 3) + QQ(I, 2, I1, 3) ' FTA
+                indRecords!(29, 1) = 1 ' TIMES DONE
+                indRecords!(29, 2) = 1 ' HALF
+                indRecDesc$(29, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(29, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(29, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(29, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(29, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 3, I1, 3) + QQ(I, 4, I1, 3) > indRecords!(29, 0) Then
+                indRecords!(29, 0) = QQ(I, 3, I1, 3) + QQ(I, 4, I1, 3) ' FTM
+                indRecords!(29, 1) = 1 ' TIMES DONE
+                indRecords!(29, 2) = 2 ' HALF
+                indRecDesc$(29, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(29, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(29, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(29, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(29, 4) = Date$ ' DATE
+            End If
+
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 3) > indRecords!(30, 0) Then
+                    indRecords!(30, 0) = QQ(I, I2, I1, 3) ' FTM
+                    indRecords!(30, 1) = 1 ' TIMES DONE
+                    indRecords!(30, 2) = I2 ' QTR
+                    indRecDesc$(30, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(30, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(30, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(30, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(30, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' TOTAL REBOUNDS IN A GAME, HALF, QUARTER
+            If gameRatings!(I, I1, 11) > indRecords!(31, 0) Then
+                indRecords!(31, 0) = gameRatings!(I, I1, 11) ' FTA
+                indRecords!(31, 1) = 1 ' TIMES DONE
+                indRecords!(31, 2) = 0 ' GAME
+                indRecDesc$(31, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(31, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(31, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(31, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(31, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) > indRecords!(32, 0) Then
+                indRecords!(32, 0) = QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) ' RB
+                indRecords!(32, 1) = 1 ' TIMES DONE
+                indRecords!(32, 2) = 1 ' HALF
+                indRecDesc$(32, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(32, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(32, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(32, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(32, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) > indRecords!(32, 0) Then
+                indRecords!(32, 0) = QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) ' RB
+                indRecords!(32, 1) = 1 ' TIMES DONE
+                indRecords!(32, 2) = 2 ' HALF
+                indRecDesc$(32, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(32, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(32, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(32, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(32, 4) = Date$ ' DATE
+            End If
+
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 5) > indRecords!(33, 0) Then
+                    indRecords!(33, 0) = QQ(I, I2, I1, 5) ' RB
+                    indRecords!(33, 1) = 1 ' TIMES DONE
+                    indRecords!(33, 2) = I2 ' QTR
+                    indRecDesc$(33, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(33, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(33, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(33, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(33, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' TOTAL OFFENSIVE REBOUNDS IN A GAME, HALF, QUARTER
+            If gameRatings!(I, I1, 24) > indRecords!(34, 0) Then
+                indRecords!(34, 0) = gameRatings!(I, I1, 24) ' FTA
+                indRecords!(34, 1) = 1 ' TIMES DONE
+                indRecords!(34, 2) = 0 ' GAME
+                indRecDesc$(34, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(34, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(34, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(34, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(34, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12) > indRecords!(35, 0) Then
+                indRecords!(35, 0) = QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12) ' RB
+                indRecords!(35, 1) = 1 ' TIMES DONE
+                indRecords!(35, 2) = 1 ' HALF
+                indRecDesc$(35, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(35, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(35, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(35, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(35, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12) > indRecords!(35, 0) Then
+                indRecords!(35, 0) = QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12) ' RB
+                indRecords!(35, 1) = 1 ' TIMES DONE
+                indRecords!(35, 2) = 2 ' HALF
+                indRecDesc$(35, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(35, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(35, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(35, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(35, 4) = Date$ ' DATE
+            End If
+
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 12) > indRecords!(36, 0) Then
+                    indRecords!(36, 0) = QQ(I, I2, I1, 12) ' RB
+                    indRecords!(36, 1) = 1 ' TIMES DONE
+                    indRecords!(36, 2) = I2 ' QTR
+                    indRecDesc$(36, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(36, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(36, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(36, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(36, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' TOTAL DEFENSIVE REBOUNDS IN A GAME, HALF, QUARTER
+            If gameRatings!(I, I1, 11) - gameRatings!(I, I1, 24) > indRecords!(37, 0) Then
+                indRecords!(37, 0) = gameRatings!(I, I1, 11) - gameRatings!(I, I1, 24) ' FTA
+                indRecords!(37, 1) = 1 ' TIMES DONE
+                indRecords!(37, 2) = 0 ' GAME
+                indRecDesc$(37, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(37, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(37, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(37, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(37, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) - (QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12)) > indRecords!(38, 0) Then
+                indRecords!(38, 0) = QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) - (QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12)) ' RB
+                indRecords!(38, 1) = 1 ' TIMES DONE
+                indRecords!(38, 2) = 1 ' HALF
+                indRecDesc$(38, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(38, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(38, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(38, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(38, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) - (QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12)) > indRecords!(38, 0) Then
+                indRecords!(38, 0) = QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) - (QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12)) ' RB
+                indRecords!(38, 1) = 1 ' TIMES DONE
+                indRecords!(38, 2) = 2 ' HALF
+                indRecDesc$(38, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(38, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(38, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(38, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(38, 4) = Date$ ' DATE
+            End If
+
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 5) - QQ(I, I2, I1, 12) > indRecords!(39, 0) Then
+                    indRecords!(39, 0) = QQ(I, I2, I1, 5) - QQ(I, I2, I1, 12) ' RB
+                    indRecords!(39, 1) = 1 ' TIMES DONE
+                    indRecords!(39, 2) = I2 ' QTR
+                    indRecDesc$(39, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(39, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(39, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(39, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(39, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' ASSISTS IN A GAME, HALF, QUARTER
+            If gameRatings!(I, I1, 14) > indRecords!(40, 0) Then
+                indRecords!(40, 0) = gameRatings!(I, I1, 14) ' FTA
+                indRecords!(40, 1) = 1 ' TIMES DONE
+                indRecords!(40, 2) = 0 ' GAME
+                indRecDesc$(40, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(40, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(40, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(40, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(40, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 1, I1, 8) + QQ(I, 2, I1, 8) > indRecords!(41, 0) Then
+                indRecords!(41, 0) = QQ(I, 1, I1, 8) + QQ(I, 2, I1, 8) ' FTA
+                indRecords!(41, 1) = 1 ' TIMES DONE
+                indRecords!(41, 2) = 1 ' HALF
+                indRecDesc$(41, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(41, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(41, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(41, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(41, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 3, I1, 8) + QQ(I, 4, I1, 8) > indRecords!(41, 0) Then
+                indRecords!(41, 0) = QQ(I, 3, I1, 8) + QQ(I, 4, I1, 8) ' FTM
+                indRecords!(41, 1) = 1 ' TIMES DONE
+                indRecords!(41, 2) = 2 ' HALF
+                indRecDesc$(41, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(41, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(41, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(41, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(41, 4) = Date$ ' DATE
+            End If
+
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 8) > indRecords!(42, 0) Then
+                    indRecords!(42, 0) = QQ(I, I2, I1, 8) ' FTM
+                    indRecords!(42, 1) = 1 ' TIMES DONE
+                    indRecords!(42, 2) = I2 ' QTR
+                    indRecDesc$(42, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(42, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(42, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(42, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(42, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' STEALS IN A GAME, HALF, QUARTER
+            If gameRatings!(I, I1, 13) > indRecords!(43, 0) Then
+                indRecords!(43, 0) = gameRatings!(I, I1, 13) ' FTA
+                indRecords!(43, 1) = 1 ' TIMES DONE
+                indRecords!(43, 2) = 0 ' GAME
+                indRecDesc$(43, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(43, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(43, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(43, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(43, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 1, I1, 7) + QQ(I, 2, I1, 7) > indRecords!(44, 0) Then
+                indRecords!(44, 0) = QQ(I, 1, I1, 7) + QQ(I, 2, I1, 7) ' FTA
+                indRecords!(44, 1) = 1 ' TIMES DONE
+                indRecords!(44, 2) = 1 ' HALF
+                indRecDesc$(44, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(44, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(44, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(44, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(44, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 3, I1, 7) + QQ(I, 4, I1, 7) > indRecords!(44, 0) Then
+                indRecords!(44, 0) = QQ(I, 3, I1, 7) + QQ(I, 4, I1, 7) ' FTM
+                indRecords!(44, 1) = 1 ' TIMES DONE
+                indRecords!(44, 2) = 2 ' HALF
+                indRecDesc$(44, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(44, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(44, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(44, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(44, 4) = Date$ ' DATE
+            End If
+
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 7) > indRecords!(45, 0) Then
+                    indRecords!(45, 0) = QQ(I, I2, I1, 7) ' FTM
+                    indRecords!(45, 1) = 1 ' TIMES DONE
+                    indRecords!(45, 2) = I2 ' QTR
+                    indRecDesc$(45, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(45, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(45, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(45, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(45, 4) = Date$ ' DATE
+                End If
+            Next I2
+
+            ' BLOCKS IN A GAME, HALF, QUARTER
+            If gameRatings!(I, I1, 15) > indRecords!(46, 0) Then
+                indRecords!(46, 0) = gameRatings!(I, I1, 15) ' FTA
+                indRecords!(46, 1) = 1 ' TIMES DONE
+                indRecords!(46, 2) = 0 ' GAME
+                indRecDesc$(46, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(46, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(46, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(46, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(46, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 1, I1, 9) + QQ(I, 2, I1, 9) > indRecords!(47, 0) Then
+                indRecords!(47, 0) = QQ(I, 1, I1, 9) + QQ(I, 2, I1, 9) ' FTA
+                indRecords!(47, 1) = 1 ' TIMES DONE
+                indRecords!(47, 2) = 1 ' HALF
+                indRecDesc$(47, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(47, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(47, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(47, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(47, 4) = Date$ ' DATE
+            End If
+
+            If QQ(I, 3, I1, 9) + QQ(I, 4, I1, 9) > indRecords!(47, 0) Then
+                indRecords!(47, 0) = QQ(I, 3, I1, 9) + QQ(I, 4, I1, 9) ' FTM
+                indRecords!(47, 1) = 1 ' TIMES DONE
+                indRecords!(47, 2) = 2 ' HALF
+                indRecDesc$(47, 0) = players_GAME$(I, I1, 0) ' NAME
+                indRecDesc$(47, 1) = gameTeams$(I) ' TEAM
+                indRecDesc$(47, 2) = VERSUS$(I) ' AT/VS
+                indRecDesc$(47, 3) = gameTeams$(1 - I) ' OPPONENT
+                indRecDesc$(47, 4) = Date$ ' DATE
+            End If
+
+            For I2 = 1 To 4
+                If QQ(I, I2, I1, 9) > indRecords!(48, 0) Then
+                    indRecords!(48, 0) = QQ(I, I2, I1, 9) ' FTM
+                    indRecords!(48, 1) = 1 ' TIMES DONE
+                    indRecords!(48, 2) = I2 ' QTR
+                    indRecDesc$(48, 0) = players_GAME$(I, I1, 0) ' NAME
+                    indRecDesc$(48, 1) = gameTeams$(I) ' TEAM
+                    indRecDesc$(48, 2) = VERSUS$(I) ' AT/VS
+                    indRecDesc$(48, 3) = gameTeams$(1 - I) ' OPPONENT
+                    indRecDesc$(48, 4) = Date$ ' DATE
+                End If
+            Next I2
+        Next
+    Next
+
+    ' MOST OVERTIME PERIODS
+    If quarter - 5 > teamRecords!(0, 0) Then
+        teamRecords!(0, 0) = quarter - 5
+        teamRecords!(0, 1) = score(0, 0)
+        teamRecords!(0, 2) = score(1, 0)
+        teamRecDesc$(0, 0) = gameTeams$(0)
+        teamRecDesc$(0, 1) = gameTeams$(1)
+        teamRecDesc$(0, 2) = Date$
+    End If
+
+    For I = 0 To 1
+
+        If score(I, 0) > teamRecords!(1, 0) Then
+            teamRecords!(1, 0) = score(I, 0)
+            teamRecords!(1, 1) = 1
+            teamRecords!(1, 2) = 0
+            teamRecDesc$(1, 0) = gameTeams$(I)
+            teamRecDesc$(1, 1) = VERSUS$(I)
+            teamRecDesc$(1, 2) = gameTeams$(1 - I)
+            teamRecDesc$(1, 3) = Date$
+        End If
+
+        If score(I, 0) < teamRecords!(2, 0) Then
+            teamRecords!(2, 0) = score(I, 0)
+            teamRecords!(2, 1) = 1
+            teamRecords!(2, 2) = 0
+            teamRecDesc$(2, 0) = gameTeams$(I)
+            teamRecDesc$(2, 1) = VERSUS$(I)
+            teamRecDesc$(2, 2) = gameTeams$(1 - I)
+            teamRecDesc$(2, 3) = Date$
+        End If
+
+        If score(I, 0) + score(1 - I, 0) > teamRecords!(3, 0) Then
+            teamRecords!(3, 0) = score(I, 0) + score(1 - I, 0)
+            teamRecords!(3, 1) = score(I, 0)
+            teamRecords!(3, 2) = score(1 - I, 0)
+            teamRecDesc$(3, 0) = gameTeams$(I)
+            teamRecDesc$(3, 1) = VERSUS$(I)
+            teamRecDesc$(3, 2) = gameTeams$(1 - I)
+            teamRecDesc$(3, 3) = Date$
+        End If
+
+        If score(I, 0) + score(1 - I, 0) < teamRecords!(4, 0) Then
+            teamRecords!(4, 0) = score(I, 0) + score(1 - I, 0)
+            teamRecords!(4, 1) = score(I, 0)
+            teamRecords!(4, 2) = score(1 - I, 0)
+            teamRecDesc$(4, 0) = gameTeams$(I)
+            teamRecDesc$(4, 1) = VERSUS$(I)
+            teamRecDesc$(4, 2) = gameTeams$(1 - I)
+            teamRecDesc$(4, 3) = Date$
+        End If
+
+        If score(I, 1) + score(I, 2) > teamRecords!(6, 0) Then
+            teamRecords!(6, 0) = score(I, 1) + score(I, 2)
+            teamRecords!(6, 1) = 1
+            teamRecords!(6, 2) = 0
+            teamRecDesc$(6, 0) = gameTeams$(I)
+            teamRecDesc$(6, 1) = VERSUS$(I)
+            teamRecDesc$(6, 2) = gameTeams$(1 - I)
+            teamRecDesc$(6, 3) = Date$
+        End If
+
+        If score(I, 1) + score(I, 2) < teamRecords!(7, 0) Then
+            teamRecords!(7, 0) = score(I, 1) + score(I, 2)
+            teamRecords!(7, 1) = 1
+            teamRecords!(7, 2) = 0
+            teamRecDesc$(7, 0) = gameTeams$(I)
+            teamRecDesc$(7, 1) = VERSUS$(I)
+            teamRecDesc$(7, 2) = gameTeams$(1 - I)
+            teamRecDesc$(7, 3) = Date$
+        End If
+
+        If score(I, 1) + score(I, 2) + score(1 - I, 1) + score(1 - I, 2) > teamRecords!(8, 0) Then
+            teamRecords!(8, 0) = score(I, 1) + score(1 - I, 1) + score(I, 2) + score(1 - I, 2)
+            teamRecords!(8, 1) = score(I, 1) + score(I, 2)
+            teamRecords!(8, 2) = score(1 - I, 1) + score(1 - I, 2)
+            teamRecDesc$(8, 0) = gameTeams$(I)
+            teamRecDesc$(8, 1) = VERSUS$(I)
+            teamRecDesc$(8, 2) = gameTeams$(1 - I)
+            teamRecDesc$(8, 3) = Date$
+        End If
+
+        If score(I, 1) + score(I, 2) + score(1 - I, 1) + score(1 - I, 2) < teamRecords!(9, 0) Then
+            teamRecords!(9, 0) = score(I, 1) + score(1 - I, 1) + score(I, 2) + score(1 - I, 2)
+            teamRecords!(9, 1) = score(I, 1) + score(I, 2)
+            teamRecords!(9, 2) = score(1 - I, 1) + score(1 - I, 2)
+            teamRecDesc$(9, 0) = gameTeams$(I)
+            teamRecDesc$(9, 1) = VERSUS$(I)
+            teamRecDesc$(9, 2) = gameTeams$(1 - I)
+            teamRecDesc$(9, 3) = Date$
+        End If
+
+        If score(I, 3) + score(I, 4) > teamRecords!(10, 0) Then
+            teamRecords!(10, 0) = score(I, 3) + score(I, 4)
+            teamRecords!(10, 1) = 1
+            teamRecords!(10, 2) = 0
+            teamRecDesc$(10, 0) = gameTeams$(I)
+            teamRecDesc$(10, 1) = VERSUS$(I)
+            teamRecDesc$(10, 2) = gameTeams$(1 - I)
+            teamRecDesc$(10, 3) = Date$
+        End If
+
+        If score(I, 3) + score(I, 4) < teamRecords!(11, 0) Then
+            teamRecords!(11, 0) = score(I, 3) + score(I, 4)
+            teamRecords!(11, 1) = 1
+            teamRecords!(11, 2) = 0
+            teamRecDesc$(11, 0) = gameTeams$(I)
+            teamRecDesc$(11, 1) = VERSUS$(I)
+            teamRecDesc$(11, 2) = gameTeams$(1 - I)
+            teamRecDesc$(11, 3) = Date$
+        End If
+
+        If score(I, 3) + score(I, 4) + score(1 - I, 3) + score(1 - I, 4) > teamRecords!(12, 0) Then
+            teamRecords!(12, 0) = score(I, 3) + score(1 - I, 3) + score(I, 4) + score(1 - I, 4)
+            teamRecords!(12, 1) = score(I, 3) + score(I, 4)
+            teamRecords!(12, 2) = score(1 - I, 3) + score(1 - I, 4)
+            teamRecDesc$(12, 0) = gameTeams$(I)
+            teamRecDesc$(12, 1) = VERSUS$(I)
+            teamRecDesc$(12, 2) = gameTeams$(1 - I)
+            teamRecDesc$(12, 3) = Date$
+        End If
+
+        If score(I, 3) + score(I, 4) + score(1 - I, 3) + score(1 - I, 4) < teamRecords!(13, 0) Then
+            teamRecords!(13, 0) = score(I, 3) + score(1 - I, 3) + score(I, 4) + score(1 - I, 4)
+            teamRecords!(13, 1) = score(I, 3) + score(I, 4)
+            teamRecords!(13, 2) = score(1 - I, 3) + score(1 - I, 4)
+            teamRecDesc$(13, 0) = gameTeams$(I)
+            teamRecDesc$(13, 1) = VERSUS$(I)
+            teamRecDesc$(13, 2) = gameTeams$(1 - I)
+            teamRecDesc$(13, 3) = Date$
+        End If
+
+        If score(I, 1) > teamRecords!(14, 0) Then
+            teamRecords!(14, 0) = score(I, 1)
+            teamRecords!(14, 1) = 1
+            teamRecords!(14, 2) = 0
+            teamRecDesc$(14, 0) = gameTeams$(I)
+            teamRecDesc$(14, 1) = VERSUS$(I)
+            teamRecDesc$(14, 2) = gameTeams$(1 - I)
+            teamRecDesc$(14, 3) = Date$
+        End If
+
+        If score(I, 1) < teamRecords!(15, 0) Then
+            teamRecords!(15, 0) = score(I, 1)
+            teamRecords!(15, 1) = 1
+            teamRecords!(15, 2) = 0
+            teamRecDesc$(15, 0) = gameTeams$(I)
+            teamRecDesc$(15, 1) = VERSUS$(I)
+            teamRecDesc$(15, 2) = gameTeams$(1 - I)
+            teamRecDesc$(15, 3) = Date$
+        End If
+
+        If score(I, 1) + score(1 - I, 1) > teamRecords!(16, 0) Then
+            teamRecords!(16, 0) = score(I, 1) + score(1 - I, 1)
+            teamRecords!(16, 1) = score(I, 1)
+            teamRecords!(16, 2) = score(1 - I, 1)
+            teamRecDesc$(16, 0) = gameTeams$(I)
+            teamRecDesc$(16, 1) = VERSUS$(I)
+            teamRecDesc$(16, 2) = gameTeams$(1 - I)
+            teamRecDesc$(16, 3) = Date$
+        End If
+
+        If score(I, 1) + score(1 - I, 1) < teamRecords!(17, 0) Then
+            teamRecords!(17, 0) = score(I, 1) + score(1 - I, 1)
+            teamRecords!(17, 1) = score(I, 1)
+            teamRecords!(17, 2) = score(1 - I, 1)
+            teamRecDesc$(17, 0) = gameTeams$(I)
+            teamRecDesc$(17, 1) = VERSUS$(I)
+            teamRecDesc$(17, 2) = gameTeams$(1 - I)
+            teamRecDesc$(17, 3) = Date$
+        End If
+
+        If score(I, 2) > teamRecords!(18, 0) Then
+            teamRecords!(18, 0) = score(I, 2)
+            teamRecords!(18, 1) = 1
+            teamRecords!(18, 2) = 0
+            teamRecDesc$(18, 0) = gameTeams$(I)
+            teamRecDesc$(18, 1) = VERSUS$(I)
+            teamRecDesc$(18, 2) = gameTeams$(1 - I)
+            teamRecDesc$(18, 3) = Date$
+        End If
+
+        If score(I, 2) < teamRecords!(19, 0) Then
+            teamRecords!(19, 0) = score(I, 2)
+            teamRecords!(19, 1) = 1
+            teamRecords!(19, 2) = 0
+            teamRecDesc$(19, 0) = gameTeams$(I)
+            teamRecDesc$(19, 1) = VERSUS$(I)
+            teamRecDesc$(19, 2) = gameTeams$(1 - I)
+            teamRecDesc$(19, 3) = Date$
+        End If
+
+        If score(I, 2) + score(1 - I, 2) > teamRecords!(20, 0) Then
+            teamRecords!(20, 0) = score(I, 2) + score(1 - I, 2)
+            teamRecords!(20, 1) = score(I, 2)
+            teamRecords!(20, 2) = score(1 - I, 2)
+            teamRecDesc$(20, 0) = gameTeams$(I)
+            teamRecDesc$(20, 1) = VERSUS$(I)
+            teamRecDesc$(20, 2) = gameTeams$(1 - I)
+            teamRecDesc$(20, 3) = Date$
+        End If
+
+        If score(I, 2) + score(1 - I, 2) < teamRecords!(21, 0) Then
+            teamRecords!(21, 0) = score(I, 2) + score(1 - I, 2)
+            teamRecords!(21, 1) = score(I, 2)
+            teamRecords!(21, 2) = score(1 - I, 2)
+            teamRecDesc$(21, 0) = gameTeams$(I)
+            teamRecDesc$(21, 1) = VERSUS$(I)
+            teamRecDesc$(21, 2) = gameTeams$(1 - I)
+            teamRecDesc$(21, 3) = Date$
+        End If
+
+        If score(I, 3) > teamRecords!(22, 0) Then
+            teamRecords!(22, 0) = score(I, 3)
+            teamRecords!(22, 1) = 1
+            teamRecords!(22, 2) = 0
+            teamRecDesc$(22, 0) = gameTeams$(I)
+            teamRecDesc$(22, 1) = VERSUS$(I)
+            teamRecDesc$(22, 2) = gameTeams$(1 - I)
+            teamRecDesc$(22, 3) = Date$
+        End If
+
+        If score(I, 3) < teamRecords!(23, 0) Then
+            teamRecords!(23, 0) = score(I, 3)
+            teamRecords!(23, 1) = 1
+            teamRecords!(23, 2) = 0
+            teamRecDesc$(23, 0) = gameTeams$(I)
+            teamRecDesc$(23, 1) = VERSUS$(I)
+            teamRecDesc$(23, 2) = gameTeams$(1 - I)
+            teamRecDesc$(23, 3) = Date$
+        End If
+
+        If score(I, 3) + score(1 - I, 3) > teamRecords!(24, 0) Then
+            teamRecords!(24, 0) = score(I, 3) + score(1 - I, 3)
+            teamRecords!(24, 1) = score(I, 3)
+            teamRecords!(24, 2) = score(1 - I, 3)
+            teamRecDesc$(24, 0) = gameTeams$(I)
+            teamRecDesc$(24, 1) = VERSUS$(I)
+            teamRecDesc$(24, 2) = gameTeams$(1 - I)
+            teamRecDesc$(24, 3) = Date$
+        End If
+
+        If score(I, 3) + score(1 - I, 3) < teamRecords!(25, 0) Then
+            teamRecords!(25, 0) = score(I, 3) + score(1 - I, 3)
+            teamRecords!(25, 1) = score(I, 3)
+            teamRecords!(25, 2) = score(1 - I, 3)
+            teamRecDesc$(25, 0) = gameTeams$(I)
+            teamRecDesc$(25, 1) = VERSUS$(I)
+            teamRecDesc$(25, 2) = gameTeams$(1 - I)
+            teamRecDesc$(25, 3) = Date$
+        End If
+
+        If score(I, 4) > teamRecords!(26, 0) Then
+            teamRecords!(26, 0) = score(I, 4)
+            teamRecords!(26, 1) = 1
+            teamRecords!(26, 2) = 0
+            teamRecDesc$(26, 0) = gameTeams$(I)
+            teamRecDesc$(26, 1) = VERSUS$(I)
+            teamRecDesc$(26, 2) = gameTeams$(1 - I)
+            teamRecDesc$(26, 3) = Date$
+        End If
+
+        If score(I, 4) < teamRecords!(27, 0) Then
+            teamRecords!(27, 0) = score(I, 4)
+            teamRecords!(27, 1) = 1
+            teamRecords!(27, 2) = 0
+            teamRecDesc$(27, 0) = gameTeams$(I)
+            teamRecDesc$(27, 1) = VERSUS$(I)
+            teamRecDesc$(27, 2) = gameTeams$(1 - I)
+            teamRecDesc$(27, 3) = Date$
+        End If
+
+        If score(I, 4) + score(1 - I, 4) > teamRecords!(28, 0) Then
+            teamRecords!(28, 0) = score(I, 4) + score(1 - I, 4)
+            teamRecords!(28, 1) = score(I, 4)
+            teamRecords!(28, 2) = score(1 - I, 4)
+            teamRecDesc$(28, 0) = gameTeams$(I)
+            teamRecDesc$(28, 1) = VERSUS$(I)
+            teamRecDesc$(28, 2) = gameTeams$(1 - I)
+            teamRecDesc$(28, 3) = Date$
+        End If
+
+        If score(I, 4) + score(1 - I, 4) < teamRecords!(29, 0) Then
+            teamRecords!(29, 0) = score(I, 4) + score(1 - I, 4)
+            teamRecords!(29, 1) = score(I, 4)
+            teamRecords!(29, 2) = score(1 - I, 4)
+            teamRecDesc$(29, 0) = gameTeams$(I)
+            teamRecDesc$(29, 1) = VERSUS$(I)
+            teamRecDesc$(29, 2) = gameTeams$(1 - I)
+            teamRecDesc$(29, 3) = Date$
+        End If
+
+        ' TEAM FIELD GOAL PERCENTAGES
+        For I1 = 0 To 14: V8(I, I1) = 0: V8(1 - I, I1) = 0: Next
+
+        For I2 = 0 To 1
+            For I1 = 0 To 14
+                V8(I2, 0) = V8(I2, 0) + gameRatings!(I2, I1, 8)
+                V8(I2, 1) = V8(I2, 1) + gameRatings!(I2, I1, 7)
+                V8(I2, 2) = V8(I2, 2) + gameRatings!(I2, I1, 10)
+                V8(I2, 3) = V8(I2, 3) + gameRatings!(I2, I1, 9)
+                V8(I2, 4) = V8(I2, 4) + gameRatings!(I2, I1, 11)
+                V8(I2, 5) = V8(I2, 5) + (gameRatings!(I2, I1, 8) * 2) + gameRatings!(I2, I1, 10) + threeFG(I2, I1, 0)
+                V8(I2, 13) = V8(I2, 13) + threeFG(I2, I1, 0)
+                V8(I2, 14) = V8(I2, 14) + threeFG(I2, I1, 1)
+                V8(I2, 6) = teamFouls(I2)
+                V8(I2, 7) = V8(I2, 7) + gameRatings!(I2, I1, 14)
+                V8(I2, 8) = V8(I2, 8) + gameRatings!(I2, I1, 15)
+                V8(I2, 9) = V8(I2, 9) + gameRatings!(I2, I1, 13)
+                V8(I2, 11) = V8(I2, 11) + gameRatings!(I2, I1, 24)
+                V8(I2, 12) = V8(I2, 12) + gameRatings!(I2, I1, 23)
+                V8(I2, 10) = V8(I2, 10) + timePlayed(I2, I1)
+            Next
+        Next
+
+        If V8(I, 0) / V8(I, 1) > teamRecords!(30, 0) Then
+            teamRecords!(30, 0) = V8(I, 0) / V8(I, 1)
+            teamRecords!(30, 1) = V8(I, 0)
+            teamRecords!(30, 2) = V8(I, 1)
+            teamRecDesc$(30, 0) = gameTeams$(I)
+            teamRecDesc$(30, 1) = VERSUS$(I)
+            teamRecDesc$(30, 2) = gameTeams$(1 - I)
+            teamRecDesc$(30, 3) = Date$
+        End If
+
+        If V8(I, 0) / V8(I, 1) < teamRecords!(31, 0) Then
+            teamRecords!(31, 0) = V8(I, 0) / V8(I, 1)
+            teamRecords!(31, 1) = V8(I, 0)
+            teamRecords!(31, 2) = V8(I, 1)
+            teamRecDesc$(31, 0) = gameTeams$(I)
+            teamRecDesc$(31, 1) = VERSUS$(I)
+            teamRecDesc$(31, 2) = gameTeams$(1 - I)
+            teamRecDesc$(31, 3) = Date$
+        End If
+
+        If (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1)) > teamRecords!(32, 0) Then
+            teamRecords!(32, 0) = (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1))
+            teamRecords!(32, 1) = V8(I, 0) / V8(I, 1)
+            teamRecords!(32, 2) = V8(1 - I, 0) / V8(1 - I, 1)
+            teamRecDesc$(32, 0) = gameTeams$(I)
+            teamRecDesc$(32, 1) = VERSUS$(I)
+            teamRecDesc$(32, 2) = gameTeams$(1 - I)
+            teamRecDesc$(32, 3) = Date$
+        End If
+
+        If (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1)) < teamRecords!(33, 0) Then
+            teamRecords!(33, 0) = (V8(I, 0) + V8(1 - I, 0)) / (V8(I, 1) + V8(1 - I, 1))
+            teamRecords!(33, 1) = V8(I, 0) / V8(I, 1)
+            teamRecords!(33, 2) = V8(1 - I, 0) / V8(1 - I, 1)
+            teamRecDesc$(33, 0) = gameTeams$(I)
+            teamRecDesc$(33, 1) = VERSUS$(I)
+            teamRecDesc$(33, 2) = gameTeams$(1 - I)
+            teamRecDesc$(33, 3) = Date$
+        End If
+
+        ' TEAM FIELD GOALS MADE
+        If V8(I, 0) > teamRecords!(34, 0) Then
+            teamRecords!(34, 0) = V8(I, 0)
+            teamRecords!(34, 1) = 0
+            teamRecords!(34, 2) = 0
+            teamRecDesc$(34, 0) = gameTeams$(I)
+            teamRecDesc$(34, 1) = VERSUS$(I)
+            teamRecDesc$(34, 2) = gameTeams$(1 - I)
+            teamRecDesc$(34, 3) = Date$
+        End If
+
+        If V8(I, 0) < teamRecords!(35, 0) Then
+            teamRecords!(35, 0) = V8(I, 0)
+            teamRecords!(35, 1) = 0
+            teamRecords!(35, 2) = 0
+            teamRecDesc$(35, 0) = gameTeams$(I)
+            teamRecDesc$(35, 1) = VERSUS$(I)
+            teamRecDesc$(35, 2) = gameTeams$(1 - I)
+            teamRecDesc$(35, 3) = Date$
+        End If
+
+        If V8(I, 0) + V8(1 - I, 0) > teamRecords!(36, 0) Then
+            teamRecords!(36, 0) = V8(I, 0) + V8(1 - I, 0)
+            teamRecords!(36, 1) = V8(I, 0)
+            teamRecords!(36, 2) = V8(1 - I, 0)
+            teamRecDesc$(36, 0) = gameTeams$(I)
+            teamRecDesc$(36, 1) = VERSUS$(I)
+            teamRecDesc$(36, 2) = gameTeams$(1 - I)
+            teamRecDesc$(36, 3) = Date$
+        End If
+
+        If V8(I, 0) + V8(1 - I, 0) < teamRecords!(37, 0) Then
+            teamRecords!(37, 0) = V8(I, 0) + V8(1 - I, 0)
+            teamRecords!(37, 1) = V8(I, 0)
+            teamRecords!(37, 2) = V8(1 - I, 0)
+            teamRecDesc$(37, 0) = gameTeams$(I)
+            teamRecDesc$(37, 1) = VERSUS$(I)
+            teamRecDesc$(37, 2) = gameTeams$(1 - I)
+            teamRecDesc$(37, 3) = Date$
+        End If
+
+        If QR(I, 1, 0) + QR(I, 2, 0) > teamRecords!(38, 0) Then
+            teamRecords!(38, 0) = QR(I, 1, 0) + QR(I, 2, 0)
+            teamRecords!(38, 1) = 1
+            teamRecords!(38, 2) = 0
+            teamRecDesc$(38, 0) = gameTeams$(I)
+            teamRecDesc$(38, 1) = VERSUS$(I)
+            teamRecDesc$(38, 2) = gameTeams$(1 - I)
+            teamRecDesc$(38, 3) = Date$
+        End If
+
+        If QR(I, 3, 0) + QR(I, 4, 0) > teamRecords!(38, 0) Then
+            teamRecords!(38, 0) = QR(I, 3, 0) + QR(I, 4, 0)
+            teamRecords!(38, 1) = 2
+            teamRecords!(38, 2) = 0
+            teamRecDesc$(38, 0) = gameTeams$(I)
+            teamRecDesc$(38, 1) = VERSUS$(I)
+            teamRecDesc$(38, 2) = gameTeams$(1 - I)
+            teamRecDesc$(38, 3) = Date$
+        End If
+
+        If QR(I, 1, 0) + QR(I, 2, 0) + QR(1 - I, 1, 0) + QR(1 - I, 2, 0) > teamRecords!(39, 0) Then
+            teamRecords!(39, 0) = QR(I, 1, 0) + QR(I, 2, 0) + QR(1 - I, 1, 0) + QR(1 - I, 2, 0)
+            teamRecords!(39, 1) = 1
+            teamRecords!(39, 2) = 0
+            teamRecDesc$(39, 0) = gameTeams$(I)
+            teamRecDesc$(39, 1) = VERSUS$(I)
+            teamRecDesc$(39, 2) = gameTeams$(1 - I)
+            teamRecDesc$(39, 3) = Date$
+        End If
+
+        If QR(I, 3, 0) + QR(I, 4, 0) + QR(1 - I, 3, 0) + QR(1 - I, 4, 0) > teamRecords!(39, 0) Then
+            teamRecords!(39, 0) = QR(I, 3, 0) + QR(I, 4, 0) + QR(1 - I, 3, 0) + QR(1 - I, 4, 0)
+            teamRecords!(39, 1) = 2
+            teamRecords!(39, 2) = 0
+            teamRecDesc$(39, 0) = gameTeams$(I)
+            teamRecDesc$(39, 1) = VERSUS$(I)
+            teamRecDesc$(39, 2) = gameTeams$(1 - I)
+            teamRecDesc$(39, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 0) > teamRecords!(40, 0) Then
+                teamRecords!(40, 0) = QR(I, I2, 0)
+                teamRecords!(40, 1) = I2
+                teamRecords!(40, 2) = 0
+                teamRecDesc$(40, 0) = gameTeams$(I)
+                teamRecDesc$(40, 1) = VERSUS$(I)
+                teamRecDesc$(40, 2) = gameTeams$(1 - I)
+                teamRecDesc$(40, 3) = Date$
+            End If
+
+            If QR(I, I2, 0) + QR(1 - I, I2, 0) > teamRecords!(41, 0) Then
+                teamRecords!(41, 0) = QR(I, I2, 0) + QR(1 - I, I2, 0)
+                teamRecords!(41, 1) = I2
+                teamRecords!(41, 2) = QR(I, I2, 0)
+                teamRecDesc$(41, 0) = gameTeams$(I)
+                teamRecDesc$(41, 1) = VERSUS$(I)
+                teamRecDesc$(41, 2) = gameTeams$(1 - I)
+                teamRecDesc$(41, 3) = Date$
+            End If
+        Next
+
+        'TEAM FIELD GOAL ATTEMPTS
+        If V8(I, 1) > teamRecords!(42, 0) Then
+            teamRecords!(42, 0) = V8(I, 1)
+            teamRecords!(42, 1) = 0
+            teamRecords!(42, 2) = 0
+            teamRecDesc$(42, 0) = gameTeams$(I)
+            teamRecDesc$(42, 1) = VERSUS$(I)
+            teamRecDesc$(42, 2) = gameTeams$(1 - I)
+            teamRecDesc$(42, 3) = Date$
+        End If
+
+        If V8(I, 1) < teamRecords!(43, 0) Then
+            teamRecords!(43, 0) = V8(I, 1)
+            teamRecords!(43, 1) = 0
+            teamRecords!(43, 2) = 0
+            teamRecDesc$(43, 0) = gameTeams$(I)
+            teamRecDesc$(43, 1) = VERSUS$(I)
+            teamRecDesc$(43, 2) = gameTeams$(1 - I)
+            teamRecDesc$(43, 3) = Date$
+        End If
+
+        If V8(I, 1) + V8(1 - I, 1) > teamRecords!(44, 0) Then
+            teamRecords!(44, 0) = V8(I, 1) + V8(1 - I, 1)
+            teamRecords!(44, 1) = V8(I, 1)
+            teamRecords!(44, 2) = V8(1 - I, 1)
+            teamRecDesc$(44, 0) = gameTeams$(I)
+            teamRecDesc$(44, 1) = VERSUS$(I)
+            teamRecDesc$(44, 2) = gameTeams$(1 - I)
+            teamRecDesc$(44, 3) = Date$
+        End If
+
+        If V8(I, 1) + V8(1 - I, 1) < teamRecords!(45, 0) Then
+            teamRecords!(45, 0) = V8(I, 1) + V8(1 - I, 1)
+            teamRecords!(45, 1) = V8(I, 1)
+            teamRecords!(45, 2) = V8(1 - I, 1)
+            teamRecDesc$(45, 0) = gameTeams$(I)
+            teamRecDesc$(45, 1) = VERSUS$(I)
+            teamRecDesc$(45, 2) = gameTeams$(1 - I)
+            teamRecDesc$(45, 3) = Date$
+        End If
+
+        If QR(I, 1, 1) + QR(I, 2, 1) > teamRecords!(46, 0) Then
+            teamRecords!(46, 0) = QR(I, 1, 1) + QR(I, 2, 1)
+            teamRecords!(46, 1) = 1
+            teamRecords!(46, 2) = 0
+            teamRecDesc$(46, 0) = gameTeams$(I)
+            teamRecDesc$(46, 1) = VERSUS$(I)
+            teamRecDesc$(46, 2) = gameTeams$(1 - I)
+            teamRecDesc$(46, 3) = Date$
+        End If
+
+        If QR(I, 3, 1) + QR(I, 4, 1) > teamRecords!(46, 0) Then
+            teamRecords!(46, 0) = QR(I, 3, 1) + QR(I, 4, 1)
+            teamRecords!(46, 1) = 2
+            teamRecords!(46, 2) = 0
+            teamRecDesc$(46, 0) = gameTeams$(I)
+            teamRecDesc$(46, 1) = VERSUS$(I)
+            teamRecDesc$(46, 2) = gameTeams$(1 - I)
+            teamRecDesc$(46, 3) = Date$
+        End If
+
+        If QR(I, 1, 1) + QR(I, 2, 1) + QR(1 - I, 1, 1) + QR(1 - I, 2, 1) > teamRecords!(47, 0) Then
+            teamRecords!(47, 0) = QR(I, 1, 1) + QR(I, 2, 1) + QR(1 - I, 1, 1) + QR(1 - I, 2, 1)
+            teamRecords!(47, 1) = 1
+            teamRecords!(47, 2) = QR(I, 1, 1) + QR(I, 2, 1)
+            teamRecDesc$(47, 0) = gameTeams$(I)
+            teamRecDesc$(47, 1) = VERSUS$(I)
+            teamRecDesc$(47, 2) = gameTeams$(1 - I)
+            teamRecDesc$(47, 3) = Date$
+        End If
+
+        If QR(I, 3, 1) + QR(I, 4, 1) + QR(1 - I, 3, 1) + QR(1 - I, 4, 1) > teamRecords!(47, 0) Then
+            teamRecords!(47, 0) = QR(I, 3, 1) + QR(I, 4, 1) + QR(1 - I, 3, 1) + QR(1 - I, 4, 1)
+            teamRecords!(47, 1) = 1
+            teamRecords!(47, 2) = QR(I, 3, 1) + QR(I, 4, 1)
+            teamRecDesc$(47, 0) = gameTeams$(I)
+            teamRecDesc$(47, 1) = VERSUS$(I)
+            teamRecDesc$(47, 2) = gameTeams$(1 - I)
+            teamRecDesc$(47, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 1) > teamRecords!(48, 0) Then
+                teamRecords!(48, 0) = QR(I, I2, 1)
+                teamRecords!(48, 1) = I2
+                teamRecords!(48, 2) = 0
+                teamRecDesc$(48, 0) = gameTeams$(I)
+                teamRecDesc$(48, 1) = VERSUS$(I)
+                teamRecDesc$(48, 2) = gameTeams$(1 - I)
+                teamRecDesc$(48, 3) = Date$
+            End If
+
+            If QR(I, I2, 1) + QR(1 - I, I2, 1) > teamRecords!(49, 0) Then
+                teamRecords!(49, 0) = QR(I, I2, 1) + QR(1 - I, I2, 1)
+                teamRecords!(49, 1) = I2
+                teamRecords!(49, 2) = QR(I, I2, 1)
+                teamRecDesc$(49, 0) = gameTeams$(I)
+                teamRecDesc$(49, 1) = VERSUS$(I)
+                teamRecDesc$(49, 2) = gameTeams$(1 - I)
+                teamRecDesc$(49, 3) = Date$
+            End If
+        Next
+
+        'TEAM FIELD GOAL ATTEMPTS
+        If V8(I, 13) = V8(I, 14) And V8(I, 14) > teamRecords!(50, 0) Then
+            teamRecords!(50, 0) = V8(I, 13)
+            teamRecords!(50, 1) = 0
+            teamRecords!(50, 2) = 0
+            teamRecDesc$(50, 0) = gameTeams$(I)
+            teamRecDesc$(50, 1) = VERSUS$(I)
+            teamRecDesc$(50, 2) = gameTeams$(1 - I)
+            teamRecDesc$(50, 3) = Date$
+        End If
+
+        'TEAM FIELD GOAL ATTEMPTS MOST MADE
+        If V8(I, 13) = V8(I, 14) And V8(1 - I, 13) = V8(1 - I, 14) And V8(I, 14) + V8(1 - I, 14) > teamRecords!(51, 0) Then
+            teamRecords!(51, 0) = V8(I, 13)
+            teamRecords!(51, 1) = V8(1 - I, 13)
+            teamRecords!(51, 2) = 0
+            teamRecDesc$(51, 0) = gameTeams$(I)
+            teamRecDesc$(51, 1) = VERSUS$(I)
+            teamRecDesc$(51, 2) = gameTeams$(1 - I)
+            teamRecDesc$(51, 3) = Date$
+        End If
+
+        'TEAM FIELD GOAL ATTEMPTS NONE MADE
+        If V8(I, 13) = 0 And V8(I, 14) > teamRecords!(52, 0) Then
+            teamRecords!(52, 0) = V8(I, 14)
+            teamRecords!(52, 1) = 0
+            teamRecords!(52, 2) = 0
+            teamRecDesc$(52, 0) = gameTeams$(I)
+            teamRecDesc$(52, 1) = VERSUS$(I)
+            teamRecDesc$(52, 2) = gameTeams$(1 - I)
+            teamRecDesc$(52, 3) = Date$
+        End If
+
+        'TEAM FIELD GOAL ATTEMPTS NONE MADE
+        If V8(I, 13) > teamRecords!(53, 0) Then
+            teamRecords!(53, 0) = V8(I, 13)
+            teamRecords!(53, 1) = 0
+            teamRecords!(53, 2) = 0
+            teamRecDesc$(53, 0) = gameTeams$(I)
+            teamRecDesc$(53, 1) = VERSUS$(I)
+            teamRecDesc$(53, 2) = gameTeams$(1 - I)
+            teamRecDesc$(53, 3) = Date$
+        End If
+
+        'TEAM FIELD GOAL ATTEMPTS NONE MADE
+        If V8(I, 13) + V8(1 - I, 13) > teamRecords!(54, 0) Then
+            teamRecords!(54, 0) = V8(I, 13) + V8(1 - I, 13)
+            teamRecords!(54, 1) = V8(I, 13)
+            teamRecords!(54, 2) = V8(1 - I, 13)
+            teamRecDesc$(54, 0) = gameTeams$(I)
+            teamRecDesc$(54, 1) = VERSUS$(I)
+            teamRecDesc$(54, 2) = gameTeams$(1 - I)
+            teamRecDesc$(54, 3) = Date$
+        End If
+
+        If QR(I, 1, 13) + QR(I, 2, 13) > teamRecords!(55, 0) Then
+            teamRecords!(55, 0) = QR(I, 1, 13) + QR(I, 2, 13)
+            teamRecords!(55, 1) = 1
+            teamRecords!(55, 2) = 0
+            teamRecDesc$(55, 0) = gameTeams$(I)
+            teamRecDesc$(55, 1) = VERSUS$(I)
+            teamRecDesc$(55, 2) = gameTeams$(1 - I)
+            teamRecDesc$(55, 3) = Date$
+        End If
+
+        If QR(I, 3, 13) + QR(I, 4, 13) > teamRecords!(55, 0) Then
+            teamRecords!(55, 0) = QR(I, 3, 13) + QR(I, 4, 13)
+            teamRecords!(55, 1) = 2
+            teamRecords!(55, 2) = 0
+            teamRecDesc$(55, 0) = gameTeams$(I)
+            teamRecDesc$(55, 1) = VERSUS$(I)
+            teamRecDesc$(55, 2) = gameTeams$(1 - I)
+            teamRecDesc$(55, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 13) > teamRecords!(56, 0) Then
+                teamRecords!(56, 0) = QR(I, I2, 13)
+                teamRecords!(56, 1) = I2
+                teamRecords!(56, 2) = 0
+                teamRecDesc$(56, 0) = gameTeams$(I)
+                teamRecDesc$(56, 1) = VERSUS$(I)
+                teamRecDesc$(56, 2) = gameTeams$(1 - I)
+                teamRecDesc$(56, 3) = Date$
+            End If
+        Next
+        'TEAM FIELD GOAL ATTEMPTS NONE MADE
+        If V8(I, 14) > teamRecords!(57, 0) Then
+            teamRecords!(57, 0) = V8(I, 14)
+            teamRecords!(57, 1) = 0
+            teamRecords!(57, 2) = 0
+            teamRecDesc$(57, 0) = gameTeams$(I)
+            teamRecDesc$(57, 1) = VERSUS$(I)
+            teamRecDesc$(57, 2) = gameTeams$(1 - I)
+            teamRecDesc$(57, 3) = Date$
+        End If
+
+        'TEAM FIELD GOAL ATTEMPTS NONE MADE
+        If V8(I, 14) + V8(1 - I, 14) > teamRecords!(58, 0) Then
+            teamRecords!(58, 0) = V8(I, 14) + V8(1 - I, 14)
+            teamRecords!(58, 1) = V8(I, 14)
+            teamRecords!(58, 2) = V8(1 - I, 14)
+            teamRecDesc$(58, 0) = gameTeams$(I)
+            teamRecDesc$(58, 1) = VERSUS$(I)
+            teamRecDesc$(58, 2) = gameTeams$(1 - I)
+            teamRecDesc$(58, 3) = Date$
+        End If
+
+        If QR(I, 1, 14) + QR(I, 2, 14) > teamRecords!(59, 0) Then
+            teamRecords!(59, 0) = QR(I, 1, 14) + QR(I, 2, 14)
+            teamRecords!(59, 1) = 1
+            teamRecords!(59, 2) = 0
+            teamRecDesc$(59, 0) = gameTeams$(I)
+            teamRecDesc$(59, 1) = VERSUS$(I)
+            teamRecDesc$(59, 2) = gameTeams$(1 - I)
+            teamRecDesc$(59, 3) = Date$
+        End If
+
+        If QR(I, 3, 14) + QR(I, 4, 14) > teamRecords!(59, 0) Then
+            teamRecords!(59, 0) = QR(I, 3, 14) + QR(I, 4, 14)
+            teamRecords!(59, 1) = 2
+            teamRecords!(59, 2) = 0
+            teamRecDesc$(59, 0) = gameTeams$(I)
+            teamRecDesc$(59, 1) = VERSUS$(I)
+            teamRecDesc$(59, 2) = gameTeams$(1 - I)
+            teamRecDesc$(59, 3) = Date$
+        End If
+
+        ' FREE THROW ATTEMPTS NO MISS
+        If V8(I, 2) = V8(I, 3) And V8(I, 2) > teamRecords!(60, 0) Then
+            teamRecords!(60, 0) = V8(I, 2)
+            teamRecords!(60, 1) = 0
+            teamRecords!(60, 2) = 0
+            teamRecDesc$(60, 0) = gameTeams$(I)
+            teamRecDesc$(60, 1) = VERSUS$(I)
+            teamRecDesc$(60, 2) = gameTeams$(1 - I)
+            teamRecDesc$(60, 3) = Date$
+        End If
+
+        ' FREE THROW ATTEMPTS LOW %
+        If V8(I, 2) / V8(I, 3) < teamRecords!(61, 0) Then
+            teamRecords!(61, 0) = V8(I, 2) / V8(I, 3)
+            teamRecords!(61, 1) = V8(I, 2)
+            teamRecords!(61, 2) = V8(I, 3)
+            teamRecDesc$(61, 0) = gameTeams$(I)
+            teamRecDesc$(61, 1) = VERSUS$(I)
+            teamRecDesc$(61, 2) = gameTeams$(1 - I)
+            teamRecDesc$(61, 3) = Date$
+        End If
+
+        ' FREE THROW ATTEMPTS COMBINED HIGH %
+        If (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3)) > teamRecords!(62, 0) Then
+            teamRecords!(62, 0) = (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3))
+            teamRecords!(62, 1) = V8(I, 2) / V8(I, 3)
+            teamRecords!(62, 2) = V8(1 - I, 2) / V8(1 - I, 3)
+            teamRecDesc$(62, 0) = gameTeams$(I)
+            teamRecDesc$(62, 1) = VERSUS$(I)
+            teamRecDesc$(62, 2) = gameTeams$(1 - I)
+            teamRecDesc$(62, 3) = Date$
+        End If
+
+        ' FREE THROW ATTEMPTS COMBINED LOW %
+        If (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3)) < teamRecords!(63, 0) Then
+            teamRecords!(63, 0) = (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3))
+            teamRecords!(63, 1) = V8(I, 2) / V8(I, 3)
+            teamRecords!(63, 2) = V8(1 - I, 2) / V8(1 - I, 3)
+            teamRecDesc$(63, 0) = gameTeams$(I)
+            teamRecDesc$(63, 1) = VERSUS$(I)
+            teamRecDesc$(63, 2) = gameTeams$(1 - I)
+            teamRecDesc$(63, 3) = Date$
+        End If
+
+        ' TEAM FREE THROWS MADE
+        If V8(I, 2) > teamRecords!(64, 0) Then
+            teamRecords!(64, 0) = V8(I, 2)
+            teamRecords!(64, 1) = 0
+            teamRecords!(64, 2) = 0
+            teamRecDesc$(64, 0) = gameTeams$(I)
+            teamRecDesc$(64, 1) = VERSUS$(I)
+            teamRecDesc$(64, 2) = gameTeams$(1 - I)
+            teamRecDesc$(64, 3) = Date$
+        End If
+
+        If V8(I, 2) < teamRecords!(65, 0) Then
+            teamRecords!(65, 0) = V8(I, 2)
+            teamRecords!(65, 1) = 0
+            teamRecords!(65, 2) = 0
+            teamRecDesc$(65, 0) = gameTeams$(I)
+            teamRecDesc$(65, 1) = VERSUS$(I)
+            teamRecDesc$(65, 2) = gameTeams$(1 - I)
+            teamRecDesc$(65, 3) = Date$
+        End If
+
+        If V8(I, 2) + V8(1 - I, 2) > teamRecords!(66, 0) Then
+            teamRecords!(66, 0) = V8(I, 2) + V8(1 - I, 2)
+            teamRecords!(66, 1) = V8(I, 2)
+            teamRecords!(66, 2) = V8(1 - I, 2)
+            teamRecDesc$(66, 0) = gameTeams$(I)
+            teamRecDesc$(66, 1) = VERSUS$(I)
+            teamRecDesc$(66, 2) = gameTeams$(1 - I)
+            teamRecDesc$(66, 3) = Date$
+        End If
+
+        If V8(I, 2) + V8(1 - I, 2) < teamRecords!(67, 0) Then
+            teamRecords!(67, 0) = V8(I, 2) + V8(1 - I, 2)
+            teamRecords!(67, 1) = V8(I, 2)
+            teamRecords!(67, 2) = V8(1 - I, 2)
+            teamRecDesc$(67, 0) = gameTeams$(I)
+            teamRecDesc$(67, 1) = VERSUS$(I)
+            teamRecDesc$(67, 2) = gameTeams$(1 - I)
+            teamRecDesc$(67, 3) = Date$
+        End If
+
+        If QR(I, 1, 2) + QR(I, 2, 2) > teamRecords!(68, 0) Then
+            teamRecords!(68, 0) = QR(I, 1, 2) + QR(I, 2, 2)
+            teamRecords!(68, 1) = 1
+            teamRecords!(68, 2) = 0
+            teamRecDesc$(68, 0) = gameTeams$(I)
+            teamRecDesc$(68, 1) = VERSUS$(I)
+            teamRecDesc$(68, 2) = gameTeams$(1 - I)
+            teamRecDesc$(68, 3) = Date$
+        End If
+
+        If QR(I, 3, 2) + QR(I, 4, 2) > teamRecords!(68, 0) Then
+            teamRecords!(68, 0) = QR(I, 3, 2) + QR(I, 4, 2)
+            teamRecords!(68, 1) = 2
+            teamRecords!(68, 2) = 0
+            teamRecDesc$(68, 0) = gameTeams$(I)
+            teamRecDesc$(68, 1) = VERSUS$(I)
+            teamRecDesc$(68, 2) = gameTeams$(1 - I)
+            teamRecDesc$(68, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 2) > teamRecords!(70, 0) Then
+                teamRecords!(70, 0) = QR(I, I2, 2)
+                teamRecords!(70, 1) = I2
+                teamRecords!(70, 2) = 0
+                teamRecDesc$(70, 0) = gameTeams$(I)
+                teamRecDesc$(70, 1) = VERSUS$(I)
+                teamRecDesc$(70, 2) = gameTeams$(1 - I)
+                teamRecDesc$(70, 3) = Date$
+            End If
+
+        Next
+
+        ' TEAM FREE THROWS ATTEMPTED
+        If V8(I, 3) > teamRecords!(72, 0) Then
+            teamRecords!(72, 0) = V8(I, 3)
+            teamRecords!(72, 1) = 0
+            teamRecords!(72, 2) = 0
+            teamRecDesc$(72, 0) = gameTeams$(I)
+            teamRecDesc$(72, 1) = VERSUS$(I)
+            teamRecDesc$(72, 2) = gameTeams$(1 - I)
+            teamRecDesc$(72, 3) = Date$
+        End If
+
+        If V8(I, 3) < teamRecords!(73, 0) Then
+            teamRecords!(73, 0) = V8(I, 3)
+            teamRecords!(73, 1) = 0
+            teamRecords!(73, 2) = 0
+            teamRecDesc$(73, 0) = gameTeams$(I)
+            teamRecDesc$(73, 1) = VERSUS$(I)
+            teamRecDesc$(73, 2) = gameTeams$(1 - I)
+            teamRecDesc$(73, 3) = Date$
+        End If
+
+        If V8(I, 3) + V8(1 - I, 3) > teamRecords!(74, 0) Then
+            teamRecords!(74, 0) = V8(I, 3) + V8(1 - I, 3)
+            teamRecords!(74, 1) = V8(I, 3)
+            teamRecords!(74, 2) = V8(1 - I, 3)
+            teamRecDesc$(74, 0) = gameTeams$(I)
+            teamRecDesc$(74, 1) = VERSUS$(I)
+            teamRecDesc$(74, 2) = gameTeams$(1 - I)
+            teamRecDesc$(74, 3) = Date$
+        End If
+
+        If V8(I, 3) + V8(1 - I, 3) < teamRecords!(75, 0) Then
+            teamRecords!(75, 0) = V8(I, 3) + V8(1 - I, 3)
+            teamRecords!(75, 1) = V8(I, 3)
+            teamRecords!(75, 2) = V8(1 - I, 3)
+            teamRecDesc$(75, 0) = gameTeams$(I)
+            teamRecDesc$(75, 1) = VERSUS$(I)
+            teamRecDesc$(75, 2) = gameTeams$(1 - I)
+            teamRecDesc$(75, 3) = Date$
+        End If
+
+        If QR(I, 1, 3) + QR(I, 2, 3) > teamRecords!(76, 0) Then
+            teamRecords!(76, 0) = QR(I, 1, 3) + QR(I, 2, 3)
+            teamRecords!(76, 1) = 1
+            teamRecords!(76, 2) = 0
+            teamRecDesc$(76, 0) = gameTeams$(I)
+            teamRecDesc$(76, 1) = VERSUS$(I)
+            teamRecDesc$(76, 2) = gameTeams$(1 - I)
+            teamRecDesc$(76, 3) = Date$
+        End If
+
+        If QR(I, 3, 3) + QR(I, 4, 3) > teamRecords!(76, 0) Then
+            teamRecords!(76, 0) = QR(I, 3, 3) + QR(I, 4, 3)
+            teamRecords!(76, 1) = 2
+            teamRecords!(76, 2) = 0
+            teamRecDesc$(76, 0) = gameTeams$(I)
+            teamRecDesc$(76, 1) = VERSUS$(I)
+            teamRecDesc$(76, 2) = gameTeams$(1 - I)
+            teamRecDesc$(76, 3) = Date$
+        End If
+
+        If QR(I, 1, 3) + QR(I, 2, 3) + QR(1 - I, 1, 3) + QR(1 - I, 2, 3) > teamRecords!(77, 0) Then
+            teamRecords!(77, 0) = QR(I, 1, 3) + QR(I, 2, 3) + QR(1 - I, 1, 3) + QR(1 - I, 2, 3)
+            teamRecords!(77, 1) = 1
+            teamRecords!(77, 2) = QR(I, 1, 3) + QR(I, 2, 3)
+            teamRecDesc$(77, 0) = gameTeams$(I)
+            teamRecDesc$(77, 1) = VERSUS$(I)
+            teamRecDesc$(77, 2) = gameTeams$(1 - I)
+            teamRecDesc$(77, 3) = Date$
+        End If
+
+        If QR(I, 3, 3) + QR(I, 4, 3) + QR(1 - I, 3, 3) + QR(1 - I, 4, 3) > teamRecords!(77, 0) Then
+            teamRecords!(77, 0) = QR(I, 3, 3) + QR(I, 4, 3) + QR(1 - I, 3, 3) + QR(1 - I, 4, 3)
+            teamRecords!(77, 1) = 2
+            teamRecords!(77, 2) = QR(I, 3, 3) + QR(I, 4, 3)
+            teamRecDesc$(77, 0) = gameTeams$(I)
+            teamRecDesc$(77, 1) = VERSUS$(I)
+            teamRecDesc$(77, 2) = gameTeams$(1 - I)
+            teamRecDesc$(77, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 3) > teamRecords!(78, 0) Then
+                teamRecords!(78, 0) = QR(I, I2, 3)
+                teamRecords!(78, 1) = I2
+                teamRecords!(78, 2) = 0
+                teamRecDesc$(78, 0) = gameTeams$(I)
+                teamRecDesc$(78, 1) = VERSUS$(I)
+                teamRecDesc$(78, 2) = gameTeams$(1 - I)
+                teamRecDesc$(78, 3) = Date$
+            End If
+
+            If QR(I, I2, 3) + QR(1 - I, I2, 3) > teamRecords!(79, 0) Then
+                teamRecords!(79, 0) = QR(I, I2, 3) + QR(1 - I, I2, 3)
+                teamRecords!(79, 1) = I2
+                teamRecords!(79, 2) = QR(I, I2, 3)
+                teamRecDesc$(79, 0) = gameTeams$(I)
+                teamRecDesc$(79, 1) = VERSUS$(I)
+                teamRecDesc$(79, 2) = gameTeams$(1 - I)
+                teamRecDesc$(79, 3) = Date$
+            End If
+        Next
+
+        If totRebounds(I) > teamRecords!(80, 0) Then
+            teamRecords!(80, 0) = totRebounds(I)
+            teamRecords!(80, 1) = 0
+            teamRecords!(80, 2) = 0
+            teamRecDesc$(80, 0) = gameTeams$(I)
+            teamRecDesc$(80, 1) = VERSUS$(I)
+            teamRecDesc$(80, 2) = gameTeams$(1 - I)
+            teamRecDesc$(80, 3) = Date$
+        End If
+
+        If totRebounds(I) < teamRecords!(81, 0) Then
+            teamRecords!(81, 0) = totRebounds(I)
+            teamRecords!(81, 1) = 0
+            teamRecords!(81, 2) = 0
+            teamRecDesc$(81, 0) = gameTeams$(I)
+            teamRecDesc$(81, 1) = VERSUS$(I)
+            teamRecDesc$(81, 2) = gameTeams$(1 - I)
+            teamRecDesc$(81, 3) = Date$
+        End If
+
+        If totRebounds(I) + totRebounds(1 - I) > teamRecords!(82, 0) Then
+            teamRecords!(82, 0) = totRebounds(I) + totRebounds(1 - I)
+            teamRecords!(82, 1) = totRebounds(I)
+            teamRecords!(82, 2) = totRebounds(1 - I)
+            teamRecDesc$(82, 0) = gameTeams$(I)
+            teamRecDesc$(82, 1) = VERSUS$(I)
+            teamRecDesc$(82, 2) = gameTeams$(1 - I)
+            teamRecDesc$(82, 3) = Date$
+        End If
+
+        If totRebounds(I) + totRebounds(1 - I) < teamRecords!(83, 0) Then
+            teamRecords!(83, 0) = totRebounds(I) + totRebounds(1 - I)
+            teamRecords!(83, 1) = totRebounds(I)
+            teamRecords!(83, 2) = totRebounds(1 - I)
+            teamRecDesc$(83, 0) = gameTeams$(I)
+            teamRecDesc$(83, 1) = VERSUS$(I)
+            teamRecDesc$(83, 2) = gameTeams$(1 - I)
+            teamRecDesc$(83, 3) = Date$
+        End If
+
+        If QR(I, 1, 4) + QR(I, 2, 4) > teamRecords!(84, 0) Then
+            teamRecords!(84, 0) = QR(I, 1, 4) + QR(I, 2, 4)
+            teamRecords!(84, 1) = 1
+            teamRecords!(84, 2) = QR(I, 1, 4) + QR(I, 2, 4)
+            teamRecDesc$(84, 0) = gameTeams$(I)
+            teamRecDesc$(84, 1) = VERSUS$(I)
+            teamRecDesc$(84, 2) = gameTeams$(1 - I)
+            teamRecDesc$(84, 3) = Date$
+        End If
+
+        If QR(I, 3, 4) + QR(I, 4, 4) > teamRecords!(84, 0) Then
+            teamRecords!(84, 0) = QR(I, 3, 4) + QR(I, 4, 4)
+            teamRecords!(84, 1) = 2
+            teamRecords!(84, 2) = QR(I, 3, 4) + QR(I, 4, 4)
+            teamRecDesc$(84, 0) = gameTeams$(I)
+            teamRecDesc$(84, 1) = VERSUS$(I)
+            teamRecDesc$(84, 2) = gameTeams$(1 - I)
+            teamRecDesc$(84, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 4) > teamRecords!(85, 0) Then
+                teamRecords!(85, 0) = QR(I, I2, 4)
+                teamRecords!(85, 1) = I2
+                teamRecords!(85, 2) = 0
+                teamRecDesc$(85, 0) = gameTeams$(I)
+                teamRecDesc$(85, 1) = VERSUS$(I)
+                teamRecDesc$(85, 2) = gameTeams$(1 - I)
+                teamRecDesc$(85, 3) = Date$
+            End If
+        Next
+
+        If V8(I, 11) > teamRecords!(86, 0) Then
+            teamRecords!(86, 0) = V8(I, 11)
+            teamRecords!(86, 1) = 0
+            teamRecords!(86, 2) = 0
+            teamRecDesc$(86, 0) = gameTeams$(I)
+            teamRecDesc$(86, 1) = VERSUS$(I)
+            teamRecDesc$(86, 2) = gameTeams$(1 - I)
+            teamRecDesc$(86, 3) = Date$
+        End If
+
+        If V8(I, 11) + V8(1 - I, 11) > teamRecords!(88, 0) Then
+            teamRecords!(88, 0) = V8(I, 11) + V8(1 - I, 11)
+            teamRecords!(88, 1) = V8(I, 11)
+            teamRecords!(88, 2) = V8(1 - I, 11)
+            teamRecDesc$(88, 0) = gameTeams$(I)
+            teamRecDesc$(88, 1) = VERSUS$(I)
+            teamRecDesc$(88, 2) = gameTeams$(1 - I)
+            teamRecDesc$(88, 3) = Date$
+        End If
+
+        If V8(I, 11) + V8(1 - I, 11) < teamRecords!(89, 0) Then
+            teamRecords!(89, 0) = V8(I, 11) + V8(1 - I, 11)
+            teamRecords!(89, 1) = V8(I, 11)
+            teamRecords!(89, 2) = V8(1 - I, 11)
+            teamRecDesc$(89, 0) = gameTeams$(I)
+            teamRecDesc$(89, 1) = VERSUS$(I)
+            teamRecDesc$(89, 2) = gameTeams$(1 - I)
+            teamRecDesc$(89, 3) = Date$
+        End If
+
+        If QR(I, 1, 11) + QR(I, 2, 11) > teamRecords!(90, 0) Then
+            teamRecords!(90, 0) = QR(I, 1, 11) + QR(I, 2, 11)
+            teamRecords!(90, 1) = 1
+            teamRecords!(90, 2) = QR(I, 1, 11) + QR(I, 2, 11)
+            teamRecDesc$(90, 0) = gameTeams$(I)
+            teamRecDesc$(90, 1) = VERSUS$(I)
+            teamRecDesc$(90, 2) = gameTeams$(1 - I)
+            teamRecDesc$(90, 3) = Date$
+        End If
+
+        If QR(I, 3, 11) + QR(I, 4, 11) > teamRecords!(90, 0) Then
+            teamRecords!(90, 0) = QR(I, 3, 11) + QR(I, 4, 11)
+            teamRecords!(90, 1) = 2
+            teamRecords!(90, 2) = QR(I, 3, 11) + QR(I, 4, 11)
+            teamRecDesc$(90, 0) = gameTeams$(I)
+            teamRecDesc$(90, 1) = VERSUS$(I)
+            teamRecDesc$(90, 2) = gameTeams$(1 - I)
+            teamRecDesc$(90, 3) = Date$
+        End If
+
+        ' ASSISTS
+        If V8(I, 7) > teamRecords!(96, 0) Then
+            teamRecords!(96, 0) = V8(I, 7)
+            teamRecords!(96, 1) = 0
+            teamRecords!(96, 2) = 0
+            teamRecDesc$(96, 0) = gameTeams$(I)
+            teamRecDesc$(96, 1) = VERSUS$(I)
+            teamRecDesc$(96, 2) = gameTeams$(1 - I)
+            teamRecDesc$(96, 3) = Date$
+        End If
+
+        If V8(I, 7) < teamRecords!(97, 0) Then
+            teamRecords!(97, 0) = V8(I, 7)
+            teamRecords!(97, 1) = 0
+            teamRecords!(97, 2) = 0
+            teamRecDesc$(97, 0) = gameTeams$(I)
+            teamRecDesc$(97, 1) = VERSUS$(I)
+            teamRecDesc$(97, 2) = gameTeams$(1 - I)
+            teamRecDesc$(97, 3) = Date$
+        End If
+
+        If V8(I, 7) + V8(1 - I, 7) > teamRecords!(98, 0) Then
+            teamRecords!(98, 0) = V8(I, 7) + V8(1 - I, 7)
+            teamRecords!(98, 1) = V8(I, 7)
+            teamRecords!(98, 2) = V8(1 - I, 7)
+            teamRecDesc$(98, 0) = gameTeams$(I)
+            teamRecDesc$(98, 1) = VERSUS$(I)
+            teamRecDesc$(98, 2) = gameTeams$(1 - I)
+            teamRecDesc$(98, 3) = Date$
+        End If
+
+        If V8(I, 7) + V8(1 - I, 7) < teamRecords!(99, 0) Then
+            teamRecords!(99, 0) = V8(I, 7) + V8(1 - I, 7)
+            teamRecords!(99, 1) = V8(I, 7)
+            teamRecords!(99, 2) = V8(1 - I, 7)
+            teamRecDesc$(99, 0) = gameTeams$(I)
+            teamRecDesc$(99, 1) = VERSUS$(I)
+            teamRecDesc$(99, 2) = gameTeams$(1 - I)
+            teamRecDesc$(99, 3) = Date$
+        End If
+
+        If QR(I, 1, 7) + QR(I, 2, 7) > teamRecords!(100, 0) Then
+            teamRecords!(100, 0) = QR(I, 1, 7) + QR(I, 2, 7)
+            teamRecords!(100, 1) = 1
+            teamRecords!(100, 2) = 0
+            teamRecDesc$(100, 0) = gameTeams$(I)
+            teamRecDesc$(100, 1) = VERSUS$(I)
+            teamRecDesc$(100, 2) = gameTeams$(1 - I)
+            teamRecDesc$(100, 3) = Date$
+        End If
+
+        If QR(I, 3, 7) + QR(I, 4, 7) > teamRecords!(100, 0) Then
+            teamRecords!(100, 0) = QR(I, 3, 7) + QR(I, 4, 7)
+            teamRecords!(100, 1) = 2
+            teamRecords!(100, 2) = 0
+            teamRecDesc$(100, 0) = gameTeams$(I)
+            teamRecDesc$(100, 1) = VERSUS$(I)
+            teamRecDesc$(100, 2) = gameTeams$(1 - I)
+            teamRecDesc$(100, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 7) > teamRecords!(102, 0) Then
+                teamRecords!(102, 0) = QR(I, I2, 7)
+                teamRecords!(102, 1) = I2
+                teamRecords!(102, 2) = 0
+                teamRecDesc$(102, 0) = gameTeams$(I)
+                teamRecDesc$(102, 1) = VERSUS$(I)
+                teamRecDesc$(102, 2) = gameTeams$(1 - I)
+                teamRecDesc$(102, 3) = Date$
+            End If
+        Next
+
+        ' FOULS
+        If V8(I, 6) > teamRecords!(104, 0) Then
+            teamRecords!(104, 0) = V8(I, 6)
+            teamRecords!(104, 1) = 0
+            teamRecords!(104, 2) = 0
+            teamRecDesc$(104, 0) = gameTeams$(I)
+            teamRecDesc$(104, 1) = VERSUS$(I)
+            teamRecDesc$(104, 2) = gameTeams$(1 - I)
+            teamRecDesc$(104, 3) = Date$
+        End If
+
+        If V8(I, 6) < teamRecords!(105, 0) Then
+            teamRecords!(105, 0) = V8(I, 6)
+            teamRecords!(105, 1) = 0
+            teamRecords!(105, 2) = 0
+            teamRecDesc$(105, 0) = gameTeams$(I)
+            teamRecDesc$(105, 1) = VERSUS$(I)
+            teamRecDesc$(105, 2) = gameTeams$(1 - I)
+            teamRecDesc$(105, 3) = Date$
+        End If
+
+        If V8(I, 6) + V8(1 - I, 6) > teamRecords!(106, 0) Then
+            teamRecords!(106, 0) = V8(I, 6) + V8(1 - I, 6)
+            teamRecords!(106, 1) = V8(I, 6)
+            teamRecords!(106, 2) = V8(1 - I, 6)
+            teamRecDesc$(106, 0) = gameTeams$(I)
+            teamRecDesc$(106, 1) = VERSUS$(I)
+            teamRecDesc$(106, 2) = gameTeams$(1 - I)
+            teamRecDesc$(106, 3) = Date$
+        End If
+
+        If V8(I, 6) + V8(1 - I, 6) < teamRecords!(107, 0) Then
+            teamRecords!(107, 0) = V8(I, 6) + V8(1 - I, 6)
+            teamRecords!(107, 1) = V8(I, 6)
+            teamRecords!(107, 2) = V8(1 - I, 6)
+            teamRecDesc$(107, 0) = gameTeams$(I)
+            teamRecDesc$(107, 1) = VERSUS$(I)
+            teamRecDesc$(107, 2) = gameTeams$(1 - I)
+            teamRecDesc$(107, 3) = Date$
+        End If
+
+        If QR(I, 1, 6) + QR(I, 2, 6) > teamRecords!(108, 0) Then
+            teamRecords!(108, 0) = QR(I, 1, 6) + QR(I, 2, 6)
+            teamRecords!(108, 1) = 1
+            teamRecords!(108, 2) = 0
+            teamRecDesc$(108, 0) = gameTeams$(I)
+            teamRecDesc$(108, 1) = VERSUS$(I)
+            teamRecDesc$(108, 2) = gameTeams$(1 - I)
+            teamRecDesc$(108, 3) = Date$
+        End If
+
+        If QR(I, 3, 6) + QR(I, 4, 6) > teamRecords!(108, 0) Then
+            teamRecords!(108, 0) = QR(I, 3, 6) + QR(I, 4, 6)
+            teamRecords!(108, 1) = 2
+            teamRecords!(108, 2) = 0
+            teamRecDesc$(108, 0) = gameTeams$(I)
+            teamRecDesc$(108, 1) = VERSUS$(I)
+            teamRecDesc$(108, 2) = gameTeams$(1 - I)
+            teamRecDesc$(108, 3) = Date$
+        End If
+
+        If QR(I, 1, 6) + QR(I, 2, 6) + QR(1 - I, 1, 6) + QR(1 - I, 2, 6) > teamRecords!(109, 0) Then
+            teamRecords!(109, 0) = QR(I, 1, 6) + QR(I, 2, 6) + QR(1 - I, 1, 6) + QR(1 - I, 2, 6)
+            teamRecords!(109, 1) = 1
+            teamRecords!(109, 2) = QR(I, 1, 6) + QR(I, 2, 6)
+            teamRecDesc$(109, 0) = gameTeams$(I)
+            teamRecDesc$(109, 1) = VERSUS$(I)
+            teamRecDesc$(109, 2) = gameTeams$(1 - I)
+            teamRecDesc$(109, 3) = Date$
+        End If
+
+        If QR(I, 3, 6) + QR(I, 4, 6) + QR(1 - I, 3, 6) + QR(1 - I, 4, 6) > teamRecords!(109, 0) Then
+            teamRecords!(109, 0) = QR(I, 3, 6) + QR(I, 4, 6) + QR(1 - I, 3, 6) + QR(1 - I, 4, 6)
+            teamRecords!(109, 1) = 2
+            teamRecords!(109, 2) = QR(I, 3, 6) + QR(I, 4, 6)
+            teamRecDesc$(109, 0) = gameTeams$(I)
+            teamRecDesc$(109, 1) = VERSUS$(I)
+            teamRecDesc$(109, 2) = gameTeams$(1 - I)
+            teamRecDesc$(109, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 6) > teamRecords!(110, 0) Then
+                teamRecords!(110, 0) = QR(I, I2, 6)
+                teamRecords!(110, 1) = I2
+                teamRecords!(110, 2) = 0
+                teamRecDesc$(110, 0) = gameTeams$(I)
+                teamRecDesc$(110, 1) = VERSUS$(I)
+                teamRecDesc$(110, 2) = gameTeams$(1 - I)
+                teamRecDesc$(110, 3) = Date$
+            End If
+
+            If QR(I, I2, 6) + QR(1 - I, I2, 6) > teamRecords!(111, 0) Then
+                teamRecords!(111, 0) = QR(I, I2, 6) + QR(1 - I, I2, 6)
+                teamRecords!(111, 1) = I2
+                teamRecords!(111, 2) = QR(I, I2, 6)
+                teamRecDesc$(111, 0) = gameTeams$(I)
+                teamRecDesc$(111, 1) = VERSUS$(I)
+                teamRecDesc$(111, 2) = gameTeams$(1 - I)
+                teamRecDesc$(111, 3) = Date$
+            End If
+        Next
+
+        ' STEALS
+        If V8(I, 9) > teamRecords!(112, 0) Then
+            teamRecords!(112, 0) = V8(I, 9)
+            teamRecords!(112, 1) = 0
+            teamRecords!(112, 2) = 0
+            teamRecDesc$(112, 0) = gameTeams$(I)
+            teamRecDesc$(112, 1) = VERSUS$(I)
+            teamRecDesc$(112, 2) = gameTeams$(1 - I)
+            teamRecDesc$(112, 3) = Date$
+        End If
+
+        If V8(I, 9) + V8(1 - I, 9) > teamRecords!(114, 0) Then
+            teamRecords!(114, 0) = V8(I, 9) + V8(1 - I, 9)
+            teamRecords!(114, 1) = V8(I, 9)
+            teamRecords!(114, 2) = V8(1 - I, 9)
+            teamRecDesc$(114, 0) = gameTeams$(I)
+            teamRecDesc$(114, 1) = VERSUS$(I)
+            teamRecDesc$(114, 2) = gameTeams$(1 - I)
+            teamRecDesc$(114, 3) = Date$
+        End If
+
+        If QR(I, 1, 9) + QR(I, 2, 9) > teamRecords!(116, 0) Then
+            teamRecords!(116, 0) = QR(I, 1, 9) + QR(I, 2, 9)
+            teamRecords!(116, 1) = 1
+            teamRecords!(116, 2) = 0
+            teamRecDesc$(116, 0) = gameTeams$(I)
+            teamRecDesc$(116, 1) = VERSUS$(I)
+            teamRecDesc$(116, 2) = gameTeams$(1 - I)
+            teamRecDesc$(116, 3) = Date$
+        End If
+
+        If QR(I, 3, 9) + QR(I, 4, 9) > teamRecords!(116, 0) Then
+            teamRecords!(116, 0) = QR(I, 3, 9) + QR(I, 4, 9)
+            teamRecords!(116, 1) = 2
+            teamRecords!(116, 2) = 0
+            teamRecDesc$(116, 0) = gameTeams$(I)
+            teamRecDesc$(116, 1) = VERSUS$(I)
+            teamRecDesc$(116, 2) = gameTeams$(1 - I)
+            teamRecDesc$(116, 3) = Date$
+        End If
+
+        For I2 = 1 To 4
+            If QR(I, I2, 9) > teamRecords!(117, 0) Then
+                teamRecords!(117, 0) = QR(I, I2, 9)
+                teamRecords!(117, 1) = I2
+                teamRecords!(117, 2) = 0
+                teamRecDesc$(117, 0) = gameTeams$(I)
+                teamRecDesc$(117, 1) = VERSUS$(I)
+                teamRecDesc$(117, 2) = gameTeams$(1 - I)
+                teamRecDesc$(117, 3) = Date$
+            End If
+        Next
+
+        ' BLOCKS
+        If V8(I, 8) > teamRecords!(118, 0) Then
+            teamRecords!(118, 0) = V8(I, 8)
+            teamRecords!(118, 1) = 0
+            teamRecords!(118, 2) = 0
+            teamRecDesc$(118, 0) = gameTeams$(I)
+            teamRecDesc$(118, 1) = VERSUS$(I)
+            teamRecDesc$(118, 2) = gameTeams$(1 - I)
+            teamRecDesc$(118, 3) = Date$
+        End If
+
+        If V8(I, 8) + V8(1 - I, 8) > teamRecords!(119, 0) Then
+            teamRecords!(119, 0) = V8(I, 8) + V8(1 - I, 8)
+            teamRecords!(119, 1) = V8(I, 8)
+            teamRecords!(119, 2) = V8(1 - I, 8)
+            teamRecDesc$(119, 0) = gameTeams$(I)
+            teamRecDesc$(119, 1) = VERSUS$(I)
+            teamRecDesc$(119, 2) = gameTeams$(1 - I)
+            teamRecDesc$(119, 3) = Date$
+        End If
+
+        ' TURNOVERS
+        If V8(I, 12) > teamRecords!(122, 0) Then
+            teamRecords!(122, 0) = V8(I, 12)
+            teamRecords!(122, 1) = 0
+            teamRecords!(122, 2) = 0
+            teamRecDesc$(122, 0) = gameTeams$(I)
+            teamRecDesc$(122, 1) = VERSUS$(I)
+            teamRecDesc$(122, 2) = gameTeams$(1 - I)
+            teamRecDesc$(122, 3) = Date$
+        End If
+
+        If V8(I, 12) < teamRecords!(123, 0) Then
+            teamRecords!(123, 0) = V8(I, 12)
+            teamRecords!(123, 1) = 0
+            teamRecords!(123, 2) = 0
+            teamRecDesc$(123, 0) = gameTeams$(I)
+            teamRecDesc$(123, 1) = VERSUS$(I)
+            teamRecDesc$(123, 2) = gameTeams$(1 - I)
+            teamRecDesc$(123, 3) = Date$
+        End If
+
+        If V8(I, 12) + V8(1 - I, 12) > teamRecords!(124, 0) Then
+            teamRecords!(124, 0) = V8(I, 12) + V8(1 - I, 12)
+            teamRecords!(124, 1) = V8(I, 12)
+            teamRecords!(124, 2) = V8(1 - I, 12)
+            teamRecDesc$(124, 0) = gameTeams$(I)
+            teamRecDesc$(124, 1) = VERSUS$(I)
+            teamRecDesc$(124, 2) = gameTeams$(1 - I)
+            teamRecDesc$(124, 3) = Date$
+        End If
+
+        If V8(I, 12) + V8(1 - I, 12) < teamRecords!(125, 0) Then
+            teamRecords!(125, 0) = V8(I, 12) + V8(1 - I, 12)
+            teamRecords!(125, 1) = V8(I, 12)
+            teamRecords!(125, 2) = V8(1 - I, 12)
+            teamRecDesc$(125, 0) = gameTeams$(I)
+            teamRecDesc$(125, 1) = VERSUS$(I)
+            teamRecDesc$(125, 2) = gameTeams$(1 - I)
+            teamRecDesc$(125, 3) = Date$
+        End If
+
+    Next
+
+    Open diskPaths$(1) + "RECORDS.GAM" For Output As #3
+
+    For I = 0 To 48
+
+        For I1 = 0 To 2
+            Write #3, indRecords!(I, I1)
+        Next
+
+        For I1 = 0 To 4
+            Write #3, indRecDesc$(I, I1)
+        Next
+
+    Next
+
+    For I = 0 To 125
+
+        For I1 = 0 To 2
+            Write #3, teamRecords!(I, I1)
+        Next
+
+        For I1 = 0 To 3
+            Write #3, teamRecDesc$(I, I1)
+        Next
+
+    Next
+
+    Close #3
+
+End Sub
+
+
+'----------------------------------------
+'         CheckString Subroutine
+'----------------------------------------
+'This function checks the given string
+'to determine if any characters are not
+'printable. If found, it will return a
+'value of 1. Otherwise, it will return 0.
+Function CheckString% (targetString$)
+
+    badString = 0
+    stringPosition% = 1
+
+    Do
+
+        test = Asc(Mid$(targetString$, stringPosition%, 1))
+
+        'If it is a non-printable character (corrupt data)
+        If test > 122 Or test < 32 Then
+            stringPosition% = 1
+            badString = 1
+        Else
+            stringPosition% = stringPosition% + 1
+        End If
+
+    Loop Until stringPosition% = Len(targetString$) Or badString = 1
+
+    CheckString% = badString
+
+End Function
+
+
+'----------------------------------------
+'          GetTeamYear Function
+'----------------------------------------
+'This subroutine determines the 4-digit
+'team year from the team loaded by the
+'file. It uses the 2 digit year to make
+'assumptions. (00 to 24 are year 2000.)
+'The NBL was formed in 1937 and became
+'part of the NBA in 1949. Any teams from
+'00 to 37 are safe to assume are from 2000's
+Function GetTeamYear% (yearFromName$)
+
+    teamYear% = Val(yearFromName$)
+
+    If teamYear% >= 0 And teamYear% < 37 Then
+        GetTeamYear% = 2000 + teamYear%
+    Else
+        GetTeamYear% = 1900 + teamYear%
+    End If
+
+End Function
+
+
+'----------------------------------------
+'        GetTeamGender$ Function
+'----------------------------------------
+'This function attempts to determine if
+'the team has been loaded from a disk of
+'women's teams only". It is only able to
+'do this by checking if the last letter
+'(ie, 2024W) or first letter (ie, WNBA)
+' is a "W", as has been common to do in
+'the modding community.
+'This obviously would not be useful for
+'leagues that would choose a W arbitrarily
+'(ie, for a "World" league, etc.)
+Function GetTeamGender$ (diskID$)
+
+    test$ = diskID$
+
+    If Right$(diskID$, 1) = "W" Or Left$(diskID$, 1) = "W" Then
+        GetTeamGender$ = "SHE"
+    Else
+        GetTeamGender$ = "HE"
+    End If
+
+End Function
