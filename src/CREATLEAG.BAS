@@ -61,15 +61,16 @@ Sub CREATLEAG ()
 
                 Case 1:
                     Call DefineLeaguePro(league$, div1$, div2$, div3$, div4$)
-                    Call ReviewEditLeague(league$, div1$, div2$, div3$, div4$)
+                    leagueFile$ = league$
+                    Call ReviewEditLeague(leagueFile$, league$, div1$, div2$, div3$, div4$)
 
                 Case 2:
                     Do
 
-                        league$ = ChooseFile$(diskPaths$(2) + "*.TMI", "LEAGUE", FileExit%)
+                        leagueFile$  = ChooseFile$(diskPaths$(2) + "*.TMI", "LEAGUE", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
-                            Call ReviewEditLeague(league$, div1$, div2$, div3$, div4$)
+                            Call ReviewEditLeague(leagueFile$, league$, div1$, div2$, div3$, div4$)
                         End If
 
                     Loop Until FileExit% = 27 Or FileExit% = 0
@@ -187,15 +188,15 @@ End Sub
 'This subroutine provides an interface to
 'the user allowing them to choose / clear
 'teams from the league definition.
-Sub ReviewEditLeague (league$, div1$, div2$, div3$, div4$)
+Sub ReviewEditLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
 
     Shared intZ1%()
 
     Shared memberTeams$(), memberYears$()
 
-    If _FileExists(diskPaths$(2) + league$ + ".TMI") Then
+    If _FileExists(diskPaths$(2) + leagueFile$ + ".TMI") Then
 
-        Open diskPaths$(2) + league$ + ".TMI" For Input As #1
+        Open diskPaths$(2) + leagueFile$ + ".TMI" For Input As #1
 
         Input #1, league$, div1$, div2$, div3$, div4$
 
@@ -227,19 +228,19 @@ Sub ReviewEditLeague (league$, div1$, div2$, div3$, div4$)
 
             Color 2
             Print Using "## "; I;
-            Color 15: Print memberTeams$(I);
+            Color 15: Print Left$(memberTeams$(I), 17);
 
             Locate , 21
             Color 2: Print Using "## "; I + 10;
-            Color 15: Print memberTeams$(I + 10);
+            Color 15: Print Left$(memberTeams$(I + 10), 17);
 
             Locate , 41
             Color 2: Print Using "## "; I + 20;
-            Color 15: Print memberTeams$(I + 20);
+            Color 15: Print Left$(memberTeams$(I + 20), 17);
 
             Locate , 61
             Color 2: Print Using "## "; I + 30;
-            Color 15: Print memberTeams$(I + 30)
+            Color 15: Print Left$(memberTeams$(I + 30), 17)
 
         Next I
 
@@ -279,7 +280,7 @@ Sub ReviewEditLeague (league$, div1$, div2$, div3$, div4$)
 
     Loop Until choice = 3
 
-    Call SaveLeague(league$, div1$, div2$, div3$, div4$)
+    Call SaveLeague(leagueFile$, league$, div1$, div2$, div3$, div4$)
 
 End Sub
 
@@ -290,13 +291,13 @@ End Sub
 'This subroutine writes the league team
 'memberships and definition to each of
 'the corresponding files (.TMI, .TMS)
-Sub SaveLeague (league$, div1$, div2$, div3$, div4$)
+Sub SaveLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
 
     Shared intZ1%()
 
     Shared memberTeams$(), memberYears$(), statNames$()
 
-    Open diskPaths$(2) + league$ + ".TMI" For Output As #1
+    Open diskPaths$(2) + leagueFile$  + ".TMI" For Output As #1
 
     Print #1, league$
     Print #1, div1$
@@ -322,7 +323,7 @@ Sub SaveLeague (league$, div1$, div2$, div3$, div4$)
 
     Next X
 
-    Open diskPaths$(2) + league$ + ".TMS" For Output As #2
+    Open diskPaths$(2) + leagueFile$ + ".TMS" For Output As #2
 
     Write #2, league$, div1$, div2$, div3$, div4$
 

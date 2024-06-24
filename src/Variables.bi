@@ -211,48 +211,45 @@ Dim tickerStart
 
 Dim alpha$(4), tickerPeriod$(14)
 
-Dim Shared A4, autoPlay, ballCarrier, bonusFoulNum, coachOpt, compTeam
-Dim Shared D, endGame, endAllGames, ftRulesOpt, freeThrowNbr, freeThrowVal
-Dim Shared gameLoc, halfTime, JY, nbrLines
-Dim Shared P, fullCtOpt, P9, playerMode, playerOpt, playoffOpt, pbpOpt
-Dim Shared quarter, sClockVal, shotChance, shotClock, shotPctOpt
+Dim Shared assistShotBoost, autoPlay, ballCarrier, bonusFoulNum, coachOpt, compTeam
+Dim Shared D, endGame, endAllGames
+Dim Shared fastBreak, ftRulesOpt, freeThrowNbr, freeThrowVal, fullCtOpt
+Dim Shared gameLoc, halfTime, JY, MJ, nbrFTMade, nbrLines, offStatus
+Dim Shared P, P9, playerMode, playerOpt, playoffOpt, pbpOpt
+Dim Shared quarter, sClockVal, shotChance, shotClock, shotPctOpt, shotType
+Dim Shared threePtOpt, T1, TMT, willDunk
 
-'I have no clue what xFactor (previously "X") does
-Dim Shared threePtOpt, T1, TMT, xFactor
-
-Dim Shared DK%, fastBreak, FT%, GF%, HH%
-Dim Shared NM%, OX%, OY%, shotType
+Dim Shared FT%, GF%, HH%, OX%, OY%
 
 Dim Shared gameClock!, pbpDelay!, timeElapsed!
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
-Dim Shared prevBall$, TS$, pbpString$, Y2$, Z3$
+Dim Shared pbpString$, prevBall$, TS$, Z3$
 
 Dim Shared CF%(1, 9), eventSettings(13)
-Dim Shared F%(1, 9), F5%(1, 4), F7%(1, 9), FY%(0 To 1), G9%(1), GF%(2, 9)
+Dim Shared F%(1, 9), FY%(0 To 1), G9%(1), GF%(2, 9)
 Dim Shared NG%(18), N0%(2, 2, 4)
 Dim Shared OX%(2), OY%(2), offStyles(1)
 Dim Shared PF%(1), PFA%(33), ST%(32), SX%(32, 1, 14)
-Dim Shared TOA%(33), TOF%(1), threeFG(1, 14, 1), YR%(1)
+Dim Shared TOA%(33), TOF%(1), YR%(1)
 
 'Dim Shared C1(1, 14)
-Dim Shared D1(1), defStyles(1), D8(6, 6), F1(14), G4(14), G5(14)
-Dim Shared leagRat_GAME(1, 6), rebRatings(0 To 10), plyrRat_GAME(1, 14, 19)
-Dim Shared P2(1), P4(5), P5(5), fullCtOpt(0 To 1), QQ(1, 8, 14, 14), QR(1, 7, 14)
-Dim Shared S3(14), scSettings(0 To 2)
+Dim Shared dFGPA(1), defStyles(1), D8(6, 6), F1(14), fullCtOpt(0 To 1)
+Dim Shared G4(14), G5(14), leagRat_GAME(1, 6), lineupIdx(0 To 1, 0 To 4), miscRatings(1, 9)
+Dim Shared P4(5), P5(5), plyrRat_GAME(1, 14, 19), QQ(1, 8, 14, 14), QR(1, 7, 14)
+Dim Shared rebRatings(0 To 10), S3(14), scSettings(0 To 2)
 Dim Shared score(1, 14), schedGame(2)
-Dim Shared teamFouls(1), timePlayed(2, 14), timeouts(1)
+Dim Shared teamAdj(1, 4), teamFouls(1), totalFouls(1), threeFG(1, 14, 1), timePlayed(2, 14), timeouts(1)
 Dim Shared teamRat_GAME(0 To 1, 0 To 34), totRebounds(1), turnovers(1)
 Dim Shared statTotals(14), pbpFG(1 To 8), pbpBG(1 To 8), W2(1, 14), W3(1, 14)
 Dim Shared X7(1), Z5(1), Z6(1)
 
-Dim Shared gameB1!(0 To 1, 0 To 4), gameRatings!(0 To 1, 0 To 14, 0 To 25)
-Dim Shared M9!(1)
+Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), M9!(1)
 Dim gameW0!(1, 14), gameW1!(1, 14)
 
 Dim Shared defStyleDesc$(5), diskIDs$(0 To 1)
 Dim Shared gameCoach$(3), gameMascots$(3), gameStadium$(3), gameTeams$(3)
-Dim Shared offStyleDesc$(2), pbpType$(1), players_GAME$(1, 14, 1), posnName$(0 To 4)
+Dim Shared offStyleDesc$(2), pbpStyle$(1), players_GAME$(1, 14, 1), posnName$(0 To 4)
 Dim Shared SX$(32, 1)
 Dim Shared teamAbbrev$(3), teamGender$(0 To 1)
 Dim Shared Y$(1)
