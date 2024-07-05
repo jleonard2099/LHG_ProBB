@@ -1,5 +1,5 @@
 '----------------------------------------
-'             ALIGN Subroutine
+'            ALIGN Subroutine
 '----------------------------------------
 'This routine presents a menu / interface
 'that assists the user with aligning
@@ -13,12 +13,13 @@ Sub ALIGN ()
 
     Shared statPlyrNames$(), roadPlyrNames$()
 
-    Shared statsZ!(), statsZ1!()
     Shared AR!()
-    Shared compareA!()
     Shared statsW0!(), statsW1!()
+    Shared statsZ!(), statsZ1!()
     Shared W0R!(), WR1!()
     Shared ZR!(), ZR1!()
+
+    Shared playerRatings!()
 
     Do
 
@@ -26,8 +27,13 @@ Sub ALIGN ()
 
         If UCase$(I$) = "N" And I$ <> Chr$(27) Then
 
+            Locate 15, 5: Print Space$(55)
+            Locate 16, 5: Print Space$(55)
+            Color 11
+
             teamNbr = 0
             Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+
             statFile$ = nameStatFile$(team$)
 
             Color 12, 0
@@ -45,16 +51,22 @@ Sub ALIGN ()
 
                     Input #1, roadPlyrNames$(I)
 
-                    For J = 0 To 13: Input #1, AR!(I, J): Next
+                    For J = 0 To 13: 
+                        Input #1, AR!(I, J)
+                    Next
 
                     Input #1, W0R!(I)
                     Input #1, WR1!(I)
 
                 Next
 
-                For L = 0 To 15: Input #1, ZR!(L): Next
+                For L = 0 To 15: 
+                    Input #1, ZR!(L)
+                Next
 
-                For L = 0 To 15: Input #1, ZR1!(L): Next
+                For L = 0 To 15: 
+                    Input #1, ZR1!(L)
+                Next
 
                 Close #1
 
@@ -68,16 +80,22 @@ Sub ALIGN ()
 
                         Input #2, statPlyrNames$(I)
 
-                        For J = 0 To 13: Input #2, compareA!(I, J): Next
+                        For J = 0 To 13: 
+                            Input #2, playerRatings!(I, J)
+                        Next
 
                         Input #2, statsW0!(I)
                         Input #2, statsW1!(I)
 
                     Next
 
-                    For L = 0 To 15: Input #2, statsZ!(L): Next
+                    For L = 0 To 15: 
+                        Input #2, statsZ!(L)
+                    Next
 
-                    For L = 0 To 15: Input #2, statsZ1!(L): Next
+                    For L = 0 To 15: 
+                        Input #2, statsZ1!(L)
+                    Next
 
                     Close #2
 
@@ -85,8 +103,11 @@ Sub ALIGN ()
                     DUMMY$ = "OK"
 
                 Else
+
                     Cls
-                    Locate 2, 10: Color 7
+
+                    Color 7
+                    Locate 2, 10
                     Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
                     Print
                     Locate , 10
@@ -95,8 +116,11 @@ Sub ALIGN ()
                 End If 'Done checking if current file exists
 
             Else
+
                 Cls
-                Locate 2, 10: Color 7
+
+                Color 7
+                Locate 2, 10
                 Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
                 Print
                 Locate , 10
@@ -111,7 +135,6 @@ Sub ALIGN ()
 End Sub
 
 
-
 '----------------------------------------
 '         AlignStats Subroutine
 '----------------------------------------
@@ -122,7 +145,8 @@ End Sub
 'the results.
 Sub AlignStats (pathRoadStats$, statFile$)
 
-    Shared statPlyrNames$(), roadPlyrNames$()
+    Shared statPlyrNames$()
+    Shared roadPlyrNames$()
     Shared AN$()
 
     Shared AR!()
@@ -132,21 +156,25 @@ Sub AlignStats (pathRoadStats$, statFile$)
     Shared W0N!(), WN1!()
 
     Cls
+
     Locate 1, 34
     Color 12: Print "STAT ROSTERS"
 
-    Locate , 26
-    Color 15: Print "CURRENT  ";
+    Color 15
+    Locate , 26: Print "CURRENT  ";
     Color 7: Print "             ROAD"
 
     For I = 0 To 14
+
         Locate I + 4, 22
+
         Color 12: Print Using "##"; I;
         Print " ";
         Color 15: Print statPlyrNames$(I);
         Color 12: Print Tab(44); Using "##"; I;
         Print " ";
         Color 7: Print roadPlyrNames$(I)
+
     Next
 
     Color 11
@@ -156,6 +184,7 @@ Sub AlignStats (pathRoadStats$, statFile$)
     N = 0
 
     Do
+
         For J = 0 To 14
 
             If statPlyrNames$(N) = roadPlyrNames$(J) Then
@@ -181,6 +210,7 @@ Sub AlignStats (pathRoadStats$, statFile$)
             SEQ = 0
 
             For K = 0 To 14
+
                 If AN$(K) <> statPlyrNames$(K) Then
                     SEQ = SEQ + 1
                 End If
@@ -190,12 +220,13 @@ Sub AlignStats (pathRoadStats$, statFile$)
             If SEQ = 0 Then
                 Call ReviewAndSaveAlignment(pathRoadStats$, statFile$)
             Else
-                Locate 20
                 Color 14
+                Locate 20
                 Print "WARNING !! - - ROAD STAT FILE CONTAINS PLAYERS NOT IN EXISTING STATS.  YOU MUST"
                 Print "CHANGE ROAD STAT FILE USING OPTION #6 ON GAME MENU BEFORE ATTEMPTING STAT MERGE."
+                Color 13
                 Locate 23, 30
-                Color 13: Line Input "HIT ENTER TO CONTINUE"; DUMMY$
+                Line Input "HIT ENTER TO CONTINUE"; DUMMY$
             End If 'Done checking if players are in sequence
 
         End If 'Done checking N = 15
@@ -220,11 +251,12 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
     Shared ZR!(), ZR1!()
 
     Cls
+
     Locate 1, 32
     Color 12: Print "STAT ROSTERS"
 
-    Locate , 26
-    Color 15: Print "CURRENT  ";
+    Color 15
+    Locate , 26: Print "CURRENT  ";
     Color 7: Print "             ROAD"
 
     For I = 0 To 14:
@@ -245,13 +277,26 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
 
     Write #1, BR$
 
-    For I = 0 To 14: Write #1, AN$(I)
+    For I = 0 To 14: 
+        
+        Write #1, AN$(I)
 
-    For J = 0 To 13: Write #1, AN!(I, J): Next: Write #1, W0N!(I): Write #1, WN1!(I): Next
+        For J = 0 To 13: 
+            Write #1, AN!(I, J)
+        Next
+        
+        Write #1, W0N!(I)
+        Write #1, WN1!(I)
 
-    For L = 0 To 15: Write #1, ZR!(L): Next
+    Next
 
-    For L = 0 To 15: Write #1, ZR1!(L): Next
+    For L = 0 To 15: 
+        Write #1, ZR!(L)
+    Next
+
+    For L = 0 To 15: 
+        Write #1, ZR1!(L)
+    Next
 
     Close #1
 

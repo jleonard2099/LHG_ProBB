@@ -33,15 +33,13 @@ Sub LoadLeaderFiles_Pro (targetFile$)
     Shared defLeaders!(), offLeaders!()
     Shared seeZ!(), seeZ1!()
 
-    Shared DL$(), OL$()
+    Shared defLeaderNames$(), offLeaderNames$()
     Shared leagT$(), Z2$(), Z3$()
 
     Shared LG$, div1Name$, div2Name$, div3Name$, div4Name$
 
     Open diskPaths$(2) + targetFile$ + ".TMS" For Input As #1
-
     Input #1, LG$, div1Name$, div2Name$, div3Name$, div4Name$
-
     Close #1
 
     div1Name$ = PadRight$(div1Name$, 8)
@@ -64,14 +62,14 @@ Sub LoadLeaderFiles_Pro (targetFile$)
     Next
 
     For X = 1 To TEAMS_PER_LEAGUE
-        Input #2, OL$(X)
+        Input #2, offLeaderNames$(X)
         For M = 1 To 20
             Input #2, offLeaders!(X, M)
         Next
     Next
 
     For X = 1 To TEAMS_PER_LEAGUE
-        Input #2, DL$(X)
+        Input #2, defLeaderNames$(X)
         For M = 1 To 20
             Input #2, defLeaders!(X, M)
         Next
@@ -149,7 +147,7 @@ Sub LeaderStats_Screen ()
     Shared defLeaders!(), offLeaders!()
     Shared seeZ!(), seeZ1!()
 
-    Shared DL$(), OL$(), offLeaders!()
+    Shared defLeaderNames$(), offLeaderNames$(), offLeaders!()
     Shared leagT$(), Z2$(), Z3$()
 
     Shared LG$, div1Name$, div2Name$, div3Name$, div4Name$
@@ -710,9 +708,9 @@ Sub LeaderStats_Screen ()
 
     For X = 1 To 20
 
-        If Not (OL$(X) = "" Or OL$(X) = "*" Or OL$(X) = " ") Then
+        If Not (offLeaderNames$(X) = "" Or offLeaderNames$(X) = "*" Or offLeaderNames$(X) = " ") Then
             'Team
-            Print Left$(OL$(X), 11); Tab(13);
+            Print Left$(offLeaderNames$(X), 11); Tab(13);
             'G
             Print Using "##"; offLeaders!(X, 16);: Print Tab(16);
             'FGA
@@ -759,8 +757,8 @@ Sub LeaderStats_Screen ()
 
     For X = 21 To 40
 
-        If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
-            Print Left$(OL$(X), 11); Tab(13);
+        If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
+            Print Left$(offLeaderNames$(X), 11); Tab(13);
             'G
             Print Using "##"; offLeaders!(X, 16);: Print Tab(16);
             'FGA
@@ -806,9 +804,9 @@ Sub LeaderStats_Screen ()
 
     For X = 1 To 20
 
-        If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
+        If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
             'Team
-            Print Left$(DL$(X), 11); Tab(13);
+            Print Left$(defLeaderNames$(X), 11); Tab(13);
             'Games
             Print Using "##"; defLeaders!(X, 16);: Print Tab(16);
             'FGA
@@ -853,8 +851,8 @@ Sub LeaderStats_Screen ()
 
     For X = 21 To 40
 
-        If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
-            Print Left$(DL$(X), 11); Tab(13);: Print Using "##"; defLeaders!(X, 16);
+        If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
+            Print Left$(defLeaderNames$(X), 11); Tab(13);: Print Using "##"; defLeaders!(X, 16);
             Print Tab(16);: Print Using "####"; defLeaders!(X, 2);
             Print Tab(21);: Print Using "####"; defLeaders!(X, 3);
             Print Tab(26);: Print Using ".###"; defLeaders!(X, 17);
@@ -895,7 +893,7 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
     Shared defLeaders!(), offLeaders!()
     Shared seeZ!(), seeZ1!()
 
-    Shared OL$(), DL$(), leagT$()
+    Shared offLeaderNames$(), defLeaderNames$(), leagT$()
     Shared Z2$(), Z3$()
 
     Shared LG$, div1Name$, div2Name$, div3Name$, div4Name$
@@ -1272,8 +1270,8 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For X = 1 To TEAMS_PER_LEAGUE
 
-        If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
-            Print #1, Left$(OL$(X), 11); Tab(13);
+        If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
+            Print #1, Left$(offLeaderNames$(X), 11); Tab(13);
             Print #1, Using "##"; offLeaders!(X, 16);: Print #1, Tab(16);
             Print #1, Using "####"; offLeaders!(X, 2);: Print #1, Tab(21);
             Print #1, Using "####"; offLeaders!(X, 3);: Print #1, Tab(26);
@@ -1298,8 +1296,8 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For X = 1 To TEAMS_PER_LEAGUE
 
-        If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
-            Print #1, Left$(DL$(X), 11); Tab(13);
+        If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
+            Print #1, Left$(defLeaderNames$(X), 11); Tab(13);
             Print #1, Using "##"; defLeaders!(X, 16);: Print #1, Tab(16);
             Print #1, Using "####"; defLeaders!(X, 2);: Print #1, Tab(21);
             Print #1, Using "####"; defLeaders!(X, 3);: Print #1, Tab(26);

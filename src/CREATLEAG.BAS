@@ -8,7 +8,7 @@ Sub CREATLEAG ()
 
     _Title "Basketball: The Pro Game - Manage Leagues"
 
-    Shared intZ1%()
+    Shared memberIdx()
 
     Shared memberTeams$(), memberYears$()
 
@@ -32,7 +32,6 @@ Sub CREATLEAG ()
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 8
-        Column% = 25
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
@@ -47,7 +46,7 @@ Sub CREATLEAG ()
         If ExitCode% <> 27 Then
 
             For X = 1 To TEAMS_PER_LEAGUE
-                intZ1%(X) = -1
+                memberIdx(X) = -1
                 memberTeams$(X) = "XXX"
                 memberYears$(X) = "XXX"
             Next
@@ -81,6 +80,7 @@ Sub CREATLEAG ()
 
     Loop Until Selection% = 3 Or ExitCode% = 27
 
+    Color 15, 0
     Cls
 
 End Sub
@@ -190,7 +190,7 @@ End Sub
 'teams from the league definition.
 Sub ReviewEditLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
 
-    Shared intZ1%()
+    Shared memberIdx()
 
     Shared memberTeams$(), memberYears$()
 
@@ -202,7 +202,7 @@ Sub ReviewEditLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
 
         For X = 1 To TEAMS_PER_LEAGUE
             Input #1, memberTeams$(X)
-            Input #1, intZ1%(X)
+            Input #1, memberIdx(X)
             Input #1, memberYears$(X)
         Next
 
@@ -270,7 +270,7 @@ Sub ReviewEditLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
             If choice = 1 Then
                 'Add team
                 teamNbr = 0
-                Call ChooseTeam(memberYears$(B), NTMS, intZ1%(B), memberTeams$(B))
+                Call ChooseTeam(memberYears$(B), NTMS, memberIdx(B), memberTeams$(B))
             Else
                 'Remove team
                 memberTeams$(B) = "XXX"
@@ -293,9 +293,9 @@ End Sub
 'the corresponding files (.TMI, .TMS)
 Sub SaveLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
 
-    Shared intZ1%()
+    Shared memberIdx()
 
-    Shared memberTeams$(), memberYears$(), statNames$()
+    Shared memberTeams$(), memberYears$(), statFileNames$()
 
     Open diskPaths$(2) + leagueFile$  + ".TMI" For Output As #1
 
@@ -307,7 +307,7 @@ Sub SaveLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
 
     For X = 1 To TEAMS_PER_LEAGUE
         Print #1, memberTeams$(X)
-        Print #1, intZ1%(X)
+        Print #1, memberIdx(X)
         Print #1, memberYears$(X)
     Next
 
@@ -316,9 +316,9 @@ Sub SaveLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
     For X = 1 To TEAMS_PER_LEAGUE
 
         If memberTeams$(X) = "XXX" Then
-            statNames$(X) = Chr$(42)
+            statFileNames$(X) = Chr$(42)
         Else
-            statNames$(X) = nameStatFile$(memberTeams$(X))
+            statFileNames$(X) = nameStatFile$(memberTeams$(X))
         End If
 
     Next X
@@ -328,7 +328,7 @@ Sub SaveLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
     Write #2, league$, div1$, div2$, div3$, div4$
 
     For X = 1 To TEAMS_PER_LEAGUE
-        Write #2, statNames$(X)
+        Write #2, statFileNames$(X)
     Next
 
     Close #2

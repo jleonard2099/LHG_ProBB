@@ -8,10 +8,11 @@ bin/GAME82
 bin/HELLO*
 bin/TICKER
 doc/*.odt
+src/*.mp3
 src/DEFAULT
 src/DEV.BAS
 src/errlog
-src/GAME82
 src/EVENTS.BOX
+src/FOLDERS.CFG
+src/GAME82
 src/TICKER
-src/RECORDS

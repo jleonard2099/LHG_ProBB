@@ -715,7 +715,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
 
     Shared scheduleAP%()
     Shared scheduleNG%()
-    Shared teamRatings%()
+    Shared teamRatings()
     Shared scheduleYN$()
 
     Select Case scheduleAction%
@@ -744,7 +744,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                     'Change mode of play
                     If scheduleAction% = 4 Then
 
-                        Color teamRatings%(33), teamRatings%(34): Print teamName$;
+                        Color teamRatings(33), teamRatings(34): Print teamName$;
                         Color 15, 0
                         Print " IS TO BE:"
                         Print

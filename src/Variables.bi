@@ -9,18 +9,24 @@ Dim Shared teamIndex%(MAX_TEAMS)
 
 ' *** Reading Stat Data ***
 ' -------------------------
-Dim teamScore(0 To MAX_SCHED_STATS), oppScore(0 To MAX_SCHED_STATS)
+Dim gameAttendance&(MAX_SCHED_STATS)
 
-Dim locIndicator$(0 To MAX_SCHED_STATS), oppName$(MAX_SCHED_STATS)
+Dim oppScore(MAX_SCHED_STATS), teamScore(MAX_SCHED_STATS)
 
-Dim statsZ1$(TEAMS_PER_LEAGUE)
+Dim gameSite$(MAX_SCHED_STATS)
+Dim locIndicator$(MAX_SCHED_STATS), oppName$(MAX_SCHED_STATS)
 
 Dim statsW0!(0 To 14), statsW1!(0 To 14)
-Dim statsZ!(0 To 15), statsZ1!(0 To 15), statsZ2!(0 To 14, 0 To 13)
+Dim statsZ!(0 To 15), statsZ1!(0 To 15)
+Dim statsZ2!(0 To 14, 0 To 13)
 
 '-- For Road Data
-Dim ORD%(0 To MAX_SCHED_STATS), TRD%(0 To MAX_SCHED_STATS)
-Dim HRD$(0 To MAX_SCHED_STATS), ORD$(0 To MAX_SCHED_STATS)
+Dim gameAtt_Road&(MAX_SCHED_STATS)
+
+Dim oppScore_Road(MAX_SCHED_STATS), teamScore_Road(MAX_SCHED_STATS)
+
+Dim gameSite_Road$(MAX_SCHED_STATS)
+Dim locIndicator_Road$(MAX_SCHED_STATS), oppName_Road$(MAX_SCHED_STATS)
 
 
 ' *** Schedule Data ***
@@ -43,14 +49,10 @@ Dim yesNo$(0 To 1), yesNoText$(1)
 ' -------------------------
 Dim Shared BO%
 
-Dim compareA!(15, 14)
-
 
 '----------------------------------------
 ' Used in ALIGN / MERGE routines
 '----------------------------------------
-Dim nbrGamesCurr, nbrGamesRoad
-
 Dim roadPlyrNames$(15)
 Dim AN$(0 To 14)
 
@@ -66,7 +68,7 @@ Dim ZRD!(0 To 16), ZRD1!(0 To 16)
 ' Used in CAREER routines
 '----------------------------------------
 '---> should we need these ?!?!
-Dim ars!(15, 62, 15)
+Dim ARS!(15, 62, 15)
 Dim BL!(62), BLYR!(21)
 Dim W0S!(15, 62), W1S!(15, 62)
 Dim AR$(62), BL$(0 To 20)
@@ -75,10 +77,10 @@ Dim AR$(62), BL$(0 To 20)
 '----------------------------------------
 ' Used in CREATE routines
 '----------------------------------------
-Dim intZ1%(TEAMS_PER_LEAGUE)
+Dim memberIdx(TEAMS_PER_LEAGUE)
 Dim memberTeams$(TEAMS_PER_LEAGUE)
 Dim memberYears$(TEAMS_PER_LEAGUE)
-Dim statNames$(TEAMS_PER_LEAGUE)
+Dim statFileNames$(TEAMS_PER_LEAGUE)
 
 
 '----------------------------------------
@@ -89,8 +91,8 @@ Dim plyrRat_DRAFT%(0 To 1, 0 To 14, 0 To 19), teamRat_DRAFT%(0 To 1, 0 To 34)
 
 Dim players_DRAFT$(1, 14, 1), tmInfo_DRAFT$(1, 4)
 
-Dim draftYears$(1 To 79)
-Dim leagueAverages%(1 To 79, 0 To 5)
+Dim draftYears$(1 To 80)
+'Dim leagueAverages%(1 To 80, 0 To 5)
 Dim teamYears$(0 To 1)
 
 '----------------------------------------
@@ -114,7 +116,8 @@ Dim tradeB1!(2, 14, 14), tradeNbrs(1)
 Dim tradeW0!(2, 14), tradeW1!(2, 14)
 
 Dim B1$(2, 14), A1$(1)
-Dim statFiles$(TEAMS_PER_LEAGUE), statTeam$(1)
+
+Dim statTeam$(1)
 
 
 '----------------------------------------
@@ -129,30 +132,32 @@ Dim totHomeLosses!(40), totHomeWin!(40)
 Dim totHomeScoreTeam!(40), totHomeScoreOpp!(40)
 Dim totAwayScoreTeam!(40), totAwayScoreOpp!(40)
 
-Dim league$, div1Name$, div2Name$, div3Name$, div4Name$
+Dim div1Name$, div2Name$, div3Name$, div4Name$
 
 
 '----------------------------------------
 ' Used in STAT / INPUT routines
 '----------------------------------------
-Dim defLeaders!(40, 20), leaderVals!(250, 2), leagS!(14, 26)
+Dim leaderVals!(250, 2), leagS!(14, 26)
 Dim defTotals!(21), offTotals!(21)
-Dim O1!(40), O2!(40), offLeaders!(40, 20)
-Dim seeZ!(260), seeZ1!(260)
+
+Dim defLeaders!(40, 20), offLeaders!(40, 20)
+Dim O1!(40), O2!(40)
 Dim values!(0 To 14, 0 To 24)
+
+Dim seeZ!(260), seeZ1!(260)
+
+Dim defLeaderNames$(40), Z2$(260), Z3$(260)
+Dim offLeaderNames$(40), leagT$(40)
 
 Dim statCategoryAbbr$(0 To 25), statPlyrNames$(0 To 14)
 
-Dim DL$(40), Z2$(260), Z3$(260)
-Dim OL$(40), leagT$(40)
 
-Dim Z%
-
-' reduce things here
-'Dim confWins, confLosses
+Dim confWins, confLosses
 Dim fullWins, fullLosses
 Dim homeLosses, homeWins, neutralLosses, neutralWins
 Dim roadLosses, roadWins, totalLosses, totalWins
+Dim tiedGames
 
 
 '----------------------------------------
@@ -165,7 +170,7 @@ Dim RLL(TEAMS_PER_LEAGUE), RWW(TEAMS_PER_LEAGUE)
 Dim TLS(TEAMS_PER_LEAGUE), TWS(TEAMS_PER_LEAGUE), WW(TEAMS_PER_LEAGUE)
 
 Dim plyrStatLeaders!(600, 14)
-Dim GM!(40), GM1!(40)
+Dim plyrLeaderYears!(40), tmLeaderYears!(40)
 Dim GMA!(600), TYP!(600)
 Dim TT!(40, 15), TT1!(40, 15)
 Dim W0L!(600), W1L!(600)
@@ -174,7 +179,7 @@ Dim AL$(600)
 Dim TMA$(600), TML$(TEAMS_PER_LEAGUE)
 Dim expIndCategory$(0 To 31), expTeamCategory$(0 To 38)
 Dim TPP$(600), TMM$(600)
-Dim TT$(40, 15), TT1$(40, 15)
+Dim plyLeaderTeams$(40, 15), tmLeaderTeams$(40, 15)
 
 
 '----------------------------------------
@@ -184,7 +189,7 @@ Dim plyrRecords!(1 To 25), offRecords!(1 To 21), defRecords!(1 To 21)
 Dim plyrRecDesc$(25, 1), offRecDesc$(1 To 21), defRecDesc$(1 To 21)
 
 Dim indRecords!(50, 2), teamRecords!(125, 2)
-Dim indRecords$(25), teamRecordDesc$(20)
+Dim indRecordDesc$(25), teamRecordDesc$(20)
 Dim indRecDesc$(50, 4), teamRecDesc$(125, 3)
 
 
@@ -212,7 +217,7 @@ Dim tickerStart
 Dim alpha$(4), tickerPeriod$(14)
 
 Dim Shared assistShotBoost, autoPlay, ballCarrier, bonusFoulNum, coachOpt, compTeam
-Dim Shared D, endGame, endAllGames
+Dim Shared D, defPress, endGame, endAllGames
 Dim Shared fastBreak, ftRulesOpt, freeThrowNbr, freeThrowVal, fullCtOpt
 Dim Shared gameLoc, halfTime, JY, MJ, nbrFTMade, nbrLines, offStatus
 Dim Shared P, P9, playerMode, playerOpt, playoffOpt, pbpOpt
@@ -230,8 +235,8 @@ Dim Shared CF%(1, 9), eventSettings(13)
 Dim Shared F%(1, 9), FY%(0 To 1), G9%(1), GF%(2, 9)
 Dim Shared NG%(18), N0%(2, 2, 4)
 Dim Shared OX%(2), OY%(2), offStyles(1)
-Dim Shared PF%(1), PFA%(33), ST%(32), SX%(32, 1, 14)
-Dim Shared TOA%(33), TOF%(1), YR%(1)
+Dim Shared PF%(1), PFA%(0 To 32), ST%(32), SX%(32, 1, 14)
+Dim Shared TOA%(0 To 32), TOF%(1), YR%(1)
 
 'Dim Shared C1(1, 14)
 Dim Shared dFGPA(1), defStyles(1), D8(6, 6), F1(14), fullCtOpt(0 To 1)
@@ -248,7 +253,7 @@ Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), M9!(1)
 Dim gameW0!(1, 14), gameW1!(1, 14)
 
 Dim Shared defStyleDesc$(5), diskIDs$(0 To 1)
-Dim Shared gameCoach$(3), gameMascots$(3), gameStadium$(3), gameTeams$(3)
+Dim Shared gameCoach$(3), gameMascots$(3), gameArena$(3), gameTeams$(3)
 Dim Shared offStyleDesc$(2), pbpStyle$(1), players_GAME$(1, 14, 1), posnName$(0 To 4)
 Dim Shared SX$(32, 1)
 Dim Shared teamAbbrev$(3), teamGender$(0 To 1)

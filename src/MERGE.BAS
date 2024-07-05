@@ -67,21 +67,25 @@ End Sub
 'perform the merge
 Sub MergeStats ()
 
-    Dim ARD$(0 To 14)
+    Dim statPlyrName_Road$(0 To 14)
 
     Shared nbrGamesCurr, nbrGamesRoad
 
-    Shared ORD%(), teamScore(), oppScore()
+    Shared gameAttendance&(), gameAtt_Road&()
 
-    Shared ARD!(), compareA!()
+    Shared teamScore(), teamScore_Road()
+    Shared oppScore(), oppScore_Road()
+
+    Shared ARD!(), playerRatings!()
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
-    Shared TRD%(), W0RD!(), W1RD!()
+    Shared W0RD!(), W1RD!()
     Shared ZRD!(), ZRD1!()
 
-    Shared HRD$(), ORD$()
+    'Shared gameSite$(), gameSite_Road$()
+    Shared locIndicator$(), locIndicator_Road$()
+    Shared oppName$(), oppName_Road$()
     Shared statPlyrNames$()
-    Shared locIndicator$(), oppName$()
 
     Do
 
@@ -114,7 +118,8 @@ Sub MergeStats ()
                     Input #1, B$
 
                     For I = 0 To 14
-                        Input #1, ARD$(I)
+
+                        Input #1, statPlyrName_Road$(I)
 
                         For J = 0 To 13
                             Input #1, ARD!(I, J)
@@ -125,8 +130,13 @@ Sub MergeStats ()
 
                     Next
 
-                    For L = 0 To 15: Input #1, ZRD!(L): Next
-                    For L = 0 To 15: Input #1, ZRD1!(L): Next
+                    For L = 0 To 15: 
+                        Input #1, ZRD!(L)
+                    Next
+                    
+                    For L = 0 To 15: 
+                        Input #1, ZRD1!(L)
+                    Next
 
                     Close #1
 
@@ -135,20 +145,28 @@ Sub MergeStats ()
                     Input #2, nbrGamesRoad
 
                     For I = 1 to MAX_SCHED_STATS: 
-                        Input #2, ORD%(I)
+                        Input #2, teamScore_Road(I)
                     Next I
                     
                     For I = 1 to MAX_SCHED_STATS: 
-                        Input #2, ORD$(I)
+                        Input #2, oppName_Road$(I)
                     Next I
                     
                     For I = 1 to MAX_SCHED_STATS: 
-                        Input #2, TRD%(I)
+                        Input #2, oppScore_Road(I)
                     Next I
                     
                     For I = 1 to MAX_SCHED_STATS: 
-                        Input #2, HRD$(I)
+                        Input #2, locIndicator_Road$(I)
                     Next I
+
+                    'For I = 1 To MAX_SCHED_STATS: 
+                    '    Input #2, gameAtt_Road&(I)
+                    'Next I
+
+                    'For I = 1 To MAX_SCHED_STATS: 
+                    '    Input #2, gameSite_Road$(I)
+                    'Next I
 
                     Close #2
 
@@ -167,7 +185,9 @@ Sub MergeStats ()
 
                             Input #3, statPlyrNames$(I)
 
-                            For J = 0 To 13: Input #3, compareA!(I, J): Next
+                            For J = 0 To 13: 
+                                Input #3, playerRatings!(I, J)
+                            Next
 
                             Input #3, statsW0!(I)
                             Input #3, statsW1!(I)
@@ -204,19 +224,27 @@ Sub MergeStats ()
                             Input #4, locIndicator$(I)
                         Next I
 
+                        'For I = 1 To MAX_SCHED_STATS: 
+                        '    Input #4, gameAttendance&(I)
+                        'Next I
+
+                        'For I = 1 To MAX_SCHED_STATS: 
+                        '    Input #4, gameSite$(I)
+                        'Next I
+
                         Close #4
 
                         SEQ = 0
 
                         For K = 0 To 14
-                            If UCase$(ARD$(K)) <> UCase$(statPlyrNames$(K)) Then
+                            If UCase$(statPlyrName_Road$(K)) <> UCase$(statPlyrNames$(K)) Then
                                 SEQ = SEQ + 1
                             End If
                         Next
 
                         If SEQ = 0 Then
 
-                            Call DoTheMerge(pathCurrentStats$, statFile$, B$)
+                            Call DoTheMerge(pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
 
                             For J = 13 To 23
                                 Locate J
@@ -288,7 +316,7 @@ Sub MergeStats ()
 
         End If 'Done checking for ESC
 
-    Loop Until DUMMY$ <> "" Or UCase$(I$) = "N"
+    Loop Until DUMMY$ <> "" Or UCase$(J$) = "N" Or UCase$(I$) = "N" Or I$ = Chr$(27)
 
 End Sub
 
@@ -300,47 +328,55 @@ End Sub
 'values together from each file and then
 'overwrites the current file with the
 'newly aggregated results.
-Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
+Sub DoTheMerge (pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
 
     Shared nbrGamesCurr, nbrGamesRoad
 
-    Shared ORD%(), TRD%()
-    Shared teamScore(), oppScore()
+    Shared gameAttendance&(), gameAtt_Road&()
 
-    Shared ARD!(), compareA!()
+    Shared oppScore(), oppScore_Road() 
+    Shared teamScore(), teamScore_Road()
+
+    Shared ARD!(), playerRatings!()
 
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
     Shared W0RD!(), W1RD!()
     Shared ZRD!(), ZRD1!()
 
-    Shared HRD$(), ORD$()
+    Shared gameSite$(), gameSite_Road$()
+    Shared locIndicator$(), locIndicator_Road$()
+    Shared oppName$(), oppName_Road$()
     Shared statPlyrNames$()
-    Shared oppName$(), locIndicator$()
 
     For K = 1 To nbrGamesRoad
         nbrGamesCurr = nbrGamesCurr + 1
-        teamScore(nbrGamesCurr) = ORD%(K)
-        oppName$(nbrGamesCurr) = ORD$(K)
-        oppScore(nbrGamesCurr) = TRD%(K)
-        locIndicator$(nbrGamesCurr) = HRD$(K)
+        teamScore(nbrGamesCurr) = teamScore_Road(K)
+        oppName$(nbrGamesCurr) = oppName_Road$(K)
+        oppScore(nbrGamesCurr) = oppScore_Road(K)
+        locIndicator$(nbrGamesCurr) = locIndicator_Road$(K)
+        'gameAttendance&(nbrGamesCurr) = gameAtt_Road&(nbrGamesCurr)
+        'gameSite$(nbrGamesCurr) = gameSite_Road$(nbrGamesCurr)
     Next
 
-    Locate 18, 20: Color 12: Print "MERGING STAT FILE AND SCHEDULE RESULTS . . . ."
+    Color 12
+    Locate 18, 20: Print "MERGING STAT FILE AND SCHEDULE RESULTS . . . ."
 
     For I = 0 To 14
+
         For J = 0 To 12
-            compareA!(I, J) = compareA!(I, J) + ARD!(I, J)
+            playerRatings!(I, J) = playerRatings!(I, J) + ARD!(I, J)
         Next J
 
         statsW0!(I) = statsW0!(I) + W0RD!(I)
         statsW1!(I) = statsW1!(I) + W1RD!(I)
 
-        If compareA!(I, 13) < ARD!(I, 13) Then
-            compareA!(I, 13) = ARD!(I, 13)
+        If playerRatings!(I, 13) < ARD!(I, 13) Then
+            playerRatings!(I, 13) = ARD!(I, 13)
         Else
-            compareA!(I, 13) = compareA!(I, 13)
+            playerRatings!(I, 13) = playerRatings!(I, 13)
         End If
+
     Next I
 
     For L = 0 To 14
@@ -353,30 +389,62 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
     Write #1, B$
 
     For I = 0 To 14:
+
         Write #1, statPlyrNames$(I)
-        For J = 0 To 13: Write #1, compareA!(I, J): Next
+
+        For J = 0 To 13: 
+            Write #1, playerRatings!(I, J)
+        Next
+
         Write #1, statsW0!(I)
         Write #1, statsW1!(I)
+
     Next
 
-    For L = 0 To 15: Write #1, statsZ!(L): Next
-    For L = 0 To 15: Write #1, statsZ1!(L): Next
+    For L = 0 To 15: 
+        Write #1, statsZ!(L)
+    Next
+    
+    For L = 0 To 15: 
+        Write #1, statsZ1!(L)
+    Next
 
     Close #1
 
     Open pathCurrentStats$ + statFile$ + "S" For Output As #2
 
     Write #2, nbrGamesCurr
-    For I = 1 to MAX_SCHED_STATS: Write #2, teamScore(I): Next I
-    For I = 1 to MAX_SCHED_STATS: Write #2, oppName$(I): Next I
-    For I = 1 to MAX_SCHED_STATS: Write #2, oppScore(I): Next I
-    For I = 1 to MAX_SCHED_STATS: Write #2, locIndicator$(I): Next I
+
+    For I = 1 to MAX_SCHED_STATS: 
+        Write #2, teamScore(I)
+    Next I
+
+    For I = 1 to MAX_SCHED_STATS: 
+        Write #2, oppName$(I)
+    Next I
+
+    For I = 1 to MAX_SCHED_STATS: 
+        Write #2, oppScore(I)
+    Next I
+
+    For I = 1 to MAX_SCHED_STATS: 
+        Write #2, locIndicator$(I)
+    Next I
+
+    'For I = 1 To MAX_SCHED_STATS: 
+    '    Write #2, gameAttendance&(I)
+    'Next I
+    
+    'For I = 1 To MAX_SCHED_STATS: 
+    '    Write #2, gameSite$(I)
+    'Next I
 
     Close #2
 
     Y = 0
 
-    Locate 20, 20: Color 12: Print "RESULTS SUCCESSFULLY MERGED!!"
+    Color 12
+    Locate 20, 20: Print "RESULTS SUCCESSFULLY MERGED!!"
 
 End Sub
 

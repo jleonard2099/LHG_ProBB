@@ -19,13 +19,15 @@ Sub CompileLeague ()
     Shared offRecords!(), defRecords!(), statsW0!(), statsW1!()
 
     Shared plyrRecDesc$()
-    Shared DL$(), statFiles$(), OL$()
+    Shared defLeaderNames$(), offLeaderNames$()
     Shared statPlyrNames$()
     Shared locIndicator$(), oppName$()
-    Shared statsZ1$(), offRecDesc$(), defRecDesc$()
+    Shared memberTeams$(), statFileNames$()
     Shared Z2$(), Z3$()
 
-    Shared fullWins, fullLosses
+    Shared offRecDesc$(), defRecDesc$()
+
+    Shared confWins, confLosses, fullWins, fullLosses
 
     'Read in any existing records first
     If _FileExists(diskPaths$(1) + "RECORDS.PBB") Then
@@ -101,11 +103,11 @@ Sub CompileLeague ()
 
         Open diskPaths$(2) + leagueFile$ + ".TMS" For Input As #2
 
-        Input #2, league$, D1$, D2$, D3$, D4$
+        Input #2, league$, div1$, div2$, div3$, div4$
 
         For XW = 1 To TEAMS_PER_LEAGUE
-            Input #2, statFiles$(XW)
-            statsZ1$(XW) = statFiles$(XW)
+            Input #2, statFileNames$(XW)
+            memberTeams$(XW) = statFileNames$(XW)
         Next
 
         Close #2
@@ -113,17 +115,17 @@ Sub CompileLeague ()
         For XW = 1 To TEAMS_PER_LEAGUE
 
             'Look for * as terminating char
-            If statFiles$(XW) <> Chr$(42) Then
+            If statFileNames$(XW) <> Chr$(42) Then
 
-                haveStats = FindStatsLeague%(statFiles$(XW), numberGames)
+                haveStats = FindStatsLeague%(statFileNames$(XW), numberGames)
 
                 If (haveStats) Then
 
-                    L = Len(statFiles$(XW))
+                    L = Len(statFileNames$(XW))
                     WT$ = ""
 
                     For X = 1 To L
-                        A = Asc(Mid$(statFiles$(XW), X, 1))
+                        A = Asc(Mid$(statFileNames$(XW), X, 1))
                         WT$ = WT$ + Chr$(A)
                     Next X
 
@@ -131,7 +133,7 @@ Sub CompileLeague ()
 
                     For X = 1 To TEAMS_PER_LEAGUE
 
-                        If statsZ1$(X) = WT$ Then
+                        If memberTeams$(X) = WT$ Then
 
                             If O1!(X) = fullWins And O2!(X) = fullLosses Then
 
@@ -149,19 +151,19 @@ Sub CompileLeague ()
 
                     Next X
 
-                    If nonConfGame <> 1 And _FileExists(diskPaths$(1) + statFiles$(XW)) Then
+                    If nonConfGame <> 1 And _FileExists(diskPaths$(1) + statFileNames$(XW)) Then
 
-                        Call ReadStatsPro(statFiles$(XW), TN$)
+                        Call ReadStatsPro(statFileNames$(XW), TN$)
                         Call CalcStatTotalsPro(numberGames, TN$, finalUpdate$)
                         Call CalcStatLeadersPro(TN$, numberGames)
 
-                    End If 'Done checking for stat file
+                    End If
 
                 End If ' Done checking if we have stats
 
-            End If 'Done checking statFiles$(XW)
+            End If 'Done checking valid conference
 
-        Next XW
+        Next XW 'Done "checking stats"
 
         Call SortStandingsLeague
         Call PostLeadersPro(leagueFile$)
@@ -169,101 +171,6 @@ Sub CompileLeague ()
     End If
 
 End Sub
-
-
-'----------------------------------------
-'       FindStatsLeague% Function
-'----------------------------------------
-'...explanation...
-Function FindStatsLeague% (statFile$, numberGames)
-
-    Shared oppScore(), teamScore()
-
-    Shared statFiles$(), locIndicator$(), oppName$()
-
-    Shared fullWins, fullLosses
-
-    If Not _FileExists(diskPaths$(1) + statFile$ + "S") Then
-
-        Print "NO STATS FOUND FOR "; statFile$
-        FindStatsLeague% = 0
-
-    Else
-
-        Open diskPaths$(1) + statFile$ + "S" For Input As #1
-
-        Input #1, numberGames
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #1, teamScore(I)
-        Next I
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #1, oppName$(I)
-        Next I
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #1, oppScore(I)
-        Next I
-
-        Close #1
-
-        fullWins = 0
-        fullLosses = 0
-
-        confWins = 0
-        confLosses = 0
-
-        For I = 1 To numberGames
-
-            statName$ = nameStatFile$(oppName$(I))
-            oppName$(I) = targetFile$
-
-            nonConfGame = 0
-
-            For EC = 1 To TEAMS_PER_LEAGUE
-
-                If statName$ = statFiles$(EC) Then
-                    nonConfGame = 1
-                    Exit For
-                End If
-
-            Next EC
-
-            If nonConfGame <> 1 Then
-                If teamScore(I) > oppScore(I) Then fullWins = fullWins + 1
-                If teamScore(I) < oppScore(I) Then fullLosses = fullLosses + 1
-            Else
-                If teamScore(I) > oppScore(I) Then
-                    confWins = confWins + 1
-                    fullWins = fullWins + 1
-                End If
-                If teamScore(I) < oppScore(I) Then
-                    confLosses = confLosses + 1
-                    fullLosses = fullLosses + 1
-                End If
-            End If
-
-            EC = 0
-
-        Next I
-
-        Cls
-
-        Locate 4, 5
-
-        Color 15
-        Print "FINDING ";
-        Color 14
-        Print statFile$;
-        Color 15
-        Print " STATS            "
-
-        FindStatsLeague% = 1
-
-    End If
-
-End Function
 
 
 '----------------------------------------
@@ -324,7 +231,7 @@ Sub CalcStatLeadersPro (teamName$, numberGames)
     Shared leaderVals!(), leagS!()
     Shared statsW0!(), statsW1!()
 
-    Shared DL$(), OL$()
+    Shared defLeaderNames$(), offLeaderNames$()
     Shared statPlyrNames$()
     Shared Z2$(), Z3$()
 
@@ -350,7 +257,9 @@ Sub CalcStatLeadersPro (teamName$, numberGames)
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap leaderVals!(Z1, M), leaderVals!(Z, M): Next
+                        For M = 1 To 2: 
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
+                        Next
                     End If
 
                 Next Z1
@@ -458,7 +367,7 @@ Sub CalcStatLeadersPro (teamName$, numberGames)
 
         End If
 
-        'Steals Per Game
+        'Steals
         '--- Must have played 70% of team's games
         If leagS!(X, 7) > leaderVals!(100, 1) And (leagS!(X, 0) >= (numberGames * 0.7)) Then
 
@@ -858,13 +767,13 @@ Sub CalcStatLeadersPro (teamName$, numberGames)
             offLeaders!(40, M) = offTotals!(M)
         Next
 
-        OL$(40) = teamName$
+        offLeaderNames$(40) = teamName$
 
         For X = 1 To 39
             For X1 = 1 + X To TEAMS_PER_LEAGUE
 
                 If offLeaders!(X, 19) < offLeaders!(X1, 19) Then
-                    Swap OL$(X1), OL$(X)
+                    Swap offLeaderNames$(X1), offLeaderNames$(X)
                     For M = 1 To 20
                         Swap offLeaders!(X1, M), offLeaders!(X, M)
                     Next
@@ -882,13 +791,13 @@ Sub CalcStatLeadersPro (teamName$, numberGames)
             defLeaders!(40, M) = defTotals!(M)
         Next
 
-        DL$(40) = teamName$
+        defLeaderNames$(40) = teamName$
 
         For X = 1 To 39
             For X1 = 1 + X To TEAMS_PER_LEAGUE
 
                 If defLeaders!(X, 19) > defLeaders!(X1, 19) Then
-                    Swap DL$(X1), DL$(X)
+                    Swap defLeaderNames$(X1), defLeaderNames$(X)
                     For M = 1 To 20
                         Swap defLeaders!(X1, M), defLeaders!(X, M)
                     Next
@@ -910,10 +819,13 @@ End Sub
 'see if any should be updated
 Sub CalcStatTotalsPro (numberGames, teamName$, finalUpdate$)
 
-    Shared defTotals!(), plyrRecords!(), leagS!(), offTotals!()
-    Shared statsW0!(), statsW1!(), offRecords!(), defRecords!()
+    Shared defTotals!(), offTotals!()
+    Shared plyrRecords!(), leagS!()
+    Shared offRecords!(), defRecords!()
+    Shared statsW0!(), statsW1!()
 
-    Shared plyrRecDesc$(), statPlyrNames$(), offRecDesc$(), defRecDesc$()
+    Shared plyrRecDesc$(), statPlyrNames$()
+    Shared offRecDesc$(), defRecDesc$()
 
     Shared fullWins, fullLosses
 
@@ -946,6 +858,7 @@ Sub CalcStatTotalsPro (numberGames, teamName$, finalUpdate$)
             End If
 
             leagS!(I, 22) = leagS!(I, 12) / leagS!(I, 0): ' *** PTS/G ***
+
             If leagS!(I, 0) > plyrRecords!(1) Then plyrRecords!(1) = leagS!(I, 0): plyrRecDesc$(1, 0) = statPlyrNames$(I): plyrRecDesc$(1, 1) = teamName$
             If leagS!(I, 1) > plyrRecords!(2) Then plyrRecords!(2) = leagS!(I, 1): plyrRecDesc$(2, 0) = statPlyrNames$(I): plyrRecDesc$(2, 1) = teamName$
             If leagS!(I, 2) > plyrRecords!(3) Then plyrRecords!(3) = leagS!(I, 2): plyrRecDesc$(3, 0) = statPlyrNames$(I): plyrRecDesc$(3, 1) = teamName$
@@ -1070,7 +983,7 @@ Sub SortStandingsLeague ()
 
     Shared O1!(), O2!()
 
-    Shared statsZ1$()
+    Shared memberTeams$()
 
     For Z = 0 To 3
 
@@ -1089,7 +1002,7 @@ Sub SortStandingsLeague ()
                     If diffX <> diffY Then
 
                         If Not (O1!(X) <= O1!(Y) And O1!(X) > O2!(X)) Or Not (O1!(X) >= O1!(Y) And O1!(X) < O2!(X)) Then
-                            Swap statsZ1$(X), statsZ1$(Y)
+                            Swap memberTeams$(X), memberTeams$(Y)
                             Swap O1!(X), O1!(Y)
                             Swap O2!(X), O2!(Y)
                         End If
@@ -1115,12 +1028,12 @@ End Sub
 'writes the updated stats to the file
 Sub PostLeadersPro (leaderFile$)
 
-    Shared plyrRecords!(), defLeaders!(), leaderVals!()
-    Shared O1!(), O2!(), offLeaders!()
-    Shared offRecords!(), defRecords!()
+    Shared defLeaderNames$(), offLeaderNames$()
+    Shared defLeaders!(), offLeaders!()
+    Shared leaderVals!()
+    Shared O1!(), O2!()
 
-    Shared plyrRecDesc$(), DL$(), OL$()
-    Shared statsZ1$(), offRecDesc$(), defRecDesc$()
+    Shared memberTeams$()
     Shared Z2$(), Z3$()
 
     Cls
@@ -1132,7 +1045,7 @@ Sub PostLeadersPro (leaderFile$)
     Print "    POSTING NEW "; leaderFile$; " LEADERS"
 
     For X = 1 To TEAMS_PER_LEAGUE
-        Write #1, statsZ1$(X), O1!(X), O2!(X)
+        Write #1, memberTeams$(X), O1!(X), O2!(X)
     Next
 
     For X = 1 To 250
@@ -1140,20 +1053,38 @@ Sub PostLeadersPro (leaderFile$)
     Next X
 
     For X = 1 To TEAMS_PER_LEAGUE:
-        Write #1, OL$(X)
+        Write #1, offLeaderNames$(X)
         For Y = 1 To 20:
             Write #1, offLeaders!(X, Y)
         Next
     Next
 
     For X = 1 To TEAMS_PER_LEAGUE:
-        Write #1, DL$(X)
+        Write #1, defLeaderNames$(X)
         For Y = 1 To 20:
             Write #1, defLeaders!(X, Y)
         Next
     Next
 
     Close #1
+    
+    Call PostRecordsPro
+
+End Sub
+
+
+'----------------------------------------
+'         PostRecordsColl Subroutine
+'----------------------------------------
+'This subroutine writes the calculated
+'records to the records file
+Sub PostRecordsPro()
+
+    Shared plyrRecords!()    
+    Shared offRecords!(), defRecords!()
+
+    Shared defRecDesc$(), offRecDesc$()
+    Shared plyrRecDesc$()
 
     Open diskPaths$(1) + "RECORDS.PBB" For Output As #2
 
@@ -1177,3 +1108,110 @@ Sub PostLeadersPro (leaderFile$)
 
 End Sub
 
+
+'----------------------------------------
+'       FindStatsLeague% Function
+'----------------------------------------
+'...explanation...
+Function FindStatsLeague% (statFile$, numberGames)
+
+    Shared oppScore(), teamScore()
+
+    Shared locIndicator$(), oppName$(), statFileNames$()
+
+    Shared confWins, confLosses, fullWins, fullLosses
+
+    findFile$ = diskPaths$(1) + statFile$ + "S"
+
+    If Not _FileExists(findFile$) Then
+
+        Print "NO STATS FOUND FOR "; statFile$
+        FindStatsLeague% = 0
+
+    Else
+
+        Open findFile$ For Input As #1
+
+        Input #1, numberGames
+
+        For I = 1 To MAX_SCHED_STATS:
+            Input #1, teamScore(I)
+        Next I
+
+        For I = 1 To MAX_SCHED_STATS:
+            Input #1, oppName$(I)
+        Next I
+
+        For I = 1 To MAX_SCHED_STATS:
+            Input #1, oppScore(I)
+        Next I
+
+        Close #1
+
+        confWins = 0
+        confLosses = 0
+
+        fullWins = 0
+        fullLosses = 0
+
+        'RATINGS
+        For I = 1 To numberGames
+
+            statName$ = nameStatFile$(oppName$(I))
+            oppName$(I) = targetFile$
+
+            nonConfGame = 0
+
+            For EC = 1 To TEAMS_PER_LEAGUE
+
+                If statName$ = statFileNames$(EC) Then
+                    nonConfGame = 1
+                    Exit For
+                End If
+
+            Next EC
+
+            If nonConfGame <> 1 Then
+
+                If teamScore(I) > oppScore(I) Then 
+                    fullWins = fullWins + 1
+                End If
+
+                If teamScore(I) < oppScore(I) Then 
+                    fullLosses = fullLosses + 1
+                End If
+
+            Else
+
+                If teamScore(I) > oppScore(I) Then
+                    confWins = confWins + 1
+                    fullWins = fullWins + 1
+                End If
+
+                If teamScore(I) < oppScore(I) Then
+                    confLosses = confLosses + 1
+                    fullLosses = fullLosses + 1
+                End If
+
+            End If
+
+            EC = 0
+
+        Next I
+
+        Cls
+
+        Locate 4, 5
+
+        Color 15
+        Print "FINDING ";
+        Color 14
+        Print statFile$;
+        Color 15
+        Print " STATS            "
+
+        FindStatsLeague% = 1
+
+    End If
+
+End Function

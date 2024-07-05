@@ -6,7 +6,7 @@
 'routines to load and view the stats
 Sub LOOKY ()
 
-    _Title "Basketball: The Pro Game - View Stats"
+    _Title "Basketball: The Pro Game - Stats Viewer"
 
     Shared statCategoryAbbr$(), statPlyrNames$()
 
@@ -54,11 +54,13 @@ End Sub
 'stats into arrays
 Sub LoadTeamStats (statFile$, team$, totalGames%)
 
+    Dim totalScore(0 To MAX_SCHED_STATS)
+
+    'Do these need shared based on the below???
+    'All are assigned 0s and read in from file
     Shared homeLosses, homeWins, neutralLosses, neutralWins 
     Shared roadLosses, roadWins, totalLosses, totalWins
-    Shared Z%
-
-    Dim P%(0 To MAX_SCHED_STATS)
+    Shared tiedGames
 
     Shared teamScore(), oppScore()
 
@@ -69,15 +71,16 @@ Sub LoadTeamStats (statFile$, team$, totalGames%)
     Shared values!(), statsW0!(), statsW1!()
 
     ' *** READ IN TEAM STATS ***
-    P%(0) = 0
-    P%(1) = 0
+    Erase totalScore
 
     totalLosses = 0
     totalWins = 0
-    Z% = 0
+    tiedGames = 0
+
     homeWins = 0
     roadWins = 0
     neutralWins = 0
+
     homeLosses = 0
     roadLosses = 0
     neutralLosses = 0
@@ -105,17 +108,21 @@ Sub LoadTeamStats (statFile$, team$, totalGames%)
     Close #1
 
     For I = 1 To totalGames%
+
         If teamScore(I) > oppScore(I) Then totalWins = totalWins + 1
         If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then homeWins = homeWins + 1
         If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then roadWins = roadWins + 1
         If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "N" Then neutralWins = neutralWins + 1
+
         If teamScore(I) < oppScore(I) Then totalLosses = totalLosses + 1
         If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then homeLosses = homeLosses + 1
         If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then roadLosses = roadLosses + 1
         If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "N" Then neutralLosses = neutralLosses + 1
-        If teamScore(I) = oppScore(I) Then Z% = Z% + 1
-        P%(0) = P%(0) + teamScore(I)
-        P%(1) = P%(1) + oppScore(I)
+
+        If teamScore(I) = oppScore(I) Then tiedGames = tiedGames + 1
+        totalScore(0) = totalScore(0) + teamScore(I)
+        totalScore(1) = totalScore(1) + oppScore(I)
+
     Next
 
     Open diskPaths$(1) + statFile$ For Input As #2
@@ -131,7 +138,6 @@ Sub LoadTeamStats (statFile$, team$, totalGames%)
         Next
 
         Input #2, statsW0!(I)
-
         Input #2, statsW1!(I)
 
     Next
@@ -157,17 +163,25 @@ Sub LoadTeamStats (statFile$, team$, totalGames%)
         values!(I, 22) = values!(I, 2) * 2 + values!(I, 4) + statsW0!(I)
         values!(I, 23) = values!(I, 5) - values!(I, 12)
 
-        If values!(I, 1) <> 0 Then values!(I, 15) = values!(I, 2) / values!(I, 1)
+        If values!(I, 1) <> 0 Then 
+            values!(I, 15) = values!(I, 2) / values!(I, 1)
+        End If
 
         values!(I, 18) = statsW0!(I)
         values!(I, 19) = statsW1!(I)
 
-        If values!(I, 19) <> 0 Then values!(I, 16) = values!(I, 18) / values!(I, 19)
-        If values!(I, 3) <> 0 Then values!(I, 17) = values!(I, 4) / values!(I, 3)
+        If values!(I, 19) <> 0 Then 
+            values!(I, 16) = values!(I, 18) / values!(I, 19)
+        End If
+
+        If values!(I, 3) <> 0 Then 
+            values!(I, 17) = values!(I, 4) / values!(I, 3)
+        End If
 
     Next
 
 End Sub
+
 
 '----------------------------------------
 '       ViewStatSummary Subroutine
@@ -178,15 +192,18 @@ End Sub
 'the other stat categories
 Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
+    Shared teamRatings()
+
+    'Do these need shared based on the below???
+    'All are assigned 0s and read in from file
     Shared homeLosses, homeWins, neutralLosses, neutralWins 
     Shared roadLosses, roadWins, totalLosses, totalWins
 
     Shared teamScore(), oppScore()
-    'Shared gameAttendance&()
+    
+    Shared gameAttendance&()
 
-    'Shared gameSite$()
-    Shared locIndicator$(), oppName$()
-    Shared statCategoryAbbr$()
+    Shared gameSite$(), locIndicator$(), oppName$()
 
     Do
 
@@ -208,7 +225,7 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
         Locate , Xcoord
 
         Print "GAME-BY-GAME REPORT FOR ";
-        Color teamRatings%(0), teamRatings%(1)
+        Color teamRatings(0), teamRatings(1)
         Print teamName$
 
         Color 14, 1
@@ -223,7 +240,7 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
             Color 7
 
-            If I / 2 = Int(I / 2) Then Color 15
+            If (I Mod 2) = 0 Then Color 15
 
             Print Left$(oppName$(I), 14);
 
@@ -245,11 +262,9 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
                 'tiedGames = tiedGames + 1
                 'Print "T";
             'End If
-             Print
 
-            'Locate , 31: Print Using "####,###"; gameAttendance&(I);
-            'Locate , 31: Print " -------";
-            'Locate , 43: Print locIndicator$(I) ';"  "; Left$(teamInfo$(I), 24)
+            Locate , 31: Print Using "####,###"; gameAttendance&(I);
+            Locate , 43: Print locIndicator$(I); "  "; Left$(teamInfo$(I), 24)
 
             If (I Mod 18 = 0) Then
 
@@ -263,11 +278,11 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
                 Locate , Xcoord
                 Print "GAME-BY-GAME REPORT FOR ";
-                Color teamRatings%(0), teamRatings%(1)
+                Color teamRatings(0), teamRatings(1)
                 Print teamName$
 
                 Color 14, 1
-                Print "OPPONENT            SCORE  W/L  "; 'ATTEND   SITE                                   ";
+                Print "OPPONENT            SCORE  W/L  ATTEND   SITE                                   ";
 
                 Locate 25, 1: Print Tab(80); " ";
                 Locate 3, 1
@@ -299,7 +314,7 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
         Color 15: Print "SELECT ANOTHER TEAM ";
         Color 14: Print "[ESC]  ";
         Color 15: Print "PRINT STATS ";
-        Color 14: Print "[P]";
+        Color 14: Print "[P]           ";
 
         Locate 3, 1
 
@@ -324,20 +339,24 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
             Case "P":
                 userKey$ = GetPrintOptions$
 
-                Select Case userKey$
+                If userKey$ <> Chr$(27) Then
 
-                    Case "F"
-                        userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
-                        If userFile$ <> "" Then
-                            Call StatsSchedule_Report(0, userFile$, teamName$, totalGames%)
-                            Call StatsSummary_Report(0, userFile$, teamName$, totalGames%)
-                        End If
+                    Select Case userKey$
 
-                    Case "P"
-                        Call StatsSchedule_Report(1, "REPORT", teamName$, totalGames%)
-                        Call StatsSummary_Report(1, "REPORT", teamName$, totalGames%)
+                        Case "F"
+                            userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                            If userFile$ <> "" Then
+                                Call StatsSchedule_Report(0, userFile$, teamName$, totalGames%)
+                                Call StatsSummary_Report(0, userFile$, teamName$, totalGames%)
+                            End If
 
-                End Select
+                        Case "P"
+                            Call StatsSchedule_Report(1, "REPORT", teamName$, totalGames%)
+                            Call StatsSummary_Report(1, "REPORT", teamName$, totalGames%)
+
+                    End Select
+
+                End If
 
         End Select
 
@@ -355,11 +374,11 @@ End Sub
 'team's player stats to the user display
 Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
-    Shared statCategoryAbbr$(), statPlyrNames$()
-
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
     Shared values!()
+
+    Shared statCategoryAbbr$(), statPlyrNames$()
 
     categoryPick = 1
 
@@ -400,14 +419,14 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
                 Color 7
 
-                If I / 2 = Int(I / 2) Then Color 15
+                If (I Mod 2) = 0 Then Color 15
 
                 Print Left$(statPlyrNames$(I), 13); Tab(15);
 
                 'Games
                 Print Using "## "; values!(I, 0);
 
-                'Min, Avg
+                'Minutes
                 If values!(I, 10) > 0 Then 
                     Locate , 18: Print Using "####"; Int((values!(I, 10) + 30) / 60);
                     Locate , 24: Print Using "##"; Int(((values!(I, 10) / 60) / values!(I, 0)) + .5);
@@ -475,7 +494,7 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
         Color 12
         Print
-        Print "TOTALS";
+        Print "TEAM TOTALS";
 
         'Games
         Locate , 15: Print Using "##"; totalGames%;
@@ -501,10 +520,23 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
             Locate , 70: Print Using ".###"; ftPCT!
         End If
 
-        'Opponents
+        Color 6: Print "PER GAME";
+
+        'FGM / FGA
+        Locate , 28: Print Using "##.# ##.#"; statsZ!(2) / totalGames%; statsZ!(1) / totalGames%;
+
+        '3FGM / 3FGA
+        Locate , 44: Print Using "##.# ##.#"; statsZ!(13) / totalGames%; statsZ!(14) / totalGames%;
+
+        'FTM / FTA
+        Locate , 60: Print Using "##.# ##.#"; statsZ!(4) / totalGames%; statsZ!(3) / totalGames%
+
+
+        ' *** Opponents ***
 
         'Games
         Color 12
+        Print "OPP TOTALS";        
         Locate , 15: Print Using "##"; totalGames%;
 
         'FGM / FGA
@@ -528,10 +560,22 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
             Locate , 70: Print Using ".###"; ftPCT!
         End If
 
+        Locate , 1
+        Color 6: Print "PER GAME";
+
+        'FGM / FGA
+        Locate , 28: Print Using "##.# ##.#"; statsZ1!(2) / totalGames%; statsZ1!(1) / totalGames%;
+
+        '3FGM / 3FGA
+        Locate , 44: Print Using "##.# ##.#"; statsZ1!(13) / totalGames%; statsZ1!(14) / totalGames%;
+
+        'FTM / FTA
+        Locate , 60: Print Using "##.# ##.#"; statsZ1!(4) / totalGames%; statsZ1!(3) / totalGames%
+
         Do
             I$ = GetKeyPress$
 
-            Select Case I$
+            Select Case UCase$(I$)
 
                 Case Chr$(0) + Chr$(81)
                     'Pg Down
@@ -561,14 +605,14 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
                     'Enter
                     Call SortStats(categoryPick)
 
-                Case "d", "D"
+                Case "D"
                     'Delete
                     Kill diskPaths$(1) + statFile$
                     Kill diskPaths$(1) + statFile$ + "S"
 
-                Case "p", "P"
+                Case "P"
                     'Print
-                    userKey$ = GetOutputOptions$
+                    userKey$ = GetPrintOptions$
 
                     If userKey$ <> Chr$(27) Then
 
@@ -653,7 +697,7 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
             If statPlyrNames$(I) <> "XXX" Then
 
                 Color 7
-                If I / 2 = Int(I / 2) Then Color 15
+                If (I Mod 2) = 0 Then Color 15
 
                 'Name
                 Print Left$(statPlyrNames$(I), 13);: Locate , 15
@@ -679,11 +723,10 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
         Print "TEAM";: Locate , 39: Print Using "####"; statsZ!(15)
 
-        Color 12: Print "TOTALS";
+        ' *** Team ***
+        Color 12: Print "TEAM TOTALS";
 
-        'Team
-
-        'Points
+        'Points / Average
         If totalGames% > 0 Then ptsCalc! = statsZ!(10) / totalGames% Else ptsCalc! = 0
         Locate , 14: Print Using "##### ###.#"; statsZ!(10); ptsCalc!;
 
@@ -694,9 +737,16 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
         'Fouls  AST  BLK  STL  TO
         Print Using " #### #### #### #### ####"; statsZ!(6); statsZ!(8); statsZ!(9); statsZ!(7); statsZ!(11)
 
-        'Opponents
+        Color 6: Print "PER GAME";
 
-        'Points
+        'Fouls  AST  BLK  STL  TO
+        Locate , 49: Print Using " ##.# ##.# ##.# ##.# ##.#"; statsZ!(6) / totalGames%; statsZ!(8) / totalGames%; statsZ!(9) / totalGames%; statsZ!(7) / totalGames%; statsZ!(11) / totalGames%
+
+
+        ' *** Opponents ***
+        Color 12: Print "OPP TOTALS";
+
+        'Points / Average
         If totalGames% > 0 Then ptsCalc! = statsZ1!(10) / totalGames% Else ptsCalc! = 0
         Locate , 14: Print Using "##### ###.#"; statsZ1!(10); ptsCalc!;
 
@@ -707,11 +757,16 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
         'Fouls  AST  BLK  STL  TO
         Print Using " #### #### #### #### ####"; statsZ1!(6); statsZ1!(8); statsZ1!(9); statsZ1!(7); statsZ1!(11)
 
+        Color 6: Print "PER GAME";
+
+        'Fouls  AST  BLK  STL  TO
+        Locate , 49: Print Using " ##.# ##.# ##.# ##.# ##.#"; statsZ1!(6) / totalGames%; statsZ1!(8) / totalGames%; statsZ1!(9) / totalGames%; statsZ1!(7) / totalGames%; statsZ1!(11) / totalGames%
+
         Do
 
-            J$ = GetKeyPress$
+            I$ = GetKeyPress$
 
-            Select Case UCase$(J$)
+            Select Case UCase$(I$)
 
                 Case Chr$(0) + Chr$(73)
                     'Page Up
@@ -733,6 +788,7 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
                     Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
                 Case Chr$(13):
+                    'Enter
                     Call SortStats(categoryPick)
 
                 Case "D":
@@ -765,6 +821,8 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
         Loop Until J$ = Chr$(27) Or J$ = Chr$(13)
 
+        If I$ = Chr$(27) Then menuExit = 1
+
     Loop Until J$ = Chr$(27) Or J$ = Chr$(0) + Chr$(73)
 
 End Sub
@@ -782,8 +840,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
     Shared oppScore(), teamScore()
 
-    Shared statCategoryAbbr$()
-    Shared oppName$(), locIndicator$()
+    Shared locIndicator$(), oppName$()
 
     Color , 0
     Cls
@@ -806,7 +863,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
         Color 7
 
-        If I / 2 = Int(I / 2) Then Color 15
+        If (I Mod 2) = 0 Then Color 15
 
         If I >= 55 Then
 
@@ -848,7 +905,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
     Color 15: Print "SELECT ANOTHER TEAM ";
     Color 14: Print "[ESC]  ";
     Color 15: Print "PRINT STATS ";
-    Color 14: Print "[P]";
+    Color 14: Print "[P]           ";
     Locate 3, 1
 
     Do
@@ -1072,7 +1129,7 @@ Sub StatsSummary_Report (printDest, destFile$, teamName$, totalGames%)
             End If
         End If
 
-    Next
+    Next 'done looping through players
 
     Print #1,
     Print #1, "TOTALS"; Tab(15);
@@ -1083,19 +1140,22 @@ Sub StatsSummary_Report (printDest, destFile$, teamName$, totalGames%)
     'FGM / FGA / FGPCT
     Print #1, Tab(28); Using "#### ####"; statsZ!(2); statsZ!(1);
     If statsZ!(1) <> 0 Then 
-        Print #1, Tab(38); Using ".###"; statsZ!(2) / statsZ!(1);
+        fgPCT! = statsZ!(2) / statsZ!(1)
+        Print #1, Tab(38); Using ".###"; fgPCT!;
     End If
 
     '3FGM / 3FGA / 3FGPCT
     Print #1, Tab(44); Using "#### ####"; statsZ!(13); statsZ!(14);
     If statsZ!(14) <> 0 Then 
-        Print #1, Tab(54); Using ".###"; statsZ!(13) / statsZ!(14);
+        threeFGPCT! = statsZ!(13) / statsZ!(14)
+        Print #1, Tab(54); Using ".###"; threeFGPCT!;
     End If
 
     'FTM / FTA / FTPCT
     Print #1, Tab(60); Using "#### ####"; statsZ!(4); statsZ!(3);
     If statsZ!(3) <> 0 Then 
-        Print #1, Tab(70); Using ".###"; statsZ!(4) / statsZ!(3)
+        ftPCT! = statsZ!(4) / statsZ!(3)
+        Print #1, Tab(70); Using ".###"; ftPCT!
     End If
 
     'Opponents
@@ -1103,17 +1163,26 @@ Sub StatsSummary_Report (printDest, destFile$, teamName$, totalGames%)
     'Games
     Print #1, Tab(15); Using "##"; totalGames%;
 
-    'FGM / FGA / FGPCT
+    'FGM / FGA / FG PCT
     Print #1, Tab(28); Using "#### ####"; statsZ1!(2); statsZ1!(1);
-    If statsZ1!(1) <> 0 Then Print #1, Tab(38); Using ".###"; statsZ1!(2) / statsZ1!(1);
+    If statsZ1!(1) <> 0 Then
+        fgPCT! = statsZ1!(2) / statsZ1!(1)
+        Print #1, Tab(38); Using ".###"; fgPCT!;
+    End If
 
-    '3FGM / 3FGA / 3FGPCT
+    '3FGM / 3FGA / 3FG PCT
     Print #1, Tab(44); Using "#### ####"; statsZ1!(13); statsZ1!(14);
-    If statsZ1!(14) <> 0 Then Print #1, Tab(54); Using ".###"; statsZ1!(13) / statsZ1!(14);
+    If statsZ1!(14) <> 0 Then
+        threeFGPCT! = statsZ1!(13) / statsZ1!(14)
+        Print #1, Tab(54); Using ".###"; threeFGPCT!;
+    End If
 
-    'FTM / FTA / FTPCT
+    'FTM / FTA / FT PCT
     Print #1, Tab(60); Using "#### ####"; statsZ1!(4); statsZ1!(3);
-    If statsZ1!(3) <> 0 Then Print #1, Tab(70); Using ".###"; statsZ1!(4) / statsZ1!(3)
+    If statsZ1!(3) <> 0 Then
+        ftPCT! = statsZ1!(4) / statsZ1!(3)
+        Print #1, Tab(70); Using ".###"; ftPCT!
+    End If
 
     'Player Stats
     Print #1,
@@ -1153,8 +1222,8 @@ Sub StatsSummary_Report (printDest, destFile$, teamName$, totalGames%)
     Print #1, "TOTALS";
 
     'Points
-    If totalGames% > 0 Then ptsCalc! = statsZ!(5) / totalGames% Else ptsCalc! = 0
-    Print #1, Tab(14); Using "##### ###.#"; statsZ!(10); ptsCalc;
+    If totalGames% > 0 Then ptsCalc! = statsZ!(10) / totalGames% Else ptsCalc! = 0
+    Print #1, Tab(14); Using "##### ###.#"; statsZ!(10); ptsCalc!;
 
     'Rebounds
     If totalGames% > 0 Then rebCalc! = statsZ!(5) / totalGames% Else rebCalc! = 0
@@ -1238,7 +1307,9 @@ Sub SortStats (categoryPick)
 
             If values!(Z, SG%) < values!(Z1, SG%) Then
 
-                For I = 0 To 24: Swap values!(Z, I), values!(Z1, I): Next
+                For I = 0 To 24: 
+                    Swap values!(Z, I), values!(Z1, I)
+                Next
 
                 Swap statsW0!(Z), statsW0!(Z1)
                 Swap statsW1!(Z), statsW1!(Z1)

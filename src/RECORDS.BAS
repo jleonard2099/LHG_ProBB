@@ -63,11 +63,11 @@ Sub GameRecords (menuChoice)
                         Case "F"
                             userFile$ = _SAVEFILEDIALOG$("Save Records Report",_CWD$ + "\Records","*.txt","Text File")			
                             If userFile$ <> "" Then
-                                Call PrintGameRecords(0, userFile$)
+                                Call GameRecords_Report(0, userFile$)
                             End If
 
                         Case "P"
-                            Call PrintGameRecords(1, "RECORDS")
+                            Call GameRecords_Report(1, "RECORDS")
 
                     End Select
                 
@@ -141,6 +141,7 @@ Sub ViewGameRecords
         Print "- "; indRecDesc$(4, 0); ", "; indRecDesc$(4, 1) + " " + indRecDesc$(4, 2) + " " + indRecDesc$(4, 3) + ", " + indRecDesc$(4, 4);
         Print Using " (##/##)"; indRecords!(4, 1); indRecords!(4, 2)
     End If
+    
     Print
 
     Color 14
@@ -280,7 +281,6 @@ Sub ViewGameRecords
     If I$ = Chr$(27) Then Exit Sub
 
     Cls
-
     Color 12: Print Tab(31); "INDIVIDUAL RECORDS"
 
     Color 14: Print "MOST FREE THROWS MADE, NO MISSES, GAME"
@@ -312,7 +312,7 @@ Sub ViewGameRecords
 
     Color 14: Print "MOST FREE THROWS MADE, ONE HALF"
     Color 15
-
+    
     If indRecords!(26, 0) = 0 Then
         Print "NO RECORD AT THIS TIME"
     Else
@@ -1277,15 +1277,15 @@ Sub ViewGameRecords
 End Sub
 
 '----------------------------------------
-'      PrintGameRecords Subroutine
+'      GameRecords_Report Subroutine
 '----------------------------------------
 'This subroutine facilitates formatting
 'of the record data to a file, that is
 'subsequently either saved, or printed.
-Sub PrintGameRecords (printDest, destFile$)
+Sub GameRecords_Report (printDest, destFile$)
 
-    Shared indRecDesc$(), teamRecDesc$()
     Shared indRecords!(), teamRecords!()
+    Shared indRecDesc$(), teamRecDesc$()
 
     Dim HALF$(2), QTR$(4)
 
@@ -2199,6 +2199,7 @@ Sub PrintGameRecords (printDest, destFile$)
     Close #1
 
 	If printDest = 1 Then
+
 		Open destFile$ For Input As #2
 
 		Do While Not EOF(2)
@@ -2216,4 +2217,3 @@ Sub PrintGameRecords (printDest, destFile$)
     
 
 End Sub
-

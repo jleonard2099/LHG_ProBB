@@ -4,11 +4,11 @@
 'This routine assists the user in choosing
 'a league, and then proceeds to delete all 
 'stats files for all the associated teams
-Sub BLANK ()
+Sub BLANKPRO ()
 
     _Title "Basketball: The Pro Game - Erase League Stats"
 
-    Shared statFiles$()
+    Dim statFileNames$(TEAMS_PER_LEAGUE)
 
 	leagueFile$ = ChooseFile$ (diskPaths$(2) + "*.TMI", "LEAGUE", ExitCode%)
 
@@ -26,27 +26,29 @@ Sub BLANK ()
 
         	Open diskPaths$(2) + leagueFile$ + ".TMS" For Input As #1
 
-        	Input #1, league$, D1$, D2$, D3$, D4$
+            Input #2, league$, div1$, div2$, div3$, div4$
 
         	For XW = 1 To TEAMS_PER_LEAGUE
-        		Input #1, statFiles$(XW)
+        		Input #1, statFileNames$(XW)
         	Next
 
         	Close #1
 
         	For XW = 1 To TEAMS_PER_LEAGUE
-        		If statFiles$(XW) <> Chr$(42) Then
-                    statFile$ = diskPaths$(1) + statFiles$(XW)
-        			Print "DELETING "; statFiles$(XW); " STATS"
+
+        		If statFileNames$(XW) <> Chr$(42) Then
+                    Print "DELETING "; statFileNames$(XW); " STATS"
+                    statFile$ = diskPaths$(1) + statFileNames$(XW)
                     If _FileExists (statFile$) Then Kill statFile$
                     If _FileExists (statFile$ + "R") Then Kill statFile$ + "R"
                     If _FileExists (statFile$ + "S") Then Kill statFile$ + "S"
                     If _FileExists (statFile$ + "D") Then Kill statFile$ + "D"
         		End If
-        	Next
 
-		End If 'Done with keypress from CsMsgBox
+            Next
 
-	End If
+        End If 'Done confirming to move forward with deletion
+
+    End If
 	
 END SUB

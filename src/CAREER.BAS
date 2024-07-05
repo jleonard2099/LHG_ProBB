@@ -32,7 +32,6 @@ Sub CAREER ()
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 8
-        Column% = 25
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
@@ -119,14 +118,16 @@ End Sub
 'year's worth of stats to the career file
 Sub MergeFirstYear ()
 
+    Dim NB, TMR
+
     Dim initA!(62, 15)
     Dim initA$(62)
     Dim careerW0!(62), careerW1!(62)
 
     Shared AR$()
-    Shared ars!(), statsZ!(), statsZ1!()
-    Shared W0S!(), W1S!()
+    Shared ARS!(), statsZ!(), statsZ1!()
 
+    Shared W0S!(), W1S!()
 
     NB = -1
 
@@ -227,11 +228,11 @@ Sub MergeFirstYear ()
                         End If
 
                         For J = 0 To 13
-                            ars!(N, I, J) = initA!(I, J)
+                            ARS!(N, I, J) = initA!(I, J)
                         Next J
 
-                        ars!(N, I, 14) = 1
-                        ars!(N, I, 15) = statYear
+                        ARS!(N, I, 14) = 1
+                        ARS!(N, I, 15) = statYear
                         W0S!(N, I) = careerW0!(I)
                         W1S!(N, I) = careerW1!(I)
 
@@ -242,6 +243,9 @@ Sub MergeFirstYear ()
                     Next
 
                     If doPostLeaders = 1 Then Call UpdateCareerLeaders(careerFile$)
+
+                    Locate 20, 5
+                    Color 15: Print "MERGING AND UPDATING CAREER STATS . . . . PLEASE WAIT"
 
                     Open diskPaths$(1) + careerFile$ + ".CAR" For Output As #2
 
@@ -254,7 +258,7 @@ Sub MergeFirstYear ()
                             Write #2, AR$(I)
 
                             For J = 0 To 15: 
-                                Write #2, ars!(N, I, J)
+                                Write #2, ARS!(N, I, J)
                             Next J
 
                             Write #2, W0S!(N, I)
@@ -262,7 +266,8 @@ Sub MergeFirstYear ()
 
                             Color 5
                             Locate 21, 38
-                            TMR = TMR - 1: Print Using "####"; TMR
+                            TMR = TMR - 1
+                            Print Using "####"; TMR
 
                         Next I
 
@@ -276,7 +281,7 @@ Sub MergeFirstYear ()
 
         End If 'Done checking if team was chosen
 
-    Loop Until UCase$(J$) = "N"
+    Loop Until UCase$(I$) = "N" Or UCase$(J$) = "N"
 
 End Sub
 
@@ -328,7 +333,7 @@ Sub ReviewCareerRecords ()
 
                     Do
                         Cls
-                        Color 15, 0
+                        Color 0, 15
 
                         Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
                         Print
@@ -539,6 +544,7 @@ Sub MergeCareerFiles ()
     _Title "Basketball: The Pro Game - Update Career Files"
 
     Do
+
         Color 14, 0
         Cls
 
@@ -614,18 +620,6 @@ End Sub
 'with the new values. 
 Sub MergeAddYear (selectedFile$, statFile$)
 
-    Dim initA$(62)
-
-    Dim mergeA!(15, 62)
-    Dim careerW0!(62), careerW1!(62)
-
-    Shared AR$()
-
-    Shared ars!(), statsZ!(), statsZ1!()
-    Shared W0S!(), W1S!()
-
-    TMR1% = 1875
-
     Color 15, 0
     Cls
 
@@ -646,163 +640,196 @@ Sub MergeAddYear (selectedFile$, statFile$)
 
         If finalUpdate$ = "Y" Then doPostLeaders = 1 Else doPostLeaders = 0
 
-        Locate 20, 5
-        Print "LOADING CAREER STATS . . . . PLEASE WAIT"
+        Call AddCareerYear(doPostLeaders, selectedFile$, statFile$)
 
-        Open diskPaths$(1) + selectedFile$ + ".CAR" For Input As #1
+    End If 'Done checking user confirmation
 
-        Input #1, NB, B$
+End Sub
 
-        For N = 1 To 15
 
-            For I = 0 To 61
+'----------------------------------------
+'       AddCareerYear Subroutine
+'----------------------------------------
+'This routine loads the existing career
+'stats, adds the team's stats to them,
+'then overwrites the career file with the
+'new values. 
+Sub AddCareerYear (finalUpdate, careerFile$, statFile$)
 
-                Input #1, AR$(I)
+    Dim NB, TMR1%
 
-                For J = 0 To 15: 
-                    Input #1, ars!(N, I, J)
-                Next J
+    Dim initA$(62)
+    Dim mergeA!(15, 62)
 
-                Input #1, W0S!(N, I)
-                Input #1, W1S!(N, I)
+    Dim careerW0!(62), careerW1!(62)
+    Shared statsZ!(), statsZ1!()
 
-                Color 5
-                Locate 21, 38
-                TMR1% = TMR1% - 1
-                Print Using "####"; TMR1%
+    Shared AR$()
 
-            Next I
+    Shared ARS!(), W0S!(), W1S!()
 
-        Next N
+    TMR1% = 1875
+    NB = -1
 
-        Close #1
+    Locate 20, 5
+    Print "LOADING CAREER STATS . . . . PLEASE WAIT"
 
-        Locate 20, 5
-        Print "LOADING STATS FILE . . . . PLEASE WAIT"
+    Open diskPaths$(1) + selectedFile$ + ".CAR" For Input As #1
 
-        Open diskPaths$(1) + statFile$ For Input As #2
+    Input #1, NB, B$
 
-        Input #2, B$
+    For N = 1 To 15
 
-        For I = 0 To 14
+        For I = 0 To 61
 
-            Input #2, initA$(I)
+            Input #1, AR$(I)
 
-            For J = 0 To 13: 
-                Input #2, mergeA!(I, J)
-            Next
-            
-            Input #2, careerW0!(I)
-            Input #2, careerW1!(I)
+            For J = 0 To 15: 
+                Input #1, ARS!(N, I, J)
+            Next J
+
+            Input #1, W0S!(N, I)
+            Input #1, W1S!(N, I)
 
             Color 5
             Locate 21, 38
             TMR1% = TMR1% - 1
             Print Using "####"; TMR1%
 
+        Next I
+
+    Next N
+
+    Close #1
+
+    Locate 20, 5
+    Print "LOADING STATS FILE . . . . PLEASE WAIT"
+
+    Open diskPaths$(1) + statFile$ For Input As #2
+
+    Input #2, B$
+
+    For I = 0 To 14
+
+        Input #2, initA$(I)
+
+        For J = 0 To 13: 
+            Input #2, mergeA!(I, J)
         Next
+        
+        Input #2, careerW0!(I)
+        Input #2, careerW1!(I)
 
-        For L = 0 To 15: Input #2, statsZ!(L): Next
+        Color 5
+        Locate 21, 38
+        TMR1% = TMR1% - 1
+        Print Using "####"; TMR1%
 
-        For L = 0 To 15: Input #2, statsZ1!(L): Next
+    Next
 
-        Close #2
+    For L = 0 To 15: 
+        Input #2, statsZ!(L)
+    Next
 
-        For I = 0 To 14
-            RR = 0
-            CHK = 0
+    For L = 0 To 15: 
+        Input #2, statsZ1!(L)
+    Next
 
-            For J = 0 To 61
+    Close #2
 
-                If AR$(J) = initA$(I) Then
+    For I = 0 To 14
+        RR = 0
+        CHK = 0
 
-                    For W = 1 To 15
-                        If ars!(W, J, 15) = statYear Then
-                            1412 CHK = CHK + 1
-                        End If
-                    Next W
+        For J = 0 To 61
 
-                    If CHK <= 0 Then
-                        N = ars!(1, J, 14) + ars!(2, J, 14) + ars!(3, J, 14) + ars!(4, J, 14)
-                        N = N + ars!(5, J, 14) + ars!(6, J, 14) + ars!(7, J, 14) + ars!(8, J, 14)
-                        N = N + ars!(9, J, 14) + ars!(10, J, 14) + ars!(11, J, 14)
-                        N = N + ars!(12, J, 14) + ars!(13, J, 14) + ars!(14, J, 14) + ars!(15, J, 14) + 1
-                    Else
-                        N = ars!(1, J, 14) + ars!(2, J, 14) + ars!(3, J, 14) + ars!(4, J, 14)
-                        N = N + ars!(5, J, 14) + ars!(6, J, 14) + ars!(7, J, 14) + ars!(8, J, 14)
-                        N = N + ars!(9, J, 14) + ars!(10, J, 14) + ars!(11, J, 14)
-                        N = N + ars!(12, J, 14) + ars!(13, J, 14) + ars!(14, J, 14) + ars!(15, J, 14)
+            If AR$(J) = initA$(I) Then
+
+                For W = 1 To 15
+                    If ARS!(W, J, 15) = statYear Then
+                        CHK = CHK + 1
                     End If
+                Next W
 
-                    For K = 0 To 13
-                        ars!(N, J, K) = mergeA!(I, K)
-                    Next K
-
-                    ars!(N, J, 14) = 1
-                    ars!(N, J, 15) = statYear
-                    W0S!(N, J) = careerW0!(J)
-                    W1S!(N, J) = careerW1!(J)
-
+                If CHK <= 0 Then
+                    N = ARS!(1, J, 14) + ARS!(2, J, 14) + ARS!(3, J, 14) + ARS!(4, J, 14)
+                    N = N + ARS!(5, J, 14) + ARS!(6, J, 14) + ARS!(7, J, 14) + ARS!(8, J, 14)
+                    N = N + ARS!(9, J, 14) + ARS!(10, J, 14) + ARS!(11, J, 14)
+                    N = N + ARS!(12, J, 14) + ARS!(13, J, 14) + ARS!(14, J, 14) + ARS!(15, J, 14) + 1
                 Else
-                    RR = RR + 1
-                    If RR = 62 Then
+                    N = ARS!(1, J, 14) + ARS!(2, J, 14) + ARS!(3, J, 14) + ARS!(4, J, 14)
+                    N = N + ARS!(5, J, 14) + ARS!(6, J, 14) + ARS!(7, J, 14) + ARS!(8, J, 14)
+                    N = N + ARS!(9, J, 14) + ARS!(10, J, 14) + ARS!(11, J, 14)
+                    N = N + ARS!(12, J, 14) + ARS!(13, J, 14) + ARS!(14, J, 14) + ARS!(15, J, 14)
+                End If
 
-                        If initA$(I) <> "END" And initA$(I) <> "XXX" And initA$(I) <> "" Then
+                For K = 0 To 13
+                    ARS!(N, J, K) = mergeA!(I, K)
+                Next K
 
-                            NB = NB + 1
-                            AR$(NB) = initA$(I)
-                            N = 1
+                ARS!(N, J, 14) = 1
+                ARS!(N, J, 15) = statYear
+                W0S!(N, J) = careerW0!(J)
+                W1S!(N, J) = careerW1!(J)
 
-                            For K = 0 To 13: ars!(N, NB, K) = mergeA!(I, K): Next K
+            Else
+                RR = RR + 1
+                If RR = 62 Then
 
-                            ars!(N, NB, 14) = 1
-                            ars!(N, NB, 15) = statYear
-                            W0S!(N, NB) = careerW0!(NB)
-                            W1S!(N, NB) = careerW1!(NB)
-                        End If
+                    If initA$(I) <> "END" And initA$(I) <> "XXX" And initA$(I) <> "" Then
 
+                        NB = NB + 1
+                        AR$(NB) = initA$(I)
+                        N = 1
+
+                        For K = 0 To 13: ARS!(N, NB, K) = mergeA!(I, K): Next K
+
+                        ARS!(N, NB, 14) = 1
+                        ARS!(N, NB, 15) = statYear
+                        W0S!(N, NB) = careerW0!(NB)
+                        W1S!(N, NB) = careerW1!(NB)
                     End If
 
                 End If
 
+            End If
+
+        Next J
+
+    Next I
+
+    If doPostLeaders = 1 Then Call UpdateCareerLeaders(selectedFile$)
+
+    Locate 20, 5
+    Print "MERGING CAREER STATS . . . . PLEASE WAIT"
+
+    Open diskPaths$(1) + selectedFile$ + ".CAR" For Output As #2
+
+    Write #3, NB, B$
+
+    For N = 1 To 15
+
+        For I = 0 To 61: 
+
+            Write #3, AR$(I)
+
+            For J = 0 To 15: 
+                Write #3, ARS!(N, I, J)
             Next J
+            
+            Write #3, W0S!(N, I)
+            Write #3, W1S!(N, I)
+            
+            Color 5
+            Locate 21, 38
+            TMR1% = TMR1% - 1
+            Print Using "####"; TMR1%
 
         Next I
 
-        If doPostLeaders = 1 Then Call UpdateCareerLeaders(selectedFile$)
+    Next N
 
-        Locate 20, 5
-        Print "MERGING CAREER STATS . . . . PLEASE WAIT"
-
-        Open diskPaths$(1) + selectedFile$ + ".CAR" For Output As #2
-
-        Write #2, NB, B$
-
-        For N = 1 To 15
-
-            For I = 0 To 61: 
-
-                Write #2, AR$(I)
-
-                For J = 0 To 15: 
-                    Write #2, ars!(N, I, J)
-                Next J
-                
-                Write #2, W0S!(N, I)
-                Write #2, W1S!(N, I)
-                
-                Color 5
-                Locate 21, 38
-                TMR1% = TMR1% - 1
-                Print Using "####"; TMR1%
-
-            Next I
-
-        Next N
-
-        Close #2
-
-    End If 'Done checking user confirmation
+    Close #3
 
 End Sub
 
@@ -820,7 +847,7 @@ Sub UpdateCareerLeaders (careerFile$)
     Dim BL$(0 To 20)
 
     Shared AR$()
-    Shared ars!(), W0S!(), W1S!()
+    Shared ARS!(), W0S!(), W1S!()
 
     If _FileExists(diskPaths$(2) + careerFile$ + ".CLD") Then
 
@@ -840,142 +867,142 @@ Sub UpdateCareerLeaders (careerFile$)
 
             For J = 1 To 15
 
-                If ars!(J, I, 15) <> 0 Then
+                If ARS!(J, I, 15) <> 0 Then
 
-                    If ars!(J, I, 1) > BL!(0) Then
-                        BL!(0) = ars!(J, I, 1)
+                    If ARS!(J, I, 1) > BL!(0) Then
+                        BL!(0) = ARS!(J, I, 1)
                         BL$(0) = AR$(I)
-                        BLYR!(0) = ars!(J, I, 15)
+                        BLYR!(0) = ARS!(J, I, 15)
                     End If
 
-                    If ars!(J, I, 2) > BL!(1) Then
-                        BL!(1) = ars!(J, I, 2)
+                    If ARS!(J, I, 2) > BL!(1) Then
+                        BL!(1) = ARS!(J, I, 2)
                         BL$(1) = AR$(I)
-                        BLYR!(1) = ars!(J, I, 15)
+                        BLYR!(1) = ARS!(J, I, 15)
                     End If
 
-                    If ars!(J, I, 1) <> 0 And ars!(J, I, 1) / ars!(J, I, 0) >= 3.65 Then
-                        If ars!(J, I, 2) / ars!(J, I, 1) > BL!(2) Then
-                            BL!(2) = ars!(J, I, 2) / ars!(J, I, 1)
+                    If ARS!(J, I, 1) <> 0 And ARS!(J, I, 1) / ARS!(J, I, 0) >= 3.65 Then
+                        If ARS!(J, I, 2) / ARS!(J, I, 1) > BL!(2) Then
+                            BL!(2) = ARS!(J, I, 2) / ARS!(J, I, 1)
                             BL$(2) = AR$(I)
-                            BLYR!(2) = ars!(J, I, 15)
+                            BLYR!(2) = ARS!(J, I, 15)
                         End If
                     End If
 
-                    If ars!(J, I, 4) > BL!(3) Then
-                        BL!(3) = ars!(J, I, 4)
+                    If ARS!(J, I, 4) > BL!(3) Then
+                        BL!(3) = ARS!(J, I, 4)
                         BL$(3) = AR$(I)
-                        BLYR!(3) = ars!(J, I, 15)
+                        BLYR!(3) = ARS!(J, I, 15)
                     End If
 
-                    If ars!(J, I, 3) > BL!(4) Then
-                        BL!(4) = ars!(J, I, 3)
+                    If ARS!(J, I, 3) > BL!(4) Then
+                        BL!(4) = ARS!(J, I, 3)
                         BL$(4) = AR$(I)
-                        BLYR!(4) = ars!(J, I, 15)
+                        BLYR!(4) = ARS!(J, I, 15)
                     End If
 
-                    If ars!(J, I, 3) <> 0 And ars!(J, I, 3) / ars!(J, I, 0) >= 1.5 Then
-                        If ars!(J, I, 4) / ars!(J, I, 3) > BL!(5) Then
-                            BL!(5) = ars!(J, I, 4) / ars!(J, I, 3)
+                    If ARS!(J, I, 3) <> 0 And ARS!(J, I, 3) / ARS!(J, I, 0) >= 1.5 Then
+                        If ARS!(J, I, 4) / ARS!(J, I, 3) > BL!(5) Then
+                            BL!(5) = ARS!(J, I, 4) / ARS!(J, I, 3)
                             BL$(5) = AR$(I)
-                            BLYR!(5) = ars!(J, I, 15)
+                            BLYR!(5) = ARS!(J, I, 15)
                         End If
                     End If
 
                     If W0S!(J, I) > BL!(6) Then
                         BL!(6) = W0S!(J, I)
                         BL$(6) = AR$(I)
-                        BLYR!(6) = ars!(J, I, 15)
+                        BLYR!(6) = ARS!(J, I, 15)
                     End If
 
                     If W1S!(J, I) > BL!(7) Then
                         BL!(7) = W1S!(J, I)
                         BL$(7) = AR$(I)
-                        BLYR!(7) = ars!(J, I, 15)
+                        BLYR!(7) = ARS!(J, I, 15)
                     End If
 
-                    If W1S!(J, I) <> 0 And W1S!(J, I) / ars!(J, I, 0) >= 0.3 Then
+                    If W1S!(J, I) <> 0 And W1S!(J, I) / ARS!(J, I, 0) >= 0.3 Then
                         If W0S!(J, I) / W1S!(J, I) > BL!(8) Then
                             BL!(8) = W0S!(J, I) / W1S!(J, I)
                             BL$(8) = AR$(I)
-                            BLYR!(8) = ars!(J, I, 15)
+                            BLYR!(8) = ARS!(J, I, 15)
                         End If
                     End If
 
-                    If ars!(J, I, 2) * 2 + ars!(J, I, 4) + W0S!(J, I) > BL!(9) Then
-                        BL!(9) = ars!(J, I, 2) * 2 + ars!(J, I, 4) + W0S!(J, I)
+                    If ARS!(J, I, 2) * 2 + ARS!(J, I, 4) + W0S!(J, I) > BL!(9) Then
+                        BL!(9) = ARS!(J, I, 2) * 2 + ARS!(J, I, 4) + W0S!(J, I)
                         BL$(9) = AR$(I)
-                        BLYR!(9) = ars!(J, I, 15)
+                        BLYR!(9) = ARS!(J, I, 15)
                     End If
 
-                    If ars!(J, I, 0) <> 0 Then
-                        If (ars!(J, I, 2) * 2 + ars!(J, I, 4) + W0S!(J, I)) / ars!(J, I, 0) > BL!(10) Then
-                            BL!(10) = (ars!(J, I, 2) * 2 + ars!(J, I, 4) + W0S!(J, I)) / ars!(J, I, 0)
+                    If ARS!(J, I, 0) <> 0 Then
+                        If (ARS!(J, I, 2) * 2 + ARS!(J, I, 4) + W0S!(J, I)) / ARS!(J, I, 0) > BL!(10) Then
+                            BL!(10) = (ARS!(J, I, 2) * 2 + ARS!(J, I, 4) + W0S!(J, I)) / ARS!(J, I, 0)
                             BL$(10) = AR$(I)
-                            BLYR!(10) = ars!(J, I, 15)
+                            BLYR!(10) = ARS!(J, I, 15)
                         End If
                     End If
 
-                    If ars!(J, I, 12) > BL!(11) Then
-                        BL!(11) = ars!(J, I, 12)
+                    If ARS!(J, I, 12) > BL!(11) Then
+                        BL!(11) = ARS!(J, I, 12)
                         BL$(11) = AR$(I)
-                        BLYR!(11) = ars!(J, I, 15)
+                        BLYR!(11) = ARS!(J, I, 15)
                     End If
 
-                    If ars!(J, I, 5) - ars!(J, I, 12) > BL!(12) Then
-                        BL!(12) = ars!(J, I, 5) - ars!(J, I, 12)
+                    If ARS!(J, I, 5) - ARS!(J, I, 12) > BL!(12) Then
+                        BL!(12) = ARS!(J, I, 5) - ARS!(J, I, 12)
                         BL$(12) = AR$(I)
-                        BLYR!(12) = ars!(J, I, 15)
+                        BLYR!(12) = ARS!(J, I, 15)
                     End If
 
-                    If ars!(J, I, 5) > BL!(13) Then
-                        BL!(13) = ars!(J, I, 5)
+                    If ARS!(J, I, 5) > BL!(13) Then
+                        BL!(13) = ARS!(J, I, 5)
                         BL$(13) = AR$(I)
-                        BLYR!(13) = ars!(J, I, 15)
+                        BLYR!(13) = ARS!(J, I, 15)
                     End If
 
-                    If ars!(J, I, 0) <> 0 Then
-                        If ars!(J, I, 5) / ars!(J, I, 0) > BL!(14) Then
-                            BL!(14) = ars!(J, I, 5) / ars!(J, I, 0)
+                    If ARS!(J, I, 0) <> 0 Then
+                        If ARS!(J, I, 5) / ARS!(J, I, 0) > BL!(14) Then
+                            BL!(14) = ARS!(J, I, 5) / ARS!(J, I, 0)
                             BL$(14) = AR$(I)
-                            BLYR!(14) = ars!(J, I, 15)
+                            BLYR!(14) = ARS!(J, I, 15)
                         End If
                     End If
 
-                    If ars!(J, I, 6) > BL!(15) Then
-                        BL!(15) = ars!(J, I, 6)
+                    If ARS!(J, I, 6) > BL!(15) Then
+                        BL!(15) = ARS!(J, I, 6)
                         BL$(15) = AR$(I)
-                        BLYR!(15) = ars!(J, I, 15)
+                        BLYR!(15) = ARS!(J, I, 15)
                     End If
 
-                    If ars!(J, I, 8) > BL!(16) Then
-                        BL!(16) = ars!(J, I, 8)
+                    If ARS!(J, I, 8) > BL!(16) Then
+                        BL!(16) = ARS!(J, I, 8)
                         BL$(16) = AR$(I)
-                        BLYR!(16) = ars!(J, I, 15)
+                        BLYR!(16) = ARS!(J, I, 15)
                     End If
 
-                    If ars!(J, I, 9) > BL!(17) Then
-                        BL!(17) = ars!(J, I, 9)
+                    If ARS!(J, I, 9) > BL!(17) Then
+                        BL!(17) = ARS!(J, I, 9)
                         BL$(17) = AR$(I)
-                        BLYR!(17) = ars!(J, I, 15)
+                        BLYR!(17) = ARS!(J, I, 15)
                     End If
 
-                    If ars!(J, I, 7) > BL!(18) Then
-                        BL!(18) = ars!(J, I, 7)
+                    If ARS!(J, I, 7) > BL!(18) Then
+                        BL!(18) = ARS!(J, I, 7)
                         BL$(18) = AR$(I)
-                        BLYR!(18) = ars!(J, I, 15)
+                        BLYR!(18) = ARS!(J, I, 15)
                     End If
 
-                    If ars!(J, I, 11) > BL!(19) Then
-                        BL!(19) = ars!(J, I, 11)
+                    If ARS!(J, I, 11) > BL!(19) Then
+                        BL!(19) = ARS!(J, I, 11)
                         BL$(19) = AR$(I)
-                        BLYR!(19) = ars!(J, I, 15)
+                        BLYR!(19) = ARS!(J, I, 15)
                     End If
 
-                    If ars!(J, I, 13) > BL!(20) Then
-                        BL!(20) = ars!(J, I, 13)
+                    If ARS!(J, I, 13) > BL!(20) Then
+                        BL!(20) = ARS!(J, I, 13)
                         BL$(20) = AR$(I)
-                        BLYR!(20) = ars!(J, I, 15)
+                        BLYR!(20) = ARS!(J, I, 15)
                     End If
 
                 End If
