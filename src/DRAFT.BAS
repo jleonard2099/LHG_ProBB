@@ -151,7 +151,7 @@ End Sub
 'new team that players will be drafted to.
 Sub NewTeamParameters (teamYear$, teamName$, normYrIdx)
 
-    Shared tmInfo_DRAFT$(), teamYears$()
+    Shared tmInfo_DRAFT$()
     Shared leagRat_DRAFT%(), leagueAverages%(), teamRat_DRAFT%()
 
     Color 15, 0
@@ -1004,7 +1004,7 @@ Sub ReadDraftTeam (teamYear$, teamIdx, draftIdx, dataOK)
 
     Shared plyrRat_DRAFT%(), leagRat_DRAFT%(), teamRat_DRAFT%()
 
-    Shared tmInfo_DRAFT$(), players_DRAFT$(), teamYears$()
+    Shared tmInfo_DRAFT$(), players_DRAFT$()
 
     Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
 

@@ -12,21 +12,24 @@ Sub TRADE ()
 
     _Title "Basketball: The Pro Game - Trade Players"
 
-    Shared tradeNbrs()
+    Shared teamYears$()
 
-    Shared teamYears$(), tmInfo_TRADE$()
+    Shared teamIndexes()
+
+    Shared tmInfo_TRADE$()
 
     tradeIdx = 0
     Call ChooseTradeTeam(teamYears$(tradeIdx), NTMS, teamNbr, tmInfo_TRADE$(tradeIdx, 0), tradeIdx)
-    tradeNbrs(tradeIdx) = teamNbr
 
     If teamNbr > 0 Then
+
+        teamIndexes(tradeIdx) = teamNbr
 
         Call LoadStatsForTrade(tradeIdx)
 
         tradeIdx = 1
         Call ChooseTradeTeam(teamYears$(tradeIdx), NTMS, teamNbr, tmInfo_TRADE$(tradeIdx, 0), tradeIdx)
-        tradeNbrs(tradeIdx) = teamNbr
+        teamIndexes(tradeIdx) = teamNbr
         Call LoadStatsForTrade(tradeIdx)
 
         'Teams / Stats are loaded
@@ -44,21 +47,22 @@ End Sub
 'ards to the trading of stats associated
 'with the players. If chosen to trade them,
 'the stats are loaded from the team stats.
-Sub LoadStatsForTrade (tradeTeam)
+Sub LoadStatsForTrade (tradeIdx)
 
     Shared tmRat_TRADE(), plyrRat_TRADE(), leagRat_TRADE()
     Shared tradeZZ(), tradeZZ1()
 
-    Shared haveStats()
     Shared tradeB1!(), tradeW0!(), tradeW1!()
 
-    Shared B1$(), teamYears$(), statTeam$()
+    Shared B1$(), statTeam$()
     Shared A1$(), tmInfo_TRADE$(), players_TRADE$()
+
+    Shared haveStats()
 
     Color 15, 0
     Cls
 
-    haveStats(tradeTeam) = 0
+    haveStats(tradeIdx) = 0
 
     Call box0 (6, 8, 8, 70, 2, 15, 1)
 
@@ -73,16 +77,45 @@ Sub LoadStatsForTrade (tradeTeam)
 
     If UCase$(I$) = "N" Then
 
-        haveStats(tradeTeam) = 1
+        haveStats(tradeIdx) = 1
 
     Else
 
-        statTeam$(tradeTeam) = tmInfo_TRADE$(tradeTeam, 0)
-        statFile$ = nameStatFile$(statTeam$(tradeTeam))
+        statTeam$(tradeIdx) = tmInfo_TRADE$(tradeIdx, 0)
+        statFile$ = nameStatFile$(statTeam$(tradeIdx))
 
-        If Not _FileExists(diskPaths$(1) + statFile$) Then
+        If _FileExists(diskPaths$(1) + statFile$) Then
 
-            haveStats(tradeTeam) = 1
+            Open diskPaths$(1) + statFile$ For Input As #1
+
+            Input #1, A1$(tradeIdx)
+
+            For I = 0 To 14:
+
+                Input #1, B1$(tradeIdx, I)
+
+                For I1 = 0 To 13:
+                    Input #1, tradeB1!(tradeIdx, I, I1)
+                Next I1
+
+                Input #1, tradeW0!(tradeIdx, I)
+                Input #1, tradeW1!(tradeIdx, I)
+
+            Next I
+
+            For L = 0 To 15:
+                Input #1, tradeZZ(tradeIdx, L)
+            Next L
+
+            For L = 0 To 15:
+                Input #1, tradeZZ1(tradeIdx, L)
+            Next L
+
+            Close #1
+
+        Else
+
+            haveStats(tradeIdx) = 1
             MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
             BoxWidth = 24
             BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
@@ -90,35 +123,6 @@ Sub LoadStatsForTrade (tradeTeam)
             Call CSMsgBox(MsgText$, BoxWidth, Pass)
             I$ = GetKeyPress$
             Call CSMsgBox("", 0, Pass)
-
-        Else
-
-            Open diskPaths$(1) + statFile$ For Input As #1
-
-            Input #1, A1$(tradeTeam)
-
-            For I = 0 To 14:
-
-                Input #1, B1$(tradeTeam, I)
-
-                For I1 = 0 To 13:
-                    Input #1, tradeB1!(tradeTeam, I, I1)
-                Next I1
-
-                Input #1, tradeW0!(tradeTeam, I)
-                Input #1, tradeW1!(tradeTeam, I)
-
-            Next I
-
-            For L = 0 To 15:
-                Input #1, tradeZZ(tradeTeam, L)
-            Next L
-
-            For L = 0 To 15:
-                Input #1, tradeZZ1(tradeTeam, L)
-            Next L
-
-            Close #1
 
         End If
 
@@ -128,7 +132,7 @@ End Sub
 
 
 '----------------------------------------
-'         ContinueTrade Subroutine
+'       ContinueTrade Subroutine
 '----------------------------------------
 'This subroutine actually presents the user
 'a menu for choosing players to trade. It
@@ -142,7 +146,7 @@ Sub ContinueTrade ()
     Shared tradeB1!(), tradeW0!(), tradeW1!()
     Shared haveStats()
 
-    Shared B1$(), teamYears$()
+    Shared B1$()
     Shared A1$(), tmInfo_TRADE$(), players_TRADE$()
 
     Do
@@ -314,7 +318,7 @@ Sub SaveTrades ()
     Shared tmRat_TRADE(), plyrRat_TRADE(), leagRat_TRADE()
     Shared tradeZZ(), tradeZZ1()
 
-    Shared tradeB1!(), haveStats(), tradeNbrs()
+    Shared tradeB1!(), haveStats(), teamIndexes()
     Shared tradeW0!(), tradeW1!()
 
     Shared B1$(), statTeam$(), teamYears$()
@@ -375,7 +379,7 @@ Sub SaveTrades ()
         LSet Q$(376) = tmInfo_TRADE$(J, 3)
         LSet Q$(377) = tmInfo_TRADE$(J, 4)
 
-        Put #1, tradeNbrs(J)
+        Put #1, teamIndexes(J)
 
         Close #1
 
@@ -385,7 +389,7 @@ Sub SaveTrades ()
 
         If haveStats(J) <> 1 Then
 
-            statFile$ = nameStatFile$(statTeam$(tradeTeam))
+            statFile$ = nameStatFile$(statTeam$(tradeIdx))
 
             Open diskPaths$(1) + statFile$ For Output As #2
 

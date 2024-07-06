@@ -153,12 +153,8 @@ Sub ViewSeasonRecords ()
         Color 0, 0
         Cls
 
-        Call MenuBox(1, 1, 73, 20, 15, 4)
+        Call ShadowBox(1, 1, 73, 20, 15, 4)
 
-        Color 7, 4: Print String$(2, 177)
-        Locate , 3: Print String$(77, 177)
-
-        Color 15
         Locate 2, 23
         Print "******* INDIVIDUAL PLAYER RECORDS *******"
         Print
@@ -204,12 +200,8 @@ Sub ViewSeasonRecords ()
         Color 0, 0
         Cls
 
-        Call MenuBox(1, 1, 73, 20, 15, 4)
+        Call ShadowBox(1, 1, 73, 20, 15, 4)
 
-        Color 7, 4: Print String$(2, 177)
-        Locate , 3: Print String$(77, 177)
-
-        Color 15
         Locate 2, 23
         Print "******* INDIVIDUAL PLAYER RECORDS *******"
         Print
@@ -244,7 +236,6 @@ Sub ViewSeasonRecords ()
 
         Call ShadowBox(1, 1, 73, 20, 15, 1)
 
-        Color 15
         Locate 2, 23
         Print "*******  OFFENSIVE TEAM RECORDS *******"
         Print
@@ -292,7 +283,6 @@ Sub ViewSeasonRecords ()
 
         Call ShadowBox(1, 1, 73, 20, 15, 1)
 
-        Color 15
         Locate 2, 23
         Print "*******  OFFENSIVE TEAM RECORDS *******"
         Print
@@ -321,7 +311,6 @@ Sub ViewSeasonRecords ()
 
         Call ShadowBox(1, 1, 73, 20, 15, 4)
 
-        Color 14
         Locate 2, 23
         Print "*******  DEFENSIVE TEAM RECORDS *******"
         Print

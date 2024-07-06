@@ -14,7 +14,7 @@ Sub SEELEAG ()
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
         Call LoadLeaderFiles_Pro(leaderFile$)
-        Call StatOptions
+        Call StatOptions_Pro
 
     End If
 
@@ -36,10 +36,10 @@ Sub LoadLeaderFiles_Pro (targetFile$)
     Shared defLeaderNames$(), offLeaderNames$()
     Shared leagT$(), Z2$(), Z3$()
 
-    Shared LG$, div1Name$, div2Name$, div3Name$, div4Name$
+    Shared league$, div1Name$, div2Name$, div3Name$, div4Name$
 
     Open diskPaths$(2) + targetFile$ + ".TMS" For Input As #1
-    Input #1, LG$, div1Name$, div2Name$, div3Name$, div4Name$
+    Input #1, league$, div1Name$, div2Name$, div3Name$, div4Name$
     Close #1
 
     div1Name$ = PadRight$(div1Name$, 8)
@@ -82,12 +82,12 @@ End Sub
 
 
 '----------------------------------------
-'          StatOptions Subroutine
+'       StatOptions_Pro Subroutine
 '----------------------------------------
 'This subroutine gives the user various
 'options for viewing the previously loaded
 'stats, and then calls routines for each
-Sub StatOptions ()
+Sub StatOptions_Pro ()
 
     Do
 
@@ -150,14 +150,14 @@ Sub LeaderStats_Screen ()
     Shared defLeaderNames$(), offLeaderNames$(), offLeaders!()
     Shared leagT$(), Z2$(), Z3$()
 
-    Shared LG$, div1Name$, div2Name$, div3Name$, div4Name$
+    Shared league$, div1Name$, div2Name$, div3Name$, div4Name$
 
     Color 15, 0
     Cls
 
     Color 12
-    Locate , Int((80 - Len(LG$) - 17) / 2)
-    Print LG$; " LEAGUE STANDINGS"
+    Locate , Int((80 - Len(league$) - 17) / 2)
+    Print league$; " LEAGUE STANDINGS"
     Print
 
     ' Division 1 Standings
@@ -204,8 +204,8 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Locate , Int((80 - Len(LG$) - 17) / 2)
-    Print LG$; " LEAGUE STANDINGS"
+    Locate , Int((80 - Len(league$) - 17) / 2)
+    Print league$; " LEAGUE STANDINGS"
     Print
 
     ' Division 2 Standings
@@ -253,8 +253,8 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Locate , Int((80 - Len(LG$) - 17) / 2)
-    Print LG$; " LEAGUE STANDINGS"
+    Locate , Int((80 - Len(league$) - 17) / 2)
+    Print league$; " LEAGUE STANDINGS"
     Print
 
     ' Division 3 Standings
@@ -300,8 +300,8 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Locate , Int((80 - Len(LG$) - 17) / 2)
-    Print LG$; " LEAGUE STANDINGS"
+    Locate , Int((80 - Len(league$) - 17) / 2)
+    Print league$; " LEAGUE STANDINGS"
     Print
 
     ' Division 4 Standings
@@ -896,14 +896,14 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
     Shared offLeaderNames$(), defLeaderNames$(), leagT$()
     Shared Z2$(), Z3$()
 
-    Shared LG$, div1Name$, div2Name$, div3Name$, div4Name$
+    Shared league$, div1Name$, div2Name$, div3Name$, div4Name$
 
     Color 0, 15
     Cls
 
 	Open destFile$ For Output As #1
 
-    Print #1, "                        "; LG$; " LEAGUE STANDINGS"
+    Print #1, "                        "; league$; " LEAGUE STANDINGS"
     Print #1,
     Print #1, "    "; div1Name$; " DIVISION"
     Print #1,

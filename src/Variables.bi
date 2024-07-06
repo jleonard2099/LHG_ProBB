@@ -112,7 +112,7 @@ Dim tmInfo_TRADE$(1, 6)
 
 Dim tradeZZ(2, 15), tradeZZ1(2, 15)
 
-Dim tradeB1!(2, 14, 14), tradeNbrs(1)
+Dim tradeB1!(2, 14, 14), teamIndexes(1)
 Dim tradeW0!(2, 14), tradeW1!(2, 14)
 
 Dim B1$(2, 14), A1$(1)
@@ -132,7 +132,7 @@ Dim totHomeLosses!(40), totHomeWin!(40)
 Dim totHomeScoreTeam!(40), totHomeScoreOpp!(40)
 Dim totAwayScoreTeam!(40), totAwayScoreOpp!(40)
 
-Dim div1Name$, div2Name$, div3Name$, div4Name$
+Dim league$, div1Name$, div2Name$, div3Name$, div4Name$
 
 
 '----------------------------------------
