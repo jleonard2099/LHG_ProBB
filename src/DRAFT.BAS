@@ -10,7 +10,7 @@ Sub DRAFT ()
 
     Shared leagTot_DRAFT(), leagRat_DRAFT%(), plyrRat_DRAFT%(), teamRat_DRAFT%()
 
-    Shared draftYears$(), players_DRAFT$(), teamYears$(), tmInfo_DRAFT$()
+    Shared draftYears$(), players_DRAFT$(), tmYears_DRAFT$(), tmInfo_DRAFT$()
 
     Dim tmTotal_DRAFT(34)
 
@@ -18,7 +18,7 @@ Sub DRAFT ()
 
     Do
 
-        Selection% = 1
+        SELECTION% = 1
         Count% = 79
         Start% = 1
         FileFGColor% = 15: FileBGColor% = 4
@@ -36,7 +36,7 @@ Sub DRAFT ()
 
         Do
             _MouseShow "DEFAULT"
-            MAMenu draftYears$(), Selection%, Start%, Count%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
+            MAMenu draftYears$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
         Loop Until ExitCode% = 27 Or ExitCode% = 13
 
@@ -47,7 +47,7 @@ Sub DRAFT ()
             Do
                 Locate 3, 33
                 Color 15, 0
-                Print draftYears$(Selection%)
+                Print draftYears$(SELECTION%)
 
                 Color 15, 4
 
@@ -57,7 +57,7 @@ Sub DRAFT ()
 
             Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
-            yearIdx = Selection%
+            yearIdx = SELECTION%
 
         End If
 
@@ -74,7 +74,7 @@ Sub DRAFT ()
             menuChoices$(1) = "DRAFT A NEW TEAM         "
             menuChoices$(2) = "DRAFT TO AN EXISTING TEAM"
             menuChoices$(3) = "EXIT TO MAIN MENU        "
-            Selection% = 1
+            SELECTION% = 1
             Count% = 3
             Start% = 1
             ExitCode% = 3
@@ -89,14 +89,14 @@ Sub DRAFT ()
             Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
 
             _MouseShow "DEFAULT"
-            MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+            MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
             _MouseHide
 
             Color , 0
 
             If ExitCode% <> 27 Then
 
-                Select Case Selection%
+                Select Case SELECTION%
 
                     Case 1
 
@@ -122,21 +122,21 @@ Sub DRAFT ()
                             Next
                         Next
 
-                        Call NewTeamParameters(teamYears$(0), tmInfo_DRAFT$(0, 0), yearIdx)
+                        Call NewTeamParameters(tmYears_DRAFT$(0), tmInfo_DRAFT$(0, 0), yearIdx)
                         Call DraftChoices(1, doneDraft, teamIdx, tmTotal_DRAFT(), yearIdx)
 
                     Case 2
                         draftIdx = 0
-                        Call ChooseDraftTeam(teamYears$(draftIdx), NTMS, teamIdx, tmInfo_DRAFT$(draftIdx, 0), draftIdx)
+                        Call ChooseDraftTeam(tmYears_DRAFT$(draftIdx), NTMS, teamIdx, tmInfo_DRAFT$(draftIdx, 0), draftIdx)
                         If teamIdx > 0 Then Call DraftChoices(0, doneDraft, teamIdx, tmTotal_DRAFT(), yearIdx)
 
                 End Select
 
-                If doneDraft = 1 Then Selection% = 3
+                If doneDraft = 1 Then SELECTION% = 3
 
             End If
 
-        Loop Until Selection% = 3 Or ExitCode% = 27
+        Loop Until SELECTION% = 3 Or ExitCode% = 27
 
     End If 'Done checking for ESC
 
@@ -561,7 +561,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT(), normYrIdx)
 
     Dim nbrPlayers
 
-    Shared tmInfo_DRAFT$(), players_DRAFT$(), teamYears$()
+    Shared tmInfo_DRAFT$(), players_DRAFT$(), tmYears_DRAFT$()
     Shared plyrRat_DRAFT%(), leagRat_DRAFT%(), leagueAverages%(), leagTot_DRAFT(), teamRat_DRAFT%()
 
     Do
@@ -601,7 +601,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT(), normYrIdx)
                 Loop Until B >= 0 And B <= 14
 
                 draftIdx = 1
-                Call ChooseDraftTeam(teamYears$(draftIdx), NTMS, destIdx, tmInfo_DRAFT$(draftIdx, 0), draftIdx)
+                Call ChooseDraftTeam(tmYears_DRAFT$(draftIdx), NTMS, destIdx, tmInfo_DRAFT$(draftIdx, 0), draftIdx)
 
                 Color , 0
                 Cls
@@ -684,7 +684,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT(), normYrIdx)
                     teamRat_DRAFT%(0, I1) = tmTotal_DRAFT(I1)
                 Next
 
-                Call SaveTeamDraft(draftNew, teamYears$(0), teamIdx)
+                Call SaveTeamDraft(draftNew, tmYears_DRAFT$(0), teamIdx)
 
         End Select
 
@@ -808,6 +808,8 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
 
     Do
 
+        chosenIdx = 0
+
         Color 15, 0
         Cls
 
@@ -923,13 +925,13 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
 
                 End If
 
-            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N"
+            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N" Or chosenIdx = -1
 
         End If 'Done checking for ESC
 
     Loop Until UCase$(J$) = "N" Or I$ = Chr$(27) 'Or J$ = Chr$(27)
 
-    If I$ = Chr$(27) Or J$ = Chr$(27) Then chosenIdx = 0
+    'If I$ = Chr$(27) Or J$ = Chr$(27) Then chosenIdx = 0
 
 End Sub
 

@@ -24,7 +24,7 @@ Sub CAREER ()
         menuChoices$(4) = "PRINT CAREER FILE                 "
         menuChoices$(5) = "VIEW / PRINT CAREER RECORDS       "
         menuChoices$(6) = "EXIT TO MAIN MENU                 "
-        Selection% = 1
+        SELECTION% = 1
         Count% = 6
         Start% = 1
         ExitCode% = 6
@@ -38,14 +38,14 @@ Sub CAREER ()
         Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
         
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
         If ExitCode% <> 27 Then
 
-            Select Case Selection%
+            Select Case SELECTION%
 
                 Case 1: 
                     Call CreateCareerFile
@@ -63,7 +63,7 @@ Sub CAREER ()
 
         End If
 
-    Loop Until Selection% = 6 Or ExitCode% = 27
+    Loop Until SELECTION% = 6 Or ExitCode% = 27
 
 End Sub
 

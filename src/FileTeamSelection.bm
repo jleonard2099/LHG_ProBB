@@ -151,11 +151,11 @@ End Sub
 '----------------------------------------
 '          SelectTeam Subroutine
 '----------------------------------------
-'Presents selection menu of all teams 
-' found in the target "disk" file. 
-'The focus of this routine is confirming 
-' a team choice. It then relies on 
-' another subroutine to read in data 
+'Presents selection menu of all teams
+' found in the target "disk" file.
+'The focus of this routine is confirming
+' a team choice. It then relies on
+' another subroutine to read in data
 ' from the selected team.
 Sub SelectTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%)
 
@@ -193,7 +193,7 @@ Sub SelectTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%)
             'Locate 2, 33
             'Color 31: Print "LOADING..."
 
-            Call ReadTeam(yearNumber$, teamName$, selectedIdx)
+            Call ReadTeam(yearNumber$, teamName$, selectedIdx, validData)
 
         End If
 
@@ -215,12 +215,12 @@ End Sub
 '----------------------------------------
 '           ReadTeam Subroutine
 '----------------------------------------
-'Reads in all data for the selected team, 
-' given it's index in the team file. 
+'Reads in all data for the selected team,
+' given it's index in the team file.
 'This routine is highly customized TO
 ' the specific game for which it has
 ' been included for.
-Sub ReadTeam (teamYear$, targetTeam$, teamIdx)
+Sub ReadTeam (teamYear$, targetTeam$, teamIdx, dataOK)
 
     Shared playerRatings!(), leagueRatings(), teamRatings()
 
@@ -297,9 +297,9 @@ Sub ReadTeam (teamYear$, targetTeam$, teamIdx)
         dataOK = 0
 
     Else
-    
+
         dataOK = 1
-        
+
     End If
 
 End Sub
@@ -308,7 +308,7 @@ End Sub
 '----------------------------------------
 '         nameStatFile$ Function
 '----------------------------------------
-'Helps create uniquely named file to 
+'Helps create uniquely named file to
 ' store a team's stats.
 '
 'There are 2 main changes done in order
@@ -361,15 +361,15 @@ End Function
 'Shows user a file selection menu, based
 ' on the file spec parameter passed.
 '
-'fileSpec$ - file specification to load 
+'fileSpec$ - file specification to load
 '            should include base path.
 '
 ' EXAMPLE - C:\Temp\*.tmp
 '
-'fileDesc$ - brief description of the 
+'fileDesc$ - brief description of the
 '            type of file
 '
-' RETURNS - base name of chosen file 
+' RETURNS - base name of chosen file
 '            (that is, without extension)
 Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
 
@@ -394,8 +394,8 @@ Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
             ReDim foundFiles$(0 To Count%)
 
             'For X = 1 To Count%
-                '8 char's filename + 4 char's (. + ext)
-                'foundFiles$(X) = Space$(12)
+            '8 char's filename + 4 char's (. + ext)
+            'foundFiles$(X) = Space$(12)
             'Next
 
             foundFiles$(0) = fileSpec$
@@ -404,14 +404,14 @@ Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
             Do
 
                 XCoord = Int((80 - (descLength + 12)) / 2)
-                
+
                 Color , 1
                 Cls
                 Locate , XCoord
                 Color 14
                 Print "SELECT "; fileDesc$; " FILE"
                 Color 15
-                Selection% = 1
+                SELECTION% = 1
                 START% = 1
                 FileFGColor% = 15: FileBGColor% = 1
                 HiLiteFGColor% = 0: HiLiteBGColor% = 7
@@ -431,14 +431,14 @@ Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
                 Color 15
 
                 _MouseShow "DEFAULT"
-                MAMenu foundFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
+                MAMenu foundFiles$(), SELECTION%, START%, Count%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
                 _MouseHide
 
                 If ExitCode% <> 27 Then
 
                     Color 15, 1
-                    targetFile$ = RTrim$(foundFiles$(Selection%))
-                    XCoord = Int((80 - Len(targetFile$))/2)
+                    targetFile$ = RTrim$(foundFiles$(SELECTION%))
+                    XCoord = Int((80 - Len(targetFile$)) / 2)
                     Locate 2, XCoord
                     Print targetFile$
 
@@ -508,36 +508,37 @@ End Sub
 'the name of the schedule file to be saved
 Sub ScheduleFilePrompt (scheduleFile$)
 
-	Color 15, 0
-	Cls
+    Color 15, 0
+    Cls
 
-	Call MenuBox(6, 8, 61, 8, 15, 1)
+    Call MenuBox(6, 8, 61, 8, 15, 1)
 
-	Do
+    Do
 
-		Locate 7, 32
+        Locate 7, 32
 
-		Locate , 12: Print "ENTER NAME FOR SCHEDULE: "
-		Print
-		Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
-		Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
-		Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
-		Locate , 12: Print "SAMPLE NAMES ARE INDIANA, BOS68, CHI-76, ETC      "
-		Locate 7, 40: Input scheduleFile$
+        Locate , 12: Print "ENTER NAME FOR SCHEDULE: "
+        Print
+        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
+        Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
+        Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
+        Locate , 12: Print "SAMPLE NAMES ARE INDIANA, BOS68, CHI-76, ETC      "
+        Locate 7, 40: Input scheduleFile$
 
-		If scheduleFile$ <> "" Then
+        If scheduleFile$ <> "" Then
 
-			Do
+            Do
 
-				Locate 14, 12
-				Print "ANY CHANGE? (Y/N) "
-				I$ = GetKeyPress$
+                Locate 14, 12
+                Print "ANY CHANGE? (Y/N) "
+                I$ = GetKeyPress$
 
-			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or I$ = Chr$(27)
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or I$ = Chr$(27)
 
-		End If
+        End If
 
-	Loop Until (UCase$(I$) = "N" And scheduleFile$ <> "") Or I$ = Chr$(27)
+    Loop Until (UCase$(I$) = "N" And scheduleFile$ <> "") Or I$ = Chr$(27)
 
 
 End Sub
+

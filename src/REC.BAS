@@ -27,7 +27,7 @@ Sub Records_Menu ()
         menuChoices$(5) = "PRINT SINGLE GAME RECORDS"
         menuChoices$(6) = "DELETE GAME RECORDS      "
         menuChoices$(7) = "RETURN TO GAME MENU      "
-        Selection% = 1
+        SELECTION% = 1
         Count% = 7
         Start% = 1
         ExitCode% = 7
@@ -41,14 +41,14 @@ Sub Records_Menu ()
         Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
 		Color , 0
 
         If ExitCode% <> 27 Then
 
-            Select Case Selection%
+            Select Case SELECTION%
 
                 Case 1:
                     Call ViewSeasonRecords
@@ -93,7 +93,7 @@ Sub Records_Menu ()
 
         End If
 
-    Loop Until Selection% = 7 Or ExitCode% = 27
+    Loop Until SELECTION% = 7 Or ExitCode% = 27
     
     Cls
 

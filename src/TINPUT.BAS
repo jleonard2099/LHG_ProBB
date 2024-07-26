@@ -28,7 +28,7 @@ Sub InputTeam (menuShortcut%)
             menuChoices$(3) = "PRINT A TEAM ROSTER  "
             menuChoices$(4) = "VIEW A TEAM ROSTER   "
             menuChoices$(5) = "EXIT TO MAIN MENU    "
-            Selection% = 1
+            SELECTION% = 1
             Count% = 5
             Start% = 1
             ExitCode% = 5
@@ -43,12 +43,12 @@ Sub InputTeam (menuShortcut%)
             Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
 
             _MouseShow "DEFAULT"
-            MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+            MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
             _MouseHide
 
-            If (Selection% >= 1) And (Selection% <= 4) Then Call DoTheInput(Selection%)
+            If (SELECTION% >= 1) And (SELECTION% <= 4) Then Call DoTheInput(SELECTION%)
 
-        Loop Until Selection% = 5 Or ExitCode% = 27
+        Loop Until SELECTION% = 5 Or ExitCode% = 27
 
     End If
 

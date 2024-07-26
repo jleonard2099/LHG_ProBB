@@ -12,14 +12,14 @@ Sub TRADE ()
 
     _Title "Basketball: The Pro Game - Trade Players"
 
-    Shared teamYears$()
+    Shared tmYears_DRAFT$()
 
     Shared teamIndexes()
 
     Shared tmInfo_TRADE$()
 
     tradeIdx = 0
-    Call ChooseTradeTeam(teamYears$(tradeIdx), NTMS, teamNbr, tmInfo_TRADE$(tradeIdx, 0), tradeIdx)
+    Call ChooseTradeTeam(tmYears_DRAFT$(tradeIdx), NTMS, teamNbr, tmInfo_TRADE$(tradeIdx, 0), tradeIdx)
 
     If teamNbr > 0 Then
 
@@ -28,7 +28,7 @@ Sub TRADE ()
         Call LoadStatsForTrade(tradeIdx)
 
         tradeIdx = 1
-        Call ChooseTradeTeam(teamYears$(tradeIdx), NTMS, teamNbr, tmInfo_TRADE$(tradeIdx, 0), tradeIdx)
+        Call ChooseTradeTeam(tmYears_DRAFT$(tradeIdx), NTMS, teamNbr, tmInfo_TRADE$(tradeIdx, 0), tradeIdx)
         teamIndexes(tradeIdx) = teamNbr
         Call LoadStatsForTrade(tradeIdx)
 
@@ -321,12 +321,12 @@ Sub SaveTrades ()
     Shared tradeB1!(), haveStats(), teamIndexes()
     Shared tradeW0!(), tradeW1!()
 
-    Shared B1$(), statTeam$(), teamYears$()
+    Shared B1$(), statTeam$(), tmYears_DRAFT$()
     Shared A1$(), tmInfo_TRADE$(), players_TRADE$()
 
     For J = 0 To 1
 
-        teamYear$ = RTrim$(teamYears$(J))
+        teamYear$ = RTrim$(tmYears_DRAFT$(J))
 
         Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
 
@@ -505,6 +505,8 @@ Sub ChooseTradeTeam (yearNumber$, numberTeams, chosenIdx, teamName$, tradeIdx)
 
     Do
 
+        chosenIdx = 0
+
         Color 15, 0
         Cls
 
@@ -608,9 +610,9 @@ Sub ChooseTradeTeam (yearNumber$, numberTeams, chosenIdx, teamName$, tradeIdx)
 
             Do
 
-                Call SelectTradeTeam(numberTeams, yearNumber$, chosenIdx, ExitCode%, tradeIdx)
+                Call SelectTradeTeam (numberTeams, yearNumber$, chosenIdx, ExitCode%, tradeIdx)
 
-                If ExitCode% <> 27 Then
+                If ExitCode% <> 27 And numberTeams <> 0 And chosenIdx > 0 Then
 
                     Do
                         Locate 2, 33
@@ -625,19 +627,19 @@ Sub ChooseTradeTeam (yearNumber$, numberTeams, chosenIdx, teamName$, tradeIdx)
 
                 End If
 
-            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N"
+            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N" Or chosenIdx = -1
 
         End If 'Done checking for ESC
 
     Loop Until UCase$(J$) = "N" Or I$ = Chr$(27) 'Or J$ = Chr$(27)
 
-    If I$ = Chr$(27) Or J$ = Chr$(27) Then chosenIdx = 0
+    'If I$ = Chr$(27) Or J$ = Chr$(27) Then chosenIdx = 0
 
 End Sub
 
 
 '----------------------------------------
-'     SelectTradeTeam Subroutine
+'       SelectTradeTeam Subroutine
 '----------------------------------------
 'This subroutine provides an interface for 
 'selecting the team to trade players from
@@ -659,7 +661,7 @@ Sub SelectTradeTeam (numberTeams, yearNumber$, selectedIdx, ExitCode%, tradeIdx)
         Color , 4
         Cls
         Color 14
-        Locate , 33: Print "TEAM SELECTION"
+        Locate , 33: Print "TEAM"; tradeIdx; "SELECTION"
         Locate 25, 1
         Color 14: Print "ESC";
         Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";
@@ -769,4 +771,3 @@ Sub ReadTradeTeam (teamYear$, teamIdx, tradeIdx, dataOK)
     End If
 
 End Sub
-
