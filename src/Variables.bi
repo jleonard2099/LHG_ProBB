@@ -228,7 +228,7 @@ Dim Shared threePtOpt, T1, TMT, willDunk
 
 Dim Shared GF%, HH%, J8%, OX%, OY%
 
-Dim Shared gameClock!, pbpDelay!, shotChance!, timeElapsed!
+Dim Shared gameClock!, pbpDelay!, shotChance, timeElapsed!
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
 Dim Shared activePosition$, pbpString$, prevBall$, TS$
