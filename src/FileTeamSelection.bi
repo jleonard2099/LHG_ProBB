@@ -7,7 +7,7 @@ Declare Sub UserFilePrompt (reportFile$)
 Declare Function nameStatFile$ (teamName$)
 Declare Function ChooseFile$(fileSpec$, fileDesc$)
 
-Const TEAM_SIZE_BYTES = 1031
+Const TEAM_SIZE_BYTES = 1035
 Const TEAM_FILE_NAME$ = "PROBBTMS"
 
 Dim previousYear$

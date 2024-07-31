@@ -723,6 +723,8 @@ End Sub
 '  1 = New Team
 Sub SaveTeamDraft (draftNew, yearNumber$, teamIdx)
 
+    Shared tmAtt_DRAFT&()
+
     Shared plyrRat_DRAFT%(), leagRat_DRAFT%(), teamRat_DRAFT%()
 
     Shared tmInfo_DRAFT$(), players_DRAFT$()
@@ -733,7 +735,9 @@ Sub SaveTeamDraft (draftNew, yearNumber$, teamIdx)
 
     fileLength& = LOF(1)
 
-    If draftNew = 1 Then teamIdx = fileLength& / TEAM_SIZE_BYTES + 1
+    If draftNew = 1 Then 
+        teamIdx = (fileLength& / TEAM_SIZE_BYTES) + 1
+    End If
 
     Field #1, 15 As Q$(0), 15 As Q$(1)
 
@@ -787,6 +791,7 @@ Sub SaveTeamDraft (draftNew, yearNumber$, teamIdx)
     LSet Q$(375) = tmInfo_DRAFT$(0, 2)
     LSet Q$(376) = tmInfo_DRAFT$(0, 3)
     LSet Q$(377) = tmInfo_DRAFT$(0, 4)
+    LSet Q$(378) = MKL$(tmAtt_DRAFT&(0))
 
     Put #1, teamIdx
 
@@ -1004,6 +1009,8 @@ End Sub
 'arrays for the selected team
 Sub ReadDraftTeam (teamYear$, teamIdx, draftIdx, dataOK)
 
+    Shared tmAtt_DRAFT&()
+    
     Shared plyrRat_DRAFT%(), leagRat_DRAFT%(), teamRat_DRAFT%()
 
     Shared tmInfo_DRAFT$(), players_DRAFT$()
@@ -1029,7 +1036,7 @@ Sub ReadDraftTeam (teamYear$, teamIdx, draftIdx, dataOK)
         Next
     Next
 
-    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377), 4 As Q$(378)
 
     Get #1, teamIdx
 
@@ -1058,6 +1065,7 @@ Sub ReadDraftTeam (teamYear$, teamIdx, draftIdx, dataOK)
     tmInfo_DRAFT$(draftIdx, 2) = RTrim$(Q$(375))
     tmInfo_DRAFT$(draftIdx, 3) = RTrim$(Q$(376))
     tmInfo_DRAFT$(draftIdx, 4) = RTrim$(Q$(377))
+    tmAtt_DRAFT&(draftIdx) = CVL(Q$(378))
 
     Close #1
 

@@ -27,7 +27,8 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-Dim Shared test
+Dim Shared passes, test
+Dim Shared possTime!
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -191,7 +192,7 @@ For I = 0 To 14
     Read tickerPeriod$(I)
 Next
 
-Data 60,61,60,58,58,59,59,59,59,58,58,58,57,58,57,51,51,52,49,50,44,45,42,47,43,43,42,39,38,38,35,34,34
+Data 60,61,60,58,58,59,59,59,59,58,58,58,57,58,57,51,51,52,49,50,48,45,42,47,43,43,42,39,38,38,35,34,34
 For I = 0 To 32
     Read turnoverAdj(I)
 Next
@@ -445,7 +446,7 @@ Sub TeamMgt_Menu ()
 
         Call TITLE
 
-        ReDim menuChoices$(1 To 8)
+        ReDim menuChoices$(1 To 9)
 
         menuChoices$(1) = "INPUT A NEW TEAM          "
         menuChoices$(2) = "EDIT AN EXISTING TEAM     "
@@ -453,11 +454,12 @@ Sub TeamMgt_Menu ()
         menuChoices$(4) = "VIEW TEAM ROSTER / REPORT "
         menuChoices$(5) = "DRAFT PLAYERS             "
         menuChoices$(6) = "TRADE PLAYERS             "
-        menuChoices$(7) = "ADJUST PLAYING TIME       "
-        menuChoices$(8) = "RETURN TO MAIN MENU       "
-        Count% = 8
+        menuChoices$(7) = "CONVERT DATA FILE FROM 4.0"
+        menuChoices$(8) = "ADJUST PLAYING TIME       "
+        menuChoices$(9) = "RETURN TO MAIN MENU       "
+        Count% = 9
         Start% = 1
-        ExitCode% = 8
+        ExitCode% = 9
         FileFGColor% = 15: FileBGColor% = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
@@ -477,19 +479,37 @@ Sub TeamMgt_Menu ()
 
             Select Case SELECTION%
 
-                Case 1: Call InputTeam(1)
-                Case 2: Call InputTeam(2)
-                Case 3: Call InputTeam(3)
-                Case 4: Call InputTeam(4)
-                Case 5: Call DRAFT
-                Case 6: Call TRADE
-                Case 7: Call GPMIN
+                Case 1:
+                    Call InputTeam(1)
+
+                Case 2:
+                    Call InputTeam(2)
+
+                Case 3:
+                    Call InputTeam(3)
+
+                Case 4:
+                    Call InputTeam(4)
+
+                Case 5:
+                    Call DRAFT
+
+                Case 6:
+                    Call TRADE
+
+                Case 7:
+                    targetFile$ = _OpenFileDialog$("Select team file", diskPaths$(0), "PROBBTMS.*", "Team files")
+
+                    Call ConvertTeam4to5(targetFile$, 0)
+
+                Case 8:
+                    Call GPMIN
 
             End Select
 
         End If
 
-    Loop Until SELECTION% = 8 Or ExitCode% = 27
+    Loop Until SELECTION% = 9 Or ExitCode% = 27
 
 End Sub
 
@@ -656,6 +676,7 @@ End Sub
 '$Include: 'BoxRoutines.bm'
 '$Include: 'ConfigureDrives.bm'
 '$Include: 'FileTeamSelection.bm'
+'$Include: 'CONVERT.BAS'
 '$Include: 'TITLE.bm'
 '$Include: 'ALIGN.BAS'
 '$Include: 'BLANKPRO.BAS'
@@ -796,7 +817,7 @@ Sub PROHOOP ()
         currGame = schedGame(0) + schedGame(2)
 
         'Open "pbplog" + Str$(currGame) For Append As #11
-        'Open "pbplog" For Append As #11
+        Open "pbplog" For Append As #11
 
         If Not _FileExists(diskPaths$(3) + scheduleFile$) Then
 
@@ -842,7 +863,7 @@ Sub PROHOOP ()
 
     Else
 
-        'Open "pbplog" For Append As #11
+        Open "pbplog" For Append As #11
 
     End If
 
@@ -1202,7 +1223,7 @@ Sub PROHOOP ()
     Call ResetShotClock
 
     '----------------------------------------
-    '           Tip Off!
+    '                Tip Off!
     '----------------------------------------
     If (autoPlay = 0 Or pbpDelay! > 0) Then
 
@@ -1226,7 +1247,6 @@ Sub PROHOOP ()
     '----- NOODLE -----
 
     170 '
-
     totalFouls(0) = totalFouls(0) + teamFouls(0)
     totalFouls(1) = totalFouls(1) + teamFouls(1)
     Erase teamFouls
@@ -1422,12 +1442,13 @@ Sub PROHOOP ()
 
         D = 1 - P
 
-        If gameClock! < 6 And LT <> 4 Then LS = 4
+        If gameClock! < 6 And LT <> 4 Then
+            LS = 4
+        End If
 
     End If
 
-    '302
-    PASS = 1
+    passes = 1
     assistShotBoost = 0
     shotChance = 0
 
@@ -1496,7 +1517,7 @@ Sub PROHOOP ()
 
                         Else
 
-                            If DecideShot%(PASS) = 1 Then
+                            If DecideShot%(passes) = 1 Then
                                 'Shoot!
                                 GoTo 445
                             Else
@@ -1540,7 +1561,7 @@ Sub PROHOOP ()
 
                         Else
 
-                            If DecideShot%(PASS) = 1 Then
+                            If DecideShot%(passes) = 1 Then
                                 'Shoot!
                                 GoTo 445
                             End If
@@ -1581,7 +1602,7 @@ Sub PROHOOP ()
 
                         Else
 
-                            If DecideShot%(PASS) = 1 Then
+                            If DecideShot%(passes) = 1 Then
                                 'Shoot!
                                 GoTo 445
                             End If
@@ -1625,7 +1646,7 @@ Sub PROHOOP ()
                 If RN0 <= 40 + teamAdj(P, 1) + teamAdj(D, 2) + gameRatings!(D, lineupIdx(D, P9), 5) + teamAdj(P, 0) Then
                     GoTo 513
                 Else
-                    If DecideShot%(PASS) = 1 Then
+                    If DecideShot%(passes) = 1 Then
                         'Shoot!
                         GoTo 445
                     End If
@@ -1901,7 +1922,7 @@ Sub PROHOOP ()
 
     If (autoPlay = 0 Or pbpDelay! > 0) Then
 
-        If shotChance > 70 And fastBreak = 1 And PASS = 1 Then
+        If shotChance > 70 And fastBreak = 1 And passes = 1 Then
 
             pbpType = 6
             shotType = 8
@@ -2342,7 +2363,7 @@ Sub PROHOOP ()
         Case 1
             ' *** PASS ***
             A6 = 1
-            PASS = PASS + 1
+            passes = passes + 1
 
             playChoice = 0
             shotChance = 0
@@ -2354,6 +2375,7 @@ Sub PROHOOP ()
         Case 2
             537 '
             ' *** SHOOT !!! ***
+            '--Call pbplog(2357)
             pbpType = 3
             Call MAKEPBP(pbpType)
             Call PBP(P)
@@ -2373,8 +2395,8 @@ Sub PROHOOP ()
 
                     'FOUL!!!
                     gameRatings!(P, lineupIdx(P, ballCarrier), 7) = gameRatings!(P, lineupIdx(P, ballCarrier), 7) - 1
-                    Call ResetShotClock
 
+                    Call ResetShotClock
                     gameClock! = gameClock! - 4
                     timeElapsed! = 4
 
@@ -2397,9 +2419,8 @@ Sub PROHOOP ()
 
             If foulRoll <= foulChance Then
                 'Foul on the shot
-            
-                Call ResetShotClock
 
+                Call ResetShotClock
                 gameClock! = gameClock! - 4
                 timeElapsed! = 4
 
@@ -2751,6 +2772,7 @@ Sub PROHOOP ()
                 'Restore time on clock
                 gameClock! = gameClock! + M5
                 timeElapsed! = -M5
+
                 Call AdjustPlayTime
 
                 shotClock = shotClock + M5
@@ -2766,13 +2788,12 @@ Sub PROHOOP ()
             If A6 = 0 Then
 
                 Call PRESSGUARD
-
                 GoTo 300
 
             Else
 
                 A6 = 1
-                PASS = PASS + 1
+                passes = passes + 1
 
                 playChoice = 0
                 shotChance = 0
@@ -2821,6 +2842,7 @@ Sub PROHOOP ()
         Case 5
             ' *** 3FG ATTEMPT ***
             359 '
+            '--Call pbplog(2825)
             Call Rolld100(shotRoll)
 
             threeFG(P, lineupIdx(P, ballCarrier), 1) = threeFG(P, lineupIdx(P, ballCarrier), 1) + 1
@@ -2842,7 +2864,6 @@ Sub PROHOOP ()
                 threeFG(P, lineupIdx(P, ballCarrier), 0) = threeFG(P, lineupIdx(P, ballCarrier), 0) - 1
 
                 Call ResetShotClock
-
                 gameClock! = gameClock! - 4
                 timeElapsed! = 4
 
@@ -2951,7 +2972,6 @@ Sub PROHOOP ()
                     End If
 
                     Call ResetShotClock
-
                     gameClock! = gameClock! - 4
                     timeElapsed! = 4
 
@@ -3010,7 +3030,7 @@ Sub PROHOOP ()
             Call DELAY
 
             A6 = 1
-            PASS = PASS + 1
+            passes = passes + 1
 
             playChoice = 0
             shotChance = 0
@@ -3046,25 +3066,28 @@ Sub PROHOOP ()
             If missedLast = 1 Then
                 'Rebound
                 GoTo 650
+
+            Else
+
+                Call ChangePossession
+
+                pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
+                Call SELECTPBP(P, 1)
+                DELAY
+
+                Call DEADBALLOPTIONS
+
+                ballCarrier = 6
+                offStatus = 0
+
+                Call PRESSGUARD
+
+                GoTo 300
+
             End If
 
-            Call ChangePossession
-
-            pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
-            Call SELECTPBP(P, 1)
-            DELAY
-
-            Call DEADBALLOPTIONS
-
-            ballCarrier = 6
-            offStatus = 0
-
-            Call PRESSGUARD
-
-            GoTo 300
-            
         End If
-        
+
     End If
 
     '----- NOODLE -----
@@ -3073,7 +3096,7 @@ Sub PROHOOP ()
 
     580 '
     Call LastShot
-    
+
     Call ResetShotClock
 
     'FoulCalled always targets the DEF
@@ -3260,7 +3283,7 @@ Sub PROHOOP ()
             GoTo 770
 
         Case rebFoulChance + 1 To 19
-
+            'Ball knocked out-of-bounds
             If d100% > 35 Then
 
                 totRebounds(D) = totRebounds(D) + 1
@@ -3269,8 +3292,8 @@ Sub PROHOOP ()
 
                 pbpString$ = "RB KNOCKED O.B. TO " + gameTeams$(D)
                 Call SELECTPBP(D, 1)
-
                 Call DELAY
+
                 Call Substitutions
 
                 Call ChangePossession
@@ -3640,10 +3663,12 @@ Sub InitVar ()
     Shared indRecords!(), teamRecords!()
 
     Shared alpha$()
-    Shared oppName$(), locIndicator$()
+    Shared gameSite$(), oppName$(), locIndicator$()
     Shared indRecDesc$(), teamRecDesc$()
     Shared teamIndicator$()
 
+    possTime! = 0
+    
     For I = 0 To 1
         For I1 = 0 To 4
             lineupIdx(I, I1) = -1
@@ -3696,31 +3721,31 @@ Sub InitVar ()
     D = 0
     endAllGames = 0
     endGame = 0
+    fastBreak = 0
+    forcedThree = 0
     freeThrowNbr = 0
+    fullCtOpt = 0
     halfTime = 0
     JY = 0
-    nbrLines = 1
-    P = 0
-    fullCtOpt = 0
-    P9 = 0
     nbrFTMade = 0
+    nbrLines = 1
+    offStatus = 0
+    P = 0
+    P9 = 0
+    passes = 0
+    pbpType = 0
     quarter = 1
     shotClock = 0
+    shotType = 0
     statSpecial = 0
     T1 = 0
     TMT = 0
-    offStatus = 0
+    willDunk = 0
 
     gameClock! = 720
 
-    willDunk = 0
-    fastBreak = 0
-    forcedThree = 0
-    HH% = 0
     OX% = 0
     OY% = 0
-    pbpType = 0
-    shotType = 0
 
     timeElapsed! = 0
 
@@ -3750,14 +3775,14 @@ Sub InitVar ()
     Erase rebRatings, score, schedGame, statTotals, S3
     Erase totalFouls, teamScore, timePlayed
     Erase totRebounds, turnovers
-    Erase W2, W3, X7, Z5, Z6
+    Erase W2, W3, X7, teamRecWins, teamRecLoss
 
     Erase gameRatings!, gameW0!, gameW1!
     Erase M9!
     Erase statsZ!, statsZ1!, statsZ2!
     Erase indRecords!, teamRecords!
 
-    Erase diskIDs$, gameTeams$
+    Erase diskIDs$, gameSite$, gameTeams$
     Erase indRecDesc$, locIndicator$, oppName$
     Erase Q$, SX$
     Erase teamAbbrev$, teamNames$, teamRecDesc$
@@ -7159,6 +7184,7 @@ End Sub
 'in possession of the ball
 Sub ChangePossession
 
+    '--Call pbplog(7164)
     prevBall$ = ""
     P = 1 - P
     D = 1 - D
@@ -7304,7 +7330,10 @@ Sub LOADSTATS ()
     Dim nbrStats
 
     Shared teamScore(), oppScore()
-    Shared oppName$(), locIndicator$()
+    
+    Shared gameAttendance&()
+    
+    Shared gameSite$(), locIndicator$(), oppName$()
 
     For I = 0 To 1
 
@@ -7337,8 +7366,12 @@ Sub LOADSTATS ()
             Close #1
 
             For I1 = 1 To nbrStats
-                If teamScore(I1) > oppScore(I1) Then Z5(I) = Z5(I) + 1
-                If teamScore(I1) < oppScore(I1) Then Z6(I) = Z6(I) + 1
+                If teamScore(I1) > oppScore(I1) Then
+                    teamRecWins(I) = teamRecWins(I) + 1
+                End If
+                If teamScore(I1) < oppScore(I1) Then
+                    teamRecLoss(I) = teamRecLoss(I) + 1
+                End If
             Next
 
         End If
@@ -7489,7 +7522,7 @@ Sub SCOREBOARD ()
     Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0);
 
     'Win/Loss record from current stats files
-    Print Using " [##"; Z5(0);: Print "-";: Print Using "##]"; Z6(0)
+    Print Using " [##"; teamRecWins(0);: Print "-";: Print Using "##]"; teamRecLoss(0)
 
     Color 14, 0: Print "# NAME         FG FT RB CX PA DF PT  F"
 
@@ -7539,7 +7572,7 @@ Sub SCOREBOARD ()
     Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1);
 
     'Win/Loss record from current stats files
-    Print Using " [##"; Z5(1);: Print "-";: Print Using "##]"; Z6(1)
+    Print Using " [##"; teamRecWins(1);: Print "-";: Print Using "##]"; teamRecLoss(1)
 
     Color 14, 0
     Locate , 40: Print "# NAME          FG FT RB CX PA DF PT  F"
@@ -8004,7 +8037,7 @@ Sub SETUPRATINGS (teamStyle)
         '(Off TOs - Def Steals) / Game  / (adjustment)
         teamAdj(I, 1) = Int(((teamRat_GAME(I, 15) - teamRat_GAME(I, 28)) / teamRat_GAME(I, 0)) / (X7(I) * 5) * 1000 + .5)
 
-        '(Def TOs - Off Steals) / Game / (adjustment) - TOF%
+        '(Def TOs - Off Steals) / Game / (adjustment) - turnoverFreq
         teamAdj(I, 2) = Int(((teamRat_GAME(I, 29) - teamRat_GAME(I, 14)) / teamRat_GAME(I, 0)) / (X7(I) * 5) * 1000 + .5) - turnoverFreq(I)
 
         'Def 3FGA
@@ -8233,32 +8266,26 @@ Function DecideShot% (passNbr)
 
     Select Case passNbr
 
-        Case 1 To 3, Is > 4
+        Case 1
+            '16
+            If RN0 <= 8 + (JY - 89) Then
+                'doShoot = 1
+            End If
 
-            Select Case sClockVal
+        Case 2
+            '32
+            If RN0 <= 40 + (JY - 89) Then
+                doShoot = 1
+            End If
 
-                Case 0
-                    '24-sec shot clock
-                    If RN0 <= 32 + (JY - 89) Then
-                        doShoot = 1
-                    End If
-
-                Case 1
-                    '30-sec shot clock
-                    If RN0 <= 32 + (JY - 89) Then
-                        doShoot = 1
-                    End If
-
-                Case 2
-                    'Not shot clock
-                    If RN0 <= 32 + (JY - 89) Then
-                        doShoot = 1
-                    End If
-
-            End Select
-
-        Case 4
+        Case 3, 4
             doShoot = 1
+
+        Case Is > 4
+            '32
+            If RN0 <= 65 + (JY - 89) Then
+                doShoot = 1
+            End If
 
     End Select
 
@@ -8677,14 +8704,22 @@ Sub ComputerCoach ()
 
                     M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
 
-                    If lineupIdx(P9, I2) > -1 Then M7 = gameRatings!(P9, lineupIdx(P9, I2), 3) - gameRatings!(P9, lineupIdx(P9, I2), 7) - gameRatings!(P9, lineupIdx(P9, I2), 11) - gameRatings!(P9, lineupIdx(P9, I2), 12)
+                    If lineupIdx(P9, I2) > -1 Then
+                        M7 = gameRatings!(P9, lineupIdx(P9, I2), 3) - gameRatings!(P9, lineupIdx(P9, I2), 7) - gameRatings!(P9, lineupIdx(P9, I2), 11) - gameRatings!(P9, lineupIdx(P9, I2), 12)
+                    End If
 
-                    If quarter = 4 And gameClock! < 120 Or quarter > 4 Then M6 = gameRatings!(P9, I1, 3)
+                    If quarter = 4 And gameClock! < 120 Or quarter > 4 Then
+                        M6 = gameRatings!(P9, I1, 3)
+                    End If
 
-                    If (quarter = 4 And gameClock! < 120 Or quarter > 4) And lineupIdx(P9, I2) > -1 Then M7 = gameRatings!(P9, lineupIdx(P9, I2), 3)
+                    If (quarter = 4 And gameClock! < 120 Or quarter > 4) And lineupIdx(P9, I2) > -1 Then
+                        M7 = gameRatings!(P9, lineupIdx(P9, I2), 3)
+                    End If
 
                     If I2 <> 1 Or lineupIdx(P9, 0) <> I1 Then
-                        If lineupIdx(P9, I2) = -1 Or M6 >= M7 Then lineupIdx(P9, I2) = I1
+                        If lineupIdx(P9, I2) = -1 Or M6 >= M7 Then
+                            lineupIdx(P9, I2) = I1
+                        End If
                     End If
 
                 End If
@@ -9242,8 +9277,13 @@ Sub ResetShotClock ()
     If sClockVal < 2 Then
 
         Select Case sClockVal
-            Case 0: shotClock = 24
-            Case 1: shotClock = 30
+
+            Case 0:
+                possTime! = possTime! + (24 - shotClock)
+                shotClock = 24
+            Case 1:
+                possTime! = possTime! + (30 - shotClock)
+                shotClock = 30
         End Select
 
         LS = 4
@@ -10637,8 +10677,8 @@ Sub SAVESTATS ()
 
             Do
                 J$ = GetKeyPress$
-                X1 = Val(J$)
-            Loop Until X1 >= 0 And X1 <= 2
+                tmStatOpt = Val(J$)
+            Loop Until tmStatOpt >= 0 And tmStatOpt <= 2
 
         End If
 
@@ -10669,7 +10709,7 @@ Sub SAVESTATS ()
 
         End If
 
-        Call COMPILESTATFILES(X1)
+        Call COMPILESTATFILES(tmStatOpt)
 
     End If
 
@@ -10684,18 +10724,21 @@ End Sub
 'the stats generated for a completed game.
 Sub COMPILESTATFILES (compileOpt)
 
+    'Somehow related to FTM???
     Dim TG!
+
+    Shared actualAttendance&
+
+    Shared gameAttendance&()
 
     Shared teamScore(), oppScore()
 
     Shared gameW0!(), gameW1!()
     Shared statsZ!(), statsZ1!(), statsZ2!()
 
-    Shared oppName$(), locIndicator$()
+    Shared gameSite$(), locIndicator$(), oppName$()
 
     Cls
-
-    HH% = gameLoc
 
     For PX = 0 To 1
 
@@ -10725,23 +10768,27 @@ Sub COMPILESTATFILES (compileOpt)
     teamIdx = 0
 
     Do
-        C% = 0
 
-        If autoPlay <> 1 Then
+        dontCompile = 0
 
-            I$ = "Y"
+        If autoPlay = 0 Then
 
-            If compileOpt = 1 And teamIdx = 1 Or compileOpt = 2 And teamIdx = 0 Then I$ = "N"
-
+            'If player is Visiting team but we chose Home | player is Home but we chose Visitor
+            If compileOpt = 1 And teamIdx = 1 Or compileOpt = 2 And teamIdx = 0 Then
+                I$ = "N"
+            Else
+                I$ = "Y"
+            End If
+            
             If UCase$(I$) = "N" Then
-                C% = 1
+                dontCompile = 1
             Else
                 Cls
             End If
 
         End If
 
-        If C% <> 1 Then
+        If dontCompile = 0 Then
 
             statFile$ = nameStatFile$(gameTeams$(teamIdx))
 
@@ -10780,9 +10827,13 @@ Sub COMPILESTATFILES (compileOpt)
 
             For I = 0 To 14
 
-                If gameRatings!(teamIdx, I, 2) * 2 + gameRatings!(teamIdx, I, 4) + gameW0!(teamIdx, I) > statsZ2!(I, 13) Then statsZ2!(I, 13) = gameRatings!(teamIdx, I, 2) * 2 + gameRatings!(teamIdx, I, 4) + gameW0!(teamIdx, I)
+                If gameRatings!(teamIdx, I, 2) * 2 + gameRatings!(teamIdx, I, 4) + gameW0!(teamIdx, I) > statsZ2!(I, 13) Then
+                    statsZ2!(I, 13) = gameRatings!(teamIdx, I, 2) * 2 + gameRatings!(teamIdx, I, 4) + gameW0!(teamIdx, I)
+                End If
 
-                If gameRatings!(teamIdx, I, 10) > 0 Then statsZ2!(I, 0) = statsZ2!(I, 0) + 1
+                If gameRatings!(teamIdx, I, 10) > 0 Then
+                    statsZ2!(I, 0) = statsZ2!(I, 0) + 1
+                End If
 
                 For J = 1 To 12
 
@@ -10865,13 +10916,13 @@ Sub COMPILESTATFILES (compileOpt)
 
             Close #2
 
-            Y% = 0
+            numberGames = 0
 
             If _FileExists(diskPaths$(1) + statFile$ + "S") Then
 
                 Open diskPaths$(1) + statFile$ + "S" For Input As #3
 
-                Input #3, Y%
+                Input #3, numberGames
 
                 For I = 1 To MAX_SCHED_STATS:
                     Input #3, teamScore(I)
@@ -10889,64 +10940,86 @@ Sub COMPILESTATFILES (compileOpt)
                     Input #3, locIndicator$(I)
                 Next I
 
+                For I = 1 To MAX_SCHED_STATS:
+                    Input #3, gameAttendance&(I)
+                Next I
+
+                For I = 1 To MAX_SCHED_STATS:
+                    Input #3, gameSite$(I)
+                Next I
+
                 Close #3
 
             End If
 
-            If Y% < 100 Then Y% = Y% + 1
+            If numberGames < MAX_SCHED_STATS Then
+                numberGames = numberGames + 1
+            End If
 
-            Select Case HH%
+            Select Case gameLoc
+
                 Case 2
                     Select Case TG!
                         Case Is < 14500
-                            locIndicator$(Y%) = "N"
+                            locIndicator$(numberGames) = "N"
                         Case 14501 To 16000
-                            locIndicator$(Y%) = "N1"
+                            locIndicator$(numberGames) = "N1"
                         Case 16001 To 17500
-                            locIndicator$(Y%) = "N2"
+                            locIndicator$(numberGames) = "N2"
                         Case 17501 To 19000
-                            locIndicator$(Y%) = "N3"
+                            locIndicator$(numberGames) = "N3"
                         Case 19001 To 20500
-                            locIndicator$(Y%) = "N4"
+                            locIndicator$(numberGames) = "N4"
                     End Select
 
                 Case Is = teamIdx
                     Select Case TG!
                         Case Is < 14500
-                            locIndicator$(Y%) = "H"
+                            locIndicator$(numberGames) = "H"
                         Case 14501 To 16000
-                            locIndicator$(Y%) = "H1"
+                            locIndicator$(numberGames) = "H1"
                         Case 16001 To 17500
-                            locIndicator$(Y%) = "H2"
+                            locIndicator$(numberGames) = "H2"
                         Case 17501 To 19000
-                            locIndicator$(Y%) = "H3"
+                            locIndicator$(numberGames) = "H3"
                         Case 19001 To 20500
-                            locIndicator$(Y%) = "H4"
+                            locIndicator$(numberGames) = "H4"
                     End Select
 
                 Case Is <> teamIdx
                     Select Case TG!
                         Case Is < 14500
-                            locIndicator$(Y%) = "V"
+                            locIndicator$(numberGames) = "V"
                         Case 14501 To 16000
-                            locIndicator$(Y%) = "V1"
+                            locIndicator$(numberGames) = "V1"
                         Case 16001 To 17500
-                            locIndicator$(Y%) = "V2"
+                            locIndicator$(numberGames) = "V2"
                         Case 17501 To 19000
-                            locIndicator$(Y%) = "V3"
+                            locIndicator$(numberGames) = "V3"
                         Case 19001 To 20500
-                            locIndicator$(Y%) = "V4"
+                            locIndicator$(numberGames) = "V4"
                     End Select
 
             End Select
 
-            teamScore(Y%) = score(teamIdx, 0)
-            oppName$(Y%) = gameTeams$(1 - teamIdx)
-            oppScore(Y%) = score(1 - teamIdx, 0)
+            teamScore(numberGames) = score(teamIdx, 0)
+            oppName$(numberGames) = gameTeams$(1 - teamIdx)
+            oppScore(numberGames) = score(1 - teamIdx, 0)
+            gameAttendance&(numberGames) = actualAttendance&
+
+            If gameArena$(1) = "" Then
+                gameArena$(1) = "MEMORIAL COLISEUM"
+            End If
+
+            If gameLoc = 2 Then
+                gameSite$(numberGames) = "NEUTRAL SITE"
+            Else
+                gameSite$(numberGames) = gameArena$(1)
+            End If
 
             Open diskPaths$(1) + statFile$ + "S" For Output As #4
 
-            Print #4, Y%
+            Print #4, numberGames
 
             For I = 1 To MAX_SCHED_STATS:
                 Print #4, teamScore(I)
@@ -10964,12 +11037,21 @@ Sub COMPILESTATFILES (compileOpt)
                 Print #4, locIndicator$(I)
             Next I
 
+            For I = 1 To MAX_SCHED_STATS:
+                Print #4, gameAttendance&(I)
+            Next I
+
+            For I = 1 To MAX_SCHED_STATS:
+                Print #4, gameSite$(I)
+            Next I
+
             Close #4
 
             'Reset arrays for next iteration
             Erase teamScore, oppScore
+            Erase gameAttendance&
             Erase statsZ!, statsZ1!, statsZ2!
-            Erase locIndicator$, oppName$
+            Erase gameSite$, locIndicator$, oppName$
 
         End If
 
@@ -10990,12 +11072,14 @@ End Sub
 'was originally to be called everywhere
 'there is PBP. This helps me debug where
 'issues are happening in a game.
-Sub pbplog (lineNumber, roll)
+Sub pbplog (lineNumber)
 
     'Print #11, "Called from line # "; lineNumber
     'Print #11, gameTeams$(0); " vs "; gameTeams$(1)
     'Print #11, currGame; ","; ballCarrier; ","; lineNumber
-    Print #11, lineNumber, roll, shotChance
+    'Print #11, lineNumber, passes
+    Print #11, possTime!
+    'Print #11, shotClock
     'Print #11,
 
 End Sub
@@ -11075,9 +11159,9 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
                         BoxWidth = 20
                         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
                         Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-                        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+                        Call CSMsgBox(MsgText$, BoxWidth, PASS)
                         I$ = GetKeyPress$
-                        Call CSMsgBox("", 0, Pass)
+                        Call CSMsgBox("", 0, PASS)
                         Exit Sub
 
                     Else
@@ -11217,6 +11301,8 @@ End Sub
 'needed by the game.
 Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx, dataOK)
 
+    Dim CK
+    
     Dim gamesPlayed, minsPerGame!
 
     Shared avgAttendance&()
@@ -11242,7 +11328,7 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx, dataOK)
         Next
     Next
 
-    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377), 4 As Q$(378)
 
     Get #1, teamIdx
 
@@ -11252,6 +11338,8 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx, dataOK)
     For I = 0 To 6
         leagRat_GAME(gameIdx, I) = CVI(Q$(I + 2))
     Next
+
+    CK = CVI(Q$(9))
 
     For I = 0 To 34
         teamRat_GAME(gameIdx, I) = CVI(Q$(I + 10))
@@ -11276,10 +11364,13 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx, dataOK)
 
     'Arena
     gameArena$(gameIdx) = RTrim$(Q$(377))
+    
+    'Attendance
+    avgAttendance&(gameIdx) = CVL(Q$(378))
 
     Close #1
 
-    If (CheckString%(gameArena$(gameIdx)) = 1) Then
+    If ((CheckString%(gameArena$(gameIdx)) = 1) Or CK <> 999) Then
 
         dataOK = 0
 
@@ -11378,7 +11469,7 @@ Sub EndOfGame
 
     End If
 
-    'Close #11
+    Close #11
 
     If UCase$(I$) = "Y" Or (autoPlay = 1 And endAllGames <> 1) Then
 

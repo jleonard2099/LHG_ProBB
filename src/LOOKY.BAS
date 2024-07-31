@@ -106,6 +106,14 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
         Input #1, locIndicator$(I)
     Next I
 
+    For I = 1 To MAX_SCHED_STATS:
+        Input #1, gameAttendance&(I)
+    Next I
+
+    For I = 1 To MAX_SCHED_STATS:
+        Input #1, gameSite$(I)
+    Next I
+
     Close #1
 
     For I = 1 To totalGames%

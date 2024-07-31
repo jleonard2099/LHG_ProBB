@@ -3,7 +3,7 @@
 '----------------------------------------
 Dim opSysType$
 
-Dim Shared diskPaths$(0 To 3), Q$(0 To 377)
+Dim Shared diskPaths$(0 To 3), Q$(0 To 378)
 Dim Shared teamNames$(MAX_TEAMS)
 Dim Shared teamIndex%(MAX_TEAMS)
 
@@ -86,6 +86,8 @@ Dim statFileNames$(TEAMS_PER_LEAGUE)
 '----------------------------------------
 ' Used in DRAFT routines
 '----------------------------------------
+Dim tmAtt_DRAFT&(0 to 1)
+
 Dim leagRat_DRAFT%(0 To 1, 0 To 6), leagTot_DRAFT(0 To 14, 0 To 34)
 Dim plyrRat_DRAFT%(0 To 1, 0 To 14, 0 To 19), teamRat_DRAFT%(0 To 1, 0 To 34)
 
@@ -101,6 +103,8 @@ Dim tmYears_DRAFT$(0 To 1)
 Dim haveStats(1)
 
 ' ** Team File **
+Dim tmAtt_TRADE&(0 to 1)
+
 Dim leagRat_TRADE(0 To 1, 0 To 6)
 Dim plyrRat_TRADE(0 To 1, 0 To 14, 0 To 19)
 Dim tmRat_TRADE(1, 34)
@@ -152,6 +156,7 @@ Dim offLeaderNames$(40), leagT$(40)
 
 Dim statCategoryAbbr$(0 To 25), statPlyrNames$(0 To 14)
 
+Dim teamAttendance&
 
 Dim confWins, confLosses
 Dim fullWins, fullLosses
@@ -234,7 +239,7 @@ Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
 Dim Shared activePosition$, pbpString$, prevBall$, TS$
 
 Dim Shared CF%(1, 9), eventSettings(13)
-Dim Shared F%(1, 9), FY%(0 To 1), G9%(1), GF%(2, 9)
+Dim Shared F%(1, 9), G9%(1), GF%(2, 9)
 Dim Shared NG%(18), N0%(2, 2, 4)
 Dim Shared OX%(2), OY%(2), offStyles(1)
 Dim Shared ST%(32), SX%(32, 1, 14)
@@ -249,7 +254,7 @@ Dim Shared S3(14), score(1, 14), schedGame(2), scSettings(0 To 2), statTotals(14
 Dim Shared teamAdj(1, 9), teamFouls(1), teamRat_GAME(0 To 1, 0 To 34), teamYears(1)
 Dim Shared timePlayed(2, 14), timeouts(1), totalFouls(1), threeFG(1, 14, 1)
 Dim Shared totRebounds(1), turnoverAdj(0 To 32), turnovers(1)
-Dim Shared W2(1, 14), W3(1, 14), X7(1), Z5(1), Z6(1)
+Dim Shared W2(1, 14), W3(1, 14), X7(1), teamRecWins(1), teamRecLoss(1)
 
 Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), M9!(1)
 Dim gameW0!(1, 14), gameW1!(1, 14)

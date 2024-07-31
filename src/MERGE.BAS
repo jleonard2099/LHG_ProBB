@@ -160,13 +160,13 @@ Sub MergeStats ()
                         Input #2, locIndicator_Road$(I)
                     Next I
 
-                    'For I = 1 To MAX_SCHED_STATS: 
-                    '    Input #2, gameAtt_Road&(I)
-                    'Next I
+                    For I = 1 To MAX_SCHED_STATS: 
+                        Input #2, gameAtt_Road&(I)
+                    Next I
 
-                    'For I = 1 To MAX_SCHED_STATS: 
-                    '    Input #2, gameSite_Road$(I)
-                    'Next I
+                    For I = 1 To MAX_SCHED_STATS: 
+                        Input #2, gameSite_Road$(I)
+                    Next I
 
                     Close #2
 
@@ -224,13 +224,13 @@ Sub MergeStats ()
                             Input #4, locIndicator$(I)
                         Next I
 
-                        'For I = 1 To MAX_SCHED_STATS: 
-                        '    Input #4, gameAttendance&(I)
-                        'Next I
+                        For I = 1 To MAX_SCHED_STATS: 
+                            Input #4, gameAttendance&(I)
+                        Next I
 
-                        'For I = 1 To MAX_SCHED_STATS: 
-                        '    Input #4, gameSite$(I)
-                        'Next I
+                        For I = 1 To MAX_SCHED_STATS: 
+                            Input #4, gameSite$(I)
+                        Next I
 
                         Close #4
 
@@ -355,8 +355,8 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
         oppName$(nbrGamesCurr) = oppName_Road$(K)
         oppScore(nbrGamesCurr) = oppScore_Road(K)
         locIndicator$(nbrGamesCurr) = locIndicator_Road$(K)
-        'gameAttendance&(nbrGamesCurr) = gameAtt_Road&(nbrGamesCurr)
-        'gameSite$(nbrGamesCurr) = gameSite_Road$(nbrGamesCurr)
+        gameAttendance&(nbrGamesCurr) = gameAtt_Road&(nbrGamesCurr)
+        gameSite$(nbrGamesCurr) = gameSite_Road$(nbrGamesCurr)
     Next
 
     Color 12
@@ -431,13 +431,13 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
         Write #2, locIndicator$(I)
     Next I
 
-    'For I = 1 To MAX_SCHED_STATS: 
-    '    Write #2, gameAttendance&(I)
-    'Next I
+    For I = 1 To MAX_SCHED_STATS: 
+        Write #2, gameAttendance&(I)
+    Next I
     
-    'For I = 1 To MAX_SCHED_STATS: 
-    '    Write #2, gameSite$(I)
-    'Next I
+    For I = 1 To MAX_SCHED_STATS: 
+        Write #2, gameSite$(I)
+    Next I
 
     Close #2
 

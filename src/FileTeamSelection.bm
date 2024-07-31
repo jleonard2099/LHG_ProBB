@@ -222,6 +222,8 @@ End Sub
 ' been included for.
 Sub ReadTeam (teamYear$, targetTeam$, teamIdx, dataOK)
 
+    Dim CK
+    
     Shared playerRatings!(), leagueRatings(), teamRatings()
 
     Shared playerNames$(), teamInfo$()
@@ -250,7 +252,7 @@ Sub ReadTeam (teamYear$, targetTeam$, teamIdx, dataOK)
 
     Next
 
-    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377), 4 As Q$(378)
 
     Get #1, teamIdx
 
@@ -265,6 +267,8 @@ Sub ReadTeam (teamYear$, targetTeam$, teamIdx, dataOK)
         leagueRatings(I) = CVI(Q$(I + 2))
     Next
 
+    CK = CVI(Q$(9))
+    
     For I = 0 To 34
         teamRatings(I) = CVI(Q$(I + 10))
     Next
@@ -288,11 +292,14 @@ Sub ReadTeam (teamYear$, targetTeam$, teamIdx, dataOK)
 
     'Arena
     teamInfo$(4) = RTrim$(Q$(377))
+    
+    'Attendance
+    teamAttendance& = CVL(Q$(378))
 
     'Close team file
     Close #1
 
-    If (CheckString%(teamInfo$(4)) = 1) Then
+    If (CheckString%(teamInfo$(4)) = 1 Or CK <> 999) Then
 
         dataOK = 0
 

@@ -62,7 +62,7 @@ End Sub
 'menu
 Sub DoTheInput (action%)
 
-    Shared playerRatings!(), leagueRatings(), teamRatings()
+    Shared playerRatings!(), teamRatings()
     Shared playerNames$(), teamInfo$()
 
     Dim P$(2)
@@ -241,7 +241,7 @@ End Sub
 'team's roster to the default printer
 Sub PrintRoster (printDest, destFile$, YN$)
 
-    Shared playerRatings!(), leagueRatings(), teamRatings()
+    Shared playerRatings!(), teamRatings()
     Shared playerNames$(), teamInfo$()
 
     Color 15, 0
@@ -594,7 +594,10 @@ End Sub
 'faster and easier to proceed through screens
 Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
 
+    Shared teamAttendance&
+
     Shared playerRatings!(), leagueRatings(), teamRatings()
+
     Shared playerNames$(), teamInfo$()
 
     Color 15, 0
@@ -709,7 +712,7 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
 
         Locate 12: Input "10. TEXT COLOR (0-15) "; teamRatings(33)
         Locate 13: Input "11. BACKGROUND COLOR (0-7) "; teamRatings(34)
-        Locate 18
+        Locate 19
         Print "TEAM APPEARANCE: ";
         Color teamRatings(33), teamRatings(34)
         Print RTrim$(teamInfo$(0)) + " " + RTrim$(teamInfo$(1))
@@ -718,6 +721,7 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
         Locate 14: Input "12. TEAM ABBREV (IE. BOS) "; teamInfo$(2)
         Locate 15: Input "13. COACH'S NAME "; teamInfo$(3)
         Locate 16: Input "14. ARENA NAME "; teamInfo$(4)
+        Locate 17: Input "15. ATTENDANCE "; teamAttendance&
 
     Else
 
@@ -740,8 +744,9 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
         Print "12. TEAM ABBREV (IE. BOS) "; teamInfo$(2)
         Print "13. COACH'S NAME  "; teamInfo$(3)
         Print "14. ARENA NAME  "; teamInfo$(4)
+        Print "15. ATTENDANCE  "; teamAttendance&
 
-        Locate 18
+        Locate 19
         Print "TEAM APPEARANCE: ";
         Color teamRatings(33), teamRatings(34)
         Print RTrim$(teamInfo$(0)) + " " + RTrim$(teamInfo$(1))
@@ -754,7 +759,7 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
         Do
             Locate 20, 1
             Input "# TO CHANGE (0 TO CONTINUE)"; B9
-        Loop Until B9 >= 0 And B9 <= 14
+        Loop Until B9 >= 0 And B9 <= 15
 
         If B9 <> 0 Then
 
@@ -818,7 +823,7 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
                     Locate 13, 1: Input "11. BACKGROUND COLOR (0-7) "; teamRatings(34)
                     Locate 13, 28: Print " "
 
-                    Locate 18
+                    Locate 19
                     Print "TEAM APPEARANCE: ";
                     Color teamRatings(33), teamRatings(34)
                     Print RTrim$(teamInfo$(0)) + " " + RTrim$(teamInfo$(1))
@@ -835,6 +840,10 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
                 Case 14
                     Locate 16, 1: Input "14. ARENA NAME "; teamInfo$(4)
                     Locate 16, 16: Print " "
+
+                Case 15
+                    Locate 17, 1: Input "15. ATTENDANCE "; teamAttendance&
+                    Locate 17, 16: Print " "
 
             End Select
 
@@ -1468,8 +1477,15 @@ End Sub
 'This subroutine saves the modifed team
 'data (from corresponding arrays) to an
 'appropriate spot in the select team file
+
+'action%
+'   1 = New Team
+'   2 = Edit Team
+
 Sub SaveTeamFile (yearNumber$, teamIdx, action%)
 
+    Shared teamAttendance&
+    
     Shared playerRatings!(), leagueRatings(), teamRatings()
     Shared playerNames$(), teamInfo$()
 
@@ -1479,7 +1495,9 @@ Sub SaveTeamFile (yearNumber$, teamIdx, action%)
 
     fileLength& = LOF(1)
 
-    If action% <> 2 Then teamIdx = fileLength& / TEAM_SIZE_BYTES + 1
+    If action% <> 2 Then 
+        teamIdx = (fileLength& / TEAM_SIZE_BYTES) + 1
+    End If
 
     Field #1, 15 As Q$(0), 15 As Q$(1)
 
@@ -1501,7 +1519,7 @@ Sub SaveTeamFile (yearNumber$, teamIdx, action%)
         Next
     Next
 
-    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377), 4 As Q$(378)
 
     LSet Q$(0) = teamInfo$(0)
     LSet Q$(1) = teamInfo$(1)
@@ -1530,6 +1548,7 @@ Sub SaveTeamFile (yearNumber$, teamIdx, action%)
     LSet Q$(375) = teamInfo$(2)
     LSet Q$(376) = teamInfo$(3)
     LSet Q$(377) = teamInfo$(4)
+    LSet Q$(378) = MKL$(teamAttendance&)
 
     Put #1, teamIdx
 

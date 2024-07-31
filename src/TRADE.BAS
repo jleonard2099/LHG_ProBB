@@ -315,6 +315,8 @@ End Sub
 'data from the trade to the team files.
 Sub SaveTrades ()
 
+    Shared tmAtt_TRADE&()
+    
     Shared tmRat_TRADE(), plyrRat_TRADE(), leagRat_TRADE()
     Shared tradeZZ(), tradeZZ1()
 
@@ -378,6 +380,7 @@ Sub SaveTrades ()
         LSet Q$(375) = tmInfo_TRADE$(J, 2)
         LSet Q$(376) = tmInfo_TRADE$(J, 3)
         LSet Q$(377) = tmInfo_TRADE$(J, 4)
+        LSet Q$(378) = MKL$(tmAtt_TRADE&(J))
 
         Put #1, teamIndexes(J)
 
@@ -705,6 +708,8 @@ End Sub
 'arrays for the selected team
 Sub ReadTradeTeam (teamYear$, teamIdx, tradeIdx, dataOK)
 
+    Shared tmAtt_TRADE&()
+
     Shared plyrRat_TRADE(), leagRat_TRADE(), tmRat_TRADE()
 
     Shared tmInfo_TRADE$(), players_TRADE$()
@@ -730,7 +735,7 @@ Sub ReadTradeTeam (teamYear$, teamIdx, tradeIdx, dataOK)
         Next
     Next
 
-    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377)
+    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377), 4 As Q$(378)
 
     Get #1, teamIdx
 
@@ -757,7 +762,8 @@ Sub ReadTradeTeam (teamYear$, teamIdx, tradeIdx, dataOK)
     tmInfo_TRADE$(tradeIdx, 2) = RTrim$(Q$(375))
     tmInfo_TRADE$(tradeIdx, 3) = RTrim$(Q$(376))
     tmInfo_TRADE$(tradeIdx, 4) = RTrim$(Q$(377))
-
+    tmAtt_TRADE&(tradeIdx) = CVL(Q$(378))
+    
     Close #1
 
     If (CheckString%(tmInfo_TRADE$(draftIdx, 4)) = 1) Then

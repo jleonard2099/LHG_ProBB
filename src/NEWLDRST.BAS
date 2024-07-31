@@ -72,37 +72,44 @@ Sub UpdateExpandedStandings (league$)
 
                 For I = 1 To XX%
 
-                    If teamScore(I) > oppScore(I) Then WW(YY) = WW(YY) + 1
-                    If teamScore(I) > oppScore(I) And locIndicator$(I) = "V" Then RWW(YY) = RWW(YY) + 1
-                    If teamScore(I) > oppScore(I) And locIndicator$(I) = "V1" Then RWW(YY) = RWW(YY) + 1
-                    If teamScore(I) > oppScore(I) And locIndicator$(I) = "V2" Then RWW(YY) = RWW(YY) + 1
-                    If teamScore(I) > oppScore(I) And locIndicator$(I) = "H" Then HWW(YY) = HWW(YY) + 1
-                    If teamScore(I) > oppScore(I) And locIndicator$(I) = "H1" Then HWW(YY) = HWW(YY) + 1
-                    If teamScore(I) > oppScore(I) And locIndicator$(I) = "H2" Then HWW(YY) = HWW(YY) + 1
+                    If teamScore(I) > oppScore(I) Then
+                        WW(YY) = WW(YY) + 1
+                        LWS(YY) = LWS(YY) + 1
+                        LLS(YY) = 0
+                        If locIndicator$(I) = "V" Then RWW(YY) = RWW(YY) + 1
+                        If locIndicator$(I) = "V1" Then RWW(YY) = RWW(YY) + 1
+                        If locIndicator$(I) = "V2" Then RWW(YY) = RWW(YY) + 1
+                        If locIndicator$(I) = "H" Then HWW(YY) = HWW(YY) + 1
+                        If locIndicator$(I) = "H1" Then HWW(YY) = HWW(YY) + 1
+                        If locIndicator$(I) = "H2" Then HWW(YY) = HWW(YY) + 1
+                    End If
 
-                    If oppScore(I) > teamScore(I) Then LL(YY) = LL(YY) + 1
-                    If oppScore(I) > teamScore(I) And locIndicator$(I) = "V" Then RLL(YY) = RLL(YY) + 1
-                    If oppScore(I) > teamScore(I) And locIndicator$(I) = "V1" Then RLL(YY) = RLL(YY) + 1
-                    If oppScore(I) > teamScore(I) And locIndicator$(I) = "V2" Then RLL(YY) = RLL(YY) + 1
-                    If oppScore(I) > teamScore(I) And locIndicator$(I) = "H" Then HLL(YY) = HLL(YY) + 1
-                    If oppScore(I) > teamScore(I) And locIndicator$(I) = "H1" Then HLL(YY) = HLL(YY) + 1
-                    If oppScore(I) > teamScore(I) And locIndicator$(I) = "H2" Then HLL(YY) = HLL(YY) + 1
+                    If teamScore(I) < oppScore(I) Then 
+                        LL(YY) = LL(YY) + 1
+                        LLS(YY) = LLS(YY) + 1
+                        LWS(YY) = 0
+                        If locIndicator$(I) = "V" Then RLL(YY) = RLL(YY) + 1
+                        If locIndicator$(I) = "V1" Then RLL(YY) = RLL(YY) + 1
+                        If locIndicator$(I) = "V2" Then RLL(YY) = RLL(YY) + 1
+                        If locIndicator$(I) = "H" Then HLL(YY) = HLL(YY) + 1
+                        If locIndicator$(I) = "H1" Then HLL(YY) = HLL(YY) + 1
+                        If locIndicator$(I) = "H2" Then HLL(YY) = HLL(YY) + 1
+                    End If
 
-                    If teamScore(I) > oppScore(I) Then LWS(YY) = LWS(YY) + 1: LLS(YY) = 0
                     If LWS(YY) > TWS(YY) Then TWS(YY) = LWS(YY)
-                    If teamScore(I) < oppScore(I) Then LLS(YY) = LLS(YY) + 1: LWS(YY) = 0
                     If LLS(YY) > TLS(YY) Then TLS(YY) = LLS(YY)
 
                 Next I
 
                 If XX% <= 10 Then
-                    LTL(YY) = LL(YY): LTW(YY) = WW(YY)
+                    LTL(YY) = LL(YY)
+                    LTW(YY) = WW(YY)
                 Else
                     M = XX% - 9
 
                     For J = M To XX%
                         If teamScore(J) > oppScore(J) Then LTW(YY) = LTW(YY) + 1
-                        If oppScore(J) > teamScore(J) Then LTL(YY) = LTL(YY) + 1
+                        If teamScore(J) < oppScore(J) Then LTL(YY) = LTL(YY) + 1
                     Next J
                 End If
 
@@ -256,10 +263,10 @@ Sub NewStandings_Report (printDest, destFile$, league$)
 
     MJ = 0
 
-	Color 15, 0
-	Cls
+    Color 15, 0
+    Cls
 
-	Open destFile$ For Output As #1
+    Open destFile$ For Output As #1
 
     For NT = 1 To 4
 
@@ -338,22 +345,22 @@ Sub NewStandings_Report (printDest, destFile$, league$)
 
     Next NT
 
-	If printDest = 1 Then
+    If printDest = 1 Then
 
-		Open destFile$ For Input As #2
+        Open destFile$ For Input As #2
 
-		Do While Not EOF(2)
-			Line Input #2, X$
-			LPrint X$
-		Loop
+        Do While Not EOF(2)
+            Line Input #2, X$
+            LPrint X$
+        Loop
 
-		Close #2
+        Close #2
 
-		LPrint Chr$(12)
+        LPrint Chr$(12)
 
-		Kill destFile$
+        Kill destFile$
 
-	End If
+    End If
 
 End Sub
 
