@@ -86,7 +86,7 @@ Dim statFileNames$(TEAMS_PER_LEAGUE)
 '----------------------------------------
 ' Used in DRAFT routines
 '----------------------------------------
-Dim tmAtt_DRAFT&(0 to 1)
+Dim tmAtt_DRAFT&(0 To 1)
 
 Dim leagRat_DRAFT%(0 To 1, 0 To 6), leagTot_DRAFT(0 To 14, 0 To 34)
 Dim plyrRat_DRAFT%(0 To 1, 0 To 14, 0 To 19), teamRat_DRAFT%(0 To 1, 0 To 34)
@@ -103,7 +103,7 @@ Dim tmYears_DRAFT$(0 To 1)
 Dim haveStats(1)
 
 ' ** Team File **
-Dim tmAtt_TRADE&(0 to 1)
+Dim tmAtt_TRADE&(0 To 1)
 
 Dim leagRat_TRADE(0 To 1, 0 To 6)
 Dim plyrRat_TRADE(0 To 1, 0 To 14, 0 To 19)
@@ -204,8 +204,8 @@ Dim indRecDesc$(50, 4), teamRecDesc$(125, 3)
 Dim BS%, NS%
 
 Dim scheduleAP%(1), scheduleNG%(MAX_SCHEDULE_GAMES, 18)
-
-ReDim scheduleH$(0 To 20), scheduleV$(0 To 20)
+'ReDim scheduleH$(0 To 20), scheduleV$(0 To 20)
+ReDim scheduleH$(MAX_SCHEDULE_GAMES), scheduleV$(MAX_SCHEDULE_GAMES)
 Dim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
 
 

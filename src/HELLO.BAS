@@ -11417,9 +11417,9 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx, dataOK)
             Wend
 
         End If
-        
+
         dataOK = 1
-        
+
     End If
 
 End Sub
@@ -13650,37 +13650,6 @@ Sub CheckRecords ()
     Close #3
 
 End Sub
-
-
-'----------------------------------------
-'         CheckString Subroutine
-'----------------------------------------
-'This function checks the given string
-'to determine if any characters are not
-'printable. If found, it will return a
-'value of 1. Otherwise, it will return 0.
-Function CheckString% (targetString$)
-
-    badString = 0
-    stringPosition% = 1
-
-    Do
-
-        test = Asc(Mid$(targetString$, stringPosition%, 1))
-
-        'If it is a non-printable character (corrupt data)
-        If test > 122 Or test < 32 Then
-            stringPosition% = 1
-            badString = 1
-        Else
-            stringPosition% = stringPosition% + 1
-        End If
-
-    Loop Until stringPosition% = Len(targetString$) Or badString = 1
-
-    CheckString% = badString
-
-End Function
 
 
 '----------------------------------------
