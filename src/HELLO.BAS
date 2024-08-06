@@ -858,7 +858,7 @@ Sub PROHOOP ()
             Close #7
 
             autoPlay = 1
-        
+
         End If
 
     Else
@@ -1160,7 +1160,7 @@ Sub PROHOOP ()
 
     'Determine subs / play parameters
     For P9 = 0 To 1
-    
+
         If playerMode = 1 And P9 = compTeam Or playerMode = 2 Then
             Call ComputerCoach
         Else
@@ -1427,11 +1427,12 @@ Sub PROHOOP ()
     'that is in college basketball
 
     'If there is time on the shot clock
-    If shotClock > 0 And sClockVal < 2 And shotClock < scSettings(sClockVal) Then
+    If sClockVal < 2 And shotClock > 0 And shotClock < scSettings(sClockVal) Then
 
         shotClock = shotClock - 5
 
     Else
+
         'Reset shot clock
         Select Case sClockVal
             Case 0: shotClock = 24
@@ -1486,7 +1487,7 @@ Sub PROHOOP ()
 
             Case 1, 4:
 
-                ' *** SHOT VS REG/TIGHT M-M ***
+                ' *** SHOT VS REG M-M, TIGHT M-M ***
                 Select Case RN0
 
                     Case 1, 2
@@ -1517,11 +1518,12 @@ Sub PROHOOP ()
 
                         Else
 
-                            If DecideShot%(passes) = 1 Then
+                            If DecideShot% = 1 Then
+                                'We're either shooting based on team pace
                                 'Shoot!
                                 GoTo 445
                             Else
-                                'No Shot / Difficult Shot
+                                'Difficult Shot
                                 GoTo 437
                             End If
 
@@ -1530,7 +1532,7 @@ Sub PROHOOP ()
                 End Select
 
             Case 2, 5
-                ' *** SHOT VS LOOSE/SAG M-M ***
+                ' *** SHOT VS LOOSE M-M, SAG M-M ***
                 Select Case RN0
 
                     Case 1
@@ -1561,7 +1563,7 @@ Sub PROHOOP ()
 
                         Else
 
-                            If DecideShot%(passes) = 1 Then
+                            If DecideShot% = 1 Then
                                 'Shoot!
                                 GoTo 445
                             End If
@@ -1602,7 +1604,7 @@ Sub PROHOOP ()
 
                         Else
 
-                            If DecideShot%(passes) = 1 Then
+                            If DecideShot% = 1 Then
                                 'Shoot!
                                 GoTo 445
                             End If
@@ -1644,12 +1646,16 @@ Sub PROHOOP ()
 
                 'Check for steal
                 If RN0 <= 40 + teamAdj(P, 1) + teamAdj(D, 2) + gameRatings!(D, lineupIdx(D, P9), 5) + teamAdj(P, 0) Then
+
                     GoTo 513
+
                 Else
-                    If DecideShot%(passes) = 1 Then
+
+                    If DecideShot% = 1 Then
                         'Shoot!
                         GoTo 445
                     End If
+
                 End If
 
         End Select
@@ -1701,7 +1707,7 @@ Sub PROHOOP ()
     '----- NOODLE -----
 
     445 '
-    If Not (quarter = 4 And gameClock! <= 120 Or quarter > 4) Then
+    If Not (quarter < 4 And gameClock! <= 120 Or quarter > 4) Then
 
         If gameRatings!(P, lineupIdx(P, ballCarrier), 3) - gameRatings!(P, lineupIdx(P, ballCarrier), 7) - gameRatings!(P, lineupIdx(P, ballCarrier), 11) - gameRatings!(P, lineupIdx(P, ballCarrier), 12) <= 0 Then
             'No Shot / Difficult Shot
@@ -1721,7 +1727,6 @@ Sub PROHOOP ()
             shotType = 4
             offStatus = 0
             threePtShotChance = threePtShotChance + Int(Rnd(1) * 7) - 3
-
             GoTo 520
         End If
 
@@ -1854,6 +1859,7 @@ Sub PROHOOP ()
 
     End If
 
+    'Increase steals (as well as team TOs)
     gameRatings!(D, lineupIdx(D, P9), 13) = gameRatings!(D, lineupIdx(D, P9), 13) + 1
     turnovers(P) = turnovers(P) + 1
 
@@ -1895,7 +1901,7 @@ Sub PROHOOP ()
     Call SELECTPBP(P, 1)
 
     pbpString$ = "BALL OUT OF BOUNDS TO " + gameTeams$(D)
-    Call SELECTPBP(P, 0)
+    Call SELECTPBP(D, 0)
     Call DELAY
 
     Call UPDATESCREEN
@@ -1949,13 +1955,13 @@ Sub PROHOOP ()
 
             Call PBP(P)
 
-            If shotClock <= 0 And sClockVal < 2 Then
+            If sClockVal < 2 And shotClock <= 0 Then
                 shotViolation = 1
                 pbpString$ = "SHOT CLOCK HAS EXPIRED!"
                 GoTo 515
             End If
 
-            If shotClock < 5 And sClockVal < 2 Then
+            If sClockVal < 2 And shotClock < 5 Then
                 pbpString$ = "SHOT CLOCK DOWN TO" + Str$(shotClock)
                 Call PBP(P)
             End If
@@ -2049,38 +2055,51 @@ Sub PROHOOP ()
                         End If
 
                         If activePosition$ = "F" Then
+
                             Select Case RN0
+
                                 Case 1 To 17:
                                     pbpString$ = teamGender$(P) + " DRIVES THE BASELINE"
+
                                 Case 18 To 34:
                                     pbpString$ = teamGender$(P) + " PENETRATES THE LANE"
+
                                 Case 35 To 50:
                                     pbpString$ = teamGender$(P) + " MOVES INSIDE"
+
                                 Case 51 To 67:
                                     pbpString$ = teamGender$(P) + " DRIVES THE LANE"
+
                                 Case 68 To 84:
                                     pbpString$ = teamGender$(P) + " MOVES INTO THE PAINT"
+
                                 Case 85 To 100:
                                     pbpString$ = teamGender$(P) + " DRIVES UNDERNEATH"
+
                             End Select
 
                             Call PBP(P)
                             pbpString$ = teamGender$(P) + "'S GOT A GOOD SHOT UNDERNEATH"
                             Call PBP(P)
+
                         End If
 
                         If activePosition$ = "G" Then
+
                             Select Case RN0
+
                                 Case 1 To 25:
                                     pbpString$ = teamGender$(P) + " DRIVES THE LANE"
                                     Call PBP(P)
                                     pbpString$ = teamGender$(P) + " HAS A GOOD SHOT CLOSE IN"
+
                                 Case 26 To 50:
                                     pbpString$ = teamGender$(P) + " DRIVES THROUGH THE KEY"
                                     Call PBP(P)
                                     pbpString$ = teamGender$(P) + "'S INTO THE LANE"
                                     Call PBP(P)
                                     pbpString$ = teamGender$(P) + " HAS A GOOD SHOT CLOSE IN"
+
                                 Case 51 To 75
                                     pbpString$ = teamGender$(P) + " DRIVES TO THE BASKET"
                                     Call PBP(P)
@@ -2088,9 +2107,11 @@ Sub PROHOOP ()
                             End Select
 
                             Call PBP(P)
+
                         Else
                             pbpString$ = teamGender$(P) + " DRIVES THROUGH AN OPENING"
                             Call PBP(P)
+
                         End If
 
                     End If
@@ -2163,18 +2184,10 @@ Sub PROHOOP ()
 
     Print
 
-
-    ' *** Determine value for playChoice ***
-    'playChoice
-    '0 = Pass
-    '1 = Shoot (2FGA)
-    '2 = Timeout
-    '3 = Foul
-    '4 = Shoot (3FGA)
-
-    'Computer Opponent or "Let Computer Shoot"
+    'Determine some late game scenarios
     scoreDiff = score(P, 0) - score(D, 0)
 
+    'Computer Opponent or "Let Computer Shoot"
     If playerMode <> 0 Or coachOpt = 1 Then
 
         'NOT (4th Q | OT, 4 mins left, Offense Ahead, Computer is Visitor / On Offense)
@@ -2219,14 +2232,21 @@ Sub PROHOOP ()
 
         End If
 
-        'Determine when to shoot
-        If gameClock! <= 1 Or shotClock <= 6 Then
+        'Determine when to shoot in late scenarios
+        If gameClock! <= 1 Or (sClockVal < 2 And shotClock <= 6) Or (sClockVal = 1 And passes >= 4) Or (sClockVal = 2 And passes >= 5) Then
+
+            'This is where ~1/2 of FGA's are decided
+            'Simply by waiting until the clock is low
             playChoice = 1
+
         Else
+
             If quarter >= 4 Then
 
                 If (gameClock! <= 8 And scoreDiff <= -3) Or (gameClock! <= 20 And scoreDiff <= -5) Then
+
                     playChoice = 1
+
                 Else
 
                     If shotType > 1 Then
@@ -2236,7 +2256,7 @@ Sub PROHOOP ()
                     End If
 
                 End If
- 
+
             End If
 
         End If
@@ -2321,6 +2341,16 @@ Sub PROHOOP ()
 
     End Select
 
+
+    ' *** Determine value for playChoice ***
+    'playChoice
+    '0 = Pass
+    '1 = Shoot (2FGA)
+    '2 = Timeout
+    '3 = Foul
+    '4 = Shoot (3FGA)
+
+
     'Foul was chosen | Computer on offense and last 4 minutes of game
     If Val(I$) = 3 And (playerMode = 0 Or playerMode = 1 And P = compTeam) And quarter >= 4 And gameClock! < 240 Then
         playChoice = 3
@@ -2383,6 +2413,7 @@ Sub PROHOOP ()
             shotRoll = 0
             Call Rolld100(foulRoll)
 
+            'Increase FGA
             gameRatings!(P, lineupIdx(P, ballCarrier), 7) = gameRatings!(P, lineupIdx(P, ballCarrier), 7) + 1
 
             scoreDiff = score(D, 0) - score(P, 0)
@@ -2397,6 +2428,7 @@ Sub PROHOOP ()
                     gameRatings!(P, lineupIdx(P, ballCarrier), 7) = gameRatings!(P, lineupIdx(P, ballCarrier), 7) - 1
 
                     Call ResetShotClock
+
                     gameClock! = gameClock! - 4
                     timeElapsed! = 4
 
@@ -2406,6 +2438,7 @@ Sub PROHOOP ()
                     Call FoulCalled(1)
 
                     'Free Throws
+                    'Call pbplog(2408)
                     GoTo 591
 
                 End If
@@ -2477,6 +2510,7 @@ Sub PROHOOP ()
                 score(P, quarter) = score(P, quarter) + 2
                 score(P, 0) = score(P, 0) + 2
 
+                'Inrease FGM
                 gameRatings!(P, lineupIdx(P, ballCarrier), 8) = gameRatings!(P, lineupIdx(P, ballCarrier), 8) + 1
 
                 Call UPDATESCREEN
@@ -2485,7 +2519,8 @@ Sub PROHOOP ()
 
                 '620
                 Call FreeThrow_Make1(missedLast)
- 
+                'Call pbplog(2487)
+
                 Call CheckGameClock
                 If gameClock! = 0 Then 170
 
@@ -2640,6 +2675,7 @@ Sub PROHOOP ()
 
                     Call UPDATESCREEN
 
+                    'Increase FGM
                     gameRatings!(P, lineupIdx(P, ballCarrier), 8) = gameRatings!(P, lineupIdx(P, ballCarrier), 8) + 1
 
                     562 '
@@ -2775,7 +2811,9 @@ Sub PROHOOP ()
 
                 Call AdjustPlayTime
 
-                shotClock = shotClock + M5
+                If sClockVal < 2 Then
+                    shotClock = shotClock + M5
+                End If
 
                 pbpString$ = "TIMEOUT " + gameTeams$(P):
                 Call SELECTPBP(P, 1)
@@ -2845,7 +2883,10 @@ Sub PROHOOP ()
             '--Call pbplog(2825)
             Call Rolld100(shotRoll)
 
+            'Increase 3FGA
             threeFG(P, lineupIdx(P, ballCarrier), 1) = threeFG(P, lineupIdx(P, ballCarrier), 1) + 1
+
+            'Increase FGA
             gameRatings!(P, lineupIdx(P, ballCarrier), 7) = gameRatings!(P, lineupIdx(P, ballCarrier), 7) + 1
 
             pbpType = 3
@@ -2859,8 +2900,10 @@ Sub PROHOOP ()
 
                 'FOUL!
 
-                'Remove the attempt from the record
+                'Remove FGA attempt from record
                 gameRatings!(P, lineupIdx(P, ballCarrier), 8) = gameRatings!(P, lineupIdx(P, ballCarrier), 8) - 1
+
+                'Remove 3FGA attempt from record
                 threeFG(P, lineupIdx(P, ballCarrier), 0) = threeFG(P, lineupIdx(P, ballCarrier), 0) - 1
 
                 Call ResetShotClock
@@ -2878,6 +2921,7 @@ Sub PROHOOP ()
                     'Would have been a miss
                     ' *** Take 3 free throws ***
                     Call FreeThrow_Three(missedLast)
+                    'Call pbplog(2881)
 
                 Else
 
@@ -2886,6 +2930,7 @@ Sub PROHOOP ()
                     score(P, 0) = score(P, 0) + 3
 
                     Call FreeThrow_One(missedLast)
+                    'Call pbplog(2890)
 
                 End If
 
@@ -2943,7 +2988,10 @@ Sub PROHOOP ()
                     score(P, quarter) = score(P, quarter) + 3
                     score(P, 0) = score(P, 0) + 3
 
+                    'Increase FGM
                     gameRatings!(P, lineupIdx(P, ballCarrier), 8) = gameRatings!(P, lineupIdx(P, ballCarrier), 8) + 1
+
+                    'Increase 3FGM
                     threeFG(P, lineupIdx(P, ballCarrier), 0) = threeFG(P, lineupIdx(P, ballCarrier), 0) + 1
 
                     Call CreditAssists
@@ -3009,6 +3057,7 @@ Sub PROHOOP ()
         Call PBP(P)
 
         'Take free throws
+        'Call pbplog(3015)
         GoTo 591
 
     Else
@@ -3019,6 +3068,7 @@ Sub PROHOOP ()
 
         'FT only in Bonus or Shooting
         If ftRulesOpt = 0 Then
+
             'Time to inbound the ball
             Call Substitutions
 
@@ -3058,6 +3108,8 @@ Sub PROHOOP ()
             End If
 
             Call FreeThrow_One(missedLast)
+            'Call pbplog(3063)
+
             LT = 0
 
             Call CheckGameClock
@@ -3119,6 +3171,7 @@ Sub PROHOOP ()
         Call PBP(P)
 
         'Take free throws
+        'Call pbplog(3128)
         GoTo 591
 
     Else
@@ -3163,6 +3216,10 @@ Sub PROHOOP ()
 
     If missedLast = 1 Then
 
+        GoTo 650
+
+    Else
+
         Call ChangePossession
 
         pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
@@ -3177,10 +3234,6 @@ Sub PROHOOP ()
         Call PRESSGUARD
 
         GoTo 300
-
-    Else
-
-        GoTo 650
 
     End If
 
@@ -3214,12 +3267,10 @@ Sub PROHOOP ()
                 foulOnReb = 1
                 GoTo 770
 
-                'Case rebFoulChance + 1 To 19:
             Case rebFoulChance + 1 To 42:
                 Call ReboundOffense
                 GoTo 760
 
-                'Case 20 To 100:
             Case 43 To 100:
                 Call ReboundDefense
                 GoTo 800
@@ -3282,7 +3333,7 @@ Sub PROHOOP ()
             foulOnReb = 1
             GoTo 770
 
-        Case rebFoulChance + 1 To 19
+        Case rebFoulChance + 1 To rebFoulChance + 12
             'Ball knocked out-of-bounds
             If d100% > 35 Then
 
@@ -3316,7 +3367,7 @@ Sub PROHOOP ()
 
             End If
 
-        Case 20 To 22
+        Case rebFoulChance + 13 To rebFoulChance + 15
 
             If offStatus = 99 Then
 
@@ -3326,8 +3377,13 @@ Sub PROHOOP ()
 
                 Call ReboundOffense
 
+                'Increase FGA
                 gameRatings!(P, lineupIdx(P, ballCarrier), 7) = gameRatings!(P, lineupIdx(P, ballCarrier), 7) + 1
+
+                'Increase FGM
                 gameRatings!(P, lineupIdx(P, ballCarrier), 8) = gameRatings!(P, lineupIdx(P, ballCarrier), 8) + 1
+
+                'Increase rebounds
                 gameRatings!(P, lineupIdx(P, ballCarrier), 11) = gameRatings!(P, lineupIdx(P, ballCarrier), 11) + 1
                 totRebounds(P) = totRebounds(P) + 1
 
@@ -3362,7 +3418,7 @@ Sub PROHOOP ()
 
             End If
 
-        Case 23:
+        Case rebFoulChance + 16:
 
             If playChoice <> 4 Then
 
@@ -3380,7 +3436,7 @@ Sub PROHOOP ()
 
             End If
             
-        Case 24 To 100
+        Case rebFoulChance + 17 To 100:
             770 '
             'Calculate rebound contributions
             '-- RB is a total of "rebound ratings" for both teams
@@ -3463,6 +3519,7 @@ Sub PROHOOP ()
     ' *** OFFENSIVE REBOUND ***
 
     760 '
+    'Increase rebounds
     gameRatings!(P, lineupIdx(P, ballCarrier), 11) = gameRatings!(P, lineupIdx(P, ballCarrier), 11) + 1
     gameRatings!(P, lineupIdx(P, ballCarrier), 24) = gameRatings!(P, lineupIdx(P, ballCarrier), 24) + 1
     totRebounds(P) = totRebounds(P) + 1
@@ -4208,8 +4265,9 @@ End Sub
 Sub MAKEPBP (pbpType)
 
     'PLAY BY PLAY
-    'If (autoPlay = 0 Or pbpDelay! > 0) Then
-    If autoPlay = 1 Then
+    '--> only set this if we need to track where code is going
+    'If autoPlay = 1 Then
+    If (autoPlay = 0 Or pbpDelay! > 0) Then
 
         Call Rolld100(RN0)
 
@@ -6393,19 +6451,22 @@ Sub PlayStyle ()
 
                     I$ = GetKeyPress$
                     Call LetterToNumber(I$, J)
-                    
+
                     If UCase$(I$) = "O" Or UCase$(I$) = "P" Then
                         J = 15
                     End If
 
                     If J = 15 Then
+
                         If UCase$(I$) = "P" Then
                             fullCtOpt(P9) = 1 - fullCtOpt(P9)
                         End If
+
                         If UCase$(I$) = "F" Then
                             defStyles(P9) = defStyles(P9) + 1
                             If defStyles(P9) > 5 Then defStyles(P9) = 1
                         End If
+
                         If UCase$(I$) = "O" Then
                             offStyles(P9) = offStyles(P9) + 1
                             If offStyles(P9) > 2 Then offStyles(P9) = 0
@@ -8153,7 +8214,7 @@ Sub SETUPRATINGS (teamStyle)
                 'If Player FGA > 0
                 If plyrRat_GAME(I, I1, 2) > 0 Then
                     'Calculate 3FGA frequency
-                    gameRatings!(I, I1, 19) = Int(plyrRat_GAME(I, I1, 13) / plyrRat_GAME(I, I1, 2) * 100 + .5)
+                    gameRatings!(I, I1, 19) = Int((plyrRat_GAME(I, I1, 13) / plyrRat_GAME(I, I1, 2) * 100) + .5)
                 End If
 
                 'If Player 3FGA > 0
@@ -8246,7 +8307,13 @@ Sub SETUPRATINGS (teamStyle)
 
     X3! = 0
 
-    rebFoulChance = 11
+    If sClockVal = 2 Then
+        'Fouls on rebound were more common
+        'in the no-shot-clock era
+        rebFoulChance = 25
+    Else
+        rebFoulChance = 7 '11
+    End If
 
 End Sub
 
@@ -8258,36 +8325,42 @@ End Sub
 'of taking a shot. It is based on the
 'need to pace the game for the 24-sec
 'shot clock.
-Function DecideShot% (passNbr)
+Function DecideShot%
 
     doShoot = 0
 
     Call Rolld100(RN0)
 
-    Select Case passNbr
+    Select Case sClockVal
 
-        Case 1
-            '16
-            If RN0 <= 8 + (JY - 89) Then
-                'doShoot = 1
-            End If
-
-        Case 2
-            '32
-            If RN0 <= 40 + (JY - 89) Then
+        Case 0
+            '24-sec shot clock
+            'Average - 80% chance
+            If RN0 <= 48 + Int(((JY - 40) * .8) + .5) Then
                 doShoot = 1
             End If
 
-        Case 3, 4
-            doShoot = 1
+        Case 1
+            '30 sec shot clock
+            'Average - __% chance
+            If RN0 <= 48 + Int(((JY - 65) * .8) + .5) Then
+                doShoot = 1
+            End If
 
-        Case Is > 4
-            '32
-            If RN0 <= 65 + (JY - 89) Then
+        Case 2
+            'No shot clock
+            'Average - 90% chance
+            If RN0 <= 48 + Int(((JY - 50) * .8) + .5) Then
                 doShoot = 1
             End If
 
     End Select
+
+    '65 = 70% chance: ~68 FGA
+    '55 = 80% chance; ~71 FGA
+    '50 = 85% chance: ~72 FGA
+    test = 48 + Int(((JY - 65) * .8) + .5)
+    Call pbplog(8360)
 
     DecideShot% = doShoot
 
@@ -8530,12 +8603,15 @@ End Sub
 'in how to handle it's strategy.
 Sub ComputerStrategy ()
 
-    If P9 = 0 Then I6 = 1
-    If P9 = 1 Then I6 = 0
+    If P9 = 0 Then
+        defTeam = 1
+    Else
+        defTeam = 0
+    End If
 
-    If score(P9, 0) - score(I6, 0) < 0 Then
+    If score(P9, 0) - score(defTeam, 0) < 0 Then
 
-        I5 = score(I6, 0) - score(P9, 0)
+        scoreDef = score(defTeam, 0) - score(P9, 0)
 
         If quarter <= 2 Then
             defStyles(P9) = 1
@@ -8544,16 +8620,20 @@ Sub ComputerStrategy ()
 
         If quarter = 3 Then
 
-            Select Case I5
+            Select Case scoreDef
+
                 Case Is < 10
                     defStyles(P9) = 1
                     fullCtOpt(P9) = 0
+
                 Case 10 To 20
                     defStyles(P9) = 1
                     fullCtOpt(P9) = 1
+
                 Case Is > 20
                     defStyles(P9) = 1
                     fullCtOpt(P9) = 0
+
             End Select
 
         End If
@@ -8562,17 +8642,21 @@ Sub ComputerStrategy ()
 
             If gameClock! >= 120 Then
 
-                Select Case I5
+                Select Case scoreDef
 
                     Case 1 To 10
                         defStyles(P9) = 1
                         fullCtOpt(P9) = 1
 
-                    Case 11 To 20
+                    Case 11 To 12
+                        defStyles(P9) = 5
+                        fullCtOpt(P9) = 0
+
+                    Case 13 To 22
                         defStyles(P9) = 3
                         fullCtOpt(P9) = 1
 
-                    Case Is > 20
+                    Case Is > 22
                         defStyles(P9) = 1
                         fullCtOpt(P9) = 0
 
@@ -8580,22 +8664,26 @@ Sub ComputerStrategy ()
 
             Else
 
-                Select Case I5
-                
+                Select Case scoreDef
+
                     Case 1 To 4
                         defStyles(P9) = 1
                         fullCtOpt(P9) = 1
-                
-                    Case 5 To 10
+
+                    Case 5
+                        defStyles(P9) = 5
+                        fullCtOpt(P9) = 0
+
+                    Case 6 To 12
                         defStyles(P9) = 3
                         fullCtOpt(P9) = 1
 
-                    Case Is > 10
+                    Case Is > 12
                         defStyles(P9) = 1
                         fullCtOpt(P9) = 0
 
                 End Select
-                    
+
             End If
 
         End If
@@ -8611,47 +8699,83 @@ Sub ComputerStrategy ()
         fullCtOpt(P9) = 0
 
         If quarter <= 4 Then
+
             Select Case RN0
-                Case Is <= 20
+
+                Case Is <= 17
                     defStyles(P9) = 2
-                Case 21 To 40
+
+                Case 18 To 34
                     defStyles(P9) = 4
-                Case Is >= 41
+
+                Case 35 To 40
+                    defStyles(P9) = 5
+
+                Case Is >= 40
                     defStyles(P9) = 1
+
             End Select
+
         End If
 
         If quarter = 3 Then
+
             Select Case RN0
-                Case Is <= 25
+
+                Case Is <= 22
                     defStyles(P9) = 2
-                Case 26 To 49
+
+                Case 23 To 43
                     defStyles(P9) = 4
-                Case Is >= 50
+
+                Case 44 To 48
+                    defStyles(P9) = 5
+
+                Case Is >= 49
                     defStyles(P9) = 1
+
             End Select
+
         End If
 
         If quarter = 4 Then
+
             Select Case RN0
-                Case Is < 35
+
+                Case Is < 32
                     defStyles(P9) = 4
-                Case 35 To 69
+
+                Case 33 To 63
                     defStyles(P9) = 2
-                Case Is >= 70
+
+                Case 64 To 68
+                    defStyles(P9) = 5
+
+                Case Is >= 69
                     defStyles(P9) = 1
+
             End Select
+
         End If
 
         If quarter > 4 Then
+
             Select Case RN0
-                Case Is < 25
+
+                Case Is < 22
                     defStyles(P9) = 4
-                Case 25 To 49
+
+                Case 23 To 43
                     defStyles(P9) = 2
-                Case Is >= 50
+
+                Case 44 To 48
+                    defStyles(P9) = 5
+
+                Case Is >= 49
                     defStyles(P9) = 1
+
             End Select
+
         End If
 
     End If
@@ -8664,13 +8788,15 @@ Sub ComputerStrategy ()
 
     If quarter >= 3 And Int(Rnd(1) * 2) = 1 Then
 
-        If score(P9, 0) - score(I6, 0) < 0 Then
+        If score(P9, 0) - score(defTeam, 0) < 0 Then
             offStyles(P9) = 1
         Else
             offStyles(P9) = 2
         End If
 
     End If
+
+    'Call pbplog(8680)
 
 End Sub
 
@@ -8768,9 +8894,17 @@ Sub ComputerCoach ()
 
                     M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
 
-                    If lineupIdx(P9, I2) > -1 Then M7 = gameRatings!(P9, lineupIdx(P9, I2), 3) - gameRatings!(P9, lineupIdx(P9, I2), 7) - gameRatings!(P9, lineupIdx(P9, I2), 11) - gameRatings!(P9, lineupIdx(P9, I2), 12)
-                    If quarter = 4 And gameClock! < 120 Or quarter > 4 Then M6 = gameRatings!(P9, I1, 3)
-                    If (quarter = 4 And gameClock! < 120 Or quarter > 4) And lineupIdx(P9, I2) > -1 Then M7 = gameRatings!(P9, lineupIdx(P9, I2), 3)
+                    If lineupIdx(P9, I2) > -1 Then
+                        M7 = gameRatings!(P9, lineupIdx(P9, I2), 3) - gameRatings!(P9, lineupIdx(P9, I2), 7) - gameRatings!(P9, lineupIdx(P9, I2), 11) - gameRatings!(P9, lineupIdx(P9, I2), 12)
+                    End If
+
+                    If quarter = 4 And gameClock! < 120 Or quarter > 4 Then
+                        M6 = gameRatings!(P9, I1, 3)
+                    End If
+
+                    If (quarter = 4 And gameClock! < 120 Or quarter > 4) And lineupIdx(P9, I2) > -1 Then
+                        M7 = gameRatings!(P9, lineupIdx(P9, I2), 3)
+                    End If
 
                     If Not (I2 = 2 And (lineupIdx(P9, 0) = I1 Or lineupIdx(P9, 1) = I1)) Then
                         If Not (I2 = 3 And (lineupIdx(P9, 0) = I1 Or lineupIdx(P9, 1) = I1 Or lineupIdx(P9, 2) = I1)) Then
@@ -8817,9 +8951,18 @@ Sub ComputerCoach ()
             If Not (players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or quarter = 1 And gameRatings!(P9, I1, 12) >= 2 + FS% Or quarter = 2 And gameRatings!(P9, I1, 12) >= 4 + FS% Or quarter = 3 And gameRatings!(P9, I1, 12) >= 5 Or quarter = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5) Then
 
                 M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
-                If lineupIdx(P9, 4) > -1 Then M7 = gameRatings!(P9, lineupIdx(P9, 4), 3) - gameRatings!(P9, lineupIdx(P9, 4), 7) - gameRatings!(P9, lineupIdx(P9, 4), 11) - gameRatings!(P9, lineupIdx(P9, 4), 12)
-                If quarter = 4 And gameClock! < 120 Or quarter > 4 Then M6 = gameRatings!(P9, I1, 3)
-                If (quarter = 4 And gameClock! < 120 Or quarter > 4) And lineupIdx(P9, I2) > -1 Then M7 = gameRatings!(P9, lineupIdx(P9, I2), 3)
+                
+                If lineupIdx(P9, 4) > -1 Then
+                    M7 = gameRatings!(P9, lineupIdx(P9, 4), 3) - gameRatings!(P9, lineupIdx(P9, 4), 7) - gameRatings!(P9, lineupIdx(P9, 4), 11) - gameRatings!(P9, lineupIdx(P9, 4), 12)
+                End If
+
+                If quarter = 4 And gameClock! < 120 Or quarter > 4 Then
+                    M6 = gameRatings!(P9, I1, 3)
+                End If
+
+                If (quarter = 4 And gameClock! < 120 Or quarter > 4) And lineupIdx(P9, I2) > -1 Then
+                    M7 = gameRatings!(P9, lineupIdx(P9, I2), 3)
+                End If
 
                 If Not (lineupIdx(P9, 0) = I1 Or lineupIdx(P9, 1) = I1 Or lineupIdx(P9, 2) = I1 Or lineupIdx(P9, 3) = I1) Then
                     If lineupIdx(P9, 4) = -1 Or M6 >= M7 Then lineupIdx(P9, 4) = I1
@@ -8859,14 +9002,18 @@ Sub ComputerCoach ()
             For I2 = 0 To 4
                 8795 '
                 I = I - 1
+
                 If I < 0 Then
                     Call ADJFOUL
                     GoTo 8790
                 End If
+
                 If plyrRat_GAME(P9, I, 18) <> 0 Or players_GAME$(P9, I, 0) = "XXX" Or gameRatings!(P9, I, 12) >= 6 Then
                     GoTo 8795
                 End If
+
                 lineupIdx(P9, I2) = I
+
             Next I2
 
             Exit For
@@ -8988,11 +9135,25 @@ Sub LINEUPS ()
             'CN
             J = (gameRatings!(P9, R1, 3)) - gameRatings!(P9, R1, 7) - gameRatings!(P9, R1, 11) - gameRatings!(P9, R1, 12)
 
-            If quarter <= 3 And J / gameRatings!(P9, R1, 3) < .25 Then Locate , 61: Print " T";
-            If J / gameRatings!(P9, R1, 3) < .5 And quarter <= 2 Then Locate , 61: Print " T";
-            If quarter = 4 And gameClock! > 200 And J / gameRatings!(P9, R1, 3) <= gameClock! / 2880 Then Locate , 61: Print " T";
-            If gameRatings!(P9, R1, 3) - gameRatings!(P9, R1, 7) - gameRatings!(P9, R1, 11) - gameRatings!(P9, R1, 12) <= 0 Then Locate , 61: Print "EX";
-            If quarter > 4 Or quarter = 4 And gameClock! <= 120 And gameClock! <> 0 Then Locate , 61: Print "  ";
+            If quarter <= 3 And J / gameRatings!(P9, R1, 3) < .25 Then
+                Locate , 61: Print " T";
+            End If
+
+            If J / gameRatings!(P9, R1, 3) < .5 And quarter <= 2 Then
+                Locate , 61: Print " T";
+            End If
+
+            If quarter = 4 And gameClock! > 200 And J / gameRatings!(P9, R1, 3) <= gameClock! / 2880 Then
+                Locate , 61: Print " T";
+            End If
+
+            If gameRatings!(P9, R1, 3) - gameRatings!(P9, R1, 7) - gameRatings!(P9, R1, 11) - gameRatings!(P9, R1, 12) <= 0 Then
+                Locate , 61: Print "EX";
+            End If
+
+            If quarter > 4 Or quarter = 4 And gameClock! <= 120 And gameClock! <> 0 Then
+                Locate , 61: Print "  ";
+            End If
 
             'PT F  FC  PPG
             Locate , 63: Print Using "### # ### ##.#"; gameRatings!(P9, R1, 8) * 2 + gameRatings!(P9, R1, 10) + threeFG(P9, R1, 0); gameRatings!(P9, R1, 12); gameRatings!(P9, R1, 17); (plyrRat_GAME(P9, R1, 3) * 2 + plyrRat_GAME(P9, R1, 5) + plyrRat_GAME(P9, R1, 14)) / plyrRat_GAME(P9, R1, 0)
@@ -9039,9 +9200,11 @@ Sub SHOTPERCENT (useAssist)
         RN1 = Int(.17 * miscAdj(P, 4) + .5)
 
         If RN1 >= RN0 Then
+
             shotChance = shotChance + assistShotBoost
             shotType = 2
             offStatus = 0
+
         Else
 
             ' *** CHECK PENETRATION SHOT ***
@@ -9281,9 +9444,11 @@ Sub ResetShotClock ()
             Case 0:
                 possTime! = possTime! + (24 - shotClock)
                 shotClock = 24
+
             Case 1:
                 possTime! = possTime! + (30 - shotClock)
                 shotClock = 30
+
         End Select
 
         LS = 4
@@ -9384,7 +9549,7 @@ Sub FreeThrow_Three (missedLastFT)
             Print gameTeams$(P)
         End If
 
-        pbpString$ = "1 FT: " + players_GAME$(P, lineupIdx(P, ballCarrier), 0) + Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " %"
+        pbpString$ = "3 FT: " + players_GAME$(P, lineupIdx(P, ballCarrier), 0) + Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " %"
         Call SELECTPBP(P, 0)
 
     End If
@@ -9867,7 +10032,7 @@ Sub UPDATESCREEN ()
 
     'Shot Clock
     'If no shot clock, or shot clock expired
-    If sClockVal = 2 Or gameClock! < 24 And shotClock >= gameClock! And sClockVal = 0 Or gameClock! < 30 And shotClock >= gameClock! And sClockVal = 1 Or quarter > 4 And gameClock! = 300 Then
+    If sClockVal = 2 Or (sClockVal < 2 And gameClock! < scSettings(sClockVal) And shotClock >= gameClock!) Or (quarter > 4 And gameClock! = 300) Then
         Locate 6, 37: Print " :  "
     Else
         Locate 6, 37: Print Using " :##"; shotClock
@@ -11077,9 +11242,10 @@ Sub pbplog (lineNumber)
     'Print #11, "Called from line # "; lineNumber
     'Print #11, gameTeams$(0); " vs "; gameTeams$(1)
     'Print #11, currGame; ","; ballCarrier; ","; lineNumber
+    'Print #11, lineNumber
+    Print #11, lineNumber, test
+    'Print #11, defStyles(P9)
     'Print #11, lineNumber, passes
-    Print #11, possTime!
-    'Print #11, shotClock
     'Print #11,
 
 End Sub

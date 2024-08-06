@@ -433,7 +433,7 @@ Sub TeamComparisons_Screen (teamName$)
         Print "   0.0";
     End If
     If teamRatings(7) > 0 Then 
-        Print Using " .###"; (teamRatings(8) / teamRatings(7));
+        Print Using "  .###"; (teamRatings(8) / teamRatings(7));
     End If
 
     'Rebounds / Assists / Fouls / Steals / TOs

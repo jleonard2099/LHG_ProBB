@@ -274,16 +274,26 @@ Sub PrintRoster (printDest, destFile$, YN$)
             Print #1, Using "## #### #### #### "; playerRatings!(I, 0); playerRatings!(I, 1); playerRatings!(I, 2); playerRatings!(I, 3);
 
             'FG PCT
-            If playerRatings!(I, 2) = playerRatings!(I, 3) And playerRatings!(I, 3) <> 0 Then Print #1, "1.000";
-            If playerRatings!(I, 2) <> playerRatings!(I, 3) Then fgPCT! = playerRatings!(I, 3) / playerRatings!(I, 2): Print #1, Using ".###"; fgPCT!;
+            If playerRatings!(I, 2) = playerRatings!(I, 3) And playerRatings!(I, 3) <> 0 Then 
+                Print #1, "1.000";
+            End If
+            If playerRatings!(I, 2) <> playerRatings!(I, 3) Then 
+                fgPCT! = playerRatings!(I, 3) / playerRatings!(I, 2)
+                Print #1, Using ".###"; fgPCT!;
+            End If
 
             Print #1, Tab(42);
             'FTA, FTM
             Print #1, Using "### ### "; playerRatings!(I, 4); playerRatings!(I, 5);
 
             'FT PCT
-            If playerRatings!(I, 4) = playerRatings!(I, 5) And playerRatings!(I, 5) <> 0 Then Print #1, "1.000 ";
-            If playerRatings!(I, 4) <> playerRatings!(I, 5) Then ftPCT! = playerRatings!(I, 5) / playerRatings!(I, 4): Print #1, Using ".### "; ftPCT!;
+            If playerRatings!(I, 4) = playerRatings!(I, 5) And playerRatings!(I, 5) <> 0 Then 
+                Print #1, "1.000 ";
+            End If
+            If playerRatings!(I, 4) <> playerRatings!(I, 5) Then 
+                ftPCT! = playerRatings!(I, 5) / playerRatings!(I, 4)
+                Print #1, Using ".### "; ftPCT!;
+            End If
 
             Print #1, Tab(55);
             'Rebounds / AST / Fouls / STL / BLK / PTS / AVG HI
