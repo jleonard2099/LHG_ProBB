@@ -817,7 +817,7 @@ Sub PROHOOP ()
         currGame = schedGame(0) + schedGame(2)
 
         'Open "pbplog" + Str$(currGame) For Append As #11
-        Open "pbplog" For Append As #11
+        'Open "pbplog" For Append As #11
 
         If Not _FileExists(diskPaths$(3) + scheduleFile$) Then
 
@@ -863,7 +863,7 @@ Sub PROHOOP ()
 
     Else
 
-        Open "pbplog" For Append As #11
+        'Open "pbplog" For Append As #11
 
     End If
 
@@ -1256,14 +1256,29 @@ Sub PROHOOP ()
     quarter = quarter + 1
 
     ' *** ADJUST TIMEOUTS ***
-    If quarter >= 4 Then
+    For PG = 0 To 1
 
-        For PG = 0 To 1
-            If timeouts(PG) > 4 Then timeouts(PG) = 4
-            If quarter > 4 Then timeouts(PG) = 3
-        Next
+        Select Case quarter
 
-    End If
+            Case 4
+                '# 4th quarter timeouts
+                If teamYears(0) < 2000 And teamYears(1) < 2000 Then
+                    timeouts(PG) = 3
+                Else
+                    timeouts(PG) = 4
+                End If
+
+            Case Is > 4
+                '# Overtime timeouts
+                If (teamYears(0) >= 1985 And teamYears(1) >= 1985) Or (teamYears(0) <= 2000 And teamYears(1) <= 2000) Then
+                    'Between 1984-85 And 1999-2000
+                    timeouts(PG) = 3
+                Else
+                    timeouts(PG) = 2
+                End If
+        End Select
+
+    Next
 
     offStatus = 0
     XS = 1
@@ -1721,8 +1736,16 @@ Sub PROHOOP ()
     If threePtOpt = 1 Then
 
         threePtShotChance = gameRatings!(P, lineupIdx(P, ballCarrier), 20) + teamAdj(D, 4)
+        If teamYears(0) < 2013 And teamYears(1) < 2013 Then
+            'Without subtracting 3 from the likelihood, players always shoot
+            '25% more often than they should. Given that FGAs are accurate, it's
+            'not clear to me why this happens.
+            threeFGChance = gameRatings!(P, lineupIdx(P, ballCarrier), 19) - 3
+        Else
+            threeFGChance = gameRatings!(P, lineupIdx(P, ballCarrier), 19)
+        End If
 
-        If d100% <= gameRatings!(P, lineupIdx(P, ballCarrier), 19) Then
+        If d100% <= threeFGChance Then
             'Take 3FGA within player's frequency
             shotType = 4
             offStatus = 0
@@ -2380,6 +2403,7 @@ Sub PROHOOP ()
 
     'Shoot and in 3 pt range
     If (playChoice = 1 Or playChoice = 4) And shotType = 4 Then
+        '-- This is where the vast majority of 3-pointers are decided --
         If threePtOpt = 1 Then
             playChoice = 4
         End If
@@ -3435,7 +3459,7 @@ Sub PROHOOP ()
                 End If
 
             End If
-            
+
         Case rebFoulChance + 17 To 100:
             770 '
             'Calculate rebound contributions
@@ -3725,7 +3749,7 @@ Sub InitVar ()
     Shared teamIndicator$()
 
     possTime! = 0
-    
+
     For I = 0 To 1
         For I1 = 0 To 4
             lineupIdx(I, I1) = -1
@@ -3759,8 +3783,13 @@ Sub InitVar ()
     scSettings(2) = 0
 
     ' # of timeouts
-    timeouts(1) = 7
-    timeouts(0) = 7
+    If teamYears(0) < 2000 And teamYears(1) < 2000 Then
+        timeouts(1) = 6
+        timeouts(0) = 6
+    Else
+        timeouts(1) = 7
+        timeouts(0) = 7
+    End If
 
     OY%(1) = 2
     OY%(2) = -2
@@ -4179,13 +4208,13 @@ Sub PBP (teamIdx)
 
             Case 6
                 F1$ = pbpString$
-                        
+
             Case 7
                 G1$ = pbpString$
-                
+
             Case 8
                 H1$ = pbpString$
-                
+
             Case Is > 8
                 A1$ = B1$
                 B1$ = C1$
@@ -8312,7 +8341,18 @@ Sub SETUPRATINGS (teamStyle)
         'in the no-shot-clock era
         rebFoulChance = 25
     Else
-        rebFoulChance = 7 '11
+
+        If teamYears(0) < 1993 And teamYears(1) < 1993 Then
+            rebFoulChance = 7
+        Else
+            'Personal fouls trend higher in 1993 and on
+            'The game got more physical as the jump shot
+            'became less common
+            '--- we should consider normalizing this
+            '--- for when years don't match?
+            rebFoulChance = 16
+        End If
+
     End If
 
 End Sub
@@ -8327,7 +8367,10 @@ End Sub
 'shot clock.
 Function DecideShot%
 
-    doShoot = 0
+    'In general, adjusting paceFactor
+    'can work as follows:
+    'value +10 yields -5% chance
+    'this can yield 1-2 FGA/G less
 
     Call Rolld100(RN0)
 
@@ -8335,34 +8378,33 @@ Function DecideShot%
 
         Case 0
             '24-sec shot clock
-            'Average - 80% chance
-            If RN0 <= 48 + Int(((JY - 40) * .8) + .5) Then
-                doShoot = 1
+            If teamYears(P) >= 1993 Then
+                'Average - 70% chance
+                paceFactor = 60
+            Else
+                'Average - 80% chance
+                paceFactor = 40
             End If
 
         Case 1
             '30 sec shot clock
-            'Average - __% chance
-            If RN0 <= 48 + Int(((JY - 65) * .8) + .5) Then
-                doShoot = 1
-            End If
+            'Average - 75% chance
+            paceFactor = 65
 
         Case 2
             'No shot clock
             'Average - 90% chance
-            If RN0 <= 48 + Int(((JY - 50) * .8) + .5) Then
-                doShoot = 1
-            End If
+            'Higher chance of a good shot is needed
+            'because teams are passing more often
+            paceFactor = 50
 
     End Select
 
-    '65 = 70% chance: ~68 FGA
-    '55 = 80% chance; ~71 FGA
-    '50 = 85% chance: ~72 FGA
-    test = 48 + Int(((JY - 65) * .8) + .5)
-    Call pbplog(8360)
-
-    DecideShot% = doShoot
+    If RN0 <= 48 + Int(((JY - paceFactor) * .8) + .5) Then
+        DecideShot% = 1
+    Else
+        DecideShot% = 0
+    End If
 
 End Function
 
@@ -9244,7 +9286,9 @@ Sub SHOTPERCENT (useAssist)
 
                 End If
 
+                '-- This sometimes throws an error
                 shotChance = shotChance + GF%(rndTeam, I2)
+
                 offStatus = 0
 
             End If
@@ -11635,7 +11679,7 @@ Sub EndOfGame
 
     End If
 
-    Close #11
+    'Close #11
 
     If UCase$(I$) = "Y" Or (autoPlay = 1 And endAllGames <> 1) Then
 
