@@ -225,7 +225,7 @@ End Sub
 ' been included for.
 Sub ReadTeam (teamYear$, targetTeam$, teamIdx, dataOK)
 
-    Dim CK
+    Shared CK
 
     Shared playerRatings!(), leagueRatings(), teamRatings()
 

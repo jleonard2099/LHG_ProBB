@@ -86,7 +86,7 @@ Sub COMPARE ()
 
                 Open diskPaths$(1) + statFile$ + "S" For Input As #2
 
-                Input #2, Y
+                Input #2, numberGames
 
                 For J = 1 To MAX_SCHED_STATS: 
                     Input #2, teamScore(J)
@@ -111,7 +111,7 @@ Sub COMPARE ()
                 roadWins = 0
                 roadLosses = 0
 
-                For I = 1 To Y
+                For I = 1 To numberGames
                     If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then 
                         homeLosses = homeLosses + 1
                     End If

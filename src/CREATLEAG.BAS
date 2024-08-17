@@ -10,7 +10,7 @@ Sub CREATLEAG ()
 
     Shared memberIdx()
 
-    Shared memberTeams$(), memberYears$()
+    Shared memberName$(), memberYears$()
 
     ReDim menuChoices$(1 To 3)
 
@@ -47,7 +47,7 @@ Sub CREATLEAG ()
 
             For X = 1 To TEAMS_PER_LEAGUE
                 memberIdx(X) = -1
-                memberTeams$(X) = "XXX"
+                memberName$(X) = "XXX"
                 memberYears$(X) = "XXX"
             Next
 
@@ -192,7 +192,7 @@ Sub ReviewEditLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
 
     Shared memberIdx()
 
-    Shared memberTeams$(), memberYears$()
+    Shared memberName$(), memberYears$()
 
     If _FileExists(diskPaths$(2) + leagueFile$ + ".TMI") Then
 
@@ -201,7 +201,7 @@ Sub ReviewEditLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
         Input #1, league$, div1$, div2$, div3$, div4$
 
         For X = 1 To TEAMS_PER_LEAGUE
-            Input #1, memberTeams$(X)
+            Input #1, memberName$(X)
             Input #1, memberIdx(X)
             Input #1, memberYears$(X)
         Next
@@ -228,19 +228,19 @@ Sub ReviewEditLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
 
             Color 2
             Print Using "## "; I;
-            Color 15: Print Left$(memberTeams$(I), 17);
+            Color 15: Print Left$(memberName$(I), 17);
 
             Locate , 21
             Color 2: Print Using "## "; I + 10;
-            Color 15: Print Left$(memberTeams$(I + 10), 17);
+            Color 15: Print Left$(memberName$(I + 10), 17);
 
             Locate , 41
             Color 2: Print Using "## "; I + 20;
-            Color 15: Print Left$(memberTeams$(I + 20), 17);
+            Color 15: Print Left$(memberName$(I + 20), 17);
 
             Locate , 61
             Color 2: Print Using "## "; I + 30;
-            Color 15: Print Left$(memberTeams$(I + 30), 17)
+            Color 15: Print Left$(memberName$(I + 30), 17)
 
         Next I
 
@@ -270,10 +270,10 @@ Sub ReviewEditLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
             If choice = 1 Then
                 'Add team
                 teamNbr = 0
-                Call ChooseTeam(memberYears$(B), NTMS, memberIdx(B), memberTeams$(B))
+                Call ChooseTeam(memberYears$(B), NTMS, memberIdx(B), memberName$(B))
             Else
                 'Remove team
-                memberTeams$(B) = "XXX"
+                memberName$(B) = "XXX"
             End If
 
         End If 'Done checking if ready to save
@@ -295,7 +295,7 @@ Sub SaveLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
 
     Shared memberIdx()
 
-    Shared memberTeams$(), memberYears$(), statFileNames$()
+    Shared memberName$(), memberYears$(), statFiles$()
 
     Open diskPaths$(2) + leagueFile$  + ".TMI" For Output As #1
 
@@ -306,7 +306,7 @@ Sub SaveLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
     Print #1, div4$
 
     For X = 1 To TEAMS_PER_LEAGUE
-        Print #1, memberTeams$(X)
+        Print #1, memberName$(X)
         Print #1, memberIdx(X)
         Print #1, memberYears$(X)
     Next
@@ -315,10 +315,10 @@ Sub SaveLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
 
     For X = 1 To TEAMS_PER_LEAGUE
 
-        If memberTeams$(X) = "XXX" Then
-            statFileNames$(X) = Chr$(42)
+        If memberName$(X) = "XXX" Then
+            statFiles$(X) = Chr$(42)
         Else
-            statFileNames$(X) = nameStatFile$(memberTeams$(X))
+            statFiles$(X) = nameStatFile$(memberName$(X))
         End If
 
     Next X
@@ -328,7 +328,7 @@ Sub SaveLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
     Write #2, league$, div1$, div2$, div3$, div4$
 
     For X = 1 To TEAMS_PER_LEAGUE
-        Write #2, statFileNames$(X)
+        Write #2, statFiles$(X)
     Next
 
     Close #2

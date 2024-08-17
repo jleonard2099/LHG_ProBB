@@ -50,7 +50,7 @@ End Sub
 Sub LoadStatsForTrade (tradeIdx)
 
     Shared tmRat_TRADE(), plyrRat_TRADE(), leagRat_TRADE()
-    Shared tradeZZ(), tradeZZ1()
+    Shared tradeZZ0(), tradeZZ1()
 
     Shared tradeB1!(), tradeW0!(), tradeW1!()
 
@@ -104,7 +104,7 @@ Sub LoadStatsForTrade (tradeIdx)
             Next I
 
             For L = 0 To 15:
-                Input #1, tradeZZ(tradeIdx, L)
+                Input #1, tradeZZ0(tradeIdx, L)
             Next L
 
             For L = 0 To 15:
@@ -141,7 +141,7 @@ End Sub
 Sub ContinueTrade ()
 
     Shared tmRat_TRADE(), plyrRat_TRADE(), leagRat_TRADE()
-    Shared tradeZZ(), tradeZZ1()
+    Shared tradeZZ0(), tradeZZ1()
 
     Shared tradeB1!(), tradeW0!(), tradeW1!()
     Shared haveStats()
@@ -318,7 +318,7 @@ Sub SaveTrades ()
     Shared tmAtt_TRADE&()
     
     Shared tmRat_TRADE(), plyrRat_TRADE(), leagRat_TRADE()
-    Shared tradeZZ(), tradeZZ1()
+    Shared tradeZZ0(), tradeZZ1()
 
     Shared tradeB1!(), haveStats(), teamIndexes()
     Shared tradeW0!(), tradeW1!()
@@ -412,7 +412,7 @@ Sub SaveTrades ()
             Next I
 
             For L = 0 To 15:
-                Print #2, tradeZZ(J, L)
+                Print #2, tradeZZ0(J, L)
             Next L
 
             For L = 0 To 15:

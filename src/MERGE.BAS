@@ -330,8 +330,6 @@ End Sub
 'newly aggregated results.
 Sub DoTheMerge (pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
 
-    Shared nbrGamesCurr, nbrGamesRoad
-
     Shared gameAttendance&(), gameAtt_Road&()
 
     Shared oppScore(), oppScore_Road() 

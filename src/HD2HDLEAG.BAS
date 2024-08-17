@@ -17,7 +17,7 @@ Sub HD2HDLEAG ()
     Shared totHomeScoreTeam!(), totHomeScoreOpp!(), totAwayScoreTeam!(), totAwayScoreOpp!()
 
     Shared oppName$(), locIndicator$()
-    Shared memberTeams$(), memberYears$()
+    Shared memberName$(), memberYears$()
 
     Shared div1Name$, div2Name$, div3Name$, div4Name$
 
@@ -115,9 +115,9 @@ Sub HD2HDLEAG ()
                 Input #2, div4Name$
 
                 For X = 1 To TEAMS_PER_LEAGUE
-                    Input #2, memberTeams$(X)
+                    Input #2, memberName$(X)
                     Input #2, memberIdx(X)
-                    Input #2, memberTeams$(X)
+                    Input #2, memberName$(X)
                 Next
 
                 Close #2
@@ -133,17 +133,17 @@ Sub HD2HDLEAG ()
                 'Calculations for 1st league
                 For K = 1 To TEAMS_PER_LEAGUE
 
-                    If memberTeams$(K) <> "XXX" Then
+                    If memberName$(K) <> "XXX" Then
 
                         For I = 1 To nbrGames
 
-                            If Left$(locIndicator$(I), 1) = "V" And oppName$(I) = memberTeams$(K) Then
+                            If Left$(locIndicator$(I), 1) = "V" And oppName$(I) = memberName$(K) Then
 
                                 If teamScore(I) > oppScore(I) Then
                                     awayWins!(K) = awayWins!(K) + 1
                                 End If
 
-                                If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "V" And oppName$(I) = memberTeams$(K) Then
+                                If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "V" And oppName$(I) = memberName$(K) Then
                                     awayLosses(K) = awayLosses(K) + 1
                                 End If
 
@@ -152,7 +152,7 @@ Sub HD2HDLEAG ()
 
                             End If
 
-                            If (Left$(locIndicator$(I), 1) = "H" Or Left$(locIndicator$(I), 1) = "N") And oppName$(I) = memberTeams$(K) Then
+                            If (Left$(locIndicator$(I), 1) = "H" Or Left$(locIndicator$(I), 1) = "N") And oppName$(I) = memberName$(K) Then
 
                                 If teamScore(I) > oppScore(I) Then
                                     homeWins!(K) = homeWins!(K) + 1
@@ -250,7 +250,7 @@ Sub Hd2HdPro_Report (teamName$, printDest)
     Shared totAwayLosses!(), totAwayWin!(), totHomeLosses!(), totHomeWin!()
     Shared totHomeScoreTeam!(), totHomeScoreOpp!(), totAwayScoreTeam!(), totAwayScoreOpp!()
 
-    Shared memberTeams$()
+    Shared memberName$()
 
     Shared div1Name$, div2Name$, div3Name$, div4Name$
 
@@ -296,9 +296,9 @@ Sub Hd2HdPro_Report (teamName$, printDest)
 
         For K = DD To EE
 
-            If memberTeams$(K) <> "XXX" And memberTeams$(K) <> teamName$ Then
+            If memberName$(K) <> "XXX" And memberName$(K) <> teamName$ Then
 
-                Print #1, memberTeams$(K);
+                Print #1, memberName$(K);
                 Print #1, Tab(22); Using "#"; homeWins!(K);
                 Print #1, Tab(26); Using "#"; homeLosses!(K);
 
@@ -697,7 +697,7 @@ Sub Hd2HdPro_Screen (teamName$)
     Shared totAwayLosses!(), totAwayWin!(), totHomeLosses!(), totHomeWin!()
     Shared totHomeScoreTeam!(), totHomeScoreOpp!(), totAwayScoreTeam!(), totAwayScoreOpp!()
 
-    Shared memberTeams$()
+    Shared memberName$()
 
     Shared div1Name$, div2Name$, div3Name$, div4Name$
 
@@ -740,10 +740,10 @@ Sub Hd2HdPro_Screen (teamName$)
 
         For K = DD To EE
 
-            If memberTeams$(K) <> "XXX" And memberTeams$(K) <> teamName$ And memberTeams$(K) <> "*" Then
+            If memberName$(K) <> "XXX" And memberName$(K) <> teamName$ And memberName$(K) <> "*" Then
 
                 Color 15
-                Locate , 1: Print Left$(memberTeams$(K), 13);
+                Locate , 1: Print Left$(memberName$(K), 13);
 
                 Color 7
                 Locate , 15: Print Using "#"; homeWins!(K);

@@ -1,3 +1,4 @@
+
 $Debug
 $Color:32
 
@@ -152,6 +153,13 @@ For I = 1 To 80
 Next
 
 
+'Defaults for Event Settings
+Data 5,250,120,135,60,30,12,9,6,5,6,0,0
+For X = 1 To 13:
+    Read eventSettings(X)
+Next
+
+
 Data NAME,G,MIN,MIN/G,FGM,FGA,FG PCT,3FGM,3FGA,3FG PCT,FTM,FTA,FT PCT
 Data NAME,PTS,PTG/G,HI,OFF REB,DEF REB,TOT REB,REB/G,PF,AST,BLK,STL,TO
 For I = 0 To 25:
@@ -218,8 +226,9 @@ For I = 0 To 1
     Next I1
 Next I
 
-'This is used to somehow adjust
-'the shot chance for a penetration shot
+'This is used to adjust the chance
+'for a shot based on the defender's
+'penetration rating
 Data 0,0,-1,-2,-3,-4,-5,-5,-6
 Data -3,-3,-4,-5,-6,-6,-7,-8,-9
 Data -6,-7,-8,-8,-8,-9,-10,-11,-12
@@ -817,7 +826,7 @@ Sub PROHOOP ()
         currGame = schedGame(0) + schedGame(2)
 
         'Open "pbplog" + Str$(currGame) For Append As #11
-        'Open "pbplog" For Append As #11
+        Open "pbplog" For Append As #11
 
         If Not _FileExists(diskPaths$(3) + scheduleFile$) Then
 
@@ -863,7 +872,7 @@ Sub PROHOOP ()
 
     Else
 
-        'Open "pbplog" For Append As #11
+        Open "pbplog" For Append As #11
 
     End If
 
@@ -1714,8 +1723,7 @@ Sub PROHOOP ()
 
     End If
 
-    'No check for TIEUP like CBB
-    'This also meanas no check for assigning shotType = 3 (PENETRATE)
+    '-- Missing code for TIEUP
 
     GoTo 520
 
@@ -1735,7 +1743,11 @@ Sub PROHOOP ()
 
     If threePtOpt = 1 Then
 
-        threePtShotChance = gameRatings!(P, lineupIdx(P, ballCarrier), 20) + teamAdj(D, 4)
+        'Shot chance based on user's 3FG make %
+        'For reasons I haven't determined, without the +15
+        'the shot percentages are consistently low by .100
+        threePtShotChance = gameRatings!(P, lineupIdx(P, ballCarrier), 20) + teamAdj(D, 4) + 15
+
         If teamYears(0) < 2013 And teamYears(1) < 2013 Then
             'Without subtracting 3 from the likelihood, players always shoot
             '25% more often than they should. Given that FGAs are accurate, it's
@@ -1766,7 +1778,7 @@ Sub PROHOOP ()
                 'Difficult shot - reduced chance to hit
                 shotType = 4
                 offStatus = 0
-                threePtShotChance = .4 * threePtShotChance
+                threePtShotChance = .33 * threePtShotChance
                 GoTo 520
             End If
 
@@ -1787,6 +1799,7 @@ Sub PROHOOP ()
     End If
 
     ' *** CHECKING FOR ASSISTED SHOT ***
+    'playChoice = 1
     Call SHOTPERCENT(1)
 
     GoTo 520
@@ -1949,7 +1962,13 @@ Sub PROHOOP ()
     Call CheckGameClock
     If gameClock! = 0 Then 170
 
-    If (autoPlay = 0 Or pbpDelay! > 0) Then
+    If shotType = 4 And threePtShotChance <= 0 Then
+        threePtShotChance = 3
+    End If
+
+    '--> only set this if we need to track where code is going
+    If autoPlay = 1 Then
+        'If (autoPlay = 0 Or pbpDelay! > 0) Then
 
         If shotChance > 70 And fastBreak = 1 And passes = 1 Then
 
@@ -2336,6 +2355,7 @@ Sub PROHOOP ()
     532 '
     I$ = InKey$
 
+
     Select Case UCase$(I$)
 
         Case "B"
@@ -2373,7 +2393,6 @@ Sub PROHOOP ()
     '3 = Foul
     '4 = Shoot (3FGA)
 
-
     'Foul was chosen | Computer on offense and last 4 minutes of game
     If Val(I$) = 3 And (playerMode = 0 Or playerMode = 1 And P = compTeam) And quarter >= 4 And gameClock! < 240 Then
         playChoice = 3
@@ -2386,9 +2405,11 @@ Sub PROHOOP ()
 
     P3 = playChoice
 
-    If (playChoice = 2 And timeouts(P) = 0) Or (playChoice = 3 And quarter < 4) Or (playChoice = 3 And quarter = 4 And gameClock! > 240) Or (playChoice = 3 And playerMode = 1 And D = compTeam) Then
-        'Take shot with no timeous | Timeout with more than 4 mins left | Timeout before Q4 | Timeout with PC on Defense
-        GoTo 530
+    If playerMode < 2 Then
+        If (playChoice = 2 And timeouts(P) = 0) Or (playChoice = 3 And quarter < 4) Or (playChoice = 3 And quarter = 4 And gameClock! > 240) Or (playerMode = 1 And playChoice = 3 And D = compTeam) Then
+            'Take shot with no timeouts | Take timeout with more than 4 mins left | Take timeout before Q4 | Take timeout with PC on Defense
+            GoTo 530
+        End If
     End If
 
     ' *** Decide if 3FGA ***
@@ -2429,7 +2450,6 @@ Sub PROHOOP ()
         Case 2
             537 '
             ' *** SHOOT !!! ***
-            '--Call pbplog(2357)
             pbpType = 3
             Call MAKEPBP(pbpType)
             Call PBP(P)
@@ -2462,7 +2482,6 @@ Sub PROHOOP ()
                     Call FoulCalled(1)
 
                     'Free Throws
-                    'Call pbplog(2408)
                     GoTo 591
 
                 End If
@@ -2486,7 +2505,7 @@ Sub PROHOOP ()
 
                 If willDunk = 1 Then
 
-                    'Call pbplog(2505)
+                    'Call pbplog(2508)
 
                     If pbpOpt = 1 Then
                         Call WINDEX
@@ -2543,7 +2562,6 @@ Sub PROHOOP ()
 
                 '620
                 Call FreeThrow_Make1(missedLast)
-                'Call pbplog(2487)
 
                 Call CheckGameClock
                 If gameClock! = 0 Then 170
@@ -2583,6 +2601,7 @@ Sub PROHOOP ()
                     'Shot Good
                     If willDunk = 1 Then
 
+                        'Call pbplog(2604)
 
                         If pbpOpt = 1 Then
                             Call WINDEX
@@ -2904,7 +2923,6 @@ Sub PROHOOP ()
         Case 5
             ' *** 3FG ATTEMPT ***
             359 '
-            '--Call pbplog(2825)
             Call Rolld100(shotRoll)
 
             'Increase 3FGA
@@ -2945,7 +2963,6 @@ Sub PROHOOP ()
                     'Would have been a miss
                     ' *** Take 3 free throws ***
                     Call FreeThrow_Three(missedLast)
-                    'Call pbplog(2881)
 
                 Else
 
@@ -2954,7 +2971,6 @@ Sub PROHOOP ()
                     score(P, 0) = score(P, 0) + 3
 
                     Call FreeThrow_One(missedLast)
-                    'Call pbplog(2890)
 
                 End If
 
@@ -3081,7 +3097,6 @@ Sub PROHOOP ()
         Call PBP(P)
 
         'Take free throws
-        'Call pbplog(3015)
         GoTo 591
 
     Else
@@ -3132,7 +3147,6 @@ Sub PROHOOP ()
             End If
 
             Call FreeThrow_One(missedLast)
-            'Call pbplog(3063)
 
             LT = 0
 
@@ -3195,7 +3209,6 @@ Sub PROHOOP ()
         Call PBP(P)
 
         'Take free throws
-        'Call pbplog(3128)
         GoTo 591
 
     Else
@@ -3604,19 +3617,28 @@ Sub PROHOOP ()
 
         Else
 
-            RN0 = Int(Rnd(1) * 10) + 1
+            'RN0 = Int(Rnd(1) * 130) + 1
             prevBall$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0)
 
-            'No RB TIEUP !?!?
+            '-- If RN0 = 32 Then
+
+            '    GoTo RBTIEUP
+
+            '-- Else
+
+            rebShotRoll = Int(Rnd(1) * 10) + 1
 
             Call SHOTPERCENT(0)
 
-            If RN0 <= 8 Then
+            If rebShotRoll <= 8 Then
                 shotType = 9
+                '-- playChoice = 1
                 GoTo 537
             Else
                 GoTo 520
             End If
+
+            '-- End If
 
         End If
 
@@ -3737,6 +3759,7 @@ Sub InitVar ()
 
     Shared avgAttendance&()
 
+    Shared eventSettings()
     Shared teamScore(), oppScore()
 
     Shared gameW0!(), gameW1!()
@@ -3791,8 +3814,8 @@ Sub InitVar ()
         timeouts(0) = 7
     End If
 
-    OY%(1) = 2
-    OY%(2) = -2
+    penetrationOffAdj(1) = 2
+    penetrationOffAdj(2) = -2
 
     OX%(1) = 10
     OX%(2) = -10
@@ -3825,13 +3848,14 @@ Sub InitVar ()
     shotType = 0
     statSpecial = 0
     T1 = 0
+    threePtShotChance = 0
     TMT = 0
     willDunk = 0
 
     gameClock! = 720
 
     OX% = 0
-    OY% = 0
+    penetrationOffAdj = 0
 
     timeElapsed! = 0
 
@@ -4295,8 +4319,8 @@ Sub MAKEPBP (pbpType)
 
     'PLAY BY PLAY
     '--> only set this if we need to track where code is going
-    'If autoPlay = 1 Then
-    If (autoPlay = 0 Or pbpDelay! > 0) Then
+    If autoPlay = 1 Then
+        'If (autoPlay = 0 Or pbpDelay! > 0) Then
 
         Call Rolld100(RN0)
 
@@ -4388,6 +4412,8 @@ Sub MAKEPBP (pbpType)
 
                 End Select
 
+                Call pbplog(4415)
+
             Case 3
                 'SHOOTS...
                 pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0)
@@ -4414,6 +4440,8 @@ Sub MAKEPBP (pbpType)
 
                     Case 2
                         'INSIDE W/ASSIST
+                        checkForDunk = 0
+
                         Select Case RN0
 
                             Case 1 To 10
@@ -4421,50 +4449,17 @@ Sub MAKEPBP (pbpType)
                                 Call PBP(P)
                                 pbpString$ = "TAKES IT UP"
 
-                                Call Rolld100(RN1)
-                                If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 32 Then
-                                    willDunk = 1
-                                End If
-                                If (ballCarrier = 2 Or ballCarrier = 3) And RN1 <= 2 Then
-                                    willDunk = 1
-                                End If
-                                If ballCarrier = 4 And RN0 <= 33 Then
-                                    willDunk = 1
-                                End If
-
-                                'If willDunk = 1 Then Call pbplog(4217)
+                                checkForDunk = 1
 
                             Case 11 To 20
                                 pbpString$ = teamGender$(P) + " TAKES IT TO THE HOLE"
 
-                                Call Rolld100(RN1)
-                                If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 32 Then
-                                    willDunk = 1
-                                End If
-                                If (ballCarrier = 2 Or ballCarrier = 3) And RN1 <= 2 Then
-                                    willDunk = 1
-                                End If
-                                If ballCarrier = 4 And RN0 <= 33 Then
-                                    willDunk = 1
-                                End If
-
-                                'If willDunk = 1 Then Call pbplog(4233)
+                                checkForDunk = 1
 
                             Case 21 To 30
                                 pbpString$ = teamGender$(P) + " TAKES IT TO THE HOOP"
 
-                                Call Rolld100(RN1)
-                                If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 32 Then
-                                    willDunk = 1
-                                End If
-                                If (ballCarrier = 2 Or ballCarrier = 3) And RN1 <= 2 Then
-                                    willDunk = 1
-                                End If
-                                If ballCarrier = 4 And RN1 <= 33 Then
-                                    willDunk = 1
-                                End If
-
-                                'If willDunk = 1 Then Call pbplog(4249)
+                                checkForDunk = 1
 
                             Case 31 To 40
                                 pbpString$ = teamGender$(P) + " LEANS IN AND SHOOTS"
@@ -4475,18 +4470,7 @@ Sub MAKEPBP (pbpType)
                             Case 51 To 60
                                 pbpString$ = teamGender$(P) + " TAKES IT TO THE BOARD"
 
-                                Call Rolld100(RN0)
-                                If (ballCarrier = 0 Or ballCarrier = 1) And RN0 <= 32 Then
-                                    willDunk = 1
-                                End If
-                                If (ballCarrier = 2 Or ballCarrier = 3) And RN0 <= 2 Then
-                                    willDunk = 1
-                                End If
-                                If ballCarrier = 4 And RN0 <= 33 Then
-                                    willDunk = 1
-                                End If
-
-                                'If willDunk = 1 Then Call pbplog(4271)
+                                checkForDunk = 1
 
                             Case 61 To 70
                                 pbpString$ = teamGender$(P) + " PUTS IT OFF THE GLASS"
@@ -4501,42 +4485,60 @@ Sub MAKEPBP (pbpType)
                             Case 81 To 90
                                 pbpString$ = teamGender$(P) + " TAKES IT UP STRONG"
 
-                                Call Rolld100(RN0)
-                                If (ballCarrier = 0 Or ballCarrier = 1) And RN0 <= 32 Then
-                                    willDunk = 1
-                                End If
-                                If (ballCarrier = 2 Or ballCarrier = 3) And RN0 <= 2 Then
-                                    willDunk = 1
-                                End If
-                                If ballCarrier = 4 And RN0 <= 33 Then
-                                    willDunk = 1
-                                End If
-
-                                'If willDunk = 1 Then Call pbplog(4297)
+                                checkForDunk = 1
 
                             Case 91 To 95
                                 pbpString$ = teamGender$(P) + " POWERS IT UP"
 
-                                Call Rolld100(RN0)
-                                If (ballCarrier = 0 Or ballCarrier = 1) And RN0 <= 32 Then
-                                    willDunk = 1
-                                End If
-                                If (ballCarrier = 2 Or ballCarrier = 3) And RN0 <= 2 Then
-                                    willDunk = 1
-                                End If
-                                If ballCarrier = 4 And RN0 <= 33 Then
-                                    willDunk = 1
-                                End If
-
-                                'If willDunk = 1 Then Call pbplog(4313)
+                                checkForDunk = 1
 
                             Case 96 To 100
                                 pbpString$ = teamGender$(P) + " LAYS IT UP"
 
                         End Select
 
+                        If checkForDunk = 1 Then
+
+                            Call Rolld100(RN1)
+                            'Call pbplog(4501)
+
+                            If teamYears(0) <= 2000 And teamYears(1) <= 2000 Then
+
+                                If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 6 Then
+                                    willDunk = 1
+                                End If
+
+                                If (ballCarrier = 2 Or ballCarrier = 3) And RN1 <= 99 Then
+                                    willDunk = 1
+                                End If
+
+                                If ballCarrier = 4 And RN1 <= 6 Then
+                                    willDunk = 1
+                                End If
+
+                            Else
+
+                                If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 11 Then
+                                    willDunk = 1
+                                End If
+
+                                If (ballCarrier = 2 Or ballCarrier = 3) And RN1 <= 26 Then
+                                    willDunk = 1
+                                End If
+
+                                If ballCarrier = 4 And RN1 <= 17 Then
+                                    willDunk = 1
+                                End If
+
+                            End If
+
+                            'If willDunk = 1 Then Call pbplog(4533)
+
+                        End If
+
                     Case 3
                         'PENETRATE
+                        checkForDunk = 0
 
                         If activePosition$ = "G" Then
 
@@ -4552,11 +4554,8 @@ Sub MAKEPBP (pbpType)
                                     pbpString$ = teamGender$(P) + " TAKES IT UP UNDER THE BASKET"
 
                                     Call Rolld100(RN1)
-                                    If RN1 <= 2 Then
-                                        willDunk = 1
-                                    End If
 
-                                    'If willDunk = 1 Then Call pbplog(4341)
+                                    checkForDunk = 1
 
                                 Case 51 To 52:
                                     pbpString$ = teamGender$(P) + " MAKES A NICE SPIN MOVE"
@@ -4564,12 +4563,7 @@ Sub MAKEPBP (pbpType)
                                     Call PBP(P)
                                     pbpString$ = "AND SOARS TO THE HOOP"
 
-                                    Call Rolld100(RN1)
-                                    If RN1 <= 2 Then
-                                        willDunk = 1
-                                    End If
-
-                                    'If willDunk = 1 Then Call pbplog(4354)
+                                    checkForDunk = 1
 
                                 Case 53 To 54:
                                     pbpString$ = teamGender$(P) + " BLOWS PAST TWO DEFENDERS"
@@ -4580,12 +4574,7 @@ Sub MAKEPBP (pbpType)
                                     Call PBP(P)
                                     pbpString$ = "SPINS RIGHT AND GOES UP"
 
-                                    Call Rolld100(RN1)
-                                    If RN1 <= 2 Then
-                                        willDunk = 1
-                                    End If
-
-                                    'If willDunk = 1 Then Call pbplog(4370)
+                                    checkForDunk = 1
 
                                 Case 57:
                                     pbpString$ = teamGender$(P) + " SLICES IN THE HOLE"
@@ -4628,6 +4617,31 @@ Sub MAKEPBP (pbpType)
 
                             End Select
 
+
+                            If checkForDunk = 1 Then
+
+                                Call Rolld100(RN1)
+                                'Call pbplog(4622)
+
+                                If teamYears(0) <= 2000 And teamYears(1) <= 2000 Then
+
+                                    If RN1 <= 23 Then
+                                        willDunk = 1
+                                    End If
+
+                                Else
+
+                                    If RN1 <= 34 Then
+                                        willDunk = 1
+                                    End If
+
+                                End If
+
+                                'If willDunk = 1 Then Call pbplog(4638)
+
+                            End If
+
+
                         End If
 
                         If activePosition$ = "F" Then
@@ -4636,36 +4650,22 @@ Sub MAKEPBP (pbpType)
 
                                 Case 1 To 16:
                                     pbpString$ = teamGender$(P) + " TAKES IT UP"
-                                    Call Rolld100(RN1)
-                                    If RN1 <= 5 Then
-                                        willDunk = 1
-                                    End If
 
-                                    'If willDunk = 1 Then Call pbplog(4426)
+                                    checkForDunk = 1
 
                                 Case 17 To 32:
                                     pbpString$ = teamGender$(P) + " SPINS FREE"
                                     Call PBP(P)
                                     pbpString$ = "SHOOTS"
 
-                                    Call Rolld100(RN1)
-                                    If RN1 <= 4 Then
-                                        willDunk = 1
-                                    End If
-
-                                    'If willDunk = 1 Then Call pbplog(4438)
+                                    checkForDunk = 1
 
                                 Case 33 To 48:
                                     pbpString$ = teamGender$(P) + " GETS LOOSE IN THE PAINT"
                                     Call PBP(P)
                                     pbpString$ = "TAKES IT UP"
 
-                                    Call Rolld100(RN1)
-                                    If RN0 <= 5 Then
-                                        willDunk = 1
-                                    End If
-
-                                    'If willDunk = 1 Then Call pbplog(4450)
+                                    checkForDunk = 1
 
                                 Case 49 To 64:
                                     pbpString$ = teamGender$(P) + " PUTS IT UP"
@@ -4676,10 +4676,7 @@ Sub MAKEPBP (pbpType)
                                     Call PBP(P)
                                     pbpString$ = "TAKES IT UP"
 
-                                    Call Rolld100(RN1)
-                                    If RN1 <= 4 Then
-                                        willDunk = 1
-                                    End If
+                                    checkForDunk = 1
 
                                 Case 68 To 69:
                                     pbpString$ = teamGender$(P) + " MAKES A NICE SPIN MOVE"
@@ -4687,12 +4684,7 @@ Sub MAKEPBP (pbpType)
                                     Call PBP(P)
                                     pbpString$ = "AND SOARS TO THE HOOP"
 
-                                    Call Rolld100(RN1)
-                                    If RN1 <= 4 Then
-                                        willDunk = 1
-                                    End If
-
-                                    'If willDunk = 1 Then Call pbplog(4477)
+                                    checkForDunk = 1
 
                                 Case 70 To 71:
                                     pbpString$ = teamGender$(P) + " DRIVES THE BASELINE"
@@ -4700,12 +4692,7 @@ Sub MAKEPBP (pbpType)
                                     Call PBP(P)
                                     pbpString$ = "SPINS RIGHT AND GOES UP"
 
-                                    Call Rolld100(RN1)
-                                    If RN1 <= 4 Then
-                                        willDunk = 1
-                                    End If
-
-                                    'If willDunk = 1 Then Call pbplog(4490)
+                                    checkForDunk = 1
 
                                 Case 72:
                                     pbpString$ = teamGender$(P) + " SLICES IN THE HOLE"
@@ -4733,6 +4720,29 @@ Sub MAKEPBP (pbpType)
 
                             End Select
 
+                            If checkForDunk = 1 Then
+
+                                Call Rolld100(RN1)
+                                'Call pbplog(4695)
+
+                                If teamYears(0) <= 2000 And teamYears(1) <= 2000 Then
+
+                                    If RN1 <= 57 Then
+                                        willDunk = 1
+                                    End If
+
+                                Else
+
+                                    If RN1 <= 80 Then
+                                        willDunk = 1
+                                    End If
+
+                                End If
+
+                                'If willDunk = 1 Then Call pbplog(4740)
+
+                            End If
+
                         End If
 
                         If activePosition$ = "C" Then
@@ -4750,10 +4760,8 @@ Sub MAKEPBP (pbpType)
 
                                 Case 41 To 58:
                                     pbpString$ = teamGender$(P) + " TAKES IT TO THE HOOP"
-                                    Call Rolld100(RN0)
-                                    If RN0 <= 15 Then willDunk = 1
 
-                                    'If willDunk = 1 Then Call pbplog(4538)
+                                    checkForDunk = 1
 
                                 Case 59 To 70:
                                     pbpString$ = teamGender$(P) + " TAKES THE SHOT"
@@ -4761,38 +4769,46 @@ Sub MAKEPBP (pbpType)
                                 Case 71 To 72:
                                     pbpString$ = teamGender$(P) + " CURLS OFF A PICK IN THE PAINT"
                                     Call PBP(P)
-
                                     pbpString$ = "TAKES IT UP"
-                                    Call Rolld100(RN1)
-                                    If RN1 <= 45 Then
-                                        willDunk = 1
-                                    End If
 
-                                    'If willDunk = 1 Then Call pbplog(4552)
+                                    checkForDunk = 1
 
                                 Case 73 To 74:
                                     pbpString$ = teamGender$(P) + " MAKES A NICE SPIN MOVE"
                                     Call PBP(P)
                                     pbpString$ = "AND SOARS TO THE HOOP"
 
-                                    Call Rolld100(RN1)
-                                    If RN1 <= 45 Then
-                                        willDunk = 1
-                                    End If
-
-                                    'If willDunk = 1 Then Call pbplog(4565)
+                                    checkForDunk = 1
 
                                 Case 75 To 100:
                                     pbpString$ = teamGender$(P) + " TAKES IT UP STRONG"
 
-                                    Call Rolld100(RN1)
-                                    If RN1 <= 45 Then
+                                    checkForDunk = 1
+
+                            End Select
+
+                            If checkForDunk = 1 Then
+
+                                Call Rolld100(RN1)
+                                'Call pbplog(4791)
+
+                                If teamYears(0) <= 2000 And teamYears(1) <= 2000 Then
+
+                                    If RN1 <= 17 Then
                                         willDunk = 1
                                     End If
 
-                                    'If willDunk = 1 Then Call pbplog(4574)
+                                Else
 
-                            End Select
+                                    If RN1 <= 28 Then
+                                        willDunk = 1
+                                    End If
+
+                                End If
+
+                                'If willDunk = 1 Then Call pbplog(4807)
+
+                            End If
 
                         End If
 
@@ -5029,7 +5045,7 @@ Sub MAKEPBP (pbpType)
                                 Else
                                     pbpString$ = teamGender$(P) + " TAKES A DEFENDER WITH HIM"
                                 End If
-                                
+
                             Case 81 To 100: pbpString$ = teamGender$(P) + " GOES UP WITH IT"
 
                         End Select
@@ -5077,15 +5093,36 @@ Sub MAKEPBP (pbpType)
                         End Select
 
                         Call Rolld100(RN2)
-                        If ballCarrier = 2 Or ballCarrier = 3 And Int(Rnd(1) * 1000) <= 11 Then
-                            willDunk = 1
-                        End If
-                        'If ballCarrier = 4 And RN2 <= 83 Then
-                        If ballCarrier = 4 And RN2 <= 41 Then
-                            willDunk = 1
+
+                        'Call pbplog(5095)
+
+                        If teamYears(0) <= 2000 And teamYears(1) <= 2000 Then
+
+                            test = 1
+
+                            If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 1000) <= 137 Then
+                                willDunk = 1
+                            End If
+
+                            If ballCarrier = 4 And RN2 <= 40 Then
+                                willDunk = 1
+                            End If
+
+                        Else
+
+                            test = 2
+
+                            If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 1000) <= 182 Then
+                                willDunk = 1
+                            End If
+
+                            If ballCarrier = 4 And RN2 <= 57 Then
+                                willDunk = 1
+                            End If
+
                         End If
 
-                        'If willDunk = 1 Then Call pbplog(4869)
+                        'If willDunk = 1 Then Call pbplog(5119)
 
                 End Select
 
@@ -5320,7 +5357,7 @@ Sub MAKEPBP (pbpType)
                 End If
 
             Case 9
-                'NOPASS
+                'NO PASS
                 pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " "
                 RN1 = Int(Rnd(1) * 56) + 1
 
@@ -7274,7 +7311,6 @@ End Sub
 'in possession of the ball
 Sub ChangePossession
 
-    '--Call pbplog(7164)
     prevBall$ = ""
     P = 1 - P
     D = 1 - D
@@ -7523,6 +7559,7 @@ Sub SCOREBOARD ()
 
     'Period Designation
     Locate 2, 35
+
     Print Using " PERIOD #"; quarter;
     If quarter > 4 Then Locate , 35: Print Using "OVERTIME #"; quarter - 4
 
@@ -7622,8 +7659,6 @@ Sub SCOREBOARD ()
         '#
         Color 2: Print Using "# "; I1;
 
-        Color 3
-
         'Name
         Color 15: Print Left$(players_GAME$(0, lineupIdx(0, I1), 0), 12);
         Locate , 16
@@ -7668,9 +7703,14 @@ Sub SCOREBOARD ()
     Locate , 40: Print "# NAME          FG FT RB CX PA DF PT  F"
 
     'Team 2 Roster
-    For I1 = 0 To 4: Locate , 40: Color 2: Print Using "# "; I1;
+    For I1 = 0 To 4:
 
-        Color 15
+        Locate , 40
+        Color 2: Print Using "# "; I1;
+
+        'Name
+        Color 15:
+
         Print Left$(players_GAME$(1, lineupIdx(1, I1), 0), 12);
         Locate , 56
 
@@ -8257,6 +8297,7 @@ Sub SETUPRATINGS (teamStyle)
 
                 'Calculate penetration rating
                 If Left$(players_GAME$(I, I1, 1), 1) <> "F" And Left$(players_GAME$(I, I1, 1), 1) <> "C" Then
+                    'Guards
                     If X3! >= 86 Then plyrRat_GAME(I, I1, 16) = 1
                     If X3! = 84 Or X3! = 85 Then plyrRat_GAME(I, I1, 16) = 2
                     If X3! = 82 Or X3! = 83 Then plyrRat_GAME(I, I1, 16) = 3
@@ -8267,6 +8308,7 @@ Sub SETUPRATINGS (teamStyle)
                     If X3! = 71 Or X3! = 72 Then plyrRat_GAME(I, I1, 16) = 8
                     If X3! <= 70 Then plyrRat_GAME(I, I1, 16) = 9
                 Else
+                    'Forwards / Centers
                     If X3! >= 81 Then plyrRat_GAME(I, I1, 16) = 1
                     If X3! = 79 Or X3! = 80 Then plyrRat_GAME(I, I1, 16) = 2
                     If X3! = 77 Or X3! = 78 Then plyrRat_GAME(I, I1, 16) = 3
@@ -8382,7 +8424,8 @@ Function DecideShot%
                 'Average - 70% chance
                 paceFactor = 60
             Else
-                'Average - 80% chance
+                '40; Average - 80% chance
+                '120; works for fix PENETRATE SHOT
                 paceFactor = 40
             End If
 
@@ -8399,6 +8442,9 @@ Function DecideShot%
             paceFactor = 50
 
     End Select
+
+    test = 48 + Int(((JY - paceFactor) * .8) + .5)
+    'Call pbplog(8442)
 
     If RN0 <= 48 + Int(((JY - paceFactor) * .8) + .5) Then
         DecideShot% = 1
@@ -8838,7 +8884,7 @@ Sub ComputerStrategy ()
 
     End If
 
-    'Call pbplog(8680)
+    'Call pbplog(8881)
 
 End Sub
 
@@ -9155,7 +9201,8 @@ Sub LINEUPS ()
             Color 15
 
             'Name
-            Print Left$(players_GAME$(P9, R1, 0), 12);: Locate , 16
+            Print Left$(players_GAME$(P9, R1, 0), 12);
+            Locate , 16
 
             'Position
             If Len(players_GAME$(P9, R1, 1)) = 1 Then Print players_GAME$(P9, R1, 1);
@@ -9237,12 +9284,16 @@ Sub SHOTPERCENT (useAssist)
     If useAssist = 1 Then
 
         assistShotBoost = Int(Rnd(1) * 41)
+        assistChance = Int(Rnd(1) * 9) + 1
 
+        'Random # based on assist rating
         RN0 = Int(Rnd(1) * miscAdj(P, 4)) + 1
         RN1 = Int(.17 * miscAdj(P, 4) + .5)
 
+        ' *** CHECK ASSIST SHOT ***
         If RN1 >= RN0 Then
 
+            'Assisted shot
             shotChance = shotChance + assistShotBoost
             shotType = 2
             offStatus = 0
@@ -9250,14 +9301,20 @@ Sub SHOTPERCENT (useAssist)
         Else
 
             ' *** CHECK PENETRATION SHOT ***
-            Call Rolld100(RN2)
             assistShotBoost = Int(Rnd(1) * 50) + 1
 
-            If RN2 <= (plyrRat_GAME(P, lineupIdx(P, ballCarrier), 16) + OY%(offStyles(P))) * 2 + 1 Then
+            'Call Rolld100(penetratRoll)
+            penetratRoll = Int(Rnd(1) * 60) + 1
+
+            penetratChance = (plyrRat_GAME(P, lineupIdx(P, ballCarrier), 16) + penetrationOffAdj(offStyles(P))) * 2 + 1
+
+            If penetratRoll <= penetratChance Then
 
                 shotType = 3
-                shotChance = shotChance + assistShotBoost
+                'playChoice = 1
                 offStatus = 0
+
+                shotChance = shotChance + assistShotBoost
 
             Else
 
@@ -9926,6 +9983,8 @@ End Sub
 'a corresponding "special" box score
 Sub EVENTS (specialCount, specialStat)
 
+    Shared eventSettings()
+
     If _FileExists("EVENTS.BOX") Then
 
         Open "EVENTS.BOX" For Input As #1
@@ -10036,6 +10095,7 @@ Sub UPDATESCREEN ()
 
     'Period Designation
     Locate 4, 13: Print Using "###"; score(0, 0);
+
     Locate 2, 35: Print Using " PERIOD #"; quarter;
     If quarter > 4 Then Locate , 35: Print Using "OVERTIME #"; quarter - 4
 
@@ -10814,6 +10874,8 @@ End Sub
 ' to a boxscore file
 Sub BOX2SPC (boxName$)
 
+    Shared eventSettings()
+
     Open diskPaths$(1) + boxName$ For Output As #1
 
     Print #1,
@@ -11285,11 +11347,12 @@ Sub pbplog (lineNumber)
 
     'Print #11, "Called from line # "; lineNumber
     'Print #11, gameTeams$(0); " vs "; gameTeams$(1)
+    Print #11, pbpString$
     'Print #11, currGame; ","; ballCarrier; ","; lineNumber
     'Print #11, lineNumber
-    Print #11, lineNumber, test
     'Print #11, defStyles(P9)
-    'Print #11, lineNumber, passes
+    'Print #11, test
+    'Print #11, lineNumber, ballCarrier
     'Print #11,
 
 End Sub
@@ -11511,7 +11574,7 @@ End Sub
 'needed by the game.
 Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx, dataOK)
 
-    Dim CK
+    Shared CK
     
     Dim gamesPlayed, minsPerGame!
 
@@ -11679,7 +11742,7 @@ Sub EndOfGame
 
     End If
 
-    'Close #11
+    Close #11
 
     If UCase$(I$) = "Y" Or (autoPlay = 1 And endAllGames <> 1) Then
 
@@ -13899,8 +13962,6 @@ End Function
 'leagues that would choose a W arbitrarily
 '(ie, for a "World" league, etc.)
 Function GetTeamGender$ (diskID$)
-
-    test$ = diskID$
 
     If Right$(diskID$, 1) = "W" Or Left$(diskID$, 1) = "W" Then
         GetTeamGender$ = "SHE"

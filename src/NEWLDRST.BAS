@@ -17,7 +17,7 @@ Sub UpdateExpandedStandings (league$)
     Shared teamScore(), oppScore()
 
     Shared locIndicator$(), oppName$()
-    Shared memberTeams$(), TML$()
+    Shared memberName$(), TML$()
 
     Shared div1Name$, div2Name$, div3Name$, div4Name$, league$
 
@@ -32,18 +32,18 @@ Sub UpdateExpandedStandings (league$)
         TMR = TMR - 1
         Print Using "##"; TMR
 
-        If memberTeams$(KK) <> "*" Then
+        If memberName$(KK) <> "*" Then
 
-            TML$(YY) = memberTeams$(KK)
+            TML$(YY) = memberName$(KK)
 
             Color 15, 0
             Cls
 
             Locate 5: Print "COMPUTING RECORDS . . . . . . PLEASE WAIT"
 
-            If _FileExists(diskPaths$(1) + memberTeams$(KK) + "S") Then
+            If _FileExists(diskPaths$(1) + memberName$(KK) + "S") Then
 
-                Open diskPaths$(1) + memberTeams$(KK) + "S" For Input As #2
+                Open diskPaths$(1) + memberName$(KK) + "S" For Input As #2
 
                 Input #2, XX%
 

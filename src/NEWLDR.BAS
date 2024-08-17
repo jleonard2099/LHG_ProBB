@@ -13,7 +13,7 @@ Sub NEWLDR ()
     Dim printOrView
 
     Shared div1Name$, div2Name$, div3Name$, div4Name$, league$
-    Shared statFileNames$()
+    Shared statFiles$()
 
     'Needed for Expanded Standings
     Shared HLL(), HWW()
@@ -63,26 +63,26 @@ Sub NEWLDR ()
 
                 Case 1:
                     Do
-                        leagStatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE STATS", FileExit%)
+                        plyrRat_COMPtatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE STATS", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
 
                             For X = 1 To TEAMS_PER_LEAGUE
-                                statFileNames$(X) = "XXX"
+                                statFiles$(X) = "XXX"
                             Next
 
-                            Open diskPaths$(2) + leagStatFile$ + ".TMS" For Input As #1
+                            Open diskPaths$(2) + plyrRat_COMPtatFile$ + ".TMS" For Input As #1
 
                             Input #1, league$, div1Name$, div2Name$, div3Name$, div4Name$
 
                             For X = 1 To TEAMS_PER_LEAGUE
-                                Input #1, statFileNames$(X)
+                                Input #1, statFiles$(X)
                             Next
 
                             Close #1
 
                             Call UpdateExpandedLeaders(JB, PTS, TTS)
-                            Call SAVELEADER(leagStatFile$, JB, PTS, TTS)
+                            Call SAVELEADER(plyrRat_COMPtatFile$, JB, PTS, TTS)
 
                         End If
 
@@ -101,12 +101,12 @@ Sub NEWLDR ()
 
                 Case 3:
                     Do
-                        leagStatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE STATS", FileExit%)
+                        plyrRat_COMPtatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE STATS", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
                             Color 15, 0
                             Cls
-                            Call UpdateExpandedStandings(leagStatFile$)
+                            Call UpdateExpandedStandings(plyrRat_COMPtatFile$)
                         End If
 
                     Loop Until FileExit% = 27 Or FileExit% = 0
@@ -177,31 +177,31 @@ Sub ViewExpandedStats ()
 
     Shared div1Name$, div2Name$, div3Name$, div4Name$, league$
 
-    Shared statFileNames$()
+    Shared statFiles$()
 
     printOrView = 0
 
     For X = 1 To TEAMS_PER_LEAGUE
-        statFileNames$(X) = "XXX"
+        statFiles$(X) = "XXX"
     Next
 
-    leagStatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE ", ExitCode%)
+    plyrRat_COMPtatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE ", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        Open diskPaths$(2) + leagStatFile$ + ".TMS" For Input As #1
+        Open diskPaths$(2) + plyrRat_COMPtatFile$ + ".TMS" For Input As #1
 
         Input #1, league$, div1Name$, div2Name$, div3Name$, div4Name$
 
         For X = 1 To TEAMS_PER_LEAGUE
-            Input #1, statFileNames$(X)
+            Input #1, statFiles$(X)
         Next
 
         Close #1
 
         Call READLEADER(conferenceFile$, JB, PTS, TTS)
         Call UpdateExpandedLeaders(JB, PTS, TTS)
-        Call SAVELEADER(leagStatFile$, JB, PTS, TTS)
+        Call SAVELEADER(plyrRat_COMPtatFile$, JB, PTS, TTS)
         Call ExpandedLeaders_Menu (printOrView, JB, PTS, TTS)
 
     End If 'Done checking for ESC
@@ -218,7 +218,7 @@ End Sub
 Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
     Shared AL$(), plyLeaderTeams$()
-    Shared statFileNames$(), statPlyrNames$()
+    Shared statFiles$(), statPlyrNames$()
     Shared TMA$(), tmLeaderTeams$()
 
     Shared plyrStatLeaders!()
@@ -241,13 +241,13 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
         YY = YY + 1
 
-        If statFileNames$(KK) <> "*" And statFileNames$(KK) <> "XXX" And statFileNames$(KK) <> "" Then
+        If statFiles$(KK) <> "*" And statFiles$(KK) <> "XXX" And statFiles$(KK) <> "" Then
 
-            Print "CONVERTING STAT FILE OF "; statFileNames$(KK)
+            Print "CONVERTING STAT FILE OF "; statFiles$(KK)
 
-            If _FileExists(diskPaths$(1) + statFileNames$(KK)) Then
+            If _FileExists(diskPaths$(1) + statFiles$(KK)) Then
 
-                Open diskPaths$(1) + statFileNames$(KK) For Input As #1
+                Open diskPaths$(1) + statFiles$(KK) For Input As #1
 
                 Input #1, teamName$
 
@@ -274,7 +274,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
                 Close #1
 
-                Open diskPaths$(1) + statFileNames$(KK) + "S" For Input As #2
+                Open diskPaths$(1) + statFiles$(KK) + "S" For Input As #2
                 Input #2, year
                 Close #2
 

@@ -147,7 +147,7 @@ Sub AlignStats (pathRoadStats$, statFile$)
 
     Shared statPlyrNames$()
     Shared roadPlyrNames$()
-    Shared AN$()
+    Shared alignName$()
 
     Shared AR!()
     Shared W0R!(), WR1!()
@@ -189,7 +189,7 @@ Sub AlignStats (pathRoadStats$, statFile$)
 
             If statPlyrNames$(N) = roadPlyrNames$(J) Then
 
-                AN$(N) = roadPlyrNames$(J)
+                alignName$(N) = roadPlyrNames$(J)
 
                 For K = 0 To 13
                     AN!(N, K) = AR!(J, K)
@@ -211,7 +211,7 @@ Sub AlignStats (pathRoadStats$, statFile$)
 
             For K = 0 To 14
 
-                If AN$(K) <> statPlyrNames$(K) Then
+                If alignName$(K) <> statPlyrNames$(K) Then
                     SEQ = SEQ + 1
                 End If
 
@@ -244,7 +244,7 @@ End Sub
 'user a chance to actually save the results 
 Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
 
-    Shared statPlyrNames$(), AN$()
+    Shared statPlyrNames$(), alignName$()
 
     Shared AN!()
     Shared W0N!(), WN1!()
@@ -266,7 +266,7 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
         Color 15: Print statPlyrNames$(I);
         Color 12: Print Tab(44); Using "##"; I;
         Print " ";
-        Color 7: Print AN$(I)
+        Color 7: Print alignName$(I)
     Next
 
     Color 11
@@ -279,7 +279,7 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
 
     For I = 0 To 14: 
         
-        Write #1, AN$(I)
+        Write #1, alignName$(I)
 
         For J = 0 To 13: 
             Write #1, AN!(I, J)

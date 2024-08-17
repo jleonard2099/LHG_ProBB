@@ -51,8 +51,11 @@ Sub SCHEDULE ()
 
         If ExitCode% <> 27 Then
 
+            'Assign full array sizes for schedule games
             ReDim homeScores(MAX_SCHEDULE_GAMES)
             ReDim visitorScores(MAX_SCHEDULE_GAMES)
+            ReDim scheduleH$(MAX_SCHEDULE_GAMES)
+            ReDim scheduleV$(MAX_SCHEDULE_GAMES)
 
             scheduleNG%(0, 2) = 1
             scheduleNG%(0, 3) = 1
@@ -113,8 +116,11 @@ Sub SCHEDULE ()
 
     Loop Until SELECTION% = 7 Or ExitCode% = 27
 
+    'Free up memory for rest of program
     ReDim homeScores(1)
     ReDim visitorScores(1)
+    ReDim scheduleH$(1)
+    ReDim scheduleV$(1)
 
 End Sub 'Menu
 
@@ -208,8 +214,8 @@ Sub NewSchedule (scheduleFile$)
                 Call ReadTeam(YN$, team$, T1, validData)
 
                 If validData = 1 Then
-                
-                    scheduleV$(X) = team$
+
+                    scheduleV$(X + NS% * 20) = team$
 
                     T1 = scheduleNG%(X + NS% * 20, 1)
                     YN$ = scheduleYN$(X + NS% * 20, 1)
@@ -217,7 +223,7 @@ Sub NewSchedule (scheduleFile$)
 
                     If validData = 1 Then
 
-                        scheduleH$(X) = team$
+                        scheduleH$(X + NS% * 20) = team$
 
                         'Game number
                         Print Using "####  "; X + NS% * 20;
@@ -244,11 +250,11 @@ Sub NewSchedule (scheduleFile$)
                         Print TM$;
 
                         'Visiting Team
-                        Locate , 25: Print scheduleV$(X); " ";
+                        Locate , 25: Print scheduleV$(X + NS% * 20); " ";
                         If scheduleNG%(X + NS% * 20, 13) = 1 Then Print Using "###"; visitorScores(X + NS% * 20);
 
                         'Home Team
-                        Locate , 46: Print scheduleH$(X); " ";
+                        Locate , 46: Print scheduleH$(X + NS% * 20); " ";
                         If scheduleNG%(X + NS% * 20, 13) = 1 Then Print Using "###"; homeScores(X + NS% * 20);
 
                         'Mode of Play
@@ -430,13 +436,23 @@ Sub NewSchedule (scheduleFile$)
 
                 Close #2
 
-                'ReDim scheduleNG%(1, 18)
-                'ReDim scheduleYN$(1, 1)
+                'Free up used memory so games can load faster
+                ReDim scheduleNG%(1, 18)
+                ReDim scheduleYN$(1, 1)
+                ReDim homeScores(1)
+                ReDim visitorScores(1)
+                ReDim scheduleH$(1)
+                ReDim scheduleV$(1)
 
                 Call PROHOOP
 
-                'ReDim scheduleNG%(MAX_SCHEDULE_GAMES, 18)
-                'ReDim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
+                'Restore memory so we can populate again
+                ReDim scheduleNG%(MAX_SCHEDULE_GAMES, 18)
+                ReDim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
+                ReDim homeScores(MAX_SCHEDULE_GAMES)
+                ReDim visitorScores(MAX_SCHEDULE_GAMES)
+                ReDim scheduleH$(MAX_SCHEDULE_GAMES)
+                ReDim scheduleV$(MAX_SCHEDULE_GAMES)
 
                 Call LoadScheduleInfo(scheduleFile$)
 
@@ -548,15 +564,9 @@ Sub EditGame (DT$, TM$)
         Locate 23, 1: Input "ENTER GAME # TO EDIT "; targetGame%
     Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
 
-    If targetGame% - Int(targetGame% / 20) * 20 = 0 Then
-        V$ = scheduleV$(20)
-        H$ = scheduleH$(20)
-        YN$ = scheduleYN$(20, 0)
-    Else
-        V$ = scheduleV$(targetGame% - Int(targetGame% / 20) * 20)
-        H$ = scheduleH$(targetGame% - Int(targetGame% / 20) * 20)
-        YN$ = scheduleYN$(targetGame% - Int(targetGame% / 20) * 20, 0)
-    End If
+    V$ = scheduleV$(targetGame%)
+    H$ = scheduleH$(targetGame%)
+    YN$ = scheduleYN$(targetGame%, 0)
 
     HR% = Int(scheduleNG%(targetGame%, 15) / 100)
     MIN% = scheduleNG%(targetGame%, 15) - HR% * 100
@@ -716,12 +726,12 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
 
                         If setting = 2 Then
                             visitor$ = team$
-                            scheduleV$(gameIndex% - Int(gameIndex% / 20) * 20) = team$
+                            scheduleV$(gameIndex%) = team$
                         End If
 
                         If setting = 3 Then
                             home$ = team$
-                            scheduleH$(gameIndex% - Int(gameIndex% / 20) * 20) = team$
+                            scheduleH$(gameIndex%) = team$
                         End If
 
                     End If
@@ -953,7 +963,7 @@ End Sub
 '"Special" boxscores are created / saved.
 Sub EditParameters ()
 
-    Dim eventSettings(13)
+    Shared eventSettings()
 
     'Read in existing parameters if there are any
     If _FileExists("EVENTS.BOX") Then
@@ -1562,3 +1572,4 @@ Sub EditBoxscore (boxName$)
     End If
 
 End Sub
+

@@ -12,7 +12,7 @@ Sub EditStats ()
     Shared statsW0!(), statsW1!()
 
     Dim statPlyrNames$(14)
-    Dim inputZ2!(0 To 14, 0 To 13)
+    Dim plyrRat_INPUT!(14, 13)
 
     teamNbr = 0
     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
@@ -39,7 +39,7 @@ Sub EditStats ()
             Input #1, statPlyrNames$(I)
 
             For J = 0 To 13:
-                Input #1, inputZ2!(I, J)
+                Input #1, plyrRat_INPUT!(I, J)
             Next J
 
             Input #1, statsW0!(I)
@@ -323,22 +323,22 @@ Sub EditStats ()
                 Locate 2, 1: Print "PLAYER - " + Str$(I + 1)
                 Locate 3, 1
                 Print "1. NAME  "; statPlyrNames$(I)
-                Print "2. GAMES "; inputZ2!(I, 0)
-                Print "3. MINUTES "; Int(inputZ2!(I, 10) / 60 + .5)
-                Print "4. FGA "; inputZ2!(I, 1)
-                Print "5. FGM "; inputZ2!(I, 2); ""
-                Print "6. FTA "; inputZ2!(I, 3)
-                Print "7. FTM "; inputZ2!(I, 4)
-                Print "8. OFF REB "; inputZ2!(I, 12)
-                Print "9. TOT REB "; inputZ2!(I, 5)
-                Print "10. FOULS "; inputZ2!(I, 6)
-                Print "11. STEALS "; inputZ2!(I, 7)
-                Print "12. ASSISTS "; inputZ2!(I, 8)
-                Print "13. BLOCKS "; inputZ2!(I, 9)
-                Print "14. TURNOVERS "; inputZ2!(I, 11)
+                Print "2. GAMES "; plyrRat_INPUT!(I, 0)
+                Print "3. MINUTES "; Int(plyrRat_INPUT!(I, 10) / 60 + .5)
+                Print "4. FGA "; plyrRat_INPUT!(I, 1)
+                Print "5. FGM "; plyrRat_INPUT!(I, 2); ""
+                Print "6. FTA "; plyrRat_INPUT!(I, 3)
+                Print "7. FTM "; plyrRat_INPUT!(I, 4)
+                Print "8. OFF REB "; plyrRat_INPUT!(I, 12)
+                Print "9. TOT REB "; plyrRat_INPUT!(I, 5)
+                Print "10. FOULS "; plyrRat_INPUT!(I, 6)
+                Print "11. STEALS "; plyrRat_INPUT!(I, 7)
+                Print "12. ASSISTS "; plyrRat_INPUT!(I, 8)
+                Print "13. BLOCKS "; plyrRat_INPUT!(I, 9)
+                Print "14. TURNOVERS "; plyrRat_INPUT!(I, 11)
                 Print "15. 3FGA "; statsW1!(I)
                 Print "16. 3FGM "; statsW0!(I)
-                Print "17. HI-GAME (PTS) "; inputZ2!(I, 13)
+                Print "17. HI-GAME (PTS) "; plyrRat_INPUT!(I, 13)
 
                 Do
 
@@ -355,69 +355,69 @@ Sub EditStats ()
 
                         Case 2
                             Locate 4, 10: Print Space$(10)
-                            Locate 4, 1: Input "2. GAMES "; inputZ2!(I, 0)
+                            Locate 4, 1: Input "2. GAMES "; plyrRat_INPUT!(I, 0)
                             Locate 4, 10: Print " "
 
                         Case 3
                             Locate 5, 12: Print Space$(10)
-                            Locate 5, 1: Input "3. MINUTES "; inputZ2!(I, 10)
+                            Locate 5, 1: Input "3. MINUTES "; plyrRat_INPUT!(I, 10)
                             Locate 5, 12: Print " "
-                            inputZ2!(I, 10) = inputZ2!(I, 10) * 60
+                            plyrRat_INPUT!(I, 10) = plyrRat_INPUT!(I, 10) * 60
 
                         Case 4
                             Locate 6, 8: Print Space$(10)
-                            Locate 6, 1: Input "4. FGA "; inputZ2!(I, 1)
+                            Locate 6, 1: Input "4. FGA "; plyrRat_INPUT!(I, 1)
                             Locate 6, 8: Print " "
 
                         Case 5
                             Locate 7, 8: Print Space$(10)
-                            Locate 7, 1: Input "5. FGM "; inputZ2!(I, 2)
+                            Locate 7, 1: Input "5. FGM "; plyrRat_INPUT!(I, 2)
                             Locate 7, 8: Print " "
 
                         Case 6
                             Locate 8, 8: Print Space$(10)
-                            Locate 8, 1: Input "6. FTA "; inputZ2!(I, 3)
+                            Locate 8, 1: Input "6. FTA "; plyrRat_INPUT!(I, 3)
                             Locate 8, 8: Print " "
 
                         Case 7
                             Locate 9, 8: Print Space$(10)
-                            Locate 9, 1: Input "7. FTM "; inputZ2!(I, 4)
+                            Locate 9, 1: Input "7. FTM "; plyrRat_INPUT!(I, 4)
                             Locate 9, 8: Print " "
 
                         Case 8
                             Locate 10, 12: Print Space$(10)
-                            Locate 10, 1: Input "8. OFF REB "; inputZ2!(I, 12)
+                            Locate 10, 1: Input "8. OFF REB "; plyrRat_INPUT!(I, 12)
                             Locate 10, 12: Print " "
 
                         Case 9
                             Locate 11, 12: Print Space$(10)
-                            Locate 11, 1: Input "9. TOT REB "; inputZ2!(I, 5)
+                            Locate 11, 1: Input "9. TOT REB "; plyrRat_INPUT!(I, 5)
                             Locate 11, 12: Print " "
                         Case 10
 
                         Case 10
                             Locate 12, 11: Print Space$(10)
-                            Locate 12, 1: Input "10. FOULS "; inputZ2!(I, 6)
+                            Locate 12, 1: Input "10. FOULS "; plyrRat_INPUT!(I, 6)
                             Locate 12, 11: Print " "
 
                         Case 11
                             Locate 13, 12: Print Space$(10)
-                            Locate 13, 1: Input "11. STEALS "; inputZ2!(I, 7)
+                            Locate 13, 1: Input "11. STEALS "; plyrRat_INPUT!(I, 7)
                             Locate 13, 12: Print " "
 
                         Case 12
                             Locate 14, 13: Print Space$(10)
-                            Locate 14, 1: Input "12. ASSISTS "; inputZ2!(I, 8)
+                            Locate 14, 1: Input "12. ASSISTS "; plyrRat_INPUT!(I, 8)
                             Locate 14, 13: Print " "
 
                         Case 13
                             Locate 15, 12: Print Space$(10)
-                            Locate 15, 1: Input "13. BLOCKS "; inputZ2!(I, 9)
+                            Locate 15, 1: Input "13. BLOCKS "; plyrRat_INPUT!(I, 9)
                             Locate 15, 12: Print " "
 
                         Case 14
                             Locate 16, 15: Print Space$(10)
-                            Locate 16, 1: Input "14. TURNOVERS "; inputZ2!(I, 11)
+                            Locate 16, 1: Input "14. TURNOVERS "; plyrRat_INPUT!(I, 11)
                             Locate 16, 15: Print " "
 
                         Case 15
@@ -432,7 +432,7 @@ Sub EditStats ()
 
                         Case 17
                             Locate 19, 19: Print Space$(10)
-                            Locate 19, 1: Input "17. HI-GAME (PTS) "; inputZ2!(I, 13)
+                            Locate 19, 1: Input "17. HI-GAME (PTS) "; plyrRat_INPUT!(I, 13)
                             Locate 19, 19: Print " "
 
                     End Select
@@ -458,7 +458,7 @@ Sub EditStats ()
             Print #2, statPlyrNames$(I)
 
             For J = 0 To 13:
-                Print #2, inputZ2!(I, J)
+                Print #2, plyrRat_INPUT!(I, J)
             Next J
 
             Print #2, statsW0!(I)

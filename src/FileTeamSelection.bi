@@ -16,8 +16,13 @@ Dim previousYear$
 '-- transition away from this
 Dim Shared fileLength&
 
+Dim CK
+
+Dim teamAttendance&
+
 Dim leagueRatings(0 To 6), teamRatings(0 To 34)
 
 Dim playerRatings!(0 To 14, 0 To 19)
 
 Dim playerNames$(0 To 14, 0 To 1), teamInfo$(4)
+Dim statPlyrNames$(0 To 15)

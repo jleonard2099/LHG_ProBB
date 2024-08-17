@@ -34,7 +34,7 @@ Sub LoadLeaderFiles_Pro (targetFile$)
     Shared seeZ!(), seeZ1!()
 
     Shared defLeaderNames$(), offLeaderNames$()
-    Shared leagT$(), Z2$(), Z3$()
+    Shared seeT$(), Z2$(), Z3$()
 
     Shared league$, div1Name$, div2Name$, div3Name$, div4Name$
 
@@ -54,7 +54,7 @@ Sub LoadLeaderFiles_Pro (targetFile$)
     Open diskPaths$(2) + targetFile$ + ".LDR" For Input As #2
 
     For X = 1 To TEAMS_PER_LEAGUE
-        Input #2, leagT$(X), O1!(X), O2!(X)
+        Input #2, seeT$(X), O1!(X), O2!(X)
     Next
 
     For X = 1 To 250
@@ -148,7 +148,7 @@ Sub LeaderStats_Screen ()
     Shared seeZ!(), seeZ1!()
 
     Shared defLeaderNames$(), offLeaderNames$(), offLeaders!()
-    Shared leagT$(), Z2$(), Z3$()
+    Shared seeT$(), Z2$(), Z3$()
 
     Shared league$, div1Name$, div2Name$, div3Name$, div4Name$
 
@@ -171,7 +171,7 @@ Sub LeaderStats_Screen ()
 
     For P = 1 To 10
 
-        If leagT$(P) <> "" And leagT$(P) <> "*" Then
+        If seeT$(P) <> "" And seeT$(P) <> "*" Then
 
             D1 = O1!(1) - O2!(1)
             D = O1!(P) - O2!(P)
@@ -182,7 +182,7 @@ Sub LeaderStats_Screen ()
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            Print "    "; leagT$(P); Tab(16);
+            Print "    "; seeT$(P); Tab(16);
 
             'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
             PCT! = O1!(P) / (O1!(P) + O2!(P))
@@ -220,7 +220,7 @@ Sub LeaderStats_Screen ()
 
     For P = 11 To 20
 
-        If leagT$(P) <> "" And leagT$(P) <> "*" Then
+        If seeT$(P) <> "" And seeT$(P) <> "*" Then
 
             D1 = O1!(11) - O2!(11)
             D = O1!(P) - O2!(P)
@@ -231,7 +231,7 @@ Sub LeaderStats_Screen ()
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            Print "    "; leagT$(P); Tab(16);
+            Print "    "; seeT$(P); Tab(16);
 
             'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
             PCT! = O1!(P) / (O1!(P) + O2!(P))
@@ -269,7 +269,7 @@ Sub LeaderStats_Screen ()
 
     For P = 21 To 30
 
-        If leagT$(P) <> "" And leagT$(P) <> "*" Then
+        If seeT$(P) <> "" And seeT$(P) <> "*" Then
             D1 = O1!(21) - O2!(21)
             D = O1!(P) - O2!(P)
             D = D1 - D
@@ -282,7 +282,7 @@ Sub LeaderStats_Screen ()
             'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
             PCT! = O1!(P) / (O1!(P) + O2!(P))
 
-            Print "    "; leagT$(P); Tab(16);
+            Print "    "; seeT$(P); Tab(16);
             Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
             Print BK$
 
@@ -316,7 +316,7 @@ Sub LeaderStats_Screen ()
 
     For P = 31 To 40
 
-        If leagT$(P) <> "" And leagT$(P) <> "*" Then
+        If seeT$(P) <> "" And seeT$(P) <> "*" Then
             D1 = O1!(31) - O2!(31)
             D = O1!(P) - O2!(P)
             D = D1 - D
@@ -329,7 +329,7 @@ Sub LeaderStats_Screen ()
             'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
             PCT! = O1!(P) / (O1!(P) + O2!(P))
 
-            Print "    "; leagT$(P); Tab(16);
+            Print "    "; seeT$(P); Tab(16);
             Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
             Print BK$
         End If
@@ -893,7 +893,7 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
     Shared defLeaders!(), offLeaders!()
     Shared seeZ!(), seeZ1!()
 
-    Shared offLeaderNames$(), defLeaderNames$(), leagT$()
+    Shared offLeaderNames$(), defLeaderNames$(), seeT$()
     Shared Z2$(), Z3$()
 
     Shared league$, div1Name$, div2Name$, div3Name$, div4Name$
@@ -911,7 +911,7 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 1 To 10
 
-        If leagT$(P) <> "" And leagT$(P) <> "*" Then
+        If seeT$(P) <> "" And seeT$(P) <> "*" Then
             D1 = O1!(1) - O2!(1)
             D = O1!(P) - O2!(P)
             D = D1 - D
@@ -923,7 +923,7 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
             PCT! = O1!(P) / (O1!(P) + O2!(P))
 
-            Print #1, "    "; leagT$(P); Tab(16);
+            Print #1, "    "; seeT$(P); Tab(16);
             Print #1, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
             Print #1, BK$
         End If
@@ -937,7 +937,7 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 11 To 20
 
-        If leagT$(P) <> "" And leagT$(P) <> "*" Then
+        If seeT$(P) <> "" And seeT$(P) <> "*" Then
             D1 = O1!(11) - O2!(11)
             D = O1!(P) - O2!(P)
             D = D1 - D
@@ -949,7 +949,7 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
             PCT! = O1!(P) / (O1!(P) + O2!(P))
 
-            Print #1, "    "; leagT$(P); Tab(16);
+            Print #1, "    "; seeT$(P); Tab(16);
             Print #1, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
             Print #1, BK$
         End If
@@ -963,7 +963,7 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 21 To 30
 
-        If leagT$(P) <> "" And leagT$(P) <> "*" Then
+        If seeT$(P) <> "" And seeT$(P) <> "*" Then
             D1 = O1!(21) - O2!(21)
             D = O1!(P) - O2!(P)
             D = D1 - D
@@ -975,7 +975,7 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
             PCT! = O1!(P) / (O1!(P) + O2!(P))
 
-            Print #1, "    "; leagT$(P); Tab(16);
+            Print #1, "    "; seeT$(P); Tab(16);
             Print #1, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
             Print #1, BK$
 
@@ -990,7 +990,7 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 31 To 40
 
-        If leagT$(P) <> "" And leagT$(P) <> "*" Then
+        If seeT$(P) <> "" And seeT$(P) <> "*" Then
             D1 = O1!(31) - O2!(31)
             D = O1!(P) - O2!(P)
             D = D1 - D
@@ -1002,7 +1002,7 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
             PCT! = O1!(P) / (O1!(P) + O2!(P))
 
-            Print #1, "    "; leagT$(P); Tab(16);
+            Print #1, "    "; seeT$(P); Tab(16);
             Print #1, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
             Print #1, BK$
         End If
