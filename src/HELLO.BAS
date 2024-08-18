@@ -1,4 +1,3 @@
-
 $Debug
 $Color:32
 
@@ -4412,8 +4411,6 @@ Sub MAKEPBP (pbpType)
 
                 End Select
 
-                Call pbplog(4415)
-
             Case 3
                 'SHOOTS...
                 pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0)
@@ -4500,11 +4497,10 @@ Sub MAKEPBP (pbpType)
                         If checkForDunk = 1 Then
 
                             Call Rolld100(RN1)
-                            'Call pbplog(4501)
 
                             If teamYears(0) <= 2000 And teamYears(1) <= 2000 Then
 
-                                If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 6 Then
+                                If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 19 Then
                                     willDunk = 1
                                 End If
 
@@ -4512,27 +4508,25 @@ Sub MAKEPBP (pbpType)
                                     willDunk = 1
                                 End If
 
-                                If ballCarrier = 4 And RN1 <= 6 Then
+                                If ballCarrier = 4 And RN1 <= 19 Then
                                     willDunk = 1
                                 End If
 
                             Else
 
-                                If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 11 Then
+                                If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 36 Then
                                     willDunk = 1
                                 End If
 
-                                If (ballCarrier = 2 Or ballCarrier = 3) And RN1 <= 26 Then
+                                If (ballCarrier = 2 Or ballCarrier = 3) And RN1 <= 84 Then
                                     willDunk = 1
                                 End If
 
-                                If ballCarrier = 4 And RN1 <= 17 Then
+                                If ballCarrier = 4 And RN1 <= 55 Then
                                     willDunk = 1
                                 End If
 
                             End If
-
-                            'If willDunk = 1 Then Call pbplog(4533)
 
                         End If
 
@@ -4621,23 +4615,20 @@ Sub MAKEPBP (pbpType)
                             If checkForDunk = 1 Then
 
                                 Call Rolld100(RN1)
-                                'Call pbplog(4622)
 
                                 If teamYears(0) <= 2000 And teamYears(1) <= 2000 Then
 
-                                    If RN1 <= 23 Then
+                                    If RN1 <= 31 Then
                                         willDunk = 1
                                     End If
 
                                 Else
 
-                                    If RN1 <= 34 Then
+                                    If RN1 <= 46 Then
                                         willDunk = 1
                                     End If
 
                                 End If
-
-                                'If willDunk = 1 Then Call pbplog(4638)
 
                             End If
 
@@ -4723,23 +4714,20 @@ Sub MAKEPBP (pbpType)
                             If checkForDunk = 1 Then
 
                                 Call Rolld100(RN1)
-                                'Call pbplog(4695)
 
                                 If teamYears(0) <= 2000 And teamYears(1) <= 2000 Then
 
-                                    If RN1 <= 57 Then
+                                    If RN1 <= 77 Then
                                         willDunk = 1
                                     End If
 
                                 Else
 
-                                    If RN1 <= 80 Then
+                                    If RN1 <= 99 Then
                                         willDunk = 1
                                     End If
 
                                 End If
-
-                                'If willDunk = 1 Then Call pbplog(4740)
 
                             End If
 
@@ -4790,23 +4778,20 @@ Sub MAKEPBP (pbpType)
                             If checkForDunk = 1 Then
 
                                 Call Rolld100(RN1)
-                                'Call pbplog(4791)
 
                                 If teamYears(0) <= 2000 And teamYears(1) <= 2000 Then
 
-                                    If RN1 <= 17 Then
+                                    If RN1 <= 23 Then
                                         willDunk = 1
                                     End If
 
                                 Else
 
-                                    If RN1 <= 28 Then
+                                    If RN1 <= 38 Then
                                         willDunk = 1
                                     End If
 
                                 End If
-
-                                'If willDunk = 1 Then Call pbplog(4807)
 
                             End If
 
@@ -5094,35 +5079,27 @@ Sub MAKEPBP (pbpType)
 
                         Call Rolld100(RN2)
 
-                        'Call pbplog(5095)
-
                         If teamYears(0) <= 2000 And teamYears(1) <= 2000 Then
 
-                            test = 1
-
-                            If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 1000) <= 137 Then
+                            If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 1000) <= 33 Then
                                 willDunk = 1
                             End If
 
-                            If ballCarrier = 4 And RN2 <= 40 Then
+                            If ballCarrier = 4 And RN2 <= 10 Then
                                 willDunk = 1
                             End If
 
                         Else
 
-                            test = 2
-
-                            If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 1000) <= 182 Then
+                            If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 1000) <= 45 Then
                                 willDunk = 1
                             End If
 
-                            If ballCarrier = 4 And RN2 <= 57 Then
+                            If ballCarrier = 4 And RN2 <= 14 Then
                                 willDunk = 1
                             End If
 
                         End If
-
-                        'If willDunk = 1 Then Call pbplog(5119)
 
                 End Select
 
@@ -11347,12 +11324,13 @@ Sub pbplog (lineNumber)
 
     'Print #11, "Called from line # "; lineNumber
     'Print #11, gameTeams$(0); " vs "; gameTeams$(1)
-    Print #11, pbpString$
+    'Print #11, pbpString$
+
     'Print #11, currGame; ","; ballCarrier; ","; lineNumber
     'Print #11, lineNumber
     'Print #11, defStyles(P9)
     'Print #11, test
-    'Print #11, lineNumber, ballCarrier
+    Print #11, lineNumber, ballCarrier
     'Print #11,
 
 End Sub
