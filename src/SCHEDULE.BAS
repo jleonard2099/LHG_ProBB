@@ -622,8 +622,9 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
     Shared coachMode$(), foulOption$(), freeThrowOpt$()
     Shared location$(), modeAbbrev$()
     Shared playMode$(), playoffGame$()
+    Shared quarterLength$()
     Shared sClockOpt$(), teamEraOpt$()
-    Shared yesNoText$()
+    Shared timeoutSetting$(), yesNoText$()
 
     Do
 
@@ -679,7 +680,11 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
         Locate 16, 2: Color 14
         Print "(F) ";
         Color 15: Print "FREE THROW RULES: "; foulOption$(scheduleNG%(gameIndex%, 11))
-        Locate 18, 2: Color 14
+        Locate 17, 2: Color 14
+        Print "(G) ";
+        Color 15: Print "TIMEOUT SETTINGS: "; timeoutSetting$(scheduleNG%(gameIndex%, 19))
+
+        Locate 19, 2: Color 14
         Print "(0) ";
         Color 15: Print "ACCEPT SETTINGS"
 
@@ -703,6 +708,7 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
                 Case "D": I$ = "14"
                 Case "E": I$ = "15"
                 Case "F": I$ = "16"
+                Case "G": I$ = "17"
             End Select
 
             setting = Val(I$)
@@ -781,9 +787,13 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
                 Case 16
                     scheduleNG%(gameIndex%, 11) = 1 - scheduleNG%(gameIndex%, 11)
 
+                Case 17
+                    scheduleNG%(gameIndex%, 19) = scheduleNG%(gameIndex%, 19) + 1
+                    If scheduleNG%(gameIndex%, 19) > 2 Then scheduleNG%(gameIndex%, 19) = 0
+
             End Select
 
-        Loop Until (setting >= 0 And setting <= 16)
+        Loop Until (setting >= 0 And setting <= 17)
 
         If visitor$ <> "" And home$ <> "" And TM$ <> "" And DT$ <> "" Then
 
@@ -1300,7 +1310,8 @@ Sub ChangeGlobalSettings ()
     Shared coachMode$(), foulOption$(), freeThrowOpt$()
     Shared location$(), modeAbbrev$()
     Shared playMode$(), playoffGame$()
-    Shared sClockOpt$(), yesNoText$()
+    Shared quarterLength$(), sClockOpt$()
+    Shared timeoutSetting$(), yesNoText$()
 
     Dim displayPause!
 
@@ -1329,6 +1340,9 @@ Sub ChangeGlobalSettings ()
     bonusFoulNum = scheduleNG%(1, 14)
     freeThrowVal = scheduleNG%(1, 10)
     ftRulesOpt = scheduleNG%(1, 11)
+    timeoutOpt = scheduleNG%(1, 19)
+    quarterOpt = scheduleNG%(1, 20)
+
 
     DT$ = "10-01-23"
     TM$ = "07:30P"
@@ -1367,8 +1381,14 @@ Sub ChangeGlobalSettings ()
         Locate 12, 2: Color 14
         Print "(9) ";
         Color 15: Print "FREE THROW RULES: "; foulOption$(ftRulesOpt)
+        Locate 13, 2: Color 14
+        Print "(A) ";
+        Color 15: Print "TIMEOUT SETTINGS: "; timeoutSetting$(timeoutOpt)
+        Locate 14, 2: Color 14
+        Print "(B) ";
+        Color 15: Print "QUARTER LENGTH: "; quarterLength$(quarterOpt)
 
-        Locate 14, 2: Color 14: Print "(0) ";
+        Locate 16, 2: Color 14: Print "(0) ";
         Color 15: Print "ACCEPT GLOBAL SETTINGS"
 
         Do
@@ -1409,6 +1429,13 @@ Sub ChangeGlobalSettings ()
             Case 9:
                 ftRulesOpt = 1 - ftRulesOpt
 
+            Case 10
+                timeoutOpt = timeoutOpt + 1
+                If timeoutOpt > 2 Then timeoutOpt = 0
+
+            Case 11
+                quarterOpt = 1 - quarterOpt
+
         End Select
 
     Loop Until I = 0
@@ -1423,6 +1450,8 @@ Sub ChangeGlobalSettings ()
         scheduleNG%(I, 10) = freeThrowVal
         scheduleNG%(I, 11) = ftRulesOpt
         scheduleNG%(I, 14) = bonusFoulNum
+        scheduleNG%(I, 19) = timeoutOpt
+        scheduleNG%(I, 20) = quarterOpt
     Next
 
 End Sub

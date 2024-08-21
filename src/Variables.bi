@@ -43,7 +43,7 @@ Dim gameSite_Road$(MAX_SCHED_STATS), locIndicator_Road$(MAX_SCHED_STATS), oppNam
 ' -------------------------
 Dim BS%, NS%
 
-ReDim scheduleAP%(MAX_SCHEDULE_GAMES), scheduleNG%(MAX_SCHEDULE_GAMES, 18)
+ReDim scheduleAP%(MAX_SCHEDULE_GAMES), scheduleNG%(MAX_SCHEDULE_GAMES, 20)
 ReDim homeScores(MAX_SCHEDULE_GAMES), visitorScores(MAX_SCHEDULE_GAMES)
 
 ReDim scheduleH$(MAX_SCHEDULE_GAMES), scheduleV$(MAX_SCHEDULE_GAMES)
@@ -61,8 +61,9 @@ Dim eventSettings(13)
 Dim coachMode$(0 To 1), foulOption$(1), freeThrowOpt$(1)
 Dim location$(0 To 2), modeAbbrev$(0 To 3)
 Dim playoffGame$(1), playMode$(3)
+Dim quarterLength$(0 To 1)
 Dim sClockOpt$(0 To 2), teamEraOpt$(0 To 2)
-Dim teamIndicator$(1)
+Dim teamIndicator$(1), timeoutSetting$(0 To 2)
 Dim yesNo$(0 To 1), yesNoText$(1)
 
 
@@ -216,8 +217,9 @@ Dim Shared defPress, endGame, endAllGames
 Dim Shared fastBreak, forcedThree, ftRulesOpt, freeThrowVal, fullCtOpt
 Dim Shared gameLoc, halfTime, JY, MJ, nbrFTMade, nbrLines, offStatus
 Dim Shared playerMode, playerOpt, playoffOpt, pbpOpt, playChoice
-Dim Shared quarter, rebFoulChance, sClockVal, shotClock, shotPctOpt, shotType
-Dim Shared threePtOpt, T1, TMT, willDunk
+Dim Shared quarter, quarterOpt, rebFoulChance
+Dim Shared sClockVal, shotClock, shotPctOpt, shotType
+'Dim Shared threePtOpt, T1, timeoutOpt, TMT, twoTimeouts, willDunk
 
 Dim Shared GF%, HH%, J8%, OX%, OY%
 
@@ -235,7 +237,7 @@ Dim Shared ST%(32), SX%(32, 1, 14)
 'Dim Shared C1(1, 14)
 Dim Shared D8(6, 6), dFGPA(1), defStyles(1), F1(14), fullCtOpt(0 To 1)
 Dim Shared G4(14), G5(14), leagRat_GAME(1, 6), lineupIdx(0 To 1, 0 To 4)
-Dim Shared miscAdj(1, 4)
+'Dim Shared mandatoryTO(0 To 1), miscAdj(1, 4)
 Dim Shared P4(5), P5(5), pbpFG(1 To 8), pbpBG(1 To 8), perFoulAdj(0 To 32)
 Dim Shared plyrRat_GAME(1, 14, 19), QQ(1, 8, 14, 14), QR(1, 7, 14), rebRatings(0 To 10)
 Dim Shared S3(14), score(1, 14), schedGame(2), scSettings(0 To 2), statTotals(14)
