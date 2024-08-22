@@ -213,13 +213,13 @@ Dim alpha$(4), tickerPeriod$(14)
 Dim Shared D, P, P9
 Dim Shared assistShotBoost, autoPlay, ballCarrier, bonusFoulNum
 Dim Shared coachOpt, compTeam, currGame
-Dim Shared defPress, endGame, endAllGames
+Dim Shared defPress, endGame, endAllGames, eraAdj, eraChoice
 Dim Shared fastBreak, forcedThree, ftRulesOpt, freeThrowVal, fullCtOpt
 Dim Shared gameLoc, halfTime, JY, MJ, nbrFTMade, nbrLines, offStatus
 Dim Shared playerMode, playerOpt, playoffOpt, pbpOpt, playChoice
 Dim Shared quarter, quarterOpt, rebFoulChance
 Dim Shared sClockVal, shotClock, shotPctOpt, shotType
-'Dim Shared threePtOpt, T1, timeoutOpt, TMT, twoTimeouts, willDunk
+Dim Shared threePtOpt, T1, timeoutOpt, TMT, twoTimeouts, willDunk
 
 Dim Shared GF%, HH%, J8%, OX%, OY%
 
@@ -230,14 +230,14 @@ Dim Shared activePosition$, pbpString$, prevBall$, TS$
 
 Dim Shared CF%(1, 9)
 Dim Shared F%(1, 9), G9%(1), GF%(2, 9)
-Dim Shared NG%(18), N0%(2, 2, 4)
+Dim Shared NG%(20), N0%(2, 2, 4)
 Dim Shared OX%(2), penetrationOffAdj(2), offStyles(1)
 Dim Shared ST%(32), SX%(32, 1, 14)
 
-'Dim Shared C1(1, 14)
+Dim Shared C1(1, 14)
 Dim Shared D8(6, 6), dFGPA(1), defStyles(1), F1(14), fullCtOpt(0 To 1)
 Dim Shared G4(14), G5(14), leagRat_GAME(1, 6), lineupIdx(0 To 1, 0 To 4)
-'Dim Shared mandatoryTO(0 To 1), miscAdj(1, 4)
+Dim Shared mandatoryTO(0 To 1), miscAdj(1, 4)
 Dim Shared P4(5), P5(5), pbpFG(1 To 8), pbpBG(1 To 8), perFoulAdj(0 To 32)
 Dim Shared plyrRat_GAME(1, 14, 19), QQ(1, 8, 14, 14), QR(1, 7, 14), rebRatings(0 To 10)
 Dim Shared S3(14), score(1, 14), schedGame(2), scSettings(0 To 2), statTotals(14)

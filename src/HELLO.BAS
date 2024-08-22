@@ -11,7 +11,7 @@ Const DIVS_PER_LEAGUE = 4
 Const TEAMS_PER_LEAGUE = 40
 
 Const MAX_SCHED_STATS = 100
-Const SCHEDULE_SIZE_BYTES = 52
+Const SCHEDULE_SIZE_BYTES = 56
 
 Const FOULS_TO_DQ = 6
 
@@ -27,9 +27,6 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-Dim Shared mandatoryTO(0 To 1), miscAdj(1, 4)
-Dim Shared threePtOpt, T1, timeoutOpt, TMT, twoTimeouts, willDunk
-
 Dim Shared passes, test
 Dim Shared possTime!
 
@@ -694,7 +691,597 @@ End Sub
 ' For Utils
 '$Include: 'BoxRoutines.bm'
 '$Include: 'ConfigureDrives.bm'
-'$Include: 'FileTeamSelection.bm'
+'Include: 'FileTeamSelection.bm'
+
+
+'----------------------------------------
+'          ChooseTeam Subroutine
+'----------------------------------------
+'Provides dialog for user to select teams
+' from a previously populated team file.
+'The focus of this routine is to accept
+' a disk ID from the user. It then relies
+' on separate subroutines to assist with
+' actually choosing the team, and also
+' reading in data for the chosen team
+Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
+
+    Shared teamRatings()
+
+    'Shared teamNames$()
+
+    Shared previousYear$
+
+    Do
+
+        Color 15, 0
+        Cls
+
+        Call MenuBox(6, 8, 61, 7, 15, 4)
+
+        Locate 7, 32
+
+        Locate , 12: Print "ENTER DISK ID: "
+        Print
+        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+        Print
+        Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
+
+        I$ = GetKeyPress$
+
+        If I$ <> Chr$(27) Then
+
+            If I$ <> Chr$(13) Then
+
+                Locate 7, 27: Print I$;
+
+                NY$ = ""
+
+                Do Until NY$ = Chr$(13)
+
+                    NY$ = GetKeyPress$
+
+                    If NY$ = Chr$(8) And Len(I$) >= 1 Then
+                        col% = Pos(0)
+                        I$ = Left$(I$, (Len(I$) - 1))
+                        Locate , col% - 1
+                        Print " ";
+                        Locate , col% - 1
+                    Else
+                        I$ = I$ + NY$
+                        Print NY$;
+                    End If
+
+                Loop
+
+                I$ = Left$(I$, (Len(I$) - 1))
+
+                If Not (I$ = "" And yearNumber$ <> "") Then
+
+                    yearNumber$ = RTrim$(I$)
+                    Erase teamNames$
+                    numberTeams = 0
+
+                    Cls
+
+                    If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
+
+                        MsgText$ = "NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID"
+                        BoxWidth = 20
+                        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+                        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+                        I$ = GetKeyPress$
+                        Call CSMsgBox("", 0, Pass)
+                        Exit Sub
+
+                    Else
+
+                        Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$ For Random As #1 Len = TEAM_SIZE_BYTES
+
+                        fileLength& = LOF(1)
+
+                        Field #1, 15 As Q$(0)
+
+                        numberTeams = fileLength& / TEAM_SIZE_BYTES
+
+                        For teamIdx = 1 To numberTeams
+                            Get #1, teamIdx
+                            'numberTeams = numberTeams + 1
+                            teamNames$(teamIdx) = Q$(0)
+                            teamIndex%(teamIdx) = teamIdx
+                        Next teamIdx
+
+                        Close #1
+
+                    End If 'Done checking if file exists
+
+                End If 'Done checking for blank year number
+
+                previousYear$ = yearNumber$
+
+            Else
+
+                yearNumber$ = previousYear$
+
+            End If 'Done checking for ENTER key
+
+            'Locate 2, 33
+            'Color 31: Print "LOADING..."
+
+            Do
+
+                Call SelectTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%)
+                'teamGender$(gameIdx) = GetTeamGender$(yearNumber$)
+
+                If ExitCode% <> 27 And numberTeams <> 0 And chosenIdx > 0 Then
+
+                    Do
+
+                        YCoord = Int((80 - Len(teamName$)) / 2)
+                        Locate 2, YCoord
+                        Color teamRatings(33), teamRatings(34): Print teamName$
+
+                        Color 15, 4
+                        Locate 3, 32: Print "ANY CHANGE? (Y/N)";
+
+                        J$ = GetKeyPress$
+
+                    Loop Until J$ = Chr$(27) Or UCase$(J$) = "Y" Or UCase$(J$) = "N"
+
+                End If
+
+                'chosenIdx = -1 means there was invalid data
+            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N" Or chosenIdx = -1
+
+        End If 'Done checking for ESC
+
+    Loop Until UCase$(J$) = "N" Or I$ = Chr$(27) 'Or J$ = Chr$(27)
+
+    If I$ = Chr$(27) Or J$ = Chr$(27) Then chosenIdx = 0
+
+End Sub
+
+
+'----------------------------------------
+'          SelectTeam Subroutine
+'----------------------------------------
+'Presents selection menu of all teams
+' found in the target "disk" file.
+'The focus of this routine is confirming
+' a team choice. It then relies on
+' another subroutine to read in data
+' from the selected team.
+Sub SelectTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%)
+
+    ExitCode% = -1
+    validData = 0
+
+    If numberTeams > 0 And CheckString%(teamNames$(numberTeams)) = 0 Then
+
+        SELECTION% = 1
+        Count% = numberTeams
+        Start% = 1
+        FileFGColor = 15: FileBGColor = 4
+        HiLiteFGColor = 0: HiLiteBGColor = 7
+        Rows = 20
+        Columns% = 4
+        Spacing% = 6
+        Row% = 4
+        Column% = 1
+
+        Color , 4
+        Cls
+        Color 14
+        Locate , 33: Print "TEAM SELECTION"
+        Locate 25, 1
+        Color 14: Print "ESC";
+        Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";
+        Color 14: Print "ENTER";
+        Color 15: Print "-SELECTS TEAM";
+
+        _MouseShow "DEFAULT"
+        MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor, HiLiteBGColor, Rows%, Columns%, Spacing%, Row%, Column%
+        _MouseHide
+
+        If ExitCode% <> 27 Then
+
+            selectedIdx = teamIndex%(SELECTION%)
+
+            'Locate 2, 33
+            'Color 31: Print "LOADING..."
+
+            Call ReadTeam(yearNumber$, teamName$, selectedIdx, validData)
+
+        End If
+
+    End If
+
+    If validData = 0 And ExitCode% <> 27 Then
+
+        selectedIdx = -1
+        Locate 9,
+        Call CSMsgBox("THERE WAS AN ISSUE READING TEAM DATA. YOU MAY HAVE CHOSEN A TEAM FROM 4.0... PRESS ANY KEY AND TRY ANOTHER DISK ID", 20, PASS)
+        K$ = GetKeyPress$
+        Call CSMsgBox("", 0, PASS)
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'           ReadTeam Subroutine
+'----------------------------------------
+'Reads in all data for the selected team,
+' given it's index in the team file.
+'This routine is highly customized TO
+' the specific game for which it has
+' been included for.
+Sub ReadTeam (teamYear$, targetTeam$, teamIdx, dataOK)
+
+    Shared CK
+
+    Shared playerRatings!(), leagueRatings(), teamRatings()
+
+    Shared playerNames$(), teamInfo$()
+
+    Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
+
+    Field #1, 15 As Q$(0), 15 As Q$(1)
+
+    For I = 0 To 6
+        Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
+    Next
+
+    Field #1, 44 As X$, 2 As Q$(9)
+
+    For I = 0 To 34
+        Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
+    Next
+
+    For I = 0 To 14
+
+        Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
+
+        For I1 = 0 To 19
+            Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
+        Next
+
+    Next
+
+    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377), 4 As Q$(378)
+
+    Get #1, teamIdx
+
+    'Name
+    teamInfo$(0) = RTrim$(Q$(0))
+    targetTeam$ = teamInfo$(0)
+
+    'Mascot
+    teamInfo$(1) = RTrim$(Q$(1))
+
+    For I = 0 To 6
+        leagueRatings(I) = CVI(Q$(I + 2))
+    Next
+
+    CK = CVI(Q$(9))
+
+    For I = 0 To 34
+        teamRatings(I) = CVI(Q$(I + 10))
+    Next
+
+    For I = 0 To 14
+
+        playerNames$(I, 0) = Q$(22 * I + 45)
+        playerNames$(I, 1) = Q$(22 * I + 46)
+
+        For I1 = 0 To 19
+            playerRatings!(I, I1) = CVI(Q$(22 * I + 47 + I1))
+        Next
+
+    Next
+
+    'Abbreviation
+    teamInfo$(2) = RTrim$(Q$(375))
+
+    'Coach
+    teamInfo$(3) = RTrim$(Q$(376))
+
+    'Arena
+    teamInfo$(4) = RTrim$(Q$(377))
+
+    'Attendance
+    teamAttendance& = CVL(Q$(378))
+
+    'Close team file
+    Close #1
+
+    If (CheckString%(teamInfo$(4)) = 1 Or CK <> 999) Then
+
+        dataOK = 0
+
+    Else
+
+        dataOK = 1
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'         nameStatFile$ Function
+'----------------------------------------
+'Helps create uniquely named file to
+' store a team's stats.
+'
+'There are 2 main changes done in order
+' to accomodate this:
+' 1) Replaces invalid characters with _
+' 2) If "ST" is the name, shortens the
+'    prefix. This helps with college
+'    teams (ARKANSAS vs ARKANSAS ST)
+Function nameStatFile$ (teamName$)
+
+    teamPrefix$ = teamName$
+
+    For XX = 4 To 11
+
+        If Mid$(teamPrefix$, XX, 1) = " " Or Mid$(teamPrefix$, XX, 1) = "." Or Mid$(teamPrefix$, XX, 1) = "/" Or Mid$(teamPrefix$, XX, 1) = "_" Then
+            Mid$(teamPrefix$, XX, 1) = "_"
+        End If
+
+    Next XX
+
+    For XX = 12 To 14
+
+        If Mid$(teamPrefix$, XX, 2) = "ST" Then
+            Mid$(teamPrefix$, 9, 1) = "_"
+            Mid$(teamPrefix$, 10, 2) = "ST"
+        End If
+
+    Next XX
+
+    'Length of 'converted' name for file
+    '-- update this if we want to support long files
+    QQ = 8
+
+    For XX = 11 To 4 Step -1
+        If Mid$(teamPrefix$, XX, 1) = "_" Then
+            QQ = XX - 4
+        Else
+            Exit For
+        End If
+    Next XX
+
+    nameStatFile$ = Mid$(teamPrefix$, 4, QQ) + "." + Left$(teamPrefix$, 2)
+
+End Function
+
+
+'----------------------------------------
+'          CheckString Function
+'----------------------------------------
+'This function checks the given string
+'to determine if any characters are not
+'alpha-numeric or printable.
+'Return Values
+'1 = non-printable characters were found
+'0 = all characters in string are alpha-numeric.
+Function CheckString% (targetString$)
+
+    badString = 0
+    stringPosition% = 1
+
+    Do
+
+        test = Asc(Mid$(targetString$, stringPosition%, 1))
+
+        'If it is a non-printable character (corrupt data)
+        If test > 122 Or test < 32 Then
+            stringPosition% = 1
+            badString = 1
+        Else
+            stringPosition% = stringPosition% + 1
+        End If
+
+    Loop Until stringPosition% = Len(targetString$) Or badString = 1
+
+    CheckString% = badString
+
+End Function
+
+
+'----------------------------------------
+'        ChooseFile$ Function
+'----------------------------------------
+'Shows user a file selection menu, based
+' on the file spec parameter passed.
+'
+'fileSpec$ - file specification to load
+'            should include base path.
+'
+' EXAMPLE - C:\Temp\*.tmp
+'
+'fileDesc$ - brief description of the
+'            type of file
+'
+' RETURNS - base name of chosen file
+'            (that is, without extension)
+Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
+
+    descLength = Len(fileDesc$)
+
+    Do
+        'Display list of files...
+
+        Count% = FileCount%(fileSpec$)
+
+        If Count% = 0 Then
+
+            Locate 10, 8
+            zeroCountMsg$ = "NO " + fileDesc$ + " FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU"
+
+            Call CSMsgBox(zeroCountMsg$, 20, Pass)
+            I$ = GetKeyPress$
+            Call CSMsgBox("", 0, Pass)
+
+        Else
+
+            ReDim foundFiles$(0 To Count%)
+
+            'For X = 1 To Count%
+            '8 char's filename + 4 char's (. + ext)
+            'foundFiles$(X) = Space$(12)
+            'Next
+
+            foundFiles$(0) = fileSpec$
+            Call ReadFile(foundFiles$())
+
+            Do
+
+                XCoord = Int((80 - (descLength + 12)) / 2)
+
+                Color , 1
+                Cls
+                Locate , XCoord
+                Color 14
+                Print "SELECT "; fileDesc$; " FILE"
+                Color 15
+                SELECTION% = 1
+                START% = 1
+                FileFGColor = 15: FileBGColor = 1
+                HiLiteFGColor% = 0: HiLiteBGColor% = 7
+                Rows% = 20
+                Columns% = 3
+                Spacing% = 5
+                Row% = 4
+                Column% = 1
+                Locate 25, 1
+                Color 14
+                Print "ENTER";
+                Color 15
+                Print "-SELECTS "; fileDesc$;
+                Color 14
+                Locate , 55
+                Print "HIT ESCAPE KEY TO EXIT";
+                Color 15
+
+                _MouseShow "DEFAULT"
+                MAMenu foundFiles$(), SELECTION%, START%, Count%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
+                _MouseHide
+
+                If ExitCode% <> 27 Then
+
+                    Color 15, 1
+                    targetFile$ = RTrim$(foundFiles$(SELECTION%))
+                    XCoord = Int((80 - Len(targetFile$)) / 2)
+                    Locate 2, XCoord
+                    Print targetFile$
+
+                    Do
+                        Locate , 31
+                        Print "ANY CHANGE? (Y/N)";
+                        I$ = GetKeyPress$
+                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+                    Color 15, 0
+
+                End If
+
+            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
+
+        End If 'Done checking file count
+
+        '...Until we press ESC
+    Loop Until ExitCode% = 27 Or Count% = 0 Or UCase$(I$) = "N"
+
+    If ExitCode% <> 27 Then
+        ChooseFile$ = Left$(RTrim$(targetFile$), Len(targetFile$) - 4)
+    End If
+
+End Function
+
+'----------------------------------------
+'     ReportFilePrompt_Pro Subroutine
+'----------------------------------------
+'This subroutine prompts the user for
+'the name of the report file to be saved
+Sub UserFilePrompt (reportFile$)
+
+    Do
+
+        Color 15, 0
+        Cls
+
+        Call MenuBox(6, 8, 61, 7, 15, 1)
+
+        Locate 7, 32
+
+        Locate , 12: Print "ENTER NAME FOR FILE: ": Print
+        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
+        Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
+        Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
+        Locate 7, 37: Input reportFile$
+
+        If reportFile$ <> "" Then
+
+            Do
+                Locate 13, 12: Print "ANY CHANGE? (Y/N) "
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+        End If
+
+    Loop Until UCase$(I$) = "N" And reportFile$ <> ""
+
+End Sub
+
+
+'----------------------------------------
+'     ScheduleFilePrompt Subroutine
+'----------------------------------------
+'This subroutine prompts the user for
+'the name of the schedule file to be saved
+Sub ScheduleFilePrompt (scheduleFile$)
+
+    Color 15, 0
+    Cls
+
+    Call MenuBox(6, 8, 61, 8, 15, 1)
+
+    Do
+
+        Locate 7, 32
+
+        Locate , 12: Print "ENTER NAME FOR SCHEDULE: "
+        Print
+        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
+        Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
+        Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
+        Locate , 12: Print "SAMPLE NAMES ARE INDIANA, BOS68, CHI-76, ETC      "
+        Locate 7, 40: Input scheduleFile$
+
+        If scheduleFile$ <> "" Then
+
+            Do
+
+                Locate 14, 12
+                Print "ANY CHANGE? (Y/N) "
+                I$ = GetKeyPress$
+
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or I$ = Chr$(27)
+
+        End If
+
+    Loop Until (UCase$(I$) = "N" And scheduleFile$ <> "") Or I$ = Chr$(27)
+
+
+End Sub
+
+
 '$Include: 'CONVERT.BAS'
 '$Include: 'TITLE.bm'
 '$Include: 'ALIGN.BAS'
@@ -846,7 +1433,7 @@ Sub PROHOOP ()
         currGame = schedGame(0) + schedGame(2)
 
         'Open "pbplog" + Str$(currGame) For Append As #11
-        Open "pbplog" For Append As #11
+        'Open "pbplog" For Append As #11
 
         If Not _FileExists(diskPaths$(3) + scheduleFile$) Then
 
@@ -865,11 +1452,11 @@ Sub PROHOOP ()
 
             Open diskPaths$(3) + scheduleFile$ For Random As #7 Len = SCHEDULE_SIZE_BYTES
 
-            For X = 0 To 18
+            For X = 0 To 20
                 Field #7, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
             Next
 
-            Field #7, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
+            Field #7, 42 As X$, 2 As Q$(24), 2 As Q$(25), 5 As Q$(22), 5 As Q$(23)
 
             Get #7, schedGame(0) + schedGame(2)
 
@@ -878,11 +1465,11 @@ Sub PROHOOP ()
             Next
 
             For X = 0 To 1:
-                diskIDs$(X) = Q$(20 + X)
+                diskIDs$(X) = Q$(22 + X)
             Next
 
-            VS% = CVI(Q$(22))
-            HS% = CVI(Q$(23))
+            VS% = CVI(Q$(24))
+            HS% = CVI(Q$(25))
 
             Close #7
 
@@ -892,7 +1479,7 @@ Sub PROHOOP ()
 
     Else
 
-        Open "pbplog" For Append As #11
+        'Open "pbplog" For Append As #11
 
     End If
 
@@ -994,17 +1581,7 @@ Sub PROHOOP ()
 
                 I$ = GetKeyPress$
 
-                '-- Replace with call to AlphaToNum ???
-                If I$ <> Chr$(27) Then
-                    iVal = Val(I$)
-                    If UCase$(I$) = "A" Then iVal = 10
-                    If UCase$(I$) = "B" Then iVal = 11
-                    If UCase$(I$) = "C" Then iVal = 12
-                    If UCase$(I$) = "D" Then iVal = 13
-                    If UCase$(I$) = "E" Then iVal = 14
-                    If UCase$(I$) = "F" Then iVal = 15
-                    If UCase$(I$) = "G" Then iVal = 16
-                End If
+                Call LetterToNumber(I$, iVal)
 
             Loop Until iVal >= 0 And iVal <= 16 Or I$ = Chr$(27) Or UCase$(I$) = "Q"
 
@@ -1221,10 +1798,12 @@ Sub PROHOOP ()
     End If
 
     ' # of timeouts
-    If teamYears(0) < 2000 And teamYears(1) < 2000 Then
+    If teamYears(eraChoice) < 2000 Then
         timeouts(1) = 6
         timeouts(0) = 6
     Else
+        'Favor modern rules if teams Are
+        'from different eras
         timeouts(1) = 7
         timeouts(0) = 7
     End If
@@ -1321,9 +1900,11 @@ Sub PROHOOP ()
 
             Case 4
                 '# 4th quarter timeouts
-                If teamYears(0) < 2000 And teamYears(1) < 2000 Then
+                If teamYears(eraChoice) < 2000 Then
                     If timeouts(PG) > 3 Then timeouts(PG) = 3
                 Else
+                    'Favor modern rules if teams Are
+                    'from different eras
                     If timeouts(PG) > 4 Then timeouts(PG) = 4
                 End If
 
@@ -1808,12 +2389,14 @@ Sub PROHOOP ()
         'the shot percentages are consistently low by .100
         threePtShotChance = gameRatings!(P, lineupIdx(P, ballCarrier), 20) + teamAdj(D, 4) + 15
 
-        If teamYears(0) < 2013 And teamYears(1) < 2013 Then
-            'Without subtracting 3 from the likelihood, players always shoot
-            '25% more often than they should. Given that FGAs are accurate, it's
-            'not clear to me why this happens.
+        If teamYears(eraChoice) < 2013 Then
+            'Without subtracting 3, players always shoot 25% more
+            'frequent than they should. Given that FGAs are accurate,
+            'it's not clear to me why this happens.
             threeFGChance = gameRatings!(P, lineupIdx(P, ballCarrier), 19) - 3
         Else
+            'Favor modern outcomes if teams are
+            'from different eras
             threeFGChance = gameRatings!(P, lineupIdx(P, ballCarrier), 19)
         End If
 
@@ -4046,6 +4629,8 @@ Sub AUTOSETUP (validTeam)
     ftRulesOpt = NG%(11)
     tickerStart = NG%(12)
     bonusFoulNum = NG%(14)
+    timeoutOpt = NG%(19)
+    quarterLen = NG%(20)
 
     For tgtTeam = 0 To 1
 
@@ -4624,7 +5209,7 @@ Sub MAKEPBP (pbpType)
 
                             Call Rolld100(RN1)
 
-                            If teamYears(0) <= 2000 And teamYears(1) <= 2000 Then
+                            If teamYears(eraChoice) <= 2000 Then
 
                                 If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 19 Then
                                     willDunk = 1
@@ -4640,6 +5225,8 @@ Sub MAKEPBP (pbpType)
 
                             Else
 
+                                'Favor modern outcomes if teams are
+                                'from different eras
                                 If (ballCarrier = 0 Or ballCarrier = 1) And RN1 <= 36 Then
                                     willDunk = 1
                                 End If
@@ -4742,7 +5329,7 @@ Sub MAKEPBP (pbpType)
 
                                 Call Rolld100(RN1)
 
-                                If teamYears(0) <= 2000 And teamYears(1) <= 2000 Then
+                                If teamYears(eraChoice) <= 2000 Then
 
                                     If RN1 <= 31 Then
                                         willDunk = 1
@@ -4750,6 +5337,8 @@ Sub MAKEPBP (pbpType)
 
                                 Else
 
+                                    'Favor modern outcomes if teams are
+                                    'from different eras
                                     If RN1 <= 46 Then
                                         willDunk = 1
                                     End If
@@ -4841,7 +5430,7 @@ Sub MAKEPBP (pbpType)
 
                                 Call Rolld100(RN1)
 
-                                If teamYears(0) <= 2000 And teamYears(1) <= 2000 Then
+                                If teamYears(eraChoice) <= 2000 Then
 
                                     If RN1 <= 77 Then
                                         willDunk = 1
@@ -4849,6 +5438,8 @@ Sub MAKEPBP (pbpType)
 
                                 Else
 
+                                    'Favor modern outcomes if teams are
+                                    'from different eras
                                     If RN1 <= 99 Then
                                         willDunk = 1
                                     End If
@@ -4905,7 +5496,7 @@ Sub MAKEPBP (pbpType)
 
                                 Call Rolld100(RN1)
 
-                                If teamYears(0) <= 2000 And teamYears(1) <= 2000 Then
+                                If teamYears(eraChoice) <= 2000 Then
 
                                     If RN1 <= 23 Then
                                         willDunk = 1
@@ -4913,6 +5504,8 @@ Sub MAKEPBP (pbpType)
 
                                 Else
 
+                                    'Favor modern outcomes if teams are
+                                    'from different eras
                                     If RN1 <= 38 Then
                                         willDunk = 1
                                     End If
@@ -5205,7 +5798,7 @@ Sub MAKEPBP (pbpType)
 
                         Call Rolld100(RN2)
 
-                        If teamYears(0) <= 2000 And teamYears(1) <= 2000 Then
+                        If teamYears(eraChoice) <= 2000 Then
 
                             If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 1000) <= 33 Then
                                 willDunk = 1
@@ -5217,6 +5810,8 @@ Sub MAKEPBP (pbpType)
 
                         Else
 
+                            'Favor modern outcomes if teams are
+                            'from different eras
                             If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 1000) <= 45 Then
                                 willDunk = 1
                             End If
@@ -6376,24 +6971,24 @@ Sub TickerSchedule
 
     Open diskPaths$(3) + scheduleFile$ For Random As #2 Len = SCHEDULE_SIZE_BYTES
 
-    For X = 0 To 18
+    For X = 0 To 20
         Field #2, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
     Next
 
-    Field #2, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
+    Field #2, 42 As X$, 2 As Q$(24), 2 As Q$(25), 5 As Q$(22), 5 As Q$(23)
 
     NG%(13) = 1
 
-    For X = 0 To 18:
+    For X = 0 To 20:
         LSet Q$(X + 1) = MKI$(NG%(X))
     Next
 
     For X = 0 To 1:
-        LSet Q$(20 + X) = diskIDs$(X)
+        LSet Q$(22 + X) = diskIDs$(X)
     Next
 
-    LSet Q$(22) = MKI$(score(0, 0))
-    LSet Q$(23) = MKI$(score(1, 0))
+    LSet Q$(24) = MKI$(score(0, 0))
+    LSet Q$(25) = MKI$(score(1, 0))
 
     Put #2, schedGame(0) + schedGame(2)
 
@@ -8303,11 +8898,11 @@ Sub SETUPRATINGS (teamStyle)
             Color 15, 0
             Do
                 I$ = GetKeyPress$
-                I = Val(I$)
-            Loop Until I >= 0 And I <= 2
+                eraAdj = Val(I$)
+            Loop Until eraAdj >= 0 And eraAdj <= 2
         End If
 
-        If I <> 2 Then
+        If eraAdj <> 2 Then
 
             HN% = 1
             teamStyle = I
@@ -8320,6 +8915,8 @@ Sub SETUPRATINGS (teamStyle)
 
     Else
 
+        eraAdj = 3
+        'Both Teams Are Same Year
         'Adjust FGA / G for both teams evenly
         JX! = (teamRat_GAME(0, 5) + teamRat_GAME(0, 19)) / ((teamRat_GAME(1, 0) + teamRat_GAME(0, 0)) * 2) + (teamRat_GAME(1, 5) + teamRat_GAME(1, 19)) / ((teamRat_GAME(1, 0) + teamRat_GAME(0, 0)) * 2)
         JY = JX! * 2 - (leagRat_GAME(0, 1) + leagRat_GAME(1, 1)) / 2
@@ -8329,6 +8926,17 @@ Sub SETUPRATINGS (teamStyle)
         End If
 
     End If 'Done checking for different eras
+
+    'Check if we should favor ratings (rebounds, dunks, etc.)
+    'towards one team or another
+    If eraAdj > 2 Then
+        'No favored era: assume teams are same era
+        'Use Home Team's era (in case they are not)
+        eraChoice = 1
+    Else
+        'Favored team chosen
+        eraChoice = eraAdj
+    End If
 
     For I = 0 To 1
 
@@ -8566,14 +9174,14 @@ Sub SETUPRATINGS (teamStyle)
         rebFoulChance = 25
     Else
 
-        If teamYears(0) < 1993 And teamYears(1) < 1993 Then
+        If teamYears(eraChoice) < 1993 Then
             rebFoulChance = 7
         Else
             'Personal fouls trend higher in 1993 and on
             'The game got more physical as the jump shot
             'became less common
-            '--- we should consider normalizing this
-            '--- for when years don't match?
+            'Favor modern outcomes if teams are
+            'from different eras
             rebFoulChance = 16
         End If
 
@@ -11843,13 +12451,15 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx, dataOK)
 
     'Arena
     gameArena$(gameIdx) = RTrim$(Q$(377))
-    
+
     'Attendance
     avgAttendance&(gameIdx) = CVL(Q$(378))
 
     Close #1
 
-    If ((CheckString%(gameArena$(gameIdx)) = 1) Or CK <> 999) Then
+    test$ = gameArena$(gameIdx)
+
+    If (CK <> 999) Then
 
         dataOK = 0
 

@@ -8,7 +8,7 @@
 Sub SCHEDULE ()
 
     Dim scheduleFile$
-    ReDim menuChoices$(1 To 7)
+    ReDim menuChoices$(1 To 8)
 
     Shared NS%
 
@@ -29,11 +29,12 @@ Sub SCHEDULE ()
         menuChoices$(4) = "CHANGE TEAM CONTROL FOR A SCHEDULE"
         menuChoices$(5) = "MAKE GLOBAL CHANGES TO A SCHEDULE "
         menuChoices$(6) = "BOXSCORE MAINTENANCE / PARAMETERS "
-        menuChoices$(7) = "RETURN TO BB PRO GAME MAIN MENU   "
+        menuChoices$(7) = "CONVERT SCHEDULE FILE FROM 4.0    "
+        menuChoices$(8) = "RETURN TO BB PRO GAME MAIN MENU   "
         SELECTION% = 1
-        Count% = 7
+        Count% = 8
         Start% = 1
-        ExitCode% = 7
+        ExitCode% = 8
         FileFGColor = 15: FileBGColor = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
@@ -110,11 +111,16 @@ Sub SCHEDULE ()
                 Case 6:
                     Call BoxscoreMaintenance
 
+                Case 7:
+                    scheduleFile$ = _OpenFileDialog$("Select schedule file", diskPaths$(3), "*.SCD", "Schedule files")
+
+                    Call ConvertSched4to5(scheduleFile$, 0)
+
             End Select
 
         End If
 
-    Loop Until SELECTION% = 7 Or ExitCode% = 27
+    Loop Until SELECTION% = 8 Or ExitCode% = 27
 
     'Free up memory for rest of program
     ReDim homeScores(1)
@@ -437,7 +443,7 @@ Sub NewSchedule (scheduleFile$)
                 Close #2
 
                 'Free up used memory so games can load faster
-                ReDim scheduleNG%(1, 18)
+                ReDim scheduleNG%(1, 20)
                 ReDim scheduleYN$(1, 1)
                 ReDim homeScores(1)
                 ReDim visitorScores(1)
@@ -447,7 +453,7 @@ Sub NewSchedule (scheduleFile$)
                 Call PROHOOP
 
                 'Restore memory so we can populate again
-                ReDim scheduleNG%(MAX_SCHEDULE_GAMES, 18)
+                ReDim scheduleNG%(MAX_SCHEDULE_GAMES, 20)
                 ReDim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
                 ReDim homeScores(MAX_SCHEDULE_GAMES)
                 ReDim visitorScores(MAX_SCHEDULE_GAMES)
@@ -626,6 +632,8 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
     Shared sClockOpt$(), teamEraOpt$()
     Shared timeoutSetting$(), yesNoText$()
 
+    test = scheduleNG%(gameIndex%, 20)
+
     Do
 
         ' ** Enter New Game **
@@ -683,8 +691,11 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
         Locate 17, 2: Color 14
         Print "(G) ";
         Color 15: Print "TIMEOUT SETTINGS: "; timeoutSetting$(scheduleNG%(gameIndex%, 19))
+        Locate 18, 2: Color 14
+        Print "(H) ";
+        Color 15: Print "QUARTER LENGTH: "; quarterLength$(scheduleNG%(gameIndex%, 20))
 
-        Locate 19, 2: Color 14
+        Locate 20, 2: Color 14
         Print "(0) ";
         Color 15: Print "ACCEPT SETTINGS"
 
@@ -701,17 +712,7 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
 
             I$ = GetKeyPress$
 
-            Select Case UCase$(I$)
-                Case "A": I$ = "11"
-                Case "B": I$ = "12"
-                Case "C": I$ = "13"
-                Case "D": I$ = "14"
-                Case "E": I$ = "15"
-                Case "F": I$ = "16"
-                Case "G": I$ = "17"
-            End Select
-
-            setting = Val(I$)
+            Call LetterToNumber(I$, setting)
 
             Select Case setting
 
@@ -764,32 +765,32 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
                 Case 9
                     scheduleNG%(gameIndex%, 3) = 1 - scheduleNG%(gameIndex%, 3)
 
-                Case 10: ' Back to beginning of loop
-
-                Case 11
+                Case 10:
                     scheduleNG%(gameIndex%, 5) = 1 - scheduleNG%(gameIndex%, 5)
 
-                Case 12
-
+                Case 11
                     scheduleNG%(gameIndex%, 9) = 1 - scheduleNG%(gameIndex%, 9)
 
-                Case 13
+                Case 12
                     scheduleNG%(gameIndex%, 6) = scheduleNG%(gameIndex%, 6) + 1
                     If scheduleNG%(gameIndex%, 6) > 2 Then scheduleNG%(gameIndex%, 6) = 0
 
-                Case 14
+                Case 13
                     scheduleNG%(gameIndex%, 14) = scheduleNG%(gameIndex%, 14) + 1
                     If scheduleNG%(gameIndex%, 14) > 6 Then scheduleNG%(gameIndex%, 14) = 4
 
-                Case 15
+                Case 14
                     scheduleNG%(gameIndex%, 10) = 1 - scheduleNG%(gameIndex%, 10)
 
-                Case 16
+                Case 15
                     scheduleNG%(gameIndex%, 11) = 1 - scheduleNG%(gameIndex%, 11)
 
-                Case 17
+                Case 16
                     scheduleNG%(gameIndex%, 19) = scheduleNG%(gameIndex%, 19) + 1
                     If scheduleNG%(gameIndex%, 19) > 2 Then scheduleNG%(gameIndex%, 19) = 0
+
+                Case 17
+                    scheduleNG%(gameIndex%, 20) = 1 - scheduleNG%(gameIndex%, 20)
 
             End Select
 
@@ -931,22 +932,22 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                             'Write matching games
                             Locate 1, 1: Print totalGames + 1; " MATCHES"
 
-                            For X = 0 To 18
+                            For X = 0 To 20
                                 Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
                             Next
 
-                            Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
+                            Field #1, 42 As X$, 2 As Q$(24), 2 As Q$(25), 5 As Q$(22), 5 As Q$(23)
 
-                            For X = 0 To 18:
+                            For X = 0 To 20:
                                 LSet Q$(X + 1) = MKI$(scheduleNG%(I, X))
                             Next
 
                             For X = 0 To 1:
-                                LSet Q$(20 + X) = scheduleYN$(I, X)
+                                LSet Q$(22 + X) = scheduleYN$(I, X)
                             Next
 
-                            LSet Q$(22) = MKI$(visitorScores(I))
-                            LSet Q$(23) = MKI$(homeScores(I))
+                            LSet Q$(24) = MKI$(visitorScores(I))
+                            LSet Q$(25) = MKI$(homeScores(I))
 
                             Put #1, totalGames + 1
 
@@ -1186,24 +1187,24 @@ Sub SaveScheduleFile (saveFile$)
 
     Open diskPaths$(3) + saveFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
 
-    For X = 0 To 18
+    For X = 0 To 20
         Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
     Next
 
-    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
+    Field #1, 42 As X$, 2 As Q$(24), 2 As Q$(25), 5 As Q$(22), 5 As Q$(23)
 
     For I = 1 To scheduleAP%(0)
 
-        For X = 0 To 18
+        For X = 0 To 20
             LSet Q$(X + 1) = MKI$(scheduleNG%(I, X))
         Next
 
         For X = 0 To 1
-            LSet Q$(20 + X) = RTrim$(scheduleYN$(I, X))
+            LSet Q$(22 + X) = RTrim$(scheduleYN$(I, X))
         Next
 
-        LSet Q$(22) = MKI$(visitorScores(I))
-        LSet Q$(23) = MKI$(homeScores(I))
+        LSet Q$(24) = MKI$(visitorScores(I))
+        LSet Q$(25) = MKI$(homeScores(I))
 
         Put #1, I
 
@@ -1392,12 +1393,14 @@ Sub ChangeGlobalSettings ()
         Color 15: Print "ACCEPT GLOBAL SETTINGS"
 
         Do
-            I$ = GetKeyPress$
-            If UCase$(I$) = "A" Then I$ = "10"
-            I = Val(I$)
-        Loop Until I >= 0 And I <= 10
 
-        Select Case I
+            I$ = GetKeyPress$
+
+            Call LetterToNumber(I$, iVal)
+
+        Loop Until iVal >= 0 And iVal <= 11
+
+        Select Case iVal
 
             Case 1
                 playerOpt = playerOpt + 1
@@ -1438,7 +1441,7 @@ Sub ChangeGlobalSettings ()
 
         End Select
 
-    Loop Until I = 0
+    Loop Until iVal = 0
 
     For I = 1 To scheduleAP%(0)
         scheduleNG%(I, 3) = threePtOpt
@@ -1540,26 +1543,26 @@ Sub LoadScheduleInfo (targetFile$)
     scheduleAP%(0) = fileLength& / SCHEDULE_SIZE_BYTES
     BS% = Int((scheduleAP%(0) - 1) / 20)
 
-    For X = 0 To 18
+    For X = 0 To 20
         Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
     Next
 
-    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
+    Field #1, 42 As X$, 2 As Q$(24), 2 As Q$(25), 5 As Q$(22), 5 As Q$(23)
 
     For I = 1 To scheduleAP%(0)
 
         Get #1, I
 
-        For X = 0 To 18:
+        For X = 0 To 20:
             scheduleNG%(I, X) = CVI(Q$(X + 1))
         Next
 
         For X = 0 To 1:
-            scheduleYN$(I, X) = RTrim$(Q$(20 + X))
+            scheduleYN$(I, X) = RTrim$(Q$(22 + X))
         Next
 
-        visitorScores(I) = CVI(Q$(22))
-        homeScores(I) = CVI(Q$(23))
+        visitorScores(I) = CVI(Q$(24))
+        homeScores(I) = CVI(Q$(25))
 
     Next
 
@@ -1601,4 +1604,3 @@ Sub EditBoxscore (boxName$)
     End If
 
 End Sub
-
