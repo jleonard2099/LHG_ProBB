@@ -227,6 +227,8 @@ Sub ReadTeam (teamYear$, targetTeam$, teamIdx, dataOK)
 
     Shared CK
 
+    Shared teamAttendance&
+    
     Shared playerRatings!(), leagueRatings(), teamRatings()
 
     Shared playerNames$(), teamInfo$()

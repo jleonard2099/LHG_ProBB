@@ -669,16 +669,16 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
         Color 15: Print "SHOT CLOCK: "; sClockOpt$(scheduleNG%(gameIndex%, 7))
         Locate 10, 2: Color 14
         Print "(9) ";
-        Color 15: Print "3-POINT SHOT: "; yesNoText$(scheduleNG%(gameIndex%, 3))
+        Color 15: Print "QUARTER LENGTH: "; quarterLength$(scheduleNG%(gameIndex%, 20))
         Locate 11, 2: Color 14
         Print "(A) ";
-        Color 15: Print "GAME TYPE: "; playoffGame$(scheduleNG%(gameIndex%, 5))
+        Color 15: Print "TIMEOUT SETTINGS: "; timeoutSetting$(scheduleNG%(gameIndex%, 19))
         Locate 12, 2: Color 14
         Print "(B) ";
-        Color 15: Print "HUMAN COACHES: "; coachMode$(scheduleNG%(gameIndex%, 9))
+        Color 15: Print "GAME TYPE: "; playoffGame$(scheduleNG%(gameIndex%, 5))
         Locate 13, 2: Color 14
         Print "(C) ";
-        Color 15: Print "PLAY IN ERA OF TEAM (IF DIFFERENT): "; teamEraOpt$(scheduleNG%(gameIndex%, 6))
+        Color 15: Print "3-POINT SHOT: "; yesNoText$(scheduleNG%(gameIndex%, 3))
         Locate 14, 2: Color 14
         Print "(D) ";
         Color 15: Print "BONUS AFTER FOUL #: "; scheduleNG%(gameIndex%, 14)
@@ -690,10 +690,10 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
         Color 15: Print "FREE THROW RULES: "; foulOption$(scheduleNG%(gameIndex%, 11))
         Locate 17, 2: Color 14
         Print "(G) ";
-        Color 15: Print "TIMEOUT SETTINGS: "; timeoutSetting$(scheduleNG%(gameIndex%, 19))
+        Color 15: Print "HUMAN COACHES: "; coachMode$(scheduleNG%(gameIndex%, 9))
         Locate 18, 2: Color 14
         Print "(H) ";
-        Color 15: Print "QUARTER LENGTH: "; quarterLength$(scheduleNG%(gameIndex%, 20))
+        Color 15: Print "PLAY IN ERA OF TEAM (IF DIFFERENT): "; teamEraOpt$(scheduleNG%(gameIndex%, 6))
 
         Locate 20, 2: Color 14
         Print "(0) ";
@@ -763,17 +763,18 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
                     scheduleNG%(gameIndex%, 7) = 1 - scheduleNG%(gameIndex%, 7)
 
                 Case 9
-                    scheduleNG%(gameIndex%, 3) = 1 - scheduleNG%(gameIndex%, 3)
+                    scheduleNG%(gameIndex%, 20) = 1 - scheduleNG%(gameIndex%, 20)
 
                 Case 10:
-                    scheduleNG%(gameIndex%, 5) = 1 - scheduleNG%(gameIndex%, 5)
+                    scheduleNG%(gameIndex%, 19) = scheduleNG%(gameIndex%, 19) + 1
+                    If scheduleNG%(gameIndex%, 19) > 2 Then scheduleNG%(gameIndex%, 19) = 0
+
 
                 Case 11
-                    scheduleNG%(gameIndex%, 9) = 1 - scheduleNG%(gameIndex%, 9)
+                    scheduleNG%(gameIndex%, 5) = 1 - scheduleNG%(gameIndex%, 5)
 
                 Case 12
-                    scheduleNG%(gameIndex%, 6) = scheduleNG%(gameIndex%, 6) + 1
-                    If scheduleNG%(gameIndex%, 6) > 2 Then scheduleNG%(gameIndex%, 6) = 0
+                    scheduleNG%(gameIndex%, 3) = 1 - scheduleNG%(gameIndex%, 3)
 
                 Case 13
                     scheduleNG%(gameIndex%, 14) = scheduleNG%(gameIndex%, 14) + 1
@@ -786,11 +787,11 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
                     scheduleNG%(gameIndex%, 11) = 1 - scheduleNG%(gameIndex%, 11)
 
                 Case 16
-                    scheduleNG%(gameIndex%, 19) = scheduleNG%(gameIndex%, 19) + 1
-                    If scheduleNG%(gameIndex%, 19) > 2 Then scheduleNG%(gameIndex%, 19) = 0
+                    scheduleNG%(gameIndex%, 9) = 1 - scheduleNG%(gameIndex%, 9)
 
                 Case 17
-                    scheduleNG%(gameIndex%, 20) = 1 - scheduleNG%(gameIndex%, 20)
+                    scheduleNG%(gameIndex%, 6) = scheduleNG%(gameIndex%, 6) + 1
+                    If scheduleNG%(gameIndex%, 6) > 2 Then scheduleNG%(gameIndex%, 6) = 0
 
             End Select
 
@@ -1363,7 +1364,7 @@ Sub ChangeGlobalSettings ()
         Color 15: Print "SHOT CLOCK: "; sClockOpt$(sClockVal)
         Locate 6, 2: Color 14
         Print "(3) ";
-        Color 15: Print "3-POINT SHOT: "; yesNoText$(threePtOpt)
+        Color 15: Print "QUARTER LENGTH: "; quarterLength$(quarterOpt)
         Locate 7, 2: Color 14
         Print "(4) ";
         Color 15: Print "GAME TYPE: "; playoffGame$(playoffOpt)
@@ -1372,22 +1373,22 @@ Sub ChangeGlobalSettings ()
         Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; displayPause!
         Locate 9, 2: Color 14
         Print "(6) ";
-        Color 15: Print "HUMAN COACHES: "; coachMode$(coachOpt)
+        Color 15: Print "TIMEOUT SETTINGS: "; timeoutSetting$(timeoutOpt)
         Locate 10, 2: Color 14
         Print "(7) ";
-        Color 15: Print Using "BONUS AFTER FOUL: ##"; bonusFoulNum
+        Color 15: Print "3-POINT SHOT: "; yesNoText$(threePtOpt)
         Locate 11, 2: Color 14
         Print "(8) ";
-        Color 15: Print "NUMBER OF FREE THROWS: "; freeThrowOpt$(freeThrowVal)
+        Color 15: Print Using "BONUS AFTER FOUL: ##"; bonusFoulNum
         Locate 12, 2: Color 14
         Print "(9) ";
-        Color 15: Print "FREE THROW RULES: "; foulOption$(ftRulesOpt)
+        Color 15: Print "NUMBER OF FREE THROWS: "; freeThrowOpt$(freeThrowVal)
         Locate 13, 2: Color 14
         Print "(A) ";
-        Color 15: Print "TIMEOUT SETTINGS: "; timeoutSetting$(timeoutOpt)
+        Color 15: Print "FREE THROW RULES: "; foulOption$(ftRulesOpt)
         Locate 14, 2: Color 14
         Print "(B) ";
-        Color 15: Print "QUARTER LENGTH: "; quarterLength$(quarterOpt)
+        Color 15: Print "HUMAN COACHES: "; coachMode$(coachOpt)
 
         Locate 16, 2: Color 14: Print "(0) ";
         Color 15: Print "ACCEPT GLOBAL SETTINGS"
@@ -1411,7 +1412,7 @@ Sub ChangeGlobalSettings ()
                 If sClockVal > 2 Then sClockVal = 0
 
             Case 3
-                threePtOpt = 1 - threePtOpt
+                quarterOpt = 1 - quarterOpt
 
             Case 4:
                 playoffOpt = 1 - playoffOpt
@@ -1420,24 +1421,24 @@ Sub ChangeGlobalSettings ()
                 Locate 8, 32: Input displayPause!
 
             Case 6:
-                coachOpt = 1 - coachOpt
-
-            Case 7:
-                bonusFoulNum = bonusFoulNum + 1
-                If bonusFoulNum > 7 Then bonusFoulNum = 5
-
-            Case 8
-                freeThrowVal = 1 - freeThrowVal
-
-            Case 9:
-                ftRulesOpt = 1 - ftRulesOpt
-
-            Case 10
                 timeoutOpt = timeoutOpt + 1
                 If timeoutOpt > 2 Then timeoutOpt = 0
 
+            Case 7:
+                threePtOpt = 1 - threePtOpt
+
+            Case 8
+                bonusFoulNum = bonusFoulNum + 1
+                If bonusFoulNum > 7 Then bonusFoulNum = 5
+
+            Case 9:
+                freeThrowVal = 1 - freeThrowVal
+
+            Case 10
+                ftRulesOpt = 1 - ftRulesOpt
+
             Case 11
-                quarterOpt = 1 - quarterOpt
+                coachOpt = 1 - coachOpt
 
         End Select
 
@@ -1504,7 +1505,7 @@ Sub DeleteBoxscores (fileChoice%, fileSpec$)
 
         boxFiles$(0) = fileSpec$
         Call ReadFile(boxFiles$())
-
+ 
         For X = 1 To Count%
             Kill (diskPaths$(1) + boxFiles$(X))
             Locate 12, 34: Print "DELETING "; boxFiles$(X)

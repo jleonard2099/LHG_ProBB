@@ -222,6 +222,7 @@ Dim Shared sClockVal, shotClock, shotPctOpt, shotType
 Dim Shared threePtOpt, T1, timeoutOpt, TMT, twoTimeouts, willDunk
 
 Dim Shared GF%, HH%, J8%, OX%, OY%
+Dim Shared MINS_PER_GAME
 
 Dim Shared gameClock!, pbpDelay!, shotChance, timeElapsed!
 

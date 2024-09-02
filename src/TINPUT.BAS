@@ -822,7 +822,7 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
                     Locate 12, 1: Input "10. TEXT COLOR (0-15) "; teamRatings(33)
                     Locate 12, 23: Print " "
 
-                    Locate 18
+                    Locate 19
                     Print "TEAM APPEARANCE: ";
                     Color teamRatings(33), teamRatings(34)
                     Print RTrim$(teamInfo$(0)) + " " + RTrim$(teamInfo$(1))
@@ -852,6 +852,7 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
                     Locate 16, 16: Print " "
 
                 Case 15
+                    Locate 17, 17: Print "      "
                     Locate 17, 1: Input "15. ATTENDANCE "; teamAttendance&
                     Locate 17, 16: Print " "
 

@@ -364,17 +364,17 @@ Sub ReadSchedOld (targetFile$)
     Shared scheduleNG%(), scheduleYN$()
 
     'Open diskPaths$(3) + targetFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES - 4
-    Open targetFile$ For Random As #1 Len = SCHEDULE_SIZE_BYTES - 4
+    Open targetFile$ For Random As #1 Len = SCHEDULE_SIZE_BYTES - 8
 
     fileLength& = LOF(1)
-    scheduleAP%(0) = fileLength& / (SCHEDULE_SIZE_BYTES - 4)
+    scheduleAP%(0) = fileLength& / (SCHEDULE_SIZE_BYTES - 8)
     BS% = Int((scheduleAP%(0) - 1) / 20)
 
     For X = 0 To 18
-        Field #1, X * 2 As X$, 2 As Q$(X + 1), (SCHEDULE_SIZE_BYTES - 4) - 2 - 2 * X As X$
+        Field #1, X * 2 As X$, 2 As Q$(X + 1), (SCHEDULE_SIZE_BYTES - 8) - 2 - 2 * X As X$
     Next
 
-    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
+    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
 
     For I = 1 To scheduleAP%(0)
 
@@ -417,10 +417,10 @@ Sub SaveSchedOld (saveFile$)
 
     If _FileExists(diskPaths$(3) + saveFile$ + ".SCD") Then Kill diskPaths$(3) + saveFile$ + ".SCD"
 
-    Open diskPaths$(3) + saveFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES - 4
+    Open diskPaths$(3) + saveFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES - 8
 
     For X = 0 To 18
-        Field #1, X * 2 As X$, 2 As Q$(X + 1), (SCHEDULE_SIZE_BYTES - 4) - 2 - 2 * X As X$
+        Field #1, X * 2 As X$, 2 As Q$(X + 1), (SCHEDULE_SIZE_BYTES - 8) - 2 - 2 * X As X$
     Next
 
     Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
@@ -448,7 +448,7 @@ End Sub
 
 
 '----------------------------------------
-'       SaveScheduleFile SubRoutine
+'    SaveSchedFileConverted SubRoutine
 '----------------------------------------
 'This subroutine writes all scheduled data,
 'as stored in the relevant arrays, back to
