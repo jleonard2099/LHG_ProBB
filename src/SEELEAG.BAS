@@ -101,7 +101,7 @@ Sub StatOptions_Pro ()
             Select Case userKey$
 
                 Case "F":
-                    userFile$ = _SAVEFILEDIALOG$("Save League Report",_CWD$ + "\Report","*.txt","Text File")
+                    userFile$ = _SaveFileDialog$("Save League Report", _CWD$ + "\Report", "*.txt", "Text File")
                     Call SavePrintLeagueLeaders(0, userFile$)
 
                 Case "P":
@@ -901,7 +901,7 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
     Color 0, 15
     Cls
 
-	Open destFile$ For Output As #1
+    Open destFile$ For Output As #1
 
     Print #1, "                        "; league$; " LEAGUE STANDINGS"
     Print #1,
@@ -1316,23 +1316,23 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     Close #1
 
-	If printDest = 1 Then
+    If printDest = 1 Then
 
-		Open destFile$ For Input As #2
+        Open destFile$ For Input As #2
 
-		Do While Not EOF(2)
-			Line Input #2, X$
-			LPrint X$
-		Loop
+        Do While Not EOF(2)
+            Line Input #2, X$
+            LPrint X$
+        Loop
 
-		Close #2
+        Close #2
 
-		LPrint Chr$(12)
+        LPrint Chr$(12)
 
-		Kill destFile$
+        Kill destFile$
 
-	End If
+    End If
 
 End Sub
 
-    
+

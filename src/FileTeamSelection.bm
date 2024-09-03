@@ -161,6 +161,7 @@ Sub SelectTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%)
 
     ExitCode% = -1
     validData = 0
+    test$ = teamNames$(numberTeams)
 
     If numberTeams > 0 And CheckString%(teamNames$(numberTeams)) = 0 Then
 
@@ -228,7 +229,7 @@ Sub ReadTeam (teamYear$, targetTeam$, teamIdx, dataOK)
     Shared CK
 
     Shared teamAttendance&
-    
+
     Shared playerRatings!(), leagueRatings(), teamRatings()
 
     Shared playerNames$(), teamInfo$()
@@ -304,7 +305,7 @@ Sub ReadTeam (teamYear$, targetTeam$, teamIdx, dataOK)
     'Close team file
     Close #1
 
-    If (CheckString%(teamInfo$(4)) = 1 Or CK <> 999) Then
+    If (CK <> 999) Then
 
         dataOK = 0
 

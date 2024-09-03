@@ -215,8 +215,8 @@ Dim Shared assistShotBoost, autoPlay, ballCarrier, bonusFoulNum
 Dim Shared coachOpt, compTeam, currGame
 Dim Shared defPress, endGame, endAllGames, eraAdj, eraChoice
 Dim Shared fastBreak, forcedThree, ftRulesOpt, freeThrowVal, fullCtOpt
-Dim Shared gameLoc, halfTime, JY, MJ, nbrFTMade, nbrLines, offStatus
-Dim Shared playerMode, playerOpt, playoffOpt, pbpOpt, playChoice
+Dim Shared gameLoc, halfTime, JY, maxTimeouts, MJ, nbrFTMade, nbrLines
+Dim Shared offStatus, playerMode, playerOpt, playoffOpt, pbpOpt, playChoice
 Dim Shared quarter, quarterOpt, rebFoulChance
 Dim Shared sClockVal, shotClock, shotPctOpt, shotType
 Dim Shared threePtOpt, T1, timeoutOpt, TMT, twoTimeouts, willDunk

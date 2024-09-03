@@ -691,600 +691,7 @@ End Sub
 ' For Utils
 '$Include: 'BoxRoutines.bm'
 '$Include: 'ConfigureDrives.bm'
-'Include: 'FileTeamSelection.bm'
-
-
-'----------------------------------------
-'          ChooseTeam Subroutine
-'----------------------------------------
-'Provides dialog for user to select teams
-' from a previously populated team file.
-'The focus of this routine is to accept
-' a disk ID from the user. It then relies
-' on separate subroutines to assist with
-' actually choosing the team, and also
-' reading in data for the chosen team
-Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
-
-    Shared teamRatings()
-
-    'Shared teamNames$()
-
-    Shared previousYear$
-
-    Do
-
-        Color 15, 0
-        Cls
-
-        Call MenuBox(6, 8, 61, 7, 15, 4)
-
-        Locate 7, 32
-
-        Locate , 12: Print "ENTER DISK ID: "
-        Print
-        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-        Print
-        Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
-
-        I$ = GetKeyPress$
-
-        If I$ <> Chr$(27) Then
-
-            If I$ <> Chr$(13) Then
-
-                Locate 7, 27: Print I$;
-
-                NY$ = ""
-
-                Do Until NY$ = Chr$(13)
-
-                    NY$ = GetKeyPress$
-
-                    If NY$ = Chr$(8) And Len(I$) >= 1 Then
-                        col% = Pos(0)
-                        I$ = Left$(I$, (Len(I$) - 1))
-                        Locate , col% - 1
-                        Print " ";
-                        Locate , col% - 1
-                    Else
-                        I$ = I$ + NY$
-                        Print NY$;
-                    End If
-
-                Loop
-
-                I$ = Left$(I$, (Len(I$) - 1))
-
-                If Not (I$ = "" And yearNumber$ <> "") Then
-
-                    yearNumber$ = RTrim$(I$)
-                    Erase teamNames$
-                    numberTeams = 0
-
-                    Cls
-
-                    If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
-
-                        MsgText$ = "NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID"
-                        BoxWidth = 20
-                        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-                        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-                        Call CSMsgBox(MsgText$, BoxWidth, Pass)
-                        I$ = GetKeyPress$
-                        Call CSMsgBox("", 0, Pass)
-                        Exit Sub
-
-                    Else
-
-                        Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$ For Random As #1 Len = TEAM_SIZE_BYTES
-
-                        fileLength& = LOF(1)
-
-                        Field #1, 15 As Q$(0)
-
-                        numberTeams = fileLength& / TEAM_SIZE_BYTES
-
-                        For teamIdx = 1 To numberTeams
-                            Get #1, teamIdx
-                            'numberTeams = numberTeams + 1
-                            teamNames$(teamIdx) = Q$(0)
-                            teamIndex%(teamIdx) = teamIdx
-                        Next teamIdx
-
-                        Close #1
-
-                    End If 'Done checking if file exists
-
-                End If 'Done checking for blank year number
-
-                previousYear$ = yearNumber$
-
-            Else
-
-                yearNumber$ = previousYear$
-
-            End If 'Done checking for ENTER key
-
-            'Locate 2, 33
-            'Color 31: Print "LOADING..."
-
-            Do
-
-                Call SelectTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%)
-                'teamGender$(gameIdx) = GetTeamGender$(yearNumber$)
-
-                If ExitCode% <> 27 And numberTeams <> 0 And chosenIdx > 0 Then
-
-                    Do
-
-                        YCoord = Int((80 - Len(teamName$)) / 2)
-                        Locate 2, YCoord
-                        Color teamRatings(33), teamRatings(34): Print teamName$
-
-                        Color 15, 4
-                        Locate 3, 32: Print "ANY CHANGE? (Y/N)";
-
-                        J$ = GetKeyPress$
-
-                    Loop Until J$ = Chr$(27) Or UCase$(J$) = "Y" Or UCase$(J$) = "N"
-
-                End If
-
-                'chosenIdx = -1 means there was invalid data
-            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N" Or chosenIdx = -1
-
-        End If 'Done checking for ESC
-
-    Loop Until UCase$(J$) = "N" Or I$ = Chr$(27) 'Or J$ = Chr$(27)
-
-    If I$ = Chr$(27) Or J$ = Chr$(27) Then chosenIdx = 0
-
-End Sub
-
-
-'----------------------------------------
-'          SelectTeam Subroutine
-'----------------------------------------
-'Presents selection menu of all teams
-' found in the target "disk" file.
-'The focus of this routine is confirming
-' a team choice. It then relies on
-' another subroutine to read in data
-' from the selected team.
-Sub SelectTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%)
-
-    ExitCode% = -1
-    validData = 0
-    test$ = teamNames$(numberTeams)
-
-    If numberTeams > 0 And CheckString%(teamNames$(numberTeams)) = 0 Then
-
-        SELECTION% = 1
-        Count% = numberTeams
-        Start% = 1
-        FileFGColor = 15: FileBGColor = 4
-        HiLiteFGColor = 0: HiLiteBGColor = 7
-        Rows = 20
-        Columns% = 4
-        Spacing% = 6
-        Row% = 4
-        Column% = 1
-
-        Color , 4
-        Cls
-        Color 14
-        Locate , 33: Print "TEAM SELECTION"
-        Locate 25, 1
-        Color 14: Print "ESC";
-        Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";
-        Color 14: Print "ENTER";
-        Color 15: Print "-SELECTS TEAM";
-
-        _MouseShow "DEFAULT"
-        MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor, HiLiteBGColor, Rows%, Columns%, Spacing%, Row%, Column%
-        _MouseHide
-
-        If ExitCode% <> 27 Then
-
-            selectedIdx = teamIndex%(SELECTION%)
-
-            'Locate 2, 33
-            'Color 31: Print "LOADING..."
-
-            Call ReadTeam(yearNumber$, teamName$, selectedIdx, validData)
-
-        End If
-
-    End If
-
-    If validData = 0 And ExitCode% <> 27 Then
-
-        selectedIdx = -1
-        Locate 9,
-        Call CSMsgBox("THERE WAS AN ISSUE READING TEAM DATA. YOU MAY HAVE CHOSEN A TEAM FROM 4.0... PRESS ANY KEY AND TRY ANOTHER DISK ID", 20, PASS)
-        K$ = GetKeyPress$
-        Call CSMsgBox("", 0, PASS)
-
-    End If
-
-End Sub
-
-
-'----------------------------------------
-'           ReadTeam Subroutine
-'----------------------------------------
-'Reads in all data for the selected team,
-' given it's index in the team file.
-'This routine is highly customized TO
-' the specific game for which it has
-' been included for.
-Sub ReadTeam (teamYear$, targetTeam$, teamIdx, dataOK)
-
-    Shared CK
-
-    Shared teamAttendance&
-
-    Shared playerRatings!(), leagueRatings(), teamRatings()
-
-    Shared playerNames$(), teamInfo$()
-
-    Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
-
-    Field #1, 15 As Q$(0), 15 As Q$(1)
-
-    For I = 0 To 6
-        Field #1, 30 + I * 2 As X$, 2 As Q$(I + 2)
-    Next
-
-    Field #1, 44 As X$, 2 As Q$(9)
-
-    For I = 0 To 34
-        Field #1, 46 + I * 2 As X$, 2 As Q$(I + 10)
-    Next
-
-    For I = 0 To 14
-
-        Field #1, 116 + I * 57 As X$, 15 As Q$(I * 22 + 45), 2 As Q$(I * 22 + 46)
-
-        For I1 = 0 To 19
-            Field #1, 133 + I * 57 + I1 * 2 As X$, 2 As Q$(I * 22 + 47 + I1)
-        Next
-
-    Next
-
-    Field #1, 971 As X$, 5 As Q$(375), 15 As Q$(376), 40 As Q$(377), 4 As Q$(378)
-
-    Get #1, teamIdx
-
-    'Name
-    teamInfo$(0) = RTrim$(Q$(0))
-    targetTeam$ = teamInfo$(0)
-
-    'Mascot
-    teamInfo$(1) = RTrim$(Q$(1))
-
-    For I = 0 To 6
-        leagueRatings(I) = CVI(Q$(I + 2))
-    Next
-
-    CK = CVI(Q$(9))
-
-    For I = 0 To 34
-        teamRatings(I) = CVI(Q$(I + 10))
-    Next
-
-    For I = 0 To 14
-
-        playerNames$(I, 0) = Q$(22 * I + 45)
-        playerNames$(I, 1) = Q$(22 * I + 46)
-
-        For I1 = 0 To 19
-            playerRatings!(I, I1) = CVI(Q$(22 * I + 47 + I1))
-        Next
-
-    Next
-
-    'Abbreviation
-    teamInfo$(2) = RTrim$(Q$(375))
-
-    'Coach
-    teamInfo$(3) = RTrim$(Q$(376))
-
-    'Arena
-    teamInfo$(4) = RTrim$(Q$(377))
-
-    'Attendance
-    teamAttendance& = CVL(Q$(378))
-
-    'Close team file
-    Close #1
-
-    If (CK <> 999) Then
-
-        dataOK = 0
-
-    Else
-
-        dataOK = 1
-
-    End If
-
-End Sub
-
-
-'----------------------------------------
-'         nameStatFile$ Function
-'----------------------------------------
-'Helps create uniquely named file to
-' store a team's stats.
-'
-'There are 2 main changes done in order
-' to accomodate this:
-' 1) Replaces invalid characters with _
-' 2) If "ST" is the name, shortens the
-'    prefix. This helps with college
-'    teams (ARKANSAS vs ARKANSAS ST)
-Function nameStatFile$ (teamName$)
-
-    teamPrefix$ = teamName$
-
-    For XX = 4 To 11
-
-        If Mid$(teamPrefix$, XX, 1) = " " Or Mid$(teamPrefix$, XX, 1) = "." Or Mid$(teamPrefix$, XX, 1) = "/" Or Mid$(teamPrefix$, XX, 1) = "_" Then
-            Mid$(teamPrefix$, XX, 1) = "_"
-        End If
-
-    Next XX
-
-    For XX = 12 To 14
-
-        If Mid$(teamPrefix$, XX, 2) = "ST" Then
-            Mid$(teamPrefix$, 9, 1) = "_"
-            Mid$(teamPrefix$, 10, 2) = "ST"
-        End If
-
-    Next XX
-
-    'Length of 'converted' name for file
-    '-- update this if we want to support long files
-    QQ = 8
-
-    For XX = 11 To 4 Step -1
-        If Mid$(teamPrefix$, XX, 1) = "_" Then
-            QQ = XX - 4
-        Else
-            Exit For
-        End If
-    Next XX
-
-    nameStatFile$ = Mid$(teamPrefix$, 4, QQ) + "." + Left$(teamPrefix$, 2)
-
-End Function
-
-
-'----------------------------------------
-'          CheckString Function
-'----------------------------------------
-'This function checks the given string
-'to determine if any characters are not
-'alpha-numeric or printable.
-'Return Values
-'1 = non-printable characters were found
-'0 = all characters in string are alpha-numeric.
-Function CheckString% (targetString$)
-
-    badString = 0
-    stringPosition% = 1
-
-    Do
-
-        test = Asc(Mid$(targetString$, stringPosition%, 1))
-
-        'If it is a non-printable character (corrupt data)
-        If test > 122 Or test < 32 Then
-            stringPosition% = 1
-            badString = 1
-        Else
-            stringPosition% = stringPosition% + 1
-        End If
-
-    Loop Until stringPosition% = Len(targetString$) Or badString = 1
-
-    CheckString% = badString
-
-End Function
-
-
-'----------------------------------------
-'        ChooseFile$ Function
-'----------------------------------------
-'Shows user a file selection menu, based
-' on the file spec parameter passed.
-'
-'fileSpec$ - file specification to load
-'            should include base path.
-'
-' EXAMPLE - C:\Temp\*.tmp
-'
-'fileDesc$ - brief description of the
-'            type of file
-'
-' RETURNS - base name of chosen file
-'            (that is, without extension)
-Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
-
-    descLength = Len(fileDesc$)
-
-    Do
-        'Display list of files...
-
-        Count% = FileCount%(fileSpec$)
-
-        If Count% = 0 Then
-
-            Locate 10, 8
-            zeroCountMsg$ = "NO " + fileDesc$ + " FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU"
-
-            Call CSMsgBox(zeroCountMsg$, 20, Pass)
-            I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
-
-        Else
-
-            ReDim foundFiles$(0 To Count%)
-
-            'For X = 1 To Count%
-            '8 char's filename + 4 char's (. + ext)
-            'foundFiles$(X) = Space$(12)
-            'Next
-
-            foundFiles$(0) = fileSpec$
-            Call ReadFile(foundFiles$())
-
-            Do
-
-                XCoord = Int((80 - (descLength + 12)) / 2)
-
-                Color , 1
-                Cls
-                Locate , XCoord
-                Color 14
-                Print "SELECT "; fileDesc$; " FILE"
-                Color 15
-                SELECTION% = 1
-                START% = 1
-                FileFGColor = 15: FileBGColor = 1
-                HiLiteFGColor% = 0: HiLiteBGColor% = 7
-                Rows% = 20
-                Columns% = 3
-                Spacing% = 5
-                Row% = 4
-                Column% = 1
-                Locate 25, 1
-                Color 14
-                Print "ENTER";
-                Color 15
-                Print "-SELECTS "; fileDesc$;
-                Color 14
-                Locate , 55
-                Print "HIT ESCAPE KEY TO EXIT";
-                Color 15
-
-                _MouseShow "DEFAULT"
-                MAMenu foundFiles$(), SELECTION%, START%, Count%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
-                _MouseHide
-
-                If ExitCode% <> 27 Then
-
-                    Color 15, 1
-                    targetFile$ = RTrim$(foundFiles$(SELECTION%))
-                    XCoord = Int((80 - Len(targetFile$)) / 2)
-                    Locate 2, XCoord
-                    Print targetFile$
-
-                    Do
-                        Locate , 31
-                        Print "ANY CHANGE? (Y/N)";
-                        I$ = GetKeyPress$
-                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                    Color 15, 0
-
-                End If
-
-            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
-
-        End If 'Done checking file count
-
-        '...Until we press ESC
-    Loop Until ExitCode% = 27 Or Count% = 0 Or UCase$(I$) = "N"
-
-    If ExitCode% <> 27 Then
-        ChooseFile$ = Left$(RTrim$(targetFile$), Len(targetFile$) - 4)
-    End If
-
-End Function
-
-'----------------------------------------
-'     ReportFilePrompt_Pro Subroutine
-'----------------------------------------
-'This subroutine prompts the user for
-'the name of the report file to be saved
-Sub UserFilePrompt (reportFile$)
-
-    Do
-
-        Color 15, 0
-        Cls
-
-        Call MenuBox(6, 8, 61, 7, 15, 1)
-
-        Locate 7, 32
-
-        Locate , 12: Print "ENTER NAME FOR FILE: ": Print
-        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
-        Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
-        Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
-        Locate 7, 37: Input reportFile$
-
-        If reportFile$ <> "" Then
-
-            Do
-                Locate 13, 12: Print "ANY CHANGE? (Y/N) "
-                I$ = GetKeyPress$
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-        End If
-
-    Loop Until UCase$(I$) = "N" And reportFile$ <> ""
-
-End Sub
-
-
-'----------------------------------------
-'     ScheduleFilePrompt Subroutine
-'----------------------------------------
-'This subroutine prompts the user for
-'the name of the schedule file to be saved
-Sub ScheduleFilePrompt (scheduleFile$)
-
-    Color 15, 0
-    Cls
-
-    Call MenuBox(6, 8, 61, 8, 15, 1)
-
-    Do
-
-        Locate 7, 32
-
-        Locate , 12: Print "ENTER NAME FOR SCHEDULE: "
-        Print
-        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
-        Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
-        Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
-        Locate , 12: Print "SAMPLE NAMES ARE INDIANA, BOS68, CHI-76, ETC      "
-        Locate 7, 40: Input scheduleFile$
-
-        If scheduleFile$ <> "" Then
-
-            Do
-
-                Locate 14, 12
-                Print "ANY CHANGE? (Y/N) "
-                I$ = GetKeyPress$
-
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or I$ = Chr$(27)
-
-        End If
-
-    Loop Until (UCase$(I$) = "N" And scheduleFile$ <> "") Or I$ = Chr$(27)
-
-
-End Sub
-
-
+'$Include: 'FileTeamSelection.bm'
 '$Include: 'CONVERT.BAS'
 '$Include: 'TITLE.bm'
 '$Include: 'ALIGN.BAS'
@@ -1824,14 +1231,36 @@ Sub PROHOOP ()
     End If
 
     ' # of timeouts
-    If teamYears(eraChoice) < 2000 Then
-        timeouts(1) = 6
-        timeouts(0) = 6
+    For X = 0 To 1
+    
+    Next X
+
+    '10 minutes quarters have fewer timeouts.
+    'Currently only WNBA rules are considered,
+    'although other BB scenarios have 10-min quarters.
+    If quarterOpt = 1 Then
+
+        If teamYears(eraChoice) < 2000 Then
+            timeouts(1) = 6
+            timeouts(0) = 6
+        Else
+            'Favor modern rules if teams Are
+            'from different eras
+            timeouts(1) = 7
+            timeouts(0) = 7
+        End If
+
     Else
-        'Favor modern rules if teams Are
-        'from different eras
-        timeouts(1) = 7
-        timeouts(0) = 7
+
+        '10-minute quarters aka WNBA
+        If teamYears(eraChoice) < 2024
+            timeouts(1) = 4
+            timeouts(0) = 4        
+        Else
+            timeouts(1) = 5
+            timeouts(0) = 5
+        End If
+    
     End If
 
     'Set game clock
@@ -4040,13 +3469,13 @@ Sub PROHOOP ()
 
         Select Case teamYears(eraChoice)
 
-            Case Is < 1993
+            Case Is < 1993:
                 rebMax = 47
 
-            Case 1993 To 2017
+            Case 1993 To 2017:
                 rebMax = 42
 
-            Case Is >= 2018
+            Case Is >= 2018:
                 rebMax = 42
 
         End Select
@@ -4057,11 +3486,11 @@ Sub PROHOOP ()
                 foulOnReb = 1
                 GoTo 770
 
-            Case rebFoulChance + 1 To rebMax
+            Case rebFoulChance + 1 To rebMax:
                 Call ReboundOffense
                 GoTo 760
 
-            Case rebMax To 100:
+            Case rebMax + 1 To 100:
                 Call ReboundDefense
                 GoTo 800
 
@@ -8926,12 +8355,10 @@ Sub SETUPRATINGS (teamStyle)
 
             Case 1960 To 1992
                 turnoverFreq(I) = turnoverAdj(teamYears(I) - 1960)
-                '-- was - 5
                 perFoulRat(I) = perFoulAdj(teamYears(I) - 1960) - 3
 
             Case Is >= 1993
                 turnoverFreq(I) = 34
-                '-- was 8
                 perFoulRat(I) = 6
 
         End Select
@@ -9099,7 +8526,6 @@ Sub SETUPRATINGS (teamStyle)
                 'Def Reb / Game
                 X3! = plyrRat_GAME(I, I1, 7) / plyrRat_GAME(I, I1, 1) * MINS_PER_GAME
 
-                'Opp Reb / 29.3 Mins / (Avg Reb / G * .677) * ( (Team FGA + Opp FGA) / (Games Played * 2) / Avg FGA/G )
                 X3! = X3! * 29.3 / (leagRat_GAME(I, 2) * .677) * ((teamRat_GAME(I, 5) + teamRat_GAME(I, 19)) / (teamRat_GAME(I, 0) * 2) / leagRat_GAME(I, 1))
                 X3! = Int(X3! * 10 + .5)
 
@@ -9278,12 +8704,12 @@ Sub SETUPRATINGS (teamStyle)
             Case Is < 1993
                 rebFoulChance = 7
 
-
             Case 1993 To 2017
                 'Personal fouls trend higher in 1993 and on
                 'Jump shots became less common so Basketball
                 'got more physical
-                rebFoulChance = 16
+                'rebFoulChance = 20
+                rebFoulChance = 0
 
             Case Is >= 2018
                 rebFoulChance = 26
@@ -11801,23 +11227,74 @@ Sub BOX2SPC (boxName$)
     Print #1,
 
     'Output any special events
-    If quarter - 1 > eventSettings(1) Then Print #1, Using "MORE THAN ## QUARTERS"; eventSettings(1)
-    If score(1, 0) + score(0, 0) > eventSettings(2) Then Print #1, Using "MORE THAN ### COMBINED POINTS"; eventSettings(2)
-    If totRebounds(0) + totRebounds(1) > eventSettings(3) Then Print #1, Using "MORE THAN ### COMBINED REBOUNDS"; eventSettings(3)
-    If score(0, 0) > eventSettings(4) Then Print #1, gameTeams$(0);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
-    If score(1, 0) > eventSettings(4) Then Print #1, gameTeams$(1);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
-    If totRebounds(0) > eventSettings(5) Then Print #1, gameTeams$(0);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
-    If totRebounds(1) > eventSettings(5) Then Print #1, gameTeams$(1);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
+    If quarter - 1 > eventSettings(1) Then
+        Print #1, Using "MORE THAN ## QUARTERS"; eventSettings(1)
+    End If
+
+    If score(1, 0) + score(0, 0) > eventSettings(2) Then
+        Print #1, Using "MORE THAN ### COMBINED POINTS"; eventSettings(2)
+    End If
+
+    If totRebounds(0) + totRebounds(1) > eventSettings(3) Then
+        Print #1, Using "MORE THAN ### COMBINED REBOUNDS"; eventSettings(3)
+    End If
+
+    If score(0, 0) > eventSettings(4) Then
+        Print #1, gameTeams$(0);
+        Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
+    End If
+
+    If score(1, 0) > eventSettings(4) Then
+        Print #1, gameTeams$(1);
+        Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
+    End If
+
+    If totRebounds(0) > eventSettings(5) Then
+        Print #1, gameTeams$(0);
+        Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
+    End If
+
+    If totRebounds(1) > eventSettings(5) Then
+        Print #1, gameTeams$(1);
+        Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
+    End If
 
     For I = 0 To 1
+
         For I1 = 0 To 14
-            If gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) > eventSettings(6) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(6)
-            If gameRatings!(I, I1, 11) > eventSettings(7) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(7)
-            If gameRatings!(I, I1, 14) > eventSettings(8) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " HAD MORE THAN ### ASSISTS"; eventSettings(8)
-            If gameRatings!(I, I1, 15) > eventSettings(9) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " BLOCKED MORE THAN ### SHOTS"; eventSettings(9)
-            If gameRatings!(I, I1, 13) > eventSettings(10) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " HAD MORE THAN ### STEALS"; eventSettings(10)
-            If threeFG(I, I1, 0) > eventSettings(11) Then Print #1, players_GAME$(I, I1, 0);: Print #1, Using " MADE MORE THAN ### 3-PT FIELD GOALS"; eventSettings(11)
+
+            If gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) > eventSettings(6) Then
+                Print #1, players_GAME$(I, I1, 0);
+                Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(6)
+            End If
+
+            If gameRatings!(I, I1, 11) > eventSettings(7) Then
+                Print #1, players_GAME$(I, I1, 0);
+                Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(7)
+            End If
+
+            If gameRatings!(I, I1, 14) > eventSettings(8) Then
+                Print #1, players_GAME$(I, I1, 0);
+                Print #1, Using " HAD MORE THAN ### ASSISTS"; eventSettings(8)
+            End If
+
+            If gameRatings!(I, I1, 15) > eventSettings(9) Then
+                Print #1, players_GAME$(I, I1, 0);
+                Print #1, Using " BLOCKED MORE THAN ### SHOTS"; eventSettings(9)
+            End If
+
+            If gameRatings!(I, I1, 13) > eventSettings(10) Then
+                Print #1, players_GAME$(I, I1, 0);
+                Print #1, Using " HAD MORE THAN ### STEALS"; eventSettings(10)
+            End If
+
+            If threeFG(I, I1, 0) > eventSettings(11) Then
+                Print #1, players_GAME$(I, I1, 0);
+                Print #1, Using " MADE MORE THAN ### 3-PT FIELD GOALS"; eventSettings(11)
+            End If
+
         Next
+
     Next
 
     Print #1,

@@ -313,6 +313,8 @@ Sub ConvertTeam5to4 (targetFile$, silent)
     diskID$ = Right$(targetFile$, Len(targetFile$) - InStr(targetFile$, "PROBBTMS.") - 8)
     oldFile$ = targetFile$ + ".OLD"
 
+    Call FCopy(targetFile$, oldFile$, Buff$, copyErr%)
+
     If targetFile$ <> "" Then
 
         Open targetFile$ For Random As #1
@@ -331,10 +333,6 @@ Sub ConvertTeam5to4 (targetFile$, silent)
             End If
 
         Next currTeam
-
-        Kill targetFile$
-
-        Call FCopy(oldFile$, targetFile$, Buff$, copyErr%)
 
         Kill oldFile$
 
