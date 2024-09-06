@@ -361,15 +361,14 @@ Sub ReadSchedOld (targetFile$)
     Shared homeScores(), visitorScores()
     Shared scheduleNG%(), scheduleYN$()
 
-    'Open diskPaths$(3) + targetFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES - 4
-    Open targetFile$ For Random As #1 Len = SCHEDULE_SIZE_BYTES - 8
+    Open targetFile$ For Random As #1 Len = SCHEDULE_SIZE_BYTES - 10
 
     fileLength& = LOF(1)
-    scheduleAP%(0) = fileLength& / (SCHEDULE_SIZE_BYTES - 8)
+    scheduleAP%(0) = fileLength& / (SCHEDULE_SIZE_BYTES - 10)
     BS% = Int((scheduleAP%(0) - 1) / 20)
 
     For X = 0 To 18
-        Field #1, X * 2 As X$, 2 As Q$(X + 1), (SCHEDULE_SIZE_BYTES - 8) - 2 - 2 * X As X$
+        Field #1, X * 2 As X$, 2 As Q$(X + 1), (SCHEDULE_SIZE_BYTES - 10) - 2 - 2 * X As X$
     Next
 
     Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
@@ -415,10 +414,10 @@ Sub SaveSchedOld (saveFile$)
 
     If _FileExists(diskPaths$(3) + saveFile$ + ".SCD") Then Kill diskPaths$(3) + saveFile$ + ".SCD"
 
-    Open diskPaths$(3) + saveFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES - 8
+    Open diskPaths$(3) + saveFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES - 10
 
     For X = 0 To 18
-        Field #1, X * 2 As X$, 2 As Q$(X + 1), (SCHEDULE_SIZE_BYTES - 8) - 2 - 2 * X As X$
+        Field #1, X * 2 As X$, 2 As Q$(X + 1), (SCHEDULE_SIZE_BYTES - 10) - 2 - 2 * X As X$
     Next
 
     Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
@@ -461,24 +460,24 @@ Sub SaveSchedFileConverted (saveFile$, numberGames)
 
     Open saveFile$ For Random As #1 Len = SCHEDULE_SIZE_BYTES
 
-    For X = 0 To 20
+    For X = 0 To 21
         Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
     Next
 
-    Field #1, 42 As X$, 2 As Q$(24), 2 As Q$(25), 5 As Q$(22), 5 As Q$(23)
+    Field #1, 44 As X$, 2 As Q$(25), 2 As Q$(26), 5 As Q$(23), 5 As Q$(24)
 
     For I = 1 To numberGames
 
-        For X = 0 To 20
+        For X = 0 To 21
             LSet Q$(X + 1) = MKI$(scheduleNG%(I, X))
         Next
 
         For X = 0 To 1
-            LSet Q$(22 + X) = RTrim$(scheduleYN$(I, X))
+            LSet Q$(23 + X) = RTrim$(scheduleYN$(I, X))
         Next
 
-        LSet Q$(24) = MKI$(visitorScores(I))
-        LSet Q$(25) = MKI$(homeScores(I))
+        LSet Q$(25) = MKI$(visitorScores(I))
+        LSet Q$(26) = MKI$(homeScores(I))
 
         Put #1, I
 
@@ -509,8 +508,7 @@ Sub ConvertSched4to5 (targetFile$, silent)
         fileLength& = LOF(1)
         Close #1
 
-        numberGames = fileLength& / (SCHEDULE_SIZE_BYTES - 4)
-
+        numberGames = fileLength& / (SCHEDULE_SIZE_BYTES - 10)
         Call ReadSchedOld(targetFile$)
 
         For currGame = 1 To numberGames
@@ -518,6 +516,7 @@ Sub ConvertSched4to5 (targetFile$, silent)
             'Assign defaults
             scheduleNG%(currGame, 19) = 0
             scheduleNG%(currGame, 20) = 0
+            scheduleNG%(currGame, 21) = 6
 
         Next currGame
 
@@ -584,6 +583,54 @@ Sub ConvertAllSched ()
         Print "Converting "; target$
         Call ConvertSched4to5(target$, 1)
     Next X
+
+End Sub
+
+
+
+
+
+
+Sub LoadSchedA (targetFile$)
+
+    Shared BS%, NS%
+
+    Shared scheduleAP%()
+    Shared homeScores(), visitorScores()
+    Shared scheduleNG%(), scheduleYN$()
+
+    Open targetFile$ For Random As #1 Len = SCHEDULE_SIZE_BYTES - 2
+
+    fileLength& = LOF(1)
+    scheduleAP%(0) = fileLength& / SCHEDULE_SIZE_BYTES - 2
+    BS% = Int((scheduleAP%(0) - 1) / 20)
+
+    For X = 0 To 20
+        Field #1, X * 2 As X$, 2 As Q$(X + 1), (SCHEDULE_SIZE_BYTES - 2) - 2 - 2 * X As X$
+    Next
+
+    Field #1, 42 As X$, 2 As Q$(24), 2 As Q$(25), 5 As Q$(22), 5 As Q$(23)
+
+    For I = 1 To scheduleAP%(0)
+
+        Get #1, I
+
+        For X = 0 To 20:
+            scheduleNG%(I, X) = CVI(Q$(X + 1))
+        Next
+
+        For X = 0 To 1:
+            scheduleYN$(I, X) = RTrim$(Q$(22 + X))
+        Next
+
+        visitorScores(I) = CVI(Q$(24))
+        homeScores(I) = CVI(Q$(25))
+
+    Next
+
+    Close #1
+
+    NS% = 0
 
 End Sub
 

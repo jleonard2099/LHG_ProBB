@@ -43,7 +43,7 @@ Dim gameSite_Road$(MAX_SCHED_STATS), locIndicator_Road$(MAX_SCHED_STATS), oppNam
 ' -------------------------
 Dim BS%, NS%
 
-ReDim scheduleAP%(MAX_SCHEDULE_GAMES), scheduleNG%(MAX_SCHEDULE_GAMES, 20)
+ReDim scheduleAP%(MAX_SCHEDULE_GAMES), scheduleNG%(MAX_SCHEDULE_GAMES, 21)
 ReDim homeScores(MAX_SCHEDULE_GAMES), visitorScores(MAX_SCHEDULE_GAMES)
 
 ReDim scheduleH$(MAX_SCHEDULE_GAMES), scheduleV$(MAX_SCHEDULE_GAMES)
@@ -231,7 +231,7 @@ Dim Shared activePosition$, pbpString$, prevBall$, TS$
 
 Dim Shared CF%(1, 9)
 Dim Shared F%(1, 9), G9%(1), GF%(2, 9)
-Dim Shared NG%(20), N0%(2, 2, 4)
+Dim Shared NG%(21), N0%(2, 2, 4)
 Dim Shared OX%(2), penetrationOffAdj(2), offStyles(1)
 Dim Shared ST%(32), SX%(32, 1, 14)
 

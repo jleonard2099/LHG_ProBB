@@ -113,7 +113,6 @@ Sub SCHEDULE ()
 
                 Case 7:
                     scheduleFile$ = _OpenFileDialog$("Select schedule file", diskPaths$(3), "*.SCD", "Schedule files")
-
                     Call ConvertSched4to5(scheduleFile$, 0)
 
             End Select
@@ -632,8 +631,6 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
     Shared sClockOpt$(), teamEraOpt$()
     Shared timeoutSetting$(), yesNoText$()
 
-    test = scheduleNG%(gameIndex%, 20)
-
     Do
 
         ' ** Enter New Game **
@@ -672,30 +669,33 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
         Color 15: Print "QUARTER LENGTH: "; quarterLength$(scheduleNG%(gameIndex%, 20))
         Locate 11, 2: Color 14
         Print "(A) ";
-        Color 15: Print "TIMEOUT SETTINGS: "; timeoutSetting$(scheduleNG%(gameIndex%, 19))
+        Color 15: Print "NUMBER TIMEOUTS: "; scheduleNG%(gameIndex%, 21)
         Locate 12, 2: Color 14
         Print "(B) ";
-        Color 15: Print "GAME TYPE: "; playoffGame$(scheduleNG%(gameIndex%, 5))
+        Color 15: Print "TIMEOUT OPTIONS: "; timeoutSetting$(scheduleNG%(gameIndex%, 19))
         Locate 13, 2: Color 14
         Print "(C) ";
-        Color 15: Print "3-POINT SHOT: "; yesNoText$(scheduleNG%(gameIndex%, 3))
+        Color 15: Print "GAME TYPE: "; playoffGame$(scheduleNG%(gameIndex%, 5))
         Locate 14, 2: Color 14
         Print "(D) ";
-        Color 15: Print "BONUS AFTER FOUL #: "; scheduleNG%(gameIndex%, 14)
+        Color 15: Print "3-POINT SHOT: "; yesNoText$(scheduleNG%(gameIndex%, 3))
         Locate 15, 2: Color 14
         Print "(E) ";
-        Color 15: Print "NUMBER OF FREE THROWS: "; freeThrowOpt$(scheduleNG%(gameIndex%, 10))
+        Color 15: Print "FREE THROW RULES: "; foulOption$(scheduleNG%(gameIndex%, 11))
         Locate 16, 2: Color 14
         Print "(F) ";
-        Color 15: Print "FREE THROW RULES: "; foulOption$(scheduleNG%(gameIndex%, 11))
+        Color 15: Print "NUMBER OF FREE THROWS: "; freeThrowOpt$(scheduleNG%(gameIndex%, 10))
         Locate 17, 2: Color 14
         Print "(G) ";
-        Color 15: Print "HUMAN COACHES: "; coachMode$(scheduleNG%(gameIndex%, 9))
+        Color 15: Print "BONUS AFTER FOUL #: "; scheduleNG%(gameIndex%, 14)
         Locate 18, 2: Color 14
         Print "(H) ";
+        Color 15: Print "HUMAN COACHES: "; coachMode$(scheduleNG%(gameIndex%, 9))
+        Locate 19, 2: Color 14
+        Print "(I) ";
         Color 15: Print "PLAY IN ERA OF TEAM (IF DIFFERENT): "; teamEraOpt$(scheduleNG%(gameIndex%, 6))
 
-        Locate 20, 2: Color 14
+        Locate 21, 2: Color 14
         Print "(0) ";
         Color 15: Print "ACCEPT SETTINGS"
 
@@ -766,36 +766,39 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
                     scheduleNG%(gameIndex%, 20) = 1 - scheduleNG%(gameIndex%, 20)
 
                 Case 10:
+                    scheduleNG%(gameIndex%, 21) = scheduleNG%(gameIndex%, 21) + 1
+                    If scheduleNG%(gameIndex%, 21) > 7 Then scheduleNG%(gameIndex%, 21) = 4
+
+                Case 11
                     scheduleNG%(gameIndex%, 19) = scheduleNG%(gameIndex%, 19) + 1
                     If scheduleNG%(gameIndex%, 19) > 2 Then scheduleNG%(gameIndex%, 19) = 0
 
-
-                Case 11
+                Case 12
                     scheduleNG%(gameIndex%, 5) = 1 - scheduleNG%(gameIndex%, 5)
 
-                Case 12
+                Case 13
                     scheduleNG%(gameIndex%, 3) = 1 - scheduleNG%(gameIndex%, 3)
 
-                Case 13
+                Case 14
+                    scheduleNG%(gameIndex%, 11) = 1 - scheduleNG%(gameIndex%, 11)
+
+                Case 15
+                    scheduleNG%(gameIndex%, 10) = 1 - scheduleNG%(gameIndex%, 10)
+
+                Case 16
                     scheduleNG%(gameIndex%, 14) = scheduleNG%(gameIndex%, 14) + 1
                     If scheduleNG%(gameIndex%, 14) > 6 Then scheduleNG%(gameIndex%, 14) = 4
 
-                Case 14
-                    scheduleNG%(gameIndex%, 10) = 1 - scheduleNG%(gameIndex%, 10)
-
-                Case 15
-                    scheduleNG%(gameIndex%, 11) = 1 - scheduleNG%(gameIndex%, 11)
-
-                Case 16
-                    scheduleNG%(gameIndex%, 9) = 1 - scheduleNG%(gameIndex%, 9)
-
                 Case 17
+                    scheduleNG%(gameIndex%, 9) = 1 - scheduleNG%(gameIndex%, 9)
+                    
+                Case 18
                     scheduleNG%(gameIndex%, 6) = scheduleNG%(gameIndex%, 6) + 1
                     If scheduleNG%(gameIndex%, 6) > 2 Then scheduleNG%(gameIndex%, 6) = 0
 
             End Select
 
-        Loop Until (setting >= 0 And setting <= 17)
+        Loop Until (setting >= 0 And setting <= 18)
 
         If visitor$ <> "" And home$ <> "" And TM$ <> "" And DT$ <> "" Then
 
@@ -811,10 +814,17 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
                 HR% = HR% + 12
             End If
 
+            'Gane Time
             scheduleNG%(gameIndex%, 15) = HR% * 100 + MIN%
+
+            'Month
             scheduleNG%(gameIndex%, 17) = Val(Left$(DT$, 2))
-            scheduleNG%(gameIndex%, 18) = Val(Mid$((DT$), 7, 2))
+
+            'Day
             scheduleNG%(gameIndex%, 16) = Val(Mid$((DT$), 4, 2))
+
+            'Year
+            scheduleNG%(gameIndex%, 18) = Val(Mid$((DT$), 7, 2))
 
         End If
 
@@ -933,22 +943,22 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                             'Write matching games
                             Locate 1, 1: Print totalGames + 1; " MATCHES"
 
-                            For X = 0 To 20
+                            For X = 0 To 21
                                 Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
                             Next
 
-                            Field #1, 42 As X$, 2 As Q$(24), 2 As Q$(25), 5 As Q$(22), 5 As Q$(23)
+                            Field #1, 44 As X$, 2 As Q$(25), 2 As Q$(26), 5 As Q$(23), 5 As Q$(24)
 
-                            For X = 0 To 20:
+                            For X = 0 To 21:
                                 LSet Q$(X + 1) = MKI$(scheduleNG%(I, X))
                             Next
 
                             For X = 0 To 1:
-                                LSet Q$(22 + X) = scheduleYN$(I, X)
+                                LSet Q$(23 + X) = scheduleYN$(I, X)
                             Next
 
-                            LSet Q$(24) = MKI$(visitorScores(I))
-                            LSet Q$(25) = MKI$(homeScores(I))
+                            LSet Q$(25) = MKI$(visitorScores(I))
+                            LSet Q$(26) = MKI$(homeScores(I))
 
                             Put #1, totalGames + 1
 
@@ -1188,24 +1198,24 @@ Sub SaveScheduleFile (saveFile$)
 
     Open diskPaths$(3) + saveFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
 
-    For X = 0 To 20
+    For X = 0 To 21
         Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
     Next
 
-    Field #1, 42 As X$, 2 As Q$(24), 2 As Q$(25), 5 As Q$(22), 5 As Q$(23)
+    Field #1, 44 As X$, 2 As Q$(25), 2 As Q$(26), 5 As Q$(23), 5 As Q$(24)
 
     For I = 1 To scheduleAP%(0)
 
-        For X = 0 To 20
+        For X = 0 To 21
             LSet Q$(X + 1) = MKI$(scheduleNG%(I, X))
         Next
 
         For X = 0 To 1
-            LSet Q$(22 + X) = RTrim$(scheduleYN$(I, X))
+            LSet Q$(23 + X) = RTrim$(scheduleYN$(I, X))
         Next
 
-        LSet Q$(24) = MKI$(visitorScores(I))
-        LSet Q$(25) = MKI$(homeScores(I))
+        LSet Q$(25) = MKI$(visitorScores(I))
+        LSet Q$(26) = MKI$(homeScores(I))
 
         Put #1, I
 
@@ -1237,7 +1247,7 @@ Sub SortSchedule ()
         TM% = HR% * 60 + MIN%
         scheduleNG%(I, 12) = Int(TM% / 30 - 18)
         D& = (scheduleNG%(I, 18) - 1)
-        D& = D& * 365 '-- 372
+        D& = D& * 365
         M& = (scheduleNG%(I, 17) - 1)
         M& = M& * 31
         Y& = scheduleNG%(I, 16)
@@ -1252,7 +1262,7 @@ Sub SortSchedule ()
 
             If scheduleNG%(Z, 12) > scheduleNG%(Z1, 12) Then
 
-                For I = 0 To 18:
+                For I = 0 To 21:
                     Swap scheduleNG%(Z, I), scheduleNG%(Z1, I)
                 Next
 
@@ -1338,13 +1348,14 @@ Sub ChangeGlobalSettings ()
     threePtOpt = scheduleNG%(1, 3)
     playoffOpt = scheduleNG%(1, 5)
     displayPause! = scheduleNG%(1, 4) / 10
+    teamEra = scheduleNG%(1, 6)
     coachOpt = scheduleNG%(1, 9)
     bonusFoulNum = scheduleNG%(1, 14)
     freeThrowVal = scheduleNG%(1, 10)
     ftRulesOpt = scheduleNG%(1, 11)
     timeoutOpt = scheduleNG%(1, 19)
     quarterOpt = scheduleNG%(1, 20)
-
+    maxTOs = scheduleNG%(1, 21)
 
     DT$ = "10-01-23"
     TM$ = "07:30P"
@@ -1373,24 +1384,30 @@ Sub ChangeGlobalSettings ()
         Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; displayPause!
         Locate 9, 2: Color 14
         Print "(6) ";
-        Color 15: Print "TIMEOUT SETTINGS: "; timeoutSetting$(timeoutOpt)
+        Color 15: Print "NUMBER TIMEOUTS: "; maxTOs
         Locate 10, 2: Color 14
         Print "(7) ";
-        Color 15: Print "3-POINT SHOT: "; yesNoText$(threePtOpt)
+        Color 15: Print "TIMEOUT OPTIONS: "; timeoutSetting$(timeoutOpt)
         Locate 11, 2: Color 14
         Print "(8) ";
-        Color 15: Print Using "BONUS AFTER FOUL: ##"; bonusFoulNum
+        Color 15: Print "3-POINT SHOT: "; yesNoText$(threePtOpt)
         Locate 12, 2: Color 14
         Print "(9) ";
-        Color 15: Print "NUMBER OF FREE THROWS: "; freeThrowOpt$(freeThrowVal)
+        Color 15: Print "FREE THROW RULES: "; foulOption$(ftRulesOpt)
         Locate 13, 2: Color 14
         Print "(A) ";
-        Color 15: Print "FREE THROW RULES: "; foulOption$(ftRulesOpt)
+        Color 15: Print "NUMBER OF FREE THROWS: "; freeThrowOpt$(freeThrowVal)
         Locate 14, 2: Color 14
         Print "(B) ";
+        Color 15: Print Using "BONUS AFTER FOUL: ##"; bonusFoulNum
+        Locate 15, 2: Color 14
+        Print "(C) ";
         Color 15: Print "HUMAN COACHES: "; coachMode$(coachOpt)
+        Locate 16, 2: Color 14
+        Print "(D) ";
+        Color 15: Print "PLAY IN ERA OF TEAM (IF DIFFERENT): "; teamEraOpt$(teamEra)
 
-        Locate 16, 2: Color 14: Print "(0) ";
+        Locate 18, 2: Color 14: Print "(0) ";
         Color 15: Print "ACCEPT GLOBAL SETTINGS"
 
         Do
@@ -1399,7 +1416,7 @@ Sub ChangeGlobalSettings ()
 
             Call LetterToNumber(I$, iVal)
 
-        Loop Until iVal >= 0 And iVal <= 11
+        Loop Until iVal >= 0 And iVal <= 13
 
         Select Case iVal
 
@@ -1421,24 +1438,32 @@ Sub ChangeGlobalSettings ()
                 Locate 8, 32: Input displayPause!
 
             Case 6:
+                maxTOs = maxTOs + 1
+                If maxTOs > 7 Then maxTOs = 4
+
+            Case 7:
                 timeoutOpt = timeoutOpt + 1
                 If timeoutOpt > 2 Then timeoutOpt = 0
 
-            Case 7:
+            Case 8
                 threePtOpt = 1 - threePtOpt
 
-            Case 8
+            Case 9:
+                ftRulesOpt = 1 - ftRulesOpt
+
+            Case 10
+                freeThrowVal = 1 - freeThrowVal
+
+            Case 11
                 bonusFoulNum = bonusFoulNum + 1
                 If bonusFoulNum > 7 Then bonusFoulNum = 5
 
-            Case 9:
-                freeThrowVal = 1 - freeThrowVal
-
-            Case 10
-                ftRulesOpt = 1 - ftRulesOpt
-
-            Case 11
+            Case 12
                 coachOpt = 1 - coachOpt
+
+            Case 13
+                teamEra = teamEra + 1
+                If teamEra > 2 Then teamEra = 0
 
         End Select
 
@@ -1448,6 +1473,7 @@ Sub ChangeGlobalSettings ()
         scheduleNG%(I, 3) = threePtOpt
         scheduleNG%(I, 4) = displayPause! * 10
         scheduleNG%(I, 5) = playoffOpt
+        scheduleNG%(I, 6) = teamEra
         scheduleNG%(I, 7) = sClockVal
         scheduleNG%(I, 8) = playerOpt
         scheduleNG%(I, 9) = coachOpt
@@ -1456,6 +1482,7 @@ Sub ChangeGlobalSettings ()
         scheduleNG%(I, 14) = bonusFoulNum
         scheduleNG%(I, 19) = timeoutOpt
         scheduleNG%(I, 20) = quarterOpt
+        scheduleNG%(I, 21) = maxTOs
     Next
 
 End Sub
@@ -1544,26 +1571,26 @@ Sub LoadScheduleInfo (targetFile$)
     scheduleAP%(0) = fileLength& / SCHEDULE_SIZE_BYTES
     BS% = Int((scheduleAP%(0) - 1) / 20)
 
-    For X = 0 To 20
+    For X = 0 To 21
         Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
     Next
 
-    Field #1, 42 As X$, 2 As Q$(24), 2 As Q$(25), 5 As Q$(22), 5 As Q$(23)
+    Field #1, 44 As X$, 2 As Q$(25), 2 As Q$(26), 5 As Q$(23), 5 As Q$(24)
 
     For I = 1 To scheduleAP%(0)
 
         Get #1, I
 
-        For X = 0 To 20:
+        For X = 0 To 21:
             scheduleNG%(I, X) = CVI(Q$(X + 1))
         Next
 
         For X = 0 To 1:
-            scheduleYN$(I, X) = RTrim$(Q$(22 + X))
+            scheduleYN$(I, X) = RTrim$(Q$(23 + X))
         Next
 
-        visitorScores(I) = CVI(Q$(24))
-        homeScores(I) = CVI(Q$(25))
+        visitorScores(I) = CVI(Q$(25))
+        homeScores(I) = CVI(Q$(26))
 
     Next
 
