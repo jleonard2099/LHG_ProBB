@@ -250,7 +250,7 @@ Dim Shared W2(1, 14), W3(1, 14), X7(1), teamRecWins(1), teamRecLoss(1)
 Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), M9!(1)
 Dim gameW0!(1, 14), gameW1!(1, 14)
 
-Dim Shared defStyleDesc$(5), diskIDs$(0 To 1)
+Dim Shared defStyleDesc$(9), diskIDs$(0 To 1)
 Dim Shared gameCoach$(3), gameMascots$(3), gameArena$(3), gameTeams$(3)
 Dim Shared offStyleDesc$(2), pbpStyle$(1), players_GAME$(1, 14, 1), posnName$(0 To 4)
 Dim Shared SX$(32, 1)

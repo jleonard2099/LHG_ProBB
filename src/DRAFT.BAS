@@ -7,7 +7,6 @@ Sub DRAFT ()
 
     _Title "Basketball: The Pro Game - Team Draft"
 
-
     Shared leagTot_DRAFT(), leagRat_DRAFT(), plyrRat_DRAFT(), teamRat_DRAFT()
 
     Shared draftYears$(), plyrNames_DRAFT$(), tmYears_DRAFT$(), tmInfo_DRAFT$()

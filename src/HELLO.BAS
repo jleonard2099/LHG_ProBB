@@ -210,8 +210,17 @@ For I = 0 To 32
     Read perFoulAdj(I)
 Next
 
-Data "REG M-M     ","SAGGING M-M ","TRAPPING M-M","TIGHT M-M   ","LOOSE M-M   "
-For I = 1 To 5
+Data "REG M-M     "
+Data "SAGGING M-M "
+Data "TRAPPING M-M"
+Data "TIGHT M-M   "
+Data "LOOSE M-M   "
+Data "1-2-2 ZONE  "
+Data "1-3-1 ZONE  "
+Data "2-3 ZONE    "
+Data "3-2 ZONE    "
+
+For I = 1 To 9
     Read defStyleDesc$(I)
 Next I
 
@@ -3517,7 +3526,6 @@ Sub PROHOOP ()
 
     Next P9
 
-    Call CheckGameClock
     Call STEALADJ
 
     If autoPlay <> 1 And playerMode <> 2 Then
@@ -3526,15 +3534,10 @@ Sub PROHOOP ()
         backboard& = _SndOpen("backboard.mp3")
     End If
 
-    ' # of timeouts
-    For X = 0 To 1
-    
-    Next X
-
     '10 minutes quarters have fewer timeouts.
     'Currently only WNBA rules are considered,
     'although other BB scenarios have 10-min quarters.
-    If quarterOpt = 1 Then
+    If quarterOpt = 0 Then
 
         timeouts(0) = maxTimeouts
         timeouts(1) = maxTimeouts
@@ -3543,7 +3546,7 @@ Sub PROHOOP ()
 
         timeouts(0) = maxTimeouts - 2
         timeouts(1) = maxTimeouts - 2
-    
+
     End If
 
     'Set game clock
@@ -3553,6 +3556,7 @@ Sub PROHOOP ()
         gameClock! = 600
     End If
 
+    Call CheckGameClock
 
     250 '
     'Jump Ball!
@@ -3885,8 +3889,8 @@ Sub PROHOOP ()
         ' *** BRANCH TO AREA BASED ON DEFENSE ***
         Select Case defStyles(D)
 
-            Case 1, 4:
-                ' *** SHOT VS REG M-M, TIGHT M-M ***
+            Case 1, 4, 7:
+                ' *** SHOT VS REG M-M, TIGHT M-M, 1-3-1 ZONE ***
 
                 Select Case RN0
 
@@ -3911,9 +3915,20 @@ Sub PROHOOP ()
 
                     Case 32 + teamAdj(P, 1) + teamAdj(D, 2) To 1000
                         P9 = Int(Rnd(1) * 5)
+
+                        'Check for steal
+                        Select Case defStyles(D)
+                            
+                            Case 1, 4
+                                stealBaseAdj = 24
+                                
+                            Case 7
+                                stealBaseAdj = 45
+
+                        End Select
                         
                         'Compare roll to 24 + several adjustments for steals
-                        If RN0 <= 24 + teamAdj(P, 0) + teamAdj(P, 1) + teamAdj(D, 2) + gameRatings!(D, lineupIdx(D, P9), 5) + OX%(offStyles(P)) Then
+                        If RN0 <= stealBaseAdj + teamAdj(P, 0) + teamAdj(P, 1) + teamAdj(D, 2) + gameRatings!(D, lineupIdx(D, P9), 5) + OX%(offStyles(P)) Then
 
                             GoTo 513
 
@@ -3932,8 +3947,8 @@ Sub PROHOOP ()
 
                 End Select
             
-            Case 2, 5
-                ' *** SHOT VS LOOSE M-M, SAG M-M ***
+            Case 2, 5, 6, 8, 9
+                ' *** SHOT VS LOOSE M-M, SAG M-M, ALL ZONE EXCEPT 1-3-1 ***
 
                 Select Case RN0
 
@@ -3960,7 +3975,23 @@ Sub PROHOOP ()
                         P9 = Int(Rnd(1) * 5)
 
                         'Check for steal
-                        stealChance = 8 + teamAdj(P, 0) + teamAdj(P, 1) + teamAdj(D, 2) + gameRatings!(D, lineupIdx(D, P9), 5) + OX%(offStyles(P))
+                        Select Case defStyles(D)
+
+                            Case 2, 5
+                                stealBaseAdj = 8
+                                
+                            Case 6
+                                stealBaseAdj = 24
+                            
+                            Case 8
+                                stealBaseAdj = 16
+                            
+                            Case 9
+                                stealBaseAdj = 28
+                                                    
+                        End Select
+
+                        stealChance = stealBaseAdj + teamAdj(P, 0) + teamAdj(P, 1) + teamAdj(D, 2) + gameRatings!(D, lineupIdx(D, P9), 5) + OX%(offStyles(P))
                         If RN0 <= stealChance Then
 
                             GoTo 513
@@ -4004,7 +4035,9 @@ Sub PROHOOP ()
                         P9 = Int(Rnd(1) * 5)
 
                         'Check for steal
-                        stealChance = 40 + teamAdj(P, 1) + teamAdj(D, 2) + gameRatings!(D, lineupIdx(D, P9), 5) + teamAdj(P, 0) + OX%(offStyles(P))
+                        stealBaseAdj = 40
+
+                        stealChance = stealBaseAdj + teamAdj(P, 1) + teamAdj(D, 2) + gameRatings!(D, lineupIdx(D, P9), 5) + teamAdj(P, 0) + OX%(offStyles(P))
                         If RN0 <= stealChance Then
 
                             GoTo 513
@@ -6126,9 +6159,6 @@ Sub PROHOOP ()
 
     If (autoPlay = 0 Or pbpDelay! > 0) Then
 
-        pbpString$ = players_GAME$(D, lineupIdx(D, ballCarrier), 0) + " HAS THE DEF REBOUND"
-        Call SELECTPBP(D, 1)
-
         If pbpOpt = 1 Then
             Call WINDEX
             pbpString$ = players_GAME$(D, lineupIdx(D, ballCarrier), 0) + " HAS THE DEF REBOUND FOR "
@@ -6485,6 +6515,9 @@ End Sub
 'cursor is set at the first printable row
 'and column inside the box.
 Sub FRAMEOPTION (boxHeight, teamIdx)
+
+    PCopy 0, 1
+    Screen , , 1, 1
 
     Locate 8, 8
     Color teamRat_GAME(teamIdx, 33), teamRat_GAME(teamIdx, 34)
@@ -8847,8 +8880,17 @@ Sub PlayStyle ()
                     End If
 
                     If UCase$(I$) = "F" Then
+                    
+                        If teamYears(eraChoice) >= 2001 Then
+                            'Zone options available
+                            maxChoice = 9
+                        Else
+                            maxChoice = 5
+                        End If
+                    
                         defStyles(P9) = defStyles(P9) + 1
-                        If defStyles(P9) > 5 Then defStyles(P9) = 1
+                        If defStyles(P9) > maxChoice Then defStyles(P9) = 1
+
                     End If
 
                     If UCase$(I$) = "O" Then
@@ -11215,20 +11257,20 @@ Sub CHANGESTRATEGY (I$)
 
         If Not (I$ = "/" And playerMode = 1 And compTeam = 1 Or playerMode = 2) Then
 
-            TS% = 1
+            teamSelected = 1
 
-            If UCase$(I$) = "Z" Then TS% = 0
+            If UCase$(I$) = "Z" Then teamSelected = 0
 
             Do
-                Call FRAMEOPTION(8, TS%)
+                Call FRAMEOPTION(8, teamSelected)
                 Locate 10, 15
-                Print gameTeams$(TS%); " SELECT STRATEGY:"
+                Print gameTeams$(teamSelected); " SELECT STRATEGY:"
 
                 Locate 12, 14
                 Locate , 14: Print "0 - RETURN TO GAME"
                 Locate , 14: Print "1 - SELECT OFFENSIVE STYLE OF PLAY"
                 Locate , 14: Print "2 - SELECT DEFENSIVE STYLE OF PLAY"
-                Locate , 14: Print "3 - FULL COURT PRESS "; yesNoText$(fullCtOpt(TS%))
+                Locate , 14: Print "3 - FULL COURT PRESS "; yesNoText$(fullCtOpt(teamSelected))
 
                 Do
                     I$ = GetKeyPress$
@@ -11238,9 +11280,9 @@ Sub CHANGESTRATEGY (I$)
                 Select Case I1
                     Case 1:
                         'DEFENSE
-                        Call FRAMEOPTION(8, TS%)
+                        Call FRAMEOPTION(8, teamSelected)
                         Locate 10, 15
-                        Print gameTeams$(TS%); " SELECT OFFENSE:"
+                        Print gameTeams$(teamSelected); " SELECT OFFENSE:"
 
                         Locate 12, 14
                         Locate , 14: Print "0 - NORMAL"
@@ -11252,13 +11294,13 @@ Sub CHANGESTRATEGY (I$)
                             I1 = Val(I$)
                         Loop Until I1 >= 0 And I1 <= 2
 
-                        offStyles(TS%) = I1
+                        offStyles(teamSelected) = I1
 
                     Case 2:
                         'DEFENSE
-                        Call FRAMEOPTION(10, TS%)
+                        Call FRAMEOPTION(13, teamSelected)
                         Locate 10, 15
-                        Print gameTeams$(TS%); " SELECT DEFENSE:"
+                        Print gameTeams$(teamSelected); " SELECT DEFENSE:"
 
                         Locate 12, 14
                         Locate , 14: Print "1 - REGULAR MAN-TO-MAN"
@@ -11266,16 +11308,27 @@ Sub CHANGESTRATEGY (I$)
                         Locate , 14: Print "3 - TRAPPING MAN-TO-MAN"
                         Locate , 14: Print "4 - TIGHT MAN-TO-MAN"
                         Locate , 14: Print "5 - LOOSE MAN-TO-MAN"
+                        maxChoice = 5
+
+                        If teamYears(teamSelected) >= 2001 Then
+                            Locate , 14: Print "6 - 1-2-2 ZONE"
+                            Locate , 14: Print "7 - 1-3-1 ZONE"
+                            Locate , 14: Print "8 - 2-3 ZONE"
+                            Locate , 14: Print "9 - 3-2 ZONE"
+                            maxChoice = 9
+                        End If
 
                         Do
                             I$ = GetKeyPress$
                             I1 = Val(I$)
-                        Loop Until I1 >= 1 And I1 <= 5
+                        Loop Until I1 >= 1 And I1 <= maxChoice
 
-                        defStyles(TS%) = I1
+                        defStyles(teamSelected) = I1
+
+                        Screen , , 0, 0
 
                     Case 3
-                        fullCtOpt(TS%) = 1 - fullCtOpt(TS%)
+                        fullCtOpt(teamSelected) = 1 - fullCtOpt(teamSelected)
 
                 End Select
 
@@ -11304,91 +11357,324 @@ Sub ComputerStrategy ()
         defTeam = 0
     End If
 
-    If score(P9, 0) - score(defTeam, 0) < 0 Then
+    ' **************************
+    ' *** Defensive Strategy ***
+    ' **************************
 
-        scoreDef = score(defTeam, 0) - score(P9, 0)
+    'Where is our score compared to opponent?
+    scoreDiffTm = score(P9, 0) - score(defTeam, 0)
+    
+    If scoreDiffTm < 0 Then
+        'Current team is behind is behind
 
-        If quarter <= 2 Then
-            defStyles(P9) = 1
-            fullCtOpt(P9) = 0
-        End If
+        'Where is opponent's score compared to us?
+        scoreDiffOpp = score(defTeam, 0) - score(P9, 0)
 
-        If quarter = 3 Then
+        Call Rolld100(RN0)
 
-            Select Case scoreDef
+        Select Case quarter
 
-                Case Is < 10
+            Case 1, 2
+                '1st Half Strategy
+                fullCtOpt(P9) = 0
+
+                If teamYears(eraChoice) < 2001 Then
+                    'Zone Defense Prohibited
                     defStyles(P9) = 1
-                    fullCtOpt(P9) = 0
+                Else
 
-                Case 10 To 20
+                    Select Case RN0
+
+                        Case 1 To 75
+                            defStyles(P9) = 1
+
+                        Case 76 To 93
+                            '2-3 Zone
+                            defStyles(P9) = 8
+
+                        Case 94 To 96
+                            '3-2 Zone
+                            defStyles(P9) = 9
+
+                        Case 97 To 99
+                            '1-2-2 Zone
+                            defStyles(P9) = 6
+
+                        Case 100
+                            '1-3-1 Zone
+                            defStyles(P9) = 7
+
+                    End Select
+
+                End If
+
+            Case 3
+                '3rd Quarter Strategy
+                If teamYears(eraChoice) < 2001 Then
+                    'Zone Defense Prohibited
+                    defStyles(P9) = 1
+                Else
+
+                    Select Case scoreDiffOpp
+
+                        Case Is < 10
+                            'Opponent behind or within 10
+                            fullCtOpt(P9) = 0
+
+                            Select Case RN0
+
+                                Case 1 To 80
+                                    defStyles(P9) = 1
+
+                                Case 81 To 84
+                                    defStyles(P9) = 1
+                                    fullCtOpt(P9) = 1
+
+                                Case 85 To 89
+                                    defStyles(P9) = 8
+
+                                Case 90 To 96
+                                    defStyles(P9) = 9
+
+                                Case 97 To 100
+                                    defStyles(P9) = 6
+
+                            End Select
+
+                        Case 10 To 19
+                            'Opponent ahead by 10-20
+                            fullCtOpt(P9) = 1
+
+                            Select Case RN0
+
+                                Case 1 To 71
+                                    defStyles(P9) = 1
+
+                                Case 72 To 100
+                                    defStyles(P9) = 1
+                                    fullCtOpt(P9) = 1
+
+                            End Select
+
+                        Case Is > 20
+                            'Opponent ahead by 21+
+                            fullCtOpt(P9) = 0
+
+                            Select Case RN0
+
+                                Case 1 To 88
+                                    defStyles(P9) = 1
+
+                                Case 89 To 100
+                                    defStyles(P9) = 1
+                                    fullCtOpt(P9) = 1
+
+                            End Select
+
+                    End Select
+
+                End If
+
+            Case 4
+                '4th Quarter Strategy
+
+                If gameClock! >= 120 Then
+                    'Outside final 2 minutes
+
+                    Select Case scoreDiffOpp
+
+                        Case 1 To 10
+                            If teamYears(eraChoice) < 2001 Then
+                                'Zone Defense Prohibited
+                                defStyles(P9) = 1
+                                fullCtOpt(P9) = 1
+                            Else
+
+                                Select Case RN0
+
+                                    Case 1 To 80
+                                        defStyles(P9) = 1
+
+                                    Case 81 To 95
+                                        defStyles(P9) = 8
+
+                                    Case 96 To 100
+                                        defStyles(P9) = 9
+
+                                End Select
+
+                            End If
+
+                        Case 11 To 12
+                            If teamYears(eraChoice) < 2001 Then
+                                'Zone Defense Prohibited
+                                defStyles(P9) = 5
+                                fullCtOpt(P9) = 0
+                            Else
+
+                                Select Case RN0
+
+                                    Case 1 To 80
+                                        defStyles(P9) = 5
+
+                                    Case 81 To 90
+                                        defStyles(P9) = 5
+                                        fullCtOpt(P9) = 1
+                                
+                                    Case 91 To 100
+                                        defStyles(P9) = 8
+
+                                End Select
+                            
+                            End If
+
+                        Case 13 To 22
+                            If teamYears(eraChoice) < 2001 Then
+                                'Zone Defense Prohibited
+                                defStyles(P9) = 3
+                                fullCtOpt(P9) = 1
+                            Else
+
+                                Select Case RN0
+
+                                    Case 1 To 80
+                                        defStyles(P9) = 3
+
+                                    Case 81 To 90
+                                        defStyles(P9) = 3
+                                        fullCtOpt(P9) = 1
+
+                                    Case 91 To 100
+                                        defStyles(P9) = 8
+
+                                End Select
+                            
+                            End If
+
+                        Case Is > 22
+                            If teamYears(eraChoice) < 2001 Then
+                                'Zone Defense Prohibited
+                                defStyles(P9) = 1
+                                fullCtOpt(P9) = 0
+                            Else
+
+                                Select Case RN0
+                                
+                                    Case 1 To 84
+                                        defStyles(P9) = 1
+
+                                    Case 85 To 94
+                                        defStyles(P9) = 1
+                                        fullCtOpt = 1
+
+                                    Case 95 To 97
+                                        defStyles(P9) = 6
+
+                                    Case 98 To 100
+                                        defStyles(P9) = 7
+                                
+                                End Select
+                            
+                            End If
+
+                    End Select
+
+                Else
+                    'Inside final 2 minutes
+
+                    Select Case scoreDiffOpp
+
+                        Case 1 To 4
+                            If teamYears(eraChoice) < 2001 Then
+                                'Zone Defense Prohibited
+                                defStyles(P9) = 1
+                                fullCtOpt(P9) = 1
+                            Else
+
+                                Select Case RN0
+
+                                    Case 1 To 42
+                                        defStyles(P9) = 1
+                                        fullCtOpt(P9) = 1
+
+                                    Case 43 To 79
+                                        defStyles(P9) = 1
+
+                                    Case 80 To 90
+                                        defStyles(P9) = 6
+
+                                    Case 91 To 100
+                                        defStyles(P9) = 7
+
+                                End Select
+
+                            End If
+
+                        Case 5
+                            'Zone Defense Prohibited
+                            defStyles(P9) = 5
+                            fullCtOpt(P9) = 0
+
+                        Case 6 To 12
+                            'Zone Defense Prohibited
+                            defStyles(P9) = 3
+                            fullCtOpt(P9) = 1
+
+                        Case Is > 12
+                            If teamYears(eraChoice) < 2001 Then
+                                'Zone Defense Prohibited
+                                defStyles(P9) = 1
+                                fullCtOpt(P9) = 0
+                            Else
+
+                                Select Case RN0
+                                
+                                    Case 1 To 67
+                                        defStyles(P9) = 1
+
+                                    Case 68 To 80
+                                        defStyles(P9) = 7
+                                
+                                    Case 81 To 100
+                                        defStyles(P9) = 9
+                                        
+                                End Select
+                            
+                            End If
+
+                    End Select
+                                        
+
+                End If
+
+            Case Is > 4
+                'Overtime Strategy
+                If teamYears(eraChoice) < 2001 Then
+                    'Zone Defense Prohibited
                     defStyles(P9) = 1
                     fullCtOpt(P9) = 1
+                Else
 
-                Case Is > 20
-                    defStyles(P9) = 1
-                    fullCtOpt(P9) = 0
+                    Select Case RN0
+                    
+                        Case 0 To 50
+                            defStyles(P9) = 1
 
-            End Select
+                        Case 51 To 96
+                            defStyles(P9) = 8
 
-        End If
+                        Case 97 To 100
+                            defStyles(P9) = 9
+                    
+                    End Select
+                
+                End If
 
-        If quarter = 4 Then
-
-            If gameClock! >= 120 Then
-
-                Select Case scoreDef
-
-                    Case 1 To 10
-                        defStyles(P9) = 1
-                        fullCtOpt(P9) = 1
-
-                    Case 11 To 12
-                        defStyles(P9) = 5
-                        fullCtOpt(P9) = 0
-
-                    Case 13 To 22
-                        defStyles(P9) = 3
-                        fullCtOpt(P9) = 1
-
-                    Case Is > 22
-                        defStyles(P9) = 1
-                        fullCtOpt(P9) = 0
-
-                End Select
-
-            Else
-
-                Select Case scoreDef
-
-                    Case 1 To 4
-                        defStyles(P9) = 1
-                        fullCtOpt(P9) = 1
-
-                    Case 5
-                        defStyles(P9) = 5
-                        fullCtOpt(P9) = 0
-
-                    Case 6 To 12
-                        defStyles(P9) = 3
-                        fullCtOpt(P9) = 1
-
-                    Case Is > 12
-                        defStyles(P9) = 1
-                        fullCtOpt(P9) = 0
-
-                End Select
-
-            End If
-
-        End If
-
-        If quarter > 4 Then
-            defStyles(P9) = 1
-            fullCtOpt(P9) = 1
-        End If
+        End Select
 
     Else
+    
+        'Team is ahead
 
         Call Rolld100(RN0)
         fullCtOpt(P9) = 0
@@ -11397,16 +11683,16 @@ Sub ComputerStrategy ()
 
             Select Case RN0
 
-                Case Is <= 17
+                Case Is <= 16
                     defStyles(P9) = 2
 
-                Case 18 To 34
+                Case 17 To 32
                     defStyles(P9) = 4
 
-                Case 35 To 40
+                Case 33 To 37
                     defStyles(P9) = 5
 
-                Case Is >= 40
+                Case Is >= 38
                     defStyles(P9) = 1
 
             End Select
@@ -11417,16 +11703,16 @@ Sub ComputerStrategy ()
 
             Select Case RN0
 
-                Case Is <= 22
+                Case Is <= 21
                     defStyles(P9) = 2
 
-                Case 23 To 43
+                Case 22 To 41
                     defStyles(P9) = 4
 
-                Case 44 To 48
+                Case 42 To 45
                     defStyles(P9) = 5
 
-                Case Is >= 49
+                Case Is >= 46
                     defStyles(P9) = 1
 
             End Select
@@ -11437,16 +11723,16 @@ Sub ComputerStrategy ()
 
             Select Case RN0
 
-                Case Is < 32
+                Case Is < 31
                     defStyles(P9) = 4
 
-                Case 33 To 63
+                Case 32 To 61
                     defStyles(P9) = 2
 
-                Case 64 To 68
+                Case 62 To 65
                     defStyles(P9) = 5
 
-                Case Is >= 69
+                Case Is >= 66
                     defStyles(P9) = 1
 
             End Select
@@ -11457,16 +11743,16 @@ Sub ComputerStrategy ()
 
             Select Case RN0
 
-                Case Is < 22
+                Case Is < 21
                     defStyles(P9) = 4
 
-                Case 23 To 43
+                Case 22 To 41
                     defStyles(P9) = 2
 
-                Case 44 To 48
+                Case 42 To 45
                     defStyles(P9) = 5
 
-                Case Is >= 49
+                Case Is >= 46
                     defStyles(P9) = 1
 
             End Select
@@ -11475,23 +11761,34 @@ Sub ComputerStrategy ()
 
     End If
 
+    ' **************************
+    ' *** Offensive Strategy ***
+    ' **************************
+
+    'Default to Normal
     offStyles(P9) = 0
 
     If quarter < 3 Then
+        'First Half
         offStyles(P9) = 0
-    End If
+    Else
+        'Second Half
+        '50% chance of using Normal / Aggressive
+        If Int(Rnd(1) * 2) = 1 Then
 
-    If quarter >= 3 And Int(Rnd(1) * 2) = 1 Then
+            If score(P9, 0) - score(defTeam, 0) < 0 Then
+                'Offense is behind = Aggressive
+                offStyles(P9) = 1
+            Else
+                'Offense is ahead = Safe
+                offStyles(P9) = 2
+            End If
 
-        If score(P9, 0) - score(defTeam, 0) < 0 Then
-            offStyles(P9) = 1
-        Else
-            offStyles(P9) = 2
         End If
 
     End If
 
-    'Call pbplog(8881)
+    'Call pbplog(11798)
 
 End Sub
 
@@ -14024,15 +14321,14 @@ End Sub
 'issues are happening in a game.
 Sub pbplog (lineNumber)
 
-    'Print #11, "Called from line # "; lineNumber
-    'Print #11, gameTeams$(0); " vs "; gameTeams$(1)
+    Print #11, "Called from line # "; lineNumber
+    Print #11, gameTeams$(0); " vs "; gameTeams$(1)
     'Print #11, pbpString$
 
     'Print #11, currGame; ","; ballCarrier; ","; lineNumber
-    Print #11, lineNumber
-    'Print #11, defStyles(P9)
-    'Print #11, test
+    'Print #11, lineNumber
     'Print #11, lineNumber, ballCarrier
+    'Print #11, defStyles(P9)
     'Print #11,
 
 End Sub
