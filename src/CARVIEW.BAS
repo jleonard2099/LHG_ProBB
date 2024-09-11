@@ -8,49 +8,13 @@ Sub CARVIEW ()
 
     _Title "Basketball: The Pro Game - View Careers"
 
-    Dim careerPlayers$(62)
-
     Shared ARS!(), W0S!(), W1S!()
 
     careerFile$ = ChooseFile$ (diskPaths$(1) + "*.CAR", "CAREER", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        Color 15, 0
-        Cls
-
-        TMR = 930
-
-        Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
-
-        Open diskPaths$(1) + careerFile$ + ".CAR" For Input As #1
-
-        Input #1, NB, B$
-
-        For N = 1 To 15
-
-            For I = 0 To 61
-
-                Input #1, careerPlayers$(I)
-
-                For J = 0 To 15
-                    Input #1, ARS!(N, I, J)
-                Next J
-
-                Input #1, W0S!(N, I)
-                Input #1, W1S!(N, I)
-
-                TMR = TMR - 1
-
-                Color 5
-                Locate 12, 38
-                Print Using "####"; TMR
-
-            Next I
-
-        Next N
-
-        Close #1
+        Call LoadCareerFile (careerFile$)
 
         userKey$ = GetOutputOptions$
 
@@ -61,14 +25,14 @@ Sub CARVIEW ()
                 Case "F"
                     userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
                     If userFile$ <> "" Then
-                        Call CareerStats_Report(0, userFile$, careerPlayers$(), careerFile$)
+                        Call CareerStats_Report(0, userFile$, careerFile$)
                     End If
 
                 Case "P"
-                    Call CareerStats_Report(1, "REPORT", careerPlayers$(), careerFile$)
+                    Call CareerStats_Report(1, "REPORT", careerFile$)
                     
                 Case "S"
-                    Call CareerStats_Screen(careerPlayers$(), careerFile$)
+                    Call CareerStats_Screen(careerFile$)
 
             End Select
             
@@ -87,7 +51,9 @@ End Sub
 'It then calls a supplemental routine for 
 'each  that will format those stats and 
 'send them to the display screen
-Sub CareerStats_Screen (careerPlayers$(), careerFile$)
+Sub CareerStats_Screen (careerFile$)
+
+    Shared careerPlayers$()
 
     Do
 
@@ -95,19 +61,25 @@ Sub CareerStats_Screen (careerPlayers$(), careerFile$)
         Cls
 
         Color 7: Print "VIEW ";
-        Color 12: Print "P";: Color 7: Print "LAYERS, ";
-        Color 12: Print "R";: Color 7: Print "OSTER IN SEQUENCE, OR ";
-        Color 12: Print "E";: Color 7: Print "XIT TO MAIN MENU"
+        Color 12: Print "P";
+        Color 7: Print "LAYERS"
+
+        Color 7: Print "VIEW ";
+        Color 12: Print "R";
+        Color 7: Print "OSTER IN SEQUENCE"
+
+        Color 12: Print "E";
+        Color 7: Print "XIT TO MAIN MENU"
 
         I$ = GetKeyPress$
 
         Select Case UCase$(I$)
 
             Case "P":
-                Call ViewPlayer(careerPlayers$(), careerFile$)
+                Call ViewPlayer(careerFile$)
 
             Case "R":
-                Call ViewRosterSequence(careerPlayers$(), careerFile$)
+                Call ViewRosterSequence(careerFile$)
 
         End Select
 
@@ -118,10 +90,12 @@ End Sub
 
 '----------------------------------------
 '       CareerStats_Report Subroutine
-'----------------------------------------
+'---------------------------------------
 'Formats results of Career stats and sends
 'to the user's default printer
-Sub CareerStats_Report (printDest, destFile$, careerPlayers$(), careerFile$)
+Sub CareerStats_Report (printDest, destFile$, careerFile$)
+
+    Shared careerPlayers$()
 
     Shared ARS!(), W0S!(), W1S!()
 
@@ -158,6 +132,7 @@ Sub CareerStats_Report (printDest, destFile$, careerPlayers$(), careerFile$)
             TT15 = 0
             TT16 = 0
             TT17 = 0
+
             VV = ARS!(1, I, 14) + ARS!(2, I, 14) + ARS!(3, I, 14) + ARS!(4, I, 14) + ARS!(5, I, 14) + ARS!(6, I, 14) + ARS!(7, I, 14) + ARS!(8, I, 14) + ARS!(9, I, 14) + ARS!(10, I, 14) + ARS!(11, I, 14) + ARS!(12, I, 14) + ARS!(13, I, 14) + ARS!(14, I, 14) + ARS!(15, I, 14)
 
             If 55 - PTN < VV Then
@@ -311,7 +286,9 @@ End Sub
 '----------------------------------------
 'This subroutine will display player stats
 'from the team's career file
-Sub ViewPlayer (careerPlayers$(), careerFile$)
+Sub ViewPlayer (careerFile$)
+
+    Shared careerPlayers$()
 
     Shared ARS!(), W0S!(), W1S!()
 
@@ -320,31 +297,31 @@ Sub ViewPlayer (careerPlayers$(), careerFile$)
     Color 12: Print careerFile$
 
     For I = 0 To 15:
-        Locate I + 2: Color 3
-        Print Using "##"; I;
+        Locate I + 2
+        Color 11: Print Using "##"; I;
         Print " ";
-        Color 7: Print careerPlayers$(I)
+        Color 7: Print Left$(careerPlayers$(I), 12)
     Next
 
     For I = 16 To 31:
-        Locate I - 14, 20: Color 3
-        Print Using "##"; I;
+        Locate I - 14, 20
+        Color 11: Print Using "##"; I;
         Print " ";
-        Color 7: Print careerPlayers$(I)
+        Color 7: Print Left$(careerPlayers$(I), 12)
     Next
 
     For I = 32 To 46:
-        Locate I - 30, 40: Color 3
-        Print Using "##"; I;
+        Locate I - 30, 40
+        Color 11: Print Using "##"; I;
         Print " ";
-        Color 7: Print careerPlayers$(I):
+        Color 7: Print Left$(careerPlayers$(I), 12)
     Next
 
     For I = 47 To 61:
-        Locate I - 45, 60: Color 3
-        Print Using "##"; I;
+        Locate I - 45, 60
+        Color 11: Print Using "##"; I;
         Print " ";
-        Color 7: Print careerPlayers$(I)
+        Color 7: Print Left$(careerPlayers$(I), 12)
     Next
 
     Print
@@ -559,7 +536,9 @@ End Sub
 '----------------------------------------
 'This subroutine will display player stats
 'from the team's career file, in sequence
-Sub ViewRosterSequence (careerPlayers$(), careerFile$)
+Sub ViewRosterSequence (careerFile$)
+
+    Shared careerPlayers$()
 
     Shared ARS!(), W0S!(), W1S!()
 

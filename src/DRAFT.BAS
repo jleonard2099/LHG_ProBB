@@ -119,7 +119,7 @@ Sub DRAFT ()
                             Next
                         Next
 
-                        Call NewTeamParameters(tmYears_DRAFT$(0), tmInfo_DRAFT$(0, 0), yearIdx)
+                        Call NewTeamParameters_Base(tmYears_DRAFT$(0), tmInfo_DRAFT$(0, 0), yearIdx)
                         Call DraftChoices(1, doneDraft, teamIdx, tmTotal_DRAFT(), yearIdx)
 
                     Case 2
@@ -141,12 +141,12 @@ End Sub
 
 
 '----------------------------------------
-'      NewTeamParameters Subroutine
+'   NewTeamParameters_Base Subroutine
 '----------------------------------------
 'This subroutine prompts the user for the
 'minimum required parameters to create a
 'new team that players will be drafted to.
-Sub NewTeamParameters (teamYear$, teamName$, normYrIdx)
+Sub NewTeamParameters_Base (teamYear$, teamName$, normYrIdx)
 
     Shared tmInfo_DRAFT$()
     Shared leagRat_DRAFT(), leagueAverages%(), teamRat_DRAFT()
@@ -260,6 +260,21 @@ Sub NewTeamParameters (teamYear$, teamName$, normYrIdx)
         End If
 
     Loop Until B9 = 0
+    
+    'prompts
+    Color 15, 0
+    Cls
+
+    Do
+        Locate , 5
+        Print "WOULD YOU LIKE TO ENTER STATS (ACTUALS) FOR THIS TEAM? (Y/N)"
+        K$ = GetKeyPress$
+        response$ = UCase$(K$)
+    Loop Until response$ = "Y" Or response$ = "N" Or K$ = Chr$(27)
+    
+    If response$ = "Y" Then
+        Call NewTeamParameters_OffDef
+    End If
 
 End Sub
 
@@ -274,6 +289,10 @@ End Sub
 ' users to complete input of all ratings.
 Sub NewTeamParameters_OffDef ()
 
+    Shared tmInfo_DRAFT$()
+    Shared leagRat_DRAFT(), leagueAverages%(), teamRat_DRAFT()
+
+    Color 15, 0
     Cls
 
     Color 14
@@ -532,13 +551,24 @@ Sub NewTeamParameters_OffDef ()
     Loop Until B9 = 0
 
     'This is ripped from the Team Input routine
-    'ST / BK / T0 represent whether the user has
-    'Steals / Blocks / Turnover data to enter
-    'If teamRat_DRAFT(0, 28) = 0 And ST = 0 Then teamRat_DRAFT(0, 28) = teamRat_DRAFT(0, 5) * .1
-    'If teamRat_DRAFT(0, 14) = 0 And ST = 0 Then teamRat_DRAFT(0, 14) = teamRat_DRAFT(0, 19) * .1
-    'If teamRat_DRAFT(0, 16) = 0 And BK = 0 Then teamRat_DRAFT(0, 16) = teamRat_DRAFT(0, 19) * .06
-    'If teamRat_DRAFT(0, 30) = 0 And BK = 0 Then teamRat_DRAFT(0, 30) = teamRat_DRAFT(0, 5) * .06
-    'If teamRat_DRAFT(0, 29) = 0 And T0 = 0 Then teamRat_DRAFT(0, 29) = 18 * leagRat_DRAFT(0, 0): teamRat_DRAFT(0, 15) = teamRat_DRAFT(0, 29)
+    'It assumes we don't have data; not that these
+    'values would ever be 0 intentionally
+    If teamRat_DRAFT(0, 28) = 0 Then
+        teamRat_DRAFT(0, 28) = teamRat_DRAFT(0, 5) * .1
+    End If
+    If teamRat_DRAFT(0, 14) = 0 Then
+        teamRat_DRAFT(0, 14) = teamRat_DRAFT(0, 19) * .1
+    End If
+    If teamRat_DRAFT(0, 16) = 0 Then
+        teamRat_DRAFT(0, 16) = teamRat_DRAFT(0, 19) * .06
+    End If
+    If teamRat_DRAFT(0, 30) = 0 Then
+        teamRat_DRAFT(0, 30) = teamRat_DRAFT(0, 5) * .06
+    End If
+    If teamRat_DRAFT(0, 29) = 0 Then
+        teamRat_DRAFT(0, 29) = 18 * leagRat_DRAFT(0, 0)
+        teamRat_DRAFT(0, 15) = teamRat_DRAFT(0, 29)
+    End If
 
 
 End Sub

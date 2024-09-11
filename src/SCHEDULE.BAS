@@ -112,8 +112,9 @@ Sub SCHEDULE ()
                     Call BoxscoreMaintenance
 
                 Case 7:
-                    scheduleFile$ = _OpenFileDialog$("Select schedule file", diskPaths$(3), "*.SCD", "Schedule files")
-                    Call ConvertSched4to5(scheduleFile$, 0)
+                    'scheduleFile$ = _OpenFileDialog$("Select schedule file", diskPaths$(3), "*.SCD", "Schedule files")
+                    'Call ConvertSched4to5(scheduleFile$, 0)
+                    Call ConvertAllSched
 
             End Select
 
@@ -791,7 +792,7 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
 
                 Case 17
                     scheduleNG%(gameIndex%, 9) = 1 - scheduleNG%(gameIndex%, 9)
-                    
+
                 Case 18
                     scheduleNG%(gameIndex%, 6) = scheduleNG%(gameIndex%, 6) + 1
                     If scheduleNG%(gameIndex%, 6) > 2 Then scheduleNG%(gameIndex%, 6) = 0
@@ -1245,13 +1246,19 @@ Sub SortSchedule ()
         HR% = Int(scheduleNG%(I, 15) / 100)
         MIN% = scheduleNG%(I, 15) - HR% * 100
         TM% = HR% * 60 + MIN%
+
         scheduleNG%(I, 12) = Int(TM% / 30 - 18)
+
         D& = (scheduleNG%(I, 18) - 1)
-        D& = D& * 365
+        D& = D& * 365 '-- 372
+
         M& = (scheduleNG%(I, 17) - 1)
         M& = M& * 31
+
         Y& = scheduleNG%(I, 16)
+
         schedDates&(I) = (D& + M& + Y&) * 24 * 60 + TM%
+
     Next
 
     For Z = 1 To scheduleAP%(0) - 1:
@@ -1323,7 +1330,7 @@ Sub ChangeGlobalSettings ()
     Shared location$(), modeAbbrev$()
     Shared playMode$(), playoffGame$()
     Shared quarterLength$(), sClockOpt$()
-    Shared timeoutSetting$(), yesNoText$()
+    Shared teamEraOpt$(), timeoutSetting$(), yesNoText$()
 
     Dim displayPause!
 
@@ -1532,7 +1539,7 @@ Sub DeleteBoxscores (fileChoice%, fileSpec$)
 
         boxFiles$(0) = fileSpec$
         Call ReadFile(boxFiles$())
- 
+
         For X = 1 To Count%
             Kill (diskPaths$(1) + boxFiles$(X))
             Locate 12, 34: Print "DELETING "; boxFiles$(X)
@@ -1632,3 +1639,4 @@ Sub EditBoxscore (boxName$)
     End If
 
 End Sub
+
