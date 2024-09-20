@@ -509,13 +509,15 @@ Sub ConvertSched4to5 (targetFile$, silent)
         Close #1
 
         numberGames = fileLength& / (SCHEDULE_SIZE_BYTES - 10)
-        Call ReadSchedOld(targetFile$)
+
+        'Call ReadSchedOld(targetFile$)
+        Call LoadSchedA(targetFile$)
 
         For currGame = 1 To numberGames
 
             'Assign defaults
-            scheduleNG%(currGame, 19) = 0
-            scheduleNG%(currGame, 20) = 0
+            'scheduleNG%(currGame, 19) = 0
+            'scheduleNG%(currGame, 20) = 0
             scheduleNG%(currGame, 21) = 6
 
         Next currGame
@@ -593,17 +595,19 @@ End Sub
 
 Sub LoadSchedA (targetFile$)
 
-    Shared BS%, NS%
-
-    Shared scheduleAP%()
+    Shared scheduleNG%()
     Shared homeScores(), visitorScores()
-    Shared scheduleNG%(), scheduleYN$()
+    Shared scheduleYN$()
+
+    ReDim scheduleNG%(MAX_SCHEDULE_GAMES, 21)
+    ReDim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
+    ReDim homeScores(MAX_SCHEDULE_GAMES)
+    ReDim visitorScores(MAX_SCHEDULE_GAMES)
 
     Open targetFile$ For Random As #1 Len = SCHEDULE_SIZE_BYTES - 2
 
     fileLength& = LOF(1)
-    scheduleAP%(0) = fileLength& / SCHEDULE_SIZE_BYTES - 2
-    BS% = Int((scheduleAP%(0) - 1) / 20)
+    totalGames = fileLength& / (SCHEDULE_SIZE_BYTES - 2)
 
     For X = 0 To 20
         Field #1, X * 2 As X$, 2 As Q$(X + 1), (SCHEDULE_SIZE_BYTES - 2) - 2 - 2 * X As X$
@@ -611,7 +615,7 @@ Sub LoadSchedA (targetFile$)
 
     Field #1, 42 As X$, 2 As Q$(24), 2 As Q$(25), 5 As Q$(22), 5 As Q$(23)
 
-    For I = 1 To scheduleAP%(0)
+    For I = 1 To totalGames
 
         Get #1, I
 
@@ -630,7 +634,4 @@ Sub LoadSchedA (targetFile$)
 
     Close #1
 
-    NS% = 0
-
 End Sub
-

@@ -42,7 +42,7 @@ Sub CAREDIT ()
                 Case "E", "X": '
 
                 Case "U":
-                    Call UpdateCareerFile(careerFile$)
+                    Call SaveCareerFile(careerFile$)
 
             End Select
 
@@ -64,7 +64,7 @@ Sub EditPlayers (careerFile$)
 
     Shared careerPlayers$()
 
-    Shared ARS!(), W0S!(), W1S!()
+    Shared ARS!(), car3FGM!(), car3FGA!()
 
     Do
 
@@ -170,14 +170,14 @@ Sub EditPlayers (careerFile$)
                 UPP = (61 - B9) * 15
                 I = B9
 
-                For J = 1 To 15
+                For J = 1 To MAX_CAREER_YEARS
                     For I = B9 To 60
                         For I1 = 0 To 15
                             ARS!(J, I + 1, I1) = ARS!(J, I + 1, I1)
                         Next I1
 
-                        W0S!(N, I) = W0S!(N, I + 1)
-                        W1S!(N, I) = W0S!(N, I + 1)
+                        car3FGM!(N, I) = car3FGM!(N, I + 1)
+                        car3FGA!(N, I) = car3FGM!(N, I + 1)
 
                         Locate 7, 36
                         Color 12: UPP = UPP - 1
@@ -189,11 +189,11 @@ Sub EditPlayers (careerFile$)
 
             If B9 < 62 Then 'we have to ignore if they entered over 62
                 careerPlayers$(61) = ""
-                For J = 1 To 15
+                For J = 1 To MAX_CAREER_YEARS
                     For I1 = 0 To 15
                         ARS!(J, 61, I1) = 0
-                        W0S!(J, 61) = 0
-                        W1S!(J, 61) = 0
+                        car3FGM!(J, 61) = 0
+                        car3FGA!(J, 61) = 0
                     Next
                 Next
             End If
@@ -214,7 +214,7 @@ Sub CareerStatsPlayer_Report (printDest, destFile$, careerFile$, playerIdx)
 
     Shared careerPlayers$()
 
-    Shared ARS!(), W0S!(), W1S!()
+    Shared ARS!(), car3FGM!(), car3FGA!()
 
     B9 = playerIdx
 
@@ -243,74 +243,146 @@ Sub CareerStatsPlayer_Report (printDest, destFile$, careerFile$, playerIdx)
     TT15 = 0
     TT16 = 0
     TT17 = 0
+    
+    VV = 0
 
-    VV = ARS!(1, B9, 14) + ARS!(2, B9, 14) + ARS!(3, B9, 14) + ARS!(4, B9, 14) + ARS!(5, B9, 14) + ARS!(6, B9, 14) + ARS!(7, B9, 14) + ARS!(8, B9, 14) + ARS!(9, B9, 14) + ARS!(10, B9, 14) + ARS!(11, B9, 14) + ARS!(12, B9, 14) + ARS!(13, B9, 14) + ARS!(14, B9, 14) + ARS!(15, B9, 14)
+    For Z = 1 To MAX_CAREER_YEARS
+        VV = VV + ARS!(Z, I, 14)
+    Next Z
 
-    Print #1, Left$(careerPlayers$(B9), 11);
+    If 55 - PTN < VV Then
+        Print #1, Chr$(12)
+        Print #1, Tab(59); careerFile$
+        Print #1,
+        Print #1, "PLAYER      YEAR   G  FGM   FGA  PCT  FTM   FTA  PCT   PTS  AVG.  3FGM 3FGA  PCT   RB   AVG   PF  AST  BLK   ST  HI   MIN  AVG."
+        PTN = 0
+    End If
+
+    Print #1, Left$(careerPlayers$(I), 11);
 
     For V = 1 To VV
+
         PTN = PTN + 1
-        Print #1, Tab(12); ARS!(V, B9, 15);
-        Print #1, Tab(19); Using "##"; ARS!(V, B9, 0);
-        Print #1, Tab(23); Using "###"; ARS!(V, B9, 2);
-        Print #1, Tab(28); Using "####"; ARS!(V, B9, 1);
+        'Year
+        Print #1, Tab(12); ARS!(V, I, 15);
+        'G
+        Print #1, Tab(19); Using "##"; ARS!(V, I, 0);
+        'FGM
+        Print #1, Tab(23); Using "###"; ARS!(V, I, 2);
+        'FGA
+        Print #1, Tab(28); Using "####"; ARS!(V, I, 1);
 
-        If ARS!(V, B9, 2) = 0 Then Print #1, Tab(34); "--.-";
-        If ARS!(V, B9, 2) > 0 Then Print #1, Tab(33); Using "###.#"; (ARS!(V, B9, 2) / ARS!(V, B9, 1)) * 100;
+        'FG Pct
+        If ARS!(V, I, 2) = 0 Then 
+            Print #1, Tab(34); "--.-";
+        End If
+        If ARS!(V, I, 2) > 0 Then 
+            Print #1, Tab(33); Using "###.#"; (ARS!(V, I, 2) / ARS!(V, I, 1)) * 100;
+        End If
 
-        Print #1, Tab(39); Using "###"; ARS!(V, B9, 4);
-        Print #1, Tab(45); Using "###"; ARS!(V, B9, 3);
+        'FTM
+        Print #1, Tab(39); Using "###"; ARS!(V, I, 4);
+        'FTA
+        Print #1, Tab(45); Using "###"; ARS!(V, I, 3);
 
-        If ARS!(V, B9, 4) = 0 Then Print #1, Tab(50); "--.-";
-        If ARS!(V, B9, 4) > 0 Then Print #1, Tab(49); Using "###.#"; (ARS!(V, B9, 4) / ARS!(V, B9, 3)) * 100;
+        'FT %
+        If ARS!(V, I, 4) = 0 Then 
+            Print #1, Tab(50); "--.-";
+        End If
+        If ARS!(V, I, 4) > 0 Then 
+            Print #1, Tab(49); Using "###.#"; (ARS!(V, I, 4) / ARS!(V, I, 3)) * 100;
+        End If
 
-        Print #1, Tab(55); Using "####"; ARS!(V, B9, 2) * 2 + ARS!(V, B9, 4) + W0S!(V, B9);
+        'Pts
+        Print #1, Tab(55); Using "####"; ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + car3FGM!(V, I);
 
-        If ARS!(V, B9, 2) * 2 + ARS!(V, B9, 4) + W0S!(V, B9) = 0 Then Print #1, Tab(61); " 0.0";
-        If ARS!(V, B9, 2) * 2 + ARS!(V, B9, 4) + W0S!(V, B9) > 0 Then Print #1, Tab(61); Using "##.#"; (ARS!(V, B9, 2) * 2 + ARS!(V, B9, 4) + W0S!(V, B9)) / ARS!(V, B9, 0);
+        'Average
+        If ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + car3FGM!(V, I) = 0 Then 
+            Print #1, Tab(61); " 0.0";
+        End If
+        If ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + car3FGM!(V, I) > 0 Then 
+            Print #1, Tab(61); Using "##.#"; (ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + car3FGM!(V, I)) / ARS!(V, I, 0);
+        End If
 
-        Print #1, Tab(68); Using "###"; W0S!(V, B9);
-        Print #1, Tab(73); Using "###"; W1S!(V, B9);
+        '3FGM
+        Print #1, Tab(68); Using "###"; car3FGM!(V, I);
+        '3FGA
+        Print #1, Tab(73); Using "###"; car3FGA!(V, I);
 
-        If W0S!(V, B9) = 0 Then Print #1, Tab(78); "--.-";
-        If W0S!(V, B9) > 0 Then Print #1, Tab(77); Using "###.#"; (W0S!(V, B9) / W1S!(V, B9)) * 100;
+        '3 FG%
+        If car3FGM!(V, I) = 0 Then 
+            Print #1, Tab(78); "--.-";
+        End If
+        If car3FGM!(V, I) > 0 Then 
+            Print #1, Tab(77); Using "###.#"; (car3FGM!(V, I) / car3FGA!(V, I)) * 100;
+        End If
+        
+        'RB
+        Print #1, Tab(83); Using "###"; ARS!(V, I, 5);
 
-        Print #1, Tab(83); Using "###"; ARS!(V, B9, 5);
+        'Avg RB
+        If ARS!(V, I, 5) = 0 Then 
+            Print #1, Tab(88); " 0.0";
+        End If
+        If ARS!(V, I, 5) > 0 Then 
+            Print #1, Tab(88); Using "##.#"; ARS!(V, I, 5) / ARS!(V, I, 0);
+        End If
 
-        If ARS!(V, B9, 5) = 0 Then Print #1, Tab(88); " 0.0";
-        If ARS!(V, B9, 5) > 0 Then Print #1, Tab(88); Using "##.#"; ARS!(V, B9, 5) / ARS!(V, B9, 0);
+        'PF
+        Print #1, Tab(94); Using "###"; ARS!(V, I, 6);
+        'Ast
+        Print #1, Tab(99); Using "###"; ARS!(V, I, 8);
+        'Blk
+        Print #1, Tab(104); Using "###"; ARS!(V, I, 9);
+        'Stl
+        Print #1, Tab(109); Using "###"; ARS!(V, I, 7);
+        'Highest Points
+        Print #1, Tab(113); Using "###"; ARS!(V, I, 13);
 
-        Print #1, Tab(94); Using "###"; ARS!(V, B9, 6);
-        Print #1, Tab(99); Using "###"; ARS!(V, B9, 8);
-        Print #1, Tab(104); Using "###"; ARS!(V, B9, 9);
-        Print #1, Tab(109); Using "###"; ARS!(V, B9, 7);
-        Print #1, Tab(113); Using "###"; ARS!(V, B9, 13);
+        'Mins
+        If ARS!(V, I, 10) = 0 Then 
+            Print #1, Tab(118); "   0";
+        End If
+        If ARS!(V, I, 10) > 0 Then 
+            Print #1, Tab(118); Using "####"; Int((ARS!(V, I, 10) + 30) / 60);
+        End If
 
-        If ARS!(V, B9, 10) = 0 Then Print #1, Tab(118); "   0";
-        If ARS!(V, B9, 10) > 0 Then Print #1, Tab(118); Using "####"; Int((ARS!(V, B9, 10) + 30) / 60);
-        If ARS!(V, B9, 10) = 0 Then Print #1, Tab(125); " 0"
-        If ARS!(V, B9, 10) > 0 Then Print #1, Tab(125); Using "##"; Int(((ARS!(V, B9, 10) / 60) / ARS!(V, B9, 0)) + .5)
+        'Avg Mins
+        If ARS!(V, I, 10) = 0 Then 
+            Print #1, Tab(125); " 0"
+        End If
+        If ARS!(V, I, 10) > 0 Then 
+            Print #1, Tab(125); Using "##"; Int(((ARS!(V, I, 10) / 60) / ARS!(V, I, 0)) + .5)
+        End If
 
     Next V
 
+    VV = 0
+
+    For Z = 1 To MAX_CAREER_YEARS1
+        VV = VV + ARS!(Z, I, 14)
+    Next Z
+
     For V = 1 To VV
-        TT1 = TT1 + ARS!(V, B9, 0)
-        TT2 = TT2 + ARS!(V, B9, 2)
-        TT3 = TT3 + ARS!(V, B9, 1)
-        TT4 = TT4 + ARS!(V, B9, 4)
-        TT5 = TT5 + ARS!(V, B9, 3)
-        TT6 = TT6 + (ARS!(V, B9, 2) * 2 + ARS!(V, B9, 4) + W0S!(V, B9))
-        TT7 = TT7 + W0S!(V, B9)
-        TT8 = TT8 + W1S!(V, B9)
-        TT9 = TT9 + ARS!(V, B9, 5)
-        TT10 = TT10 + ARS!(V, B9, 6)
-        TT11 = TT11 + ARS!(V, B9, 8)
-        TT12 = TT12 + ARS!(V, B9, 9)
-        TT13 = TT13 + ARS!(V, B9, 7)
-        TT14 = TT14 + ARS!(V, B9, 10)
-        TT16 = TT16 + ARS!(V, B9, 11)
-        TT17 = TT17 + ARS!(V, B9, 12)
-        If ARS!(V, B9, 13) > TT15 Then TT15 = ARS!(V, B9, 13)
+        TT1 = TT1 + ARS!(V, I, 0)
+        TT2 = TT2 + ARS!(V, I, 2)
+        TT3 = TT3 + ARS!(V, I, 1)
+        TT4 = TT4 + ARS!(V, I, 4)
+        TT5 = TT5 + ARS!(V, I, 3)
+        TT6 = TT6 + (ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + car3FGM!(V, I))
+        TT7 = TT7 + car3FGM!(V, I)
+        TT8 = TT8 + car3FGA!(V, I)
+        TT9 = TT9 + ARS!(V, I, 5)
+        TT10 = TT10 + ARS!(V, I, 6)
+        TT11 = TT11 + ARS!(V, I, 8)
+        TT12 = TT12 + ARS!(V, I, 9)
+        TT13 = TT13 + ARS!(V, I, 7)
+        TT14 = TT14 + ARS!(V, I, 10)
+        TT16 = TT16 + ARS!(V, I, 11)
+        TT17 = TT17 + ARS!(V, I, 12)
+        If ARS!(V, I, 13) > TT15 Then 
+            TT15 = ARS!(V, I, 13)
+        End If
     Next V
 
     Print #1, "  TOTALS";
@@ -319,30 +391,50 @@ Sub CareerStatsPlayer_Report (printDest, destFile$, careerFile$, playerIdx)
     Print #1, Tab(21); Using "#####"; TT2;
     Print #1, Tab(27); Using "#####"; TT3;
 
-    If TT2 = 0 Then Print #1, Tab(34); "--.-";
-    If TT2 > 0 Then Print #1, Tab(34); Using "###.#"; (TT2 / TT3) * 100;
+    If TT2 = 0 Then 
+        Print #1, Tab(34); "--.-";
+    End If
+    If TT2 > 0 Then 
+        Print #1, Tab(34); Using "###.#"; (TT2 / TT3) * 100;
+    End If
 
     Print #1, Tab(37); Using "#####"; TT4;
     Print #1, Tab(43); Using "#####"; TT5;
 
-    If TT4 = 0 Then Print #1, Tab(50); "--.-";
-    If TT4 > 0 Then Print #1, Tab(50); Using "###.#"; (TT4 / TT5) * 100;
+    If TT4 = 0 Then 
+        Print #1, Tab(50); "--.-";
+    End If
+    If TT4 > 0 Then 
+        Print #1, Tab(50); Using "###.#"; (TT4 / TT5) * 100;
+    End If
 
     Print #1, Tab(55); Using "####"; TT6;
 
-    If TT6 = 0 Then Print #1, Tab(61); " 0.0";
-    If TT6 > 0 Then Print #1, Tab(61); Using "##.#"; TT6 / TT1;
+    If TT6 = 0 Then 
+        Print #1, Tab(61); " 0.0";
+    End If
+    If TT6 > 0 Then 
+        Print #1, Tab(61); Using "##.#"; TT6 / TT1;
+    End If
 
     Print #1, Tab(67); Using "####"; TT7;
     Print #1, Tab(72); Using "####"; TT8;
 
-    If TT7 = 0 Then Print #1, Tab(78); "--.-";
-    If TT7 > 0 Then Print #1, Tab(78); Using "###.#"; (TT7 / TT8) * 100;
+    If TT7 = 0 Then 
+        Print #1, Tab(78); "--.-";
+    End If
+    If TT7 > 0 Then 
+        Print #1, Tab(78); Using "###.#"; (TT7 / TT8) * 100;
+    End If
 
     Print #1, Tab(81); Using "#####"; TT9;
 
-    If TT9 = 0 Then Print #1, Tab(88); " 0.0";
-    If TT9 > 0 Then Print #1, Tab(88); Using "##.#"; TT9 / TT1;
+    If TT9 = 0 Then 
+        Print #1, Tab(88); " 0.0";
+    End If
+    If TT9 > 0 Then 
+        Print #1, Tab(88); Using "##.#"; TT9 / TT1;
+    End If
 
     Print #1, Tab(93); Using "####"; TT10;
     Print #1, Tab(98); Using "####"; TT11;
@@ -350,10 +442,18 @@ Sub CareerStatsPlayer_Report (printDest, destFile$, careerFile$, playerIdx)
     Print #1, Tab(109); Using "###"; TT13;
     Print #1, Tab(114); Using "##"; TT15;
 
-    If TT14 = 0 Then Print #1, Tab(117); "    0";
-    If TT14 > 0 Then Print #1, Tab(117); Using "#####"; Int((TT14 + 30) / 60);
-    If TT14 = 0 Then Print #1, Tab(125); " 0"
-    If TT14 > 0 Then Print #1, Tab(125); Using "##"; Int((TT14 / 60) / TT1) + .5
+    If TT14 = 0 Then 
+        Print #1, Tab(117); "    0";
+    End If
+    If TT14 > 0 Then 
+        Print #1, Tab(117); Using "#####"; Int((TT14 + 30) / 60);
+    End If
+    If TT14 = 0 Then 
+        Print #1, Tab(125); " 0"
+    End If
+    If TT14 > 0 Then 
+        Print #1, Tab(125); Using "##"; Int((TT14 / 60) / TT1) + .5
+    End If
 
     Print #1, Chr$(12)
 

@@ -13,7 +13,7 @@ Sub COMPARE ()
 
     Shared leagueRatings()
 
-    Shared playerRatings!(), statsW0!(), statsW1!()
+    Shared playerRatings!(), stats3FGM!(), stats3FGA!()
     Shared statsZ!(), statsZ1!()
 
     Shared playerNames$()
@@ -58,9 +58,9 @@ Sub COMPARE ()
                         Input #1, playerRatings!(I, J)
                     Next
 
-                    Input #1, statsW0!(I)
+                    Input #1, stats3FGM!(I)
 
-                    Input #1, statsW1!(I)
+                    Input #1, stats3FGA!(I)
 
                 Next
 
@@ -672,7 +672,7 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
     Shared playerRatings!()
     Shared playerRatings!()
 
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
 
     Shared statPlyrNames$()
 
@@ -975,27 +975,27 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "#####.#"; playerRatings!(idx, 9) / playerRatings!(idx, 0);
     End If
 
-    Locate , 25: Print Using "#######"; statsW0!(idx);
-    Locate , 32: Print Using "#######"; statsW1!(idx);
+    Locate , 25: Print Using "#######"; stats3FGM!(idx);
+    Locate , 32: Print Using "#######"; stats3FGA!(idx);
 
     Locate , 39
-    If statsW0!(idx) = 0 Then
+    If stats3FGM!(idx) = 0 Then
         Print "      0.0%";
     End If
-    If statsW0!(idx) > 0 Then
-        Print Using "#######.#"; statsW0!(idx) / statsW1!(idx) * 100;
+    If stats3FGM!(idx) > 0 Then
+        Print Using "#######.#"; stats3FGM!(idx) / stats3FGA!(idx) * 100;
         Print "%";
     End If
 
     Locate , 49: Print Using "#######"; playerRatings!(idx, 13);
-    Locate , 56: Print Using "######"; (playerRatings!(idx, 2) * 2) + playerRatings!(idx, 4) + statsW0!(idx);
+    Locate , 56: Print Using "######"; (playerRatings!(idx, 2) * 2) + playerRatings!(idx, 4) + stats3FGM!(idx);
 
     Locate , 62
-    If (playerRatings!(idx, 2) * 2) + playerRatings!(idx, 4) + statsW0!(idx) = 0 Then
+    If (playerRatings!(idx, 2) * 2) + playerRatings!(idx, 4) + stats3FGM!(idx) = 0 Then
         Print "   0.0";
     End If
-    If (playerRatings!(idx, 2) * 2) + playerRatings!(idx, 4) + statsW0!(idx) > 0 Then
-        Print Using "####.#"; ((playerRatings!(idx, 2) * 2) + playerRatings!(idx, 4) + statsW0!(idx)) / playerRatings!(idx, 0);
+    If (playerRatings!(idx, 2) * 2) + playerRatings!(idx, 4) + stats3FGM!(idx) > 0 Then
+        Print Using "####.#"; ((playerRatings!(idx, 2) * 2) + playerRatings!(idx, 4) + stats3FGM!(idx)) / playerRatings!(idx, 0);
     End If
 
     Locate , 68
@@ -1025,7 +1025,7 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     Shared playerRatings!(), teamRatings()
 
     Shared playerRatings!()
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
     Shared statsZ!(), statsZ1!()
 
     Shared statPlyrNames$()
@@ -1608,30 +1608,30 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
             End If
 
             Print #1, Tab(25);
-            Print #1, Using "#######"; statsW0!(playerIdx);
+            Print #1, Using "#######"; stats3FGM!(playerIdx);
             Print #1, Tab(32);
-            Print #1, Using "#######"; statsW1!(playerIdx);
+            Print #1, Using "#######"; stats3FGA!(playerIdx);
 
             Print #1, Tab(39);
-            If statsW0!(playerIdx) = 0 Then
+            If stats3FGM!(playerIdx) = 0 Then
                 Print #1, "      0.0%";
             End If
-            If statsW0!(playerIdx) > 0 Then
-                Print #1, Using "#######.#"; statsW0!(playerIdx) / statsW1!(playerIdx) * 100;
+            If stats3FGM!(playerIdx) > 0 Then
+                Print #1, Using "#######.#"; stats3FGM!(playerIdx) / stats3FGA!(playerIdx) * 100;
                 Print #1, "%";
             End If
 
             Print #1, Tab(49);
             Print #1, Using "#######"; playerRatings!(playerIdx, 13);
             Print #1, Tab(56);
-            Print #1, Using "######"; (playerRatings!(playerIdx, 2) * 2) + playerRatings!(playerIdx, 4) + statsW0!(playerIdx);
+            Print #1, Using "######"; (playerRatings!(playerIdx, 2) * 2) + playerRatings!(playerIdx, 4) + stats3FGM!(playerIdx);
 
             Print #1, Tab(62);
-            If (playerRatings!(playerIdx, 2) * 2) + playerRatings!(playerIdx, 4) + statsW0!(playerIdx) = 0 Then
+            If (playerRatings!(playerIdx, 2) * 2) + playerRatings!(playerIdx, 4) + stats3FGM!(playerIdx) = 0 Then
                 Print #1, "   0.0";
             End If
-            If (playerRatings!(playerIdx, 2) * 2) + playerRatings!(playerIdx, 4) + statsW0!(playerIdx) > 0 Then
-                Print #1, Using "####.#"; ((playerRatings!(playerIdx, 2) * 2) + playerRatings!(playerIdx, 4) + statsW0!(playerIdx)) / playerRatings!(playerIdx, 0);
+            If (playerRatings!(playerIdx, 2) * 2) + playerRatings!(playerIdx, 4) + stats3FGM!(playerIdx) > 0 Then
+                Print #1, Using "####.#"; ((playerRatings!(playerIdx, 2) * 2) + playerRatings!(playerIdx, 4) + stats3FGM!(playerIdx)) / playerRatings!(playerIdx, 0);
             End If
 
             Print #1, Tab(68);

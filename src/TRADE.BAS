@@ -52,7 +52,7 @@ Sub LoadStatsForTrade (tradeIdx)
     Shared tmRat_TRADE(), plyrRat_TRADE(), leagRat_TRADE()
     Shared tradeZZ0(), tradeZZ1()
 
-    Shared tradeB1!(), tradeW0!(), tradeW1!()
+    Shared tradeB1!(), trade3FGM!(), trade3FGA!()
 
     Shared B1$(), statTeam$()
     Shared A1$(), tmInfo_TRADE$(), players_TRADE$()
@@ -98,8 +98,8 @@ Sub LoadStatsForTrade (tradeIdx)
                     Input #1, tradeB1!(tradeIdx, I, I1)
                 Next I1
 
-                Input #1, tradeW0!(tradeIdx, I)
-                Input #1, tradeW1!(tradeIdx, I)
+                Input #1, trade3FGM!(tradeIdx, I)
+                Input #1, trade3FGA!(tradeIdx, I)
 
             Next I
 
@@ -143,7 +143,7 @@ Sub ContinueTrade ()
     Shared tmRat_TRADE(), plyrRat_TRADE(), leagRat_TRADE()
     Shared tradeZZ0(), tradeZZ1()
 
-    Shared tradeB1!(), tradeW0!(), tradeW1!()
+    Shared tradeB1!(), trade3FGM!(), trade3FGA!()
     Shared haveStats()
 
     Shared B1$()
@@ -276,10 +276,10 @@ Sub ContinueTrade ()
                         tradeB1!(1, I2, I3) = 0
                     Next
 
-                    tradeW0!(1, I2) = 0
-                    tradeW1!(1, I2) = 0
-                    tradeW0!(0, I1) = 0
-                    tradeW1!(0, I1) = 0
+                    trade3FGM!(1, I2) = 0
+                    trade3FGA!(1, I2) = 0
+                    trade3FGM!(0, I1) = 0
+                    trade3FGA!(0, I1) = 0
 
                 Else
 
@@ -287,8 +287,8 @@ Sub ContinueTrade ()
                         Swap tradeB1!(0, I1, I3), tradeB1!(1, I2, I3)
                     Next I3
 
-                    Swap tradeW0!(0, I1), tradeW0!(1, I2)
-                    Swap tradeW1!(0, I1), tradeW1!(1, I2)
+                    Swap trade3FGM!(0, I1), trade3FGM!(1, I2)
+                    Swap trade3FGA!(0, I1), trade3FGA!(1, I2)
 
                 End If
 
@@ -321,7 +321,7 @@ Sub SaveTrades ()
     Shared tradeZZ0(), tradeZZ1()
 
     Shared tradeB1!(), haveStats(), teamIndexes()
-    Shared tradeW0!(), tradeW1!()
+    Shared trade3FGM!(), trade3FGA!()
 
     Shared B1$(), statTeam$(), tmYears_DRAFT$()
     Shared A1$(), tmInfo_TRADE$(), players_TRADE$()
@@ -406,8 +406,8 @@ Sub SaveTrades ()
                     Print #2, tradeB1!(J, I, I1)
                 Next I1
 
-                Print #2, tradeW0!(J, I)
-                Print #2, tradeW1!(J, I)
+                Print #2, trade3FGM!(J, I)
+                Print #2, trade3FGA!(J, I)
 
             Next I
 
@@ -436,7 +436,7 @@ End Sub
 'result of the trade being proposed
 Sub PrintTradeSummary (p1Idx, p2Idx)
 
-    Shared tradeB1!(), tradeW0!(), tradeW1!()
+    Shared tradeB1!(), trade3FGM!(), trade3FGA!()
     Shared tmRat_TRADE(), plyrRat_TRADE()
     Shared tmInfo_TRADE$(), players_TRADE$()
 
@@ -471,8 +471,8 @@ Sub PrintTradeSummary (p1Idx, p2Idx)
     Locate , 5: Print Using "####  ASSISTS  ####"; plyrRat_TRADE(0, p1Idx, 8); tradeB1!(0, p1Idx, 8)
     Locate , 5: Print Using "####  BLOCKS   ####"; plyrRat_TRADE(0, p1Idx, 12); tradeB1!(0, p1Idx, 9)
     Locate , 5: Print Using "     TURNOVERS ####"; tradeB1!(0, p1Idx, 11)
-    Locate , 5: Print Using "####   3FGA    ####"; plyrRat_TRADE(0, p1Idx, 13); tradeW1!(0, p1Idx)
-    Locate , 5: Print Using "####   3FGM    ####"; plyrRat_TRADE(0, p1Idx, 14); tradeW0!(0, p1Idx)
+    Locate , 5: Print Using "####   3FGA    ####"; plyrRat_TRADE(0, p1Idx, 13); trade3FGA!(0, p1Idx)
+    Locate , 5: Print Using "####   3FGM    ####"; plyrRat_TRADE(0, p1Idx, 14); trade3FGM!(0, p1Idx)
     Locate , 5: Print Using "  ##  HI GAME    ##"; plyrRat_TRADE(0, p1Idx, 15); tradeB1!(0, p1Idx, 13)
 
     Locate 6, 45: Print Using "  ##   GAMES     ##"; plyrRat_TRADE(1, p2Idx, 0); tradeB1!(1, p2Idx, 0)
@@ -488,8 +488,8 @@ Sub PrintTradeSummary (p1Idx, p2Idx)
     Locate , 45: Print Using "####  ASSISTS  ####"; plyrRat_TRADE(1, p2Idx, 8); tradeB1!(1, p2Idx, 8)
     Locate , 45: Print Using "####  BLOCKS   ####"; plyrRat_TRADE(1, p2Idx, 12); tradeB1!(1, p2Idx, 9)
     Locate , 45: Print Using "     TURNOVERS ####"; tradeB1!(1, p2Idx, 11)
-    Locate , 45: Print Using "####   3FGA    ####"; plyrRat_TRADE(1, p2Idx, 13); tradeW1!(1, p2Idx)
-    Locate , 45: Print Using "####   3FGM    ####"; plyrRat_TRADE(1, p2Idx, 14); tradeW0!(1, p2Idx)
+    Locate , 45: Print Using "####   3FGA    ####"; plyrRat_TRADE(1, p2Idx, 13); trade3FGA!(1, p2Idx)
+    Locate , 45: Print Using "####   3FGM    ####"; plyrRat_TRADE(1, p2Idx, 14); trade3FGM!(1, p2Idx)
     Locate , 45: Print Using "  ##  HI GAME    ##"; plyrRat_TRADE(1, p2Idx, 15); tradeB1!(1, p2Idx, 13)
 
 End Sub

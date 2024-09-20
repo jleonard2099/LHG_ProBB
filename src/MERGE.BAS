@@ -77,7 +77,7 @@ Sub MergeStats ()
     Shared oppScore(), oppScore_Road()
 
     Shared ARD!(), playerRatings!()
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
     Shared statsZ!(), statsZ1!()
     Shared W0RD!(), W1RD!()
     Shared ZRD!(), ZRD1!()
@@ -189,8 +189,8 @@ Sub MergeStats ()
                                 Input #3, playerRatings!(I, J)
                             Next
 
-                            Input #3, statsW0!(I)
-                            Input #3, statsW1!(I)
+                            Input #3, stats3FGM!(I)
+                            Input #3, stats3FGA!(I)
 
                         Next
 
@@ -337,7 +337,7 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
 
     Shared ARD!(), playerRatings!()
 
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
     Shared statsZ!(), statsZ1!()
     Shared W0RD!(), W1RD!()
     Shared ZRD!(), ZRD1!()
@@ -366,8 +366,8 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
             playerRatings!(I, J) = playerRatings!(I, J) + ARD!(I, J)
         Next J
 
-        statsW0!(I) = statsW0!(I) + W0RD!(I)
-        statsW1!(I) = statsW1!(I) + W1RD!(I)
+        stats3FGM!(I) = stats3FGM!(I) + W0RD!(I)
+        stats3FGA!(I) = stats3FGA!(I) + W1RD!(I)
 
         If playerRatings!(I, 13) < ARD!(I, 13) Then
             playerRatings!(I, 13) = ARD!(I, 13)
@@ -394,8 +394,8 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
             Write #1, playerRatings!(I, J)
         Next
 
-        Write #1, statsW0!(I)
-        Write #1, statsW1!(I)
+        Write #1, stats3FGM!(I)
+        Write #1, stats3FGA!(I)
 
     Next
 

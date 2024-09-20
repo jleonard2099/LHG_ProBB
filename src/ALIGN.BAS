@@ -14,7 +14,7 @@ Sub ALIGN ()
     Shared statPlyrNames$(), roadPlyrNames$()
 
     Shared AR!()
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
     Shared statsZ!(), statsZ1!()
     Shared W0R!(), WR1!()
     Shared ZR!(), ZR1!()
@@ -84,8 +84,8 @@ Sub ALIGN ()
                             Input #2, playerRatings!(I, J)
                         Next
 
-                        Input #2, statsW0!(I)
-                        Input #2, statsW1!(I)
+                        Input #2, stats3FGM!(I)
+                        Input #2, stats3FGA!(I)
 
                     Next
 

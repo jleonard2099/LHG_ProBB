@@ -13,7 +13,7 @@ Dim oppScore(MAX_SCHED_STATS), teamScore(MAX_SCHED_STATS)
 
 Dim gameSite$(MAX_SCHED_STATS), locIndicator$(MAX_SCHED_STATS), oppName$(MAX_SCHED_STATS)
 
-Dim statsW0!(0 To 14), statsW1!(0 To 14)
+Dim stats3FGM!(0 To 14), stats3FGA!(0 To 14)
 Dim statsZ!(0 To 15), statsZ1!(0 To 15)
 Dim statsZ2!(0 To 14, 0 To 13)
 Dim values!(0 To 14, 0 To 24)
@@ -70,12 +70,14 @@ Dim yesNo$(0 To 1), yesNoText$(1)
 '----------------------------------------
 ' Used in ALIGN / MERGE routines
 '----------------------------------------
-Dim ARD!(15, 14)
 
 Dim AN!(15, 14), AR!(15, 14)
+Dim ARD!(15, 14)
+
 Dim W0N!(15), WN1!(15)
 Dim W0R!(15), WR1!(15)
 Dim W0RD!(15), W1RD!(15)
+
 Dim ZR!(15), ZR1!(15)
 Dim ZRD!(16), ZRD1!(16)
 
@@ -85,22 +87,25 @@ Dim roadPlyrNames$(15), alignName$(14)
 '----------------------------------------
 ' Used in CAREER / LEADER routines
 '----------------------------------------
-Dim ARS!(15, 62, 15)
+Dim ARS!(MAX_CAREER_YEARS, 62, 15)
 Dim BL!(62), BLYR!(21)
-Dim W0S!(15, 62), W1S!(15, 62)
+Dim car3FGM!(MAX_CAREER_YEARS, 62), car3FGA!(MAX_CAREER_YEARS, 62)
 
+Dim carLdrPlyrName$(19, 20)
+Dim carLdrVal!(19, 20)
+
+Dim GMA!(600), TYP!(600)
+Dim leader3FGM!(600), leader3FGA!(600)
 Dim plyrStatLeaders!(600, 14)
+
 Dim plyrLeaderYears!(TEAMS_PER_LEAGUE), tmLeaderYears!(TEAMS_PER_LEAGUE)
 Dim TT!(TEAMS_PER_LEAGUE, 15), TT1!(TEAMS_PER_LEAGUE, 15)
-Dim GMA!(600), TYP!(600)
-Dim W0L!(600), W1L!(600)
-Dim AL$(600)
 
 Dim careerPlayers$(62), BL$(0 To 20)
 Dim expIndCategory$(0 To 31), expTeamCategory$(0 To 38)
 Dim plyLeaderTeams$(TEAMS_PER_LEAGUE, 15), tmLeaderTeams$(TEAMS_PER_LEAGUE, 15)
-Dim TMA$(600)
-Dim TMM$(600), TPP$(600)
+
+Dim AL$(600), TMA$(600), TMM$(600), TPP$(600)
 
 'For Expanded Standings
 Dim HLL(TEAMS_PER_LEAGUE), HWW(TEAMS_PER_LEAGUE)
@@ -141,8 +146,8 @@ Dim leagRat_DRAFT(0 To 1, 0 To 6), leagTot_DRAFT(0 To 14, 0 To 34)
 Dim plyrRat_DRAFT(0 To 1, 0 To 14, 0 To 19), teamRat_DRAFT(0 To 1, 0 To 34)
 
 Dim draftYears$(1 To 80)
-Dim plyrNames_DRAFT$(1, 14, 1), tmInfo_DRAFT$(1, 4)
-Dim tmYears_DRAFT$(0 To 1)
+Dim plyrNames_DRAFT$(1, 14, 1)
+Dim tmInfo_DRAFT$(1, 4), tmYears_DRAFT$(0 To 1)
 
 
 '----------------------------------------
@@ -165,7 +170,7 @@ Dim tmInfo_TRADE$(1, 6)
 Dim tradeZZ0(2, 15), tradeZZ1(2, 15)
 
 Dim tradeB1!(2, 14, 14), teamIndexes(1)
-Dim tradeW0!(2, 14), tradeW1!(2, 14)
+Dim trade3FGM!(2, 14), trade3FGA!(2, 14)
 
 Dim B1$(2, 14), A1$(1)
 
@@ -249,7 +254,7 @@ Dim Shared totRebounds(1), turnoverAdj(0 To 32), turnovers(1)
 Dim Shared W2(1, 14), W3(1, 14), X7(1), teamRecWins(1), teamRecLoss(1)
 
 Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), M9!(1)
-Dim gameW0!(1, 14), gameW1!(1, 14)
+Dim game3FGM!(1, 14), game3FGA!(1, 14)
 
 Dim Shared defStyleDesc$(9), diskIDs$(0 To 1)
 Dim Shared gameCoach$(3), gameMascots$(3), gameArena$(3), gameTeams$(3)

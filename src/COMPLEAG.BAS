@@ -16,7 +16,7 @@ Sub CompileLeague ()
     Shared defTotals!(), defLeaders!()
     Shared leaderVals!(), plyrRat_COMP!()
     Shared O1!(), O2!(), offTotals!(), offLeaders!()
-    Shared offRecords!(), defRecords!(), statsW0!(), statsW1!()
+    Shared offRecords!(), defRecords!(), stats3FGM!(), stats3FGA!()
 
     Shared plyrRecDesc$()
     Shared defLeaderNames$(), offLeaderNames$()
@@ -183,12 +183,12 @@ End Sub
 Sub ReadStatsPro (statFile$, teamName$)
 
     Shared defTotals!(), plyrRat_COMP!(), offTotals!()
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
 
     Shared statPlyrNames$()
 
     Erase defTotals!, offTotals!
-    Erase plyrRat_COMP!, statsW0!, statsW1!
+    Erase plyrRat_COMP!, stats3FGM!, stats3FGA!
     Erase statPlyrNames$
 
     Open diskPaths$(1) + statFile$ For Input As #1
@@ -203,8 +203,8 @@ Sub ReadStatsPro (statFile$, teamName$)
             Input #1, plyrRat_COMP!(I, J)
         Next
 
-        Input #1, statsW0!(I)
-        Input #1, statsW1!(I)
+        Input #1, stats3FGM!(I)
+        Input #1, stats3FGA!(I)
 
     Next I
 
@@ -231,7 +231,7 @@ Sub CalcStatLeadersPro (teamName$, numberGames)
     Shared defTotals!(), offTotals!()
     Shared defLeaders!(), offLeaders!()
     Shared leaderVals!(), plyrRat_COMP!()
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
 
     Shared defLeaderNames$(), offLeaderNames$()
     Shared statPlyrNames$()
@@ -445,10 +445,10 @@ Sub CalcStatLeadersPro (teamName$, numberGames)
 
         '3 Field Goal %
         '-- Must have 82 3FG's made; assumes 82 game schedule
-        If plyrRat_COMP!(X, 21) > leaderVals!(130, 1) And statsW0!(X) >= numberGames Then
+        If plyrRat_COMP!(X, 21) > leaderVals!(130, 1) And stats3FGM!(X) >= numberGames Then
 
             leaderVals!(130, 1) = plyrRat_COMP!(X, 21)
-            leaderVals!(130, 2) = statsW1!(X)
+            leaderVals!(130, 2) = stats3FGA!(X)
             Z2$(130) = statPlyrNames$(X)
             Z3$(130) = teamName$
 
@@ -469,9 +469,9 @@ Sub CalcStatLeadersPro (teamName$, numberGames)
 
         '3 Field Goals Made
         '-- Must have 82 3FG's made; assumes 82 game schedule
-        If statsW0!(X) > leaderVals!(140, 1) And statsW0!(X) >= numberGames Then
+        If stats3FGM!(X) > leaderVals!(140, 1) And stats3FGM!(X) >= numberGames Then
 
-            leaderVals!(140, 1) = statsW0!(X)
+            leaderVals!(140, 1) = stats3FGM!(X)
             leaderVals!(140, 2) = 0
             Z2$(140) = statPlyrNames$(X)
             Z3$(140) = teamName$
@@ -824,7 +824,7 @@ Sub CalcStatTotalsPro (numberGames, teamName$, finalUpdate$)
     Shared defTotals!(), offTotals!()
     Shared plyrRecords!(), plyrRat_COMP!()
     Shared offRecords!(), defRecords!()
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
 
     Shared plyrRecDesc$(), statPlyrNames$()
     Shared offRecDesc$(), defRecDesc$()
@@ -835,7 +835,7 @@ Sub CalcStatTotalsPro (numberGames, teamName$, finalUpdate$)
 
         plyrRat_COMP!(I, 25) = plyrRat_COMP!(I, 13)
         plyrRat_COMP!(I, 26) = plyrRat_COMP!(I, 12)
-        plyrRat_COMP!(I, 12) = plyrRat_COMP!(I, 2) * 2 + statsW0!(I) + plyrRat_COMP!(I, 4): ' *** PTS ***
+        plyrRat_COMP!(I, 12) = plyrRat_COMP!(I, 2) * 2 + stats3FGM!(I) + plyrRat_COMP!(I, 4): ' *** PTS ***
 
         If plyrRat_COMP!(I, 0) <> 0 Then
 
@@ -855,8 +855,8 @@ Sub CalcStatTotalsPro (numberGames, teamName$, finalUpdate$)
                 plyrRat_COMP!(I, 20) = plyrRat_COMP!(I, 4) / plyrRat_COMP!(I, 3): ' *** FT% ***
             End If
 
-            If Not (statsW1!(I) = 0 Or statsW0!(I) / plyrRat_COMP!(I, 0) < .3) Then
-                plyrRat_COMP!(I, 21) = statsW0!(I) / statsW1!(I): ' *** 3FG% ***
+            If Not (stats3FGA!(I) = 0 Or stats3FGM!(I) / plyrRat_COMP!(I, 0) < .3) Then
+                plyrRat_COMP!(I, 21) = stats3FGM!(I) / stats3FGA!(I): ' *** 3FG% ***
             End If
 
             plyrRat_COMP!(I, 22) = plyrRat_COMP!(I, 12) / plyrRat_COMP!(I, 0): ' *** PTS/G ***
@@ -866,9 +866,9 @@ Sub CalcStatTotalsPro (numberGames, teamName$, finalUpdate$)
             If plyrRat_COMP!(I, 2) > plyrRecords!(3) Then plyrRecords!(3) = plyrRat_COMP!(I, 2): plyrRecDesc$(3, 0) = statPlyrNames$(I): plyrRecDesc$(3, 1) = teamName$
             If plyrRat_COMP!(I, 19) > plyrRecords!(4) And UCase$(finalUpdate$) = "Y" And plyrRat_COMP!(I, 2) / plyrRat_COMP!(I, 0) >= 3.65 Then plyrRecords!(4) = plyrRat_COMP!(I, 19): plyrRecDesc$(4, 0) = statPlyrNames$(I): plyrRecDesc$(4, 1) = teamName$
 
-            If statsW1!(I) > plyrRecords!(5) Then plyrRecords!(5) = statsW1!(I): plyrRecDesc$(5, 0) = statPlyrNames$(I): plyrRecDesc$(5, 1) = teamName$
-            If statsW0!(I) > plyrRecords!(6) Then plyrRecords!(6) = statsW0!(I): plyrRecDesc$(6, 0) = statPlyrNames$(I): plyrRecDesc$(6, 1) = teamName$
-            If plyrRat_COMP!(I, 21) > plyrRecords!(7) And UCase$(finalUpdate$) = "Y" And statsW0!(I) / plyrRat_COMP!(I, 0) >= .3 Then plyrRecords!(7) = plyrRat_COMP!(I, 21): plyrRecDesc$(7, 0) = statPlyrNames$(I): plyrRecDesc$(7, 1) = teamName$
+            If stats3FGA!(I) > plyrRecords!(5) Then plyrRecords!(5) = stats3FGA!(I): plyrRecDesc$(5, 0) = statPlyrNames$(I): plyrRecDesc$(5, 1) = teamName$
+            If stats3FGM!(I) > plyrRecords!(6) Then plyrRecords!(6) = stats3FGM!(I): plyrRecDesc$(6, 0) = statPlyrNames$(I): plyrRecDesc$(6, 1) = teamName$
+            If plyrRat_COMP!(I, 21) > plyrRecords!(7) And UCase$(finalUpdate$) = "Y" And stats3FGM!(I) / plyrRat_COMP!(I, 0) >= .3 Then plyrRecords!(7) = plyrRat_COMP!(I, 21): plyrRecDesc$(7, 0) = statPlyrNames$(I): plyrRecDesc$(7, 1) = teamName$
 
             If plyrRat_COMP!(I, 3) > plyrRecords!(8) Then plyrRecords!(8) = plyrRat_COMP!(I, 3): plyrRecDesc$(8, 0) = statPlyrNames$(I): plyrRecDesc$(8, 1) = teamName$
             If plyrRat_COMP!(I, 4) > plyrRecords!(9) Then plyrRecords!(9) = plyrRat_COMP!(I, 4): plyrRecDesc$(9, 0) = statPlyrNames$(I): plyrRecDesc$(9, 1) = teamName$

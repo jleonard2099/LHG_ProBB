@@ -9,7 +9,7 @@ Sub EditStats ()
     _Title "Basketball: The Pro Game - Stats Input"
 
     Shared statsZ!(), statsZ1!()
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
 
     Dim statPlyrNames$(14)
     Dim plyrRat_INPUT!(14, 13)
@@ -42,8 +42,8 @@ Sub EditStats ()
                 Input #1, plyrRat_INPUT!(I, J)
             Next J
 
-            Input #1, statsW0!(I)
-            Input #1, statsW1!(I)
+            Input #1, stats3FGM!(I)
+            Input #1, stats3FGA!(I)
 
         Next I
 
@@ -336,8 +336,8 @@ Sub EditStats ()
                 Print "12. ASSISTS "; plyrRat_INPUT!(I, 8)
                 Print "13. BLOCKS "; plyrRat_INPUT!(I, 9)
                 Print "14. TURNOVERS "; plyrRat_INPUT!(I, 11)
-                Print "15. 3FGA "; statsW1!(I)
-                Print "16. 3FGM "; statsW0!(I)
+                Print "15. 3FGA "; stats3FGA!(I)
+                Print "16. 3FGM "; stats3FGM!(I)
                 Print "17. HI-GAME (PTS) "; plyrRat_INPUT!(I, 13)
 
                 Do
@@ -422,12 +422,12 @@ Sub EditStats ()
 
                         Case 15
                             Locate 17, 10: Print Space$(10)
-                            Locate 17, 1: Input "15. 3FGA "; statsW1!(I)
+                            Locate 17, 1: Input "15. 3FGA "; stats3FGA!(I)
                             Locate 17, 10: Print " "
 
                         Case 16
                             Locate 18, 10: Print Space$(10)
-                            Locate 18, 1: Input "16. 3FGM "; statsW0!(I)
+                            Locate 18, 1: Input "16. 3FGM "; stats3FGM!(I)
                             Locate 18, 10: Print " "
 
                         Case 17
@@ -461,9 +461,9 @@ Sub EditStats ()
                 Print #2, plyrRat_INPUT!(I, J)
             Next J
 
-            Print #2, statsW0!(I)
+            Print #2, stats3FGM!(I)
 
-            Print #2, statsW1!(I)
+            Print #2, stats3FGA!(I)
 
         Next I
 

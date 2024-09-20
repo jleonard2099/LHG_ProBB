@@ -717,6 +717,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT(), normYrIdx)
 
     Loop Until I0 = 2
 
+    Color 15, 0
     Cls
 
     Call box0 (6, 8, 8, 70, 2, 15, 1)
