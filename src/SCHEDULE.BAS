@@ -1450,7 +1450,7 @@ Sub ChangeGlobalSettings ()
 
             Case 7:
                 timeoutOpt = timeoutOpt + 1
-                If timeoutOpt > 2 Then timeoutOpt = 0
+                If timeoutOpt > 4 Then timeoutOpt = 0
 
             Case 8
                 threePtOpt = 1 - threePtOpt

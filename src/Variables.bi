@@ -63,7 +63,7 @@ Dim location$(0 To 2), modeAbbrev$(0 To 3)
 Dim playoffGame$(1), playMode$(3)
 Dim quarterLength$(0 To 1)
 Dim sClockOpt$(0 To 2), teamEraOpt$(0 To 2)
-Dim teamIndicator$(1), timeoutSetting$(0 To 2)
+Dim teamIndicator$(1), timeoutSetting$(0 To 4)
 Dim yesNo$(0 To 1), yesNoText$(1)
 
 

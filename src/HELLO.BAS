@@ -30,7 +30,7 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-Dim Shared passes, test
+Dim Shared passes
 Dim Shared possTime!
 
 '$Include: 'MainRoutines.bi'
@@ -288,9 +288,11 @@ teamEraOpt$(0) = "VISITING     "
 teamEraOpt$(1) = "HOME         "
 teamEraOpt$(2) = "NO ADJUSTMENT"
 
-timeoutSetting$(0) = "CLASSIC (LIMIT 4 IN Q4)"
-timeoutSetting$(1) = "INCLUDE MANDATORY (2017)"
-timeoutSetting$(2) = "MANDATORY + LIMIT 2 IN Q4 3:00 (2018+)"
+timeoutSetting$(0) = "MANDATORY @ 7 / 10 MIN; LIMIT 4 IN Q4 (PRE 2001)"
+timeoutSetting$(1) = "MANDATORY @ 6 / 9 MIN; LIMIT 4 IN Q4 (2001-2017)"
+timeoutSetting$(2) = "MANDATORY @ 7 / 3 MIN, LIMIT 4 IN Q4 (2017-18)"
+timeoutSetting$(3) = "MANDATORY @ 7 / 3 MIN, LIMIT 2 IN Q4 (2018+)"
+timeoutSetting$(4) = "MANDATORY @ 5 / 3 MIN, LIMIT 2 IN Q4 (WNBA)"
 
 yesNoText$(0) = "NO "
 yesNoText$(1) = "YES"
@@ -1086,7 +1088,7 @@ Sub PROHOOP ()
 
                     Case 8:
                         timeoutOpt = timeoutOpt + 1
-                        If timeoutOpt > 2 Then timeoutOpt = 0
+                        If timeoutOpt > 4 Then timeoutOpt = 0
 
                     Case 9:
                         '
@@ -1372,7 +1374,6 @@ Sub PROHOOP ()
                 '# Overtime timeouts
                 If (teamYears(0) >= 1985 And teamYears(1) >= 1985) And (teamYears(0) <= 2000 And teamYears(1) <= 2000) Then
                     'Between 1984-85 And 1999-2000
-                    '-- would this impact WNBA???
                     timeouts(PG) = 3
                 Else
                     timeouts(PG) = 2
@@ -2344,11 +2345,13 @@ Sub PROHOOP ()
             passString$ = "PASS TO " + players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " OF "
             Print passString$;
             Color teamRat_GAME(P, 33), teamRat_GAME(P, 34)
+
             If Len(passString$) + Len(gameTeams$(P)) > 38 Then
                 Print Left$(gameTeams$(P), 38 - Len(passString$))
             Else
                 Print gameTeams$(P)
             End If
+
             Color 15, 0
 
             Locate 10
@@ -2358,7 +2361,7 @@ Sub PROHOOP ()
             Else
                 Print "SHOT %"; Int(shotChance + .5);
                 If shotType >= 2 And shotType <= 8 Then
-                    Print "*";
+                    Print "*"; Space$(5);
                 End If
             End If
 
@@ -2371,9 +2374,9 @@ Sub PROHOOP ()
                 Print Using "SHOT % ##"; Int(threePtShotChance + .5);
                 Print "*";
             Else
-                Print Using "SHOT % ##   "; Int(shotChance + .5);
+                Print Using "SHOT % ##"; Int(shotChance + .5);
                 If shotType >= 2 And shotType <= 8 Then
-                    Locate , 52: Print "*";
+                    Print "*";
                 End If
             End If
 
@@ -2465,7 +2468,7 @@ Sub PROHOOP ()
 
             'Human Opponent, Computer Shoots | Computer is Visitor AND on Defense, Computer Shoots | Computer is Visitor AND On Offense | Computer is Home Team
             If (playerMode = 0 And coachOpt = 1 Or playerMode = 1 And D = compTeam And coachOpt = 1 Or playerMode = 1 And P = compTeam Or playerMode = 2) Then
-            
+
                 If gameClock! <= 660 And gameClock! >= 540 And quarter = 2 And timeouts(P) >= 6 Then
                     playChoice = 2
                     computerTimeout = 1
@@ -2581,8 +2584,6 @@ Sub PROHOOP ()
     '3 = Foul
     '4 = Shoot (3FGA)
     
-
-
     'There's alot here missing!!!!
 
     'Foul was chosen | Computer on offense and last 4 minutes of game
@@ -2772,12 +2773,15 @@ Sub PROHOOP ()
                     Call SELECTPBP(P, 1)
 
                     Call DEADBALLOPTIONS(deadballTO)
-                    
-                    ballCarrier = 6
-                    offStatus = 0
-                    Call PRESSGUARD
 
-                    GoTo 300
+                    If (deadballTO = 1) Then
+                        GoTo 640
+                    Else
+                        ballCarrier = 6
+                        offStatus = 0
+                        Call PRESSGUARD
+                        GoTo 300
+                    End If
 
                 End If
 
@@ -2926,18 +2930,18 @@ Sub PROHOOP ()
 
                     Call ChangePossession
 
-                    pbpString$ = gameTeams$(D) + " BALL AFTER SCORE"
-                    Call SELECTPBP(D, 1)
+                    pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
+                    Call SELECTPBP(P, 1)
                     Call DELAY
 
                     Call DEADBALLOPTIONS(deadballTO)
 
-                    ' WHY ARE THESE MISSING?
-                    '-- ballCarrier = 6
-                    '-- offStatus = 0
-                    Call PRESSGUARD
-
-                    GoTo 300
+                    If (deadballTO = 1) Then
+                        GoTo 640
+                    Else
+                        Call PRESSGUARD
+                        GoTo 300
+                    End If
 
                 Else
 
@@ -3046,7 +3050,7 @@ Sub PROHOOP ()
             640 '
             If timeouts(P) > 0 Then
 
-                If timeoutOpt >= 1 And mandatoryTO(P) = 0 Then
+                If mandatoryTO(P) = 0 Then
                     mandatoryTO(P) = 1
                 End If
 
@@ -3194,11 +3198,14 @@ Sub PROHOOP ()
 
                     Call DEADBALLOPTIONS(deadballTO)
 
-                    ballCarrier = 6
-                    offStatus = 0
-                    Call PRESSGUARD
-
-                    GoTo 300
+                    If (deadballTO = 1) Then
+                        GoTo 640
+                    Else
+                        ballCarrier = 6
+                        offStatus = 0
+                        Call PRESSGUARD
+                        GoTo 300
+                    End If
 
                 End If
 
@@ -3366,12 +3373,15 @@ Sub PROHOOP ()
                 DELAY
 
                 Call DEADBALLOPTIONS(deadballTO)
-                
-                ballCarrier = 6
-                offStatus = 0
-                Call PRESSGUARD
 
-                GoTo 300
+                If (deadballTO = 1) Then
+                    GoTo 640
+                Else
+                    ballCarrier = 6
+                    offStatus = 0
+                    Call PRESSGUARD
+                    GoTo 300
+                End If
 
             End If
 
@@ -3469,12 +3479,15 @@ Sub PROHOOP ()
         Call DELAY
 
         Call DEADBALLOPTIONS(deadballTO)
-        
-        ballCarrier = 6
-        offStatus = 0
-        Call PRESSGUARD
 
-        GoTo 300
+        If (deadballTO = 1) Then
+            GoTo 640
+        Else
+            ballCarrier = 6
+            offStatus = 0
+            Call PRESSGUARD
+            GoTo 300
+        End If
 
     End If
 
@@ -3672,12 +3685,12 @@ Sub PROHOOP ()
 
                 Call DEADBALLOPTIONS(deadballTO)
 
-                ' WHY ARE THESE MISSING?
-                '-- ballCarrier = 6
-                '-- offStatus = 0
-                Call PRESSGUARD
-
-                GoTo 300
+                If (deadballTO = 1) Then
+                    GoTo 640
+                Else
+                    Call PRESSGUARD
+                    GoTo 300
+                End If
 
             End If
 
@@ -4067,7 +4080,7 @@ Sub InitVar ()
     statSpecial = 0
     T1 = 0
     threePtShotChance = 0
-    timeoutOpt = 2
+    timeoutOpt = 3
     TMT = 0
     willDunk = 0
 
@@ -4500,13 +4513,6 @@ Sub PBP (teamIdx)
 
         Color 15, 0
         Call DELAY
-
-    End If
-
-    If (autoPlay = 0 Or pbpDelay! > 0) And pbpOpt = 0 Then
-
-        'pbpString$ = PadRight$(pbpString$, 38)
-        'Print pbpString$
 
     End If
 
@@ -5352,7 +5358,6 @@ Sub MAKEPBP (pbpType)
 
                     Case 1 To 6
                         pbpString$ = teamGender$(P) + " DRAINS THE THREE!"
-                        Call PBP(P)
                     Case 7 To 10
                         pbpString$ = teamGender$(P) + " FILLS UP THE BASKET!!!"
                     Case 11 To 20:
@@ -5373,7 +5378,7 @@ Sub MAKEPBP (pbpType)
                         pbpString$ = "IT'S ALL NET!!!"
 
                 End Select
-                
+
                 If d100% <= 1 Then
 
                     pbpString$ = "NO!"
@@ -7360,12 +7365,44 @@ End Sub
 'any changes to lineup, strategy, players.
 Sub DEADBALLOPTIONS (userTakeTO)
 
+    userTakeTO = 0
+
     Call CLEARPBP
 
-    If timeoutOpt >= 1 And (mandatoryTO(0) = 0 Or mandatoryTO(1) = 0) Then
+    Select Case timeoutOpt
 
-        'Mandatory timeout - 7 minute mark
-        If gameClock! <= 420 Then
+        Case 0
+            '6 minutes
+            clockTime1 = 420
+            '9 minutes
+            clockTime2 = 600
+        Case 1
+            '6 minutes
+            clockTime1 = 360
+            '9 minutes
+            clockTime2 = 540
+        Case 2, 3
+            '7 minutes
+            clockTime1 = 420
+            '3 minutes
+            clockTime2 = 180
+
+        Case 4
+            '5 | 6 minutes, dep. on quarter
+            If quarter = 2 Or quarter = 4 Then
+                clockTime1 = 360
+            Else
+                clockTime1 = 300
+            End If
+            '3 minutes
+            clockTime2 = 180
+
+    End Select
+
+    If (mandatoryTO(0) = 0 Or mandatoryTO(1) = 0) Then
+
+        'Mandatory timeout # 1 - every Quarter
+        If gameClock! <= clockTime1 Then
 
             If mandatoryTO(0) = 0 And mandatoryTO(1) = 0 Then
                 'Neither team has taken timeout
@@ -7379,22 +7416,24 @@ Sub DEADBALLOPTIONS (userTakeTO)
                 End If
             End If
 
+            Call WINDEX
+
             pbpString$ = gameTeams$(chargeTeam) + " WILL BE CHARGED"
-            Call SELECTPBP(chargeTeam, 1)
+            Call SELECTPBP(chargeTeam, 0)
             pbpString$ = "WITH A MANDATORY TIMEOUT"
-            Call SELECTPBP(chargeTeam, 1)
-
-            Call DELAY
-
-            Call UPDATESCREEN
+            Call SELECTPBP(chargeTeam, 0)
 
             timeouts(chargeTeam) = timeouts(chargeTeam) - 1
             mandatoryTO(chargeTeam) = 1
 
+            Call UPDATESCREEN
+
         End If
 
-        'Mandatory timeout - 3 minute mark
-        If gameClock! <= 180 Then
+        'Mandatory timeout # 2
+        'Older TO options were only Q2 / Q4
+        'Newer TO options are every quarter
+        If gameClock! <= clockTime2 And ((timeoutOpt >= 2) Or (timeoutOpt < 2 And (quarter = 2 Or quarter = 4))) Then
 
             If mandatoryTO(0) = 0 Then
                 chargeTeam = 0
@@ -7402,17 +7441,17 @@ Sub DEADBALLOPTIONS (userTakeTO)
                 chargeTeam = 1
             End If
 
+            Call WINDEX
+
             pbpString$ = gameTeams$(chargeTeam) + " WILL BE CHARGED"
-            Call SELECTPBP(chargeTeam, 1)
+            Call SELECTPBP(chargeTeam, 0)
             pbpString$ = "WITH A MANDATORY TIMEOUT"
-            Call SELECTPBP(chargeTeam, 1)
-
-            Call DELAY
-
-            Call UPDATESCREEN
+            Call SELECTPBP(chargeTeam, 0)
 
             timeouts(chargeTeam) = timeouts(chargeTeam) - 1
             mandatoryTO(chargeTeam) = 1
+
+            Call UPDATESCREEN
 
         End If
 
@@ -7457,22 +7496,22 @@ Sub DEADBALLOPTIONS (userTakeTO)
             I$ = GetKeyPress$
             P3 = Val(I$)
 
-            If P3 <> 1 Then
+            If P3 = 1 Then
+
+                If Not (timeouts(P) <= 0 Or P3 = 1 And P = compTeam And playerMode = 1) Then
+                    userTakeTO = 1
+                End If
+
+            Else
 
                 S2 = 0
                 P9 = P
                 C1 = 2
                 Call CheckGameClock
 
-            Else
-                
-                If Not (timeouts(P) <= 0 Or P3 = 1 And P = compTeam And playerMode = 1) Then
-                    userTakeTO = 1
-                End If
-                
             End If
 
-        Loop Until Not (P3 = 1 And timeouts(P) <= 0 Or P3 = 1 And P = compTeam And playerMode = 1)
+        Loop Until Not ((P3 = 1 And timeouts(P) <= 0) Or (P3 = 1 And P = compTeam And playerMode = 1))
 
         Call WINDEX
 
@@ -9751,7 +9790,7 @@ Sub MADEFT (currFreeThrow)
     'Increase FTM
     gameRatings!(P, lineupIdx(P, ballCarrier), 10) = gameRatings!(P, lineupIdx(P, ballCarrier), 10) + 1
 
-    If (autoPlay = 0 Or pbpDelay! > 0) Then
+    If (pbpDelay! > 0) Then
         Locate currFreeThrow + 9, 1
         Call DELAY
         Print currFreeThrow; " GOOD"
@@ -9773,7 +9812,7 @@ End Sub
 'for a missed free throw
 Sub MISSFT (currFreeThrow)
 
-    If (autoPlay = 0 Or pbpDelay! > 0) Then
+    If (pbpDelay! > 0) Then
 
         Call DELAY
         Locate currFreeThrow + 9, 1
@@ -10092,7 +10131,7 @@ Sub CheckGameClock ()
 
     'Check for late game timeouts (last 3 minutes).
     'Limit teams to 2 for 2018+ seasons
-    If quarter = 4 And gameClock! <= 180 And timeoutOpt >= 1 And assigned2TOs = 0 Then
+    If timeoutOpt >= 2 And assigned2TOs = 0 And quarter = 4 And gameClock! <= 180 Then
         If timeouts(0) > 2 Then
             timeouts(0) = 2
         End If
@@ -10100,15 +10139,6 @@ Sub CheckGameClock ()
             timeouts(1) = 2
         End If
         assigned2TOs = 1
-    End If
-
-    'Mandatory timeouts
-    If timeoutOpt >= 1 And gameClock! <= 720 And (mandatoryTO(0) = 0 Or mandatoryTO(1) = 0) Then
-        'Call Timeout on team that hasn't taken one
-    End If
-
-    If timeoutOpt >= 1 And gameClock! <= 180 And mandatoryTO(0) = 0 Then
-        'Call Timeout on opposite team
     End If
 
     If gameClock! <= 0 Then
