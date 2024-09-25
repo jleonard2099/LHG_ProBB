@@ -4,6 +4,7 @@
 *.ini
 bin/DEV.BAS
 bin/errlog
+bin/FOLDERS.CFG
 bin/GAME82
 bin/HELLO*
 bin/TICKER
@@ -16,5 +17,3 @@ src/EVENTS.BOX
 src/FOLDERS.CFG
 src/GAME82
 src/TICKER
-bin/FOLDERS.CFG
-bin/TICKER

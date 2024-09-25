@@ -32,6 +32,8 @@ DefInt A-Z
 '$Include: 'Variables.bi'
 Dim Shared passes
 Dim Shared possTime!
+Dim Shared test1, test2, test3, test4, test5, test6
+Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), lineupIdx(0 To 1, 0 To 4), M9!(1)
 
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
@@ -381,6 +383,12 @@ Print #10, "Error #"; Err; "on program file line"; _ErrorLine
 If _FileExists("GAME82") Then
     Print #10, "Schedule game # "; Using "###"; schedGame(0) + schedGame(2)
     Print #10, gameTeams$(0) + " vs. " + gameTeams$(1)
+    Print #10, test1
+    Print #10, test2
+    Print #10, test3
+    Print #10, test4
+    Print #10, test5
+    Print #10, test6
 End If
 Print #10,
 Close #10
@@ -7996,7 +8004,7 @@ Sub SCOREBOARD ()
     'Win/Loss record from current stats files
     Print Using " [##"; teamRecWins(0);: Print "-";: Print Using "##]"; teamRecLoss(0)
 
-    Color 14, 0: Print "# NAME         FG FT RB CX PA DF PT  F"
+    Color 14, 0: Print "# NAME         FG FT RB CX PA DS PT  F"
 
     'Team 1 Roster
     For I1 = 0 To 4
@@ -8008,31 +8016,36 @@ Sub SCOREBOARD ()
         Color 15: Print Left$(players_GAME$(0, lineupIdx(0, I1), 0), 12);
         Locate , 16
 
-        J = (gameRatings!(0, lineupIdx(0, I1), 3)) - gameRatings!(0, lineupIdx(0, I1), 7) - gameRatings!(0, lineupIdx(0, I1), 11) - gameRatings!(0, lineupIdx(0, I1), 12)
-
-        If J <= 0 Then J = 0
-
-        'FG
+        'Field Goals
         Print Using "##"; gameRatings!(0, lineupIdx(0, I1), 0);
-        'FT
+        'Free Throws
         Print Using "### "; gameRatings!(0, lineupIdx(0, I1), 1);
 
-        'RB
+        'Rebounds
         If P = 0 Then
             Print Using "##"; gameRatings!(0, lineupIdx(0, I1), 21) * 2 / 10;
         Else
             Print Using "##"; gameRatings!(0, lineupIdx(0, I1), 2) * 2 / 10;
         End If
 
+        'Stamina
+        J = 0
+        J = (gameRatings!(0, lineupIdx(0, I1), 3)) - gameRatings!(0, lineupIdx(0, I1), 7) - gameRatings!(0, lineupIdx(0, I1), 11) - gameRatings!(0, lineupIdx(0, I1), 12)
+        If J <= 0 Then J = 0
         If J <= 0 And (quarter = 1 Or quarter = 2 Or quarter = 3 Or quarter = 4 And gameClock! > 120) Then Color 12
-
         Print Using "### "; J;
+
         Color 15
+        'Pass Rating / Steals?
         Print Using "## ##"; gameRatings!(0, lineupIdx(0, I1), 4) / 10; gameRatings!(0, lineupIdx(0, I1), 5) / 10;
+
+        'Total Points
         Print Using "###  "; gameRatings!(0, lineupIdx(0, I1), 8) * 2 + gameRatings!(0, lineupIdx(0, I1), 10) + threeFG(0, lineupIdx(0, I1), 0);
 
+        'Fouls
         If gameRatings!(0, lineupIdx(0, I1), 12) >= 5 Then Color 12
         Print Using "#"; gameRatings!(0, lineupIdx(0, I1), 12)
+
         Color 15
 
     Next I1
@@ -8045,7 +8058,7 @@ Sub SCOREBOARD ()
     Print Using " [##"; teamRecWins(1);: Print "-";: Print Using "##]"; teamRecLoss(1)
 
     Color 14, 0
-    Locate , 40: Print "# NAME          FG FT RB CX PA DF PT  F"
+    Locate , 40: Print "# NAME          FG FT RB CX PA DS PT  F"
 
     'Team 2 Roster
     For I1 = 0 To 4:
@@ -8059,30 +8072,36 @@ Sub SCOREBOARD ()
         Print Left$(players_GAME$(1, lineupIdx(1, I1), 0), 12);
         Locate , 56
 
-        J = (gameRatings!(1, lineupIdx(1, I1), 3)) - gameRatings!(1, lineupIdx(1, I1), 7) - gameRatings!(1, lineupIdx(1, I1), 11) - gameRatings!(1, lineupIdx(1, I1), 12)
-
-        If J <= 0 Then J = 0
-
+        'Field Goals
         Print Using "##"; gameRatings!(1, lineupIdx(1, I1), 0);
+        'Free Throws
         Print Using "### "; gameRatings!(1, lineupIdx(1, I1), 1);
 
+        'Rebounds
         If P = 1 Then
             Print Using "##"; gameRatings!(1, lineupIdx(1, I1), 21) * 2 / 10;
         Else
             Print Using "##"; gameRatings!(1, lineupIdx(1, I1), 2) * 2 / 10;
         End If
 
+        'Stamina
+        J = 0
+        J = (gameRatings!(1, lineupIdx(1, I1), 3)) - gameRatings!(1, lineupIdx(1, I1), 7) - gameRatings!(1, lineupIdx(1, I1), 11) - gameRatings!(1, lineupIdx(1, I1), 12)
+        If J <= 0 Then J = 0
         If J <= 0 And (quarter = 1 Or quarter = 2 Or quarter = 3 Or quarter = 4 And gameClock! > 120) Then Color 12
-
         Print Using "### "; J;
 
         Color 15
 
+        'Assists / Steals?
         Print Using "## ##"; gameRatings!(1, lineupIdx(1, I1), 4) / 10; gameRatings!(1, lineupIdx(1, I1), 5) / 10;
+        'Total Points
         Print Using "###  "; gameRatings!(1, lineupIdx(1, I1), 8) * 2 + gameRatings!(1, lineupIdx(1, I1), 10) + threeFG(1, lineupIdx(1, I1), 0);
 
+        'Fouls
         If gameRatings!(1, lineupIdx(1, I1), 12) >= 5 Then Color 12
         Print Using "#"; gameRatings!(1, lineupIdx(1, I1), 12)
+
         Color 15
 
     Next I1
@@ -9848,7 +9867,7 @@ Sub LINEUPS ()
     Print Using "##"; teamRat_GAME(P9, 2) + teamRat_GAME(P9, 4)
 
     Color 14
-    Print "# NAME         PS GP MG FG 3FG %3A FT  ORB  DRB  A  S  B CX CN PT F  FC  PPG"
+    Print "# NAME         PS GP MG FG 3FG %3A FT  ORB  DRB PA DS B  CX CN PT F  FC PTS/G"
 
     Locate 3, 1
 
@@ -9875,20 +9894,20 @@ Sub LINEUPS ()
             If Len(players_GAME$(P9, R1, 1)) = 1 Then Print players_GAME$(P9, R1, 1);
             If Len(players_GAME$(P9, R1, 1)) > 1 Then Print Left$(players_GAME$(P9, R1, 1), 1); Right$(players_GAME$(P9, R1, 1), 1);
 
-            L = 0
             Locate , 19
-            L = gameRatings!(P9, R1, 7) + gameRatings!(P9, R1, 11) + gameRatings!(P9, R1, 12)
 
-            'GP MG
+            'Games Played, Minutes / Game
             Print Using "## ##"; plyrRat_GAME(P9, R1, 0); plyrRat_GAME(P9, R1, 1) / plyrRat_GAME(P9, R1, 0);
 
-            'FG  3FG  %3A  FT  ORB  DRB A  S  B
+            'FG, 3FG , %3A, FT, ORB, DRB, Pass Rating, Steals, Blocks
             Print Using "### ### ## ### ##.# ##.# ## ## ##"; gameRatings!(P9, R1, 0); gameRatings!(P9, R1, 20); gameRatings!(P9, R1, 19); gameRatings!(P9, R1, 1); gameRatings!(P9, R1, 21) / 10; gameRatings!(P9, R1, 2) / 10; gameRatings!(P9, R1, 4) / 10; gameRatings!(P9, R1, 5); gameRatings!(P9, R1, 6);
 
-            'CX
+            'Contribution
+            L = 0
+            L = gameRatings!(P9, R1, 7) + gameRatings!(P9, R1, 11) + gameRatings!(P9, R1, 12)
             Print Using "### "; gameRatings!(P9, R1, 3) - L;
 
-            'CN
+            'Condition
             J = (gameRatings!(P9, R1, 3)) - gameRatings!(P9, R1, 7) - gameRatings!(P9, R1, 11) - gameRatings!(P9, R1, 12)
 
             If quarter <= 3 And J / gameRatings!(P9, R1, 3) < .25 Then
@@ -9911,7 +9930,7 @@ Sub LINEUPS ()
                 Locate , 61: Print "  ";
             End If
 
-            'PT F  FC  PPG
+            'Points, Fouls, Foul Commit, Pts / Game
             Locate , 63: Print Using "### # ### ##.#"; gameRatings!(P9, R1, 8) * 2 + gameRatings!(P9, R1, 10) + threeFG(P9, R1, 0); gameRatings!(P9, R1, 12); gameRatings!(P9, R1, 17); (plyrRat_GAME(P9, R1, 3) * 2 + plyrRat_GAME(P9, R1, 5) + plyrRat_GAME(P9, R1, 14)) / plyrRat_GAME(P9, R1, 0)
 
         End If

@@ -67,8 +67,6 @@ End Sub
 'perform the merge
 Sub MergeStats ()
 
-    Dim statPlyrName_Road$(0 To 14)
-
     Shared nbrGamesCurr, nbrGamesRoad
 
     Shared gameAttendance&(), gameAtt_Road&()
@@ -76,16 +74,16 @@ Sub MergeStats ()
     Shared teamScore(), teamScore_Road()
     Shared oppScore(), oppScore_Road()
 
-    Shared ARD!(), playerRatings!()
+    Shared plyrStat_Merge!(), playerRatings!()
     Shared stats3FGM!(), stats3FGA!()
     Shared statsZ!(), statsZ1!()
-    Shared W0RD!(), W1RD!()
+    Shared threeFGM_Merge!(), threeFGA_Merge!()
     Shared ZRD!(), ZRD1!()
 
     'Shared gameSite$(), gameSite_Road$()
     Shared locIndicator$(), locIndicator_Road$()
     Shared oppName$(), oppName_Road$()
-    Shared statPlyrNames$()
+    Shared statPlyrNames$(), plyrName_Road$()
 
     Do
 
@@ -115,18 +113,18 @@ Sub MergeStats ()
 
                     Open pathRoadStats$ + statFile$ For Input As #1
 
-                    Input #1, B$
+                    Input #1, teamNameRoad$
 
                     For I = 0 To 14
 
-                        Input #1, statPlyrName_Road$(I)
+                        Input #1, plyrName_Road$(I)
 
                         For J = 0 To 13
-                            Input #1, ARD!(I, J)
+                            Input #1, plyrStat_Merge!(I, J)
                         Next
 
-                        Input #1, W0RD!(I)
-                        Input #1, W1RD!(I)
+                        Input #1, threeFGM_Merge!(I)
+                        Input #1, threeFGA_Merge!(I)
 
                     Next
 
@@ -179,7 +177,7 @@ Sub MergeStats ()
 
                         Open pathCurrentStats$ + statFile$ For Input As #3
 
-                        Input #3, B$
+                        Input #3, teamNameStats$
 
                         For I = 0 To 14:
 
@@ -237,14 +235,14 @@ Sub MergeStats ()
                         SEQ = 0
 
                         For K = 0 To 14
-                            If UCase$(statPlyrName_Road$(K)) <> UCase$(statPlyrNames$(K)) Then
+                            If UCase$(plyrName_Road$(K)) <> UCase$(statPlyrNames$(K)) Then
                                 SEQ = SEQ + 1
                             End If
                         Next
 
                         If SEQ = 0 Then
 
-                            Call DoTheMerge(pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
+                            Call DoTheMerge(pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrGamesRoad)
 
                             For J = 13 To 23
                                 Locate J
@@ -328,18 +326,18 @@ End Sub
 'values together from each file and then
 'overwrites the current file with the
 'newly aggregated results.
-Sub DoTheMerge (pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
+Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrGamesRoad)
 
     Shared gameAttendance&(), gameAtt_Road&()
 
     Shared oppScore(), oppScore_Road() 
     Shared teamScore(), teamScore_Road()
 
-    Shared ARD!(), playerRatings!()
+    Shared plyrStat_Merge!(), playerRatings!()
 
     Shared stats3FGM!(), stats3FGA!()
     Shared statsZ!(), statsZ1!()
-    Shared W0RD!(), W1RD!()
+    Shared threeFGM_Merge!(), threeFGA_Merge!()
     Shared ZRD!(), ZRD1!()
 
     Shared gameSite$(), gameSite_Road$()
@@ -363,14 +361,14 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
     For I = 0 To 14
 
         For J = 0 To 12
-            playerRatings!(I, J) = playerRatings!(I, J) + ARD!(I, J)
+            playerRatings!(I, J) = playerRatings!(I, J) + plyrStat_Merge!(I, J)
         Next J
 
-        stats3FGM!(I) = stats3FGM!(I) + W0RD!(I)
-        stats3FGA!(I) = stats3FGA!(I) + W1RD!(I)
+        stats3FGM!(I) = stats3FGM!(I) + threeFGM_Merge!(I)
+        stats3FGA!(I) = stats3FGA!(I) + threeFGA_Merge!(I)
 
-        If playerRatings!(I, 13) < ARD!(I, 13) Then
-            playerRatings!(I, 13) = ARD!(I, 13)
+        If playerRatings!(I, 13) < plyrStat_Merge!(I, 13) Then
+            playerRatings!(I, 13) = plyrStat_Merge!(I, 13)
         Else
             playerRatings!(I, 13) = playerRatings!(I, 13)
         End If
@@ -384,7 +382,7 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
 
     Open pathCurrentStats$ + statFile$ For Output As #1
 
-    Write #1, B$
+    Write #1, teamNameStats$
 
     For I = 0 To 14:
 

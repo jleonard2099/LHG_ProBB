@@ -7,6 +7,8 @@ Dim Shared teamIndex%(MAX_TEAMS)
 
 ' *** Reading Stat Data ***
 ' -------------------------
+Dim teamNameStats$
+
 Dim gameAttendance&(MAX_SCHED_STATS)
 
 Dim oppScore(MAX_SCHED_STATS), teamScore(MAX_SCHED_STATS)
@@ -71,33 +73,33 @@ Dim yesNo$(0 To 1), yesNoText$(1)
 ' Used in ALIGN / MERGE routines
 '----------------------------------------
 
-Dim AN!(15, 14), AR!(15, 14)
-Dim ARD!(15, 14)
+Dim plyrStat_Merge!(15, 14)
+Dim plyrStat_Align!(15, 14), plyrStat_Road!(15, 14)
 
-Dim W0N!(15), WN1!(15)
-Dim W0R!(15), WR1!(15)
-Dim W0RD!(15), W1RD!(15)
+Dim threeFGM_Align!(15), threeFGA_Align!(15)
+Dim threeFGM_Road!(15), threeFGA_Road!(15)
+Dim threeFGM_Merge!(15), threeFGA_Merge!(15)
 
 Dim ZR!(15), ZR1!(15)
 Dim ZRD!(16), ZRD1!(16)
 
-Dim roadPlyrNames$(15), alignName$(14)
+Dim plyrName_Road$(15), plyrName_Align$(14)
 
 
 '----------------------------------------
 ' Used in CAREER / LEADER routines
 '----------------------------------------
-Dim ARS!(MAX_CAREER_YEARS, 62, 15)
-Dim BL!(62), BLYR!(21)
-Dim car3FGM!(MAX_CAREER_YEARS, 62), car3FGA!(MAX_CAREER_YEARS, 62)
-
 Dim carLdrPlyrName$(19, 20)
 Dim carLdrVal!(19, 20)
 
+Dim plyrStat_Career!(MAX_CAREER_YEARS, 62, 15)
+Dim BL!(62), BLYR!(21)
+Dim car3FGM!(MAX_CAREER_YEARS, 62), car3FGA!(MAX_CAREER_YEARS, 62)
+
 Dim GMA!(600), TYP!(600)
 Dim leader3FGM!(600), leader3FGA!(600)
-Dim plyrStatLeaders!(600, 14)
 
+Dim plyrStatLeaders!(600, 14)
 Dim plyrLeaderYears!(TEAMS_PER_LEAGUE), tmLeaderYears!(TEAMS_PER_LEAGUE)
 Dim TT!(TEAMS_PER_LEAGUE, 15), TT1!(TEAMS_PER_LEAGUE, 15)
 
@@ -243,7 +245,7 @@ Dim Shared ST%(32), SX%(32, 1, 14)
 
 Dim Shared C1(1, 14)
 Dim Shared D8(6, 6), dFGPA(1), defStyles(1), F1(14), fullCtOpt(0 To 1)
-Dim Shared G4(14), G5(14), leagRat_GAME(1, 6), lineupIdx(0 To 1, 0 To 4)
+Dim Shared G4(14), G5(14), leagRat_GAME(1, 6)
 Dim Shared mandatoryTO(0 To 1), miscAdj(1, 4)
 Dim Shared P4(5), P5(5), pbpFG(1 To 8), pbpBG(1 To 8), perFoulAdj(0 To 32)
 Dim Shared plyrRat_GAME(1, 14, 19), QQ(1, 8, 14, 14), QR(1, 7, 14), rebRatings(0 To 10)
@@ -253,7 +255,7 @@ Dim Shared timePlayed(2, 14), timeouts(1), totalFouls(1), threeFG(1, 14, 1)
 Dim Shared totRebounds(1), turnoverAdj(0 To 32), turnovers(1)
 Dim Shared W2(1, 14), W3(1, 14), X7(1), teamRecWins(1), teamRecLoss(1)
 
-Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), M9!(1)
+'Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), lineupIdx(0 To 1, 0 To 4), M9!(1)
 Dim game3FGM!(1, 14), game3FGA!(1, 14)
 
 Dim Shared defStyleDesc$(9), diskIDs$(0 To 1)
