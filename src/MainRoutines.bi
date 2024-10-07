@@ -116,7 +116,7 @@ Declare Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 Declare Sub UpdateExpandedStandings (league$)
 Declare Sub ViewExpandedStats ()
 Declare Sub ViewGameRecords
-Declare Sub ViewIndividualLeaders (printOrView, JB)
+Declare Sub ViewIndividualleaders (printOrView, JB)
 Declare Sub ViewPlayer (careerFile$)
 Declare Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 Declare Sub ViewRoster ()

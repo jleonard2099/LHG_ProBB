@@ -16,9 +16,9 @@ Dim oppScore(MAX_SCHED_STATS), teamScore(MAX_SCHED_STATS)
 Dim gameSite$(MAX_SCHED_STATS), locIndicator$(MAX_SCHED_STATS), oppName$(MAX_SCHED_STATS)
 
 Dim stats3FGM!(0 To 14), stats3FGA!(0 To 14)
-Dim statsZ!(0 To 15), statsZ1!(0 To 15)
+Dim statsZ0!(0 To 15), statsZ1!(0 To 15)
 Dim statsZ2!(0 To 14, 0 To 13)
-Dim values!(0 To 14, 0 To 24)
+Dim statPlyrVal!(0 To 14, 0 To 24)
 
 'Record / Standings
 Dim confWins, confLosses
@@ -72,7 +72,6 @@ Dim yesNo$(0 To 1), yesNoText$(1)
 '----------------------------------------
 ' Used in ALIGN / MERGE routines
 '----------------------------------------
-
 Dim plyrStat_Merge!(15, 14)
 Dim plyrStat_Align!(15, 14), plyrStat_Road!(15, 14)
 
@@ -80,8 +79,7 @@ Dim threeFGM_Align!(15), threeFGA_Align!(15)
 Dim threeFGM_Road!(15), threeFGA_Road!(15)
 Dim threeFGM_Merge!(15), threeFGA_Merge!(15)
 
-Dim ZR!(15), ZR1!(15)
-Dim ZRD!(16), ZRD1!(16)
+Dim statsZ_Road!(16), statsZ1_Road!(16)
 
 Dim plyrName_Road$(15), plyrName_Align$(14)
 
@@ -89,53 +87,62 @@ Dim plyrName_Road$(15), plyrName_Align$(14)
 '----------------------------------------
 ' Used in CAREER / LEADER routines
 '----------------------------------------
+'-- 600 = 15 * 40
+Dim NB, NP
+
+Dim careerPlayers$(62), BL$(0 To 20)
+
+Dim car3FGM!(MAX_CAREER_YEARS, 62), car3FGA!(MAX_CAREER_YEARS, 62)
+Dim carPlyrStat!(MAX_CAREER_YEARS, 62, 15)
+Dim leader3FGM!(600), leader3FGA!(600)
+
 Dim carLdrPlyrName$(19, 20)
 Dim carLdrVal!(19, 20)
 
-Dim plyrStat_Career!(MAX_CAREER_YEARS, 62, 15)
-Dim BL!(62), BLYR!(21)
-Dim car3FGM!(MAX_CAREER_YEARS, 62), car3FGA!(MAX_CAREER_YEARS, 62)
+Dim carRecVal!(62), carRecYear!(21)
 
-Dim GMA!(600), TYP!(600)
-Dim leader3FGM!(600), leader3FGA!(600)
-
-Dim plyrStatLeaders!(600, 14)
-Dim plyrLeaderYears!(TEAMS_PER_LEAGUE), tmLeaderYears!(TEAMS_PER_LEAGUE)
-Dim TT!(TEAMS_PER_LEAGUE, 15), TT1!(TEAMS_PER_LEAGUE, 15)
-
-Dim careerPlayers$(62), BL$(0 To 20)
-Dim expIndCategory$(0 To 31), expTeamCategory$(0 To 38)
 Dim plyLeaderTeams$(TEAMS_PER_LEAGUE, 15), tmLeaderTeams$(TEAMS_PER_LEAGUE, 15)
 
-Dim AL$(600), TMA$(600), TMM$(600), TPP$(600)
+Dim plyrLdrStats!(600, 14)
+Dim plyrLeaderYears!(TEAMS_PER_LEAGUE), tmLeaderYears!(TEAMS_PER_LEAGUE)
+Dim plyrLdrVal!(TEAMS_PER_LEAGUE, 15), teamLdrVal!(TEAMS_PER_LEAGUE, 15)
+
+' For Expanded Leaders
+Dim expIndCategory$(0 To 31), expTeamCategory$(0 To 38)
+Dim expPlyrLdrName$(600), expPlyrLdrTeam$(600), expLdrTeam$(600), expLdrPlyrName$(600)
+Dim expStdLeagName$(TEAMS_PER_LEAGUE)
+
+Dim totGames!(600), expLdrVal!(600)
 
 'For Expanded Standings
-Dim HLL(TEAMS_PER_LEAGUE), HWW(TEAMS_PER_LEAGUE)
-Dim LL(TEAMS_PER_LEAGUE), LLS(TEAMS_PER_LEAGUE), LWS(TEAMS_PER_LEAGUE)
-Dim LTL(TEAMS_PER_LEAGUE), LTW(TEAMS_PER_LEAGUE)
-Dim RLL(TEAMS_PER_LEAGUE), RWW(TEAMS_PER_LEAGUE)
-Dim TLS(TEAMS_PER_LEAGUE), TWS(TEAMS_PER_LEAGUE), WW(TEAMS_PER_LEAGUE)
+Dim lastTenLosses(TEAMS_PER_LEAGUE), lastTenWins(TEAMS_PER_LEAGUE)
 
-Dim TML$(TEAMS_PER_LEAGUE)
+Dim teamLoseStreak(TEAMS_PER_LEAGUE), teamWinStreak(TEAMS_PER_LEAGUE)
+Dim teamTotWins(TEAMS_PER_LEAGUE)
+
+Dim totHomeLosses(TEAMS_PER_LEAGUE), totHomeWins(TEAMS_PER_LEAGUE)
+Dim totRoadLosses(TEAMS_PER_LEAGUE), totRoadWins(TEAMS_PER_LEAGUE)
+
+Dim totTeamLosses(TEAMS_PER_LEAGUE), lastLoseStreak(TEAMS_PER_LEAGUE), lastWinStreak(TEAMS_PER_LEAGUE)
 
 
 '----------------------------------------
-' Used in COMPARE / COMPILE / SEE
+' Used in COMPILE / SEE routines
 '----------------------------------------
 Dim defTotals!(21), offTotals!(21)
-Dim leaderVals!(0 To 250, 0 To 2)
-Dim plyrRat_COMP!(14, 26)
-
 Dim defLeaders!(TEAMS_PER_LEAGUE, 20), offLeaders!(TEAMS_PER_LEAGUE, 20)
-Dim O1!(TEAMS_PER_LEAGUE), O2!(TEAMS_PER_LEAGUE)
-Dim seeZ!(260), seeZ1!(260)
+Dim leaderVals!(0 To 250, 0 To 2)
 
-Dim defLeaderNames$(TEAMS_PER_LEAGUE)
-Dim offLeaderNames$(TEAMS_PER_LEAGUE)
+Dim compLdrTeam$(TEAMS_PER_LEAGUE)
+
+Dim compLeagWins!(TEAMS_PER_LEAGUE), compLeagLosses!(TEAMS_PER_LEAGUE)
+Dim compLgStatVal!(260), compLgStatAtt!(260)
+Dim compStats!(14, 26)
+
+Dim defLeaderNames$(TEAMS_PER_LEAGUE), offLeaderNames$(TEAMS_PER_LEAGUE)
 Dim statCategoryAbbr$(0 To 25)
-Dim Z2$(260), Z3$(260)
 
-Dim seeT$(TEAMS_PER_LEAGUE)
+Dim leagLdrPlayer$(260), leagLdrTeam$(260)
 
 '----------------------------------------
 ' Used in DRAFT routines
@@ -169,13 +176,13 @@ Dim tmInfo_TRADE$(1, 6)
 
 ' ** Stat File **
 
-Dim tradeZZ0(2, 15), tradeZZ1(2, 15)
+Dim teamIndexes(1)
+Dim tradeStatsZ0!(2, 15), tradeStatsZ1!(2, 15)
 
-Dim tradeB1!(2, 14, 14), teamIndexes(1)
+Dim tradeStatsPlyrVal!(2, 14, 14)
 Dim trade3FGM!(2, 14), trade3FGA!(2, 14)
 
-Dim B1$(2, 14), A1$(1)
-
+Dim tradeStatsPlyrName$(2, 14), tradeStatsTeamName$(1)
 Dim statTeam$(1)
 
 
@@ -185,14 +192,15 @@ Dim statTeam$(1)
 Dim league$, div1Name$, div2Name$, div3Name$, div4Name$
 
 Dim awayLosses(50), awayWins!(50)
+Dim awayScoreTeam!(50), awayScoreOpp!(50)
+
 Dim homeLosses!(50), homeWins!(50)
 Dim homeScoreTeam!(50), homeScoreOpp!(50)
-Dim awayScoreTeam!(50), awayScoreOpp!(50)
+
 Dim totAwayLosses!(40), totAwayWin!(40)
+Dim totAwayScoreTeam!(40), totAwayScoreOpp!(40)
 Dim totHomeLosses!(40), totHomeWin!(40)
 Dim totHomeScoreTeam!(40), totHomeScoreOpp!(40)
-Dim totAwayScoreTeam!(40), totAwayScoreOpp!(40)
-
 
 
 '----------------------------------------
@@ -248,7 +256,9 @@ Dim Shared D8(6, 6), dFGPA(1), defStyles(1), F1(14), fullCtOpt(0 To 1)
 Dim Shared G4(14), G5(14), leagRat_GAME(1, 6)
 Dim Shared mandatoryTO(0 To 1), miscAdj(1, 4)
 Dim Shared P4(5), P5(5), pbpFG(1 To 8), pbpBG(1 To 8), perFoulAdj(0 To 32)
-Dim Shared plyrRat_GAME(1, 14, 19), QQ(1, 8, 14, 14), QR(1, 7, 14), rebRatings(0 To 10)
+Dim Shared plyrRat_GAME(1, 14, 19)
+DIm Shared QQ(1, 8, 14, 14), QR(1, 7, 14), rebRatings(0 To 10)
+Dim Shared rosterStatus(1, 13)
 Dim Shared S3(14), score(1, 14), schedGame(2), scSettings(0 To 2), statTotals(14)
 Dim Shared teamAdj(1, 9), teamFouls(1), teamRat_GAME(0 To 1, 0 To 34), teamYears(1)
 Dim Shared timePlayed(2, 14), timeouts(1), totalFouls(1), threeFG(1, 14, 1)

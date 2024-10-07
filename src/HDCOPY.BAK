@@ -20,23 +20,23 @@ Sub HDCOPY ()
 
 		Call MenuBox (6, 8, 61, 7, 15, 1)
 		
-		LOCATE ,12:PRINT "ENTER LETTER OF DRIVE YOU WISH TO INSTALL FROM: ";
+		LOCATE ,12:PRINT "ENTER LETTER OF DRIVE YOU WISH TO INSTAll FROM: ";
 
 		S$=GetKeyPress$
 		PRINT S$+":"
 
-		LOCATE ,12:PRINT "ENTER HARD DRIVE LETTER TO INSTALL TO: ";
+		LOCATE ,12:PRINT "ENTER HARD DRIVE LETTER TO INSTAll TO: ";
 
 		D$=GetKeyPress$
 		PRINT D$+":"
 
 		LOCATE ,12
-		INPUT "SUBDIRECTORY NAME TO INSTALL TO: ";NN$
+		INPUT "SUBDIRECTORY NAME TO INSTAll TO: ";NN$
 		
 		IF NN$="" THEN NN$=PN$
 		
 		LOCATE ,12
-		PRINT "FILES WILL BE COPIED TO "D$+":\"+NN$
+		PRINT "FILES WIll BE COPIED TO "D$+":\"+NN$
 		
 		LOCATE ,12
 		PRINT "ANY CHANGE? (Y/N) "
@@ -58,8 +58,8 @@ Sub HDCOPY ()
 	LOCATE ,(80-LEN(U$))/2
 	PRINT U$
 
-	'SHELL "ECHO OFF"
-	'SHELL "COPY "+S$+":*.* "+D$+":\"+NN$+" >NUL:"
+	'Shell "ECHO OFF"
+	'Shell "COPY "+S$+":*.* "+D$+":\"+NN$+" >NUL:"
 	'CHDIR S$+":\"
 	'CHDIR D$+":\"+NN$
 
@@ -69,13 +69,13 @@ Sub HDCOPY ()
 		
 		LOCATE 17, 12
 
-		'SHELL "COPY "+S$+":*.* "+D$+":\"+NN$+" >NUL:"
+		'Shell "COPY "+S$+":*.* "+D$+":\"+NN$+" >NUL:"
 
 		Call MenuBox (16, 8, 61, 1, 15, 1)
 		
 		LOCATE 17, 12
 
-		U$="INSTALL ANOTHER DISK? (Y/N)"
+		U$="INSTAll ANOTHER DISK? (Y/N)"
 		LOCATE ,(80-LEN(U$))/2
 		PRINT U$
 
@@ -108,12 +108,12 @@ Sub HDCOPY ()
 
 		I$=GetKeyPress
 
-		'SHELL "COPY "+S$+":PROBBTMS.* "+D$+":\"+NN$
+		'Shell "COPY "+S$+":PROBBTMS.* "+D$+":\"+NN$
 
 		Call MenuBox (16, 8, 61, 1, 15, 1)
 
 		LOCATE 17,12
-		U$="INSTALL ANOTHER TEAMS DISK? (Y/N)"
+		U$="INSTAll ANOTHER TEAMS DISK? (Y/N)"
 		LOCATE ,(80-LEN(U$))/2
 		PRINT U$
 
@@ -133,6 +133,6 @@ Sub HDCOPY ()
 
 	LOCATE 20,1
 
-	'SHELL "ECHO ON"
+	'Shell "ECHO ON"
 
 End Sub

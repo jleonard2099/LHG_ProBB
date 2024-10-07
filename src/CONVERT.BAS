@@ -567,11 +567,11 @@ End Sub
 
 
 '----------------------------------------
-'       ConvertAllSched Subroutine
+'       ConvertAlastLoseStreakched Subroutine
 '----------------------------------------
 ' Quick and dirty script to convert all
 ' schedule files in the "Schedule" folder
-Sub ConvertAllSched ()
+Sub ConvertAlastLoseStreakched ()
 
     fileSpec$ = diskPaths$(3) + "*.SCD"
 

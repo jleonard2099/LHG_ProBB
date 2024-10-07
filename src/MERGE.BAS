@@ -63,7 +63,7 @@ End Sub
 'for the road and existing stat files that
 'can be merged. It then reads in all stat
 'files, checks for player sequence, and then
-'calls a supporting routine to actually
+'calastLoseStreak a supporting routine to actually
 'perform the merge
 Sub MergeStats ()
 
@@ -75,10 +75,11 @@ Sub MergeStats ()
     Shared oppScore(), oppScore_Road()
 
     Shared plyrStat_Merge!(), playerRatings!()
-    Shared stats3FGM!(), stats3FGA!()
-    Shared statsZ!(), statsZ1!()
     Shared threeFGM_Merge!(), threeFGA_Merge!()
-    Shared ZRD!(), ZRD1!()
+
+    Shared stats3FGM!(), stats3FGA!()
+    Shared statsZ0!(), statsZ1!()
+    Shared statsZ_Road!(), statsZ1_Road!()
 
     'Shared gameSite$(), gameSite_Road$()
     Shared locIndicator$(), locIndicator_Road$()
@@ -129,11 +130,11 @@ Sub MergeStats ()
                     Next
 
                     For L = 0 To 15: 
-                        Input #1, ZRD!(L)
+                        Input #1, statsZ_Road!(L)
                     Next
                     
                     For L = 0 To 15: 
-                        Input #1, ZRD1!(L)
+                        Input #1, statsZ1_Road!(L)
                     Next
 
                     Close #1
@@ -193,7 +194,7 @@ Sub MergeStats ()
                         Next
 
                         For L = 0 To 15: 
-                            Input #3, statsZ!(L)
+                            Input #3, statsZ0!(L)
                         Next
 
                         For L = 0 To 15: 
@@ -255,7 +256,7 @@ Sub MergeStats ()
                             Color 14
                             Locate 5, 27: Print "PLAYERS NOT IN SEQUENCE !!"
                             Color 15
-                            Locate 7, 20: Print "STATS WILL BE DISTORTED UNLESS THE ROAD"
+                            Locate 7, 20: Print "STATS WIll BE DISTORTED UNLESS THE ROAD"
                             Locate , 19: Print "FILE LISTS THE PLAYERS IN THE SAME SEQUENCE"
                             Locate , 24: Print "AS YOUR CURRENT PLAYER STAT FILE."
                             Color 12
@@ -334,11 +335,11 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
     Shared teamScore(), teamScore_Road()
 
     Shared plyrStat_Merge!(), playerRatings!()
+    Shared threeFGM_Merge!(), threeFGA_Merge!()
 
     Shared stats3FGM!(), stats3FGA!()
-    Shared statsZ!(), statsZ1!()
-    Shared threeFGM_Merge!(), threeFGA_Merge!()
-    Shared ZRD!(), ZRD1!()
+    Shared statsZ0!(), statsZ1!()
+    Shared statsZ_Road!(), statsZ1_Road!()
 
     Shared gameSite$(), gameSite_Road$()
     Shared locIndicator$(), locIndicator_Road$()
@@ -376,8 +377,8 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
     Next I
 
     For L = 0 To 14
-        statsZ!(L) = statsZ!(L) + ZRD!(L)
-        statsZ1!(L) = statsZ1!(L) + ZRD1!(L)
+        statsZ0!(L) = statsZ0!(L) + statsZ_Road!(L)
+        statsZ1!(L) = statsZ1!(L) + statsZ1_Road!(L)
     Next
 
     Open pathCurrentStats$ + statFile$ For Output As #1
@@ -398,7 +399,7 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
     Next
 
     For L = 0 To 15: 
-        Write #1, statsZ!(L)
+        Write #1, statsZ0!(L)
     Next
     
     For L = 0 To 15: 

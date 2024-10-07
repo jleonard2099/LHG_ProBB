@@ -70,7 +70,7 @@ Declare Sub TICKER ()
 Declare Sub TickerSchedule
 Declare Sub TICKERUPDATE ()
 Declare Sub UPDATESCREEN ()
-Declare Sub WHOGETSBALL
+Declare Sub WHOGETSBAll
 Declare Sub WINDEX ()
 
 Declare Function CheckString% (targetString$)

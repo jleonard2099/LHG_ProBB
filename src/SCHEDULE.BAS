@@ -114,7 +114,7 @@ Sub SCHEDULE ()
                 Case 7:
                     'scheduleFile$ = _OpenFileDialog$("Select schedule file", diskPaths$(3), "*.SCD", "Schedule files")
                     'Call ConvertSched4to5(scheduleFile$, 0)
-                    Call ConvertAllSched
+                    Call ConvertAlastLoseStreakched
 
             End Select
 
@@ -554,7 +554,7 @@ End Sub
 '----------------------------------------
 'This subroutine gives the user an inter-
 'face for choosing games to edit, then
-'calls the NewGame routine to essentially
+'calastLoseStreak the NewGame routine to essentially
 'display the existing parameters and allow
 'them to be modified
 Sub EditGame (DT$, TM$)
@@ -623,7 +623,7 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
     Shared scheduleH$(), scheduleV$()
     Shared scheduleYN$()
 
-    Shared scheduleNG%(), teamRatings%()
+    Shared scheduleNG%(), teamRatings()
 
     Shared coachMode$(), foulOption$(), freeThrowOpt$()
     Shared location$(), modeAbbrev$()
@@ -688,7 +688,7 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
         Color 15: Print "NUMBER OF FREE THROWS: "; freeThrowOpt$(scheduleNG%(gameIndex%, 10))
         Locate 17, 2: Color 14
         Print "(G) ";
-        Color 15: Print "BONUS AFTER FOUL #: "; scheduleNG%(gameIndex%, 14)
+        Color 15: Print "BONUS ON FOUL #: "; scheduleNG%(gameIndex%, 14)
         Locate 18, 2: Color 14
         Print "(H) ";
         Color 15: Print "HUMAN COACHES: "; coachMode$(scheduleNG%(gameIndex%, 9))
@@ -705,8 +705,8 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
         'Color 15
         'Locate , 3: Print "* BONUS ON 7TH FOUL UNTIL 72-73, 6TH FOUL (72-73 SEASON), 5TH FOUL (73-74+)"
         'Locate , 3: Print "* UNTIL 72-73, A TEAM IN BONUS CHOSE 3 FT TO MAKE 2 OR 2 FT TO MAKE 1"
-        'Locate , 3: Print "* UNTIL 72-73, ALL FOULS WERE SHOT"
-        'Locate , 3: Print "* 3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 79-80"
+        'Locate , 3: Print "* UNTIL 72-73, All FOULS WERE SHOT"
+        'Locate , 3: Print "* 3-PT SHOT WAS USED FOR All ABA SEASONS AND NBA SINCE 79-80"
         'Locate , 3: Print "* ABA USED A 30-SEC SHOT CLOCK THROUGH 73-74";
 
         Do
@@ -1111,9 +1111,9 @@ Sub BoxscoreMaintenance ()
 
     menuChoices$(1) = "SET PARAMETERS TO SAVE SPECIAL EVENTS BOXSCORES  "
     menuChoices$(2) = "ACCESS USER SAVED AND SPECIAL EVENTS BOXSCORES   "
-    menuChoices$(3) = "DELETE ALL SCHEDULE GENERATED BOXSCORES          "
-    menuChoices$(4) = "DELETE ALL USER SAVED, & SPECIAL BOXSCORES       "
-    menuChoices$(5) = "DELETE ALL BOXSCORES (SCHEDULE, USER, &  SPECIAL)"
+    menuChoices$(3) = "DELETE All SCHEDULE GENERATED BOXSCORES          "
+    menuChoices$(4) = "DELETE All USER SAVED, & SPECIAL BOXSCORES       "
+    menuChoices$(5) = "DELETE All BOXSCORES (SCHEDULE, USER, &  SPECIAL)"
     menuChoices$(6) = "RETURN TO MAIN AUTO SCHEDULER MENU               "
     SELECTION% = 1
     Count% = 6
@@ -1406,7 +1406,7 @@ Sub ChangeGlobalSettings ()
         Color 15: Print "NUMBER OF FREE THROWS: "; freeThrowOpt$(freeThrowVal)
         Locate 14, 2: Color 14
         Print "(B) ";
-        Color 15: Print Using "BONUS AFTER FOUL: ##"; bonusFoulNum
+        Color 15: Print Using "BONUS ON FOUL: ##"; bonusFoulNum
         Locate 15, 2: Color 14
         Print "(C) ";
         Color 15: Print "HUMAN COACHES: "; coachMode$(coachOpt)
@@ -1545,7 +1545,7 @@ Sub DeleteBoxscores (fileChoice%, fileSpec$)
             Locate 12, 34: Print "DELETING "; boxFiles$(X)
         Next
 
-        MsgText$ = "ALL BOXSCORE FILES HAVE BEEN DELETED. PRESS ANY KEY TO RETURN TO MAIN MENU"
+        MsgText$ = "All BOXSCORE FILES HAVE BEEN DELETED. PRESS ANY KEY TO RETURN TO MAIN MENU"
         BoxWidth = 20
         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
         Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))

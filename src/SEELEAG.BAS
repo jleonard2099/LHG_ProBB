@@ -2,7 +2,7 @@
 '           SEELEAG Subroutine
 '----------------------------------------
 'This subroutine lets the user choose a
-'league stat file to view, then calls
+'league stat file to view, then calastLoseStreak
 'other routines to both load the Stats
 'and then provide options for display
 Sub SEELEAG ()
@@ -29,12 +29,12 @@ End Sub
 'from the file into several arrays
 Sub LoadLeaderFiles_Pro (targetFile$)
 
-    Shared O1!(), O2!()
+    Shared compLeagWins!(), compLeagLosses!()
     Shared defLeaders!(), offLeaders!()
-    Shared seeZ!(), seeZ1!()
+    Shared compLgStatVal!(), compLgStatAtt!()
 
     Shared defLeaderNames$(), offLeaderNames$()
-    Shared seeT$(), Z2$(), Z3$()
+    Shared compLdrTeam$(), leagLdrPlayer$(), leagLdrTeam$()
 
     Shared league$, div1Name$, div2Name$, div3Name$, div4Name$
 
@@ -54,11 +54,11 @@ Sub LoadLeaderFiles_Pro (targetFile$)
     Open diskPaths$(2) + targetFile$ + ".LDR" For Input As #2
 
     For X = 1 To TEAMS_PER_LEAGUE
-        Input #2, seeT$(X), O1!(X), O2!(X)
+        Input #2, compLdrTeam$(X), compLeagWins!(X), compLeagLosses!(X)
     Next
 
     For X = 1 To 250
-        Input #2, Z2$(X), Z3$(X), seeZ!(X), seeZ1!(X)
+        Input #2, leagLdrPlayer$(X), leagLdrTeam$(X), compLgStatVal!(X), compLgStatAtt!(X)
     Next
 
     For X = 1 To TEAMS_PER_LEAGUE
@@ -86,7 +86,7 @@ End Sub
 '----------------------------------------
 'This subroutine gives the user various
 'options for viewing the previously loaded
-'stats, and then calls routines for each
+'stats, and then calastLoseStreak routines for each
 Sub StatOptions_Pro ()
 
     Do
@@ -142,13 +142,13 @@ End Sub
 'user display.
 Sub LeaderStats_Screen ()
 
-    Shared O1!(), O2!()
+    Shared compLeagWins!(), compLeagLosses!()
 
     Shared defLeaders!(), offLeaders!()
-    Shared seeZ!(), seeZ1!()
+    Shared compLgStatVal!(), compLgStatAtt!()
 
     Shared defLeaderNames$(), offLeaderNames$(), offLeaders!()
-    Shared seeT$(), Z2$(), Z3$()
+    Shared compLdrTeam$(), leagLdrPlayer$(), leagLdrTeam$()
 
     Shared league$, div1Name$, div2Name$, div3Name$, div4Name$
 
@@ -162,7 +162,9 @@ Sub LeaderStats_Screen ()
 
     ' Division 1 Standings
     Color 2
-    If div1Name$ <> "" Then Print "    " + RTrim$(div1Name$) + " DIVISION"
+    If div1Name$ <> "" Then
+        Print "    " + RTrim$(div1Name$) + " DIVISION"
+    End If
     Print
 
     Color 14
@@ -171,10 +173,10 @@ Sub LeaderStats_Screen ()
 
     For P = 1 To 10
 
-        If seeT$(P) <> "" And seeT$(P) <> "*" Then
+        If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
 
-            D1 = O1!(1) - O2!(1)
-            D = O1!(P) - O2!(P)
+            D1 = compLeagWins!(1) - compLeagLosses!(1)
+            D = compLeagWins!(P) - compLeagLosses!(P)
             D = D1 - D
             BK$ = "     " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
@@ -182,12 +184,12 @@ Sub LeaderStats_Screen ()
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            Print "    "; seeT$(P); Tab(16);
+            Print "    "; compLdrTeam$(P); Tab(16);
 
             'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
-            PCT! = O1!(P) / (O1!(P) + O2!(P))
+            PCT! = compLeagWins!(P) / (compLeagWins!(P) + compLeagLosses!(P))
 
-            Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+            Print Using "   ##   ##   #.###"; compLeagWins!(P); compLeagLosses!(P); PCT!;
             Print BK$
 
         End If
@@ -220,10 +222,10 @@ Sub LeaderStats_Screen ()
 
     For P = 11 To 20
 
-        If seeT$(P) <> "" And seeT$(P) <> "*" Then
+        If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
 
-            D1 = O1!(11) - O2!(11)
-            D = O1!(P) - O2!(P)
+            D1 = compLeagWins!(11) - compLeagLosses!(11)
+            D = compLeagWins!(P) - compLeagLosses!(P)
             D = D1 - D
             BK$ = "     " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
@@ -231,12 +233,12 @@ Sub LeaderStats_Screen ()
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            Print "    "; seeT$(P); Tab(16);
+            Print "    "; compLdrTeam$(P); Tab(16);
 
             'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
-            PCT! = O1!(P) / (O1!(P) + O2!(P))
+            PCT! = compLeagWins!(P) / (compLeagWins!(P) + compLeagLosses!(P))
 
-            Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+            Print Using "   ##   ##   #.###"; compLeagWins!(P); compLeagLosses!(P); PCT!;
             Print BK$
 
         End If
@@ -269,9 +271,9 @@ Sub LeaderStats_Screen ()
 
     For P = 21 To 30
 
-        If seeT$(P) <> "" And seeT$(P) <> "*" Then
-            D1 = O1!(21) - O2!(21)
-            D = O1!(P) - O2!(P)
+        If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
+            D1 = compLeagWins!(21) - compLeagLosses!(21)
+            D = compLeagWins!(P) - compLeagLosses!(P)
             D = D1 - D
             BK$ = "     " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
@@ -280,10 +282,10 @@ Sub LeaderStats_Screen ()
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
             'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
-            PCT! = O1!(P) / (O1!(P) + O2!(P))
+            PCT! = compLeagWins!(P) / (compLeagWins!(P) + compLeagLosses!(P))
 
-            Print "    "; seeT$(P); Tab(16);
-            Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+            Print "    "; compLdrTeam$(P); Tab(16);
+            Print Using "   ##   ##   #.###"; compLeagWins!(P); compLeagLosses!(P); PCT!;
             Print BK$
 
         End If
@@ -316,9 +318,9 @@ Sub LeaderStats_Screen ()
 
     For P = 31 To 40
 
-        If seeT$(P) <> "" And seeT$(P) <> "*" Then
-            D1 = O1!(31) - O2!(31)
-            D = O1!(P) - O2!(P)
+        If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
+            D1 = compLeagWins!(31) - compLeagLosses!(31)
+            D = compLeagWins!(P) - compLeagLosses!(P)
             D = D1 - D
             BK$ = "     " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
@@ -327,10 +329,10 @@ Sub LeaderStats_Screen ()
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
             'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
-            PCT! = O1!(P) / (O1!(P) + O2!(P))
+            PCT! = compLeagWins!(P) / (compLeagWins!(P) + compLeagLosses!(P))
 
-            Print "    "; seeT$(P); Tab(16);
-            Print Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+            Print "    "; compLdrTeam$(P); Tab(16);
+            Print Using "   ##   ##   #.###"; compLeagWins!(P); compLeagLosses!(P); PCT!;
             Print BK$
         End If
     Next P
@@ -351,10 +353,10 @@ Sub LeaderStats_Screen ()
 
     For P = 41 To 60
 
-        If Z2$(P) <> "*" And Z2$(P) <> "" Then
-            Print Left$(Z2$(P), 10) + ", " + Z3$(P);
+        If leagLdrPlayer$(P) <> "*" And leagLdrPlayer$(P) <> "" Then
+            Print Left$(leagLdrPlayer$(P), 10) + ", " + leagLdrTeam$(P);
             Locate , 28
-            Print Using "##.#  ####"; seeZ!(P) * 100; seeZ1!(P)
+            Print Using "##.#  ####"; compLgStatVal!(P) * 100; compLgStatAtt!(P)
         End If
 
     Next
@@ -368,11 +370,11 @@ Sub LeaderStats_Screen ()
 
     For P = 61 To 80
 
-        If Z2$(P) <> "*" And Z2$(P) <> "" Then
+        If leagLdrPlayer$(P) <> "*" And leagLdrPlayer$(P) <> "" Then
             Locate , 41
-            Print Left$(Z2$(P), 10) + ", " + Z3$(P);
+            Print Left$(leagLdrPlayer$(P), 10) + ", " + leagLdrTeam$(P);
             Locate , 68
-            Print Using "##.#  ####"; seeZ!(P) * 100; seeZ1!(P)
+            Print Using "##.#  ####"; compLgStatVal!(P) * 100; compLgStatAtt!(P)
         End If
 
     Next
@@ -393,9 +395,9 @@ Sub LeaderStats_Screen ()
 
     For P = 1 To 20
 
-        If Z2$(P) <> "*" Then
-            Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 34: Print Using "###.#"; compLgStatVal!(P)
         End If
 
     Next
@@ -408,9 +410,9 @@ Sub LeaderStats_Screen ()
     Color 15
 
     For P = 21 To 40
-        If Z2$(P) <> "*" Then
-            Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 74: Print Using "####"; compLgStatVal!(P)
         End If
     Next
 
@@ -429,9 +431,9 @@ Sub LeaderStats_Screen ()
 
     For P = 81 To 90
 
-        If Z2$(P) <> "*" Then
-            Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 34: Print Using "###.#"; compLgStatVal!(P)
         End If
 
     Next
@@ -443,9 +445,9 @@ Sub LeaderStats_Screen ()
 
     For P = 91 To 100
 
-        If Z2$(P) <> "*" Then
-            Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 74: Print Using "####"; compLgStatVal!(P)
         End If
 
     Next
@@ -457,9 +459,9 @@ Sub LeaderStats_Screen ()
 
     For P = 101 To 110
 
-        If Z2$(P) <> "*" Then
-            Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 34: Print Using "###.#"; compLgStatVal!(P)
         End If
 
     Next
@@ -471,9 +473,9 @@ Sub LeaderStats_Screen ()
 
     For P = 111 To 120
 
-        If Z2$(P) <> "*" Then
-            Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 74: Print Using "####"; compLgStatVal!(P)
         End If
 
     Next
@@ -493,9 +495,9 @@ Sub LeaderStats_Screen ()
 
     For P = 121 To 130
 
-        If Z2$(P) <> "" Then
-            Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; seeZ!(P) * 100
+        If leagLdrPlayer$(P) <> "" Then
+            Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 34: Print Using "###.#"; compLgStatVal!(P) * 100
         End If
 
     Next P
@@ -507,9 +509,9 @@ Sub LeaderStats_Screen ()
 
     For P = 141 To 150
 
-        If Z2$(P) <> "*" Then
-            Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "###.#"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 74: Print Using "###.#"; compLgStatVal!(P)
         End If
 
     Next P
@@ -521,9 +523,9 @@ Sub LeaderStats_Screen ()
 
     For P = 131 To 140
 
-        If Z2$(P) <> "" Then
-            Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "####"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "" Then
+            Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 34: Print Using "####"; compLgStatVal!(P)
         End If
 
     Next
@@ -535,9 +537,9 @@ Sub LeaderStats_Screen ()
 
     For P = 151 To 160
 
-        If Z2$(P) <> "*" Then
-            Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 74: Print Using "####"; compLgStatVal!(P)
         End If
 
     Next
@@ -557,9 +559,9 @@ Sub LeaderStats_Screen ()
 
     For P = 161 To 170
 
-        If Z2$(P) <> "*" Then
-            Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 34: Print Using "###.#"; compLgStatVal!(P)
         End If
 
     Next
@@ -571,9 +573,9 @@ Sub LeaderStats_Screen ()
 
     For P = 171 To 180
 
-        If Z2$(P) <> "*" Then
-            Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 74: Print Using "####"; compLgStatVal!(P)
         End If
 
     Next
@@ -585,9 +587,9 @@ Sub LeaderStats_Screen ()
 
     For P = 181 To 190
 
-        If Z2$(P) <> "*" Then
-            Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 34: Print Using "###.#"; compLgStatVal!(P)
         End If
 
     Next
@@ -599,9 +601,9 @@ Sub LeaderStats_Screen ()
 
     For P = 191 To 200
 
-        If Z2$(P) <> "*" Then
-            Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 74: Print Using "####"; compLgStatVal!(P)
         End If
 
     Next
@@ -620,9 +622,9 @@ Sub LeaderStats_Screen ()
 
     For P = 201 To 210
 
-        If Z2$(P) <> "*" Then
-            Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "####"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 34: Print Using "####"; compLgStatVal!(P)
         End If
 
     Next
@@ -634,9 +636,9 @@ Sub LeaderStats_Screen ()
 
     For P = 211 To 220
 
-        If Z2$(P) <> "*" Then
-            Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 74: Print Using "####"; compLgStatVal!(P)
         End If
 
     Next
@@ -648,9 +650,9 @@ Sub LeaderStats_Screen ()
 
     For P = 221 To 230
 
-        If Z2$(P) <> "*" Then
-            Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "###.#"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 34: Print Using "###.#"; compLgStatVal!(P)
         End If
 
     Next
@@ -662,9 +664,9 @@ Sub LeaderStats_Screen ()
 
     For P = 231 To 240
 
-        If Z2$(P) <> "*" Then
-            Locate , 41: Print Z2$(P) + ", " + Z3$(P);
-            Locate , 74: Print Using "####"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 74: Print Using "####"; compLgStatVal!(P)
         End If
 
     Next
@@ -684,9 +686,9 @@ Sub LeaderStats_Screen ()
 
     For P = 241 To 250
 
-        If Z2$(P) <> "*" Then
-            Print Z2$(P) + ", " + Z3$(P);
-            Locate , 34: Print Using "####"; seeZ!(P)
+        If leagLdrPlayer$(P) <> "*" Then
+            Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
+            Locate , 34: Print Using "####"; compLgStatVal!(P)
         End If
 
     Next
@@ -708,7 +710,7 @@ Sub LeaderStats_Screen ()
 
     For X = 1 To 20
 
-        If Not (offLeaderNames$(X) = "" Or offLeaderNames$(X) = "*" Or offLeaderNames$(X) = " ") Then
+        If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
             'Team
             Print Left$(offLeaderNames$(X), 11); Tab(13);
             'G
@@ -852,16 +854,29 @@ Sub LeaderStats_Screen ()
     For X = 21 To 40
 
         If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
-            Print Left$(defLeaderNames$(X), 11); Tab(13);: Print Using "##"; defLeaders!(X, 16);
+            'Team
+            Print Left$(defLeaderNames$(X), 11); Tab(13);
+            'Games
+            Print Using "##"; defLeaders!(X, 16);
+            'FGA
             Print Tab(16);: Print Using "####"; defLeaders!(X, 2);
+            'FGM
             Print Tab(21);: Print Using "####"; defLeaders!(X, 3);
+            'FG %
             Print Tab(26);: Print Using ".###"; defLeaders!(X, 17);
+            'FTA / FTM / FT %
             Print Tab(31);: Print Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);
+            'Reb / Asst
             Print Tab(46);: Print Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);
+            'PF
             Print Tab(56);: Print Using "####"; defLeaders!(X, 7);
+            'Steal
             Print Tab(61);: Print Using "###"; defLeaders!(X, 8);
+            'Block
             Print Tab(65);: Print Using "###"; defLeaders!(X, 10);
+            'Points
             Print Tab(69);: Print Using "#####"; defLeaders!(X, 20);
+            'Average
             Print Tab(75);: Print Using "###.#"; defLeaders!(X, 19)
         End If
 
@@ -889,12 +904,12 @@ End Sub
 '   1 = Printer
 Sub SavePrintLeagueLeaders (printDest, destFile$)
 
-    Shared O1!(), O2!()
+    Shared compLeagWins!(), compLeagLosses!()
     Shared defLeaders!(), offLeaders!()
-    Shared seeZ!(), seeZ1!()
+    Shared compLgStatVal!(), compLgStatAtt!()
 
-    Shared offLeaderNames$(), defLeaderNames$(), seeT$()
-    Shared Z2$(), Z3$()
+    Shared offLeaderNames$(), defLeaderNames$(), compLdrTeam$()
+    Shared leagLdrPlayer$(), leagLdrTeam$()
 
     Shared league$, div1Name$, div2Name$, div3Name$, div4Name$
 
@@ -911,9 +926,9 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 1 To 10
 
-        If seeT$(P) <> "" And seeT$(P) <> "*" Then
-            D1 = O1!(1) - O2!(1)
-            D = O1!(P) - O2!(P)
+        If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
+            D1 = compLeagWins!(1) - compLeagLosses!(1)
+            D = compLeagWins!(P) - compLeagLosses!(P)
             D = D1 - D
             BK$ = "   " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
@@ -921,10 +936,10 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            PCT! = O1!(P) / (O1!(P) + O2!(P))
+            PCT! = compLeagWins!(P) / (compLeagWins!(P) + compLeagLosses!(P))
 
-            Print #1, "    "; seeT$(P); Tab(16);
-            Print #1, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+            Print #1, "    "; compLdrTeam$(P); Tab(16);
+            Print #1, Using "   ##   ##   #.###"; compLeagWins!(P); compLeagLosses!(P); PCT!;
             Print #1, BK$
         End If
 
@@ -937,9 +952,9 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 11 To 20
 
-        If seeT$(P) <> "" And seeT$(P) <> "*" Then
-            D1 = O1!(11) - O2!(11)
-            D = O1!(P) - O2!(P)
+        If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
+            D1 = compLeagWins!(11) - compLeagLosses!(11)
+            D = compLeagWins!(P) - compLeagLosses!(P)
             D = D1 - D
             BK$ = "   " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
@@ -947,10 +962,10 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            PCT! = O1!(P) / (O1!(P) + O2!(P))
+            PCT! = compLeagWins!(P) / (compLeagWins!(P) + compLeagLosses!(P))
 
-            Print #1, "    "; seeT$(P); Tab(16);
-            Print #1, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+            Print #1, "    "; compLdrTeam$(P); Tab(16);
+            Print #1, Using "   ##   ##   #.###"; compLeagWins!(P); compLeagLosses!(P); PCT!;
             Print #1, BK$
         End If
 
@@ -963,9 +978,9 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 21 To 30
 
-        If seeT$(P) <> "" And seeT$(P) <> "*" Then
-            D1 = O1!(21) - O2!(21)
-            D = O1!(P) - O2!(P)
+        If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
+            D1 = compLeagWins!(21) - compLeagLosses!(21)
+            D = compLeagWins!(P) - compLeagLosses!(P)
             D = D1 - D
             BK$ = "   " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
@@ -973,10 +988,10 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            PCT! = O1!(P) / (O1!(P) + O2!(P))
+            PCT! = compLeagWins!(P) / (compLeagWins!(P) + compLeagLosses!(P))
 
-            Print #1, "    "; seeT$(P); Tab(16);
-            Print #1, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+            Print #1, "    "; compLdrTeam$(P); Tab(16);
+            Print #1, Using "   ##   ##   #.###"; compLeagWins!(P); compLeagLosses!(P); PCT!;
             Print #1, BK$
 
         End If
@@ -990,9 +1005,9 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 31 To 40
 
-        If seeT$(P) <> "" And seeT$(P) <> "*" Then
-            D1 = O1!(31) - O2!(31)
-            D = O1!(P) - O2!(P)
+        If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
+            D1 = compLeagWins!(31) - compLeagLosses!(31)
+            D = compLeagWins!(P) - compLeagLosses!(P)
             D = D1 - D
             BK$ = "   " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
@@ -1000,10 +1015,10 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            PCT! = O1!(P) / (O1!(P) + O2!(P))
+            PCT! = compLeagWins!(P) / (compLeagWins!(P) + compLeagLosses!(P))
 
-            Print #1, "    "; seeT$(P); Tab(16);
-            Print #1, Using "   ##   ##   #.###"; O1!(P); O2!(P); PCT!;
+            Print #1, "    "; compLdrTeam$(P); Tab(16);
+            Print #1, Using "   ##   ##   #.###"; compLeagWins!(P); compLeagLosses!(P); PCT!;
             Print #1, BK$
         End If
 
@@ -1016,21 +1031,21 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 41 To 60
 
-        If Z2$(P) = "" Then
+        If leagLdrPlayer$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, Left$(Z2$(P), 10) + ", " + Z3$(P);
+            Print #1, Left$(leagLdrPlayer$(P), 10) + ", " + leagLdrTeam$(P);
             Print #1, Tab(28);
-            Print #1, Using "##.#  ####"; seeZ!(P) * 100; seeZ1!(P);
+            Print #1, Using "##.#  ####"; compLgStatVal!(P) * 100; compLgStatAtt!(P);
             Print #1, Tab(41);
         End If
 
-        If Z2$(P + 20) = "" Then
+        If leagLdrPlayer$(P + 20) = "" Then
             Print #1,
         Else
-            Print #1, Left$(Z2$(P + 20), 10) + ", " + Z3$(P + 20);
+            Print #1, Left$(leagLdrPlayer$(P + 20), 10) + ", " + leagLdrTeam$(P + 20);
             Print #1, Tab(68);
-            Print #1, Using "##.#  ####"; seeZ!(P + 20) * 100; seeZ1!(P)
+            Print #1, Using "##.#  ####"; compLgStatVal!(P + 20) * 100; compLgStatAtt!(P)
         End If
 
     Next
@@ -1040,21 +1055,21 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 1 To 20
 
-        If Z2$(P) = "" Then
+        If leagLdrPlayer$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, Z2$(P) + ", " + Z3$(P);
+            Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "###.#"; seeZ!(P);
+            Print #1, Using "###.#"; compLgStatVal!(P);
             Print #1, Tab(41);
         End If
 
-        If Z2$(P + 20) = "" Then
+        If leagLdrPlayer$(P + 20) = "" Then
             Print #1,
         Else
-            Print #1, Z2$(P + 20) + ", " + Z3$(P + 20);
+            Print #1, leagLdrPlayer$(P + 20) + ", " + leagLdrTeam$(P + 20);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 20)
+            Print #1, Using "####"; compLgStatVal!(P + 20)
         End If
 
     Next
@@ -1064,21 +1079,21 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 81 To 90
 
-        If Z2$(P) = "" Then
+        If leagLdrPlayer$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, Z2$(P) + ", " + Z3$(P);
+            Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "###.#"; seeZ!(P);
+            Print #1, Using "###.#"; compLgStatVal!(P);
             Print #1, Tab(41);
         End If
 
-        If Z2$(P + 10) = "" Then
+        If leagLdrPlayer$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, Z2$(P + 10) + ", " + Z3$(P + 10);
+            Print #1, leagLdrPlayer$(P + 10) + ", " + leagLdrTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 10)
+            Print #1, Using "####"; compLgStatVal!(P + 10)
         End If
 
     Next
@@ -1088,21 +1103,21 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 101 To 110
 
-        If Z2$(P) = "" Then
+        If leagLdrPlayer$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, Z2$(P) + ", " + Z3$(P);
+            Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "###.#"; seeZ!(P);
+            Print #1, Using "###.#"; compLgStatVal!(P);
             Print #1, Tab(41);
         End If
 
-        If Z2$(P + 10) = "" Then
+        If leagLdrPlayer$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, Z2$(P + 10) + ", " + Z3$(P + 10);
+            Print #1, leagLdrPlayer$(P + 10) + ", " + leagLdrTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 10)
+            Print #1, Using "####"; compLgStatVal!(P + 10)
         End If
 
     Next
@@ -1112,21 +1127,21 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 121 To 130
 
-        If Z2$(P) = "" Then
+        If leagLdrPlayer$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, Z2$(P) + ", " + Z3$(P);
+            Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "###.#"; seeZ!(P) * 100;
+            Print #1, Using "###.#"; compLgStatVal!(P) * 100;
             Print #1, Tab(41);
         End If
 
-        If Z2$(P + 20) = "" Then
+        If leagLdrPlayer$(P + 20) = "" Then
             Print #1,
         Else
-            Print #1, Z2$(P + 20) + ", " + Z3$(P + 20);
+            Print #1, leagLdrPlayer$(P + 20) + ", " + leagLdrTeam$(P + 20);
             Print #1, Tab(74);
-            Print #1, Using "###.#"; seeZ!(P + 20)
+            Print #1, Using "###.#"; compLgStatVal!(P + 20)
         End If
 
     Next
@@ -1136,21 +1151,21 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 131 To 140
 
-        If Z2$(P) = "" Then
+        If leagLdrPlayer$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, Z2$(P) + ", " + Z3$(P);
+            Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "####"; seeZ!(P);
+            Print #1, Using "####"; compLgStatVal!(P);
             Print #1, Tab(41);
         End If
 
-        If Z2$(P + 20) = "" Then
+        If leagLdrPlayer$(P + 20) = "" Then
             Print #1,
         Else
-            Print #1, Z2$(P + 20) + ", " + Z3$(P + 20);
+            Print #1, leagLdrPlayer$(P + 20) + ", " + leagLdrTeam$(P + 20);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 20)
+            Print #1, Using "####"; compLgStatVal!(P + 20)
         End If
 
     Next
@@ -1161,21 +1176,21 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 161 To 170
 
-        If Z2$(P) = "" Then
+        If leagLdrPlayer$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, Z2$(P) + ", " + Z3$(P);
+            Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "###.#"; seeZ!(P);
+            Print #1, Using "###.#"; compLgStatVal!(P);
             Print #1, Tab(41);
         End If
 
-        If Z2$(P + 10) = "" Then
+        If leagLdrPlayer$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, Z2$(P + 10) + ", " + Z3$(P + 10);
+            Print #1, leagLdrPlayer$(P + 10) + ", " + leagLdrTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 10)
+            Print #1, Using "####"; compLgStatVal!(P + 10)
         End If
 
     Next
@@ -1185,21 +1200,21 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 181 To 190
 
-        If Z2$(P) = "" Then
+        If leagLdrPlayer$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, Z2$(P) + ", " + Z3$(P);
+            Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "###.#"; seeZ!(P);
+            Print #1, Using "###.#"; compLgStatVal!(P);
             Print #1, Tab(41);
         End If
 
-        If Z2$(P + 10) = "" Then
+        If leagLdrPlayer$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, Z2$(P + 10) + ", " + Z3$(P + 10);
+            Print #1, leagLdrPlayer$(P + 10) + ", " + leagLdrTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 20)
+            Print #1, Using "####"; compLgStatVal!(P + 20)
         End If
 
     Next
@@ -1209,21 +1224,21 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 201 To 210
 
-        If Z2$(P) = "" Then
+        If leagLdrPlayer$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, Z2$(P) + ", " + Z3$(P);
+            Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "####"; seeZ!(P);
+            Print #1, Using "####"; compLgStatVal!(P);
             Print #1, Tab(41);
         End If
 
-        If Z2$(P + 10) = "" Then
+        If leagLdrPlayer$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, Z2$(P + 10) + ", " + Z3$(P + 10);
+            Print #1, leagLdrPlayer$(P + 10) + ", " + leagLdrTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 10)
+            Print #1, Using "####"; compLgStatVal!(P + 10)
         End If
 
     Next
@@ -1233,21 +1248,21 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     For P = 221 To 230
 
-        If Z2$(P) = "" Then
+        If leagLdrPlayer$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, Z2$(P) + ", " + Z3$(P);
+            Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "###.#"; seeZ!(P);
+            Print #1, Using "###.#"; compLgStatVal!(P);
             Print #1, Tab(41);
         End If
 
-        If Z2$(P + 10) = "" Then
+        If leagLdrPlayer$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, Z2$(P + 10) + ", " + Z3$(P + 10);
+            Print #1, leagLdrPlayer$(P + 10) + ", " + leagLdrTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 10)
+            Print #1, Using "####"; compLgStatVal!(P + 10)
         End If
 
     Next
@@ -1256,10 +1271,10 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
     Print #1, "MOST VALUABLE PLAYER"
 
     For P = 241 To 250
-        If Z2$(P) <> "" Then
-            Print #1, Z2$(P) + ", " + Z3$(P);
+        If leagLdrPlayer$(P) <> "" Then
+            Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "####"; seeZ!(P)
+            Print #1, Using "####"; compLgStatVal!(P)
         End If
     Next
 
@@ -1271,19 +1286,31 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
     For X = 1 To TEAMS_PER_LEAGUE
 
         If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
+            'Team
             Print #1, Left$(offLeaderNames$(X), 11); Tab(13);
+            'Games
             Print #1, Using "##"; offLeaders!(X, 16);: Print #1, Tab(16);
+            'FGA
             Print #1, Using "####"; offLeaders!(X, 2);: Print #1, Tab(21);
+            'FGM
             Print #1, Using "####"; offLeaders!(X, 3);: Print #1, Tab(26);
+            'FG PCT
             Print #1, Using ".###"; offLeaders!(X, 17);: Print #1, Tab(31);
-            Print #1, Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);
-            Print #1, Tab(46);
+            'FTA / FTM / FT %
+            Print #1, Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);: Print #1, Tab(46);
+            'REB
             Print #1, Using "####"; offLeaders!(X, 6);: Print #1, Tab(51);
+            'ASS
             Print #1, Using "####"; offLeaders!(X, 9);: Print #1, Tab(56);
+            'PF
             Print #1, Using "####"; offLeaders!(X, 7);: Print #1, Tab(61);
+            'STL
             Print #1, Using "###"; offLeaders!(X, 8);: Print #1, Tab(65);
+            'BLK
             Print #1, Using "###"; offLeaders!(X, 10);: Print #1, Tab(69);
+            'PTS
             Print #1, Using "#####"; offLeaders!(X, 20);
+            'AVG
             Print #1, Tab(75);: Print #1, Using "###.#"; offLeaders!(X, 19)
         End If
 
@@ -1297,18 +1324,29 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
     For X = 1 To TEAMS_PER_LEAGUE
 
         If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
+            'Player
             Print #1, Left$(defLeaderNames$(X), 11); Tab(13);
+            'Games
             Print #1, Using "##"; defLeaders!(X, 16);: Print #1, Tab(16);
+            'FGA
             Print #1, Using "####"; defLeaders!(X, 2);: Print #1, Tab(21);
+            'FGM
             Print #1, Using "####"; defLeaders!(X, 3);: Print #1, Tab(26);
+            'FG %
             Print #1, Using ".###"; defLeaders!(X, 17);: Print #1, Tab(31);
-            Print #1, Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);
-            Print #1, Tab(46);
+            'FTA / FTM / FT %
+            Print #1, Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);: Print #1, Tab(46);
+            'REB / AST
             Print #1, Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);: Print #1, Tab(56);
+            'PF
             Print #1, Using "####"; defLeaders!(X, 7);: Print #1, Tab(61);
+            'STL
             Print #1, Using "###"; defLeaders!(X, 8);: Print #1, Tab(65);
+            'BLK
             Print #1, Using "###"; defLeaders!(X, 10);: Print #1, Tab(69);
+            'Points
             Print #1, Using "#####"; defLeaders!(X, 20);
+            'Average
             Print #1, Tab(75);: Print #1, Using "###.#"; defLeaders!(X, 19)
         End If
 

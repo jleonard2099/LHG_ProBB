@@ -1,7 +1,7 @@
 $Debug
 $Color:32
 
-Const GAME_VERSION$ = "5.00"
+Const GAME_VERSION$ = "5.01"
 Const MAX_SCHEDULE_GAMES = 1500
 Const MAX_TOURNAMENT_GAMES = 200
 Const MAX_TEAMS = 1000
@@ -47,7 +47,7 @@ On Error GoTo Errhandler
 
 
 '----------------------------------------
-'          READ IN ALL DATA
+'          READ IN All DATA
 '----------------------------------------
 
 Data 1954,1955,1956,1957,1958,1959
@@ -257,7 +257,7 @@ coachMode$(0) = "COACH AND SELECT SHOTS           "
 coachMode$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
 
 foulOption$(0) = "ONLY IN BONUS OR ACT OF SHOOTING"
-foulOption$(1) = "SHOOT ON ALL FOULS              "
+foulOption$(1) = "SHOOT ON All FOULS              "
 
 freeThrowOpt$(0) = "CURRENT RULES            "
 freeThrowOpt$(1) = "3 TO MAKE 2 / 2 TO MAKE 1"
@@ -650,7 +650,7 @@ Sub Leaders_Menu ()
         menuChoices$(4) = "HEAD-TO-HEAD RESULTS           "
         menuChoices$(5) = "LEAGUE RECORD BOOKS            "
         menuChoices$(6) = "EXPANDED LEADERS / STANDINGS   "
-        menuChoices$(7) = "DELETE ALL STATS FOR A LEAGUE  "
+        menuChoices$(7) = "DELETE All STATS FOR A LEAGUE  "
         menuChoices$(8) = "RETURN TO MAIN MENU            "
         SELECTION% = 1
         Count% = 8
@@ -1008,7 +1008,7 @@ Sub PROHOOP ()
             Color 15: Print "NUMBER OF FREE THROWS: "; freeThrowOpt$(freeThrowVal)
             Locate 18, 2: Color 14
             Print "(G) ";
-            Color 15: Print "BONUS AFTER FOUL #: "; bonusFoulNum
+            Color 15: Print "BONUS ON FOUL #: "; bonusFoulNum
             Locate 19, 2: Color 14
             Print "(H) ";
             Color 15: Print "PLAY-BY-PLAY STYLE: "; pbpStyle$(pbpOpt)
@@ -1020,9 +1020,9 @@ Sub PROHOOP ()
             'Print "NOTE:: ";: Color 15: Print "UP UNTIL 1972-73, WHEN A TEAM WAS IN THE BONUS, THEY HAD THE CHANCE"
             'Locate , 2: Print "       TO SHOOT 3 FT TO MAKE 2 OR 2 FT TO MAKE 1"
             'Locate , 2: Color 14
-            'Print "NOTE:: ";: Color 15: Print "UP UNTIL 1972-73, ALL FOULS WERE SHOT...UNLIKE THE CURRENT RULES"
+            'Print "NOTE:: ";: Color 15: Print "UP UNTIL 1972-73, All FOULS WERE SHOT...UNLIKE THE CURRENT RULES"
             'Locate , 2: Color 14
-            'Print "NOTE:: ";: Color 15: Print "THE 3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 1979-80"
+            'Print "NOTE:: ";: Color 15: Print "THE 3-PT SHOT WAS USED FOR All ABA SEASONS AND NBA SINCE 1979-80"
             'Locate , 2: Color 14
             'Print "NOTE:: ";: Color 15: Print "THE ABA USED A 30-SEC SHOT CLOCK THROUGH 1973-74";
 
@@ -1030,8 +1030,8 @@ Sub PROHOOP ()
             Print "NOTE:: "
             Color 15
             Locate , 2: Print "* BONUS ON 7TH FOUL UNTIL 72-73, 6TH FOUL (72-73 SEASON), 5TH FOUL (73-74+)"
-            Locate , 2: Print "* UNTIL 72-73, BONUS FTs WERE 3 TO MAKE 2 | 2 TO MAKE 1; ALL FOULS SHOT"
-            Locate , 2: Print "* 3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 79-80"
+            Locate , 2: Print "* UNTIL 72-73, BONUS FTs WERE 3 TO MAKE 2 | 2 TO MAKE 1; All FOULS SHOT"
+            Locate , 2: Print "* 3-PT SHOT WAS USED FOR All ABA SEASONS AND NBA SINCE 79-80"
             Locate , 2: Print "* ABA HAD 30-SEC SHOT CLOCK THROUGH 73-74; NBA BEGAN 24-SEC SOT CLOCK IN 1954";
 
             Do
@@ -1231,8 +1231,13 @@ Sub PROHOOP ()
         'Random # 12,000 - 22,000
         actualAttendance& = Int(Rnd(1) * 10000) + 12000
     Else
-        'Average attendance +/ 5,000
-        actualAttendance& = Int(Rnd(1) * 10000) + avgAttendance&(1) - 5000
+        'Average attendance +/ 10%
+        'College attendance ranges 80% to 100% of max capacity
+        margin = Int(avgAttendance&(1) * .10)
+        actualAttendance& = avgAttendance&(1) + Int(Rnd(1) * margin * 2) - margin
+
+        'Average attendance +/- 5,000
+        'actualAttendance& = avgAttendance&(1) + Int(Rnd(1) * 10000) - 5000
     End If
 
     LS = 0
@@ -1342,7 +1347,7 @@ Sub PROHOOP ()
             pbpString$ = gameTeams$(jumpBall) + " GETS THE JUMP"
 
         Else
-            pbpString$ = gameTeams$(jumpBall) + " INBOUNDS THE BALL"
+            pbpString$ = gameTeams$(jumpBall) + " INBOUNDS THE BAll"
 
         End If
 
@@ -1600,7 +1605,7 @@ Sub PROHOOP ()
 
     If (playerMode = 0 And coachOpt = 1) Or (playerMode = 1 And D = compTeam And coachOpt = 1) Or (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
 
-        Call WHOGETSBALL
+        Call WHOGETSBAll
 
     Else
 
@@ -1679,7 +1684,7 @@ Sub PROHOOP ()
                 End Select
             
             Case 2, 5, 6, 8, 9
-                ' *** SHOT VS LOOSE M-M, SAG M-M, ALL ZONE EXCEPT 1-3-1 ***
+                ' *** SHOT VS LOOSE M-M, SAG M-M, All ZONE EXCEPT 1-3-1 ***
 
                 Select Case RN0
 
@@ -1977,7 +1982,7 @@ Sub PROHOOP ()
         If pbpOpt = 1 Then
 
             Call WINDEX
-            Print "BALL STOLEN BY "; players_GAME$(D, lineupIdx(D, P9), 0); "!"
+            Print "BAll STOLEN BY "; players_GAME$(D, lineupIdx(D, P9), 0); "!"
             Call DELAY
 
         Else
@@ -1993,7 +1998,7 @@ Sub PROHOOP ()
                     pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " SNEAKS IN FROM BEHIND!"
 
                 Case 7 To 10:
-                    pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " GETS A HAND ON THE BALL!"
+                    pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " GETS A HAND ON THE BAll!"
 
             End Select
 
@@ -2007,7 +2012,7 @@ Sub PROHOOP ()
 
                 Case 2: pbpString$ = "PASS IS PICKED OFF BY " + players_GAME$(D, lineupIdx(D, P9), 0) + "!"
 
-                Case 3: pbpString$ = "BALL IS STOLEN BY " + players_GAME$(D, lineupIdx(D, P9), 0) + "!"
+                Case 3: pbpString$ = "BAll IS STOLEN BY " + players_GAME$(D, lineupIdx(D, P9), 0) + "!"
 
                 Case 4: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " WITH THE STEAL!"
 
@@ -2017,15 +2022,15 @@ Sub PROHOOP ()
 
                 Case 7: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " RIPS IT LOOSE!"
 
-                Case 8: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " TAKES THE BALL AWAY!"
+                Case 8: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " TAKES THE BAll AWAY!"
 
-                Case 9: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " STEALS THE BALL!"
+                Case 9: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " STEALS THE BAll!"
 
                 Case 10: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " PICKS IT OFF!"
 
-                Case 11: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " SWIPES THE BALL!"
+                Case 11: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " SWIPES THE BAll!"
 
-                Case 12: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " WITH THE STOLEN BALL!"
+                Case 12: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " WITH THE STOLEN BAll!"
 
                 Case 13: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " STRIPS IT AWAY!"
 
@@ -2092,7 +2097,7 @@ Sub PROHOOP ()
     pbpString$ = "TURNOVER BY " + gameTeams$(P)
     Call SELECTPBP(P, 1)
 
-    pbpString$ = "BALL OUT OF BOUNDS TO " + gameTeams$(D)
+    pbpString$ = "BAll OUT OF BOUNDS TO " + gameTeams$(D)
     Call SELECTPBP(D, 0)
     Call DELAY
 
@@ -2777,7 +2782,7 @@ Sub PROHOOP ()
 
                     Call ChangePossession
 
-                    pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
+                    pbpString$ = gameTeams$(P) + " BAll AFTER SCORE"
                     Call SELECTPBP(P, 1)
 
                     Call DEADBALLOPTIONS(deadballTO)
@@ -2876,13 +2881,13 @@ Sub PROHOOP ()
                                         Case 9:
                                             pbpString$ = "BINGO!"
                                         Case 10:
-                                            pbpString$ = "IT FALLS!"
+                                            pbpString$ = "IT FAlastLoseStreak!"
                                         Case 11:
                                             pbpString$ = teamGender$(P) + " DRAINS IT!"
                                         Case 12:
                                             pbpString$ = "SWISH!"
                                         Case 13:
-                                            pbpString$ = "ALL NET!"
+                                            pbpString$ = "All NET!"
                                         Case 14:
                                             pbpString$ = "IT'S THERE!"
                                         Case 15:
@@ -2894,7 +2899,7 @@ Sub PROHOOP ()
                                         Case 18:
                                             pbpString$ = "IT GOES DOWN!"
                                         Case 19:
-                                            pbpString$ = "BULLSEYE!"
+                                            pbpString$ = "BUlastLoseStreakEYE!"
                                         Case 20:
                                             pbpString$ = teamGender$(P) + " SCORES!"
                                         Case 21:
@@ -2938,7 +2943,7 @@ Sub PROHOOP ()
 
                     Call ChangePossession
 
-                    pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
+                    pbpString$ = gameTeams$(P) + " BAll AFTER SCORE"
                     Call SELECTPBP(P, 1)
                     Call DELAY
 
@@ -3201,7 +3206,7 @@ Sub PROHOOP ()
 
                     Call ChangePossession
 
-                    pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
+                    pbpString$ = gameTeams$(P) + " BAll AFTER SCORE"
                     Call SELECTPBP(P, 1)
 
                     Call DEADBALLOPTIONS(deadballTO)
@@ -3339,7 +3344,7 @@ Sub PROHOOP ()
             'Time to inbound the ball
             Call Substitutions
 
-            pbpString$ = gameTeams$(P) + " BALL AFTER FOUL"
+            pbpString$ = gameTeams$(P) + " BAll AFTER FOUL"
             Call PBP(P)
 
             Call DELAY
@@ -3376,7 +3381,7 @@ Sub PROHOOP ()
 
                 Call ChangePossession
 
-                pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
+                pbpString$ = gameTeams$(P) + " BAll AFTER SCORE"
                 Call SELECTPBP(P, 1)
                 DELAY
 
@@ -3440,7 +3445,7 @@ Sub PROHOOP ()
         pbpString$ = "OFFENSIVE FOUL"
         Call SELECTPBP(P, 1)
 
-        pbpString$ = gameTeams$(P) + " BALL AFTER FOUL"
+        pbpString$ = gameTeams$(P) + " BAll AFTER FOUL"
         Call SELECTPBP(P, 1)
 
         Locate 8, 41: Print Space$(12)
@@ -3482,7 +3487,7 @@ Sub PROHOOP ()
 
         Call ChangePossession
 
-        pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
+        pbpString$ = gameTeams$(P) + " BAll AFTER SCORE"
         Call SELECTPBP(P, 1)
         Call DELAY
 
@@ -3598,7 +3603,7 @@ Sub PROHOOP ()
                 pbpString$ = "OFFENSIVE GOAL TENDING"
                 Call SELECTPBP(P, 1)
 
-                pbpString$ = "BALL GOES TO " + gameTeams$(D)
+                pbpString$ = "BAll GOES TO " + gameTeams$(D)
                 Call SELECTPBP(P, 1)
                 Call DELAY
 
@@ -3687,7 +3692,7 @@ Sub PROHOOP ()
 
                 Call ChangePossession
 
-                pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
+                pbpString$ = gameTeams$(P) + " BAll AFTER SCORE"
                 Call SELECTPBP(P, 1)
                 Call DELAY
 
@@ -4005,7 +4010,7 @@ Sub InitVar ()
     Shared teamScore(), oppScore()
 
     Shared game3FGM!(), game3FGA!()
-    Shared statsZ!(), statsZ1!(), statsZ2!()
+    Shared statsZ0!(), statsZ1!(), statsZ2!()
     Shared indRecords!(), teamRecords!()
 
     Shared alpha$()
@@ -4127,7 +4132,7 @@ Sub InitVar ()
 
     Erase gameRatings!, game3FGM!, game3FGA!
     Erase M9!
-    Erase statsZ!, statsZ1!, statsZ2!
+    Erase statsZ0!, statsZ1!, statsZ2!
     Erase indRecords!, teamRecords!
 
     Erase diskIDs$, gameSite$, gameTeams$
@@ -4332,7 +4337,7 @@ Sub DISABLEPLAYERS (P9)
 
         Print
         Print
-        Print "NOTE:: THE COMPUTER WILL AUTOMATICALLY DISABLE PLAYERS BASED ON"
+        Print "NOTE:: THE COMPUTER WIll AUTOMATICALLY DISABLE PLAYERS BASED ON"
         Print "       THE RATIO OF GAMES PLAYED FOR EACH PLAYER TO THE TOTAL"
         Print "       NUMBER OF GAMES PLAYED BY THE TEAM. YOU MAY WANT TO CHECK"
         Print "       TO ACTIVATE ANY COMPUTER DEACTIVATED PLAYERS"
@@ -4577,11 +4582,11 @@ Sub MAKEPBP (pbpType)
 
                 Select Case RN1
 
-                    Case 1: pbpString$ = pbpString$ + " TURNS THE BALL OVER"
+                    Case 1: pbpString$ = pbpString$ + " TURNS THE BAll OVER"
                     Case 2: pbpString$ = pbpString$ + " THROWS IT AWAY"
                     Case 3: pbpString$ = pbpString$ + " IS WHISTLED FOR TRAVELING"
                     Case 4: pbpString$ = pbpString$ + " TURNS IT OVER"
-                    Case 5: pbpString$ = pbpString$ + " LOSES CONTROL OF THE BALL"
+                    Case 5: pbpString$ = pbpString$ + " LOSES CONTROL OF THE BAll"
                     Case 6: pbpString$ = pbpString$ + " LOSES IT OUT OF BOUNDS"
                     Case 7: pbpString$ = pbpString$ + " LOSES THE HANDLE"
                     Case 8: pbpString$ = pbpString$ + " LOSES IT"
@@ -4616,8 +4621,8 @@ Sub MAKEPBP (pbpType)
                     Case 14: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE 1-HANDED SLAM!!!"
                     Case 15: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE REVERSE SLAM!!!"
                     Case 16: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE REVERSE JAM!!!"
-                    Case 17: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE WINDMILL JAM!!!"
-                    Case 18: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE WINDMILL SLAM!!!"
+                    Case 17: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE WINDMIll JAM!!!"
+                    Case 18: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE WINDMIll SLAM!!!"
                     Case 19: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE TOMAHAWK SLAM!!!"
                     Case 20: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE 360 SLAM!!!"
                     Case 21: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE SPINNING SLAM!!!"
@@ -4833,7 +4838,7 @@ Sub MAKEPBP (pbpType)
                                     pbpString$ = teamGender$(P) + " PENETRATES"
 
                                     Call PBP(P)
-                                    pbpString$ = "GORGEOUS FINGER ROLL!"
+                                    pbpString$ = "GORGEOUS FINGER ROll!"
 
                                 Case 60 To 75:
                                     pbpString$ = teamGender$(P) + " TAKES THE JUMPER"
@@ -4950,7 +4955,7 @@ Sub MAKEPBP (pbpType)
                                     pbpString$ = teamGender$(P) + " PENETRATES"
 
                                     Call PBP(P)
-                                    pbpString$ = "GORGEOUS FINGER ROLL!"
+                                    pbpString$ = "GORGEOUS FINGER ROll!"
 
                                 Case 75 To 80:
                                     pbpString$ = teamGender$(P) + " SHOOTS"
@@ -5185,7 +5190,7 @@ Sub MAKEPBP (pbpType)
                             Case 56: pbpString$ = pbpString$ + " WITH A RUNNING LEFT HANDER"
                             Case 57: pbpString$ = pbpString$ + " WITH A RUNNING SCOOP SHOT"
                             Case 58: pbpString$ = pbpString$ + " WITH THE SCOOP SHOT"
-                            Case 59: pbpString$ = pbpString$ + " WITH THE FINGER ROLL"
+                            Case 59: pbpString$ = pbpString$ + " WITH THE FINGER ROll"
 
                         End Select
 
@@ -5207,7 +5212,7 @@ Sub MAKEPBP (pbpType)
                             Case 11: pbpString$ = pbpString$ + " FROM THE TOP OF THE KEY"
                             Case 12: pbpString$ = pbpString$ + " FIRES FROM THE LEFT WING"
                             Case 13: pbpString$ = pbpString$ + " TRIES THE 12 FOOTER"
-                            Case 14: pbpString$ = pbpString$ + " PULLS UP AND POPS"
+                            Case 14: pbpString$ = pbpString$ + " PUlastLoseStreak UP AND POPS"
                             Case 15: pbpString$ = pbpString$ + " FIRES FROM 15"
                             Case 16: pbpString$ = pbpString$ + " FROM THE PERIMETER"
                             Case 17: pbpString$ = pbpString$ + " TURNS AND SHOOTS"
@@ -5246,7 +5251,7 @@ Sub MAKEPBP (pbpType)
                             Case 43: pbpString$ = pbpString$ + " FROM AROUND 16 FEET"
                             Case 44: pbpString$ = pbpString$ + " PUTS IT UP"
                             Case 45: pbpString$ = pbpString$ + " WITH A RUNNING ONE-HANDER"
-                            Case 46: pbpString$ = pbpString$ + " PULLS UP"
+                            Case 46: pbpString$ = pbpString$ + " PUlastLoseStreak UP"
                             Case 47: pbpString$ = pbpString$ + " KISSES THE GLASS"
                             Case 48: pbpString$ = pbpString$ + " SPINS AND SHOOTS"
                             Case 49: pbpString$ = pbpString$ + " PUTS IT UP FROM 16"
@@ -5259,7 +5264,7 @@ Sub MAKEPBP (pbpType)
                             Case 56: pbpString$ = pbpString$ + " WITH A RUNNING LEFT HANDER"
                             Case 57: pbpString$ = pbpString$ + " WITH A RUNNING SCOOP SHOT"
                             Case 58: pbpString$ = pbpString$ + " WITH THE SCOOP SHOT"
-                            Case 59: pbpString$ = pbpString$ + " WITH THE FINGER ROLL"
+                            Case 59: pbpString$ = pbpString$ + " WITH THE FINGER ROll"
 
                         End Select
 
@@ -5367,7 +5372,7 @@ Sub MAKEPBP (pbpType)
                     Case 1 To 6
                         pbpString$ = teamGender$(P) + " DRAINS THE THREE!"
                     Case 7 To 10
-                        pbpString$ = teamGender$(P) + " FILLS UP THE BASKET!!!"
+                        pbpString$ = teamGender$(P) + " FIlastLoseStreak UP THE BASKET!!!"
                     Case 11 To 20:
                         pbpString$ = pbpString$ + " HITS THE TREY!!!"
                     Case 21 To 30:
@@ -5383,7 +5388,7 @@ Sub MAKEPBP (pbpType)
                     Case 81 To 90:
                         pbpString$ = pbpString$ + " BURIES IT!!!"
                     Case 91 To 100:
-                        pbpString$ = "IT'S ALL NET!!!"
+                        pbpString$ = "IT'S All NET!!!"
 
                 End Select
 
@@ -5415,7 +5420,7 @@ Sub MAKEPBP (pbpType)
                     Case 21 To 25:
                         pbpString$ = "IT NEVER HAD A CHANCE"
                     Case 26 To 35:
-                        pbpString$ = "AIRRRR BALLLL!!"
+                        pbpString$ = "AIRRRR BAlltotTeamLosses!!"
                     Case 36 To 40:
                         pbpString$ = pbpString$ + "MISFIRES"
                     Case 41 To 60:
@@ -5498,8 +5503,8 @@ Sub MAKEPBP (pbpType)
                     Case 14: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE 1-HANDED SLAM!!!"
                     Case 15: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE REVERSE SLAM!!!"
                     Case 16: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE REVERSE JAM!!!"
-                    Case 17: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE WINDMILL JAM!!!"
-                    Case 18: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE WINDMILL SLAM!!!"
+                    Case 17: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE WINDMIll JAM!!!"
+                    Case 18: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE WINDMIll SLAM!!!"
                     Case 19: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE TOMAHAWK SLAM!!!"
                     Case 20: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE 360 SLAM!!!"
                     Case 21: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE SPINNING SLAM!!!"
@@ -5563,9 +5568,9 @@ Sub MAKEPBP (pbpType)
                         Case 9: pbpString$ = "NOT EVEN CLOSE!"
                         Case 10: pbpString$ = "NO GOOD"
                         Case 11: pbpString$ = teamGender$(P) + " MISSES"
-                        Case 12: pbpString$ = "DOESN'T GET THE ROLL"
+                        Case 12: pbpString$ = "DOESN'T GET THE ROll"
                         Case 13: pbpString$ = "OFF THE GLASS"
-                        Case 14: pbpString$ = "FALLS SHORT"
+                        Case 14: pbpString$ = "FAlastLoseStreak SHORT"
                         Case 15: pbpString$ = "NO GOOD"
                         Case 16: pbpString$ = "NO"
                         Case 17: pbpString$ = teamGender$(P) + " MISSES"
@@ -5575,9 +5580,9 @@ Sub MAKEPBP (pbpType)
                         Case 21: pbpString$ = "IT'S NOT THERE"
                         Case 22: pbpString$ = "OFF TARGET"
                         Case 23: pbpString$ = "IT RATTLES OUT"
-                        Case 24: pbpString$ = "IT DOESN'T FALL"
+                        Case 24: pbpString$ = "IT DOESN'T FAll"
                         Case 25: pbpString$ = "IT BOUNCES OFF"
-                        Case 26: pbpString$ = "IT ROLLS OFF"
+                        Case 26: pbpString$ = "IT ROlastLoseStreak OFF"
                         Case 27: pbpString$ = "SHORT"
                         Case 28: pbpString$ = "IT DOESN'T GO DOWN"
                         Case 29: pbpString$ = "IT'S NO GOOD"
@@ -5587,18 +5592,18 @@ Sub MAKEPBP (pbpType)
                         Case 33: pbpString$ = teamGender$(P) + " FAILS TO CONNECT"
                         Case 34: pbpString$ = "OFF THE SIDE OF THE RIM"
                         Case 35: pbpString$ = "IT COMES UP SHORT"
-                        Case 36: pbpString$ = "IT ROLLS OUT"
+                        Case 36: pbpString$ = "IT ROlastLoseStreak OUT"
                         Case 37: pbpString$ = "AROUND AND OUT"
                         Case 38: pbpString$ = "OFF THE BACK OF THE IRON"
-                        Case 39: pbpString$ = "ON THE FRONT RIM...ROLLS OFF"
+                        Case 39: pbpString$ = "ON THE FRONT RIM...ROlastLoseStreak OFF"
                         Case 40: pbpString$ = "IN THE AIR...NO GOOD"
                         Case 41: pbpString$ = "TOO SHORT"
                         Case 42: pbpString$ = "NO GOOD"
                         Case 43: pbpString$ = "IT COMES UP SHORT"
-                        Case 44: pbpString$ = "IT ROLLS OUT"
+                        Case 44: pbpString$ = "IT ROlastLoseStreak OUT"
                         Case 45: pbpString$ = "IN AND OUT"
                         Case 46: pbpString$ = "OFF THE FRONT OF THE IRON"
-                        Case 47: pbpString$ = "ON THE RIM...ROLLS OFF"
+                        Case 47: pbpString$ = "ON THE RIM...ROlastLoseStreak OFF"
                         Case 48: pbpString$ = "OFF THE FRONT OF THE RIM"
                         Case 49: pbpString$ = "TOO SHORT"
                         Case 50: pbpString$ = "TOO STRONG"
@@ -5690,7 +5695,7 @@ Sub MAKEPBP (pbpType)
                     Case 51: pbpString$ = pbpString$ + "FAKE SPINS LEFT...GOES RIGHT"
                     Case 52: pbpString$ = pbpString$ + "FAKE SPINS RIGHT...GOES LEFT"
                     Case 53:
-                        pbpString$ = pbpString$ + "PALMS THE BALL"
+                        pbpString$ = pbpString$ + "PALMS THE BAll"
                         Call PBP(P)
                         pbpString$ = teamGender$(P) + " TAKES IT AND SPINS"
                     Case 54: pbpString$ = pbpString$ + "SHAKES AND BAKES"
@@ -6560,7 +6565,7 @@ Sub PlayStyle ()
     Color 3: Print "ENSE STYLE-";
     Color 7: Print defStyleDesc$(defStyles(P9))
 
-    Locate 23, 32: Color 3: Print "FULL COURT ";
+    Locate 23, 32: Color 3: Print "FUll COURT ";
     Color 15: Print "P";
     Color 3: Print "RESS-";
     Color 7: Print yesNoText$(fullCtOpt(P9))
@@ -6648,7 +6653,7 @@ Sub PlayStyle ()
                     Color 7: Print defStyleDesc$(defStyles(P9))
 
                     Locate 23, 32
-                    Color 3: Print "FULL COURT ";
+                    Color 3: Print "FUll COURT ";
                     Color 15: Print "P";
                     Color 3: Print "RESS-";
                     Color 7: Print yesNoText$(fullCtOpt(P9))
@@ -6734,7 +6739,7 @@ Sub PlayStyle ()
             Color 7: Print defStyleDesc$(defStyles(P9))
 
             Locate 23, 32
-            Color 3: Print "FULL COURT ";
+            Color 3: Print "FUll COURT ";
             Color 15: Print "P";
             Color 3: Print "RESS-";
             Color 7: Print yesNoText$(fullCtOpt(P9))
@@ -6903,7 +6908,7 @@ Sub PlayItSafe ()
                     gameRatings!(P9, lineupIdx(P9, P4(A)), 22) = 0
 
                     Locate P5(A) + 3, 20
-                    Print players_GAME$(P9, lineupIdx(P9, P4(A)), 0); " WILL NOW PLAY NORMAL DEFENSE!"
+                    Print players_GAME$(P9, lineupIdx(P9, P4(A)), 0); " WIll NOW PLAY NORMAL DEFENSE!"
                     Call STEALADJ
 
                     dFGPA(P9) = dFGPA(P9) - 1
@@ -6975,7 +6980,7 @@ Sub PlayItSafe ()
                         gameRatings!(P9, lineupIdx(P9, P4(A)), 22) = 50
 
                         Locate P5(A) + 3, 20
-                        Print players_GAME$(P9, lineupIdx(P9, P4(A)), 0); " WILL NOW PLAY SAFE!"
+                        Print players_GAME$(P9, lineupIdx(P9, P4(A)), 0); " WIll NOW PLAY SAFE!"
                         Call STEALADJ
 
                         dFGPA(P9) = dFGPA(P9) + 1
@@ -7038,11 +7043,11 @@ End Sub
 
 
 '----------------------------------------
-'         WHOGESTBALL Subroutine
+'         WHOGESTBAll Subroutine
 '----------------------------------------
 'Determine ball carrier for the computer
 'control when a pass is happening
-Sub WHOGETSBALL
+Sub WHOGETSBAll
 
     CNT% = 0
 
@@ -7426,7 +7431,7 @@ Sub DEADBALLOPTIONS (userTakeTO)
 
             Call WINDEX
 
-            pbpString$ = gameTeams$(chargeTeam) + " WILL BE CHARGED"
+            pbpString$ = gameTeams$(chargeTeam) + " WIll BE CHARGED"
             Call SELECTPBP(chargeTeam, 0)
             pbpString$ = "WITH A MANDATORY TIMEOUT"
             Call SELECTPBP(chargeTeam, 0)
@@ -7451,7 +7456,7 @@ Sub DEADBALLOPTIONS (userTakeTO)
 
             Call WINDEX
 
-            pbpString$ = gameTeams$(chargeTeam) + " WILL BE CHARGED"
+            pbpString$ = gameTeams$(chargeTeam) + " WIll BE CHARGED"
             Call SELECTPBP(chargeTeam, 0)
             pbpString$ = "WITH A MANDATORY TIMEOUT"
             Call SELECTPBP(chargeTeam, 0)
@@ -7769,7 +7774,9 @@ Sub FoulCalled (randomFouler)
 
         Call SELECTPBP(D, 1)
         Call DELAY
-        C9 = 9
+
+        'Disable player from roster
+        plyrRat_GAME(D, lineupIdx(D, foulPlayer), 18) = -1
 
         If teamFouls(D) >= bonusFoulNum Then
             offStatus = 50
@@ -7970,7 +7977,7 @@ Sub SCOREBOARD ()
     Color 15: Print "-PASS"
     Locate , 41:
     Color 14: Print "(2) ";
-    Color 15: Print gameTeams$(P); " CALL TIMEOUT      "
+    Color 15: Print gameTeams$(P); " CAll TIMEOUT      "
     Locate , 41:
     Color 14: Print "(3) ";
     Color 15: Print "COMMIT INTL FOUL (LAST 4 MIN)"
@@ -8487,7 +8494,7 @@ Sub SETUPRATINGS (teamStyle)
             Color 15, 0
             Cls
             Print "THESE TWO TEAMS MAY HAVE PLAYED DURING DIFFERENT ERAS AND"
-            Print "PLAYED DIFFERENT STYLES OF BASKETBALL"
+            Print "PLAYED DIFFERENT STYLES OF BASKETBAll"
             Print
             Print "PLAY STYLE OF:"
             Print
@@ -9050,7 +9057,7 @@ Sub CHANGESTRATEGY (I$)
                 Locate , 14: Print "0 - RETURN TO GAME"
                 Locate , 14: Print "1 - SELECT OFFENSIVE STYLE OF PLAY"
                 Locate , 14: Print "2 - SELECT DEFENSIVE STYLE OF PLAY"
-                Locate , 14: Print "3 - FULL COURT PRESS "; yesNoText$(fullCtOpt(teamSelected))
+                Locate , 14: Print "3 - FUll COURT PRESS "; yesNoText$(fullCtOpt(teamSelected))
 
                 Do
                     I$ = GetKeyPress$
@@ -9578,7 +9585,7 @@ End Sub
 '----------------------------------------
 'This subroutine essentially handles the
 'AI for the computer coach. After an
-'evaluation of substitutions, it then calls
+'evaluation of substitutions, it then calastLoseStreak
 'another routine to decide on strategies
 Sub ComputerCoach ()
 
@@ -10853,7 +10860,7 @@ Sub UPDATESCREEN ()
         Color 15: Print "-PASS"
         Locate , 41
         Color 14: Print "(2) ";
-        Color 15: Print gameTeams$(P); " CALL TIMEOUT      "
+        Color 15: Print gameTeams$(P); " CAll TIMEOUT      "
         Locate , 41
         Color 14: Print "(3) ";
         Color 15: Print "COMMIT INTL FOUL (LAST 4 MIN)"
@@ -11752,7 +11759,7 @@ Sub COMPILESTATFILES (compileOpt)
     Shared teamScore(), oppScore()
 
     Shared game3FGM!(), game3FGA!()
-    Shared statsZ!(), statsZ1!(), statsZ2!()
+    Shared statsZ0!(), statsZ1!(), statsZ2!()
 
     Shared gameSite$(), locIndicator$(), oppName$()
 
@@ -11830,7 +11837,7 @@ Sub COMPILESTATFILES (compileOpt)
                 Next I
 
                 For L = 0 To 15:
-                    Input #1, statsZ!(L)
+                    Input #1, statsZ0!(L)
                 Next L
 
                 For L = 0 To 15:
@@ -11858,12 +11865,12 @@ Sub COMPILESTATFILES (compileOpt)
                     statsZ2!(I, J) = statsZ2!(I, J) + gameRatings!(teamIdx, I, J)
 
                     If Not (J = 5 Or J = 6 Or J = 10 Or J = 11) Then
-                        statsZ!(J) = statsZ!(J) + gameRatings!(teamIdx, I, J)
+                        statsZ0!(J) = statsZ0!(J) + gameRatings!(teamIdx, I, J)
                         statsZ1!(J) = statsZ1!(J) + gameRatings!(1 - teamIdx, I, J)
                     End If
                 Next J
 
-                statsZ!(0) = statsZ!(0) + gameRatings!(teamIdx, I, 10)
+                statsZ0!(0) = statsZ0!(0) + gameRatings!(teamIdx, I, 10)
                 TG! = TG! + gameRatings!(teamIdx, I, 10)
 
             Next I
@@ -11876,28 +11883,28 @@ Sub COMPILESTATFILES (compileOpt)
                 Next
             Next
 
-            statsZ!(15) = statsZ!(15) + totRebounds(teamIdx) - statTotals(teamIdx)
+            statsZ0!(15) = statsZ0!(15) + totRebounds(teamIdx) - statTotals(teamIdx)
             statsZ1!(15) = statsZ1!(15) + totRebounds(1 - teamIdx) - statTotals(1 - teamIdx)
 
-            statsZ!(6) = statsZ!(6) + totalFouls(teamIdx)
+            statsZ0!(6) = statsZ0!(6) + totalFouls(teamIdx)
             statsZ1!(6) = statsZ1!(6) + totalFouls(1 - teamIdx)
 
-            statsZ!(5) = statsZ!(5) + totRebounds(teamIdx)
+            statsZ0!(5) = statsZ0!(5) + totRebounds(teamIdx)
             statsZ1!(5) = statsZ1!(5) + totRebounds(1 - teamIdx)
 
-            statsZ!(11) = statsZ!(11) + turnovers(teamIdx)
+            statsZ0!(11) = statsZ0!(11) + turnovers(teamIdx)
             statsZ1!(11) = statsZ1!(11) + turnovers(1 - teamIdx)
 
             For J = 0 To 14:
-                statsZ!(13) = statsZ!(13) + game3FGM!(teamIdx, J)
-                statsZ!(14) = statsZ!(14) + game3FGA!(teamIdx, J)
+                statsZ0!(13) = statsZ0!(13) + game3FGM!(teamIdx, J)
+                statsZ0!(14) = statsZ0!(14) + game3FGA!(teamIdx, J)
                 statsZ1!(13) = statsZ1!(13) + game3FGM!(1 - teamIdx, J)
                 statsZ1!(14) = statsZ1!(14) + game3FGA!(1 - teamIdx, J)
                 W2(teamIdx, J) = W2(teamIdx, J) + game3FGM!(teamIdx, J)
                 W3(teamIdx, J) = W3(teamIdx, J) + game3FGA!(teamIdx, J)
             Next J
 
-            statsZ!(10) = statsZ!(10) + score(teamIdx, 0)
+            statsZ0!(10) = statsZ0!(10) + score(teamIdx, 0)
             statsZ1!(10) = statsZ1!(10) + score(1 - teamIdx, 0)
 
             Call TEAMBOX(1, teamIdx)
@@ -11925,7 +11932,7 @@ Sub COMPILESTATFILES (compileOpt)
             Next I
 
             For L = 0 To 15
-                Print #2, statsZ!(L)
+                Print #2, statsZ0!(L)
             Next L
 
             For L = 0 To 15:
@@ -12068,13 +12075,13 @@ Sub COMPILESTATFILES (compileOpt)
             'Reset arrays for next iteration
             Erase teamScore, oppScore
             Erase gameAttendance&
-            Erase statsZ!, statsZ1!, statsZ2!
+            Erase statsZ0!, statsZ1!, statsZ2!
             Erase gameSite$, locIndicator$, oppName$
 
         End If
 
         teamIdx = teamIdx + 1
-        statsZ!(12) = 0
+        statsZ0!(12) = 0
 
     Loop Until teamIdx = 2
 

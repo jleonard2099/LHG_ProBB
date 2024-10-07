@@ -65,7 +65,7 @@ Sub GPMIN ()
             Color 14: Print "15 ";
             Color 15: Print "END AND SAVE CHANGES"
             Print
-            Print "TEAM MIN/G SHOULD BE APPROXIMATELY 240, OVERTIME WILL INCREASE THIS FIGURE"
+            Print "TEAM MIN/G SHOULD BE APPROXIMATELY 240, OVERTIME WIll INCREASE THIS FIGURE"
             teamTotalMins! = MIN / teamRatings(0)
             Print Using "TEAM MIN/G = ###.#"; teamTotalMins!
 
