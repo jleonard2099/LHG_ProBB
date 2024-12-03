@@ -784,21 +784,37 @@ Sub PROHOOP ()
 
         Open "DEFAULT" For Output As #3
 
-        For I = 1 To 8:
-            Print #3, 0
-        Next
+        'Player option
+        Print #3, 3
 
-        Print #3, 4
+        '3 Pt Option
+        Print #3, 1
 
-        For I = 10 To 12:
-            Print #3, 0
-        Next
-
-        'Modern TO settings
-        Print #3, 2
-
-        '12 min quarters
+        'Shot Clock Setting
         Print #3, 0
+
+        'Home Court
+        Print #3, 1
+
+        'Playoff Opt
+        Print #3, 0
+
+        'PBP Delay
+        Print #3, 1.2
+
+        'Show shot %?
+        Print #3, 1
+
+        'Coach option
+        Print #3, 0
+
+        'Bons Foul #
+        Print #3, 6
+
+        'FT Rules, PBP Option, Timeouts / Quarters
+        For I = 1 To 5:
+            Print #3, 0
+        Next
 
         '# of timeouts
         Print #3, 7
@@ -1206,7 +1222,12 @@ Sub PROHOOP ()
     '   2 = PC vs. PC
 
     For I = 0 To 1:
-        teamYears(I) = GetTeamYear%(Left$(gameTeams$(I), 2))
+        If CheckString%(diskIDs$(I)) = 1 Or Len(diskIDs$(I)) <= 2 Then
+            teamYears(I) = GetTeamYear%(Left$(gameTeams$(I), 2))
+        Else
+            'Just use the disk ID since we should have 4 digits
+            teamYears(I) = Val(RTrim$(diskIDs$(I)))
+        End If
     Next I
 
     If quarterOpt = 0 Then

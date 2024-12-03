@@ -22,7 +22,7 @@ Sub CompileLeague ()
     Shared defLeaderNames$(), offLeaderNames$()
     Shared statPlyrNames$()
     Shared locIndicator$(), oppName$()
-    Shared memberName$(), statFiles$()
+    Shared memberName$(), memberName$()
     Shared leagLdrPlayer$(), leagLdrTeam$()
 
     Shared offRecDesc$(), defRecDesc$()
@@ -108,8 +108,7 @@ Sub CompileLeague ()
         Input #2, league$, div1$, div2$, div3$, div4$
 
         For XW = 1 To TEAMS_PER_LEAGUE
-            Input #2, statFiles$(XW)
-            memberName$(XW) = statFiles$(XW)
+            Input #2, memberName$(XW)
         Next
 
         Close #2
@@ -117,17 +116,17 @@ Sub CompileLeague ()
         For XW = 1 To TEAMS_PER_LEAGUE
 
             'Look for * as terminating char
-            If statFiles$(XW) <> Chr$(42) Then
+            If memberName$(XW) <> Chr$(42) Then
 
-                haveStats = FindStatsLeague%(statFiles$(XW), numberGames)
+                haveStats = FindStatsLeague%(memberName$(XW), numberGames)
 
                 If (haveStats) Then
 
-                    L = Len(statFiles$(XW))
+                    L = Len(memberName$(XW))
                     WT$ = ""
 
                     For X = 1 To L
-                        A = Asc(Mid$(statFiles$(XW), X, 1))
+                        A = Asc(Mid$(memberName$(XW), X, 1))
                         WT$ = WT$ + Chr$(A)
                     Next X
 
@@ -153,9 +152,9 @@ Sub CompileLeague ()
 
                     Next X
 
-                    If nonConfGame <> 1 And _FileExists(diskPaths$(1) + statFiles$(XW)) Then
+                    If nonConfGame <> 1 And _FileExists(diskPaths$(1) + memberName$(XW)) Then
 
-                        Call ReadStatsPro(statFiles$(XW), TN$)
+                        Call ReadStatsPro(memberName$(XW), TN$)
                         Call CalcStatTotalsPro(numberGames, TN$, finalUpdate$)
                         Call CalcStatLeadersPro(TN$, numberGames)
 
@@ -1380,7 +1379,7 @@ Function FindStatsLeague% (statFile$, numberGames)
 
     Shared oppScore(), teamScore()
 
-    Shared locIndicator$(), oppName$(), statFiles$()
+    Shared locIndicator$(), oppName$(), memberName$()
 
     Shared confWins, confLosses, fullWins, fullLosses
 
@@ -1411,7 +1410,7 @@ Function FindStatsLeague% (statFile$, numberGames)
 
             For EC = 1 To TEAMS_PER_LEAGUE
 
-                If statName$ = statFiles$(EC) Then
+                If statName$ = memberName$(EC) Then
                     nonConfGame = 1
                     Exit For
                 End If

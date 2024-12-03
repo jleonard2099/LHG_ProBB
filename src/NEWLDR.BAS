@@ -1,3 +1,4 @@
+
 '----------------------------------------
 '           NEWLDR Subroutine
 '----------------------------------------
@@ -13,7 +14,6 @@ Sub NEWLDR ()
     Dim printOrView
 
     Shared div1Name$, div2Name$, div3Name$, div4Name$, league$
-    Shared statFiles$()
 
     'Needed for Expanded Standings
     Shared totHomeLosses(), totHomeWins()
@@ -21,7 +21,7 @@ Sub NEWLDR ()
     Shared lastTenLosses(), lastTenWins(), lastWinStreak()
     Shared totRoadLosses(), totRoadWins()
     Shared teamLoseStreak(), teamWinStreak(), teamTotWins()
-    
+
     Shared expStdLeagName$()
 
     Do
@@ -47,7 +47,7 @@ Sub NEWLDR ()
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor, FileBGColor)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor, FileBGColor)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -63,26 +63,13 @@ Sub NEWLDR ()
 
                 Case 1:
                     Do
-                        plyrRat_COMPtatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE STATS", FileExit%)
+                        leagStatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE STATS", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
 
-                            For X = 1 To TEAMS_PER_LEAGUE
-                                statFiles$(X) = "XXX"
-                            Next
-
-                            Open diskPaths$(2) + plyrRat_COMPtatFile$ + ".TMS" For Input As #1
-
-                            Input #1, league$, div1Name$, div2Name$, div3Name$, div4Name$
-
-                            For X = 1 To TEAMS_PER_LEAGUE
-                                Input #1, statFiles$(X)
-                            Next
-
-                            Close #1
-
+                            Call ReadLeagueStats(leagStatFile$)
                             Call UpdateExpandedLeaders(JB, PTS, TTS)
-                            Call SAVELEADER(plyrRat_COMPtatFile$, JB, PTS, TTS)
+                            Call SAVELEADER(leagStatFile$, JB, PTS, TTS)
 
                         End If
 
@@ -90,34 +77,35 @@ Sub NEWLDR ()
 
                 Case 2:
                     Do
-                        leaderFile$ = ChooseFile$ (diskPaths$(2) + "*.LDS", "LEAGUE LEADERS", FileExit%)
+                        leaderFile$ = ChooseFile$(diskPaths$(2) + "*.LDS", "LEAGUE LEADERS", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
                             Call READLEADER(leaderFile$, JB, PTS, TTS)
-                            Call ExpandedLeaders_Menu (printOrView, JB, PTS, TTS)
+                            Call ExpandedLeaders_Menu(printOrView, JB, PTS, TTS)
                         End If
 
                     Loop Until FileExit% = 27 Or FileExit% = 0
 
                 Case 3:
                     Do
-                        plyrRat_COMPtatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE STATS", FileExit%)
+                        leagStatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE STATS", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
                             Color 15, 0
                             Cls
-                            Call UpdateExpandedStandings(plyrRat_COMPtatFile$)
+                            Call ReadLeagueStats(leagStatFile$)
+                            Call UpdateExpandedStandings(leagStatFile$)
                         End If
 
                     Loop Until FileExit% = 27 Or FileExit% = 0
 
                 Case 4:
                     Do
-                        standingsFile$ = ChooseFile$ (diskPaths$(2) + "*.STD", "LEAGUE STANDINGS", FileExit%)
+                        standingsFile$ = ChooseFile$(diskPaths$(2) + "*.STD", "LEAGUE STANDINGS", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
 
-                            Open diskPaths$(1) + standingsFile$ + ".STD" For Input As #2
+                            Open diskPaths$(2) + standingsFile$ + ".STD" For Input As #2
 
                             Input #2, league$, div1Name$, div2Name$, div3Name$, div4Name$
 
@@ -134,7 +122,7 @@ Sub NEWLDR ()
                                 Select Case userKey$
 
                                     Case "F"
-                                        userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                                        userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
                                         If userFile$ <> "" Then
                                             Call NewStandings_Report(0, userFile$, league$)
                                         End If
@@ -146,7 +134,7 @@ Sub NEWLDR ()
                                         Call NewStandings_Screen(league$)
 
                                 End Select
-                                
+
                             End If
 
                         End If
@@ -163,11 +151,42 @@ End Sub
 
 
 '----------------------------------------
+'       ReadLeagueStats Subroutine
+'----------------------------------------
+'This subroutine reads in the league stats
+'from the .TMS file and assigns them to
+'variables for use later in the routine.
+Sub ReadLeagueStats (statFile$)
+
+    Shared memberName$()
+
+    Shared div1Name$, div2Name$, div3Name$, div4Name$
+
+    Erase memberName$
+
+    For X = 1 To TEAMS_PER_LEAGUE
+        memberName$(X) = "XXX"
+    Next
+
+    Open diskPaths$(2) + statFile$ + ".TMS" For Input As #1
+
+    Input #1, league$, div1Name$, div2Name$, div3Name$, div4Name$
+
+    For X = 1 To TEAMS_PER_LEAGUE:
+        Input #1, memberName$(X)
+    Next
+
+    Close #1
+
+End Sub
+
+
+'----------------------------------------
 '      ViewExpandedStats Subroutine
 '----------------------------------------
 'This subroutine reads in the league stats
 'from the .TMS file. It then relies on other
-'routines to calculate the expanded stats, 
+'routines to calculate the expanded stats,
 'write them to a file and present a categ-
 'orized menu to use for reviewing them
 ' XXXX NO LONGER USED WITH NEW STRUCTURE XXXX
@@ -177,32 +196,32 @@ Sub ViewExpandedStats ()
 
     Shared div1Name$, div2Name$, div3Name$, div4Name$, league$
 
-    Shared statFiles$()
+    Shared memberName$()
 
     printOrView = 0
 
     For X = 1 To TEAMS_PER_LEAGUE
-        statFiles$(X) = "XXX"
+        memberName$(X) = "XXX"
     Next
 
-    plyrRat_COMPtatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE ", ExitCode%)
+    leagStatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE ", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        Open diskPaths$(2) + plyrRat_COMPtatFile$ + ".TMS" For Input As #1
+        Open diskPaths$(2) + leagStatFile$ + ".TMS" For Input As #1
 
         Input #1, league$, div1Name$, div2Name$, div3Name$, div4Name$
 
         For X = 1 To TEAMS_PER_LEAGUE
-            Input #1, statFiles$(X)
+            Input #1, memberName$(X)
         Next
 
         Close #1
 
         Call READLEADER(conferenceFile$, JB, PTS, TTS)
         Call UpdateExpandedLeaders(JB, PTS, TTS)
-        Call SAVELEADER(plyrRat_COMPtatFile$, JB, PTS, TTS)
-        Call ExpandedLeaders_Menu (printOrView, JB, PTS, TTS)
+        Call SAVELEADER(leagStatFile$, JB, PTS, TTS)
+        Call ExpandedLeaders_Menu(printOrView, JB, PTS, TTS)
 
     End If 'Done checking for ESC
 
@@ -212,13 +231,13 @@ End Sub
 '----------------------------------------
 '    UpdateExpandedLeaders Subroutine
 '----------------------------------------
-'This subroutine calculates the expanded 
+'This subroutine calculates the expanded
 'stats from those previously read in to
 'a variety of arrays.
 Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
     Shared expPlyrLdrName$(), plyLeaderTeams$()
-    Shared statFiles$(), statPlyrNames$()
+    Shared memberName$(), statPlyrNames$()
     Shared expPlyrLdrTeam$(), tmLeaderTeams$()
 
     Shared plyrLdrStats!()
@@ -241,13 +260,13 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
         YY = YY + 1
 
-        If statFiles$(KK) <> "*" And statFiles$(KK) <> "XXX" And statFiles$(KK) <> "" Then
+        If memberName$(KK) <> "*" And memberName$(KK) <> "XXX" And memberName$(KK) <> "" Then
 
-            Print "CONVERTING STAT FILE OF "; statFiles$(KK)
+            Print "CONVERTING STAT FILE OF "; memberName$(KK)
 
-            If _FileExists(diskPaths$(1) + statFiles$(KK)) Then
+            If _FileExists(diskPaths$(1) + memberName$(KK)) Then
 
-                Open diskPaths$(1) + statFiles$(KK) For Input As #1
+                Open diskPaths$(1) + memberName$(KK) For Input As #1
 
                 Input #1, teamName$
 
@@ -274,7 +293,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
                 Close #1
 
-                Open diskPaths$(1) + statFiles$(KK) + "S" For Input As #2
+                Open diskPaths$(1) + memberName$(KK) + "S" For Input As #2
                 Input #2, year
                 Close #2
 
@@ -329,8 +348,8 @@ End Sub
 '----------------------------------------
 '        SAVELEADER Subroutine
 '----------------------------------------
-'This subroutine compiles the leader files 
-'(.LDS) for the expanded standings modules 
+'This subroutine compiles the leader files
+'(.LDS) for the expanded standings modules
 Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Shared expPlyrLdrName$(), plyLeaderTeams$()
@@ -344,7 +363,7 @@ Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
     'Our first set of stats is 600 entries
     'Our next 2 sets are loops around each
     'team in the league
-    TMR = 600 + (2*TEAMS_PER_LEAGUE)
+    TMR = 600 + (2 * TEAMS_PER_LEAGUE)
 
     Print "SAVING LEADER FILES . . . . PLEASE WAIT"
 
@@ -411,8 +430,8 @@ End Sub
 '----------------------------------------
 '        READLEADER Subroutine
 '----------------------------------------
-'This subroutine reads in the leader files 
-'(.LDS) for the expanded standings modules 
+'This subroutine reads in the leader files
+'(.LDS) for the expanded standings modules
 Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Shared expPlyrLdrName$()
@@ -426,12 +445,12 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
     'Our first set of stats is 600 entries
     'Our next 2 sets are loops around each
     'conference
-    TMR = 600 + (2*TEAMS_PER_LEAGUE)
+    TMR = 600 + (2 * TEAMS_PER_LEAGUE)
 
     'Print "READING LEADER FILES . . . . PLEASE WAIT"
 
-    If Not _FileExists (diskPaths$(2) + statFile$ + ".LDS") Then
-    
+    If Not _FileExists(diskPaths$(2) + statFile$ + ".LDS") Then
+
         MsgText$ = "NO COMPILED LEADER FILES WERE FOUND. PRESS ANY KEY TO RETURN TO MAIN MENU"
         BoxWidth = 20
         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
@@ -510,7 +529,7 @@ End Sub
 'menu for viewing expanded leaders. It then
 'relies on various subroutines for the end
 'user display of those statistics.
-Sub ExpandedLeaders_Menu  (printOrView, JB, plyrTotalStats, teamTotalStats)
+Sub ExpandedLeaders_Menu (printOrView, JB, plyrTotalStats, teamTotalStats)
 
     ReDim menuChoices$(1 To 3)
 
@@ -532,7 +551,7 @@ Sub ExpandedLeaders_Menu  (printOrView, JB, plyrTotalStats, teamTotalStats)
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor, FileBGColor)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor, FileBGColor)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -582,7 +601,7 @@ Sub ViewIndividualleaders (printOrView, JB)
 
         ZZ = 1
 
-        Call MenuBox (2, 4, 66, 20, 15, 12)
+        Call MenuBox(2, 4, 66, 20, 15, 12)
         Locate 10, 15
 
         Do
@@ -609,35 +628,35 @@ Sub ViewIndividualleaders (printOrView, JB)
 
             Select Case categoryId
 
-                Case 0: X = 1
-                Case 1: X = 11
-                Case 2: X = 3
-                Case 3: X = 2
-                Case 4: X = 3: X1 = 2
+                Case 0: X0 = 1
+                Case 1: X0 = 11
+                Case 2: X0 = 3
+                Case 3: X0 = 2
+                Case 4: X0 = 3: X1 = 2
                 Case 5 To 7: '
-                Case 8: X = 5
-                Case 9: X = 4
-                Case 10: X = 5: X1 = 4
-                Case 11: X = 3: X1 = 5
-                Case 12: X = 3: X1 = 5: X2 = 1
-                Case 13: X = 14
-                Case 14: X = 13
-                Case 15: X = 6: X1 = 13
-                Case 16: X = 6
-                Case 17: X = 6: X1 = 1
-                Case 18: X = 7
-                Case 19: X = 9
-                Case 20: X = 10
-                Case 21: X = 8
-                Case 22: X = 12
-                Case 23: X = 3: X1 = 5: X2 = 11
-                Case 24: X = 6: X1 = 11
-                Case 25: X = 7: X1 = 11
-                Case 26: X = 9: X1 = 11
-                Case 27: X = 10: X1 = 11
-                Case 28: X = 8: X1 = 11
-                Case 29: X = 12: X1 = 11
-                Case 30: X = 11: X1 = 1
+                Case 8: X0 = 5
+                Case 9: X0 = 4
+                Case 10: X0 = 5: X1 = 4
+                Case 11: X0 = 3: X1 = 5
+                Case 12: X0 = 3: X1 = 5: X2 = 1
+                Case 13: X0 = 14
+                Case 14: X0 = 13
+                Case 15: X0 = 6: X1 = 13
+                Case 16: X0 = 6
+                Case 17: X0 = 6: X1 = 1
+                Case 18: X0 = 7
+                Case 19: X0 = 9
+                Case 20: X0 = 10
+                Case 21: X0 = 8
+                Case 22: X0 = 12
+                Case 23: X0 = 3: X1 = 5: X2 = 11
+                Case 24: X0 = 6: X1 = 11
+                Case 25: X0 = 7: X1 = 11
+                Case 26: X0 = 9: X1 = 11
+                Case 27: X0 = 10: X1 = 11
+                Case 28: X0 = 8: X1 = 11
+                Case 29: X0 = 12: X1 = 11
+                Case 30: X0 = 11: X1 = 1
                 Case 31: Exit Sub
 
             End Select
@@ -658,12 +677,12 @@ Sub ViewIndividualleaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If plyrLdrStats!(I, X) <> 0 Then
+                        If plyrLdrStats!(I, X0) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
                             expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
-                            expLdrVal!(PPP) = plyrLdrStats!(I, X)
+                            expLdrVal!(PPP) = plyrLdrStats!(I, X0)
                         End If
 
                     Next I
@@ -675,12 +694,12 @@ Sub ViewIndividualleaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If plyrLdrStats!(I, X) <> 0 Then
+                        If plyrLdrStats!(I, X0) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
                             expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
-                            expLdrVal!(PPP) = (plyrLdrStats!(I, X) + 30) / 60
+                            expLdrVal!(PPP) = (plyrLdrStats!(I, X0) + 30) / 60
                         End If
 
                     Next I
@@ -692,19 +711,18 @@ Sub ViewIndividualleaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If plyrLdrStats!(I, X) >= totGames!(I) * 3.65 Then
+                        If plyrLdrStats!(I, X0) >= totGames!(I) * 3.65 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
                             expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
-                            expLdrVal!(PPP) = plyrLdrStats!(I, X) / plyrLdrStats!(I, X1)
+                            expLdrVal!(PPP) = plyrLdrStats!(I, X0) / plyrLdrStats!(I, X1)
                         End If
 
                     Next I
 
                     Call SortPlayer(PPP, stpl, sortType)
                     TVN = 2
-                    'Call DisplayLeaders(TVN, QW, categoryId)
 
                 Case 5:
 
@@ -761,13 +779,13 @@ Sub ViewIndividualleaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If plyrLdrStats!(I, X) >= totGames!(I) * 1.52 Then
+                        If plyrLdrStats!(I, X0) >= totGames!(I) * 1.52 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
                             expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
                             expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
-                            expLdrVal!(PPP) = plyrLdrStats!(I, X) / plyrLdrStats!(I, X1)
+                            expLdrVal!(PPP) = plyrLdrStats!(I, X0) / plyrLdrStats!(I, X1)
                         End If
 
                     Next I
@@ -779,13 +797,13 @@ Sub ViewIndividualleaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If (plyrLdrStats!(I, X) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I) <> 0 Then
+                        If (plyrLdrStats!(I, X0) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
                             expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
                             expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
-                            expLdrVal!(PPP) = (plyrLdrStats!(I, X) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I)
+                            expLdrVal!(PPP) = (plyrLdrStats!(I, X0) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I)
                         End If
 
                     Next I
@@ -797,13 +815,13 @@ Sub ViewIndividualleaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If (plyrLdrStats!(I, X) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I) <> 0 And plyrLdrStats!(I, X2) <> 0 Then
+                        If (plyrLdrStats!(I, X0) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I) <> 0 And plyrLdrStats!(I, X2) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
                             expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
                             expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
-                            expLdrVal!(PPP) = ((plyrLdrStats!(I, X) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I)) / plyrLdrStats!(I, X2)
+                            expLdrVal!(PPP) = ((plyrLdrStats!(I, X0) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I)) / plyrLdrStats!(I, X2)
                         End If
 
                     Next I
@@ -815,13 +833,13 @@ Sub ViewIndividualleaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If plyrLdrStats!(I, X) - plyrLdrStats!(I, X1) <> 0 Then
+                        If plyrLdrStats!(I, X0) - plyrLdrStats!(I, X1) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
                             expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
                             expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
-                            expLdrVal!(PPP) = plyrLdrStats!(I, X) - plyrLdrStats!(I, X1)
+                            expLdrVal!(PPP) = plyrLdrStats!(I, X0) - plyrLdrStats!(I, X1)
                         End If
 
                     Next I
@@ -833,13 +851,13 @@ Sub ViewIndividualleaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If plyrLdrStats!(I, X) <> 0 Then
+                        If plyrLdrStats!(I, X0) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
                             expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
                             expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
-                            expLdrVal!(PPP) = plyrLdrStats!(I, X) / plyrLdrStats!(I, X1)
+                            expLdrVal!(PPP) = plyrLdrStats!(I, X0) / plyrLdrStats!(I, X1)
                         End If
 
                     Next I
@@ -851,13 +869,13 @@ Sub ViewIndividualleaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If (plyrLdrStats!(I, X) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I) <> 0 And plyrLdrStats!(I, X2) <> 0 Then
+                        If (plyrLdrStats!(I, X0) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I) <> 0 And plyrLdrStats!(I, X2) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
                             expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
                             expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
-                            expLdrVal!(PPP) = (((plyrLdrStats!(I, X) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I))) * 48 / ((plyrLdrStats!(I, X2) + 30) / 60)
+                            expLdrVal!(PPP) = (((plyrLdrStats!(I, X0) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I))) * 48 / ((plyrLdrStats!(I, X2) + 30) / 60)
                         End If
 
                     Next I
@@ -869,13 +887,13 @@ Sub ViewIndividualleaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If plyrLdrStats!(I, X) <> 0 And plyrLdrStats!(I, X1) <> 0 Then
+                        If plyrLdrStats!(I, X0) <> 0 And plyrLdrStats!(I, X1) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
                             expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
                             expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
-                            expLdrVal!(PPP) = (plyrLdrStats!(I, X)) * 48 / ((plyrLdrStats!(I, X1) + 30) / 60)
+                            expLdrVal!(PPP) = (plyrLdrStats!(I, X0)) * 48 / ((plyrLdrStats!(I, X1) + 30) / 60)
                         End If
 
                     Next I
@@ -887,13 +905,13 @@ Sub ViewIndividualleaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If plyrLdrStats!(I, X) <> 0 And plyrLdrStats!(I, X1) <> 0 Then
+                        If plyrLdrStats!(I, X0) <> 0 And plyrLdrStats!(I, X1) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
                             expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
                             expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
-                            expLdrVal!(PPP) = ((plyrLdrStats!(I, X) + 30) / 60) / plyrLdrStats!(I, X1)
+                            expLdrVal!(PPP) = ((plyrLdrStats!(I, X0) + 30) / 60) / plyrLdrStats!(I, X1)
                         End If
 
                     Next I
@@ -918,9 +936,9 @@ Sub ViewIndividualleaders (printOrView, JB)
                     If userKey$ <> Chr$(27) Then
 
                         Select Case userKey$
-                        
+
                             Case "F"
-                                userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                                userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
                                 If userFile$ <> "" Then
                                     Call Leaders_Report(0, userFile$, TVN, LG, categoryId)
                                 End If
@@ -929,7 +947,7 @@ Sub ViewIndividualleaders (printOrView, JB)
                                 Call Leaders_Report(1, "REPORT", TVN, LG, categoryId)
 
                         End Select
-                        
+
                     End If
 
             End Select
@@ -966,7 +984,7 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
         ZZ = 3
 
-        Call MenuBox (1, 4, 66, 21, 15, 6)
+        Call MenuBox(1, 4, 66, 21, 15, 6)
         Locate 10, 15
 
         For I = 0 To 19:
@@ -995,48 +1013,48 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
             Select Case categoryId
 
-                Case 0: X = 1
-                Case 1: X = 2
-                Case 2: X = 2: X1 = 1
-                Case 3: X = 14
-                Case 4: X = 13
-                Case 5: X = 13: X1 = 14
-                Case 6: X = 3
-                Case 7: X = 4
-                Case 8: X = 4: X1 = 3
-                Case 9: X = 12
-                Case 10: X = 5: X1 = 12
-                Case 11: X = 5
-                Case 12: X = 5
-                Case 13: X = 6
-                Case 14: X = 8
-                Case 15: X = 9
-                Case 16: X = 7
-                Case 17: X = 11
-                Case 18: X = 2: X1 = 13: X2 = 4
-                Case 19: X = 1
-                Case 20: X = 2
-                Case 21: X = 2: X1 = 1
-                Case 22: X = 14
-                Case 23: X = 13
-                Case 24: X = 13: X1 = 14
-                Case 25: X = 3
-                Case 26: X = 4
-                Case 27: X = 4: X1 = 3
-                Case 28: X = 12
-                Case 29: X = 5: X1 = 12
-                Case 30: X = 5
-                Case 31: X = 5
-                Case 32: X = 6
-                Case 33: X = 8
-                Case 34: X = 9
-                Case 35: X = 7
-                Case 36: X = 11
-                Case 37: X = 2: X1 = 13: X2 = 4
+                Case 0: X0 = 1
+                Case 1: X0 = 2
+                Case 2: X0 = 2: X1 = 1
+                Case 3: X0 = 14
+                Case 4: X0 = 13
+                Case 5: X0 = 13: X1 = 14
+                Case 6: X0 = 3
+                Case 7: X0 = 4
+                Case 8: X0 = 4: X1 = 3
+                Case 9: X0 = 12
+                Case 10: X0 = 5: X1 = 12
+                Case 11: X0 = 5
+                Case 12: X0 = 5
+                Case 13: X0 = 6
+                Case 14: X0 = 8
+                Case 15: X0 = 9
+                Case 16: X0 = 7
+                Case 17: X0 = 11
+                Case 18: X0 = 2: X1 = 13: X2 = 4
+                Case 19: X0 = 1
+                Case 20: X0 = 2
+                Case 21: X0 = 2: X1 = 1
+                Case 22: X0 = 14
+                Case 23: X0 = 13
+                Case 24: X0 = 13: X1 = 14
+                Case 25: X0 = 3
+                Case 26: X0 = 4
+                Case 27: X0 = 4: X1 = 3
+                Case 28: X0 = 12
+                Case 29: X0 = 5: X1 = 12
+                Case 30: X0 = 5
+                Case 31: X0 = 5
+                Case 32: X0 = 6
+                Case 33: X0 = 8
+                Case 34: X0 = 9
+                Case 35: X0 = 7
+                Case 36: X0 = 11
+                Case 37: X0 = 2: X1 = 13: X2 = 4
 
             End Select
 
-            If categoryId < 38 And categoryID >= 0 Then
+            If categoryId < 38 And categoryId >= 0 Then
                 Call SortOptions(printOrView, sortType, newCategory)
                 Cls
             End If
@@ -1046,8 +1064,8 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
                 Case 0 To 1, 3 To 4, 6 To 7, 9, 11, 13 To 17:
 
                     For I = 1 To plyrTotalStats
-                        expLdrTeam$(I) = plyLeaderTeams$(I, X)
-                        expLdrVal!(I) = plyrLdrVal!(I, X)
+                        expLdrTeam$(I) = plyLeaderTeams$(I, X0)
+                        expLdrVal!(I) = plyrLdrVal!(I, X0)
                     Next
 
                     Call SortTeam(plyrTotalStats, stpl, sortType)
@@ -1057,11 +1075,11 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
                 Case 2, 5, 8:
                     For I = 1 To plyrTotalStats
                         If plyrLdrVal!(I, X1) = 0 Then
-                            expLdrTeam$(I) = plyLeaderTeams$(I, X)
+                            expLdrTeam$(I) = plyLeaderTeams$(I, X0)
                             expLdrVal!(I) = 0
                         Else
-                            expLdrTeam$(I) = plyLeaderTeams$(I, X)
-                            expLdrVal!(I) = plyrLdrVal!(I, X) / plyrLdrVal!(I, X1)
+                            expLdrTeam$(I) = plyLeaderTeams$(I, X0)
+                            expLdrVal!(I) = plyrLdrVal!(I, X0) / plyrLdrVal!(I, X1)
                         End If
 
                     Next
@@ -1072,8 +1090,8 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
                 Case 10:
                     For I = 1 To plyrTotalStats
-                        expLdrTeam$(I) = plyLeaderTeams$(I, X)
-                        expLdrVal!(I) = plyrLdrVal!(I, X) - plyrLdrVal!(I, X1)
+                        expLdrTeam$(I) = plyLeaderTeams$(I, X0)
+                        expLdrVal!(I) = plyrLdrVal!(I, X0) - plyrLdrVal!(I, X1)
                     Next
 
                     Call SortTeam(plyrTotalStats, stpl, sortType)
@@ -1082,8 +1100,8 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
                 Case 12:
                     For I = 1 To plyrTotalStats
-                        expLdrTeam$(I) = plyLeaderTeams$(I, X)
-                        expLdrVal!(I) = plyrLdrVal!(I, X) / plyrLeaderYears!(I)
+                        expLdrTeam$(I) = plyLeaderTeams$(I, X0)
+                        expLdrVal!(I) = plyrLdrVal!(I, X0) / plyrLeaderYears!(I)
                     Next
 
                     Call SortTeam(teamTotalStats, stpl, sortType)
@@ -1092,8 +1110,8 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
                 Case 18:
                     For I = 1 To plyrTotalStats
-                        expLdrTeam$(I) = plyLeaderTeams$(I, X)
-                        expLdrVal!(I) = ((plyrLdrVal!(I, X) * 2) + plyrLdrVal!(I, X1) + plyrLdrVal!(I, X2)) / plyrLeaderYears!(I)
+                        expLdrTeam$(I) = plyLeaderTeams$(I, X0)
+                        expLdrVal!(I) = ((plyrLdrVal!(I, X0) * 2) + plyrLdrVal!(I, X1) + plyrLdrVal!(I, X2)) / plyrLeaderYears!(I)
                     Next
 
                     Call SortTeam(teamTotalStats, stpl, sortType)
@@ -1103,8 +1121,8 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
                 Case 19 To 20, 22 To 23, 25 To 26, 28, 30, 32 To 36:
 
                     For I = 1 To teamTotalStats
-                        expLdrTeam$(I) = tmLeaderTeams$(I, X)
-                        expLdrVal!(I) = teamLdrVal!(I, X)
+                        expLdrTeam$(I) = tmLeaderTeams$(I, X0)
+                        expLdrVal!(I) = teamLdrVal!(I, X0)
                     Next
 
                     Call SortTeam(teamTotalStats, stpl, sortType)
@@ -1115,11 +1133,11 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
                     For I = 1 To teamTotalStats
                         If teamLdrVal!(I, X1) = 0 Then
-                            expLdrTeam$(I) = tmLeaderTeams$(I, X)
+                            expLdrTeam$(I) = tmLeaderTeams$(I, X0)
                             expLdrVal!(I) = 0
                         Else
-                            expLdrTeam$(I) = tmLeaderTeams$(I, X)
-                            expLdrVal!(I) = teamLdrVal!(I, X) / teamLdrVal!(I, X1)
+                            expLdrTeam$(I) = tmLeaderTeams$(I, X0)
+                            expLdrVal!(I) = teamLdrVal!(I, X0) / teamLdrVal!(I, X1)
                         End If
                     Next
 
@@ -1129,8 +1147,8 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
                 Case 29:
                     For I = 1 To teamTotalStats
-                        expLdrTeam$(I) = tmLeaderTeams$(I, X)
-                        expLdrVal!(I) = teamLdrVal!(I, X) - teamLdrVal!(I, X1)
+                        expLdrTeam$(I) = tmLeaderTeams$(I, X0)
+                        expLdrVal!(I) = teamLdrVal!(I, X0) - teamLdrVal!(I, X1)
                     Next
 
                     Call SortTeam(teamTotalStats, stpl, sortType)
@@ -1139,8 +1157,8 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
                 Case 31:
                     For I = 1 To teamTotalStats
-                        expLdrTeam$(I) = tmLeaderTeams$(I, X)
-                        expLdrVal!(I) = teamLdrVal!(I, X) / tmLeaderYears!(I)
+                        expLdrTeam$(I) = tmLeaderTeams$(I, X0)
+                        expLdrVal!(I) = teamLdrVal!(I, X0) / tmLeaderYears!(I)
                     Next
 
                     Call SortTeam(teamTotalStats, stpl, sortType)
@@ -1149,8 +1167,8 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
                 Case 37:
                     For I = 1 To teamTotalStats
-                        expLdrTeam$(I) = tmLeaderTeams$(I, X)
-                        expLdrVal!(I) = ((teamLdrVal!(I, X) * 2) + teamLdrVal!(I, X1) + teamLdrVal!(I, X2)) / tmLeaderYears!(I)
+                        expLdrTeam$(I) = tmLeaderTeams$(I, X0)
+                        expLdrVal!(I) = ((teamLdrVal!(I, X0) * 2) + teamLdrVal!(I, X1) + teamLdrVal!(I, X2)) / tmLeaderYears!(I)
                     Next
 
                     Call SortTeam(teamTotalStats, stpl, sortType)
@@ -1184,7 +1202,7 @@ Sub SortOptions (printOrView, sortType, reselect)
 
     Do
 
-        Call MenuBox (8, 8, 57, 6, 15, 1)
+        Call MenuBox(8, 8, 57, 6, 15, 1)
         Locate 10, 15
 
         Color 3
@@ -1207,9 +1225,9 @@ Sub SortOptions (printOrView, sortType, reselect)
                 Call PrintViewReselect(I2$)
 
                 Select Case UCase$(I2$)
-                    Case "P": 
+                    Case "P":
                         printOrView = 2
-                    Case "V": 
+                    Case "V":
                         printOrView = 1
                     Case "R":
                         reselect = 1
@@ -1221,9 +1239,9 @@ Sub SortOptions (printOrView, sortType, reselect)
                 Call PrintViewReselect(I2$)
 
                 Select Case UCase$(I2$)
-                    Case "P": 
+                    Case "P":
                         printOrView = 2
-                    Case "V": 
+                    Case "V":
                         printOrView = 1
                     Case "R":
                         reselect = 1
@@ -1249,7 +1267,7 @@ End Sub
 'ing category, or select a new category
 Sub PrintViewReselect (userOpt$)
 
-    Call MenuBox (9, 15, 40, 4, 15, 0)
+    Call MenuBox(9, 15, 40, 4, 15, 0)
     Locate 10, 10
 
     Color 12
@@ -1270,6 +1288,8 @@ End Sub
 '----------------------------------------
 'This subroutine sorts the players involved
 'in the chosen stat category
+'sortType = 1: High to Low
+'sortType = 2: Low to High
 Sub SortPlayer (PPP, stpl, sortType)
 
     Shared expLdrVal!()
@@ -1310,6 +1330,8 @@ End Sub
 '----------------------------------------
 'This subroutine sorts the teams involved
 'in the chosen stat category
+'sortType = 1: High to Low
+'sortType = 2: Low to High
 Sub SortTeam (sortMax, stpl, sortType)
 
     Shared expLdrVal!()
@@ -1318,7 +1340,6 @@ Sub SortTeam (sortMax, stpl, sortType)
     For I = 2 To sortMax
 
         stpl = stpl + 1
-
         Locate 5, 5: Print "sorting team "; stpl
 
         For J = sortMax To I Step -1
@@ -1542,7 +1563,7 @@ Sub DisplayTeamView (printOrView, TVN, maxRecords, categoryId)
                 Select Case userKey$
 
                     Case "F"
-                        userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                        userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
                         If userFile$ <> "" Then
                             printDest = 0
                         End If
@@ -1597,7 +1618,7 @@ Sub DisplayTeamView (printOrView, TVN, maxRecords, categoryId)
                     Kill destFile$
 
                 End If
-                
+
             End If
 
     End Select
@@ -1693,7 +1714,7 @@ Sub GetListLength (printOrView, listLength, maxItems)
             Print
             Print
 
-            Call MenuBox (10, 20, 30, 2, 4, 15)
+            Call MenuBox(10, 20, 30, 2, 4, 15)
             Locate 11
 
             Color 1

@@ -1,4 +1,3 @@
-
 '----------------------------------------
 '    UpdateExpandedStandings Subroutine
 '----------------------------------------
@@ -21,7 +20,7 @@ Sub UpdateExpandedStandings (league$)
 
     Shared div1Name$, div2Name$, div3Name$, div4Name$, league$
 
-    TMR = 40
+    TMR = TEAMS_PER_LEAGUE
     currRecord = 0
 
     For KK = 1 To TEAMS_PER_LEAGUE
@@ -47,19 +46,19 @@ Sub UpdateExpandedStandings (league$)
 
                 Input #2, nbrGames
 
-                For J = 1 to MAX_SCHED_STATS: 
+                For J = 1 To MAX_SCHED_STATS:
                     Input #2, teamScore(J)
                 Next
-                
-                For J = 1 to MAX_SCHED_STATS: 
+
+                For J = 1 To MAX_SCHED_STATS:
                     Input #2, oppName$(J)
                 Next
-                
-                For J = 1 to MAX_SCHED_STATS: 
+
+                For J = 1 To MAX_SCHED_STATS:
                     Input #2, oppScore(J)
                 Next
-                
-                For J = 1 to MAX_SCHED_STATS:
+
+                For J = 1 To MAX_SCHED_STATS:
                     Input #2, locIndicator$(J)
                 Next
 
@@ -78,58 +77,58 @@ Sub UpdateExpandedStandings (league$)
                         lastWinStreak(currRecord) = lastWinStreak(currRecord) + 1
                         lastLoseStreak(currRecord) = 0
 
-                        If locIndicator$(I) = "V" Then 
+                        If locIndicator$(I) = "V" Then
                             totRoadWins(currRecord) = totRoadWins(currRecord) + 1
                         End If
-                        If locIndicator$(I) = "V1" Then 
+                        If locIndicator$(I) = "V1" Then
                             totRoadWins(currRecord) = totRoadWins(currRecord) + 1
                         End If
-                        If locIndicator$(I) = "V2" Then 
+                        If locIndicator$(I) = "V2" Then
                             totRoadWins(currRecord) = totRoadWins(currRecord) + 1
                         End If
-                        If locIndicator$(I) = "H" Then 
+                        If locIndicator$(I) = "H" Then
                             totHomeWins(currRecord) = totHomeWins(currRecord) + 1
                         End If
-                        If locIndicator$(I) = "H1" Then 
+                        If locIndicator$(I) = "H1" Then
                             totHomeWins(currRecord) = totHomeWins(currRecord) + 1
                         End If
-                        If locIndicator$(I) = "H2" Then 
+                        If locIndicator$(I) = "H2" Then
                             totHomeWins(currRecord) = totHomeWins(currRecord) + 1
                         End If
 
                     End If
 
-                    If teamScore(I) < oppScore(I) Then 
+                    If teamScore(I) < oppScore(I) Then
 
                         totTeamLosses(currRecord) = totTeamLosses(currRecord) + 1
                         lastLoseStreak(currRecord) = lastLoseStreak(currRecord) + 1
                         lastWinStreak(currRecord) = 0
 
-                        If locIndicator$(I) = "V" Then 
+                        If locIndicator$(I) = "V" Then
                             totRoadLosses(currRecord) = totRoadLosses(currRecord) + 1
                         End If
-                        If locIndicator$(I) = "V1" Then 
+                        If locIndicator$(I) = "V1" Then
                             totRoadLosses(currRecord) = totRoadLosses(currRecord) + 1
                         End If
-                        If locIndicator$(I) = "V2" Then 
+                        If locIndicator$(I) = "V2" Then
                             totRoadLosses(currRecord) = totRoadLosses(currRecord) + 1
                         End If
-                        If locIndicator$(I) = "H" Then 
+                        If locIndicator$(I) = "H" Then
                             totHomeLosses(currRecord) = totHomeLosses(currRecord) + 1
                         End If
-                        If locIndicator$(I) = "H1" Then 
+                        If locIndicator$(I) = "H1" Then
                             totHomeLosses(currRecord) = totHomeLosses(currRecord) + 1
                         End If
-                        If locIndicator$(I) = "H2" Then 
+                        If locIndicator$(I) = "H2" Then
                             totHomeLosses(currRecord) = totHomeLosses(currRecord) + 1
                         End If
 
                     End If
 
-                    If lastWinStreak(currRecord) > teamWinStreak(currRecord) Then 
+                    If lastWinStreak(currRecord) > teamWinStreak(currRecord) Then
                         teamWinStreak(currRecord) = lastWinStreak(currRecord)
                     End If
-                    If lastLoseStreak(currRecord) > teamLoseStreak(currRecord) Then 
+                    If lastLoseStreak(currRecord) > teamLoseStreak(currRecord) Then
                         teamLoseStreak(currRecord) = lastLoseStreak(currRecord)
                     End If
 
@@ -142,10 +141,10 @@ Sub UpdateExpandedStandings (league$)
                     M = nbrGames - 9
 
                     For J = M To nbrGames
-                        If teamScore(J) > oppScore(J) Then 
+                        If teamScore(J) > oppScore(J) Then
                             lastTenWins(currRecord) = lastTenWins(currRecord) + 1
                         End If
-                        If teamScore(J) < oppScore(J) Then 
+                        If teamScore(J) < oppScore(J) Then
                             lastTenLosses(currRecord) = lastTenLosses(currRecord) + 1
                         End If
                     Next J
@@ -157,7 +156,7 @@ Sub UpdateExpandedStandings (league$)
 
     Next KK
 
-    Open diskPaths$(1) + league$ + ".STD" For Output As #3
+    Open diskPaths$(2) + league$ + ".STD" For Output As #3
 
     Write #3, league$, div1Name$, div2Name$, div3Name$, div4Name$
 
@@ -201,26 +200,27 @@ Sub NewStandings_Screen (league$)
         Color 11
         Locate 1, 35: Print league$
         Color 14
-        Locate 2: Print Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
+        Locate 2: Print Tab(20); "                     MAJ          HOME    ROAD    LAST 10"
+
         Locate 3
 
         Select Case NT
 
             Case 1
-                Print #1, div1Name$;
+                Print div1Name$;
 
             Case 2
-                Print #1, div2Name$;
+                Print div2Name$;
 
             Case 3
-                Print #1, div3Name$;
+                Print div3Name$;
 
             Case 4
-                Print #1, div4Name$;
+                Print div4Name$;
 
         End Select
 
-        Print Tab(20); "G   W   L   PCT   GB  #  lastWinStreak lastLoseStreak  W- L    W- L     W- L "
+        Print Tab(20); "G   W   L   PCT   GB  #  WS  LS   W- L    W- L    W- L "
 
         For I = AA To ZZ
 
@@ -260,7 +260,7 @@ Sub NewStandings_Screen (league$)
                 Print Tab(45); Using "##"; teamWinStreak(I); Tab(49); teamLoseStreak(I);
 
                 ' Records: Home / Road / Last 10
-                Print Tab(53); Using "##"; totHomeWins(I); Tab(56); totHomeLosses(I); Tab(61); totRoadWins(I); Tab(64); totRoadLosses(I); Tab(70); lastTenWins(I); Tab(73); lastTenLosses(I)
+                Print Tab(53); Using "##"; totHomeWins(I); Tab(56); totHomeLosses(I); Tab(61); totRoadWins(I); Tab(64); totRoadLosses(I); Tab(69); lastTenWins(I); Tab(72); lastTenLosses(I)
             End If
 
         Next
@@ -332,7 +332,7 @@ Sub NewStandings_Report (printDest, destFile$, league$)
 
         End Select
 
-        Print #1, Tab(20); "G   W   L   PCT   GB  #  lastWinStreak lastLoseStreak  W- L    W- L     W- L "
+        Print #1, Tab(20); "G   W   L   PCT   GB  #  WS  LS   W- L    W- L    W- L "
 
         For I = AA To ZZ
 
@@ -372,7 +372,7 @@ Sub NewStandings_Report (printDest, destFile$, league$)
                 End If
 
                 Print #1, Tab(45); Using "##"; teamWinStreak(I); Tab(49); teamLoseStreak(I);
-                Print #1, Tab(53); Using "##"; totHomeWins(I); Tab(56); totHomeLosses(I); Tab(61); totRoadWins(I); Tab(64); totRoadLosses(I); Tab(70); lastTenWins(I); Tab(73); lastTenLosses(I)
+                Print #1, Tab(53); Using "##"; totHomeWins(I); Tab(56); totHomeLosses(I); Tab(61); totRoadWins(I); Tab(64); totRoadLosses(I); Tab(69); lastTenWins(I); Tab(72); lastTenLosses(I)
 
             End If
 
@@ -458,4 +458,3 @@ Sub SortStandings (AA, ZZ)
     Next X
 
 End Sub
-

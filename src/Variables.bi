@@ -31,7 +31,6 @@ Dim tiedGames
 Dim memberIdx(TEAMS_PER_LEAGUE)
 Dim memberName$(TEAMS_PER_LEAGUE)
 Dim memberYears$(TEAMS_PER_LEAGUE)
-Dim statFiles$(TEAMS_PER_LEAGUE)
 
 '-- For Road Data
 Dim gameAtt_Road&(MAX_SCHED_STATS)
@@ -110,7 +109,6 @@ Dim plyrLdrVal!(TEAMS_PER_LEAGUE, 15), teamLdrVal!(TEAMS_PER_LEAGUE, 15)
 ' For Expanded Leaders
 Dim expIndCategory$(0 To 31), expTeamCategory$(0 To 38)
 Dim expPlyrLdrName$(600), expPlyrLdrTeam$(600), expLdrTeam$(600), expLdrPlyrName$(600)
-Dim expStdLeagName$(TEAMS_PER_LEAGUE)
 
 Dim totGames!(600), expLdrVal!(600)
 
@@ -124,6 +122,8 @@ Dim totHomeLosses(TEAMS_PER_LEAGUE), totHomeWins(TEAMS_PER_LEAGUE)
 Dim totRoadLosses(TEAMS_PER_LEAGUE), totRoadWins(TEAMS_PER_LEAGUE)
 
 Dim totTeamLosses(TEAMS_PER_LEAGUE), lastLoseStreak(TEAMS_PER_LEAGUE), lastWinStreak(TEAMS_PER_LEAGUE)
+
+Dim expStdLeagName$(TEAMS_PER_LEAGUE)
 
 
 '----------------------------------------
