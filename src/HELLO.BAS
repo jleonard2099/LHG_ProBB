@@ -1462,7 +1462,7 @@ Sub PROHOOP ()
 
         halfTime = 1
         Call BOXOPTIONS(0)
-        endGame = 0
+        gameOver = 0
         Call TICKER
         halfTime = 0
 
@@ -2390,10 +2390,10 @@ Sub PROHOOP ()
 
             Locate 10
             If shotType = 4 Then
-                Print "3 PT SHOT %"; Int(threePtShotChance + .5);
+                Print "3 PT SHOT %"; CInt(threePtShotChance);
                 Print "*";
             Else
-                Print "SHOT %"; Int(shotChance + .5);
+                Print "SHOT %"; CInt(shotChance);
                 If shotType >= 2 And shotType <= 8 Then
                     Print "*"; Space$(5);
                 End If
@@ -2405,10 +2405,10 @@ Sub PROHOOP ()
 
             Locate 8, 41
             If shotType = 4 Then
-                Print Using "SHOT % ##"; Int(threePtShotChance + .5);
+                Print Using "SHOT % ##"; CInt(threePtShotChance);
                 Print "*";
             Else
-                Print Using "SHOT % ##"; Int(shotChance + .5);
+                Print Using "SHOT % ##"; CInt(shotChance);
                 If shotType >= 2 And shotType <= 8 Then
                     Print "*";
                 End If
@@ -4092,7 +4092,7 @@ Sub InitVar ()
     compTeam = 0
     D = 0
     endAllGames = 0
-    endGame = 0
+    gameOver = 0
     fastBreak = 0
     forcedThree = 0
     freeThrowNbr = 0
@@ -5937,7 +5937,7 @@ Sub TICKER ()
 
         Else
 
-            If endGame = 1 Then
+            If gameOver = 1 Then
 
                 If G9 = 0 Then
                     Locate , 27: Print "CHEVROLET FINAL SCOREBOARD"
@@ -6445,7 +6445,7 @@ Function TickerTime% (timeInterval, X)
 
     If tickerIdx < 0 Then tickerIdx = 0
     If tickerIdx > 14 Then tickerIdx = 14
-    If endGame = 1 Then tickerIdx = 14
+    If gameOver = 1 Then tickerIdx = 14
 
     TickerTime% = tickerIdx
 
@@ -7086,7 +7086,7 @@ Sub WHOGETSBAll
 
                 For I = 0 To 4
 
-                    M8 = Int(plyrRat_GAME(P, lineupIdx(P, I), 2) / plyrRat_GAME(P, lineupIdx(P, I), 0) + .5) - gameRatings!(P, lineupIdx(P, I), 7)
+                    M8 = CInt(plyrRat_GAME(P, lineupIdx(P, I), 2) / plyrRat_GAME(P, lineupIdx(P, I), 0)) - gameRatings!(P, lineupIdx(P, I), 7)
 
                     If M8 <= 0 Then
                         M8 = 0
@@ -7774,7 +7774,7 @@ Sub FoulCalled (randomFouler)
 
             If I3 <> lineupIdx(D, foulPlayer) And players_GAME$(D, I3, 1) <> "XXX" And plyrRat_GAME(D, I3, 18) = 0 Then
                 If gameRatings!(D, I3, 0) <= gameRatings!(D, lineupIdx(D, foulPlayer), 0) Then
-                    gameRatings!(D, I3, 3) = gameRatings!(D, I3, 3) + Int((gameRatings!(D, lineupIdx(D, foulPlayer), 3) / M9) + .5)
+                    gameRatings!(D, I3, 3) = gameRatings!(D, I3, 3) + CInt((gameRatings!(D, lineupIdx(D, foulPlayer), 3) / M9))
                 End If
             End If
 
@@ -8386,7 +8386,7 @@ Sub STEALADJ ()
             miscAdj(I, 4) = miscAdj(I, 4) + gameRatings!(I, lineupIdx(I, I1), 4) / 10
         Next I1
 
-        miscAdj(I, 4) = Int((miscAdj(I, 4) / (teamAdj(I, 6) * .9)) * 100 + .5)
+        miscAdj(I, 4) = CInt((miscAdj(I, 4) / (teamAdj(I, 6) * .9)) * 100)
 
     Next
 
@@ -8574,7 +8574,7 @@ Sub SETUPRATINGS (teamStyle)
     For I = 0 To 1
 
         '           FG % - League FG%
-        dFGPA(I) = Int(teamRat_GAME(I, 20) / teamRat_GAME(I, 19) * 100 + .5) - leagRat_GAME(I, 3)
+        dFGPA(I) = CInt(teamRat_GAME(I, 20) / teamRat_GAME(I, 19) * 100) - leagRat_GAME(I, 3)
 
         '1440 - ((Team FGA / G + Opp FGA / Game) * 2)
         '1440 = 24 * 60 (seconds in a half
@@ -8582,17 +8582,17 @@ Sub SETUPRATINGS (teamStyle)
         X7(I) = X7(I) / 25
 
         '(Def TOs - Off Steals) / Game / (adjustment)
-        teamAdj(I, 0) = Int(((teamRat_GAME(I, 28) / teamRat_GAME(I, 0)) / (X7(I) * 5) * 1000) + .5) - 37
+        teamAdj(I, 0) = CInt(((teamRat_GAME(I, 28) / teamRat_GAME(I, 0)) / (X7(I) * 5) * 1000)) - 37
         '-- Perhaps this is more about quarterOpt???
         If teamGender$(I) = "SHE" Then
-            teamAdj(I, 0) = Int(((teamRat_GAME(I, 28) / teamRat_GAME(I, 0)) / (X7(I) * 5) * 1000) + .5) - 19
+            teamAdj(I, 0) = CInt(((teamRat_GAME(I, 28) / teamRat_GAME(I, 0)) / (X7(I) * 5) * 1000)) - 19
         End If
 
         '(Off TOs - Def Steals) / Game  / (adjustment)
-        teamAdj(I, 1) = Int(((teamRat_GAME(I, 15) - teamRat_GAME(I, 28)) / teamRat_GAME(I, 0)) / (X7(I) * 5) * 1000 + .5)
+        teamAdj(I, 1) = CInt(((teamRat_GAME(I, 15) - teamRat_GAME(I, 28)) / teamRat_GAME(I, 0)) / (X7(I) * 5) * 1000)
 
         '(Def TOs - Off Steals) / Game / (adjustment) - turnoverFreq
-        teamAdj(I, 2) = Int(((teamRat_GAME(I, 29) - teamRat_GAME(I, 14)) / teamRat_GAME(I, 0)) / (X7(I) * 5) * 1000 + .5) - turnoverFreq(I)
+        teamAdj(I, 2) = CInt(((teamRat_GAME(I, 29) - teamRat_GAME(I, 14)) / teamRat_GAME(I, 0)) / (X7(I) * 5) * 1000) - turnoverFreq(I)
 
         ' ** Foul Rating **
 
@@ -8607,12 +8607,12 @@ Sub SETUPRATINGS (teamStyle)
         X3! = X3! / 2
 
         'X3! / (Opp FGA + X3!) - PF%
-        teamAdj(I, 3) = Int(X3! / (teamRat_GAME(I, 19) + X3!) * 100 + .5) - perFoulRat(I)
+        teamAdj(I, 3) = CInt(X3! / (teamRat_GAME(I, 19) + X3!) * 100) - perFoulRat(I)
 
         ' ** Def 3FGA **
         If teamRat_GAME(I, 31) > 0 Then
             'Def 3FGA% - League 3FGA%
-            teamAdj(I, 4) = Int(teamRat_GAME(I, 32) / teamRat_GAME(I, 31) * 100 + .5) - leagRat_GAME(I, 5)
+            teamAdj(I, 4) = CInt(teamRat_GAME(I, 32) / teamRat_GAME(I, 31) * 100) - leagRat_GAME(I, 5)
         End If
 
         ' ** Team 3FGA **
@@ -8622,13 +8622,13 @@ Sub SETUPRATINGS (teamStyle)
 
         ' ** Team Pace **
         '(Off FGA + Def FGA) / (Games Played * 2)
-        teamAdj(I, 5) = Int(((teamRat_GAME(I, 5) + teamRat_GAME(I, 19)) / (teamRat_GAME(I, 0) * 2)) + .5)
+        teamAdj(I, 5) = CInt(((teamRat_GAME(I, 5) + teamRat_GAME(I, 19)) / (teamRat_GAME(I, 0) * 2)))
 
         ' ** FGM / Game **
-        teamAdj(I, 6) = Int(teamRat_GAME(I, 6) / teamRat_GAME(I, 0) + .5)
+        teamAdj(I, 6) = CInt(teamRat_GAME(I, 6) / teamRat_GAME(I, 0))
 
         ' ** Off Assists / FGM **
-        teamAdj(I, 7) = Int(teamRat_GAME(I, 11) / teamRat_GAME(I, 6) * 100 + .5)
+        teamAdj(I, 7) = CInt(teamRat_GAME(I, 11) / teamRat_GAME(I, 6) * 100)
 
     Next
 
@@ -8643,7 +8643,7 @@ Sub SETUPRATINGS (teamStyle)
                 'Start assignment of player ratings
                 If plyrRat_GAME(I, I1, 2) - plyrRat_GAME(I, I1, 13) > 0 Then
                     '(FGM - 3FGM) / (FGA - 3FGA), as a %
-                    gameRatings!(I, I1, 0) = Int((plyrRat_GAME(I, I1, 3) - plyrRat_GAME(I, I1, 14)) / (plyrRat_GAME(I, I1, 2) - plyrRat_GAME(I, I1, 13)) * 100 + .5)
+                    gameRatings!(I, I1, 0) = CInt((plyrRat_GAME(I, I1, 3) - plyrRat_GAME(I, I1, 14)) / (plyrRat_GAME(I, I1, 2) - plyrRat_GAME(I, I1, 13)) * 100)
                 End If
 
                 If playoffOpt = 1 Then
@@ -8652,14 +8652,14 @@ Sub SETUPRATINGS (teamStyle)
 
                 If plyrRat_GAME(I, I1, 4) > 0 Then
                     'FT %
-                    gameRatings!(I, I1, 1) = Int(plyrRat_GAME(I, I1, 5) / plyrRat_GAME(I, I1, 4) * 100 + .5)
+                    gameRatings!(I, I1, 1) = CInt(plyrRat_GAME(I, I1, 5) / plyrRat_GAME(I, I1, 4) * 100)
                 End If
 
                 'Def Reb / Game
                 X3! = plyrRat_GAME(I, I1, 7) / plyrRat_GAME(I, I1, 1) * MINS_PER_GAME
 
                 X3! = X3! * 29.3 / (leagRat_GAME(I, 2) * .677) * ((teamRat_GAME(I, 5) + teamRat_GAME(I, 19)) / (teamRat_GAME(I, 0) * 2) / leagRat_GAME(I, 1))
-                X3! = Int(X3! * 10 + .5)
+                X3! = CInt(X3! * 10)
 
                 gameRatings!(I, I1, 2) = X3!
 
@@ -8669,7 +8669,7 @@ Sub SETUPRATINGS (teamStyle)
                 'Off Reb * 14 / (Avg Reb / G * .323) * ( (Team FGA + Opp FGA) / (Games Played * 2) / Avg FGA/G )
                 'Off Reb / Game * 14 Players * (Avg Games / Reb) * Expected FGA / Game)
                 X3! = X3! * 14 / (leagRat_GAME(I, 2) * .323) * ((teamRat_GAME(I, 5) + teamRat_GAME(I, 19)) / (teamRat_GAME(I, 0) * 2) / leagRat_GAME(I, 1))
-                X3! = Int(X3! * 10 + .5)
+                X3! = CInt(X3! * 10)
 
                 gameRatings!(I, I1, 21) = X3!
 
@@ -8677,7 +8677,7 @@ Sub SETUPRATINGS (teamStyle)
                 'Player Assists / Game
                 X3! = plyrRat_GAME(I, I1, 8) / plyrRat_GAME(I, I1, 1) * MINS_PER_GAME
                 'Assists / 10 Mins
-                gameRatings!(I, I1, 25) = Int(X3! * 10 + .5)
+                gameRatings!(I, I1, 25) = CInt(X3! * 10)
 
                 '(Player Assists / Game) * 26  * (Games Played / Team Assists)
                 X3! = X3! * 26 * teamRat_GAME(I, 0) / teamRat_GAME(I, 11)
@@ -8689,12 +8689,12 @@ Sub SETUPRATINGS (teamStyle)
                     X3! = X3! * 26 * teamRat_GAME(I, 0) / teamRat_GAME(I, 11)
                 End If
 
-                gameRatings!(I, I1, 4) = Int(X3! * 10 + .5)
+                gameRatings!(I, I1, 4) = CInt(X3! * 10)
 
                 '### STEALS ###
                 'Player Steals / Game
                 gameRatings!(I, I1, 5) = plyrRat_GAME(I, I1, 11) / plyrRat_GAME(I, I1, 1) * MINS_PER_GAME
-                gameRatings!(I, I1, 5) = Int(gameRatings!(I, I1, 5) / X7(I) * 1000 + .5)
+                gameRatings!(I, I1, 5) = CInt(gameRatings!(I, I1, 5) / X7(I) * 1000)
 
                 '### BLOCKS ###
                 'Player Blocks / Game
@@ -8702,8 +8702,7 @@ Sub SETUPRATINGS (teamStyle)
 
                 '(Player Blocks / Game) / (((Opp FGA - Opp 3FGA - Team FGM + Team 3FGM) / Games Played) / 5)
                 gameRatings!(I, I1, 6) = gameRatings!(I, I1, 6) / ((teamRat_GAME(I, 19) - teamRat_GAME(I, 31) - teamRat_GAME(I, 20) + teamRat_GAME(I, 32)) / teamRat_GAME(I, 0) / 5)
-                gameRatings!(I, I1, 6) = Int(gameRatings!(I, I1, 6) * .96 * 100 + .5)
-                'gameRatings!(I, I1, 6) = Int(gameRatings!(I, I1, 6) * .93 * 100 + .5)
+                gameRatings!(I, I1, 6) = CInt(gameRatings!(I, I1, 6) * .96 * 100)
 
                 'Player FTA - Player FGM - 1.58 * Player Mins / Game
                 Select Case ftRulesOpt
@@ -8716,11 +8715,11 @@ Sub SETUPRATINGS (teamStyle)
                 X3! = X3! / 2
 
                 'X3! / FGA + X3!, as %
-                gameRatings!(I, I1, 16) = Int(X3! / (plyrRat_GAME(I, I1, 2) + X3!) * 100 + .5)
+                gameRatings!(I, I1, 16) = CInt(X3! / (plyrRat_GAME(I, I1, 2) + X3!) * 100)
                 If gameRatings!(I, I1, 16) < 0 Then gameRatings!(I, I1, 16) = 0
 
                 'Player Fouls / 10 Minutes
-                gameRatings!(I, I1, 17) = Int(plyrRat_GAME(I, I1, 9) / plyrRat_GAME(I, I1, 1) * MINS_PER_GAME * 10 + .5)
+                gameRatings!(I, I1, 17) = CInt(plyrRat_GAME(I, I1, 9) / plyrRat_GAME(I, I1, 1) * MINS_PER_GAME * 10)
 
                 'Active Flag
                 gameRatings!(I, I1, 18) = plyrRat_GAME(I, I1, 18)
@@ -8728,41 +8727,69 @@ Sub SETUPRATINGS (teamStyle)
                 'If Player FGA > 0
                 If plyrRat_GAME(I, I1, 2) > 0 Then
                     'Calculate 3FGA frequency
-                    gameRatings!(I, I1, 19) = Int((plyrRat_GAME(I, I1, 13) / plyrRat_GAME(I, I1, 2) * 100) + .5)
+                    gameRatings!(I, I1, 19) = CInt((plyrRat_GAME(I, I1, 13) / plyrRat_GAME(I, I1, 2) * 100))
                 End If
 
                 'If Player 3FGA > 0
                 If plyrRat_GAME(I, I1, 13) > 0 Then
                     'Calculate 3FGM %
-                    gameRatings!(I, I1, 20) = Int(plyrRat_GAME(I, I1, 14) / plyrRat_GAME(I, I1, 13) * 100 + .5)
+                    gameRatings!(I, I1, 20) = CInt(plyrRat_GAME(I, I1, 14) / plyrRat_GAME(I, I1, 13) * 100)
                 End If
 
                 'Player FGA / (Player FGA + Player FTA) as %
-                X3! = Int(plyrRat_GAME(I, I1, 2) / (plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 4)) * 100 + .5)
+                X3! = CInt(plyrRat_GAME(I, I1, 2) / (plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 4)) * 100)
 
                 'Calculate penetration rating
                 If Left$(players_GAME$(I, I1, 1), 1) <> "F" And Left$(players_GAME$(I, I1, 1), 1) <> "C" Then
                     'Guards
-                    If X3! >= 86 Then plyrRat_GAME(I, I1, 16) = 1
-                    If X3! = 84 Or X3! = 85 Then plyrRat_GAME(I, I1, 16) = 2
-                    If X3! = 82 Or X3! = 83 Then plyrRat_GAME(I, I1, 16) = 3
-                    If X3! = 80 Or X3! = 81 Then plyrRat_GAME(I, I1, 16) = 4
-                    If X3! >= 77 And X3! <= 79 Then plyrRat_GAME(I, I1, 16) = 5
-                    If X3! = 75 Or X3! = 76 Then plyrRat_GAME(I, I1, 16) = 6
-                    If X3! = 73 Or X3! = 74 Then plyrRat_GAME(I, I1, 16) = 7
-                    If X3! = 71 Or X3! = 72 Then plyrRat_GAME(I, I1, 16) = 8
-                    If X3! <= 70 Then plyrRat_GAME(I, I1, 16) = 9
+                    Select Case X3!
+
+                        Case Is <= 70
+                            plyrRat_GAME(I, I1, 16) = 9
+                        Case 71 to 72
+                            plyrRat_GAME(I, I1, 16) = 8
+                        Case 73 to 74
+                            plyrRat_GAME(I, I1, 16) = 7
+                        Case 75 to 76
+                            plyrRat_GAME(I, I1, 16) = 6
+                        Case 77 to 729
+                            plyrRat_GAME(I, I1, 16) = 5
+                        Case 80 to 81
+                            plyrRat_GAME(I, I1, 16) = 4
+                        Case 82 to 83
+                            plyrRat_GAME(I, I1, 16) = 3
+                        Case 84 to 85
+                            plyrRat_GAME(I, I1, 16) = 2                    
+                        Case Is >= 86 
+                            plyrRat_GAME(I, I1, 16) = 1
+
+                    End Select
+                    
                 Else
                     'Forwards / Centers
-                    If X3! >= 81 Then plyrRat_GAME(I, I1, 16) = 1
-                    If X3! = 79 Or X3! = 80 Then plyrRat_GAME(I, I1, 16) = 2
-                    If X3! = 77 Or X3! = 78 Then plyrRat_GAME(I, I1, 16) = 3
-                    If X3! = 75 Or X3! = 76 Then plyrRat_GAME(I, I1, 16) = 4
-                    If X3! >= 72 And X3! <= 74 Then plyrRat_GAME(I, I1, 16) = 5
-                    If X3! = 70 Or X3! = 71 Then plyrRat_GAME(I, I1, 16) = 6
-                    If X3! = 68 Or X3! = 69 Then plyrRat_GAME(I, I1, 16) = 7
-                    If X3! = 66 Or X3! = 67 Then plyrRat_GAME(I, I1, 16) = 8
-                    If X3! <= 65 Then plyrRat_GAME(I, I1, 16) = 9
+                    Select Case X3!
+
+                        Case Is <= 65 
+                            plyrRat_GAME(I, I1, 16) = 9
+                        Case 66 to 67
+                            plyrRat_GAME(I, I1, 16) = 8
+                        Case 68 to 69
+                            plyrRat_GAME(I, I1, 16) = 7
+                        Case 70 to 71
+                            plyrRat_GAME(I, I1, 16) = 6
+                        Case 72 to 74
+                            plyrRat_GAME(I, I1, 16) = 5
+                        Case 75 to 76
+                            plyrRat_GAME(I, I1, 16) = 4
+                        Case 77 to 78
+                            plyrRat_GAME(I, I1, 16) = 3
+                        Case 79 to 80
+                            plyrRat_GAME(I, I1, 16) = 2
+                        Case Is >= 81
+                            plyrRat_GAME(I, I1, 16) = 1
+                    
+                    End Select
+
                 End If
 
             End If
@@ -8794,7 +8821,7 @@ Sub SETUPRATINGS (teamStyle)
 
     End If
 
-    S9 = Int((M9!(0) + M9!(1)) / 2 + .5)
+    S9 = CInt((M9!(0) + M9!(1)) / 2)
 
     If playoffOpt = 1 Then
         S9 = S9 - 11
@@ -8806,7 +8833,7 @@ Sub SETUPRATINGS (teamStyle)
         For I1 = 0 To 14
             If plyrRat_GAME(I, I1, 18) = 0 Then
                 'ADD Player FGA + Player Off Reb + Player Def Reb + Player Fouls / Player Minutes
-                M9!(I) = M9!(I) + Int((plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 6) + plyrRat_GAME(I, I1, 7) + plyrRat_GAME(I, I1, 9)) / plyrRat_GAME(I, I1, 0) + .5)
+                M9!(I) = M9!(I) + CInt((plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 6) + plyrRat_GAME(I, I1, 7) + plyrRat_GAME(I, I1, 9)) / plyrRat_GAME(I, I1, 0))
             End If
         Next I1
     Next I
@@ -8815,7 +8842,7 @@ Sub SETUPRATINGS (teamStyle)
         For I1 = 0 To 14
             If plyrRat_GAME(I, I1, 18) = 0 Then
                 'Player FGA + Player Off Reb + Player Def RB + Player Fouls / (Minutes / (M9(I) * S9))
-                gameRatings!(I, I1, 3) = Int(((plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 6) + plyrRat_GAME(I, I1, 7) + plyrRat_GAME(I, I1, 9)) / plyrRat_GAME(I, I1, 0)) / M9!(I) * S9 + .5)
+                gameRatings!(I, I1, 3) = CInt(((plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 6) + plyrRat_GAME(I, I1, 7) + plyrRat_GAME(I, I1, 9)) / plyrRat_GAME(I, I1, 0)) / M9!(I) * S9)
                 If gameRatings!(I, I1, 3) = 0 Then gameRatings!(I, I1, 3) = 1
             End If
         Next I1
@@ -8896,14 +8923,14 @@ Function DecideShot%
     End Select
 
     baseValue = MINS_PER_GAME
-    'test = baseValue + Int(((JY - paceFactor) * .8) + .5)
+
     If quarterOpt = 1 Then
         baseValue = baseValue + 10
     End If
 
     'Call pbplog(8442)
 
-    If RN0 <= baseValue + Int(((JY - paceFactor) * .8) + .5) Then
+    If RN0 <= baseValue + CInt(((JY - paceFactor) * .8)) Then
         DecideShot% = 1
     Else
         DecideShot% = 0
@@ -9999,7 +10026,7 @@ Sub SHOTPERCENT (useAssist)
 
         assistShotBoost = Int(Rnd(1) * 41)
         assistChance = Int(Rnd(1) * miscAdj(P, 4)) + 1
-        assistRoll = Int(.17 * miscAdj(P, 4) + .5)
+        assistRoll = CInt(.17 * miscAdj(P, 4))
 
         ' *** CHECK ASSIST SHOT ***
         If assistRoll >= assistChance Then
@@ -10993,7 +11020,7 @@ Sub POSTGAME ()
 
     Call CheckRecords
     Call EVENTS(specialCount, specialStat)
-    endGame = 1
+    gameOver = 1
 
     Do
 
@@ -11061,7 +11088,7 @@ Sub POSTGAME ()
 
     Call SAVESTATS
 
-    endGame = 0
+    gameOver = 0
     specialStat = 0
 
 End Sub
@@ -11285,15 +11312,15 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
 
         'FG %
         Print #1, ; Tab(22);
-        If statTotals(1) > 0 Then Print #1, ; Int(((statTotals(0) / statTotals(1)) * 100) + .5); "%";
+        If statTotals(1) > 0 Then Print #1, ; CInt(((statTotals(0) / statTotals(1)) * 100)); "%";
 
         '3FG %
         Print #1, ; Tab(28);
-        If statTotals(14) > 0 Then Print #1, ; Int(((statTotals(13) / statTotals(14)) * 100) + .5); "%";
+        If statTotals(14) > 0 Then Print #1, ; CInt(((statTotals(13) / statTotals(14)) * 100)); "%";
 
         'FT %
         Print #1, ; Tab(35);
-        If statTotals(3) > 0 Then Print #1, ; Int(((statTotals(2) / statTotals(3)) * 100) + .5); "%"
+        If statTotals(3) > 0 Then Print #1, ; CInt(((statTotals(2) / statTotals(3)) * 100)); "%"
 
         Print #1,
         Print #1, "TOTAL TURNOVERS -"; turnovers(I)
@@ -11564,15 +11591,15 @@ Sub STATS2SCREEN
 
         'FG %
         Print Tab(22);
-        If statTotals(1) > 0 Then Print Int(((statTotals(0) / statTotals(1)) * 100) + .5); "%";
+        If statTotals(1) > 0 Then Print CInt(((statTotals(0) / statTotals(1)) * 100)); "%";
 
         '3FG %
         Print Tab(28);
-        If statTotals(14) > 0 Then Print Int(((statTotals(13) / statTotals(14)) * 100) + .5); "%";
+        If statTotals(14) > 0 Then Print CInt(((statTotals(13) / statTotals(14)) * 100)); "%";
 
         'FT %
         Print Tab(35);
-        If statTotals(3) > 0 Then Print Int(((statTotals(2) / statTotals(3)) * 100) + .5); "%"
+        If statTotals(3) > 0 Then Print CInt(((statTotals(2) / statTotals(3)) * 100)); "%"
 
         Print
         Color 14: Print "TOTAL TURNOVERS -";
@@ -12454,7 +12481,7 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx, dataOK)
                     Call Rolld100(RN)
 
                     'Auto disable specific players
-                    If UCase$(players_GAME$(gameIdx, I, 0)) = "XXX" Or (plyrRat_GAME(gameIdx, I, 18) = 0 And RN > Int(plyrRat_GAME(gameIdx, I, 0) / leagRat_GAME(gameIdx, 0) * 100 + .5)) Then
+                    If UCase$(players_GAME$(gameIdx, I, 0)) = "XXX" Or (plyrRat_GAME(gameIdx, I, 18) = 0 And RN > CInt(plyrRat_GAME(gameIdx, I, 0) / leagRat_GAME(gameIdx, 0) * 100)) Then
                         plyrRat_GAME(gameIdx, I, 18) = -1
                     End If
 

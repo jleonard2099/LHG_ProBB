@@ -665,7 +665,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT(), normYrIdx)
                 plyrRat_DRAFT(0, B, 6) = plyrRat_DRAFT(0, B, 6) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT(1, 2))
                 plyrRat_DRAFT(0, B, 7) = plyrRat_DRAFT(0, B, 7) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT(1, 2))
 
-                FG = Int(plyrRat_DRAFT(1, B1, 3) / plyrRat_DRAFT(1, B1, 2) * 100 + .5)
+                FG = CInt(plyrRat_DRAFT(1, B1, 3) / plyrRat_DRAFT(1, B1, 2) * 100)
                 FG = FG * (leagueAverages%(normYrIdx, 3) / leagRat_DRAFT(1, 3))
 
                 plyrRat_DRAFT(0, B, 3) = FG / 100 * plyrRat_DRAFT(0, B, 2)
@@ -677,12 +677,12 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT(), normYrIdx)
                 leagTot_DRAFT(B, 23) = leagTot_DRAFT(B, 23) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT(1, 2))
                 leagTot_DRAFT(B, 24) = leagTot_DRAFT(B, 24) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT(1, 2))
 
-                FG = Int(teamRat_DRAFT(1, 6) / teamRat_DRAFT(1, 5) * 100 + .5)
+                FG = cInt(teamRat_DRAFT(1, 6) / teamRat_DRAFT(1, 5) * 100)
                 FG = FG * (leagueAverages%(normYrIdx, 3) / leagRat_DRAFT(1, 3))
 
                 teamRat_DRAFT(0, 6) = FG / 100 * teamRat_DRAFT(0, 5)
 
-                FG = Int(teamRat_DRAFT(1, 20) / teamRat_DRAFT(1, 19) * 100 + .5)
+                FG = cInt(teamRat_DRAFT(1, 20) / teamRat_DRAFT(1, 19) * 100)
                 FG = FG * (leagueAverages%(normYrIdx, 3) / leagRat_DRAFT(1, 3))
 
                 teamRat_DRAFT(0, 20) = FG / 100 * teamRat_DRAFT(0, 19)

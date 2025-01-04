@@ -229,7 +229,7 @@ Dim alpha$(4), tickerPeriod$(14)
 Dim Shared D, P, P9
 Dim Shared assistShotBoost, autoPlay, ballCarrier, bonusFoulNum
 Dim Shared coachOpt, compTeam, currGame
-Dim Shared defPress, endGame, endAllGames, eraAdj, eraChoice
+Dim Shared defPress, gameOver, endAllGames, eraAdj, eraChoice
 Dim Shared fastBreak, forcedThree, ftRulesOpt, freeThrowVal, fullCtOpt
 Dim Shared gameLoc, halfTime, JY, maxTimeouts, MJ, nbrFTMade, nbrLines
 Dim Shared offStatus, playerMode, playerOpt, playoffOpt, pbpOpt, playChoice

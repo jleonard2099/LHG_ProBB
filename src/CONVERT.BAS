@@ -361,7 +361,7 @@ Sub ReadSchedOld (targetFile$)
     Shared homeScores(), visitorScores()
     Shared scheduleNG%(), scheduleYN$()
 
-    Open targetFile$ For Random As #1 Len = SCHEDULE_SIZE_BYTES - 10
+    Open targetFile$ For Random As #1 Len = (SCHEDULE_SIZE_BYTES - 10)
 
     fileLength& = LOF(1)
     scheduleAP%(0) = fileLength& / (SCHEDULE_SIZE_BYTES - 10)
@@ -567,11 +567,11 @@ End Sub
 
 
 '----------------------------------------
-'       ConvertAlastLoseStreakched Subroutine
+'       ConvertAllSched Subroutine
 '----------------------------------------
 ' Quick and dirty script to convert all
 ' schedule files in the "Schedule" folder
-Sub ConvertAlastLoseStreakched ()
+Sub ConvertAllSched ()
 
     fileSpec$ = diskPaths$(3) + "*.SCD"
 
