@@ -78,8 +78,8 @@ Sub MergeStats ()
     Shared threeFGM_Merge!(), threeFGA_Merge!()
 
     Shared stats3FGM!(), stats3FGA!()
-    Shared statsZ0!(), statsZ1!()
-    Shared statsZ_Road!(), statsZ1_Road!()
+    Shared statsOffTot!(), statsDefTot!()
+    Shared statsZ_Road!(), statsDefTot_Road!()
 
     'Shared gameSite$(), gameSite_Road$()
     Shared locIndicator$(), locIndicator_Road$()
@@ -134,7 +134,7 @@ Sub MergeStats ()
                     Next
                     
                     For L = 0 To 15: 
-                        Input #1, statsZ1_Road!(L)
+                        Input #1, statsDefTot_Road!(L)
                     Next
 
                     Close #1
@@ -194,11 +194,11 @@ Sub MergeStats ()
                         Next
 
                         For L = 0 To 15: 
-                            Input #3, statsZ0!(L)
+                            Input #3, statsOffTot!(L)
                         Next
 
                         For L = 0 To 15: 
-                            Input #3, statsZ1!(L)
+                            Input #3, statsDefTot!(L)
                         Next
 
                         Close #3
@@ -338,8 +338,8 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
     Shared threeFGM_Merge!(), threeFGA_Merge!()
 
     Shared stats3FGM!(), stats3FGA!()
-    Shared statsZ0!(), statsZ1!()
-    Shared statsZ_Road!(), statsZ1_Road!()
+    Shared statsOffTot!(), statsDefTot!()
+    Shared statsZ_Road!(), statsDefTot_Road!()
 
     Shared gameSite$(), gameSite_Road$()
     Shared locIndicator$(), locIndicator_Road$()
@@ -377,8 +377,8 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
     Next I
 
     For L = 0 To 14
-        statsZ0!(L) = statsZ0!(L) + statsZ_Road!(L)
-        statsZ1!(L) = statsZ1!(L) + statsZ1_Road!(L)
+        statsOffTot!(L) = statsOffTot!(L) + statsZ_Road!(L)
+        statsDefTot!(L) = statsDefTot!(L) + statsDefTot_Road!(L)
     Next
 
     Open pathCurrentStats$ + statFile$ For Output As #1
@@ -399,11 +399,11 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
     Next
 
     For L = 0 To 15: 
-        Write #1, statsZ0!(L)
+        Write #1, statsOffTot!(L)
     Next
     
     For L = 0 To 15: 
-        Write #1, statsZ1!(L)
+        Write #1, statsDefTot!(L)
     Next
 
     Close #1

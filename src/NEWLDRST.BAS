@@ -1,3 +1,4 @@
+
 '----------------------------------------
 '    UpdateExpandedStandings Subroutine
 '----------------------------------------
@@ -5,7 +6,7 @@
 'for a league, then calculates the standings
 'for that league and writes a  corresponding
 '.STD file.
-Sub UpdateExpandedStandings (league$)
+Sub UpdateExpandedStandings ()
 
     Shared lastTenLosses(), lastTenWins(), lastWinStreak()
     Shared totHomeLosses(), totHomeWins()
@@ -18,7 +19,7 @@ Sub UpdateExpandedStandings (league$)
     Shared locIndicator$(), oppName$()
     Shared memberName$(), expStdLeagName$()
 
-    Shared div1Name$, div2Name$, div3Name$, div4Name$, league$
+    Shared div1Name$, div2Name$, div3Name$, div4Name$, leagueName$
 
     TMR = TEAMS_PER_LEAGUE
     currRecord = 0
@@ -156,9 +157,9 @@ Sub UpdateExpandedStandings (league$)
 
     Next KK
 
-    Open diskPaths$(2) + league$ + ".STD" For Output As #3
+    Open diskPaths$(2) + leagueName$ + ".STD" For Output As #3
 
-    Write #3, league$, div1Name$, div2Name$, div3Name$, div4Name$
+    Write #3, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
     For I = 1 To TEAMS_PER_LEAGUE
         Write #3, teamTotWins(I), totHomeWins(I), totRoadWins(I), totTeamLosses(I), totHomeLosses(I), totRoadLosses(I), lastTenWins(I), lastTenLosses(I), expStdLeagName$(I)

@@ -16,9 +16,10 @@ Dim oppScore(MAX_SCHED_STATS), teamScore(MAX_SCHED_STATS)
 Dim gameSite$(MAX_SCHED_STATS), locIndicator$(MAX_SCHED_STATS), oppName$(MAX_SCHED_STATS)
 
 Dim stats3FGM!(0 To 14), stats3FGA!(0 To 14)
-Dim statsZ0!(0 To 15), statsZ1!(0 To 15)
-Dim statsZ2!(0 To 14, 0 To 13)
+Dim statsOffTot!(0 To 15), statsDefTot!(0 To 15)
 Dim statPlyrVal!(0 To 14, 0 To 24)
+
+Dim gameStatPlyrVal!(0 To 14, 0 To 13)
 
 'Record / Standings
 Dim confWins, confLosses
@@ -78,7 +79,7 @@ Dim threeFGM_Align!(15), threeFGA_Align!(15)
 Dim threeFGM_Road!(15), threeFGA_Road!(15)
 Dim threeFGM_Merge!(15), threeFGA_Merge!(15)
 
-Dim statsZ_Road!(16), statsZ1_Road!(16)
+Dim statsZ_Road!(16), statsDefTot_Road!(16)
 
 Dim plyrName_Road$(15), plyrName_Align$(14)
 
@@ -177,9 +178,9 @@ Dim tmInfo_TRADE$(1, 6)
 ' ** Stat File **
 
 Dim teamIndexes(1)
-Dim tradeStatsZ0!(2, 15), tradeStatsZ1!(2, 15)
+Dim tradeStatsOffTot!(2, 15), tradeStatsDefTot!(2, 15)
 
-Dim tradeStatsPlyrVal!(2, 14, 14)
+Dim tradeStatPlyrVal!(2, 14, 14)
 Dim trade3FGM!(2, 14), trade3FGA!(2, 14)
 
 Dim tradeStatsPlyrName$(2, 14), tradeStatsTeamName$(1)
@@ -189,7 +190,7 @@ Dim statTeam$(1)
 '----------------------------------------
 '   Used in HD2HD routines
 '----------------------------------------
-Dim league$, div1Name$, div2Name$, div3Name$, div4Name$
+Dim leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
 Dim awayLosses(50), awayWins!(50)
 Dim awayScoreTeam!(50), awayScoreOpp!(50)
@@ -254,6 +255,7 @@ Dim Shared ST%(32), SX%(32, 1, 14)
 Dim Shared C1(1, 14)
 Dim Shared D8(6, 6), dFGPA(1), defStyles(1), F1(14), fullCtOpt(0 To 1)
 Dim Shared G4(14), G5(14), leagRat_GAME(1, 6)
+Dim Shared gameStat3FGM(1, 14), gameStat3FGA(1, 14)
 Dim Shared mandatoryTO(0 To 1), miscAdj(1, 4)
 Dim Shared P4(5), P5(5), pbpFG(1 To 8), pbpBG(1 To 8), perFoulAdj(0 To 32)
 Dim Shared plyrRat_GAME(1, 14, 19)
@@ -263,7 +265,7 @@ Dim Shared S3(14), score(1, 14), schedGame(2), scSettings(0 To 2), statTotals(14
 Dim Shared teamAdj(1, 9), teamFouls(1), teamRat_GAME(0 To 1, 0 To 34), teamYears(1)
 Dim Shared timePlayed(2, 14), timeouts(1), totalFouls(1), threeFG(1, 14, 1)
 Dim Shared totRebounds(1), turnoverAdj(0 To 32), turnovers(1)
-Dim Shared W2(1, 14), W3(1, 14), X7(1), teamRecWins(1), teamRecLoss(1)
+Dim Shared X7(1), teamRecWins(1), teamRecLoss(1)
 
 'Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), lineupIdx(0 To 1, 0 To 4), M9!(1)
 Dim game3FGM!(1, 14), game3FGA!(1, 14)

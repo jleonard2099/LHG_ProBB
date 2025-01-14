@@ -131,7 +131,7 @@ Sub MergeFirstYear ()
 
     Shared careerPlayers$()
     Shared carPlyrStat!(), car3FGM!(), car3FGA!()
-    Shared statsZ0!(), statsZ1!()
+    Shared statsOffTot!(), statsDefTot!()
 
     NB = -1
 
@@ -222,7 +222,7 @@ Sub MergeFirstYear ()
                     Next
 
                     For L = 0 To 15:
-                        Input #1, statsZ0!(L)
+                        Input #1, statsOffTot!(L)
 
                         Color 5
                         Locate 21, 38
@@ -231,7 +231,7 @@ Sub MergeFirstYear ()
                     Next
 
                     For L = 0 To 15:
-                        Input #1, statsZ1!(L)
+                        Input #1, statsDefTot!(L)
 
                         Color 5
                         Locate 21, 38
@@ -651,7 +651,7 @@ End Sub
 'stats, adds the team's stats to them,
 'then overwrites the career file with the
 'new values.
-Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
+Sub AddCareerYear (targetYear, finalUpdate, careerFile$, statFile$)
 
     Shared NB, NP
 
@@ -663,7 +663,7 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
     Shared careerPlayers$()
 
     Shared carPlyrStat!(), car3FGM!(), car3FGA!()
-    Shared statsZ0!(), statsZ1!()
+    Shared statsOffTot!(), statsDefTot!()
 
     NB = -1
 
@@ -676,7 +676,7 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
 
     Open diskPaths$(1) + statFile$ For Input As #2
 
-    Input #2, B$
+    Input #2, team$
 
     For I = 0 To 14
 
@@ -697,7 +697,7 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
     Next
 
     For L = 0 To 15:
-        Input #2, statsZ0!(L)
+        Input #2, statsOffTot!(L)
 
         Color 5
         Locate 21, 38
@@ -706,7 +706,7 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
     Next
 
     For L = 0 To 15:
-        Input #2, statsZ1!(L)
+        Input #2, statsDefTot!(L)
 
         Color 5
         Locate 21, 38
@@ -727,7 +727,7 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
 
                 'Find next stat year to save
                 For W = 1 To MAX_CAREER_YEARS
-                    If carPlyrStat!(W, J, 15) = statYear Then
+                    If carPlyrStat!(W, J, 15) = targetYear Then
                         CHK = CHK + 1
                     End If
                 Next W
@@ -747,7 +747,7 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
                 Next K
 
                 carPlyrStat!(N, J, 14) = 1
-                carPlyrStat!(N, J, 15) = statYear
+                carPlyrStat!(N, J, 15) = targetYear
                 car3FGM!(N, J) = careerW0!(J)
                 car3FGA!(N, J) = careerW1!(J)
 
@@ -768,7 +768,7 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
                         Next K
 
                         carPlyrStat!(N, NB, 14) = 1
-                        carPlyrStat!(N, NB, 15) = statYear
+                        carPlyrStat!(N, NB, 15) = targetYear
                         car3FGM!(N, NB) = careerW0!(NB)
                         car3FGA!(N, NB) = careerW1!(NB)
                     End If

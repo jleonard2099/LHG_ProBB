@@ -19,7 +19,7 @@ Sub HD2HDLEAG ()
     Shared oppName$(), locIndicator$()
     Shared memberName$(), memberYears$()
 
-    Shared div1Name$, div2Name$, div3Name$, div4Name$
+    Shared leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
     newTeam = 1
 
@@ -108,7 +108,7 @@ Sub HD2HDLEAG ()
                 'Haven't checked that file exists
                 Open diskPaths$(2) + leagueFile$ + ".TMI" For Input As #2
 
-                Input #2, league$
+                Input #2, leagueName$
                 Input #2, div1Name$
                 Input #2, div2Name$
                 Input #2, div3Name$

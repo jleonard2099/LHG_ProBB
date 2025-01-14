@@ -148,7 +148,7 @@ Sub NewSchedule (scheduleFile$)
 
     Shared modeAbbrev$(), sClockOpt$(), yesNo$()
 
-    DT$ = "10-01-23"
+    DT$ = "10-22-24"
     TM$ = "07:30P"
 
     Do
@@ -1364,7 +1364,7 @@ Sub ChangeGlobalSettings ()
     quarterOpt = scheduleNG%(1, 20)
     maxTOs = scheduleNG%(1, 21)
 
-    DT$ = "10-01-23"
+    DT$ = "10-22-24"
     TM$ = "07:30P"
 
     Do

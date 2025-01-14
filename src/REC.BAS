@@ -122,34 +122,7 @@ Sub ViewSeasonRecords ()
 
     Else
 
-        Open diskPaths$(1) + "RECORDS.PBB" For Input As #1
-
-        For I = 1 To 25
-            Input #1, plyrRecords!(I)
-            Input #1, plyrRecDesc$(I, 0)
-            Input #1, plyrRecDesc$(I, 1)
-        Next
-
-        For I = 1 To 21
-            Input #1, offRecords!(I)
-            Input #1, offRecDesc$(I)
-            If offRecords!(I) = 19999 Then 
-                offRecords!(I) = 0
-                offRecDesc$(I) = ""
-            End If
-        Next
-
-        For I = 1 To 21
-            Input #1, defRecords!(I)
-            Input #1, defRecDesc$(I)
-			If defRecords!(I) = 19999 Then 
-				defRecords!(I) = 0
-				defRecDesc$(I) = ""
-			End If
-        Next
-
-        Close #1
-
+        Call ReadSeasonRecords ("RECORDS.PBB")
         Color 0, 0
         Cls
 
@@ -443,33 +416,7 @@ Sub SeasonRecords_Report (printDest, destFile$)
 
     Else
 
-        Open diskPaths$(1) + "RECORDS.PBB" For Input As #1
-
-        For I = 1 To 25
-            Input #1, plyrRecords!(I)
-            Input #1, plyrRecDesc$(I, 0)
-            Input #1, plyrRecDesc$(I, 1)
-        Next
-
-        For I = 1 To 21
-            Input #1, offRecords!(I)
-            Input #1, offRecDesc$(I)
-            If offRecords!(I) = 19999 Then 
-                offRecords!(I) = 0
-                offRecDesc$(I) = ""
-            End If
-        Next
-
-        For I = 1 To 21
-            Input #1, defRecords!(I)
-            Input #1, defRecDesc$(I)
-			If defRecords!(I) = 19999 Then 
-				defRecords!(I) = 0
-				defRecDesc$(I) = ""
-			End If
-        Next
-
-        Close #1
+        Call ReadSeasonRecords ("RECORDS.PBB")
 
 		Color 15, 0
 		Cls

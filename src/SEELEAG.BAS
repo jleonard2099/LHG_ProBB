@@ -36,10 +36,10 @@ Sub LoadLeaderFiles_Pro (targetFile$)
     Shared defLeaderNames$(), offLeaderNames$()
     Shared compLdrTeam$(), leagLdrPlayer$(), leagLdrTeam$()
 
-    Shared league$, div1Name$, div2Name$, div3Name$, div4Name$
+    Shared leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
     Open diskPaths$(2) + targetFile$ + ".TMS" For Input As #1
-    Input #1, league$, div1Name$, div2Name$, div3Name$, div4Name$
+    Input #1, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
     Close #1
 
     div1Name$ = PadRight$(div1Name$, 8)
@@ -150,14 +150,14 @@ Sub LeaderStats_Screen ()
     Shared defLeaderNames$(), offLeaderNames$(), offLeaders!()
     Shared compLdrTeam$(), leagLdrPlayer$(), leagLdrTeam$()
 
-    Shared league$, div1Name$, div2Name$, div3Name$, div4Name$
+    Shared leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
     Color 15, 0
     Cls
 
     Color 12
-    Locate , Int((80 - Len(league$) - 17) / 2)
-    Print league$; " LEAGUE STANDINGS"
+    Locate , Int((80 - Len(leagueName$) - 17) / 2)
+    Print leagueName$; " LEAGUE STANDINGS"
     Print
 
     ' Division 1 Standings
@@ -206,8 +206,8 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Locate , Int((80 - Len(league$) - 17) / 2)
-    Print league$; " LEAGUE STANDINGS"
+    Locate , Int((80 - Len(leagueName$) - 17) / 2)
+    Print leagueName$; " LEAGUE STANDINGS"
     Print
 
     ' Division 2 Standings
@@ -255,8 +255,8 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Locate , Int((80 - Len(league$) - 17) / 2)
-    Print league$; " LEAGUE STANDINGS"
+    Locate , Int((80 - Len(leagueName$) - 17) / 2)
+    Print leagueName$; " LEAGUE STANDINGS"
     Print
 
     ' Division 3 Standings
@@ -302,8 +302,8 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Locate , Int((80 - Len(league$) - 17) / 2)
-    Print league$; " LEAGUE STANDINGS"
+    Locate , Int((80 - Len(leagueName$) - 17) / 2)
+    Print leagueName$; " LEAGUE STANDINGS"
     Print
 
     ' Division 4 Standings
@@ -911,14 +911,14 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
     Shared offLeaderNames$(), defLeaderNames$(), compLdrTeam$()
     Shared leagLdrPlayer$(), leagLdrTeam$()
 
-    Shared league$, div1Name$, div2Name$, div3Name$, div4Name$
+    Shared leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
     Color 0, 15
     Cls
 
     Open destFile$ For Output As #1
 
-    Print #1, "                        "; league$; " LEAGUE STANDINGS"
+    Print #1, "                        "; leagueName$; " LEAGUE STANDINGS"
     Print #1,
     Print #1, "    "; div1Name$; " DIVISION"
     Print #1,

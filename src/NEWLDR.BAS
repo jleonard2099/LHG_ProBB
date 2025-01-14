@@ -13,7 +13,8 @@ Sub NEWLDR ()
 
     Dim printOrView
 
-    Shared div1Name$, div2Name$, div3Name$, div4Name$, league$
+    Shared div1Name$, div2Name$, div3Name$, div4Name$, leagueName$
+    Shared memberName$()
 
     'Needed for Expanded Standings
     Shared totHomeLosses(), totHomeWins()
@@ -67,9 +68,15 @@ Sub NEWLDR ()
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
 
+                            For X = 1 To TEAMS_PER_LEAGUE
+                                memberName$(X) = "XXX"
+                            Next
+
+                            Call ReadLeagueStats (leagStatFile$)
+
                             Call ReadLeagueStats(leagStatFile$)
                             Call UpdateExpandedLeaders(JB, PTS, TTS)
-                            Call SAVELEADER(leagStatFile$, JB, PTS, TTS)
+                            Call SaveLeaderStdg(leagStatFile$, JB, PTS, TTS)
 
                         End If
 
@@ -80,7 +87,7 @@ Sub NEWLDR ()
                         leaderFile$ = ChooseFile$(diskPaths$(2) + "*.LDS", "LEAGUE LEADERS", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
-                            Call READLEADER(leaderFile$, JB, PTS, TTS)
+                            Call ReadLeaderStdg(leaderFile$, JB, PTS, TTS)
                             Call ExpandedLeaders_Menu(printOrView, JB, PTS, TTS)
                         End If
 
@@ -91,10 +98,13 @@ Sub NEWLDR ()
                         leagStatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE STATS", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
+
                             Color 15, 0
                             Cls
+
                             Call ReadLeagueStats(leagStatFile$)
-                            Call UpdateExpandedStandings(leagStatFile$)
+                            Call UpdateExpandedStandings
+
                         End If
 
                     Loop Until FileExit% = 27 Or FileExit% = 0
@@ -107,7 +117,7 @@ Sub NEWLDR ()
 
                             Open diskPaths$(2) + standingsFile$ + ".STD" For Input As #2
 
-                            Input #2, league$, div1Name$, div2Name$, div3Name$, div4Name$
+                            Input #2, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
                             For I = 1 To TEAMS_PER_LEAGUE
                                 Input #2, teamTotWins(I), totHomeWins(I), totRoadWins(I), totTeamLosses(I), totHomeLosses(I), totRoadLosses(I), lastTenWins(I), lastTenLosses(I), expStdLeagName$(I)
@@ -124,14 +134,14 @@ Sub NEWLDR ()
                                     Case "F"
                                         userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
                                         If userFile$ <> "" Then
-                                            Call NewStandings_Report(0, userFile$, league$)
+                                            Call NewStandings_Report(0, userFile$, leagueName$)
                                         End If
 
                                     Case "P"
-                                        Call NewStandings_Report(1, "REPORT", league$)
+                                        Call NewStandings_Report(1, "REPORT", leagueName$)
 
                                     Case "S":
-                                        Call NewStandings_Screen(league$)
+                                        Call NewStandings_Screen(leagueName$)
 
                                 End Select
 
@@ -146,84 +156,6 @@ Sub NEWLDR ()
         End If
 
     Loop Until SELECTION% = 5 Or ExitCode% = 27
-
-End Sub
-
-
-'----------------------------------------
-'       ReadLeagueStats Subroutine
-'----------------------------------------
-'This subroutine reads in the league stats
-'from the .TMS file and assigns them to
-'variables for use later in the routine.
-Sub ReadLeagueStats (statFile$)
-
-    Shared memberName$()
-
-    Shared div1Name$, div2Name$, div3Name$, div4Name$
-
-    Erase memberName$
-
-    For X = 1 To TEAMS_PER_LEAGUE
-        memberName$(X) = "XXX"
-    Next
-
-    Open diskPaths$(2) + statFile$ + ".TMS" For Input As #1
-
-    Input #1, league$, div1Name$, div2Name$, div3Name$, div4Name$
-
-    For X = 1 To TEAMS_PER_LEAGUE:
-        Input #1, memberName$(X)
-    Next
-
-    Close #1
-
-End Sub
-
-
-'----------------------------------------
-'      ViewExpandedStats Subroutine
-'----------------------------------------
-'This subroutine reads in the league stats
-'from the .TMS file. It then relies on other
-'routines to calculate the expanded stats,
-'write them to a file and present a categ-
-'orized menu to use for reviewing them
-' XXXX NO LONGER USED WITH NEW STRUCTURE XXXX
-Sub ViewExpandedStats ()
-
-    Dim printOrView
-
-    Shared div1Name$, div2Name$, div3Name$, div4Name$, league$
-
-    Shared memberName$()
-
-    printOrView = 0
-
-    For X = 1 To TEAMS_PER_LEAGUE
-        memberName$(X) = "XXX"
-    Next
-
-    leagStatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE ", ExitCode%)
-
-    If ExitCode% <> 27 And ExitCode% <> 0 Then
-
-        Open diskPaths$(2) + leagStatFile$ + ".TMS" For Input As #1
-
-        Input #1, league$, div1Name$, div2Name$, div3Name$, div4Name$
-
-        For X = 1 To TEAMS_PER_LEAGUE
-            Input #1, memberName$(X)
-        Next
-
-        Close #1
-
-        Call READLEADER(conferenceFile$, JB, PTS, TTS)
-        Call UpdateExpandedLeaders(JB, PTS, TTS)
-        Call SAVELEADER(leagStatFile$, JB, PTS, TTS)
-        Call ExpandedLeaders_Menu(printOrView, JB, PTS, TTS)
-
-    End If 'Done checking for ESC
 
 End Sub
 
@@ -246,7 +178,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
     Shared plyrLdrVal!(), teamLdrVal!()
 
     Shared stats3FGM!(), stats3FGA!()
-    Shared statsZ0!(), statsZ1!()
+    Shared statsOffTot!(), statsDefTot!()
     Shared leader3FGM!(), leader3FGA!()
 
     Shared playerRatings!()
@@ -284,11 +216,11 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
                 Next
 
                 For L = 0 To 15:
-                    Input #1, statsZ0!(L)
+                    Input #1, statsOffTot!(L)
                 Next
 
                 For L = 0 To 15:
-                    Input #1, statsZ1!(L)
+                    Input #1, statsDefTot!(L)
                 Next
 
                 Close #1
@@ -300,7 +232,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
                 plyrTotalStats = plyrTotalStats + 1
 
                 For I = 0 To 14:
-                    plyrLdrVal!(plyrTotalStats, I) = statsZ0!(I)
+                    plyrLdrVal!(plyrTotalStats, I) = statsOffTot!(I)
                     plyLeaderTeams$(plyrTotalStats, I) = teamName$
                     plyrLeaderYears!(plyrTotalStats) = year
                 Next
@@ -308,7 +240,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
                 teamTotalStats = teamTotalStats + 1
 
                 For I = 0 To 14:
-                    teamLdrVal!(teamTotalStats, I) = statsZ1!(I)
+                    teamLdrVal!(teamTotalStats, I) = statsDefTot!(I)
                     tmLeaderTeams$(teamTotalStats, I) = teamName$
                     tmLeaderYears!(teamTotalStats) = year
                 Next
@@ -346,11 +278,11 @@ End Sub
 
 
 '----------------------------------------
-'        SAVELEADER Subroutine
+'        SaveLeaderStdg Subroutine
 '----------------------------------------
 'This subroutine compiles the leader files
 '(.LDS) for the expanded standings modules
-Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
+Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Shared expPlyrLdrName$(), plyLeaderTeams$()
     Shared expPlyrLdrTeam$(), tmLeaderTeams$()
@@ -428,11 +360,11 @@ End Sub
 
 
 '----------------------------------------
-'        READLEADER Subroutine
+'        ReadLeaderStdg Subroutine
 '----------------------------------------
 'This subroutine reads in the leader files
 '(.LDS) for the expanded standings modules
-Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
+Sub ReadLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Shared expPlyrLdrName$()
     Shared expPlyrLdrTeam$(), plyLeaderTeams$(), tmLeaderTeams$()

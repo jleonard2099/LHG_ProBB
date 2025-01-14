@@ -4031,7 +4031,7 @@ Sub InitVar ()
     Shared teamScore(), oppScore()
 
     Shared game3FGM!(), game3FGA!()
-    Shared statsZ0!(), statsZ1!(), statsZ2!()
+    Shared statsOffTot!(), statsDefTot!(), gameStatPlyrVal!()
     Shared indRecords!(), teamRecords!()
 
     Shared alpha$()
@@ -4144,16 +4144,17 @@ Sub InitVar ()
     'Erase C1
     Erase dFGPA, D8, eventSettings
     Erase F1, G4, G5, oppScore
+    Erase gameStat3FGM, gameStat3FGA
     Erase teamFouls, P4, P5, fullCtOpt
     Erase pbpFG, pbpBG, QQ, QR
     Erase rebRatings, score, schedGame, statTotals, S3
     Erase totalFouls, teamScore, timePlayed
     Erase totRebounds, turnovers
-    Erase W2, W3, X7, teamRecWins, teamRecLoss
+    Erase X7, teamRecWins, teamRecLoss
 
     Erase gameRatings!, game3FGM!, game3FGA!
     Erase M9!
-    Erase statsZ0!, statsZ1!, statsZ2!
+    Erase statsOffTot!, statsDefTot!, gameStatPlyrVal!
     Erase indRecords!, teamRecords!
 
     Erase diskIDs$, gameSite$, gameTeams$
@@ -8746,21 +8747,21 @@ Sub SETUPRATINGS (teamStyle)
 
                         Case Is <= 70
                             plyrRat_GAME(I, I1, 16) = 9
-                        Case 71 to 72
+                        Case 71 To 72
                             plyrRat_GAME(I, I1, 16) = 8
-                        Case 73 to 74
+                        Case 73 To 74
                             plyrRat_GAME(I, I1, 16) = 7
-                        Case 75 to 76
+                        Case 75 To 76
                             plyrRat_GAME(I, I1, 16) = 6
-                        Case 77 to 729
+                        Case 77 To 729
                             plyrRat_GAME(I, I1, 16) = 5
-                        Case 80 to 81
+                        Case 80 To 81
                             plyrRat_GAME(I, I1, 16) = 4
-                        Case 82 to 83
+                        Case 82 To 83
                             plyrRat_GAME(I, I1, 16) = 3
-                        Case 84 to 85
-                            plyrRat_GAME(I, I1, 16) = 2                    
-                        Case Is >= 86 
+                        Case 84 To 85
+                            plyrRat_GAME(I, I1, 16) = 2
+                        Case Is >= 86
                             plyrRat_GAME(I, I1, 16) = 1
 
                     End Select
@@ -8769,21 +8770,21 @@ Sub SETUPRATINGS (teamStyle)
                     'Forwards / Centers
                     Select Case X3!
 
-                        Case Is <= 65 
+                        Case Is <= 65
                             plyrRat_GAME(I, I1, 16) = 9
-                        Case 66 to 67
+                        Case 66 To 67
                             plyrRat_GAME(I, I1, 16) = 8
-                        Case 68 to 69
+                        Case 68 To 69
                             plyrRat_GAME(I, I1, 16) = 7
-                        Case 70 to 71
+                        Case 70 To 71
                             plyrRat_GAME(I, I1, 16) = 6
-                        Case 72 to 74
+                        Case 72 To 74
                             plyrRat_GAME(I, I1, 16) = 5
-                        Case 75 to 76
+                        Case 75 To 76
                             plyrRat_GAME(I, I1, 16) = 4
-                        Case 77 to 78
+                        Case 77 To 78
                             plyrRat_GAME(I, I1, 16) = 3
-                        Case 79 to 80
+                        Case 79 To 80
                             plyrRat_GAME(I, I1, 16) = 2
                         Case Is >= 81
                             plyrRat_GAME(I, I1, 16) = 1
@@ -11806,8 +11807,9 @@ Sub COMPILESTATFILES (compileOpt)
 
     Shared teamScore(), oppScore()
 
-    Shared game3FGM!(), game3FGA!()
-    Shared statsZ0!(), statsZ1!(), statsZ2!()
+    Shared game3FGM!(), game3FGA!(), gameStatPlyrVal!()
+    Shared gameStat3FGM(), gameStat3FGA()
+    Shared statsOffTot!(), statsDefTot!()
 
     Shared gameSite$(), locIndicator$(), oppName$()
 
@@ -11876,20 +11878,20 @@ Sub COMPILESTATFILES (compileOpt)
                     Input #1, players_GAME$(teamIdx, I, 0)
 
                     For J = 0 To 13:
-                        Input #1, statsZ2!(I, J)
+                        Input #1, gameStatPlyrVal!(I, J)
                     Next J
 
-                    Input #1, W2(teamIdx, I)
-                    Input #1, W3(teamIdx, I)
+                    Input #1, gameStat3FGM(teamIdx, I)
+                    Input #1, gameStat3FGA(teamIdx, I)
 
                 Next I
 
                 For L = 0 To 15:
-                    Input #1, statsZ0!(L)
+                    Input #1, statsOffTot!(L)
                 Next L
 
                 For L = 0 To 15:
-                    Input #1, statsZ1!(L)
+                    Input #1, statsDefTot!(L)
                 Next L
 
                 Close #1
@@ -11900,25 +11902,25 @@ Sub COMPILESTATFILES (compileOpt)
 
             For I = 0 To 14
 
-                If gameRatings!(teamIdx, I, 2) * 2 + gameRatings!(teamIdx, I, 4) + game3FGM!(teamIdx, I) > statsZ2!(I, 13) Then
-                    statsZ2!(I, 13) = gameRatings!(teamIdx, I, 2) * 2 + gameRatings!(teamIdx, I, 4) + game3FGM!(teamIdx, I)
+                If gameRatings!(teamIdx, I, 2) * 2 + gameRatings!(teamIdx, I, 4) + game3FGM!(teamIdx, I) > gameStatPlyrVal!(I, 13) Then
+                    gameStatPlyrVal!(I, 13) = gameRatings!(teamIdx, I, 2) * 2 + gameRatings!(teamIdx, I, 4) + game3FGM!(teamIdx, I)
                 End If
 
                 If gameRatings!(teamIdx, I, 10) > 0 Then
-                    statsZ2!(I, 0) = statsZ2!(I, 0) + 1
+                    gameStatPlyrVal!(I, 0) = gameStatPlyrVal!(I, 0) + 1
                 End If
 
                 For J = 1 To 12
 
-                    statsZ2!(I, J) = statsZ2!(I, J) + gameRatings!(teamIdx, I, J)
+                    gameStatPlyrVal!(I, J) = gameStatPlyrVal!(I, J) + gameRatings!(teamIdx, I, J)
 
                     If Not (J = 5 Or J = 6 Or J = 10 Or J = 11) Then
-                        statsZ0!(J) = statsZ0!(J) + gameRatings!(teamIdx, I, J)
-                        statsZ1!(J) = statsZ1!(J) + gameRatings!(1 - teamIdx, I, J)
+                        statsOffTot!(J) = statsOffTot!(J) + gameRatings!(teamIdx, I, J)
+                        statsDefTot!(J) = statsDefTot!(J) + gameRatings!(1 - teamIdx, I, J)
                     End If
                 Next J
 
-                statsZ0!(0) = statsZ0!(0) + gameRatings!(teamIdx, I, 10)
+                statsOffTot!(0) = statsOffTot!(0) + gameRatings!(teamIdx, I, 10)
                 TG! = TG! + gameRatings!(teamIdx, I, 10)
 
             Next I
@@ -11931,29 +11933,29 @@ Sub COMPILESTATFILES (compileOpt)
                 Next
             Next
 
-            statsZ0!(15) = statsZ0!(15) + totRebounds(teamIdx) - statTotals(teamIdx)
-            statsZ1!(15) = statsZ1!(15) + totRebounds(1 - teamIdx) - statTotals(1 - teamIdx)
+            statsOffTot!(15) = statsOffTot!(15) + totRebounds(teamIdx) - statTotals(teamIdx)
+            statsDefTot!(15) = statsDefTot!(15) + totRebounds(1 - teamIdx) - statTotals(1 - teamIdx)
 
-            statsZ0!(6) = statsZ0!(6) + totalFouls(teamIdx)
-            statsZ1!(6) = statsZ1!(6) + totalFouls(1 - teamIdx)
+            statsOffTot!(6) = statsOffTot!(6) + totalFouls(teamIdx)
+            statsDefTot!(6) = statsDefTot!(6) + totalFouls(1 - teamIdx)
 
-            statsZ0!(5) = statsZ0!(5) + totRebounds(teamIdx)
-            statsZ1!(5) = statsZ1!(5) + totRebounds(1 - teamIdx)
+            statsOffTot!(5) = statsOffTot!(5) + totRebounds(teamIdx)
+            statsDefTot!(5) = statsDefTot!(5) + totRebounds(1 - teamIdx)
 
-            statsZ0!(11) = statsZ0!(11) + turnovers(teamIdx)
-            statsZ1!(11) = statsZ1!(11) + turnovers(1 - teamIdx)
+            statsOffTot!(11) = statsOffTot!(11) + turnovers(teamIdx)
+            statsDefTot!(11) = statsDefTot!(11) + turnovers(1 - teamIdx)
 
             For J = 0 To 14:
-                statsZ0!(13) = statsZ0!(13) + game3FGM!(teamIdx, J)
-                statsZ0!(14) = statsZ0!(14) + game3FGA!(teamIdx, J)
-                statsZ1!(13) = statsZ1!(13) + game3FGM!(1 - teamIdx, J)
-                statsZ1!(14) = statsZ1!(14) + game3FGA!(1 - teamIdx, J)
-                W2(teamIdx, J) = W2(teamIdx, J) + game3FGM!(teamIdx, J)
-                W3(teamIdx, J) = W3(teamIdx, J) + game3FGA!(teamIdx, J)
+                statsOffTot!(13) = statsOffTot!(13) + game3FGM!(teamIdx, J)
+                statsOffTot!(14) = statsOffTot!(14) + game3FGA!(teamIdx, J)
+                statsDefTot!(13) = statsDefTot!(13) + game3FGM!(1 - teamIdx, J)
+                statsDefTot!(14) = statsDefTot!(14) + game3FGA!(1 - teamIdx, J)
+                gameStat3FGM(teamIdx, J) = gameStat3FGM(teamIdx, J) + game3FGM!(teamIdx, J)
+                gameStat3FGA(teamIdx, J) = gameStat3FGA(teamIdx, J) + game3FGA!(teamIdx, J)
             Next J
 
-            statsZ0!(10) = statsZ0!(10) + score(teamIdx, 0)
-            statsZ1!(10) = statsZ1!(10) + score(1 - teamIdx, 0)
+            statsOffTot!(10) = statsOffTot!(10) + score(teamIdx, 0)
+            statsDefTot!(10) = statsDefTot!(10) + score(1 - teamIdx, 0)
 
             Call TEAMBOX(1, teamIdx)
 
@@ -11971,20 +11973,20 @@ Sub COMPILESTATFILES (compileOpt)
                 Print #2, players_GAME$(teamIdx, I, 0)
 
                 For J = 0 To 13:
-                    Print #2, statsZ2!(I, J)
+                    Print #2, gameStatPlyrVal!(I, J)
                 Next J
 
-                Print #2, W2(teamIdx, I)
-                Print #2, W3(teamIdx, I)
+                Print #2, gameStat3FGM(teamIdx, I)
+                Print #2, gameStat3FGA(teamIdx, I)
 
             Next I
 
             For L = 0 To 15
-                Print #2, statsZ0!(L)
+                Print #2, statsOffTot!(L)
             Next L
 
             For L = 0 To 15:
-                Print #2, statsZ1!(L)
+                Print #2, statsDefTot!(L)
             Next L
 
             Close #2
@@ -12123,13 +12125,13 @@ Sub COMPILESTATFILES (compileOpt)
             'Reset arrays for next iteration
             Erase teamScore, oppScore
             Erase gameAttendance&
-            Erase statsZ0!, statsZ1!, statsZ2!
+            Erase statsOffTot!, statsDefTot!, gameStatPlyrVal!
             Erase gameSite$, locIndicator$, oppName$
 
         End If
 
         teamIdx = teamIdx + 1
-        statsZ0!(12) = 0
+        statsOffTot!(12) = 0
 
     Loop Until teamIdx = 2
 
