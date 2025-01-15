@@ -20,8 +20,8 @@ Declare Sub TICKERUPDATE ()
 Declare Sub TickerSchedule
 Declare Sub PlayStyle ()
 Declare Sub PlayItSafe ()
-Declare Sub FOULHARD
-Declare Sub WHOGETSBAll
+Declare Sub FOULHARD ()
+Declare Sub WHOGETSBALL ()
 Declare Sub GetPassChoice ()
 Declare Sub COMPUTERSUBS ()
 Declare Sub CreditAssists ()
@@ -78,11 +78,11 @@ Declare Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, game
 Declare Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%, gameIdx)
 Declare Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx, dataOK)
 Declare Sub GetKeyWhenNoDelay ()
-Declare Sub EndOfGame
+Declare Sub EndOfGame ()
 Declare Sub CheckRecords ()
 
 Declare Function d100% ()
-Declare Function DecideShot%
+Declare Function DecideShot%  ()
 Declare Function GetTeamGender$ (diskID$)
 Declare Function GetTeamYear% (yearFromName$)
 Declare Function TickerTime% (timeInterval, X)

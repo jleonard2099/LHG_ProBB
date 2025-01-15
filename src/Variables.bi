@@ -200,7 +200,7 @@ Dim homeScoreTeam!(50), homeScoreOpp!(50)
 
 Dim totAwayLosses!(40), totAwayWin!(40)
 Dim totAwayScoreTeam!(40), totAwayScoreOpp!(40)
-Dim totHomeLosses!(40), totHomeWin!(40)
+Dim totHomeLosses!(40), totHomeWins!(40)
 Dim totHomeScoreTeam!(40), totHomeScoreOpp!(40)
 
 
@@ -233,15 +233,15 @@ Dim Shared coachOpt, compTeam, currGame
 Dim Shared defPress, gameOver, endAllGames, eraAdj, eraChoice
 Dim Shared fastBreak, forcedThree, ftRulesOpt, freeThrowVal, fullCtOpt
 Dim Shared gameLoc, halfTime, JY, maxTimeouts, MJ, nbrFTMade, nbrLines
-Dim Shared offStatus, playerMode, playerOpt, playoffOpt, pbpOpt, playChoice
+Dim Shared offStatus, passes, playerMode, playerOpt, playoffOpt, pbpOpt, playChoice
 Dim Shared quarter, quarterOpt, rebFoulChance
-Dim Shared sClockVal, shotClock, shotPctOpt, shotType
+Dim Shared sClockVal, shotChance, shotClock, shotPctOpt, shotType
 Dim Shared threePtOpt, T1, timeoutOpt, TMT, twoTimeouts, willDunk
 
 Dim Shared GF%, HH%, J8%, OX%, OY%
 Dim Shared MINS_PER_GAME
 
-Dim Shared gameClock!, pbpDelay!, shotChance, timeElapsed!
+Dim Shared gameClock!, pbpDelay!, possTime!, timeElapsed!
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
 Dim Shared activePosition$, pbpString$, prevBall$, TS$
@@ -259,7 +259,7 @@ Dim Shared gameStat3FGM(1, 14), gameStat3FGA(1, 14)
 Dim Shared mandatoryTO(0 To 1), miscAdj(1, 4)
 Dim Shared P4(5), P5(5), pbpFG(1 To 8), pbpBG(1 To 8), perFoulAdj(0 To 32)
 Dim Shared plyrRat_GAME(1, 14, 19)
-DIm Shared QQ(1, 8, 14, 14), QR(1, 7, 14), rebRatings(0 To 10)
+Dim Shared QQ(1, 8, 14, 14), QR(1, 7, 14), rebRatings(0 To 10)
 Dim Shared rosterStatus(1, 13)
 Dim Shared S3(14), score(1, 14), schedGame(2), scSettings(0 To 2), statTotals(14)
 Dim Shared teamAdj(1, 9), teamFouls(1), teamRat_GAME(0 To 1, 0 To 34), teamYears(1)
@@ -267,7 +267,7 @@ Dim Shared timePlayed(2, 14), timeouts(1), totalFouls(1), threeFG(1, 14, 1)
 Dim Shared totRebounds(1), turnoverAdj(0 To 32), turnovers(1)
 Dim Shared X7(1), teamRecWins(1), teamRecLoss(1)
 
-'Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), lineupIdx(0 To 1, 0 To 4), M9!(1)
+Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), lineupIdx(0 To 1, 0 To 4), M9!(1)
 Dim game3FGM!(1, 14), game3FGA!(1, 14)
 
 Dim Shared defStyleDesc$(9), diskIDs$(0 To 1)

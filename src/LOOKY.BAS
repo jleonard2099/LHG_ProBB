@@ -306,7 +306,7 @@ Sub ViewScheduleSummary (statFile$, teamName$, totalGames%, menuExit)
             Print
 
             Locate 21, 27
-            Color 14: Print "OVERAll RECORD ";
+            Color 14: Print "OVERALL RECORD ";
             Color 15: Print "("; totalWins; "-"; totalLosses; ")"
             Locate , 27
             Color 14: Print "HOME RECORD    ";
@@ -912,7 +912,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
     Print
     Locate 21, 27
-    Color 14: Print "OVERAll RECORD ";
+    Color 14: Print "OVERALL RECORD ";
     Color 15: Print "("; totalWins; "-"; totalLosses; ")"
     Locate , 27: Color 14: Print "HOME RECORD    ";
     Color 15: Print "("; homeWins; "-"; homeLosses; ")"
@@ -1036,7 +1036,7 @@ Sub StatsSchedule_Report (printDest, destFile$, teamName$, totalGames%)
     Print #1, Chr$(12)
 
     Print #1,
-    Print #1, Tab(27); "OVERAll RECORD ("; totalWins; "-"; totalLosses; ")"
+    Print #1, Tab(27); "OVERALL RECORD ("; totalWins; "-"; totalLosses; ")"
     Print #1, Tab(27); "HOME RECORD    ("; homeWins; "-"; homeLosses; ")"
     Print #1, Tab(27); "ROAD RECORD    ("; roadWins; "-"; roadLosses; ")"
     Print #1, Tab(27); "NEUTRAL RECORD ("; neutralWins; "-"; neutralLosses; ")"
