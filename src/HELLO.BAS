@@ -1903,8 +1903,8 @@ Sub PROHOOP ()
     445 '
     If Not (quarter < 4 And gameClock! <= 120 Or quarter > 4) Then
 
-        If gameRatings!(P, lineupIdx(P, ballCarrier), 3) - gameRatings!(P, lineupIdx(P, ballCarrier), 7) - gameRatings!(P, lineupIdx(P, ballCarrier), 11) - gameRatings!(P, lineupIdx(P, ballCarrier), 12) <= 0 Then
-            'No Shot / Difficult Shot
+        If playerFatigue%(P, ballCarrier) <= 0 Then
+            'Fatigued - No Shot / Difficult Shot
             GoTo 437
         End If
 
@@ -3750,7 +3750,7 @@ Sub PROHOOP ()
                     rebRatings(I) = rebRatings(I) + gameRatings!(P, lineupIdx(P, I), 21)
                     RB = RB + gameRatings!(P, lineupIdx(P, I), 21)
                 Else
-                    If gameRatings!(P, lineupIdx(P, I), 3) - gameRatings!(P, lineupIdx(P, I), 7) - gameRatings!(P, lineupIdx(P, I), 11) - gameRatings!(P, lineupIdx(P, I), 12) <= 0 Then
+                    If playerFatigue%(P, I) <= 0 Then
                         rebRatings(I) = rebRatings(I) + gameRatings!(P, lineupIdx(P, I), 21) * .65
                         RB = RB + gameRatings!(P, lineupIdx(P, I), 21) * .65
                     Else
@@ -3768,7 +3768,7 @@ Sub PROHOOP ()
                     rebRatings(I + 5) = rebRatings(I + 5) + gameRatings!(1 - P, lineupIdx(1 - P, I), 2)
                     RB = RB + gameRatings!(1 - P, lineupIdx(1 - P, I), 2)
                 Else
-                    If gameRatings!(1 - P, lineupIdx(1 - P, I), 3) - gameRatings!(1 - P, lineupIdx(1 - P, I), 7) - gameRatings!(1 - P, lineupIdx(1 - P, I), 11) - gameRatings!(1 - P, lineupIdx(1 - P, I), 12) <= 0 Then
+                    If playerFatigue%(1 - P, I) <= 0 Then
                         rebRatings(I + 5) = rebRatings(I + 5) + gameRatings!(1 - P, lineupIdx(1 - P, I), 2) * .5
                         RB = RB + gameRatings!(1 - P, lineupIdx(1 - P, I), 2) * .5
                     Else
@@ -6616,7 +6616,7 @@ Sub PlayStyle ()
 
                 I$ = GetKeyPress$
                 Call LetterToNumber(I$, J)
-                
+
                 If UCase$(I$) = "O" Or UCase$(I$) = "P" Then
                     J = 15
                 End If
@@ -6628,14 +6628,14 @@ Sub PlayStyle ()
                     End If
 
                     If UCase$(I$) = "F" Then
-                    
+
                         If teamYears(eraChoice) >= 2001 Then
                             'Zone options available
                             maxChoice = 9
                         Else
                             maxChoice = 5
                         End If
-                    
+
                         defStyles(P9) = defStyles(P9) + 1
                         If defStyles(P9) > maxChoice Then defStyles(P9) = 1
 
@@ -6661,14 +6661,14 @@ Sub PlayStyle ()
                     Color 7: Print defStyleDesc$(defStyles(P9))
 
                     Locate 23, 32
-                    Color 3: Print "FUll COURT ";
+                    Color 3: Print "FULL COURT ";
                     Color 15: Print "P";
                     Color 3: Print "RESS-";
                     Color 7: Print yesNoText$(fullCtOpt(P9))
 
                 Else
 
-                    If J >= 0 And J <= 14 And gameRatings!(P9, J, 12) < 6 And players_GAME$(P9, J, 0) <> "XXX" And plyrRat_GAME(P9, J, 18) = 0 Then
+                    If J >= 0 And J <= 14 And gameRatings!(P9, J, 12) < FOULS_TO_DQ And players_GAME$(P9, J, 0) <> "XXX" And plyrRat_GAME(P9, J, 18) = 0 Then
                         For I2 = 0 To 4
                             If lineupIdx(P9, I2) = J Then Exit For
                         Next I2
@@ -6813,7 +6813,7 @@ Sub PlayStyle ()
 
                     Else
 
-                        If J >= 0 And J <= 14 And gameRatings!(P9, J, 12) < 6 And players_GAME$(P9, J, 0) <> "XXX" And plyrRat_GAME(P9, J, 18) = 0 Then
+                        If J >= 0 And J <= 14 And gameRatings!(P9, J, 12) < FOULS_TO_DQ And players_GAME$(P9, J, 0) <> "XXX" And plyrRat_GAME(P9, J, 18) = 0 Then
                             For I2 = 0 To 4:
                                 If lineupIdx(P9, I2) = J Then Exit For
                             Next I2
@@ -7077,8 +7077,8 @@ Sub WHOGETSBALL
 
                     If M8 <= 0 Then
                         M8 = 0
-                        If gameRatings!(P, lineupIdx(P, I), 3) - gameRatings!(P, lineupIdx(P, I), 7) - gameRatings!(P, lineupIdx(P, I), 11) - gameRatings!(P, lineupIdx(P, I), 12) > 0 Then
-                            M8 = gameRatings!(P, lineupIdx(P, I), 3) - gameRatings!(P, lineupIdx(P, I), 7) - gameRatings!(P, lineupIdx(P, I), 11) - gameRatings!(P, lineupIdx(P, I), 12)
+                        If playerFatigue%(P, I) > 0 Then
+                            M8 = playerFatigue%(P, I)
                         End If
                     End If
 
@@ -7177,14 +7177,18 @@ Sub COMPUTERSUBS ()
 
             If quarter < 4 And M6 <= 0 Or quarter = 4 And gameClock! > 120 And M6 <= 0 Then M1 = M1 + 1
 
-            If players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or quarter = 1 And gameRatings!(P9, I1, 12) >= 2 Or quarter = 2 And gameRatings!(P9, I1, 12) >= 4 Or quarter = 3 And gameRatings!(P9, I1, 12) >= 5 Or quarter = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5 Then M2 = M2 + 1
+            If players_GAME$(P9, I1, 0) = "XXX" Or gameRatings!(P9, I1, 12) >= 6 Or plyrRat_GAME(P9, I1, 18) <> 0 Or quarter = 1 And gameRatings!(P9, I1, 12) >= 2 Or quarter = 2 And gameRatings!(P9, I1, 12) >= 4 Or quarter = 3 And gameRatings!(P9, I1, 12) >= 5 Or quarter = 4 And gameClock! > 300 And gameRatings!(P9, I1, 12) = 5 Then
+                M2 = M2 + 1
+            End If
 
             If I1 <= 4 Then
-                M6 = gameRatings!(P9, lineupIdx(P9, I1), 3) - gameRatings!(P9, lineupIdx(P9, I1), 7) - gameRatings!(P9, lineupIdx(P9, I1), 11) - gameRatings!(P9, lineupIdx(P9, I1), 12)
+                M6 = playerFatigue%(P9, I1)
 
                 If M6 <= 0 And quarter < 4 Or M6 <= 0 And quarter = 4 And gameClock! > 120 Then M3 = M3 + 1
 
-                If players_GAME$(P9, lineupIdx(P9, I1), 0) = "XXX" Or gameRatings!(P9, lineupIdx(P9, I1), 12) >= 6 Or plyrRat_GAME(P9, lineupIdx(P9, I1), 18) <> 0 Or quarter = 1 And gameRatings!(P9, lineupIdx(P9, I1), 12) >= 2 Or quarter = 2 And gameRatings!(P9, lineupIdx(P9, I1), 12) >= 4 Or quarter = 3 And gameRatings!(P9, lineupIdx(P9, I1), 12) >= 5 Or quarter = 4 And gameClock! > 300 And gameRatings!(P9, lineupIdx(P9, I1), 12) = 5 Then M4 = M4 + 1
+                If players_GAME$(P9, lineupIdx(P9, I1), 0) = "XXX" Or gameRatings!(P9, lineupIdx(P9, I1), 12) >= 6 Or plyrRat_GAME(P9, lineupIdx(P9, I1), 18) <> 0 Or quarter = 1 And gameRatings!(P9, lineupIdx(P9, I1), 12) >= 2 Or quarter = 2 And gameRatings!(P9, lineupIdx(P9, I1), 12) >= 4 Or quarter = 3 And gameRatings!(P9, lineupIdx(P9, I1), 12) >= 5 Or quarter = 4 And gameClock! > 300 And gameRatings!(P9, lineupIdx(P9, I1), 12) = 5 Then
+                    M4 = M4 + 1
+                End If
 
             End If
         Next I1
@@ -7305,7 +7309,7 @@ Sub ReboundOffense ()
 
         If Not (quarter > 2 Or quarter = 2 And gameClock! <= 120) Then
 
-            If gameRatings!(P, lineupIdx(P, I), 3) - gameRatings!(P, lineupIdx(P, I), 7) - gameRatings!(P, lineupIdx(P, I), 11) - gameRatings!(P, lineupIdx(P, I), 12) <= 0 Then
+            If playerFatigue%(P, I) <= 0 Then
                 XZ = XZ * .5
             End If
 
@@ -7340,7 +7344,6 @@ End Sub
 'do with rebounds for one team (Defense?)
 Sub ReboundDefense ()
 
-    795 '
     RB = 0
 
     For I = 0 To 4
@@ -7349,7 +7352,7 @@ Sub ReboundDefense ()
         XZ = gameRatings!(1 - P, lineupIdx(1 - P, I), 2)
 
         If Not (quarter > 2 Or quarter = 2 And gameClock! <= 120) Then
-            If gameRatings!(1 - P, lineupIdx(1 - P, I), 3) - gameRatings!(1 - P, lineupIdx(1 - P, I), 7) - gameRatings!(1 - P, lineupIdx(1 - P, I), 11) - gameRatings!(1 - P, lineupIdx(1 - P, I), 12) <= 0 Then
+            If playerFatigue%(1 - P, I) <= 0 Then
                 XZ = XZ * .5
             End If
         End If
@@ -7728,7 +7731,7 @@ Sub FoulCalled (randomFouler)
 
     Call UPDATESCREEN
 
-    If gameRatings!(D, lineupIdx(D, foulPlayer), 3) - gameRatings!(D, lineupIdx(D, foulPlayer), 7) - gameRatings!(D, lineupIdx(D, foulPlayer), 11) - gameRatings!(D, lineupIdx(D, foulPlayer), 12) = 0 Then
+    If playerFatigue%(D, foulPlayer) = 0 Then
         gameRatings!(D, lineupIdx(D, foulPlayer), 3) = gameRatings!(D, lineupIdx(D, foulPlayer), 3) + 1
     End If
 
@@ -8091,9 +8094,9 @@ Sub PrintActiveLineup (teamIdx)
 
         'Stamina
         J = 0
-        J = (gameRatings!(teamIdx, lineupIdx(teamIdx, I1), 3)) - gameRatings!(teamIdx, lineupIdx(teamIdx, I1), 7) - gameRatings!(teamIdx, lineupIdx(teamIdx, I1), 11) - gameRatings!(teamIdx, lineupIdx(teamIdx, I1), 12)
+        J = playerFatigue%(teamIdx, I1)
         If J <= 0 Then J = 0
-        If J <= 0 And (quarter = 1 Or quarter = 2 Or quarter = 3 Or quarter = 4 And gameClock! > 120) Then Color 12
+        If J <= 0 And (quarter = 1 Or quarter = 2 Or quarter = 3 Or (quarter = 4 And gameClock! > 120)) Then Color 12
         Print Using "### "; J;
 
         Color 15
@@ -9626,7 +9629,7 @@ Sub ComputerCoach ()
                     M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
 
                     If lineupIdx(P9, I2) > -1 Then
-                        M7 = gameRatings!(P9, lineupIdx(P9, I2), 3) - gameRatings!(P9, lineupIdx(P9, I2), 7) - gameRatings!(P9, lineupIdx(P9, I2), 11) - gameRatings!(P9, lineupIdx(P9, I2), 12)
+                        M7 = playerFatigue%(P9, I2)
                     End If
 
                     If quarter = 4 And gameClock! < 120 Or quarter > 4 Then
@@ -9690,7 +9693,7 @@ Sub ComputerCoach ()
                     M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
 
                     If lineupIdx(P9, I2) > -1 Then
-                        M7 = gameRatings!(P9, lineupIdx(P9, I2), 3) - gameRatings!(P9, lineupIdx(P9, I2), 7) - gameRatings!(P9, lineupIdx(P9, I2), 11) - gameRatings!(P9, lineupIdx(P9, I2), 12)
+                        M7 = playerFatigue%(P9, I2)
                     End If
 
                     If quarter = 4 And gameClock! < 120 Or quarter > 4 Then
@@ -9748,7 +9751,7 @@ Sub ComputerCoach ()
                 M6 = gameRatings!(P9, I1, 3) - gameRatings!(P9, I1, 7) - gameRatings!(P9, I1, 11) - gameRatings!(P9, I1, 12)
                 
                 If lineupIdx(P9, 4) > -1 Then
-                    M7 = gameRatings!(P9, lineupIdx(P9, 4), 3) - gameRatings!(P9, lineupIdx(P9, 4), 7) - gameRatings!(P9, lineupIdx(P9, 4), 11) - gameRatings!(P9, lineupIdx(P9, 4), 12)
+                    M7 = playerFatigue%(P9, 4)
                 End If
 
                 If quarter = 4 And gameClock! < 120 Or quarter > 4 Then
@@ -9931,7 +9934,7 @@ Sub LINEUPS ()
             Print Using "### "; gameRatings!(P9, R1, 3) - L;
 
             'Condition
-            J = (gameRatings!(P9, R1, 3)) - gameRatings!(P9, R1, 7) - gameRatings!(P9, R1, 11) - gameRatings!(P9, R1, 12)
+            J = playerFatigue%(P9, R1)
 
             If quarter <= 3 And J / gameRatings!(P9, R1, 3) < .25 Then
                 Locate , 61: Print " T";
@@ -10061,7 +10064,7 @@ Sub SHOTPERCENT (useAssist)
     Else
 
         If Not (quarter > 4 Or quarter = 4 And gameClock! <= 120) Then
-            If gameRatings!(P, lineupIdx(P, ballCarrier), 3) - gameRatings!(P, lineupIdx(P, ballCarrier), 7) - gameRatings!(P, lineupIdx(P, ballCarrier), 11) - gameRatings!(P, lineupIdx(P, ballCarrier), 12) <= 0 Then
+            If playerFatigue%(P, ballCarrier) <= 0 Then
                 shotChance = shotChance * .6
             End If
         End If
@@ -14654,7 +14657,7 @@ End Sub
 '----------------------------------------
 '          GetTeamYear Function
 '----------------------------------------
-'This subroutine determines the 4-digit
+'This function determines the 4-digit
 'team year from the team loaded by the
 'file. It uses the 2 digit year to make
 'assumptions. (00 to 24 are year 2000.)
@@ -14673,6 +14676,22 @@ Function GetTeamYear% (yearFromName$)
 
 End Function
 
+
+'----------------------------------------
+'         playerFatigue% Function
+'----------------------------------------
+'This functions calculates the player's
+'current fatigue level based on their
+'existing contribution to the game
+Function playerFatigue% (team, handler)
+
+    'CX = (FGA + Off Reb + Def RB + Fouls) / (Game Minutes)
+    playerCX = gameRatings!(team, lineupIdx(team, handler), 3)
+
+    'Fatigue = CX - Curr FGA - Curr Rebounds - Curr Fouls
+    playerFatigue% = playerCX - gameRatings!(team, lineupIdx(team, handler), 7) - gameRatings!(team, lineupIdx(team, handler), 11) - gameRatings!(team, lineupIdx(team, handler), 12)
+
+End Function
 
 '----------------------------------------
 '        GetTeamGender$ Function
