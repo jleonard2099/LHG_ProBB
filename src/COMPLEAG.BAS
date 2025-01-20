@@ -15,7 +15,7 @@ Sub CompileLeague ()
     Shared plyrRecords!()
     Shared defTotals!(), defLeaders!()
     Shared leaderVals!(), statPlyrVal!()
-    Shared compLeagWins!(), compLeagLosses!(), offTotals!(), offLeaders!()
+    Shared divWins!(), divLosses!(), offTotals!(), offLeaders!()
     Shared offRecords!(), defRecords!(), stats3FGM!(), stats3FGA!()
 
     Shared plyrRecDesc$()
@@ -86,6 +86,8 @@ Sub CompileLeague ()
         Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
 
         Call ReadLeagueStats (leagueFile$)
+        
+        Erase divWins!, divLosses!
 
         For XW = 1 To TEAMS_PER_LEAGUE
 
@@ -96,35 +98,29 @@ Sub CompileLeague ()
 
                 If (haveStats) Then
 
-                    L = Len(memberName$(XW))
-                    WT$ = ""
-
-                    For X = 1 To L
-                        A = Asc(Mid$(memberName$(XW), X, 1))
-                        WT$ = WT$ + Chr$(A)
-                    Next X
-
+                    WT$ = memberName$(XW)
                     nonConfGame = 0
 
                     For X = 1 To TEAMS_PER_LEAGUE
 
                         If memberName$(X) = WT$ Then
 
-                            If compLeagWins!(X) = fullWins And compLeagLosses!(X) = fullLosses Then
+                            If divWins!(X) = fullWins And divLosses!(X) = fullLosses Then
 
                                 nonConfGame = 1
                                 Exit For
 
                             Else
 
-                                compLeagWins!(X) = fullWins
-                                compLeagLosses!(X) = fullLosses
+                                divWins!(X) = fullWins
+                                divLosses!(X) = fullLosses
 
                             End If
 
                         End If
 
                     Next X
+                    'alternatively, use a Do / Until loop; nonConfGame = 1 or EC = 30
 
                     If nonConfGame <> 1 And _FileExists(diskPaths$(1) + memberName$(XW)) Then
 
@@ -1169,7 +1165,7 @@ End Sub
 'bubble sort algorithm.
 Sub SortStandingsLeague ()
 
-    Shared compLeagWins!(), compLeagLosses!()
+    Shared divWins!(), divLosses!()
 
     Shared memberName$()
 
@@ -1182,17 +1178,17 @@ Sub SortStandingsLeague ()
 
             For Y = X + 1 To ZZ
 
-                diffX = compLeagWins!(X) - compLeagLosses!(X)
-                diffY = compLeagWins!(Y) - compLeagLosses!(Y)
+                diffX = divWins!(X) - divLosses!(X)
+                diffY = divWins!(Y) - divLosses!(Y)
 
                 If diffX <= diffY Then
 
                     If diffX <> diffY Then
 
-                        If Not (compLeagWins!(X) <= compLeagWins!(Y) And compLeagWins!(X) > compLeagLosses!(X)) Or Not (compLeagWins!(X) >= compLeagWins!(Y) And compLeagWins!(X) < compLeagLosses!(X)) Then
+                        If Not (divWins!(X) <= divWins!(Y) And divWins!(X) > divLosses!(X)) Or Not (divWins!(X) >= divWins!(Y) And divWins!(X) < divLosses!(X)) Then
                             Swap memberName$(X), memberName$(Y)
-                            Swap compLeagWins!(X), compLeagWins!(Y)
-                            Swap compLeagLosses!(X), compLeagLosses!(Y)
+                            Swap divWins!(X), divWins!(Y)
+                            Swap divLosses!(X), divLosses!(Y)
                         End If
 
                     End If
@@ -1219,7 +1215,7 @@ Sub PostLeadersPro (leaderFile$)
     Shared defLeaderNames$(), offLeaderNames$()
     Shared defLeaders!(), offLeaders!()
     Shared leaderVals!()
-    Shared compLeagWins!(), compLeagLosses!()
+    Shared divWins!(), divLosses!()
 
     Shared memberName$()
     Shared leagLdrPlayer$(), leagLdrTeam$()
@@ -1233,7 +1229,7 @@ Sub PostLeadersPro (leaderFile$)
     Print "    POSTING NEW "; leaderFile$; " LEADERS"
 
     For X = 1 To TEAMS_PER_LEAGUE
-        Write #1, memberName$(X), compLeagWins!(X), compLeagLosses!(X)
+        Write #1, memberName$(X), divWins!(X), divLosses!(X)
     Next
 
     For X = 1 To 250

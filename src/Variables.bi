@@ -136,7 +136,7 @@ Dim leaderVals!(0 To 250, 0 To 2)
 
 Dim compLdrTeam$(TEAMS_PER_LEAGUE)
 
-Dim compLeagWins!(TEAMS_PER_LEAGUE), compLeagLosses!(TEAMS_PER_LEAGUE)
+Dim divWins!(TEAMS_PER_LEAGUE), divLosses!(TEAMS_PER_LEAGUE)
 Dim compLgStatVal!(260), compLgStatAtt!(260)
 Dim compStats!(14, 26)
 
