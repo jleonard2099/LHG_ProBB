@@ -8,11 +8,12 @@
 '.STD file.
 Sub UpdateExpandedStandings ()
 
-    Shared lastTenLosses(), lastTenWins(), lastWinStreak()
+    Shared lastLoseStreak(), lastWinStreak()
+    Shared lastTenLosses(), lastTenWins()
+    Shared teamLoseStreak(), teamWinStreak()
     Shared totHomeLosses(), totHomeWins()
     Shared totRoadLosses(), totRoadWins()
-    Shared totTeamLosses(), lastLoseStreak()
-    Shared teamLoseStreak(), teamWinStreak(), teamTotWins()
+    Shared totTeamLosses(), totTeamWins
 
     Shared teamScore(), oppScore()
 
@@ -20,6 +21,13 @@ Sub UpdateExpandedStandings ()
     Shared memberName$(), expStdLeagName$()
 
     Shared div1Name$, div2Name$, div3Name$, div4Name$, leagueName$
+
+    Erase lastLoseStreak, lastWinStreak
+    Erase lastTenWins, lastTenLosses
+    Erase teamLoseStreak, teamWinStreak
+    Erase totHomeLosses, totHomeWins
+    Erase totRoadLosses, totRoadWins
+    Erase totTeamLosses, totTeamWins
 
     TMR = TEAMS_PER_LEAGUE
     currRecord = 0
@@ -43,27 +51,7 @@ Sub UpdateExpandedStandings ()
 
             If _FileExists(diskPaths$(1) + memberName$(KK) + "S") Then
 
-                Open diskPaths$(1) + memberName$(KK) + "S" For Input As #2
-
-                Input #2, nbrGames
-
-                For J = 1 To MAX_SCHED_STATS:
-                    Input #2, teamScore(J)
-                Next
-
-                For J = 1 To MAX_SCHED_STATS:
-                    Input #2, oppName$(J)
-                Next
-
-                For J = 1 To MAX_SCHED_STATS:
-                    Input #2, oppScore(J)
-                Next
-
-                For J = 1 To MAX_SCHED_STATS:
-                    Input #2, locIndicator$(J)
-                Next
-
-                Close #2
+                Call ReadScheduleStats (memberName$(KK), nbrGames)
 
                 lastWinStreak(currRecord) = 0
                 lastLoseStreak(currRecord) = 0
@@ -74,7 +62,7 @@ Sub UpdateExpandedStandings ()
 
                     If teamScore(I) > oppScore(I) Then
 
-                        teamTotWins(currRecord) = teamTotWins(currRecord) + 1
+                        totTeamWins(currRecord) = totTeamWins(currRecord) + 1
                         lastWinStreak(currRecord) = lastWinStreak(currRecord) + 1
                         lastLoseStreak(currRecord) = 0
 
@@ -137,7 +125,7 @@ Sub UpdateExpandedStandings ()
 
                 If nbrGames <= 10 Then
                     lastTenLosses(currRecord) = totTeamLosses(currRecord)
-                    lastTenWins(currRecord) = teamTotWins(currRecord)
+                    lastTenWins(currRecord) = totTeamWins(currRecord)
                 Else
                     M = nbrGames - 9
 
@@ -162,7 +150,7 @@ Sub UpdateExpandedStandings ()
     Write #3, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
     For I = 1 To TEAMS_PER_LEAGUE
-        Write #3, teamTotWins(I), totHomeWins(I), totRoadWins(I), totTeamLosses(I), totHomeLosses(I), totRoadLosses(I), lastTenWins(I), lastTenLosses(I), expStdLeagName$(I)
+        Write #3, expStdLeagName$(I), totTeamWins(I), totHomeWins(I), totRoadWins(I), lastTenWins(I), totTeamLosses(I), totHomeLosses(I), totRoadLosses(I), lastTenLosses(I), teamWinStreak!(I), teamLoseStreak!(I)
     Next
 
     Close #3
@@ -181,7 +169,7 @@ Sub NewStandings_Screen (league$)
     Shared totHomeLosses(), totHomeWins()
     Shared totTeamLosses(), lastLoseStreak()
     Shared totRoadLosses(), totRoadWins()
-    Shared teamLoseStreak(), teamWinStreak(), teamTotWins()
+    Shared teamLoseStreak(), teamWinStreak(), totTeamWins()
 
     Shared expStdLeagName$()
 
@@ -232,17 +220,17 @@ Sub NewStandings_Screen (league$)
                 Color 15
 
                 'G / W / L
-                Print Tab(18); Using "### ### ###"; teamTotWins(I) + totTeamLosses(I); teamTotWins(I); totTeamLosses(I); Tab(30);
+                Print Tab(18); Using "### ### ###"; totTeamWins(I) + totTeamLosses(I); totTeamWins(I); totTeamLosses(I); Tab(30);
 
                 ' PCT
-                If totTeamLosses(I) = 0 And totTeamLosses(I) + teamTotWins(I) <> 0 Then
+                If totTeamLosses(I) = 0 And totTeamLosses(I) + totTeamWins(I) <> 0 Then
                     Print "1.000";
                 Else
-                    If teamTotWins(I) = 0 Then
+                    If totTeamWins(I) = 0 Then
                         Print " .000";
                     Else
-                        If teamTotWins(I) + totTeamLosses(I) <> 0 Then
-                            winPCT! = teamTotWins(I) / (teamTotWins(I) + totTeamLosses(I))
+                        If totTeamWins(I) + totTeamLosses(I) <> 0 Then
+                            winPCT! = totTeamWins(I) / (totTeamWins(I) + totTeamLosses(I))
                             Print Using " .###"; winPCT!;
                         Else
                             Print " .000";
@@ -251,7 +239,7 @@ Sub NewStandings_Screen (league$)
                 End If
 
                 ' GB
-                calcGB! = ((teamTotWins(AA) - teamTotWins(I)) + (totTeamLosses(I) - totTeamLosses(AA))) / 2
+                calcGB! = ((totTeamWins(AA) - totTeamWins(I)) + (totTeamLosses(I) - totTeamLosses(AA))) / 2
                 If calcGB! = 0 Then
                     Print Tab(36); " ---";
                 Else
@@ -267,7 +255,7 @@ Sub NewStandings_Screen (league$)
         Next
 
         'MJ #
-        MJ = 83 - teamTotWins(AA) - totTeamLosses(AA + 1)
+        MJ = 83 - totTeamWins(AA) - totTeamLosses(AA + 1)
         If MJ < 0 Then MJ = 0
 
         Locate 4, 42
@@ -294,7 +282,7 @@ Sub NewStandings_Report (printDest, destFile$, league$)
     Shared totHomeLosses(), totHomeWins()
     Shared totTeamLosses(), lastLoseStreak()
     Shared totRoadLosses(), totRoadWins()
-    Shared teamLoseStreak(), teamWinStreak(), teamTotWins()
+    Shared teamLoseStreak(), teamWinStreak(), totTeamWins()
 
     Shared expStdLeagName$()
 
@@ -340,34 +328,34 @@ Sub NewStandings_Report (printDest, destFile$, league$)
             If expStdLeagName$(I) <> "" And expStdLeagName$(I) <> "*" Then
 
                 Print #1, expStdLeagName$(I);
-                Print #1, Tab(18); Using "### ### ###"; teamTotWins(I) + totTeamLosses(I); teamTotWins(I); totTeamLosses(I); Tab(30);
+                Print #1, Tab(18); Using "### ### ###"; totTeamWins(I) + totTeamLosses(I); totTeamWins(I); totTeamLosses(I); Tab(30);
 
                 'PCT
-                If totTeamLosses(I) = 0 And totTeamLosses(I) + teamTotWins(I) <> 0 Then
+                If totTeamLosses(I) = 0 And totTeamLosses(I) + totTeamWins(I) <> 0 Then
                     Print #1, "1.000";
                 Else
-                    If teamTotWins(I) = 0 Then
+                    If totTeamWins(I) = 0 Then
                         Print #1, " .000";
                     Else
-                        If teamTotWins(I) + totTeamLosses(I) = 0 Then
+                        If totTeamWins(I) + totTeamLosses(I) = 0 Then
                             Print #1, " .000";
                         Else
-                            winPCT! = teamTotWins(I) / (teamTotWins(I) + totTeamLosses(I))
+                            winPCT! = totTeamWins(I) / (totTeamWins(I) + totTeamLosses(I))
                             Print #1, Using " .###"; winPCT!;
                         End If
                     End If
                 End If
 
                 'Games Behind?
-                If ((teamTotWins(AA) - teamTotWins(I)) + (totTeamLosses(I) - totTeamLosses(AA))) / 2 = 0 Then
+                If ((totTeamWins(AA) - totTeamWins(I)) + (totTeamLosses(I) - totTeamLosses(AA))) / 2 = 0 Then
                     Print #1, Tab(36); " ---";
                 Else
-                    Print #1, Tab(36); Using "##.#"; ((teamTotWins(AA) - teamTotWins(I)) + (totTeamLosses(I) - totTeamLosses(AA))) / 2;
+                    Print #1, Tab(36); Using "##.#"; ((totTeamWins(AA) - totTeamWins(I)) + (totTeamLosses(I) - totTeamLosses(AA))) / 2;
                 End If
 
                 'Magic Number?
                 If I = AA Then
-                    MJ = 83 - teamTotWins(AA) - totTeamLosses(AA + 1)
+                    MJ = 83 - totTeamWins(AA) - totTeamLosses(AA + 1)
                     If MJ < 0 Then MJ = 0
                     Print #1, Tab(42); Using "##"; MJ;
                 End If
@@ -419,7 +407,7 @@ Sub SortStandings (AA, ZZ)
     Shared totHomeLosses(), totHomeWins()
     Shared totTeamLosses(), lastLoseStreak()
     Shared totRoadLosses(), totRoadWins()
-    Shared teamLoseStreak(), teamWinStreak(), teamTotWins()
+    Shared teamLoseStreak(), teamWinStreak(), totTeamWins()
 
     Shared expStdLeagName$()
 
@@ -427,17 +415,17 @@ Sub SortStandings (AA, ZZ)
 
         For Y = X + 1 To ZZ
 
-            diffX = teamTotWins(X) - totTeamLosses(X)
-            diffY = teamTotWins(Y) - totTeamLosses(Y)
+            diffX = totTeamWins(X) - totTeamLosses(X)
+            diffY = totTeamWins(Y) - totTeamLosses(Y)
 
             If diffX <= diffY Then
 
                 If diffX <> diffY Then
 
-                    If Not (teamTotWins(X) <= teamTotWins(Y) And teamTotWins(X) > totTeamLosses(X)) Or Not (teamTotWins(X) >= teamTotWins(Y) And teamTotWins(X) < totTeamLosses(X)) Then
+                    If Not (totTeamWins(X) <= totTeamWins(Y) And totTeamWins(X) > totTeamLosses(X)) Or Not (totTeamWins(X) >= totTeamWins(Y) And totTeamWins(X) < totTeamLosses(X)) Then
 
                         Swap expStdLeagName$(X), expStdLeagName$(Y)
-                        Swap teamTotWins(X), teamTotWins(Y)
+                        Swap totTeamWins(X), totTeamWins(Y)
                         Swap totTeamLosses(X), totTeamLosses(Y)
                         Swap totHomeLosses(X), totHomeLosses(Y)
                         Swap totRoadLosses(X), totRoadLosses(Y)

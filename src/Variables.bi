@@ -31,7 +31,7 @@ Dim tiedGames
 ' Conferences / Orgs
 Dim memberIdx(TEAMS_PER_LEAGUE)
 Dim memberName$(TEAMS_PER_LEAGUE)
-Dim memberYears$(TEAMS_PER_LEAGUE)
+Dim memberYear$(TEAMS_PER_LEAGUE)
 
 '-- For Road Data
 Dim gameAtt_Road&(MAX_SCHED_STATS)
@@ -117,7 +117,7 @@ Dim totGames!(600), expLdrVal!(600)
 Dim lastTenLosses(TEAMS_PER_LEAGUE), lastTenWins(TEAMS_PER_LEAGUE)
 
 Dim teamLoseStreak(TEAMS_PER_LEAGUE), teamWinStreak(TEAMS_PER_LEAGUE)
-Dim teamTotWins(TEAMS_PER_LEAGUE)
+Dim totTeamWins(TEAMS_PER_LEAGUE)
 
 Dim totHomeLosses(TEAMS_PER_LEAGUE), totHomeWins(TEAMS_PER_LEAGUE)
 Dim totRoadLosses(TEAMS_PER_LEAGUE), totRoadWins(TEAMS_PER_LEAGUE)
@@ -192,13 +192,13 @@ Dim statTeam$(1)
 '----------------------------------------
 Dim leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
-Dim awayLosses(50), awayWins!(50)
+Dim awayLosses!(50), awayWins!(50)
 Dim awayScoreTeam!(50), awayScoreOpp!(50)
 
 Dim homeLosses!(50), homeWins!(50)
 Dim homeScoreTeam!(50), homeScoreOpp!(50)
 
-Dim totAwayLosses!(40), totAwayWin!(40)
+Dim totAwayLosses!(40), totAwayWins!(40)
 Dim totAwayScoreTeam!(40), totAwayScoreOpp!(40)
 Dim totHomeLosses!(40), totHomeWins!(40)
 Dim totHomeScoreTeam!(40), totHomeScoreOpp!(40)

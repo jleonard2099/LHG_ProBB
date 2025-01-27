@@ -1084,11 +1084,11 @@ Sub PROHOOP ()
                         If playerOpt > 3 Then playerOpt = 0
 
                     Case 2:
-                        Call ChooseGameTeam(YN$, NTMS, teamNbr, gameTeams$(0), 0)
+                        Call ChooseGameTeam(diskIDs$(0), NTMS, teamNbr, gameTeams$(0), 0)
                         If teamNbr <> 0 Then Call DISABLEPLAYERS(0)
 
                     Case 3:
-                        Call ChooseGameTeam(YN$, NTMS, teamNbr, gameTeams$(1), 1)
+                        Call ChooseGameTeam(diskIDs$(1), NTMS, teamNbr, gameTeams$(1), 1)
                         If teamNbr <> 0 Then Call DISABLEPLAYERS(1)
 
                     Case 4:
@@ -7802,11 +7802,10 @@ Sub FoulCalled (randomFouler)
             Call PlayStyle
             Call PlayItSafe
 
-            Call Substitutions
-            Call SCOREBOARD
-
         End If
 
+        Call Substitutions
+        Call SCOREBOARD
         Call CheckGameClock
 
         offStatus = 0
@@ -7824,7 +7823,7 @@ End Sub
 'corresponding stat file.
 Sub LOADSTATS ()
 
-    Dim nbrStats
+    Dim nbrGames
 
     Shared teamScore(), oppScore()
     
@@ -7840,29 +7839,9 @@ Sub LOADSTATS ()
 
         If _FileExists(diskPaths$(1) + statFile$ + "S") Then
 
-            Open diskPaths$(1) + statFile$ + "S" For Input As #1
+            Call ReadScheduleStats (statFile$, nbrGames)
 
-            Input #1, nbrStats
-
-            For I1 = 1 To MAX_SCHED_STATS:
-                Input #1, teamScore(I1)
-            Next
-
-            For I1 = 1 To MAX_SCHED_STATS:
-                Input #1, oppName$(I1)
-            Next
-
-            For I1 = 1 To MAX_SCHED_STATS:
-                Input #1, oppScore(I1)
-            Next
-
-            For I1 = 1 To MAX_SCHED_STATS:
-                Input #1, locIndicator$(I1)
-            Next
-
-            Close #1
-
-            For I1 = 1 To nbrStats
+            For I1 = 1 To nbrGames
                 If teamScore(I1) > oppScore(I1) Then
                     teamRecWins(I) = teamRecWins(I) + 1
                 End If
@@ -11917,37 +11896,7 @@ Sub COMPILESTATFILES (compileOpt)
             numberGames = 0
 
             If _FileExists(diskPaths$(1) + statFile$ + "S") Then
-
-                Open diskPaths$(1) + statFile$ + "S" For Input As #3
-
-                Input #3, numberGames
-
-                For I = 1 To MAX_SCHED_STATS:
-                    Input #3, teamScore(I)
-                Next I
-
-                For I = 1 To MAX_SCHED_STATS:
-                    Input #3, oppName$(I)
-                Next I
-
-                For I = 1 To MAX_SCHED_STATS:
-                    Input #3, oppScore(I)
-                Next I
-
-                For I = 1 To MAX_SCHED_STATS:
-                    Input #3, locIndicator$(I)
-                Next I
-
-                For I = 1 To MAX_SCHED_STATS:
-                    Input #3, gameAttendance&(I)
-                Next I
-
-                For I = 1 To MAX_SCHED_STATS:
-                    Input #3, gameSite$(I)
-                Next I
-
-                Close #3
-
+                Call ReadScheduleStats (statFile$, numberGames)
             End If
 
             If numberGames < MAX_SCHED_STATS Then
