@@ -591,7 +591,7 @@ Sub ChooseTradeTeam (yearNumber$, numberTeams, chosenIdx, teamName$, tradeIdx)
                             Get #1, teamIdx
                             'numberTeams = numberTeams + 1
                             teamNames$(teamIdx) = Q$(0)
-                            teamIndex%(teamIdx) = teamIdx
+                            teamIndex(teamIdx) = teamIdx
                         Next teamIdx
 
                         Close #1
@@ -680,7 +680,7 @@ Sub SelectTradeTeam (numberTeams, yearNumber$, selectedIdx, ExitCode%, tradeIdx)
 
         If ExitCode% <> 27 Then
 
-            selectedIdx = teamIndex%(SELECTION%)
+            selectedIdx = teamIndex(SELECTION%)
 
             'Locate 2, 33
             'Color 31: Print "LOADING..."

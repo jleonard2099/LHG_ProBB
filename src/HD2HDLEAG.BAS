@@ -467,7 +467,7 @@ Sub Hd2HdPro_Report (teamName$, printDest)
 
         div = div + 1
 
-    Loop Until div > DIVS_PER_LEAGUE Or divisionNames(div) = "XXX" Or divisionNames(div) = "*" Or divisionNames(div) = ""
+    Loop Until div > DIVS_PER_LEAGUE Or divisionNames$(div) = "XXX" Or divisionNames$(div) = "*" Or divisionNames$(div) = ""
 
     ' ** LEAGUE TOTALS **
     Print #1,

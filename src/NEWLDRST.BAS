@@ -13,7 +13,7 @@ Sub UpdateExpandedStandings ()
     Shared teamLoseStreak(), teamWinStreak()
     Shared totHomeLosses(), totHomeWins()
     Shared totRoadLosses(), totRoadWins()
-    Shared totTeamLosses(), totTeamWins
+    Shared totTeamLosses(), totTeamWins()
 
     Shared teamScore(), oppScore()
 

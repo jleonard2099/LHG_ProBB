@@ -470,7 +470,7 @@ Sub NewSchedule (scheduleFile$)
 
             Case "Z"
                 'Export to text file
-                Open "schedule" For Append As #19
+                Open "schedule" For Append As #15
 
                 For X = 1 To scheduleAP%(0)
 
@@ -485,12 +485,12 @@ Sub NewSchedule (scheduleFile$)
                     scheduleH$(X) = team$
 
                     'Game number
-                    Print #19, Using "####"; X;
-                    Print #19, ",";
+                    Print #15, Using "####"; X;
+                    Print #15, ",";
 
                     'Date
-                    Print #19, Using "##/##/##"; scheduleNG%(X, 17); scheduleNG%(X, 16); scheduleNG%(X, 18);
-                    Print #19, ",";
+                    Print #15, Using "##/##/##"; scheduleNG%(X, 17); scheduleNG%(X, 16); scheduleNG%(X, 18);
+                    Print #15, ",";
 
                     'Time
                     I$ = "A"
@@ -507,26 +507,26 @@ Sub NewSchedule (scheduleFile$)
 
                     'Time
                     TM$ = TM$ + I$
-                    Print #19, TM$; ",";
+                    Print #15, TM$; ",";
 
                     'Visiting Team
-                    Print #19, scheduleV$(X); ",";
+                    Print #15, scheduleV$(X); ",";
                     If scheduleNG%(X, 13) = 1 Then
-                        Print #19, Using "###"; visitorScores(X);
+                        Print #15, Using "###"; visitorScores(X);
                     End If
-                    Print #19, ",";
+                    Print #15, ",";
 
                     'Home Team
-                    Print #19, scheduleH$(X); ",";
+                    Print #15, scheduleH$(X); ",";
                     If scheduleNG%(X, 13) = 1 Then
-                        Print #19, Using "###"; homeScores(X);
+                        Print #15, Using "###"; homeScores(X);
                     End If
 
-                    Print #19,
+                    Print #15,
 
                 Next X
 
-                Close #19
+                Close #15
 
             Case Chr$(0) + Chr$(81), Chr$(0) + Chr$(77)
                 ' *** PAGE DOWN | RIGHT ARROW ***

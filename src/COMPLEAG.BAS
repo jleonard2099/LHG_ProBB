@@ -98,12 +98,12 @@ Sub CompileLeague ()
 
                 If (haveStats) Then
 
-                    WT$ = memberName$(XW)
+                    statName$ = memberName$(XW)
                     nonConfGame = 0
 
                     For X = 1 To TEAMS_PER_LEAGUE
 
-                        If memberName$(X) = WT$ Then
+                        If memberName$(X) = statName$ Then
 
                             If divWins!(X) = fullWins And divLosses!(X) = fullLosses Then
 
