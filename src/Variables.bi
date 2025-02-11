@@ -24,8 +24,10 @@ Dim gameStatPlyrVal!(0 To 14, 0 To 13)
 'Record / Standings
 Dim confWins, confLosses
 Dim fullWins, fullLosses
+
 Dim homeLosses, homeWins, neutralLosses, neutralWins
 Dim roadLosses, roadWins, totalLosses, totalWins
+
 Dim tiedGames
 
 ' Conferences / Orgs
@@ -49,9 +51,11 @@ ReDim scheduleAP%(MAX_SCHEDULE_GAMES), scheduleNG%(MAX_SCHEDULE_GAMES, 21)
 ReDim homeScores(MAX_SCHEDULE_GAMES), visitorScores(MAX_SCHEDULE_GAMES)
 
 ReDim scheduleH$(MAX_SCHEDULE_GAMES), scheduleV$(MAX_SCHEDULE_GAMES)
-'ReDim homeTeam$(MAX_SCHEDULE_GAMES), visitingTeam$(MAX_SCHEDULE_GAMES)
 ReDim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
 'ReDim yearNumber$(MAX_SCHEDULE_GAMES, 1)
+
+'-- These are used for tournaments
+'ReDim homeTeam$(MAX_SCHEDULE_GAMES), visitingTeam$(MAX_SCHEDULE_GAMES)
 
 
 ' *** Game Options ***
@@ -101,11 +105,11 @@ Dim carLdrVal!(19, 20)
 
 Dim carRecVal!(62), carRecYear!(21)
 
-Dim plyLeaderTeams$(TEAMS_PER_LEAGUE, 15), tmLeaderTeams$(TEAMS_PER_LEAGUE, 15)
+Dim plyLeaderTeams$(40, 15), tmLeaderTeams$(40, 15)
 
-Dim plyrLdrStats!(600, 14)
-Dim plyrLeaderYears!(TEAMS_PER_LEAGUE), tmLeaderYears!(TEAMS_PER_LEAGUE)
-Dim plyrLdrVal!(TEAMS_PER_LEAGUE, 15), teamLdrVal!(TEAMS_PER_LEAGUE, 15)
+Dim plyrLdrStats!(0 To 600, 0 To 14)
+Dim plyrLeaderYears!(40), tmLeaderYears!(40)
+Dim plyrLdrVal!(40, 15), teamLdrVal!(40, 15)
 
 ' For Expanded Leaders
 Dim expIndCategory$(0 To 31), expTeamCategory$(0 To 38)
@@ -114,15 +118,14 @@ Dim expPlyrLdrName$(600), expPlyrLdrTeam$(600), expLdrTeam$(600), expLdrPlyrName
 Dim totGames!(600), expLdrVal!(600)
 
 'For Expanded Standings
+Dim lastLoseStreak(TEAMS_PER_LEAGUE), lastWinStreak(TEAMS_PER_LEAGUE)
 Dim lastTenLosses(TEAMS_PER_LEAGUE), lastTenWins(TEAMS_PER_LEAGUE)
 
 Dim teamLoseStreak(TEAMS_PER_LEAGUE), teamWinStreak(TEAMS_PER_LEAGUE)
-Dim totTeamWins(TEAMS_PER_LEAGUE)
 
 Dim totHomeLosses(TEAMS_PER_LEAGUE), totHomeWins(TEAMS_PER_LEAGUE)
-Dim totRoadLosses(TEAMS_PER_LEAGUE), totRoadWins(TEAMS_PER_LEAGUE)
-
-Dim totTeamLosses(TEAMS_PER_LEAGUE), lastLoseStreak(TEAMS_PER_LEAGUE), lastWinStreak(TEAMS_PER_LEAGUE)
+Dim totAwayLosses(TEAMS_PER_LEAGUE), totAwayWins(TEAMS_PER_LEAGUE)
+Dim totTeamLosses(TEAMS_PER_LEAGUE), totTeamWins(TEAMS_PER_LEAGUE)
 
 Dim expStdLeagName$(TEAMS_PER_LEAGUE)
 
@@ -136,7 +139,7 @@ Dim leaderVals!(0 To 250, 0 To 2)
 
 Dim compLdrTeam$(TEAMS_PER_LEAGUE)
 
-Dim divWins!(TEAMS_PER_LEAGUE), divLosses!(TEAMS_PER_LEAGUE)
+Dim divWins(TEAMS_PER_LEAGUE), divLosses(TEAMS_PER_LEAGUE)
 Dim compLgStatVal!(260), compLgStatAtt!(260)
 Dim compStats!(14, 26)
 
@@ -192,15 +195,13 @@ Dim statTeam$(1)
 '----------------------------------------
 Dim leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
-Dim awayLosses!(50), awayWins!(50)
+Dim awayLosses(50), awayWins(50)
 Dim awayScoreTeam!(50), awayScoreOpp!(50)
 
-Dim homeLosses!(50), homeWins!(50)
+Dim homeLosses(50), homeWins(50)
 Dim homeScoreTeam!(50), homeScoreOpp!(50)
 
-Dim totAwayLosses!(40), totAwayWins!(40)
 Dim totAwayScoreTeam!(40), totAwayScoreOpp!(40)
-Dim totHomeLosses!(40), totHomeWins!(40)
 Dim totHomeScoreTeam!(40), totHomeScoreOpp!(40)
 
 

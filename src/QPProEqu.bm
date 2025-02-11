@@ -1239,7 +1239,7 @@ Sub TextIn (T$, Max%, NumOnly%, CapsOn%, ExitCode%, FGColor&, BGColor&)
     If Len(A$) = 1 GoTo TRegularKey
 
     A$ = Right$(A$, 1) 'it was an extended key, get the code
-    On InStr(Chr$(15) + ".GHKMOPRSstu" + Chr$(19), A$) GOTO TShiftTab, TClear, THome, TUp, TLeft, TRight, TEndKey, TDown, TIns, TDel, TCttotRoadLosseseft, TCtrlRight, TCtrlEnd, TRestore
+    On InStr(Chr$(15) + ".GHKMOPRSstu" + Chr$(19), A$) GOTO TShiftTab, TClear, THome, TUp, TLeft, TRight, TEndKey, TDown, TIns, TDel, TCttotAwayLosseseft, TCtrlRight, TCtrlEnd, TRestore
     GoTo TGetKey 'none of the above, get again
 
     TShiftTab:
@@ -1308,7 +1308,7 @@ Sub TextIn (T$, Max%, NumOnly%, CapsOn%, ExitCode%, FGColor&, BGColor&)
     Length = Length - 1 'show string as one character shorter
     GoTo TGetKey
 
-    TCttotRoadLosseseft:
+    TCttotAwayLosseseft:
     If CursorPos = 1 GoTo TGetKey 'at the beginning, ignore
 
     A = CursorPos 'save cursor position
@@ -1317,7 +1317,7 @@ Sub TextIn (T$, Max%, NumOnly%, CapsOn%, ExitCode%, FGColor&, BGColor&)
     If Mid$(X$, CursorPos - 1, 1) <> " " GoTo TSeekLeft2
 
     TSeekLeft1:
-    If CursorPos = 1 GoTo TCttotRoadLosseseftExit 'at the beginning, give up
+    If CursorPos = 1 GoTo TCttotAwayLosseseftExit 'at the beginning, give up
 
     If Mid$(X$, CursorPos - 1, 1) = " " Then
         CursorPos = CursorPos - 1
@@ -1325,13 +1325,13 @@ Sub TextIn (T$, Max%, NumOnly%, CapsOn%, ExitCode%, FGColor&, BGColor&)
     End If
 
     TSeekLeft2:
-    If CursorPos = 1 GoTo TCttotRoadLosseseftExit 'at the beginning, give up
+    If CursorPos = 1 GoTo TCttotAwayLosseseftExit 'at the beginning, give up
     If Mid$(X$, CursorPos - 1, 1) <> " " Then
         CursorPos = CursorPos - 1
         GoTo TSeekLeft2 'seek character preceeded by a blank
     End If
 
-    TCttotRoadLosseseftExit:
+    TCttotAwayLosseseftExit:
     Locate , Pos(0) - (A - CursorPos) 'position the cursor
     GoTo TGetKey
 

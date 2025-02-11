@@ -566,18 +566,18 @@ Sub Replay_Menu ()
 
         _Title "Basketball: The Pro Game - Stats Menu"
 
-        ReDim menuChoices$(1 To 5)
+        ReDim menuChoices$(1 To 6)
 
         menuChoices$(1) = "VIEW / PRINT COMPILED STATS     "
         menuChoices$(2) = "TEAM CAREER OPTIONS             "
         menuChoices$(3) = "COMPARE REPLAY STATS TO ACTUAL  "
-        'menuChoices$(4) = "MODIFY REPLAY STATS             "
-        menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES"
-        menuChoices$(5) = "RETURN TO MAIN MENU             "
+        menuChoices$(4) = "MODIFY REPLAY STATS             "
+        menuChoices$(5) = "MERGE SEPARATE STATISTICAL FILES"
+        menuChoices$(6) = "RETURN TO MAIN MENU             "
         SELECTION% = 1
-        Count% = 5
+        Count% = 6
         Start% = 1
-        ExitCode% = 5
+        ExitCode% = 6
         FileFGColor% = 15: FileBGColor% = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
@@ -607,9 +607,12 @@ Sub Replay_Menu ()
                     Call COMPARE
 
                 Case 4:
+                    Call EditStats
+
+                Case 5
                     Call MERGE
 
-                Case 5:
+                Case 6:
                     '
 
             End Select
@@ -619,7 +622,7 @@ Sub Replay_Menu ()
         Color 15, 0
         Cls
 
-    Loop Until SELECTION% = 5 Or ExitCode% = 27
+    Loop Until SELECTION% = 6 Or ExitCode% = 27
 
 End Sub
 
@@ -1221,12 +1224,16 @@ Sub PROHOOP ()
     '   2 = PC vs. PC
 
     For I = 0 To 1:
-        If CheckString%(diskIDs$(I)) = 1 Or Len(diskIDs$(I)) <= 2 Then
+        'If disk ID has alpha-char, or is only 3 characters,
+        'then assume the year is the first 2 chars
+        If CheckString%(diskIDs$(I)) = 1 Or Len(diskIDs$(I)) <= 3 Then
             teamYears(I) = GetTeamYear%(Left$(gameTeams$(I), 2))
         Else
-            'Just use the disk ID since we should have 4 digits
+            'If we have 4 or more characters,
+            'then Val will return the first 4 digits
             teamYears(I) = Val(RTrim$(diskIDs$(I)))
         End If
+
     Next I
 
     If quarterOpt = 0 Then
@@ -1242,8 +1249,6 @@ Sub PROHOOP ()
     If teamRat_GAME(0, 33) = teamRat_GAME(1, 33) And teamRat_GAME(0, 34) = teamRat_GAME(1, 34) Then
         Call ColorChange
     End If
-
-    If autoPlay = 1 Then gameLoc = schedOptions(2)
 
     'Determine attendance
     If gameLoc = 2 Or avgAttendance&(1) = 0 Then
@@ -2899,7 +2904,7 @@ Sub PROHOOP ()
                                         Case 9:
                                             pbpString$ = "BINGO!"
                                         Case 10:
-                                            pbpString$ = "IT FAlastLoseStreak!"
+                                            pbpString$ = "IT FALLS!"
                                         Case 11:
                                             pbpString$ = teamGender$(P) + " DRAINS IT!"
                                         Case 12:
@@ -5431,7 +5436,7 @@ Sub MAKEPBP (pbpType)
                     Case 21 To 25:
                         pbpString$ = "IT NEVER HAD A CHANCE"
                     Case 26 To 35:
-                        pbpString$ = "AIRRRR BALLtotTeamLosses!!"
+                        pbpString$ = "AIRRRR BALLtotTeamLosses!"
                     Case 36 To 40:
                         pbpString$ = pbpString$ + "MISFIRES"
                     Case 41 To 60:
@@ -7907,8 +7912,10 @@ Sub SCOREBOARD ()
     'Game Clock - Minutes
     Color 15, 0
     Locate 1, 37
-    Print Using "##"; Int(gameClock! / 60);: Print ":";
+    Print Using "##"; Int(gameClock! / 60);
+    Print ":";
 
+    'Game Clock - Seconds
     '(Let's just round it to 2 places first)
     gcSeconds! = gameClock! - Int(gameClock! / 60) * 60
     gcSeconds! = Fix((gcSeconds! * 100 + Sgn(gcSeconds!) * .5)) / 100
@@ -7928,12 +7935,13 @@ Sub SCOREBOARD ()
     Color 14, 0
     Locate 4, 13: Print Using "###"; score(0, 0);
 
-
     'Period Designation
     Locate 2, 35
-
-    Print Using " PERIOD #"; quarter;
-    If quarter > 4 Then Locate , 35: Print Using "OVERTIME #"; quarter - 4
+    If quarter > 4 Then 
+        Print Using "OVERTIME #"; quarter - 4
+    Else
+        Print Using " PERIOD #"; quarter;
+    End If
 
     'Score Team 2
     Color 14, 0
@@ -7954,8 +7962,8 @@ Sub SCOREBOARD ()
 
     'Fouls
     Locate , 35: Print Using "##  "; teamFouls(0);
-    Color 12: Print "TF  ";: Color 7
-    Print Using "##"; teamFouls(1);
+    Color 12: Print "TF  ";
+    Color 7: Print Using "##"; teamFouls(1);
 
     'Bonus
     If teamFouls(0) >= bonusFoulNum And quarter <= 4 Or teamFouls(0) > 2 And quarter > 4 Then
@@ -7975,78 +7983,86 @@ Sub SCOREBOARD ()
     Locate , 56: Print "TIMEOUTS:"; timeouts(1)
 
     'Team strategies / decisions
-    Locate 8, 58
-    Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print "DEF - "; defStyleDesc$(defStyles(D))
-    Locate , 58
-    Color teamRat_GAME(P, 33), teamRat_GAME(P, 34): Print "OFF - "; offStyleDesc$(offStyles(P))
+    If (autoPlay = 0 Or pbpDelay! > 0) Then
 
-    Color 15, 0
+        Locate 8, 58
+        Color teamRat_GAME(D, 33), teamRat_GAME(D, 34)
+        Print "DEF - "; defStyleDesc$(defStyles(D))
+        Locate , 58
+        Color teamRat_GAME(P, 33), teamRat_GAME(P, 34)
+        Print "OFF - "; offStyleDesc$(offStyles(P))
 
-    Locate , 41
-    Color 14: Print "(1) ";
-    Color 15: Print "SHOOT        ";
-    Color 14: Print "ENTER";
-    Color 15: Print "-PASS"
-    Locate , 41:
-    Color 14: Print "(2) ";
-    Color 15: Print gameTeams$(P); " CALL TIMEOUT      "
-    Locate , 41:
-    Color 14: Print "(3) ";
-    Color 15: Print "COMMIT INTL FOUL (LAST 4 MIN)"
-    Locate , 41
-    Color 14: Print "(4) ";
-    Color 15: Print "SHOOT A FORCED 3-POINTER"
-    Locate , 41:
-    Color 14: Print "(S) ";
-    Color 15: Print "SCOUT REPORT ";
-    Color 14: Print "(T) ";
-    Color 15: Print "10 MIN TICKER"
-    Locate , 41
-    Color 14: Print "(Z) ";
-    Color 15: Print "LEFT TM STGY ";
-    Color 14: Print "(/) ";
-    Color 15: Print "RIGHT TM STGY"
+        Color 15, 0
 
-    Locate 7, 1
-    Color 9, 0: Print String$(38, 205); Chr$(203); String$(38, 205)
+        Locate , 41
+        Color 14: Print "(1) ";
+        Color 15: Print "SHOOT        ";
+        Color 14: Print "ENTER";
+        Color 15: Print "-PASS"
+        Locate , 41:
+        Color 14: Print "(2) ";
+        Color 15: Print gameTeams$(P); 
+        Print " CALL TIMEOUT      "
+        Locate , 41:
+        Color 14: Print "(3) ";
+        Color 15: Print "COMMIT INTL FOUL (LAST 4 MIN)"
+        Locate , 41
+        Color 14: Print "(4) ";
+        Color 15: Print "SHOOT A FORCED 3-POINTER"
+        Locate , 41:
+        Color 14: Print "(S) ";
+        Color 15: Print "SCOUT REPORT ";
+        Color 14: Print "(T) ";
+        Color 15: Print "10 MIN TICKER"
+        Locate , 41
+        Color 14: Print "(Z) ";
+        Color 15: Print "LEFT TM STGY ";
+        Color 14: Print "(/) ";
+        Color 15: Print "RIGHT TM STGY"
 
-    Locate 8, 1
+        Color 9, 0
+        Locate 7, 1
+        Print String$(38, 205); Chr$(203); String$(38, 205)
 
-    For I = 1 To 8:
-        Locate , 39: Print Chr$(186)
-    Next
+        Locate 8, 1
+        For I = 1 To 8:
+            Locate , 39: Print Chr$(186)
+        Next
 
-    'Team 1 Overview
-    Locate 17, 1
-    Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0);
+        'Team 1 Overview
+        Locate 17, 1
+        Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0);
 
-    'Win/Loss record from current stats files
-    Print Using " [##"; teamRecWins(0);: Print "-";: Print Using "##]"; teamRecLoss(0)
+        'Win/Loss record from current stats files
+        Print Using " [##"; teamRecWins(0);: Print "-";: Print Using "##]"; teamRecLoss(0)
 
-    Color 14, 0
-    Print "# NAME         FG FT RB CX PA DS PT F"
-    Call PrintActiveLineup(0)
+        Color 14, 0
+        Print "# NAME         FG FT RB CX PA DS PT F"
 
-    'Team 2 Overview
-    Locate 17, 40
-    Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1);
+        Call PrintActiveLineup(0)
 
-    'Win/Loss record from current stats files
-    Print Using " [##"; teamRecWins(1);: Print "-";: Print Using "##]"; teamRecLoss(1)
+        'Team 2 Overview
+        Locate 17, 40
+        Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1);
 
-    Color 14, 0
-    Locate , 40: Print "# NAME          FG FT RB CX PA DS PT F"
-    Call PrintActiveLineup(1)
+        'Win/Loss record from current stats files
+        Print Using " [##"; teamRecWins(1);: Print "-";: Print Using "##]"; teamRecLoss(1)
 
-    Color 9, 0
-    For I = 1 To 9:
-        Locate 14 + I, 39: Print Chr$(186)
-    Next
+        Color 14, 0
+        Locate , 40: Print "# NAME          FG FT RB CX PA DS PT F"
+        Call PrintActiveLineup(1)
 
-    'Color 9, 0
-    Locate 16, 1: Print String$(79, 205)
-    Locate 16, 39: Print Chr$(206)
-    Color 7, 0
+        Color 9, 0
+        For I = 1 To 9:
+            Locate 14 + I, 39: Print Chr$(186)
+        Next
+
+        'Color 9, 0
+        Locate 16, 1: Print String$(79, 205)
+        Locate 16, 39: Print Chr$(206)
+        Color 7, 0
+
+    End If
 
 End Sub
 
@@ -10821,10 +10837,13 @@ Sub UPDATESCREEN ()
 
     Call TICKERUPDATE
 
-    Color 15, 0
+    'Team 2
+    '---
 
     'Game Clock - Minutes
-    Locate 1, 37: Print Using "##"; Int(gameClock! / 60);
+    Color 15, 0
+    Locate 1, 37
+    Print Using "##"; Int(gameClock! / 60);
     Print ":";
 
     'Game Clock - Seconds
@@ -10839,29 +10858,39 @@ Sub UPDATESCREEN ()
         Print Using "##"; gcSeconds!;
     End If
 
-    Color 14, 0
+    'Team 2
+    '---
 
-    'Period Designation
+    'Score Team 1
+    Color 14, 0
     Locate 4, 13: Print Using "###"; score(0, 0);
 
+    'Period Designation
     Locate 2, 35: Print Using " PERIOD #"; quarter;
     If quarter > 4 Then Locate , 35: Print Using "OVERTIME #"; quarter - 4
 
-    'Color 14, 0
-
-    'Score Team 1
+    'Score Team 2
+    Color 14, 0
     Locate 4, 60: Print Using "###"; score(1, 0)
 
-    'TO / RB / TF
+    'Turnovers
     Color 7
-    Locate 3, 35: Print Using "##  "; turnovers(0);
-    Color 12: Print "TO  ";: Color 7: Print Using "##"; turnovers(1)
+    Locate 3, 35
+    Print Using "##  "; turnovers(0);
+    Color 12: Print "TO  ";
+    Color 7
+    Print Using "##"; turnovers(1)
 
+    'Rebounds
     Locate , 35: Print Using "##  "; totRebounds(0);
-    Color 12: Print "RB  ";: Color 7: Print Using "##"; totRebounds(1)
+    Color 12: Print "RB  ";
+    Color 7: Print Using "##"; totRebounds(1)
 
+    'Fouls
     Locate , 35: Print Using "##  "; teamFouls(0);
-    Color 12: Print "TF  ";: Color 7: Print Using "##"; teamFouls(1);
+    Color 12: Print "TF  ";
+    Color 7
+    Print Using "##"; teamFouls(1);
 
     'Bonus
     If teamFouls(0) >= bonusFoulNum And quarter <= 4 Or teamFouls(0) > 2 And quarter > 4 Then
@@ -10890,13 +10919,16 @@ Sub UPDATESCREEN ()
         Locate 6, 37: Print Using " :##"; shotClock
     End If
 
+    'Team strategies / decisions
     If (autoPlay = 0 Or pbpDelay! > 0) Then
 
         'Team Play Styles
         Locate 8, 58
-        Color teamRat_GAME(D, 33), teamRat_GAME(D, 34): Print "DEF - "; defStyleDesc$(defStyles(D))
+        Color teamRat_GAME(D, 33), teamRat_GAME(D, 34)
+        Print "DEF - "; defStyleDesc$(defStyles(D))
         Locate , 58
-        Color teamRat_GAME(P, 33), teamRat_GAME(P, 34): Print "OFF - "; offStyleDesc$(offStyles(P))
+        Color teamRat_GAME(P, 33), teamRat_GAME(P, 34)
+        Print "OFF - "; offStyleDesc$(offStyles(P))
 
         Color 15, 0
         Locate , 41
@@ -10906,7 +10938,8 @@ Sub UPDATESCREEN ()
         Color 15: Print "-PASS"
         Locate , 41
         Color 14: Print "(2) ";
-        Color 15: Print gameTeams$(P); " CALL TIMEOUT      "
+        Color 15: Print gameTeams$(P); 
+        Print " CALL TIMEOUT      "
         Locate , 41
         Color 14: Print "(3) ";
         Color 15: Print "COMMIT INTL FOUL (LAST 4 MIN)"
@@ -10923,6 +10956,7 @@ Sub UPDATESCREEN ()
         Color 15: Print "LEFT TM STGY ";
         Color 14: Print "(/) ";
         Color 15: Print "RIGHT TM STGY"
+
         Color 15, 0
 
         Locate 19, 1
@@ -11987,35 +12021,7 @@ Sub COMPILESTATFILES (compileOpt)
                 gameSite$(numberGames) = gameArena$(1)
             End If
 
-            Open diskPaths$(1) + statFile$ + "S" For Output As #4
-
-            Print #4, numberGames
-
-            For I = 1 To MAX_SCHED_STATS:
-                Print #4, teamScore(I)
-            Next I
-
-            For I = 1 To MAX_SCHED_STATS:
-                Print #4, oppName$(I)
-            Next I
-
-            For I = 1 To MAX_SCHED_STATS:
-                Print #4, oppScore(I)
-            Next I
-
-            For I = 1 To MAX_SCHED_STATS:
-                Print #4, locIndicator$(I)
-            Next I
-
-            For I = 1 To MAX_SCHED_STATS:
-                Print #4, gameAttendance&(I)
-            Next I
-
-            For I = 1 To MAX_SCHED_STATS:
-                Print #4, gameSite$(I)
-            Next I
-
-            Close #4
+            Call SaveScheduleStats (statFile$, numberGames)
 
             'Reset arrays for next iteration
             Erase teamScore, oppScore

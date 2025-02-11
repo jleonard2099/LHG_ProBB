@@ -1,4 +1,3 @@
-
 '----------------------------------------
 '           NEWLDR Subroutine
 '----------------------------------------
@@ -20,7 +19,7 @@ Sub NEWLDR ()
     Shared totHomeLosses(), totHomeWins()
     Shared totTeamLosses(), lastLoseStreak()
     Shared lastTenLosses(), lastTenWins(), lastWinStreak()
-    Shared totRoadLosses(), totRoadWins()
+    Shared totAwayLosses(), totAwayWins()
     Shared teamLoseStreak(), teamWinStreak(), totTeamWins()
 
     Shared expStdLeagName$()
@@ -34,7 +33,7 @@ Sub NEWLDR ()
 
         menuChoices$(1) = "UPDATE EXPANDED LEAGUE LEADERS        "
         menuChoices$(2) = "VIEW EXPANDED LEAGUE LEADER FILES     "
-        menuChoices$(3) = "UPDATE EXPANDED LEAGUE STANDINGS       "
+        menuChoices$(3) = "UPDATE EXPANDED LEAGUE STANDINGS      "
         menuChoices$(4) = "VIEW / PRINT EXPANDED LEAGUE STANDINGS"
         menuChoices$(5) = "RETURN TO LEAGUE LEADER MAIN MENU     "
         SELECTION% = 1
@@ -71,8 +70,6 @@ Sub NEWLDR ()
                             For X = 1 To TEAMS_PER_LEAGUE
                                 memberName$(X) = "XXX"
                             Next
-
-                            Call ReadLeagueStats (leagStatFile$)
 
                             Call ReadLeagueStats(leagStatFile$)
                             Call UpdateExpandedLeaders(JB, PTS, TTS)
@@ -120,7 +117,7 @@ Sub NEWLDR ()
                             Input #2, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
                             For I = 1 To TEAMS_PER_LEAGUE
-                                Input #2, expStdLeagName$(I), totTeamWins(I), totHomeWins(I), totRoadWins(I), lastTenWins(I), totTeamLosses(I), totHomeLosses(I), totRoadLosses(I), lastTenLosses(I), teamWinStreak!(I), teamLoseStreak!(I)
+                                Input #2, expStdLeagName$(I), totTeamWins(I), totHomeWins(I), totAwayWins(I), lastTenWins(I), totTeamLosses(I), totHomeLosses(I), totAwayLosses(I), lastTenLosses(I), teamWinStreak(I), teamLoseStreak(I)
                             Next
 
                             Close #2
@@ -350,8 +347,8 @@ End Sub
 '(.LDS) for the expanded standings modules
 Sub ReadLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
-    Shared expPlyrLdrName$()
-    Shared expPlyrLdrTeam$(), plyLeaderTeams$(), tmLeaderTeams$()
+    Shared expPlyrLdrName$(), expPlyrLdrTeam$()
+    Shared plyLeaderTeams$(), tmLeaderTeams$()
 
     Shared plyrLdrStats!()
     Shared plyrLeaderYears!(), tmLeaderYears!(), totGames!()
@@ -396,6 +393,7 @@ Sub ReadLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
             Input #1, leader3FGM!(I)
             Input #1, leader3FGA!(I)
+
             Color 14
             Locate 18, 38
             TMR = TMR - 1
@@ -517,7 +515,7 @@ Sub ViewIndividualleaders (printOrView, JB)
 
         ZZ = 1
 
-        Call MenuBox(2, 4, 66, 20, 15, 12)
+        Call MenuBox (2, 4, 66, 20, 15, 12)
         Locate 10, 15
 
         Do
