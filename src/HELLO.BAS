@@ -7937,7 +7937,7 @@ Sub SCOREBOARD ()
 
     'Period Designation
     Locate 2, 35
-    If quarter > 4 Then 
+    If quarter > 4 Then
         Print Using "OVERTIME #"; quarter - 4
     Else
         Print Using " PERIOD #"; quarter;
@@ -8001,7 +8001,7 @@ Sub SCOREBOARD ()
         Color 15: Print "-PASS"
         Locate , 41:
         Color 14: Print "(2) ";
-        Color 15: Print gameTeams$(P); 
+        Color 15: Print gameTeams$(P);
         Print " CALL TIMEOUT      "
         Locate , 41:
         Color 14: Print "(3) ";
@@ -10938,7 +10938,7 @@ Sub UPDATESCREEN ()
         Color 15: Print "-PASS"
         Locate , 41
         Color 14: Print "(2) ";
-        Color 15: Print gameTeams$(P); 
+        Color 15: Print gameTeams$(P);
         Print " CALL TIMEOUT      "
         Locate , 41
         Color 14: Print "(3) ";
@@ -12021,7 +12021,7 @@ Sub COMPILESTATFILES (compileOpt)
                 gameSite$(numberGames) = gameArena$(1)
             End If
 
-            Call SaveScheduleStats (statFile$, numberGames)
+            Call SaveScheduleStats(statFile$, numberGames)
 
             'Reset arrays for next iteration
             Erase teamScore, oppScore
