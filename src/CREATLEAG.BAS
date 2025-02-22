@@ -1,3 +1,4 @@
+
 '----------------------------------------
 '         CREATLEAG Subroutine
 '----------------------------------------
@@ -9,8 +10,10 @@ Sub CREATLEAG ()
     _Title "Basketball: The Pro Game - Manage Leagues"
 
     Shared memberIdx()
+    Shared memberName$(), memberYear$()
 
-    Shared memberName$(), memberYears$()
+    Shared leagueName$
+    Shared div1Name$, div2Name$, div3Name$, div4Name$
 
     ReDim menuChoices$(1 To 3)
 
@@ -20,7 +23,6 @@ Sub CREATLEAG ()
         Cls
 
         Call TITLE
-
         menuChoices$(1) = "CREATE A LEAGUE       "
         menuChoices$(2) = "MODIFY LEAGUE MEMBERS "
         menuChoices$(3) = "RETURN TO LEADERS MENU"
@@ -48,28 +50,27 @@ Sub CREATLEAG ()
             For X = 1 To TEAMS_PER_LEAGUE
                 memberIdx(X) = -1
                 memberName$(X) = "XXX"
-                memberYears$(X) = "XXX"
+                memberYear$(X) = "XXX"
             Next
 
-            div1$ = ""
-            div2$ = ""
-            div3$ = ""
-            div4$ = ""
+            div1Name$ = ""
+            div2Name$ = ""
+            div3Name$ = ""
+            div4Name$ = ""
 
             Select Case SELECTION%
 
                 Case 1:
-                    Call DefineLeaguePro(league$, div1$, div2$, div3$, div4$)
-                    leagueFile$ = league$
-                    Call ReviewEditLeague(leagueFile$, league$, div1$, div2$, div3$, div4$)
+                    Call DefineLeague
+                    Call ReviewEditLeague(leagueName$)
 
                 Case 2:
                     Do
 
-                        leagueFile$  = ChooseFile$(diskPaths$(2) + "*.TMI", "LEAGUE", FileExit%)
+                        leagueFile$ = ChooseFile$(diskPaths$(2) + "*.TMI", "LEAGUE", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
-                            Call ReviewEditLeague(leagueFile$, league$, div1$, div2$, div3$, div4$)
+                            Call ReviewEditLeague(leagueFile$)
                         End If
 
                     Loop Until FileExit% = 27 Or FileExit% = 0
@@ -87,12 +88,15 @@ End Sub
 
 
 '----------------------------------------
-'       DefineLeaguePro Subroutine
+'       DefineLeague Subroutine
 '----------------------------------------
 'This subroutine assists the user with the
 'input of paramters related to the league's
 'general naming and setup
-Sub DefineLeaguePro (league$, div1$, div2$, div3$, div4$)
+Sub DefineLeague ()
+
+    Shared leagueName$
+    Shared div1Name$, div2Name$, div3Name$, div4Name$
 
     Do
 
@@ -103,16 +107,15 @@ Sub DefineLeaguePro (league$, div1$, div2$, div3$, div4$)
 
         Do
 
-            Locate 7
+            Locate 7,
 
             Locate , 12: Print "ENTER NAME FOR LEAGUE: "
             Print
             Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
-            Locate , 12: Print "SAMPLE NAMES ARE NBA WBA NBA94-95"
+            Locate , 12: Print "SAMPLE NAMES ARE NBA, WBA, NBA94-95"
+            Locate 7, 33: Input leagueName$
 
-            Locate 7, 33: Input league$
-
-            If league$ <> "" Then
+            If leagueName$ <> "" Then
 
                 Do
                     Locate 13, 12: Print "ANY CHANGE? (Y/N) "
@@ -132,39 +135,39 @@ Sub DefineLeaguePro (league$, div1$, div2$, div3$, div4$)
     Color 15, 1
 
     Locate 5, 1: QPrint "Name for Division 1 ", 14, 1, -1
-    Locate , 21: QPrint PadRight$(div1$, 50), FG, BG, -1
+    Locate , 21: QPrint PadRight$(div1Name$, 50), FG, BG, -1
     Locate 7, 1: QPrint "Name for Division 2 ", 14, 1, -1
-    Locate , 21: QPrint PadRight$(div2$, 50), FG, BG, -1
+    Locate , 21: QPrint PadRight$(div2Name$, 50), FG, BG, -1
     Locate 9, 1: QPrint "Name for Division 3 ", 14, 1, -1
-    Locate , 21: QPrint PadRight$(div3$, 50), FG, BG, -1
+    Locate , 21: QPrint PadRight$(div3Name$, 50), FG, BG, -1
     Locate 11, 1: QPrint "Name for Division 4 ", 14, 1, -1
-    Locate , 21: QPrint PadRight$(div4$, 50), FG, BG, -1
+    Locate , 21: QPrint PadRight$(div4Name$, 50), FG, BG, -1
 
     GetDiv1:
     Locate 5, 21 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 50 'specify field parameters
-    Call TextIn(div1$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+    Call TextIn(div1Name$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
 
     GetDiv2:
     Locate 7, 21 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 50 'specify field parameters
-    Call TextIn(div2$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+    Call TextIn(div2Name$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
 
     GetDiv3:
     Locate 9, 21 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 50 'specify field parameters
-    Call TextIn(div3$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+    Call TextIn(div3Name$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv2: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
 
     GetDiv4:
     Locate 11, 21 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 50 'specify field parameters
-    Call TextIn(div4$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+    Call TextIn(div4Name$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv3: 'can't back up any more, stay here
 
     Done:
@@ -188,26 +191,18 @@ End Sub
 'This subroutine provides an interface to
 'the user allowing them to choose / clear
 'teams from the league definition.
-Sub ReviewEditLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
+Sub ReviewEditLeague (leagueFile$)
 
     Shared memberIdx()
+    Shared memberName$(), memberYear$()
 
-    Shared memberName$(), memberYears$()
+    Shared leagueName$
+    Shared div1Name$, div2Name$, div3Name$, div4Name$
+
+    test$ = leagueFile$
 
     If _FileExists(diskPaths$(2) + leagueFile$ + ".TMI") Then
-
-        Open diskPaths$(2) + leagueFile$ + ".TMI" For Input As #1
-
-        Input #1, league$, div1$, div2$, div3$, div4$
-
-        For X = 1 To TEAMS_PER_LEAGUE
-            Input #1, memberName$(X)
-            Input #1, memberIdx(X)
-            Input #1, memberYears$(X)
-        Next
-
-        Close #1
-
+        Call ReadLeagueIndex(leagueFile$)
     End If
 
     Do
@@ -216,18 +211,17 @@ Sub ReviewEditLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
         Cls
 
         Print
-        Print "  "; league$; " LEAGUE "
+        Print "  "; leagueName$; " LEAGUE "
         Print
 
         Color 12
         Locate , 4
-        Print div1$; Tab(24); div2$; Tab(44); div3$; Tab(64); div4$
+        Print div1Name$; Tab(24); div2Name$; Tab(44); div3Name$; Tab(64); div4Name$
         Print
 
-        For I = 1 To 10
+        For I = 1 To TEAMS_PER_DIV
 
-            Color 2
-            Print Using "## "; I;
+            Color 2: Print Using "## "; I;
             Color 15: Print Left$(memberName$(I), 17);
 
             Locate , 21
@@ -264,23 +258,23 @@ Sub ReviewEditLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
             Do
                 Locate 22, 35
                 Print "SLOT # (1-" + Str$(TEAMS_PER_LEAGUE) + ") ";
-                Input B
-            Loop Until B >= 1 And B <= TEAMS_PER_LEAGUE
+                Input teamIndex
+            Loop Until teamIndex >= 1 Or teamIndex <= TEAMS_PER_LEAGUE
 
             If choice = 1 Then
                 'Add team
                 teamNbr = 0
-                Call ChooseTeam(memberYears$(B), NTMS, memberIdx(B), memberName$(B))
+                Call ChooseTeam(memberYear$(teamIndex), NTMS, memberIdx(teamIndex), memberName$(teamIndex))
             Else
                 'Remove team
-                memberName$(B) = "XXX"
+                memberName$(teamIndex) = "XXX"
             End If
 
         End If 'Done checking if ready to save
 
     Loop Until choice = 3
 
-    Call SaveLeague(leagueFile$, league$, div1$, div2$, div3$, div4$)
+    Call SaveLeague(leagueFile$)
 
 End Sub
 
@@ -291,31 +285,31 @@ End Sub
 'This subroutine writes the league team
 'memberships and definition to each of
 'the corresponding files (.TMI, .TMS)
-Sub SaveLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
+Sub SaveLeague (leagueFile$)
 
     Shared memberIdx()
+    Shared memberName$(), memberYear$()
 
-    Shared memberName$(), memberYears$()
+    Shared leagueName$
+    Shared div1Name$, div2Name$, div3Name$, div4Name$
 
     Dim statFileNames$(TEAMS_PER_LEAGUE)
 
-    Open diskPaths$(2) + leagueFile$  + ".TMI" For Output As #1
+    Open diskPaths$(2) + leagueFile$ + ".TMI" For Output As #1
 
-    Print #1, league$
-    Print #1, div1$
-    Print #1, div2$
-    Print #1, div3$
-    Print #1, div4$
+    Print #1, leagueName$
+    Print #1, div1Name$
+    Print #1, div2Name$
+    Print #1, div3Name$
+    Print #1, div4Name$
 
     For X = 1 To TEAMS_PER_LEAGUE
         Print #1, memberName$(X)
         Print #1, memberIdx(X)
-        Print #1, memberYears$(X)
+        Print #1, memberYear$(X)
     Next
 
     Close #1
-
-    Erase memberName$
 
     For X = 1 To TEAMS_PER_LEAGUE
 
@@ -330,7 +324,7 @@ Sub SaveLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
 
     Open diskPaths$(2) + leagueFile$ + ".TMS" For Output As #2
 
-    Write #2, league$, div1$, div2$, div3$, div4$
+    Write #2, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
     For X = 1 To TEAMS_PER_LEAGUE
         Write #2, statFileNames$(X)
@@ -339,4 +333,3 @@ Sub SaveLeague (leagueFile$, league$, div1$, div2$, div3$, div4$)
     Close #2
 
 End Sub
-

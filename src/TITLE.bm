@@ -11,7 +11,7 @@ Sub TITLE_CAREER ()
 
     Color 14
     Locate , 21
-    Print "BASKETBAll THE PRO GAME: CAREER STATS"
+    Print "BASKETBALL THE PRO GAME: CAREER STATS"
 
     Locate 24, 1
     Print Tab(80); " ";
@@ -74,7 +74,7 @@ Sub TITLE_HEADER ()
     Print Tab(80); " ";
 
     Locate , 25
-    Print "BASKETBAll: THE PRO GAME V" + GAME_VERSION$
+    Print "BASKETBALL: THE PRO GAME V" + GAME_VERSION$
 
     Locate 3, 1
     Color 2, 0
@@ -94,7 +94,7 @@ Sub TITLE_LEADERS
 
     Color 14
     Locate , 24
-    Print "BASKETBAll THE PRO GAME LEADERS"
+    Print "BASKETBALL THE PRO GAME LEADERS"
 
     Locate 24, 1
     Print Tab(80); " ";
@@ -120,7 +120,7 @@ Sub TITLE_MERGE ()
 
     Color 14
     Locate , 25
-    Print "BASKETBAll THE PRO GAME: MERGE"
+    Print "BASKETBALL THE PRO GAME: MERGE"
 
     Locate 24, 1
     Print Tab(80); " ";
@@ -174,7 +174,7 @@ Sub TITLE_STATS ()
     Print Tab(80); " ";
 
     Locate , 22
-    Print "BASKETBAll: THE PRO GAME STATISTICS"
+    Print "BASKETBALL: THE PRO GAME STATISTICS"
 
     Locate 24, 1
     Print Tab(80); " ";
@@ -230,7 +230,7 @@ Sub TITLE_TOURN ()
 
     Color 12
     Locate , 18
-    Print "BASKETBAll THE PRO GAME TOURNAMENT SCHEDULER"
+    Print "BASKETBALL THE PRO GAME TOURNAMENT SCHEDULER"
     
     Locate 24, 1
     Print Tab(80); " ";
@@ -260,7 +260,7 @@ Sub TITLE_UTILS ()
 
     Color 14
     Locate , 23
-    Print "BASKETBAll THE PRO GAME UTILITIES"
+    Print "BASKETBALL THE PRO GAME UTILITIES"
 
     Locate 24, 1
     Print Tab(80); " ";
@@ -291,7 +291,7 @@ Sub TITLE ()
 
     Color 12
     Locate , 25
-    Print "BASKETBAll: THE PRO GAME V" + GAME_VERSION$
+    Print "BASKETBALL: THE PRO GAME V" + GAME_VERSION$
 
     'Footer
     Locate 24, 1
@@ -306,7 +306,7 @@ Sub TITLE ()
     Locate 3, 1
     Print "           PROGRAMMED BY LANCE HAFFNER, SHANNON LYNN AND JASON LEONARD"
     Print "               FOR TECHNICAL SUPPORT, CONTACT support@LHGames.net"
-    Print "          LANCE HAFFNER GAMES ON THE INTERNET AT https://teamTotWinsw.LHGames.net"
+    Print "          LANCE HAFFNER GAMES ON THE INTERNET AT https://www.LHGames.net"
 
     Color 10
 

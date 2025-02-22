@@ -543,7 +543,7 @@ Sub QBWRITE (FFName$)
     Next x
     Locate 12, 23, 0: Print "藩様様様様様様様様様様様様様様様様夕"
     Color 0
-    Locate 9, 26, 0: Print "All UNSAVED WORK WIll BE LOST!"
+    Locate 9, 26, 0: Print "ALL UNSAVED WORK WILL BE LOST!"
     Color 8
     Locate 11, 28, 0: Print "Exit Now?  [ Yes ]  [ No  ]"
     Color 0

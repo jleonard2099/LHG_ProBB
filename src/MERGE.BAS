@@ -30,7 +30,7 @@ Sub MERGE ()
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor, FileBGColor)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor, FileBGColor)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -256,7 +256,7 @@ Sub MergeStats ()
                             Color 14
                             Locate 5, 27: Print "PLAYERS NOT IN SEQUENCE !!"
                             Color 15
-                            Locate 7, 20: Print "STATS WIll BE DISTORTED UNLESS THE ROAD"
+                            Locate 7, 20: Print "STATS WILL BE DISTORTED UNLESS THE ROAD"
                             Locate , 19: Print "FILE LISTS THE PLAYERS IN THE SAME SEQUENCE"
                             Locate , 24: Print "AS YOUR CURRENT PLAYER STAT FILE."
                             Color 12

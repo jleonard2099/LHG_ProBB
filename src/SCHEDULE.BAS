@@ -470,7 +470,7 @@ Sub NewSchedule (scheduleFile$)
 
             Case "Z"
                 'Export to text file
-                Open "schedule" For Append As #19
+                Open "schedule" For Append As #15
 
                 For X = 1 To scheduleAP%(0)
 
@@ -485,12 +485,12 @@ Sub NewSchedule (scheduleFile$)
                     scheduleH$(X) = team$
 
                     'Game number
-                    Print #19, Using "####"; X;
-                    Print #19, ",";
+                    Print #15, Using "####"; X;
+                    Print #15, ",";
 
                     'Date
-                    Print #19, Using "##/##/##"; scheduleNG%(X, 17); scheduleNG%(X, 16); scheduleNG%(X, 18);
-                    Print #19, ",";
+                    Print #15, Using "##/##/##"; scheduleNG%(X, 17); scheduleNG%(X, 16); scheduleNG%(X, 18);
+                    Print #15, ",";
 
                     'Time
                     I$ = "A"
@@ -507,26 +507,26 @@ Sub NewSchedule (scheduleFile$)
 
                     'Time
                     TM$ = TM$ + I$
-                    Print #19, TM$; ",";
+                    Print #15, TM$; ",";
 
                     'Visiting Team
-                    Print #19, scheduleV$(X); ",";
+                    Print #15, scheduleV$(X); ",";
                     If scheduleNG%(X, 13) = 1 Then
-                        Print #19, Using "###"; visitorScores(X);
+                        Print #15, Using "###"; visitorScores(X);
                     End If
-                    Print #19, ",";
+                    Print #15, ",";
 
                     'Home Team
-                    Print #19, scheduleH$(X); ",";
+                    Print #15, scheduleH$(X); ",";
                     If scheduleNG%(X, 13) = 1 Then
-                        Print #19, Using "###"; homeScores(X);
+                        Print #15, Using "###"; homeScores(X);
                     End If
 
-                    Print #19,
+                    Print #15,
 
                 Next X
 
-                Close #19
+                Close #15
 
             Case Chr$(0) + Chr$(81), Chr$(0) + Chr$(77)
                 ' *** PAGE DOWN | RIGHT ARROW ***
@@ -705,8 +705,8 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
         'Color 15
         'Locate , 3: Print "* BONUS ON 7TH FOUL UNTIL 72-73, 6TH FOUL (72-73 SEASON), 5TH FOUL (73-74+)"
         'Locate , 3: Print "* UNTIL 72-73, A TEAM IN BONUS CHOSE 3 FT TO MAKE 2 OR 2 FT TO MAKE 1"
-        'Locate , 3: Print "* UNTIL 72-73, All FOULS WERE SHOT"
-        'Locate , 3: Print "* 3-PT SHOT WAS USED FOR All ABA SEASONS AND NBA SINCE 79-80"
+        'Locate , 3: Print "* UNTIL 72-73, ALL FOULS WERE SHOT"
+        'Locate , 3: Print "* 3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 79-80"
         'Locate , 3: Print "* ABA USED A 30-SEC SHOT CLOCK THROUGH 73-74";
 
         Do
@@ -1111,9 +1111,9 @@ Sub BoxscoreMaintenance ()
 
     menuChoices$(1) = "SET PARAMETERS TO SAVE SPECIAL EVENTS BOXSCORES  "
     menuChoices$(2) = "ACCESS USER SAVED AND SPECIAL EVENTS BOXSCORES   "
-    menuChoices$(3) = "DELETE All SCHEDULE GENERATED BOXSCORES          "
-    menuChoices$(4) = "DELETE All USER SAVED, & SPECIAL BOXSCORES       "
-    menuChoices$(5) = "DELETE All BOXSCORES (SCHEDULE, USER, &  SPECIAL)"
+    menuChoices$(3) = "DELETE ALL SCHEDULE GENERATED BOXSCORES          "
+    menuChoices$(4) = "DELETE ALL USER SAVED, & SPECIAL BOXSCORES       "
+    menuChoices$(5) = "DELETE ALL BOXSCORES (SCHEDULE, USER, &  SPECIAL)"
     menuChoices$(6) = "RETURN TO MAIN AUTO SCHEDULER MENU               "
     SELECTION% = 1
     Count% = 6
@@ -1545,7 +1545,7 @@ Sub DeleteBoxscores (fileChoice%, fileSpec$)
             Locate 12, 34: Print "DELETING "; boxFiles$(X)
         Next
 
-        MsgText$ = "All BOXSCORE FILES HAVE BEEN DELETED. PRESS ANY KEY TO RETURN TO MAIN MENU"
+        MsgText$ = "ALL BOXSCORE FILES HAVE BEEN DELETED. PRESS ANY KEY TO RETURN TO MAIN MENU"
         BoxWidth = 20
         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
         Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))

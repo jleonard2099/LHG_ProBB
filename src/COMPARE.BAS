@@ -352,10 +352,12 @@ Sub TeamComparisons_Screen (teamName$)
     Locate 8, 32: Print String$(18, 177)
     Locate 18, 32: Print String$(18, 177)
 
+    'Home Record - Actual
     Color 3, 0
     Locate 6, 41: Print Using "####"; teamRatings(1);
     Locate 6, 45: Print Using "#### "; teamRatings(2);
 
+    'Home Record - Replay
     Color 14, 0
     Locate 7, 41: Print Using "####"; homeWins;
     Locate 7, 45: Print Using "#### "; homeLosses;
@@ -485,14 +487,17 @@ Sub TeamComparisons_Screen (teamName$)
 
     '--> DEFENSE
 
+
+
+    'Road Record - Actual
     Color 3, 0
     Locate 16, 41: Print Using "####"; teamRatings(3);
     Locate 16, 45: Print Using "#### "; teamRatings(4);
 
+    'Road Record - Replay
     Color 14, 0
     Locate 17, 41: Print Using "####"; roadWins;
     Locate 17, 45: Print Using "#### "; roadLosses;
-
 
     ' *** REPLAY VALUES ***
 

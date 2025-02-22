@@ -1,4 +1,3 @@
-
 '----------------------------------------
 '           NEWLDR Subroutine
 '----------------------------------------
@@ -20,8 +19,8 @@ Sub NEWLDR ()
     Shared totHomeLosses(), totHomeWins()
     Shared totTeamLosses(), lastLoseStreak()
     Shared lastTenLosses(), lastTenWins(), lastWinStreak()
-    Shared totRoadLosses(), totRoadWins()
-    Shared teamLoseStreak(), teamWinStreak(), teamTotWins()
+    Shared totAwayLosses(), totAwayWins()
+    Shared teamLoseStreak(), teamWinStreak(), totTeamWins()
 
     Shared expStdLeagName$()
 
@@ -34,7 +33,7 @@ Sub NEWLDR ()
 
         menuChoices$(1) = "UPDATE EXPANDED LEAGUE LEADERS        "
         menuChoices$(2) = "VIEW EXPANDED LEAGUE LEADER FILES     "
-        menuChoices$(3) = "UPDATE EXPANDED LEAGUE STANDINGS       "
+        menuChoices$(3) = "UPDATE EXPANDED LEAGUE STANDINGS      "
         menuChoices$(4) = "VIEW / PRINT EXPANDED LEAGUE STANDINGS"
         menuChoices$(5) = "RETURN TO LEAGUE LEADER MAIN MENU     "
         SELECTION% = 1
@@ -71,8 +70,6 @@ Sub NEWLDR ()
                             For X = 1 To TEAMS_PER_LEAGUE
                                 memberName$(X) = "XXX"
                             Next
-
-                            Call ReadLeagueStats (leagStatFile$)
 
                             Call ReadLeagueStats(leagStatFile$)
                             Call UpdateExpandedLeaders(JB, PTS, TTS)
@@ -120,7 +117,7 @@ Sub NEWLDR ()
                             Input #2, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
                             For I = 1 To TEAMS_PER_LEAGUE
-                                Input #2, teamTotWins(I), totHomeWins(I), totRoadWins(I), totTeamLosses(I), totHomeLosses(I), totRoadLosses(I), lastTenWins(I), lastTenLosses(I), expStdLeagName$(I)
+                                Input #2, expStdLeagName$(I), totTeamWins(I), totHomeWins(I), totAwayWins(I), lastTenWins(I), totTeamLosses(I), totHomeLosses(I), totAwayLosses(I), lastTenLosses(I), teamWinStreak(I), teamLoseStreak(I)
                             Next
 
                             Close #2
@@ -168,20 +165,29 @@ End Sub
 'a variety of arrays.
 Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
-    Shared expPlyrLdrName$(), plyLeaderTeams$()
-    Shared memberName$(), statPlyrNames$()
-    Shared expPlyrLdrTeam$(), tmLeaderTeams$()
+    Shared expPlyrLdrName$(), expPlyrLdrTeam$()
+    Shared memberName$(), plyLeaderTeams$()
+    Shared statPlyrNames$(), tmLeaderTeams$()
 
-    Shared plyrLdrStats!()
+    Shared plyrLdrStats!(), plyrLdrVal!()
+    Shared plyrLeaderYears!(), playerRatings!()
+    Shared teamLdrVal!(), totGames!(), tmLeaderYears!()
 
-    Shared plyrLeaderYears!(), totGames!(), tmLeaderYears!()
-    Shared plyrLdrVal!(), teamLdrVal!()
-
+    Shared leader3FGM!(), leader3FGA!()
     Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
-    Shared leader3FGM!(), leader3FGA!()
 
-    Shared playerRatings!()
+    Erase expPlyrLdrName$, expPlyrLdrTeam$
+    Erase memberName$, plyLeaderTeams$
+    Erase statPlyrNames$, tmLeaderTeams$
+
+    Erase plyrLdrStats!, plyrLdrVal!
+    Erase plyrLeaderYears!, playerRatings!
+    Erase teamLdrVal!, totGames!, tmLeaderYears!
+
+    Erase leader3FGM!, leader3FGA!
+    Erase stats3FGM!, stats3FGA!
+    Erase statsOffTot!, statsDefTot!
 
     Color 15, 0
     Cls
@@ -198,32 +204,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
             If _FileExists(diskPaths$(1) + memberName$(KK)) Then
 
-                Open diskPaths$(1) + memberName$(KK) For Input As #1
-
-                Input #1, teamName$
-
-                For I = 0 To 14
-
-                    Input #1, statPlyrNames$(I)
-
-                    For J = 0 To 13
-                        Input #1, playerRatings!(I, J)
-                    Next
-
-                    Input #1, stats3FGM!(I)
-                    Input #1, stats3FGA!(I)
-
-                Next
-
-                For L = 0 To 15:
-                    Input #1, statsOffTot!(L)
-                Next
-
-                For L = 0 To 15:
-                    Input #1, statsDefTot!(L)
-                Next
-
-                Close #1
+                Call ReadTeamStats (teamName$, memberName$(KK))
 
                 Open diskPaths$(1) + memberName$(KK) + "S" For Input As #2
                 Input #2, year
@@ -366,8 +347,8 @@ End Sub
 '(.LDS) for the expanded standings modules
 Sub ReadLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
-    Shared expPlyrLdrName$()
-    Shared expPlyrLdrTeam$(), plyLeaderTeams$(), tmLeaderTeams$()
+    Shared expPlyrLdrName$(), expPlyrLdrTeam$()
+    Shared plyLeaderTeams$(), tmLeaderTeams$()
 
     Shared plyrLdrStats!()
     Shared plyrLeaderYears!(), tmLeaderYears!(), totGames!()
@@ -412,6 +393,7 @@ Sub ReadLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
             Input #1, leader3FGM!(I)
             Input #1, leader3FGA!(I)
+
             Color 14
             Locate 18, 38
             TMR = TMR - 1
@@ -533,7 +515,7 @@ Sub ViewIndividualleaders (printOrView, JB)
 
         ZZ = 1
 
-        Call MenuBox(2, 4, 66, 20, 15, 12)
+        Call MenuBox (2, 4, 66, 20, 15, 12)
         Locate 10, 15
 
         Do

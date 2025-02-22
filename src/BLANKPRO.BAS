@@ -14,7 +14,7 @@ Sub BLANKPRO ()
 
 	If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        MsgText$ = "WARNING!!! THIS WIll ERASE All COMPILED STATS FOR THIS LEAGUE. IF YOU STIll WISH TO ERASE All STATS, PRESS 'Y' FOR YES"
+        MsgText$ = "WARNING!!! THIS WILL ERASE ALL COMPILED STATS FOR THIS LEAGUE. IF YOU STILL WISH TO ERASE ALL STATS, PRESS 'Y' FOR YES"
         BoxWidth = 31
         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
         Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))

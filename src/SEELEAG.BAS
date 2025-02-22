@@ -29,11 +29,11 @@ End Sub
 'from the file into several arrays
 Sub LoadLeaderFiles_Pro (targetFile$)
 
-    Shared compLeagWins!(), compLeagLosses!()
+    Shared divWins(), divLosses()
     Shared defLeaders!(), offLeaders!()
     Shared compLgStatVal!(), compLgStatAtt!()
 
-    Shared defLeaderNames$(), offLeaderNames$()
+    Shared defLeaderTeams$(), offLeaderNames$()
     Shared compLdrTeam$(), leagLdrPlayer$(), leagLdrTeam$()
 
     Shared leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
@@ -54,7 +54,7 @@ Sub LoadLeaderFiles_Pro (targetFile$)
     Open diskPaths$(2) + targetFile$ + ".LDR" For Input As #2
 
     For X = 1 To TEAMS_PER_LEAGUE
-        Input #2, compLdrTeam$(X), compLeagWins!(X), compLeagLosses!(X)
+        Input #2, compLdrTeam$(X), divWins(X), divLosses(X)
     Next
 
     For X = 1 To 250
@@ -69,7 +69,7 @@ Sub LoadLeaderFiles_Pro (targetFile$)
     Next
 
     For X = 1 To TEAMS_PER_LEAGUE
-        Input #2, defLeaderNames$(X)
+        Input #2, defLeaderTeams$(X)
         For M = 1 To 20
             Input #2, defLeaders!(X, M)
         Next
@@ -142,12 +142,12 @@ End Sub
 'user display.
 Sub LeaderStats_Screen ()
 
-    Shared compLeagWins!(), compLeagLosses!()
+    Shared divWins(), divLosses()
 
     Shared defLeaders!(), offLeaders!()
     Shared compLgStatVal!(), compLgStatAtt!()
 
-    Shared defLeaderNames$(), offLeaderNames$(), offLeaders!()
+    Shared defLeaderTeams$(), offLeaderNames$(), offLeaders!()
     Shared compLdrTeam$(), leagLdrPlayer$(), leagLdrTeam$()
 
     Shared leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
@@ -165,6 +165,7 @@ Sub LeaderStats_Screen ()
     If div1Name$ <> "" Then
         Print "    " + RTrim$(div1Name$) + " DIVISION"
     End If
+
     Print
 
     Color 14
@@ -175,8 +176,8 @@ Sub LeaderStats_Screen ()
 
         If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
 
-            D1 = compLeagWins!(1) - compLeagLosses!(1)
-            D = compLeagWins!(P) - compLeagLosses!(P)
+            D1 = divWins(1) - divLosses(1)
+            D = divWins(P) - divLosses(P)
             D = D1 - D
             BK$ = "     " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
@@ -187,9 +188,9 @@ Sub LeaderStats_Screen ()
             Print "    "; compLdrTeam$(P); Tab(16);
 
             'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
-            PCT! = compLeagWins!(P) / (compLeagWins!(P) + compLeagLosses!(P))
+            PCT! = divWins(P) / (divWins(P) + divLosses(P))
 
-            Print Using "   ##   ##   #.###"; compLeagWins!(P); compLeagLosses!(P); PCT!;
+            Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
             Print BK$
 
         End If
@@ -224,8 +225,8 @@ Sub LeaderStats_Screen ()
 
         If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
 
-            D1 = compLeagWins!(11) - compLeagLosses!(11)
-            D = compLeagWins!(P) - compLeagLosses!(P)
+            D1 = divWins(11) - divLosses(11)
+            D = divWins(P) - divLosses(P)
             D = D1 - D
             BK$ = "     " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
@@ -236,9 +237,9 @@ Sub LeaderStats_Screen ()
             Print "    "; compLdrTeam$(P); Tab(16);
 
             'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
-            PCT! = compLeagWins!(P) / (compLeagWins!(P) + compLeagLosses!(P))
+            PCT! = divWins(P) / (divWins(P) + divLosses(P))
 
-            Print Using "   ##   ##   #.###"; compLeagWins!(P); compLeagLosses!(P); PCT!;
+            Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
             Print BK$
 
         End If
@@ -272,8 +273,8 @@ Sub LeaderStats_Screen ()
     For P = 21 To 30
 
         If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
-            D1 = compLeagWins!(21) - compLeagLosses!(21)
-            D = compLeagWins!(P) - compLeagLosses!(P)
+            D1 = divWins(21) - divLosses(21)
+            D = divWins(P) - divLosses(P)
             D = D1 - D
             BK$ = "     " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
@@ -282,10 +283,10 @@ Sub LeaderStats_Screen ()
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
             'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
-            PCT! = compLeagWins!(P) / (compLeagWins!(P) + compLeagLosses!(P))
+            PCT! = divWins(P) / (divWins(P) + divLosses(P))
 
             Print "    "; compLdrTeam$(P); Tab(16);
-            Print Using "   ##   ##   #.###"; compLeagWins!(P); compLeagLosses!(P); PCT!;
+            Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
             Print BK$
 
         End If
@@ -319,8 +320,8 @@ Sub LeaderStats_Screen ()
     For P = 31 To 40
 
         If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
-            D1 = compLeagWins!(31) - compLeagLosses!(31)
-            D = compLeagWins!(P) - compLeagLosses!(P)
+            D1 = divWins(31) - divLosses(31)
+            D = divWins(P) - divLosses(P)
             D = D1 - D
             BK$ = "     " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
@@ -329,10 +330,10 @@ Sub LeaderStats_Screen ()
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
             'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
-            PCT! = compLeagWins!(P) / (compLeagWins!(P) + compLeagLosses!(P))
+            PCT! = divWins(P) / (divWins(P) + divLosses(P))
 
             Print "    "; compLdrTeam$(P); Tab(16);
-            Print Using "   ##   ##   #.###"; compLeagWins!(P); compLeagLosses!(P); PCT!;
+            Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
             Print BK$
         End If
     Next P
@@ -703,39 +704,63 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Print "                         OFFENSIVE TOTALS"
+    Print Tab(32); "OFFENSIVE TOTALS"
     Color 14
-    Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print
+    Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 1 To 20
 
         If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
-            'Team
+
             Print Left$(offLeaderNames$(X), 11); Tab(13);
-            'G
-            Print Using "##"; offLeaders!(X, 16);: Print Tab(16);
+
+            'Games
+            Print Using "##"; offLeaders!(X, 16);
+            Print Tab(16);
+
             'FGA
-            Print Using "#####"; offLeaders!(X, 2);: Print Tab(21);
+            Print Using "####"; offLeaders!(X, 1);
+            Print Tab(21);
+
             'FGM
-            Print Using "#####"; offLeaders!(X, 3);: Print Tab(26);
-            'FG PCT
-            Print Using ".###"; offLeaders!(X, 17);: Print Tab(31);
-            'FTA / FTM / FT PCT
-            Print Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);: Print Tab(46);
-            'REB
-            Print Using "####"; offLeaders!(X, 6);: Print Tab(51);
-            'AST
-            Print Using "####"; offLeaders!(X, 9);: Print Tab(56);
+            Print Using "####"; offLeaders!(X, 2);
+            Print Tab(26);
+
+            'FG %
+            Print Using ".###"; offLeaders!(X, 17);
+            Print Tab(31);
+
+            'FTA / FTM / FT%
+            Print Using "#### #### .###"; offLeaders!(X, 3); offLeaders!(X, 4); offLeaders!(X, 18);
+            Print Tab(46);
+
+            'Rebounds
+            Print Using "####"; offLeaders!(X, 5);
+            Print Tab(51);
+
+            'Assists
+            Print Using "####"; offLeaders!(X, 8);
+            Print Tab(56);
+
             'Personal Fouls
-            Print Using "####"; offLeaders!(X, 7);: Print Tab(61);
-            'STL
-            Print Using "###"; offLeaders!(X, 8);: Print Tab(65);
-            'BLK
-            Print Using "###"; offLeaders!(X, 10);: Print Tab(69);
-            'PTS
-            Print Using "#####"; offLeaders!(X, 20);: Print Tab(75);
-            'AVG
+            Print Using "####"; offLeaders!(X, 6);
+            Print Tab(61);
+
+            'Steals
+            Print Using "###"; offLeaders!(X, 7);
+            Print Tab(65);
+
+            'Blocks
+            Print Using "###"; offLeaders!(X, 9);
+            Print Tab(69);
+
+            'Points
+            Print Using "#####"; offLeaders!(X, 20);
+            Print Tab(75);
+
+            'Average
             Print Using "###.#"; offLeaders!(X, 19)
 
         End If
@@ -752,39 +777,65 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Print "                      OFFENSIVE TOTALS (cont)"
+    Print Tab(27); "OFFENSIVE TOTALS (cont'd)"
     Color 14
-    Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print
+    Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 21 To 40
 
         If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
+
             Print Left$(offLeaderNames$(X), 11); Tab(13);
-            'G
-            Print Using "##"; offLeaders!(X, 16);: Print Tab(16);
+
+            'Games
+            Print Using "##"; offLeaders!(X, 16);
+            Print Tab(16);
+
             'FGA
-            Print Using "#####"; offLeaders!(X, 2);: Print Tab(21);
+            Print Using "####"; offLeaders!(X, 1);
+            Print Tab(21);
+
             'FGM
-            Print Using "#####"; offLeaders!(X, 3);: Print Tab(26);
-            'FG PCT
-            Print Using ".###"; offLeaders!(X, 17);: Print Tab(31);
-            'FTA / FTM / FT PCT
-            Print Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);: Print Tab(46);
-            'REB
-            Print Using "####"; offLeaders!(X, 6);: Print Tab(51);
-            'AST
-            Print Using "####"; offLeaders!(X, 9);: Print Tab(56);
+            Print Using "####"; offLeaders!(X, 2);
+            Print Tab(26);
+
+            'FG %
+            Print Using ".###"; offLeaders!(X, 17);
+            Print Tab(31);
+
+            'FTA / FTM / FT%
+            Print Using "#### #### .###"; offLeaders!(X, 3); offLeaders!(X, 4); offLeaders!(X, 18);
+            Print Tab(46);
+
+            'Rebounds
+            Print Using "####"; offLeaders!(X, 5);
+            Print Tab(51);
+
+            'Assists
+            Print Using "####"; offLeaders!(X, 8);
+            Print Tab(56);
+
             'Personal Fouls
-            Print Using "####"; offLeaders!(X, 7);: Print Tab(61);
-            'STL
-            Print Using "###"; offLeaders!(X, 8);: Print Tab(65);
-            'BLK
-            Print Using "###"; offLeaders!(X, 10);: Print Tab(69);
-            'PTS
-            Print Using "#####"; offLeaders!(X, 20);: Print Tab(75);
-            'AVG
+            Print Using "####"; offLeaders!(X, 6);
+            Print Tab(61);
+
+            'Steals
+            Print Using "###"; offLeaders!(X, 7);
+            Print Tab(65);
+
+            'Blocks
+            Print Using "###"; offLeaders!(X, 9);
+            Print Tab(69);
+
+            'Points
+            Print Using "#####"; offLeaders!(X, 20);
+            Print Tab(75);
+
+            'Average
             Print Using "###.#"; offLeaders!(X, 19)
+
         End If
 
     Next
@@ -799,37 +850,63 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Print "                         DEFENSIVE TOTALS"
+    Print Tab(32); "DEFENSIVE TOTALS"
     Color 14
-    Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print
+    Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 1 To 20
 
-        If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
-            'Team
-            Print Left$(defLeaderNames$(X), 11); Tab(13);
+        If defLeaderTeams$(X) <> "" And defLeaderTeams$(X) <> "*" And defLeaderTeams$(X) <> " " Then
+
+            Print Left$(defLeaderTeams$(X), 11); Tab(13);
+
             'Games
-            Print Using "##"; defLeaders!(X, 16);: Print Tab(16);
+            Print Using "##"; defLeaders!(X, 16);
+            Print Tab(16);
+
             'FGA
-            Print Using "####"; defLeaders!(X, 2);: Print Tab(21);
+            Print Using "####"; defLeaders!(X, 1);
+            Print Tab(21);
+
             'FGM
-            Print Using "####"; defLeaders!(X, 3);: Print Tab(26);
+            Print Using "####"; defLeaders!(X, 2);
+            Print Tab(26);
+
             'FG PCT
-            Print Using ".###"; defLeaders!(X, 17);: Print Tab(31);
-            'FTA / FTM / FT PCT
-            Print Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);: Print Tab(46);
-            'REB / AST
-            Print Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);: Print Tab(56);
-            'Fouls
-            Print Using "####"; defLeaders!(X, 7);: Print Tab(61);
-            'STL
-            Print Using "###"; defLeaders!(X, 8);: Print Tab(65);
-            'BLK
-            Print Using "###"; defLeaders!(X, 10);: Print Tab(69);
-            'PTS
-            Print Using "#####"; defLeaders!(X, 20);: Print Tab(75);
-            'AVG
+            Print Using ".###"; defLeaders!(X, 17);
+            Print Tab(31);
+
+            'FTA / FTM / FT %
+            Print Using "#### #### .###"; defLeaders!(X, 3); defLeaders!(X, 4); defLeaders!(X, 18);
+            Print Tab(46);
+
+            'Rebounds
+            Print Using "####"; defLeaders!(X, 5);
+            Print Tab(51);
+
+            'Assists
+            Print Using "####"; defLeaders!(X, 8);
+            Print Tab(56);
+
+            'Personal FOuls
+            Print Using "####"; defLeaders!(X, 6);
+            Print Tab(61);
+
+            'Steals
+            Print Using "###"; defLeaders!(X, 7);
+            Print Tab(65);
+
+            'Blocks
+            Print Using "###"; defLeaders!(X, 9);
+            Print Tab(69);
+
+            'Points
+            Print Using "#####"; defLeaders!(X, 20);
+            Print Tab(75);
+
+            'Average
             Print Using "###.#"; defLeaders!(X, 19)
 
         End If
@@ -846,38 +923,65 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Print "                      DEFENSIVE TOTALS (cont)"
+    Print Tab(27); "DEFENSIVE TOTALS (cont'd)"
     Color 14
-    Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print
+    Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 21 To 40
 
-        If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
-            'Team
-            Print Left$(defLeaderNames$(X), 11); Tab(13);
+        If defLeaderTeams$(X) <> "" And defLeaderTeams$(X) <> "*" And defLeaderTeams$(X) <> " " Then
+
+            Print Left$(defLeaderTeams$(X), 11); Tab(13);
+
             'Games
             Print Using "##"; defLeaders!(X, 16);
+            Print Tab(16);
+
             'FGA
-            Print Tab(16);: Print Using "####"; defLeaders!(X, 2);
+            Print Using "####"; defLeaders!(X, 1);
+            Print Tab(21);
+
             'FGM
-            Print Tab(21);: Print Using "####"; defLeaders!(X, 3);
-            'FG %
-            Print Tab(26);: Print Using ".###"; defLeaders!(X, 17);
+            Print Using "####"; defLeaders!(X, 2);
+            Print Tab(26);
+
+            'FG PCT
+            Print Using ".###"; defLeaders!(X, 17);
+            Print Tab(31);
+
             'FTA / FTM / FT %
-            Print Tab(31);: Print Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);
-            'Reb / Asst
-            Print Tab(46);: Print Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);
-            'PF
-            Print Tab(56);: Print Using "####"; defLeaders!(X, 7);
-            'Steal
-            Print Tab(61);: Print Using "###"; defLeaders!(X, 8);
-            'Block
-            Print Tab(65);: Print Using "###"; defLeaders!(X, 10);
+            Print Using "#### #### .###"; defLeaders!(X, 3); defLeaders!(X, 4); defLeaders!(X, 18);
+            Print Tab(46);
+
+            'Rebounds
+            Print Using "####"; defLeaders!(X, 5);
+            Print Tab(51);
+
+            'Assists
+            Print Using "####"; defLeaders!(X, 8);
+            Print Tab(56);
+
+            'Personal FOuls
+            Print Using "####"; defLeaders!(X, 6);
+            Print Tab(61);
+
+            'Steals
+            Print Using "###"; defLeaders!(X, 7);
+            Print Tab(65);
+
+            'Blocks
+            Print Using "###"; defLeaders!(X, 9);
+            Print Tab(69);
+
             'Points
-            Print Tab(69);: Print Using "#####"; defLeaders!(X, 20);
+            Print Using "#####"; defLeaders!(X, 20);
+            Print Tab(75);
+
             'Average
-            Print Tab(75);: Print Using "###.#"; defLeaders!(X, 19)
+            Print Using "###.#"; defLeaders!(X, 19)
+
         End If
 
     Next
@@ -890,6 +994,7 @@ Sub LeaderStats_Screen ()
     '-----
 
 End Sub
+
 
 '----------------------------------------
 '    SavePrintLeagueLeaders Subroutine
@@ -904,11 +1009,11 @@ End Sub
 '   1 = Printer
 Sub SavePrintLeagueLeaders (printDest, destFile$)
 
-    Shared compLeagWins!(), compLeagLosses!()
+    Shared divWins(), divLosses()
     Shared defLeaders!(), offLeaders!()
     Shared compLgStatVal!(), compLgStatAtt!()
 
-    Shared offLeaderNames$(), defLeaderNames$(), compLdrTeam$()
+    Shared offLeaderNames$(), defLeaderTeams$(), compLdrTeam$()
     Shared leagLdrPlayer$(), leagLdrTeam$()
 
     Shared leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
@@ -927,8 +1032,8 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
     For P = 1 To 10
 
         If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
-            D1 = compLeagWins!(1) - compLeagLosses!(1)
-            D = compLeagWins!(P) - compLeagLosses!(P)
+            D1 = divWins(1) - divLosses(1)
+            D = divWins(P) - divLosses(P)
             D = D1 - D
             BK$ = "   " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
@@ -936,10 +1041,10 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            PCT! = compLeagWins!(P) / (compLeagWins!(P) + compLeagLosses!(P))
+            PCT! = divWins(P) / (divWins(P) + divLosses(P))
 
             Print #1, "    "; compLdrTeam$(P); Tab(16);
-            Print #1, Using "   ##   ##   #.###"; compLeagWins!(P); compLeagLosses!(P); PCT!;
+            Print #1, Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
             Print #1, BK$
         End If
 
@@ -953,8 +1058,8 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
     For P = 11 To 20
 
         If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
-            D1 = compLeagWins!(11) - compLeagLosses!(11)
-            D = compLeagWins!(P) - compLeagLosses!(P)
+            D1 = divWins(11) - divLosses(11)
+            D = divWins(P) - divLosses(P)
             D = D1 - D
             BK$ = "   " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
@@ -962,10 +1067,10 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            PCT! = compLeagWins!(P) / (compLeagWins!(P) + compLeagLosses!(P))
+            PCT! = divWins(P) / (divWins(P) + divLosses(P))
 
             Print #1, "    "; compLdrTeam$(P); Tab(16);
-            Print #1, Using "   ##   ##   #.###"; compLeagWins!(P); compLeagLosses!(P); PCT!;
+            Print #1, Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
             Print #1, BK$
         End If
 
@@ -979,8 +1084,8 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
     For P = 21 To 30
 
         If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
-            D1 = compLeagWins!(21) - compLeagLosses!(21)
-            D = compLeagWins!(P) - compLeagLosses!(P)
+            D1 = divWins(21) - divLosses(21)
+            D = divWins(P) - divLosses(P)
             D = D1 - D
             BK$ = "   " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
@@ -988,10 +1093,10 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            PCT! = compLeagWins!(P) / (compLeagWins!(P) + compLeagLosses!(P))
+            PCT! = divWins(P) / (divWins(P) + divLosses(P))
 
             Print #1, "    "; compLdrTeam$(P); Tab(16);
-            Print #1, Using "   ##   ##   #.###"; compLeagWins!(P); compLeagLosses!(P); PCT!;
+            Print #1, Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
             Print #1, BK$
 
         End If
@@ -1006,8 +1111,8 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
     For P = 31 To 40
 
         If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
-            D1 = compLeagWins!(31) - compLeagLosses!(31)
-            D = compLeagWins!(P) - compLeagLosses!(P)
+            D1 = divWins(31) - divLosses(31)
+            D = divWins(P) - divLosses(P)
             D = D1 - D
             BK$ = "   " + Str$(Int(D / 2))
             If D = 0 Then BK$ = "   ---"
@@ -1015,10 +1120,10 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
             If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
             If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            PCT! = compLeagWins!(P) / (compLeagWins!(P) + compLeagLosses!(P))
+            PCT! = divWins(P) / (divWins(P) + divLosses(P))
 
             Print #1, "    "; compLdrTeam$(P); Tab(16);
-            Print #1, Using "   ##   ##   #.###"; compLeagWins!(P); compLeagLosses!(P); PCT!;
+            Print #1, Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
             Print #1, BK$
         End If
 
@@ -1280,74 +1385,126 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
 
     Print #1,
     Print #1, Chr$(12)
-    Print #1, "                         OFFENSIVE TOTALS"
-    Print #1, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print #1, Tab(32); "OFFENSIVE TOTALS"
+    Print #1, Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG": Color 15
 
     For X = 1 To TEAMS_PER_LEAGUE
 
         If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
-            'Team
+
+            'Player
             Print #1, Left$(offLeaderNames$(X), 11); Tab(13);
+
             'Games
-            Print #1, Using "##"; offLeaders!(X, 16);: Print #1, Tab(16);
+            Print #1, Using "##"; offLeaders!(X, 16);
+            Print #1, Tab(16);
+
             'FGA
-            Print #1, Using "####"; offLeaders!(X, 2);: Print #1, Tab(21);
+            Print #1, Using "####"; offLeaders!(X, 1);
+            Print #1, Tab(21);
+
             'FGM
-            Print #1, Using "####"; offLeaders!(X, 3);: Print #1, Tab(26);
-            'FG PCT
-            Print #1, Using ".###"; offLeaders!(X, 17);: Print #1, Tab(31);
-            'FTA / FTM / FT %
-            Print #1, Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);: Print #1, Tab(46);
-            'REB
-            Print #1, Using "####"; offLeaders!(X, 6);: Print #1, Tab(51);
-            'ASS
-            Print #1, Using "####"; offLeaders!(X, 9);: Print #1, Tab(56);
-            'PF
-            Print #1, Using "####"; offLeaders!(X, 7);: Print #1, Tab(61);
-            'STL
-            Print #1, Using "###"; offLeaders!(X, 8);: Print #1, Tab(65);
-            'BLK
-            Print #1, Using "###"; offLeaders!(X, 10);: Print #1, Tab(69);
-            'PTS
+            Print #1, Using "####"; offLeaders!(X, 2);
+            Print #1, Tab(26);
+
+            'FG %
+            Print #1, Using ".###"; offLeaders!(X, 17);
+            Print #1, Tab(31);
+
+            'FTA / FTM / FT%
+            Print #1, Using "#### #### .###"; offLeaders!(X, 3); offLeaders!(X, 4); offLeaders!(X, 18);
+            Print #1, Tab(46);
+
+            'Rebounds
+            Print #1, Using "####"; offLeaders!(X, 5);
+            Print #1, Tab(51);
+
+            'Assists
+            Print #1, Using "####"; offLeaders!(X, 8);
+            Print #1, Tab(56);
+
+            'Personal Fouls
+            Print #1, Using "####"; offLeaders!(X, 6);
+            Print #1, Tab(61);
+
+            'Steals
+            Print #1, Using "###"; offLeaders!(X, 7);
+            Print #1, Tab(65);
+
+            'Blocks
+            Print #1, Using "###"; offLeaders!(X, 9);
+            Print #1, Tab(69);
+
+            'Points
             Print #1, Using "#####"; offLeaders!(X, 20);
-            'AVG
-            Print #1, Tab(75);: Print #1, Using "###.#"; offLeaders!(X, 19)
+            Print #1, Tab(75);
+
+            'Average
+            Print #1, Using "###.#"; offLeaders!(X, 19)
+
         End If
 
     Next
 
     Print #1, Chr$(12)
-    Print #1, "                         DEFENSIVE TOTALS"
-    Print #1, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print #1, Tab(32); "DEFENSIVE TOTALS"
+    Print #1, Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG": Color 15
     Color 15
 
     For X = 1 To TEAMS_PER_LEAGUE
 
-        If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
+        If defLeaderTeams$(X) <> "" And defLeaderTeams$(X) <> "*" And defLeaderTeams$(X) <> " " Then
+
             'Player
-            Print #1, Left$(defLeaderNames$(X), 11); Tab(13);
+            Print #1, Left$(defLeaderTeams$(X), 11); Tab(13);
+
             'Games
-            Print #1, Using "##"; defLeaders!(X, 16);: Print #1, Tab(16);
+            Print #1, Using "##"; defLeaders!(X, 16);
+            Print #1, Tab(16);
+
             'FGA
-            Print #1, Using "####"; defLeaders!(X, 2);: Print #1, Tab(21);
+            Print #1, Using "####"; defLeaders!(X, 1);
+            Print #1, Tab(21);
+
             'FGM
-            Print #1, Using "####"; defLeaders!(X, 3);: Print #1, Tab(26);
+            Print #1, Using "####"; defLeaders!(X, 2);
+            Print #1, Tab(26);
+
             'FG %
-            Print #1, Using ".###"; defLeaders!(X, 17);: Print #1, Tab(31);
-            'FTA / FTM / FT %
-            Print #1, Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);: Print #1, Tab(46);
-            'REB / AST
-            Print #1, Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);: Print #1, Tab(56);
-            'PF
-            Print #1, Using "####"; defLeaders!(X, 7);: Print #1, Tab(61);
-            'STL
-            Print #1, Using "###"; defLeaders!(X, 8);: Print #1, Tab(65);
-            'BLK
-            Print #1, Using "###"; defLeaders!(X, 10);: Print #1, Tab(69);
+            Print #1, Using ".###"; defLeaders!(X, 17);
+            Print #1, Tab(31);
+
+            'FTA / FTM / FT%
+            Print #1, Using "#### #### .###"; defLeaders!(X, 3); defLeaders!(X, 4); defLeaders!(X, 18);
+            Print #1, Tab(46);
+
+            'Rebounds
+            Print #1, Using "####"; defLeaders!(X, 5);
+            Print #1, Tab(51);
+
+            'Assists
+            Print #1, Using "####"; defLeaders!(X, 8);
+            Print #1, Tab(56);
+
+            'Personal Fouls
+            Print #1, Using "####"; defLeaders!(X, 6);
+            Print #1, Tab(61);
+
+            'Steals
+            Print #1, Using "###"; defLeaders!(X, 7);
+            Print #1, Tab(65);
+
+            'Blocks
+            Print #1, Using "###"; defLeaders!(X, 9);
+            Print #1, Tab(69);
+
             'Points
             Print #1, Using "#####"; defLeaders!(X, 20);
+            Print #1, Tab(75);
+
             'Average
-            Print #1, Tab(75);: Print #1, Using "###.#"; defLeaders!(X, 19)
+            Print #1, Using "###.#"; defLeaders!(X, 19)
+
         End If
 
     Next
@@ -1372,5 +1529,3 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
     End If
 
 End Sub
-
-

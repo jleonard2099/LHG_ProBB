@@ -4,6 +4,7 @@ Declare Sub InitVar ()
 Declare Sub AUTOSETUP (validTeam)
 Declare Sub LetterToNumber (promptVal$, J)
 Declare Sub TEAMBOX (boxHeight, teamIdx)
+Declare Sub TimeoutCalled (chargeTeam)
 Declare Sub FRAMEOPTION (boxHeight, teamIdx)
 Declare Sub Rolld100 (randNumVar)
 Declare Sub DISABLEPLAYERS (P9)
@@ -21,7 +22,7 @@ Declare Sub TickerSchedule
 Declare Sub PlayStyle ()
 Declare Sub PlayItSafe ()
 Declare Sub FOULHARD
-Declare Sub WHOGETSBAll
+Declare Sub WHOGETSBALL
 Declare Sub GetPassChoice ()
 Declare Sub COMPUTERSUBS ()
 Declare Sub CreditAssists ()
@@ -35,9 +36,10 @@ Declare Sub ChangePossession
 Declare Sub FoulCalled (randomFouler)
 Declare Sub LOADSTATS ()
 Declare Sub SCOREBOARD ()
+Declare Sub PrintActiveLineup (teamIdx)
 Declare Sub ColorChange ()
 Declare Sub QUARTERTOTAL ()
-Declare Sub STEALADJ ()
+Declare Sub StealAdjustments ()
 Declare Sub SCOUTREPORT ()
 Declare Sub SETUPRATINGS (teamStyle)
 Declare Sub ChangeContributions
@@ -54,6 +56,7 @@ Declare Sub THREEFT (currFreeThrow)
 Declare Sub LastShot ()
 Declare Sub CheckGameClock ()
 Declare Sub CheckGameShotClock ()
+Declare Sub AdjustClockTime (timeVal!)
 Declare Sub AdjustPlayTime ()
 Declare Sub ResetShotClock ()
 Declare Sub FreeThrow_One (missedLastFT)
@@ -82,7 +85,9 @@ Declare Sub EndOfGame
 Declare Sub CheckRecords ()
 
 Declare Function d100% ()
-Declare Function DecideShot%
+Declare Function DecideShot%  ()
 Declare Function GetTeamGender$ (diskID$)
 Declare Function GetTeamYear% (yearFromName$)
+Declare Function goodPlayer% (teamIdx, playerIdx, FS%)
+Declare Function playerFatigue% (team, handler)
 Declare Function TickerTime% (timeInterval, X)
