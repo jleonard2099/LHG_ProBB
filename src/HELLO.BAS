@@ -14692,7 +14692,7 @@ Function playerFatigue% (team, plyrIdx)
     'CX = (FGA + Off Reb + Def RB + Fouls) / (Game Minutes)
     playerCX! = gameRatings!(team, plyrIdx, 3)
 
-    'If sClockVal = 2 Then playerCX! = playerCX! * 1.1
+    If sClockVal = 2 Then playerCX! = playerCX! * 1.2
 
     'Fatigue = CX - Curr FGA - Curr Rebounds - Curr Fouls
     playerFatigue% = playerCX! - gameRatings!(team, plyrIdx, 7) - gameRatings!(team, plyrIdx, 11) - gameRatings!(team, plyrIdx, 12)
