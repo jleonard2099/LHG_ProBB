@@ -17,7 +17,7 @@ Dim gameSite$(MAX_SCHED_STATS), locIndicator$(MAX_SCHED_STATS), oppName$(MAX_SCH
 
 Dim stats3FGM!(0 To 14), stats3FGA!(0 To 14)
 Dim statsOffTot!(0 To 15), statsDefTot!(0 To 15)
-Dim statPlyrVal!(0 To 14, 0 To 24)
+Dim statPlyrVal!(0 To 14, 0 To 26)
 
 Dim gameStatPlyrVal!(0 To 14, 0 To 13)
 
@@ -143,7 +143,7 @@ Dim divWins(TEAMS_PER_LEAGUE), divLosses(TEAMS_PER_LEAGUE)
 Dim compLgStatVal!(260), compLgStatAtt!(260)
 Dim compStats!(14, 26)
 
-Dim defLeaderNames$(TEAMS_PER_LEAGUE), offLeaderNames$(TEAMS_PER_LEAGUE)
+Dim defLeaderTeams$(TEAMS_PER_LEAGUE), offLeaderNames$(TEAMS_PER_LEAGUE)
 Dim statCategoryAbbr$(0 To 25)
 
 Dim leagLdrPlayer$(260), leagLdrTeam$(260)

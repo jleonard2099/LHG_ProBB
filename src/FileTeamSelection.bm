@@ -476,11 +476,11 @@ Sub ReadScheduleStats (statFile$, numberGames)
         Input #1, locIndicator$(I)
     Next I
 
-    For I = 1 To MAX_SCHED_STATS: 
+    For I = 1 To MAX_SCHED_STATS:
         Input #1, gameAttendance&(I)
     Next I
 
-    For I = 1 To MAX_SCHED_STATS: 
+    For I = 1 To MAX_SCHED_STATS:
         Input #1, gameSite$(I)
     Next I
 
@@ -539,7 +539,7 @@ End Sub
 '----------------------------------------
 '       ReadSeasonRecords Subroutine
 '----------------------------------------
-'Reads in list of team and individual 
+'Reads in list of team and individual
 'record values from the records file.
 Sub ReadSeasonRecords (recordFile$)
 
@@ -581,12 +581,12 @@ End Sub
 '----------------------------------------
 '       ReadGameRecords Subroutine
 '----------------------------------------
-'Reads in list of team and individual 
+'Reads in list of team and individual
 'record values from the records file.
 Sub ReadGameRecords (recordFile$)
 
     Shared indRecords!(), teamRecords!()
-    
+
     Shared indRecDesc$(), teamRecDesc$()
 
     Open diskPaths$(1) + recordFile$ For Input As #1
@@ -626,7 +626,7 @@ Sub ReadLeagueIndex (indexFile$)
 
     Shared memberIdx()
     Shared memberName$(), memberYear$()
- 
+
     Shared leagueName$
     Shared div1Name$, div2Name$, div3Name$, div4Name$
 
@@ -666,7 +666,7 @@ Sub ReadLeagueStats (statFile$)
 
     Input #1, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
-    For XW = 1 To TEAMS_PER_CONFERENCE
+    For XW = 1 To TEAMS_PER_LEAGUE
         Input #1, memberName$(XW)
     Next
 
@@ -868,3 +868,4 @@ Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
     End If
 
 End Function
+

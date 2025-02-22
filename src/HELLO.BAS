@@ -1,7 +1,7 @@
-$Debug
+f$Debug
 $Color:32
 
-Const GAME_VERSION$ = "5.01"
+Const GAME_VERSION$ = "5.1"
 Const MAX_SCHEDULE_GAMES = 1500
 Const MAX_TOURNAMENT_GAMES = 200
 Const MAX_TEAMS = 1000
@@ -30,7 +30,6 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -379,12 +378,6 @@ Print #10, "Error #"; Err; "on program file line"; _ErrorLine
 If _FileExists("GAME82") Then
     Print #10, "Schedule game # "; Using "###"; schedGame(0) + schedGame(2)
     Print #10, gameTeams$(0) + " vs. " + gameTeams$(1)
-    Print #10, test1
-    Print #10, test2
-    Print #10, test3
-    Print #10, test4
-    Print #10, test5
-    Print #10, test6
 End If
 Print #10,
 Close #10
@@ -1668,7 +1661,7 @@ Sub PROHOOP ()
                         Call UPDATESCREEN
                         offStatus = 88
                         Call FoulCalled(1)
-                        
+
                         GoTo 566
 
                     Case 31 To 31 + teamAdj(P, 1) + teamAdj(D, 2)
@@ -1940,7 +1933,7 @@ Sub PROHOOP ()
         End If
 
         'More frequent 3FG's with 10 min quarters (faster paced)
-        'This is just a general observation that needing more confirmation
+        'This is just a general observation that needs more confirmation
         'It could be that women's basketball is why it happens more frequent
         If quarterOpt = 1 Then threeFGChance = threeFGChance + 8
 
@@ -3081,37 +3074,12 @@ Sub PROHOOP ()
         Case 3
             ' *** TIMEOUT ***
             640 '
-            If timeouts(P) > 0 Then
-
-                If mandatoryTO(P) = 0 Then
-                    mandatoryTO(P) = 1
-                End If
-
-                timeouts(P) = timeouts(P) - 1
-
-                'Restore time on clock
-                Call AdjustClockTime(-M5)
-                Call AdjustPlayTime
-
-                If sClockVal < 2 Then
-                    shotClock = shotClock + M5
-                End If
-
-                pbpString$ = "TIMEOUT " + gameTeams$(P):
-                Call SELECTPBP(P, 1)
-                Call DELAY
-
-                Call Substitutions
-
-            End If
+            Call TimeoutCalled(P)
 
             If A6 = 0 Then
-
                 Call PRESSGUARD
                 GoTo 300
-
             Else
-
                 A6 = 1
                 passes = passes + 1
 
@@ -3121,7 +3089,6 @@ Sub PROHOOP ()
                 offStatus = 0
 
                 GoTo 400
-
             End If
 
 
@@ -4266,6 +4233,42 @@ Sub TEAMBOX (boxHeight, teamIdx)
     Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
 
     Locate 7, 11
+
+End Sub
+
+
+'----------------------------------------
+'        TimeoutCalled Subroutine
+'----------------------------------------
+'This subroutine handles the PBP and
+'variable values for when a team takes
+'a timeout. This includes resetting the
+'shot clock and adjusting play time.
+Sub TimeoutCalled (chargeTeam)
+
+    If timeouts(chargeTeam) > 0 Then
+
+        If mandatoryTO(chargeTeam) = 0 Then
+            mandatoryTO(chargeTeam) = 1
+        End If
+
+        timeouts(chargeTeam) = timeouts(chargeTeam) - 1
+
+        'Restore time on clock
+        Call AdjustClockTime(-M5)
+        Call AdjustPlayTime
+
+        If sClockVal < 2 Then
+            shotClock = shotClock + M5
+        End If
+
+        pbpString$ = "TIMEOUT " + gameTeams$(chargeTeam):
+        Call SELECTPBP(chargeTeam, 1)
+        Call DELAY
+
+        Call Substitutions
+
+    End If
 
 End Sub
 
@@ -11976,7 +11979,7 @@ Sub COMPILESTATFILES (compileOpt)
                             locIndicator$(numberGames) = "N4"
                     End Select
 
-                Case Is = teamIdx
+                Case teamIdx
                     Select Case TG!
                         Case Is < 14500
                             locIndicator$(numberGames) = "H"
@@ -11990,7 +11993,7 @@ Sub COMPILESTATFILES (compileOpt)
                             locIndicator$(numberGames) = "H4"
                     End Select
 
-                Case Is <> teamIdx
+                Case (1 - teamIdx)
                     Select Case TG!
                         Case Is < 14500
                             locIndicator$(numberGames) = "V"
@@ -14635,7 +14638,7 @@ End Sub
 '----------------------------------------
 '          GetTeamYear Function
 '----------------------------------------
-'This function determines the 4-digit
+'This subroutine determines the 4-digit
 'team year from the team loaded by the
 'file. It uses the 2 digit year to make
 'assumptions. (00 to 24 are year 2000.)
@@ -14644,8 +14647,9 @@ End Sub
 '00 to 37 are safe to assume are from 2000's
 Function GetTeamYear% (yearFromName$)
 
-    teamYear% = Val(yearFromName$)
+    teamYear% = Val(RTrim$(yearFromName$))
 
+    'For 2-digit years
     If teamYear% >= 0 And teamYear% < 37 Then
         GetTeamYear% = 2000 + teamYear%
     Else

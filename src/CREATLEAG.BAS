@@ -1,3 +1,4 @@
+
 '----------------------------------------
 '         CREATLEAG Subroutine
 '----------------------------------------
@@ -106,7 +107,7 @@ Sub DefineLeague ()
 
         Do
 
-            Locate 7, 
+            Locate 7,
 
             Locate , 12: Print "ENTER NAME FOR LEAGUE: "
             Print
@@ -198,8 +199,10 @@ Sub ReviewEditLeague (leagueFile$)
     Shared leagueName$
     Shared div1Name$, div2Name$, div3Name$, div4Name$
 
+    test$ = leagueFile$
+
     If _FileExists(diskPaths$(2) + leagueFile$ + ".TMI") Then
-        Call ReadLeagueIndex (leagueFile$)
+        Call ReadLeagueIndex(leagueFile$)
     End If
 
     Do
@@ -330,4 +333,3 @@ Sub SaveLeague (leagueFile$)
     Close #2
 
 End Sub
-
