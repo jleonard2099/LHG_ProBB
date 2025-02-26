@@ -290,35 +290,35 @@ Sub box0 (ULRow%, ULCol%, LRRow%, LRCol%, Char%, FGColor%, BGColor%)
             horizontal$ = Chr$(196)
             urCorner$ = Chr$(191)
             vertical$ = Chr$(179)
-            totTeamLossesCorner$ = Chr$(192)
+            llCorner$ = Chr$(192)
             lrCorner$ = Chr$(217)
         Case 2:
             ulCorner$ = Chr$(201)
             horizontal$ = Chr$(205)
             urCorner$ = Chr$(187)
             vertical$ = Chr$(186)
-            totTeamLossesCorner$ = Chr$(200)
+            llCorner$ = Chr$(200)
             lrCorner$ = Chr$(188)
         Case 3:
             ulCorner$ = Chr$(213)
             horizontal$ = Chr$(205)
             urCorner$ = Chr$(184)
             vertical$ = Chr$(179)
-            totTeamLossesCorner$ = Chr$(212)
+            llCorner$ = Chr$(212)
             lrCorner$ = Chr$(190)
         Case 4:
             ulCorner$ = Chr$(214)
             horizontal$ = Chr$(196)
             urCorner$ = Chr$(183)
             vertical$ = Chr$(186)
-            totTeamLossesCorner$ = Chr$(211)
+            llCorner$ = Chr$(211)
             lrCorner$ = Chr$(189)
         Case Else:
             ulCorner$ = Chr$(Char%)
             horizontal$ = Chr$(Char%)
             urCorner$ = Chr$(Char%)
             vertical$ = Chr$(Char%)
-            totTeamLossesCorner$ = Chr$(Char%)
+            llCorner$ = Chr$(Char%)
             lrCorner$ = Chr$(Char%)
     End Select
 
@@ -338,7 +338,7 @@ Sub box0 (ULRow%, ULCol%, LRRow%, LRCol%, Char%, FGColor%, BGColor%)
 
     'Print the bottom line of the box
     Locate LRRow%, ULCol%
-    Print totTeamLossesCorner$ + String$(LRCol% - ULCol%, Asc(horizontal$)) + lrCorner$
+    Print llCorner$ + String$(LRCol% - ULCol%, Asc(horizontal$)) + lrCorner$
 
     'Color Color%,
 
@@ -535,7 +535,7 @@ Sub FCopy (srcFile$, dstFile$, Buff$, copyErr%)
         If _FileExists(dstFile$) Then
             'issue with detination
             copyErr% = 2
-            'Kill dstFile$
+            'KILL dstFile$
         End If
 
         ffSrc = FreeFile
@@ -956,7 +956,7 @@ End Sub
 '-----------------------------------
 ' NumIn Subroutine
 '-----------------------------------
-Sub NumIn (Number#, Max, XCode, FGColor%, BGColor%)
+Sub NumIn (Number#, Max, XCode, FGColor&, BGColor&)
 
     NInitialize:
     If Max = 0 Then Max = 1 'leave room for minus sign
@@ -1087,7 +1087,7 @@ Sub NumIn (Number#, Max, XCode, FGColor%, BGColor%)
     Call QPrint(A$, FGColor&, BGColor&, -1) 'print the digit
     If Insrt GoTo NHandleInsert 'special treatment for insert
     Mid$(X$, Curpo, 1) = A$ 'assign new digit
-    Curpo = Curpo + 1 'show the cursor being forward
+    Curpo = Curpo + 1 'show the cursor being foneRunWinsard
     Locate , Pos(0) + 1
     GoTo NGetKey
 
@@ -1239,7 +1239,15 @@ Sub TextIn (T$, Max%, NumOnly%, CapsOn%, ExitCode%, FGColor&, BGColor&)
     If Len(A$) = 1 GoTo TRegularKey
 
     A$ = Right$(A$, 1) 'it was an extended key, get the code
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     On InStr(Chr$(15) + ".GHKMOPRSstu" + Chr$(19), A$) GOTO TShiftTab, TClear, THome, TUp, TLeft, TRight, TEndKey, TDown, TIns, TDel, TCttotAwayLosseseft, TCtrlRight, TCtrlEnd, TRestore
+=======
+    On InStr(Chr$(15) + ".GHKMOPRSstu" + Chr$(19), A$) GOTO TShiftTab, TClear, THome, TUp, TLeft, TRight, TEndKey, TDown, TIns, TDel, TCtrlLeft, TCtrlRight, TCtrlEnd, TRestore
+>>>>>>> Stashed changes
+=======
+    On InStr(Chr$(15) + ".GHKMOPRSstu" + Chr$(19), A$) GOTO TShiftTab, TClear, THome, TUp, TLeft, TRight, TEndKey, TDown, TIns, TDel, TCtrlLeft, TCtrlRight, TCtrlEnd, TRestore
+>>>>>>> Stashed changes
     GoTo TGetKey 'none of the above, get again
 
     TShiftTab:
@@ -1308,7 +1316,15 @@ Sub TextIn (T$, Max%, NumOnly%, CapsOn%, ExitCode%, FGColor&, BGColor&)
     Length = Length - 1 'show string as one character shorter
     GoTo TGetKey
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     TCttotAwayLosseseft:
+=======
+    TCtrlLeft:
+>>>>>>> Stashed changes
+=======
+    TCtrlLeft:
+>>>>>>> Stashed changes
     If CursorPos = 1 GoTo TGetKey 'at the beginning, ignore
 
     A = CursorPos 'save cursor position
@@ -1317,7 +1333,15 @@ Sub TextIn (T$, Max%, NumOnly%, CapsOn%, ExitCode%, FGColor&, BGColor&)
     If Mid$(X$, CursorPos - 1, 1) <> " " GoTo TSeekLeft2
 
     TSeekLeft1:
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     If CursorPos = 1 GoTo TCttotAwayLosseseftExit 'at the beginning, give up
+=======
+    If CursorPos = 1 GoTo TCtrlLeftExit 'at the beginning, give up
+>>>>>>> Stashed changes
+=======
+    If CursorPos = 1 GoTo TCtrlLeftExit 'at the beginning, give up
+>>>>>>> Stashed changes
 
     If Mid$(X$, CursorPos - 1, 1) = " " Then
         CursorPos = CursorPos - 1
@@ -1325,13 +1349,29 @@ Sub TextIn (T$, Max%, NumOnly%, CapsOn%, ExitCode%, FGColor&, BGColor&)
     End If
 
     TSeekLeft2:
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     If CursorPos = 1 GoTo TCttotAwayLosseseftExit 'at the beginning, give up
+=======
+    If CursorPos = 1 GoTo TCtrlLeftExit 'at the beginning, give up
+>>>>>>> Stashed changes
+=======
+    If CursorPos = 1 GoTo TCtrlLeftExit 'at the beginning, give up
+>>>>>>> Stashed changes
     If Mid$(X$, CursorPos - 1, 1) <> " " Then
         CursorPos = CursorPos - 1
         GoTo TSeekLeft2 'seek character preceeded by a blank
     End If
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     TCttotAwayLosseseftExit:
+=======
+    TCtrlLeftExit:
+>>>>>>> Stashed changes
+=======
+    TCtrlLeftExit:
+>>>>>>> Stashed changes
     Locate , Pos(0) - (A - CursorPos) 'position the cursor
     GoTo TGetKey
 
@@ -1580,7 +1620,7 @@ Sub Lts2Menu (Item$(), Prompt$(), Choice%, FGColor%, BGColor%)
     Choice% = 1 'start with item 1 the first time
 
     QPPrintLt2:
-    X% = Choice% 'assume we'totTeamLosses start at the current item
+    X% = Choice% 'assume we'll start at the current item
 
     While Break%(X%) > 0 'seek the first item on this page
         X% = X% - 1
@@ -1693,4 +1733,5 @@ Sub Lts2Menu (Item$(), Prompt$(), Choice%, FGColor%, BGColor%)
     Erase Break%, ScrBuf%
 
 End Sub
+
 
