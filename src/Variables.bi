@@ -211,9 +211,9 @@ Dim totHomeScoreTeam!(40), totHomeScoreOpp!(40)
 Dim plyrRecords!(1 To 25), offRecords!(1 To 21), defRecords!(1 To 21)
 Dim plyrRecDesc$(25, 1), offRecDesc$(1 To 21), defRecDesc$(1 To 21)
 
-Dim indRecords!(50, 2), teamRecords!(125, 2)
+Dim indRecords!(0 To 48, 0 To 2), teamRecords!(0 To 125, 0 To 2)
+Dim indRecDesc$(0 To 48, 0 To 4), teamRecDesc$(125, 0 To 3)
 Dim indRecordDesc$(25), teamRecordDesc$(20)
-Dim indRecDesc$(50, 4), teamRecDesc$(125, 3)
 
 
 '----------------------------------------
@@ -236,7 +236,7 @@ Dim Shared fastBreak, forcedThree, ftRulesOpt, freeThrowVal, fullCtOpt
 Dim Shared gameLoc, halfTime, JY, maxTimeouts, MJ, nbrFTMade, nbrLines
 Dim Shared offStatus, passes, playerMode, playerOpt, playoffOpt, pbpOpt, playChoice
 Dim Shared quarter, quarterOpt, rebFoulChance, S2
-Dim Shared sClockVal, shotChance, shotClock, shotPctOpt, shotType
+Dim Shared sClockVal, shotChance, shotClock, shotPctOpt, shotType, sndOpt
 Dim Shared threePtOpt, tickerGames, timeoutOpt, twoTimeouts, willDunk
 
 Dim Shared MINS_PER_GAME
@@ -244,7 +244,7 @@ Dim Shared MINS_PER_GAME
 Dim Shared gameClock!, pbpDelay!, possTime!, timeElapsed!
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
-Dim Shared activePosition$, pbpString$, prevBall$, TS$
+Dim Shared activePosition$, pbpString$, prevBall$
 
 Dim Shared CF%(1, 9), F%(1, 9)
 Dim Shared G9%(1), offStyles(1)

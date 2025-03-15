@@ -1,21 +1,21 @@
-f$Debug
+$Debug
 $Color:32
 
 Const GAME_VERSION$ = "5.1"
+Const MAX_FILES = 10240
+Const MAX_CAREER_YEARS = 15
+'Const MAX_CONFERENCES = 40
+Const MAX_SCHED_STATS = 100
 Const MAX_SCHEDULE_GAMES = 1500
 Const MAX_TOURNAMENT_GAMES = 200
 Const MAX_TEAMS = 1000
-Const MAX_FILES = 10240
 'optimium = 1048576 (but slows code)
 Const TEAMS_PER_DIV = 10
 Const DIVS_PER_LEAGUE = 4
 Const TEAMS_PER_LEAGUE = 40
-Const MAX_CAREER_YEARS = 15
-'Const MAX_CONFERENCES = 40
 
-Const MAX_SCHED_STATS = 100
 Const SCHEDULE_SIZE_BYTES = 58
-
+Const LAST_LINE = 30
 Const FOULS_TO_DQ = 6
 
 DefInt A-Z
@@ -361,6 +361,8 @@ Close #3
 'Run main menu
 SELECTION% = 1
 
+Screen 12
+
 Do
 
     Call Main_Menu(SELECTION%)
@@ -378,6 +380,7 @@ Print #10, "Error #"; Err; "on program file line"; _ErrorLine
 If _FileExists("GAME82") Then
     Print #10, "Schedule game # "; Using "###"; schedGame(0) + schedGame(2)
     Print #10, gameTeams$(0) + " vs. " + gameTeams$(1)
+    Print #10, I2
 End If
 Print #10,
 Close #10
@@ -800,7 +803,7 @@ Sub PROHOOP ()
         'Coach option
         Print #3, 0
 
-        'Bons Foul #
+        'Bonus Foul #
         Print #3, 6
 
         'FT Rules, PBP Option, Timeouts / Quarters
@@ -810,6 +813,9 @@ Sub PROHOOP ()
 
         '# of timeouts
         Print #3, 7
+
+        'Sound option
+        Print #3, 1
 
         Close #3
 
@@ -828,10 +834,11 @@ Sub PROHOOP ()
     Input #4, freeThrowVal
     Input #4, ftRulesOpt
     Input #4, pbpOpt
+    Input #4, timeoutOpt
+    Input #4, quarterOpt
+    Input #4, maxTimeouts
     If Not EOF(4) Then
-        Input #4, timeoutOpt
-        Input #4, quarterOpt
-        Input #4, maxTimeouts
+        Input #4, sndOpt
     End If
     Close #4
 
@@ -1023,19 +1030,9 @@ Sub PROHOOP ()
             Locate 19, 2: Color 14
             Print "(H) ";
             Color 15: Print "PLAY-BY-PLAY STYLE: "; pbpStyle$(pbpOpt)
-
-            'Locate 18, 2: Color 14
-            'Print "NOTE:: ";: Color 15: Print "BONUS WAS ON 7TH FOUL (UNTIL 72-73), 6TH FOUL (72-73 SEASON)"
-            'Locate , 2: Print "       5TH FOUL (1973-74 TO PRESENT)"
-            'Locate , 2: Color 14
-            'Print "NOTE:: ";: Color 15: Print "UP UNTIL 1972-73, WHEN A TEAM WAS IN THE BONUS, THEY HAD THE CHANCE"
-            'Locate , 2: Print "       TO SHOOT 3 FT TO MAKE 2 OR 2 FT TO MAKE 1"
-            'Locate , 2: Color 14
-            'Print "NOTE:: ";: Color 15: Print "UP UNTIL 1972-73, ALL FOULS WERE SHOT...UNLIKE THE CURRENT RULES"
-            'Locate , 2: Color 14
-            'Print "NOTE:: ";: Color 15: Print "THE 3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 1979-80"
-            'Locate , 2: Color 14
-            'Print "NOTE:: ";: Color 15: Print "THE ABA USED A 30-SEC SHOT CLOCK THROUGH 1973-74";
+            'Locate 20, 2: Color 14
+            'Print "(I) ";
+            'Color 15: Print "SOUND ENABLED: "; yesNoText$(sndOpt)
 
             Locate 20, 2: Color 14
             Print "NOTE:: "
@@ -1053,9 +1050,9 @@ Sub PROHOOP ()
 
                 Call LetterToNumber(I$, setting)
 
-            Loop Until setting >= 0 And setting <= 17 Or I$ = Chr$(27) Or UCase$(I$) = "Q"
+            Loop Until setting >= 0 And setting <= 17 Or I$ = Chr$(27) Or UCase$(I$) = Chr$(17) Or UCase$(I$) = "Q"
 
-            If I$ <> Chr$(27) And UCase$(I$) <> "Q" Then
+            If I$ <> Chr$(27) And UCase$(I$) <> "Q" And UCase$(I$) <> Chr$(17) Then
 
                 Select Case setting
 
@@ -1076,6 +1073,7 @@ Sub PROHOOP ()
                         Print #8, timeoutOpt
                         Print #8, quarterOpt
                         Print #8, maxTimeouts
+                        Print #8, sndOpt
                         Close #8
 
                     Case 1:
@@ -1142,13 +1140,16 @@ Sub PROHOOP ()
                     Case 17:
                         pbpOpt = 1 - pbpOpt
  
+                    Case 17:
+                        sndOpt = 1 - sndOpt
+
                 End Select
 
             End If
 
-        Loop Until (setting = 9 And gameTeams$(0) <> "" And gameTeams$(1) <> "") Or I$ = Chr$(27)
+        Loop Until (setting = 9 And gameTeams$(0) <> "" And gameTeams$(1) <> "") Or I$ = Chr$(27) Or I$ = Chr$(17) Or UCase$(I$) = "Q"
 
-        If I$ <> Chr$(27) And UCase$(I$) <> "Q" Then
+        If I$ <> Chr$(27) And UCase$(I$) <> Chr$(17) And UCase$(I$) <> "Q" Then
 
             'TICKER PROMPT
             Cls
@@ -1283,7 +1284,7 @@ Sub PROHOOP ()
 
     Call StealAdjustments
 
-    If autoPlay <> 1 And playerMode <> 2 Then
+    If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 Then
         whistle& = _SndOpen("whistle.mp3")
         swish& = _SndOpen("swish.mp3")
         backboard& = _SndOpen("backboard.mp3")
@@ -2424,8 +2425,22 @@ Sub PROHOOP ()
     'Computer Opponent or "Let Computer Shoot"
     If playerMode <> 0 Or coachOpt = 1 Then
 
-        'NOT (4th Q | OT, 4 mins left, Offense Ahead, Computer is Visitor / On Offense)
-        If Not (quarter >= 4 And gameClock! <= 240 And scoreDiff > 0 And playerMode = 1 And P = compTeam) Then
+        '4th Q | OT, 4 mins left, Offense Ahead, Computer is Visitor / On Offense
+        If (quarter >= 4 And gameClock! <= 240 And scoreDiff > 0 And playerMode = 1 And P = compTeam) Then
+
+            '985
+            pbpString$ = Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " FT%  INTENTIONAL FOUL? (Y/N)"
+
+            Do
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = "3"
+
+            If UCase$(I$) = "Y" Or I$ = "3" Then
+                playChoice = 3
+                GoTo 532
+            End If
+
+        Else
 
             'PC vs PC, Computer on Defense
             If playerMode = 2 Or playerMode = 1 And D = compTeam Then
@@ -2433,7 +2448,9 @@ Sub PROHOOP ()
                 '4th quarter | OT, 4 mins left, offense ahead by 10+
                 If quarter >= 4 And gameClock! <= 240 And scoreDiff > 10 Then
                     'Prompt for choices
-                    If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then 530
+                    If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then 
+                        GoTo 530
+                    End If
                 Else
                     If quarter >= 4 And gameClock! <= 30 And scoreDiff > 0 Then
                         'Less than 30 secs left in Q4 / OT and Off is ahead - INTL FOUL
@@ -2448,20 +2465,6 @@ Sub PROHOOP ()
                     End If
                 End If
 
-            End If
-
-        Else
-
-            '985
-            pbpString$ = Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " FT%  INTENTIONAL FOUL? (Y/N)"
-
-            Do
-                I$ = GetKeyPress$
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = "3"
-
-            If UCase$(I$) = "Y" Or I$ = "3" Then
-                playChoice = 3
-                GoTo 532
             End If
 
         End If
@@ -2559,7 +2562,7 @@ Sub PROHOOP ()
 
             playChoice = Val(I$)
 
-        Loop Until UCase$(I$) = "Q" Or UCase$(I$) = "B" Or (playChoice >= 0 And playChoice <= 4)
+        Loop Until UCase$(I$) = Chr$(17) Or UCase$(I$) = "B" Or (playChoice >= 0 And playChoice <= 4)
 
         If playChoice = 4 Then
             forcedThree = 1
@@ -2939,7 +2942,6 @@ Sub PROHOOP ()
                     score(P, 0) = score(P, 0) + 2
 
                     Call CreditAssists
-
                     Call UPDATESCREEN
 
                     'Increase FGM
@@ -2991,7 +2993,7 @@ Sub PROHOOP ()
 
                         Call SELECTPBP(P, 1)
 
-                        If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+                        If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And backboard& And d100% < 10 Then
                             _SndPlay backboard&
                         End If
 
@@ -3229,7 +3231,7 @@ Sub PROHOOP ()
 
                     Call DELAY
 
-                    If autoPlay <> 1 Or playerMode <> 2 And swish& Then
+                    If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& Then
                         _SndPlay swish&
                     End If
 
@@ -3271,7 +3273,7 @@ Sub PROHOOP ()
 
                     Call SELECTPBP(P, 0)
 
-                    If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+                    If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And backboard& And d100% < 10 Then
                         _SndPlay backboard&
                     End If
 
@@ -3965,7 +3967,7 @@ Sub INFO ()
     Color 14
     Print "GAME OPTIONS MENU"
 
-    Locate 24, 1
+    Locate LAST_LINE, 1
     Print Tab(80); " ";
     Locate , 1
     Print "    LANCE HAFFNER / JASON LEONARD  1986-2024"; Tab(70); Left$(Time$, 5);
@@ -4070,18 +4072,18 @@ Sub InitVar ()
     P = 0
     P9 = 0
     passes = 0
+    penetrationOffAdj = 0
     pbpType = 0
     quarter = 1
     quarterOpt = 0
     shotClock = 0
     shotType = 0
+    sndOpt = 1
     statSpecial = 0
     threePtShotChance = 0
     timeoutOpt = 3
     tickerGames = 0
     willDunk = 0
-
-    penetrationOffAdj = 0
 
     timeElapsed! = 0
 
@@ -4093,11 +4095,11 @@ Sub InitVar ()
     F1$ = ""
     G1$ = ""
     H1$ = ""
+
     activePosition$ = ""
     pbpString$ = ""
     prevBall$ = ""
     scheduleFile$ = ""
-    TS$ = ""
 
     'These are for reading in team data
     'Erase gameCoach$, gameMascots$, gameArena$, players_GAME$
@@ -4201,6 +4203,10 @@ Sub LetterToNumber (promptVal$, J)
         Case "G": J = 16
         Case "H": J = 17
         Case "I": J = 18
+        Case "J": J = 19
+        Case "K": J = 20
+        Case "L": J = 21
+        Case "M": J = 22
 
     End Select
 
@@ -4468,7 +4474,7 @@ Sub PBP (teamIdx)
         Call OPTIONS
     End If
 
-    If UCase$(M$) = "Q" Then
+    If UCase$(M$) = Chr$(17) Then
         Cls
         End
     End If
@@ -6460,31 +6466,104 @@ End Function
 'scores for the ticker games.
 Sub TICKERUPDATE ()
 
-    If autoPlay = 1 And schedGame(2) <= 31 Then
+    IF autoPlay = 1 AND schedGame(2) <= 31 THEN
+        done = 0
 
-        If quarter = 1 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 1) = -1 Then SX%(1 + schedGame(2), 0, 1) = score(0, 0): SX%(1 + schedGame(2), 1, 1) = score(1, 0): GoTo 2580
-        If quarter = 1 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 2) = -1 Then SX%(1 + schedGame(2), 0, 2) = score(0, 0): SX%(1 + schedGame(2), 1, 2) = score(1, 0): GoTo 2580
+        ' Quarter 1 block
+        IF quarter = 1 AND done = 0 THEN
+            IF gameClock! <= 480 AND SX%(1 + schedGame(2), 0, 1) = -1 THEN
+                SX%(1 + schedGame(2), 0, 1) = score(0, 0)
+                SX%(1 + schedGame(2), 1, 1) = score(1, 0)
+                done = 1
+            ELSE
+                IF gameClock! <= 240 AND SX%(1 + schedGame(2), 0, 2) = -1 THEN
+                    SX%(1 + schedGame(2), 0, 2) = score(0, 0)
+                    SX%(1 + schedGame(2), 1, 2) = score(1, 0)
+                    done = 1
+                END IF
+            END IF
+        END IF
 
-        If quarter > 1 And SX%(1 + schedGame(2), 0, 3) = -1 Then SX%(1 + schedGame(2), 0, 3) = score(0, 1): SX%(1 + schedGame(2), 1, 3) = score(1, 1): GoTo 2580
+        ' Quarter greater than 1 block (first check)
+        IF quarter > 1 AND done = 0 THEN
+            IF SX%(1 + schedGame(2), 0, 3) = -1 THEN
+                SX%(1 + schedGame(2), 0, 3) = score(0, 1)
+                SX%(1 + schedGame(2), 1, 3) = score(1, 1)
+                done = 1
+            END IF
+        END IF
 
-        If quarter = 2 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 4) = -1 Then SX%(1 + schedGame(2), 0, 4) = score(0, 0): SX%(1 + schedGame(2), 1, 4) = score(1, 0): GoTo 2580
-        If quarter = 2 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 5) = -1 Then SX%(1 + schedGame(2), 0, 5) = score(0, 0): SX%(1 + schedGame(2), 1, 5) = score(1, 0): GoTo 2580
+        ' Quarter 2 block
+        IF quarter = 2 AND done = 0 THEN
+            IF gameClock! > 240 AND gameClock! <= 480 AND SX%(1 + schedGame(2), 0, 4) = -1 THEN
+                SX%(1 + schedGame(2), 0, 4) = score(0, 0)
+                SX%(1 + schedGame(2), 1, 4) = score(1, 0)
+                done = 1
+            ELSE
+                IF gameClock! <= 240 AND SX%(1 + schedGame(2), 0, 5) = -1 THEN
+                    SX%(1 + schedGame(2), 0, 5) = score(0, 0)
+                    SX%(1 + schedGame(2), 1, 5) = score(1, 0)
+                    done = 1
+                END IF
+            END IF
+        END IF
 
-        If quarter > 2 And SX%(1 + schedGame(2), 0, 6) = -1 Then For I2 = 6 To 8: SX%(1 + schedGame(2), 0, I2) = score(0, 2) + score(0, 1): SX%(1 + schedGame(2), 1, I2) = score(1, 2) + score(1, 1): Next: GoTo 2580
+        ' Quarter greater than 2 block
+        IF quarter > 2 AND done = 0 THEN
+            IF SX%(1 + schedGame(2), 0, 6) = -1 THEN
+                FOR I2 = 6 TO 8
+                    SX%(1 + schedGame(2), 0, I2) = score(0, 2) + score(0, 1)
+                    SX%(1 + schedGame(2), 1, I2) = score(1, 2) + score(1, 1)
+                NEXT I2
+                done = 1
+            END IF
+        END IF
 
-        If quarter = 3 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 9) = -1 Then SX%(1 + schedGame(2), 0, 9) = score(0, 0): SX%(1 + schedGame(2), 1, 9) = score(1, 0): GoTo 2580
-        If quarter = 3 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 10) = -1 Then SX%(1 + schedGame(2), 0, 10) = score(0, 0): SX%(1 + schedGame(2), 1, 10) = score(1, 0): GoTo 2580
+        ' Quarter 3 block
+        IF quarter = 3 AND done = 0 THEN
+            IF gameClock! > 240 AND gameClock! <= 480 AND SX%(1 + schedGame(2), 0, 9) = -1 THEN
+                SX%(1 + schedGame(2), 0, 9) = score(0, 0)
+                SX%(1 + schedGame(2), 1, 9) = score(1, 0)
+                done = 1
+            ELSE
+                IF gameClock! <= 240 AND SX%(1 + schedGame(2), 0, 10) = -1 THEN
+                    SX%(1 + schedGame(2), 0, 10) = score(0, 0)
+                    SX%(1 + schedGame(2), 1, 10) = score(1, 0)
+                    done = 1
+                END IF
+            END IF
+        END IF
 
-        If quarter > 3 And SX%(1 + schedGame(2), 0, 11) = -1 Then SX%(1 + schedGame(2), 0, 11) = score(0, 3) + score(0, 2) + score(0, 1): SX%(1 + schedGame(2), 1, 11) = score(1, 3) + score(1, 2) + score(1, 1): GoTo 2580
+        ' Quarter greater than 3 block
+        IF quarter > 3 AND done = 0 THEN
+            IF SX%(1 + schedGame(2), 0, 11) = -1 THEN
+                SX%(1 + schedGame(2), 0, 11) = score(0, 3) + score(0, 2) + score(0, 1)
+                SX%(1 + schedGame(2), 1, 11) = score(1, 3) + score(1, 2) + score(1, 1)
+                done = 1
+            END IF
+        END IF
 
-        If quarter = 4 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 12) = -1 Then SX%(1 + schedGame(2), 0, 12) = score(0, 0): SX%(1 + schedGame(2), 1, 12) = score(1, 0): GoTo 2580
-        If quarter = 4 And gameClock! <= 240 And SX%(1 + schedGame(2), 0, 13) = -1 Then SX%(1 + schedGame(2), 0, 13) = score(0, 0): SX%(1 + schedGame(2), 1, 13) = score(1, 0): GoTo 2580
+        ' Quarter 4 block
+        IF quarter = 4 AND done = 0 THEN
+            IF gameClock! > 240 AND gameClock! <= 480 AND SX%(1 + schedGame(2), 0, 12) = -1 THEN
+                SX%(1 + schedGame(2), 0, 12) = score(0, 0)
+                SX%(1 + schedGame(2), 1, 12) = score(1, 0)
+                done = 1
+            ELSE
+                IF gameClock! <= 240 AND SX%(1 + schedGame(2), 0, 13) = -1 THEN
+                    SX%(1 + schedGame(2), 0, 13) = score(0, 0)
+                    SX%(1 + schedGame(2), 1, 13) = score(1, 0)
+                    done = 1
+                END IF
+            END IF
+        END IF
 
-        SX%(1 + schedGame(2), 0, 14) = score(0, 0): SX%(1 + schedGame(2), 1, 14) = score(1, 0)
-
-    End If
-
-    2580 '
+        ' Final default assignment if none of the above conditions were met
+        IF done = 0 THEN
+            SX%(1 + schedGame(2), 0, 14) = score(0, 0)
+            SX%(1 + schedGame(2), 1, 14) = score(1, 0)
+        END IF
+    END IF
 
 End Sub
 
@@ -7243,15 +7322,10 @@ End Sub
 'a random number.
 Sub CreditAssists ()
 
-    Call Rolld100(RN0)
-
-    If RN0 <= teamAdj(P, 7) Then
-
-        iterations = 0
+    'teamAdj(P,7) = Off Assists / FGM
+    If d100% <= teamAdj(P, 7) Then
 
         Do
-
-            skipM8% = 0
 
             totalAssisst = 0
 
@@ -7262,35 +7336,20 @@ Sub CreditAssists ()
                 totalAssisst = totalAssisst + gameRatings!(P, lineupIdx(P, M8), 25)
 
                 If RN1 <= totalAssisst Then
-                    skipM8% = 1
                     Exit For
                 End If
 
             Next M8
 
-            If skipM8% = 0 Then M8 = Int(Rnd(1) * 5)
-
-            totalAssisst = M8
-
-            Locate 7, 25
+            If RN1 > totalAssist Then
+                M8 = Int(Rnd(1) * 5)
+            End If
 
             If players_GAME$(P, lineupIdx(P, ballCarrier), 0) <> players_GAME$(P, lineupIdx(P, M8), 0) Then
                 gameRatings!(P, lineupIdx(P, M8), 14) = gameRatings!(P, lineupIdx(P, M8), 14) + 1
             End If
 
-            iterations = iterations + 1
-
-            '-- Currently I'm preventing an infinite loop by counting iterations
-            '-- Infinite loops happen very rarely: about 0.5% of games. However,
-            '-- regardless of what causes the issue, there's no reason it should
-            '-- take more than 5 passes through this. (there are 5 ball carriers)
-
-            '-- In the future I hope to find the root cause of the loops.
-            '-- Currently I know it's because this loop condition below is not met.
-            '-- That is, M8 stays as value 0 when the ball carrier is 0, so the
-            '-- player names are never different.
-
-        Loop Until players_GAME$(P, lineupIdx(P, ballCarrier), 0) <> players_GAME$(P, lineupIdx(P, M8), 0) Or iterations = 5
+        Loop Until players_GAME$(P, lineupIdx(P, ballCarrier), 0) <> players_GAME$(P, lineupIdx(P, M8), 0)
 
     End If
 
@@ -7726,7 +7785,7 @@ End Sub
 'foul / posession change.
 Sub FoulCalled (randomFouler)
 
-    If autoPlay <> 1 Or playerMode <> 2 And whistle& Then
+    If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And whistle& Then
         _SndPlay whistle&
     End If
 
@@ -8114,7 +8173,9 @@ Sub PrintActiveLineup (teamIdx)
         J = playerFatigue%(teamIdx, lineupIdx(teamIdx, I1))
         If J <= 0 Then
             J = 0
-            If (quarter = 1 Or quarter = 2 Or quarter = 3 Or (quarter = 4 And gameClock! > 120)) Then Color 12
+            If (quarter = 1 Or quarter = 2 Or quarter = 3 Or (quarter = 4 And gameClock! > 120)) Then 
+                Color 12
+            End If
         End If
         Print Using "### "; J;
 
@@ -8369,11 +8430,15 @@ Sub StealAdjustments ()
         'Process each ball carrier
         For I1 = 0 To 4
             
+            'gameRatings! vs plyrRat_GAME
             miscAdj(I, 0) = miscAdj(I, 0) + gameRatings!(I, lineupIdx(I, I1), 17)
             miscAdj(I, 1) = miscAdj(I, 1) + plyrRat_GAME(I, lineupIdx(I, I1), 18)
+
             miscAdj(I, 2) = miscAdj(I, 2) + gameRatings!(I, lineupIdx(I, I1), 25)
-            miscAdj(I, 3) = miscAdj(I, 3) + gameRatings!(I, lineupIdx(I, I1), 5)
             miscAdj(I, 4) = miscAdj(I, 4) + gameRatings!(I, lineupIdx(I, I1), 4) / 10
+
+            miscAdj(I, 3) = miscAdj(I, 3) + gameRatings!(I, lineupIdx(I, I1), 5)
+
         Next I1
 
         miscAdj(I, 4) = CInt((miscAdj(I, 4) / (teamAdj(I, 6) * .9)) * 100)
@@ -8727,8 +8792,7 @@ Sub SETUPRATINGS (teamStyle)
                 End If
 
                 'Player FGA / (Player FGA + Player FTA) as %
-                '-- Why is this suddenly an overflow???
-                X3! = CInt(plyrRat_GAME(I, I1, 2) / (plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 4)) * 100)
+                X3! = Int(plyrRat_GAME(I, I1, 2) / (plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 4)) * 100 + .5)
 
                 'Calculate penetration rating
                 If Left$(players_GAME$(I, I1, 1), 1) <> "F" And Left$(players_GAME$(I, I1, 1), 1) <> "C" Then
@@ -8755,7 +8819,7 @@ Sub SETUPRATINGS (teamStyle)
                             plyrRat_GAME(I, I1, 16) = 1
 
                     End Select
-                    
+
                 Else
                     'Forwards / Centers
                     Select Case X3!
@@ -8778,7 +8842,7 @@ Sub SETUPRATINGS (teamStyle)
                             plyrRat_GAME(I, I1, 16) = 2
                         Case Is >= 81
                             plyrRat_GAME(I, I1, 16) = 1
-                    
+
                     End Select
 
                 End If
@@ -10055,6 +10119,10 @@ Sub SHOTPERCENT (useAssist)
 
                 ' *** CHECK AVERAGE SHOT ***
                 I2 = plyrRat_GAME(P, lineupIdx(P, ballCarrier), 16)
+
+                'Sometimes penetration rating is -1
+                If I2 <= 0 Then I2 = 0
+
                 rndTeam = Int(Rnd(1) * 2)
 
                 If Left$(players_GAME$(P, lineupIdx(P, ballCarrier), 1), 1) = "G" Or Left$(players_GAME$(P, lineupIdx(P, ballCarrier), 1), 1) = "F" Then
@@ -10364,7 +10432,7 @@ Sub FreeThrow_One (missedLastFT)
             Call THREEFT(freeThrowNbr)
         End If
 
-        If autoPlay <> 1 Or playerMode <> 2 And swish& And d100% < 10 Then
+        If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& And d100% < 10 Then
             _SndPlay swish&
         End If
 
@@ -10378,7 +10446,7 @@ Sub FreeThrow_One (missedLastFT)
             Call BADFT
         End If
 
-        If autoPlay <> 1 Or playerMode <> 2 And swish& And d100% < 10 Then
+        If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& And d100% < 10 Then
             _SndPlay backboard&
         End If
 
@@ -10434,7 +10502,7 @@ Sub FreeThrow_Three (missedLastFT)
                 Call THREEFT(freeThrowNbr)
             End If
 
-            If autoPlay <> 1 Or playerMode <> 2 And swish& And d100% < 10 Then
+            If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& And d100% < 10 Then
                 _SndPlay swish&
             End If
 
@@ -10446,7 +10514,7 @@ Sub FreeThrow_Three (missedLastFT)
                 Call BADFT
             End If
 
-            If autoPlay <> 1 Or playerMode <> 2 And swish& And d100% < 10 Then
+            If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& And d100% < 10 Then
                 _SndPlay backboard&
             End If
 
@@ -10520,7 +10588,7 @@ Sub FreeThrow_Make1 (missedLastFT)
                 Call THREEFT(freeThrowNbr)
             End If
 
-            If autoPlay <> 1 Or playerMode <> 2 And swish& And d100% < 10 Then
+            If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& And d100% < 10 Then
                 _SndPlay swish&
             End If
 
@@ -10532,7 +10600,7 @@ Sub FreeThrow_Make1 (missedLastFT)
                 Call BADFT
             End If
 
-            If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+            If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And backboard& And d100% < 10 Then
                 _SndPlay backboard&
             End If
 
@@ -10615,7 +10683,7 @@ Sub FreeThrow_Make2 (missedLastFT)
                 Call THREEFT(freeThrowNbr)
             End If
 
-            If autoPlay <> 1 Or playerMode <> 2 And swish& And d100% < 10 Then
+            If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& And d100% < 10 Then
                 _SndPlay swish&
             End If
 
@@ -10627,7 +10695,7 @@ Sub FreeThrow_Make2 (missedLastFT)
                 Call BADFT
             End If
 
-            If autoPlay <> 1 Or playerMode <> 2 And swish& And d100% < 10 Then
+            If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& And d100% < 10 Then
                 _SndPlay backboard&
             End If
 
@@ -10690,7 +10758,7 @@ Sub OPTIONS ()
 
         Do
             Color 7, 0
-            'Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
+            'Locate LAST_LINE, 1: Print "HIT ANY KEY TO CONTINUE";
             I$ = GetKeyPress$
             I = Val(I$)
         Loop Until I >= 0 And I <= 3
@@ -11361,7 +11429,7 @@ Sub BOX2SCREEN ()
     Call ScoreSummary
 
     If Not (autoPlay = 1 And playerMode = 2) Then
-        Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
+        Locate LAST_LINE, 1: Print "HIT ANY KEY TO CONTINUE";
         I$ = GetKeyPress$
     End If
 
@@ -11573,7 +11641,7 @@ Sub STATS2SCREEN
         Color 15: Print totRebounds(I)
 
         If Not (autoPlay = 1 And playerMode = 2) Then
-            Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
+            Locate LAST_LINE, 1: Print "HIT ANY KEY TO CONTINUE";
             I$ = GetKeyPress$
         End If
 
@@ -12432,27 +12500,28 @@ End Sub
 'should be started.
 Sub EndOfGame
 
+    'Close #11
     Call POSTGAME
 
-    If autoPlay <> 1 Then
+    Cls
 
-        Cls
+    ' Prompt to play another game
+    If autoPlay <> 1 Then
 
         'Using Home Team's color for the box
         Call TEAMBOX(1, 1)
 
-        Do
-            pbpString$ = "PLAY ANOTHER GAME? (Y/N)"
-            Locate 7, (80 - Len(pbpString$)) / 2
-            Print pbpString$
+        pbpString$ = "PLAY ANOTHER GAME? (Y/N)"
+        Locate 7, (80 - Len(pbpString$)) / 2
+        Print pbpString$
 
-            Color 15, 0
+        Color 15, 0
+
+        Do
             I$ = GetKeyPress$
         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
     End If
-
-    'Close #11
 
     If UCase$(I$) = "Y" Or (autoPlay = 1 And endAllGames <> 1) Then
 

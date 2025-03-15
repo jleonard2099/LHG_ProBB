@@ -373,7 +373,7 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
         Call TITLE_STATS
 
         Color , 1
-        Locate 24, 1
+        Locate LAST_LINE, 1
 
         Color 15, 1: Print "SCHEDULE ";
         Color 14: Print "[Pg UP]  ";
@@ -658,7 +658,7 @@ Sub ViewDefenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
         Call TITLE_STATS
 
         Color , 1
-        Locate 24, 1
+        Locate LAST_LINE, 1
 
         Color 15: Print "OFF STATS ";
         Color 14: Print "[Pg UP]  ";

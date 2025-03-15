@@ -199,7 +199,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -248,7 +248,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -295,7 +295,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -340,7 +340,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -382,7 +382,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -419,7 +419,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -483,7 +483,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -547,7 +547,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -611,7 +611,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -674,7 +674,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -696,7 +696,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -769,7 +769,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -842,7 +842,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -915,7 +915,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -988,7 +988,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
     Color 15
     QK$ = GetKeyPress$
     '-----
