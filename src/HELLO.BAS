@@ -15,7 +15,8 @@ Const DIVS_PER_LEAGUE = 4
 Const TEAMS_PER_LEAGUE = 40
 
 Const SCHEDULE_SIZE_BYTES = 58
-Const LAST_LINE = 30
+Const LAST_COL = 80
+Const LAST_ROW = 30
 Const FOULS_TO_DQ = 6
 
 DefInt A-Z
@@ -361,7 +362,7 @@ Close #3
 'Run main menu
 SELECTION% = 1
 
-Screen 12
+Screen _NewImage(640, 480, 256)
 
 Do
 
@@ -686,7 +687,7 @@ Sub Leaders_Menu ()
                     Call Records_Menu
 
                 Case 6:
-                    Call NEWLDR
+                   Call NEWLDR
 
                 Case 7:
                     Call BLANKPRO
@@ -898,7 +899,7 @@ Sub PROHOOP ()
             MsgText$ = "CAN'T FIND OR LOAD TARGET SCHEDULE.  PRESS ANY KEY TO RETURN TO MENU"
             BoxWidth = 18
             BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-            Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+            Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
             Call CSMsgBox(MsgText$, BoxWidth, PASS)
             I$ = GetKeyPress$
             Call CSMsgBox("", 0, PASS)
@@ -950,7 +951,7 @@ Sub PROHOOP ()
             MsgText$ = "ATTEMPTED TO LOAD AN INVALID TEAM. PRESS ANY KEY TO RETURN TO MENU"
             BoxWidth = 18
             BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-            Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+            Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
             Call CSMsgBox(MsgText$, BoxWidth, PASS)
             I$ = GetKeyPress$
             Call CSMsgBox("", 0, PASS)
@@ -974,74 +975,78 @@ Sub PROHOOP ()
             Color 2
             Print Tab(29); "SELECT OPENING OPTIONS"
 
-            Locate 2, 2: Color 14
+            Locate 3, 2: Color 14
             Print "(1) ";
             Color 15: Print playMode$(playerOpt)
-            Locate 3, 2: Color 14
+            Locate 4, 2: Color 14
             Print "(2) ";
             Color 15: Print "VISITING TEAM: ";
             Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0)
-            Locate 4, 2: Color 14, 0
+            Locate 5, 2: Color 14, 0
             Print "(3) ";
             Color 15: Print "HOME TEAM: ";
             Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1)
-            Locate 5, 2: Color 14, 0
+            Locate 6, 2: Color 14, 0
             Print "(4) ";
             Color 15: Print "GAME LOCATION: "; location$(gameLoc)
-            Locate 6, 2: Color 14
+            Locate 7, 2: Color 14
             Print "(5) ";
             Color 15: Print "SHOT CLOCK: "; sClockOpt$(sClockVal)
-            Locate 7, 2: Color 14
+            Locate 8, 2: Color 14
             Print "(6) ";
             Color 15: Print "QUARTER LENGTH: "; quarterLength$(quarterOpt)
-            Locate 8, 2: Color 14
+            Locate 9, 2: Color 14
             Print "(7) ";
             Color 15: Print "NUMBER TIMEOUTS: "; maxTimeouts
-            Locate 9, 2: Color 14
+            Locate 10, 2: Color 14
             Print "(8) ";
             Color 15: Print "TIMEOUT OPTIONS: "; timeoutSetting$(timeoutOpt)
-            Locate 10, 2: Color 14
+            Locate 11, 2: Color 14
             Print "(9) ";
             Color 15: Print "START GAME"
-            Locate 11, 2: Color 14
+            Locate 12, 2: Color 14
             Print "(0) ";
             Color 15: Print "SAVE SETTINGS"
-            Locate 12, 2: Color 14
+            Locate 13, 2: Color 14
             Print "(A) ";
             Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#"; pbpDelay!
-            Locate 13, 2: Color 14
+            Locate 14, 2: Color 14
             Print "(B) ";
             Color 15: Print "HUMAN COACHES: "; coachMode$(coachOpt)
-            Locate 14, 2: Color 14
+            Locate 15, 2: Color 14
             Print "(C) ";
             Color 15: Print "GAME TYPE: "; playoffGame$(playoffOpt)
-            Locate 15, 2: Color 14
+            Locate 16, 2: Color 14
             Print "(D) ";
             Color 15: Print "3-POINT SHOT: "; yesNoText$(threePtOpt)
-            Locate 16, 2: Color 14
+            Locate 17, 2: Color 14
             Print "(E) ";
             Color 15: Print "FREE THROW RULES: "; foulOption$(ftRulesOpt)
-            Locate 17, 2: Color 14
+            Locate 18, 2: Color 14
             Print "(F) ";
             Color 15: Print "NUMBER OF FREE THROWS: "; freeThrowOpt$(freeThrowVal)
-            Locate 18, 2: Color 14
+            Locate 19, 2: Color 14
             Print "(G) ";
             Color 15: Print "BONUS ON FOUL #: "; bonusFoulNum
-            Locate 19, 2: Color 14
+            Locate 20, 2: Color 14
             Print "(H) ";
             Color 15: Print "PLAY-BY-PLAY STYLE: "; pbpStyle$(pbpOpt)
-            'Locate 20, 2: Color 14
-            'Print "(I) ";
-            'Color 15: Print "SOUND ENABLED: "; yesNoText$(sndOpt)
+            Locate 21, 2: Color 14
+            Print "(I) ";
+            Color 15: Print "SOUND ENABLED: "; yesNoText$(sndOpt)
 
-            Locate 20, 2: Color 14
+            Locate 23, 2: Color 14
             Print "NOTE:: "
             Color 15
-            Locate , 2: Print "* BONUS ON 7TH FOUL UNTIL 72-73, 6TH FOUL (72-73 SEASON), 5TH FOUL (73-74+)"
-            Locate , 2: Print "* UNTIL 72-73, BONUS FTs WERE 3 TO MAKE 2 | 2 TO MAKE 1; ALL FOULS SHOT"
-            Locate , 2: Print "* 3-PT SHOT WAS USED FOR ALL ABA SEASONS AND NBA SINCE 79-80"
-            Locate , 2: Print "* ABA HAD 30-SEC SHOT CLOCK THROUGH 73-74; NBA BEGAN 24-SEC SOT CLOCK IN 1954";
-
+            
+            Locate , 2: Print "* 30-SEC CLOCK FOR ABA THROUGH 73-74; 24-SEC CLOCK FOR NBA IN 54";
+            Locate , 2: Print "* WNBA WENT FROM 20-MIN HALVES TO 10-MIN QUARTERS IN 06";
+            Locate , 2: Print "* NBA - 6 TOs UNTIL 00-01; 7 TOs (01-02+); WNBA - 4 TOs UNTIL 23-24"
+            Locate , 2: Print "* 3-PT SHOT FOR ALL ABA SEASONS; NBA SINCE 79-80"
+            Locate , 2: Print "* FREE THROWS AWARDED ON ALL FOULS UNTIL 72-73"
+            Locate , 2: Print "* BONUS FTs: 3 TO MAKE 2 | 2 TO MAKE 1 UNTIL 72-73"
+            Locate , 2: Print "* BONUS ON 7TH FOUL UNTIL 72-73; 6TH FOUL (72-73), 5TH FOUL (73-74+)";
+            
             Do
 
                 Color 7
@@ -1050,7 +1055,7 @@ Sub PROHOOP ()
 
                 Call LetterToNumber(I$, setting)
 
-            Loop Until setting >= 0 And setting <= 17 Or I$ = Chr$(27) Or UCase$(I$) = Chr$(17) Or UCase$(I$) = "Q"
+            Loop Until setting >= 0 And setting <= 18 Or I$ = Chr$(27) Or UCase$(I$) = Chr$(17) Or UCase$(I$) = "Q"
 
             If I$ <> Chr$(27) And UCase$(I$) <> "Q" And UCase$(I$) <> Chr$(17) Then
 
@@ -1140,7 +1145,7 @@ Sub PROHOOP ()
                     Case 17:
                         pbpOpt = 1 - pbpOpt
  
-                    Case 17:
+                    Case 18:
                         sndOpt = 1 - sndOpt
 
                 End Select
@@ -2448,7 +2453,7 @@ Sub PROHOOP ()
                 '4th quarter | OT, 4 mins left, offense ahead by 10+
                 If quarter >= 4 And gameClock! <= 240 And scoreDiff > 10 Then
                     'Prompt for choices
-                    If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then 
+                    If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then
                         GoTo 530
                     End If
                 Else
@@ -3967,10 +3972,10 @@ Sub INFO ()
     Color 14
     Print "GAME OPTIONS MENU"
 
-    Locate LAST_LINE, 1
+    Locate LAST_ROW, 1
     Print Tab(80); " ";
     Locate , 1
-    Print "    LANCE HAFFNER / JASON LEONARD  1986-2024"; Tab(70); Left$(Time$, 5);
+    Print "    LANCE HAFFNER / JASON LEONARD  1986-2025"; Tab(70); Left$(Time$, 5);
     Locate 3, 1
     Color , 0
 
@@ -6466,104 +6471,104 @@ End Function
 'scores for the ticker games.
 Sub TICKERUPDATE ()
 
-    IF autoPlay = 1 AND schedGame(2) <= 31 THEN
+    If autoPlay = 1 And schedGame(2) <= 31 Then
         done = 0
 
         ' Quarter 1 block
-        IF quarter = 1 AND done = 0 THEN
-            IF gameClock! <= 480 AND SX%(1 + schedGame(2), 0, 1) = -1 THEN
+        If quarter = 1 And done = 0 Then
+            If gameClock! <= 480 And SX%(1 + schedGame(2), 0, 1) = -1 Then
                 SX%(1 + schedGame(2), 0, 1) = score(0, 0)
                 SX%(1 + schedGame(2), 1, 1) = score(1, 0)
                 done = 1
-            ELSE
-                IF gameClock! <= 240 AND SX%(1 + schedGame(2), 0, 2) = -1 THEN
+            Else
+                If gameClock! <= 240 And SX%(1 + schedGame(2), 0, 2) = -1 Then
                     SX%(1 + schedGame(2), 0, 2) = score(0, 0)
                     SX%(1 + schedGame(2), 1, 2) = score(1, 0)
                     done = 1
-                END IF
-            END IF
-        END IF
+                End If
+            End If
+        End If
 
         ' Quarter greater than 1 block (first check)
-        IF quarter > 1 AND done = 0 THEN
-            IF SX%(1 + schedGame(2), 0, 3) = -1 THEN
+        If quarter > 1 And done = 0 Then
+            If SX%(1 + schedGame(2), 0, 3) = -1 Then
                 SX%(1 + schedGame(2), 0, 3) = score(0, 1)
                 SX%(1 + schedGame(2), 1, 3) = score(1, 1)
                 done = 1
-            END IF
-        END IF
+            End If
+        End If
 
         ' Quarter 2 block
-        IF quarter = 2 AND done = 0 THEN
-            IF gameClock! > 240 AND gameClock! <= 480 AND SX%(1 + schedGame(2), 0, 4) = -1 THEN
+        If quarter = 2 And done = 0 Then
+            If gameClock! > 240 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 4) = -1 Then
                 SX%(1 + schedGame(2), 0, 4) = score(0, 0)
                 SX%(1 + schedGame(2), 1, 4) = score(1, 0)
                 done = 1
-            ELSE
-                IF gameClock! <= 240 AND SX%(1 + schedGame(2), 0, 5) = -1 THEN
+            Else
+                If gameClock! <= 240 And SX%(1 + schedGame(2), 0, 5) = -1 Then
                     SX%(1 + schedGame(2), 0, 5) = score(0, 0)
                     SX%(1 + schedGame(2), 1, 5) = score(1, 0)
                     done = 1
-                END IF
-            END IF
-        END IF
+                End If
+            End If
+        End If
 
         ' Quarter greater than 2 block
-        IF quarter > 2 AND done = 0 THEN
-            IF SX%(1 + schedGame(2), 0, 6) = -1 THEN
-                FOR I2 = 6 TO 8
+        If quarter > 2 And done = 0 Then
+            If SX%(1 + schedGame(2), 0, 6) = -1 Then
+                For I2 = 6 To 8
                     SX%(1 + schedGame(2), 0, I2) = score(0, 2) + score(0, 1)
                     SX%(1 + schedGame(2), 1, I2) = score(1, 2) + score(1, 1)
-                NEXT I2
+                Next I2
                 done = 1
-            END IF
-        END IF
+            End If
+        End If
 
         ' Quarter 3 block
-        IF quarter = 3 AND done = 0 THEN
-            IF gameClock! > 240 AND gameClock! <= 480 AND SX%(1 + schedGame(2), 0, 9) = -1 THEN
+        If quarter = 3 And done = 0 Then
+            If gameClock! > 240 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 9) = -1 Then
                 SX%(1 + schedGame(2), 0, 9) = score(0, 0)
                 SX%(1 + schedGame(2), 1, 9) = score(1, 0)
                 done = 1
-            ELSE
-                IF gameClock! <= 240 AND SX%(1 + schedGame(2), 0, 10) = -1 THEN
+            Else
+                If gameClock! <= 240 And SX%(1 + schedGame(2), 0, 10) = -1 Then
                     SX%(1 + schedGame(2), 0, 10) = score(0, 0)
                     SX%(1 + schedGame(2), 1, 10) = score(1, 0)
                     done = 1
-                END IF
-            END IF
-        END IF
+                End If
+            End If
+        End If
 
         ' Quarter greater than 3 block
-        IF quarter > 3 AND done = 0 THEN
-            IF SX%(1 + schedGame(2), 0, 11) = -1 THEN
+        If quarter > 3 And done = 0 Then
+            If SX%(1 + schedGame(2), 0, 11) = -1 Then
                 SX%(1 + schedGame(2), 0, 11) = score(0, 3) + score(0, 2) + score(0, 1)
                 SX%(1 + schedGame(2), 1, 11) = score(1, 3) + score(1, 2) + score(1, 1)
                 done = 1
-            END IF
-        END IF
+            End If
+        End If
 
         ' Quarter 4 block
-        IF quarter = 4 AND done = 0 THEN
-            IF gameClock! > 240 AND gameClock! <= 480 AND SX%(1 + schedGame(2), 0, 12) = -1 THEN
+        If quarter = 4 And done = 0 Then
+            If gameClock! > 240 And gameClock! <= 480 And SX%(1 + schedGame(2), 0, 12) = -1 Then
                 SX%(1 + schedGame(2), 0, 12) = score(0, 0)
                 SX%(1 + schedGame(2), 1, 12) = score(1, 0)
                 done = 1
-            ELSE
-                IF gameClock! <= 240 AND SX%(1 + schedGame(2), 0, 13) = -1 THEN
+            Else
+                If gameClock! <= 240 And SX%(1 + schedGame(2), 0, 13) = -1 Then
                     SX%(1 + schedGame(2), 0, 13) = score(0, 0)
                     SX%(1 + schedGame(2), 1, 13) = score(1, 0)
                     done = 1
-                END IF
-            END IF
-        END IF
+                End If
+            End If
+        End If
 
         ' Final default assignment if none of the above conditions were met
-        IF done = 0 THEN
+        If done = 0 Then
             SX%(1 + schedGame(2), 0, 14) = score(0, 0)
             SX%(1 + schedGame(2), 1, 14) = score(1, 0)
-        END IF
-    END IF
+        End If
+    End If
 
 End Sub
 
@@ -6666,7 +6671,7 @@ Sub PlayStyle ()
     Color 3: Print "ENSE STYLE-";
     Color 7: Print defStyleDesc$(defStyles(P9))
 
-    Locate 23, 32: Color 3: Print "FUll COURT ";
+    Locate 23, 32: Color 3: Print "FULL COURT ";
     Color 15: Print "P";
     Color 3: Print "RESS-";
     Color 7: Print yesNoText$(fullCtOpt(P9))
@@ -6840,7 +6845,7 @@ Sub PlayStyle ()
             Color 7: Print defStyleDesc$(defStyles(P9))
 
             Locate 23, 32
-            Color 3: Print "FUll COURT ";
+            Color 3: Print "FULL COURT ";
             Color 15: Print "P";
             Color 3: Print "RESS-";
             Color 7: Print yesNoText$(fullCtOpt(P9))
@@ -8173,7 +8178,7 @@ Sub PrintActiveLineup (teamIdx)
         J = playerFatigue%(teamIdx, lineupIdx(teamIdx, I1))
         If J <= 0 Then
             J = 0
-            If (quarter = 1 Or quarter = 2 Or quarter = 3 Or (quarter = 4 And gameClock! > 120)) Then 
+            If (quarter = 1 Or quarter = 2 Or quarter = 3 Or (quarter = 4 And gameClock! > 120)) Then
                 Color 12
             End If
         End If
@@ -9160,7 +9165,7 @@ Sub CHANGESTRATEGY (I$)
                 Locate , 14: Print "0 - RETURN TO GAME"
                 Locate , 14: Print "1 - SELECT OFFENSIVE STYLE OF PLAY"
                 Locate , 14: Print "2 - SELECT DEFENSIVE STYLE OF PLAY"
-                Locate , 14: Print "3 - FUll COURT PRESS "; yesNoText$(fullCtOpt(teamSelected))
+                Locate , 14: Print "3 - FULL COURT PRESS "; yesNoText$(fullCtOpt(teamSelected))
 
                 Do
                     I$ = GetKeyPress$
@@ -10758,7 +10763,6 @@ Sub OPTIONS ()
 
         Do
             Color 7, 0
-            'Locate LAST_LINE, 1: Print "HIT ANY KEY TO CONTINUE";
             I$ = GetKeyPress$
             I = Val(I$)
         Loop Until I >= 0 And I <= 3
@@ -11429,7 +11433,7 @@ Sub BOX2SCREEN ()
     Call ScoreSummary
 
     If Not (autoPlay = 1 And playerMode = 2) Then
-        Locate LAST_LINE, 1: Print "HIT ANY KEY TO CONTINUE";
+        Locate LAST_ROW, 1: Print "HIT ANY KEY TO CONTINUE";
         I$ = GetKeyPress$
     End If
 
@@ -11641,7 +11645,7 @@ Sub STATS2SCREEN
         Color 15: Print totRebounds(I)
 
         If Not (autoPlay = 1 And playerMode = 2) Then
-            Locate LAST_LINE, 1: Print "HIT ANY KEY TO CONTINUE";
+            Locate LAST_ROW, 1: Print "HIT ANY KEY TO CONTINUE";
             I$ = GetKeyPress$
         End If
 
@@ -12207,7 +12211,7 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
                         MsgText$ = "NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID"
                         BoxWidth = 20
                         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-                        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                        Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
                         Call CSMsgBox(MsgText$, BoxWidth, PASS)
                         I$ = GetKeyPress$
                         Call CSMsgBox("", 0, PASS)
@@ -12296,21 +12300,27 @@ Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%,
         Start% = 1
         FileFGColor = 15: FileBGColor = 4
         HiLiteFGColor = 0: HiLiteBGColor = 7
-        Rows = 20
+        Rows% = LAST_ROW - 6
         Columns% = 4
         Spacing% = 6
-        Row% = 4
+        Row% = 5
         Column% = 1
 
         Color , 4
         Cls
+
         Color 14
         Locate , 33: Print "TEAM SELECTION"
-        Locate 25, 1
-        Color 14: Print "ESC";
-        Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";
-        Color 14: Print "ENTER";
+        Locate LAST_ROW, 1
+        Color 14
+        Print Tab(3); "PG DN";
+        Print Tab(18); "ENTER";
         Color 15: Print "-SELECTS TEAM";
+        Color 14
+        Print Tab(39); "ESC";
+        Color 15: Print "-SELECT NEW ID";
+        Color 14
+        Print Tab(72); "PG UP";
 
         _MouseShow "DEFAULT"
         MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor, HiLiteBGColor, Rows%, Columns%, Spacing%, Row%, Column%

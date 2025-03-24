@@ -39,7 +39,7 @@ Sub COMPARE ()
                 MsgText$ = "NO COMPILED STATS COULD BE FOUND FOR THIS TEAM. PRESS ANY KEY TO RETURN TO THE MAIN MENU"
                 BoxWidth = 24
                 BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-                Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
                 Call CSMsgBox(MsgText$, BoxWidth, Pass)
                 I$ = GetKeyPress$
                 Call CSMsgBox("", 0, Pass)
@@ -144,7 +144,7 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
 
     Call TeamComparisons_Screen(teamName$)
 
-    Locate 23, 28
+    Locate LAST_ROW - 2, 28
     Color 15, 0: Print "HIT ANY KEY TO CONTINUE"
     I$ = GetKeyPress$
 
@@ -154,32 +154,33 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
         Cls
 
         Color 9
-        Locate 3, 12: Print "STAT COMPARISONS FOR ";
+        XCoord = Int((80 - (21 + Len(teamName$)))/2)
+        Locate 2, XCoord: Print "STAT COMPARISONS FOR ";
         Color 15: Print teamName$
 
         'Print names of all 14 characters
-        For I = O To 14:
+        For I = 0 To 14:
             Color 12
-            Locate I + 5, 15
+            Locate I + 4, 15
             Print Using "##"; I + 1;
             Print ". ";
             Color 7: Print statPlyrNames$(I)
         Next
 
         Color 12
-        Locate 5, 35: Print "16. ";
+        Locate 20, 15: Print "16. ";
         Color 3: Print "View Players In Sequence"
         Color 12
-        Locate 6, 35: Print "17. ";
+        Locate 21, 15: Print "17. ";
         Color 3: Print "View Another Team"
         Color 12
-        Locate 7, 35: Print "18. ";
+        Locate 22, 15: Print "18. ";
         Color 3: Print "Return To Main Menu"
 
         Do
 
             Color 15
-            Locate 23, 15
+            Locate LAST_ROW - 2, 15
             Input "ENTER # TO VIEW "; B9
 
             Select Case B9
@@ -238,7 +239,7 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
 
             End Select
 
-            Locate 23, 30
+            Locate LAST_ROW - 2, 30
             Print Space$(10)
 
         Loop Until B9 >= 1 And B9 <= 18 Or menuExit = 1
@@ -247,7 +248,7 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
 
     If backToMenu <> 1 Then
         Color 15, 0
-        Locate 23, 28: Print "HIT ANY KEY TO CONTINUE"
+        Locate LAST_ROW - 2, 28: Print "HIT ANY KEY TO CONTINUE"
         I$ = GetKeyPress$
     End If
 

@@ -484,7 +484,7 @@ Sub ViewRoster ()
 
         Color 15
 
-        Locate 23: Print "HIT ANY KEY TO CONTINUE"
+        Locate LAST_ROW - 2: Print "HIT ANY KEY TO CONTINUE"
         I$ = GetKeyPress$
 
         Cls

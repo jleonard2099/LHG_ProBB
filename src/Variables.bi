@@ -108,7 +108,7 @@ Dim carRecVal!(62), carRecYear!(21)
 Dim plyLeaderTeams$(40, 15), tmLeaderTeams$(40, 15)
 
 Dim plyrLdrStats!(0 To 600, 0 To 14)
-Dim plyrLeaderYears!(40), tmLeaderYears!(40)
+Dim plyrLeaderGames!(40), tmLeaderGames!(40)
 Dim plyrLdrVal!(40, 15), teamLdrVal!(40, 15)
 
 ' For Expanded Leaders
