@@ -298,70 +298,75 @@ Sub NewStandings_Report (printDest, destFile$, league$)
 
         Call SortStandings(AA, ZZ)
 
-        Print #1, league$
-        Print #1, Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
-
         Select Case NT
 
             Case 1
-                Print #1, div1Name$;
+                targetDiv$ = div1Name$
 
             Case 2
-                Print #1, div2Name$;
+                targetDiv$ = div2Name$
 
             Case 3
-                Print #1, div3Name$;
+                targetDiv$ = div3Name$
 
             Case 4
-                Print #1, div4Name$;
+                targetDiv$ = div4Name$
 
         End Select
 
-        Print #1, Tab(20); "G   W   L   PCT   GB  #  WS  LS   W- L    W- L    W- L "
+        If NT > 1 And targetDiv$ <> "" Then
 
-        For I = AA To ZZ
+            Print #1, league$
+            Print #1, Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
 
-            If expStdLeagName$(I) <> "" And expStdLeagName$(I) <> "*" Then
+            Print #1, RTrim$(targetDiv$);
+            Print #1, Tab(20); "G   W   L   PCT   GB  #  WS  LS   W- L    W- L    W- L "
+            Print #1, String$(75,45)
+            For I = AA To ZZ
 
-                Print #1, expStdLeagName$(I);
-                Print #1, Tab(18); Using "### ### ###"; totTeamWins(I) + totTeamLosses(I); totTeamWins(I); totTeamLosses(I); Tab(30);
+                If expStdLeagName$(I) <> "" And expStdLeagName$(I) <> "*" Then
 
-                'PCT
-                If totTeamLosses(I) = 0 And totTeamLosses(I) + totTeamWins(I) <> 0 Then
-                    Print #1, "1.000";
-                Else
-                    If totTeamWins(I) = 0 Then
-                        Print #1, " .000";
+                    Print #1, expStdLeagName$(I);
+                    Print #1, Tab(18); Using "### ### ###"; totTeamWins(I) + totTeamLosses(I); totTeamWins(I); totTeamLosses(I); Tab(30);
+
+                    'PCT
+                    If totTeamLosses(I) = 0 And totTeamLosses(I) + totTeamWins(I) <> 0 Then
+                        Print #1, "1.000";
                     Else
-                        If totTeamWins(I) + totTeamLosses(I) = 0 Then
+                        If totTeamWins(I) = 0 Then
                             Print #1, " .000";
                         Else
-                            winPCT! = totTeamWins(I) / (totTeamWins(I) + totTeamLosses(I))
-                            Print #1, Using " .###"; winPCT!;
+                            If totTeamWins(I) + totTeamLosses(I) = 0 Then
+                                Print #1, " .000";
+                            Else
+                                winPCT! = totTeamWins(I) / (totTeamWins(I) + totTeamLosses(I))
+                                Print #1, Using " .###"; winPCT!;
+                            End If
                         End If
                     End If
+
+                    'Games Behind?
+                    If ((totTeamWins(AA) - totTeamWins(I)) + (totTeamLosses(I) - totTeamLosses(AA))) / 2 = 0 Then
+                        Print #1, Tab(36); " ---";
+                    Else
+                        Print #1, Tab(36); Using "##.#"; ((totTeamWins(AA) - totTeamWins(I)) + (totTeamLosses(I) - totTeamLosses(AA))) / 2;
+                    End If
+
+                    'Magic Number?,
+                    If I = AA Then
+                        MJ = 83 - totTeamWins(AA) - totTeamLosses(AA + 1)
+                        If MJ < 0 Then MJ = 0
+                        Print #1, Tab(42); Using "##"; MJ;
+                    End If
+
+                    Print #1, Tab(45); Using "##"; teamWinStreak(I); Tab(49); teamLoseStreak(I);
+                    Print #1, Tab(53); Using "##"; totHomeWins(I); Tab(56); totHomeLosses(I); Tab(61); totAwayWins(I); Tab(64); totAwayLosses(I); Tab(69); lastTenWins(I); Tab(72); lastTenLosses(I)
+
                 End If
 
-                'Games Behind?
-                If ((totTeamWins(AA) - totTeamWins(I)) + (totTeamLosses(I) - totTeamLosses(AA))) / 2 = 0 Then
-                    Print #1, Tab(36); " ---";
-                Else
-                    Print #1, Tab(36); Using "##.#"; ((totTeamWins(AA) - totTeamWins(I)) + (totTeamLosses(I) - totTeamLosses(AA))) / 2;
-                End If
+            Next
 
-                'Magic Number?
-                If I = AA Then
-                    MJ = 83 - totTeamWins(AA) - totTeamLosses(AA + 1)
-                    If MJ < 0 Then MJ = 0
-                    Print #1, Tab(42); Using "##"; MJ;
-                End If
-
-                Print #1, Tab(45); Using "##"; teamWinStreak(I); Tab(49); teamLoseStreak(I);
-                Print #1, Tab(53); Using "##"; totHomeWins(I); Tab(56); totHomeLosses(I); Tab(61); totAwayWins(I); Tab(64); totAwayLosses(I); Tab(69); lastTenWins(I); Tab(72); lastTenLosses(I)
-
-            End If
-
-        Next
+        End If
 
         Print #1,
         Print #1,

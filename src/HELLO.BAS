@@ -31,6 +31,14 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
+Dim memberName$(TEAMS_PER_LEAGUE)
+
+Dim plyrLdrStats!(0 To 600, 0 To 14)
+Dim plyrLeaderGames!(40), tmLeaderGames!(40)
+Dim plyrLdrVal!(40, 15), teamLdrVal!(40, 15)
+Dim expIndCategory$(0 To 31), expTeamCategory$(0 To 38)
+Dim expPlyrLdrName$(600), expPlyrLdrTeam$(600), expLdrTeam$(600), expLdrPlyrName$(600)
+
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -687,7 +695,7 @@ Sub Leaders_Menu ()
                     Call Records_Menu
 
                 Case 6:
-                   Call NEWLDR
+                    Call NEWLDR
 
                 Case 7:
                     Call BLANKPRO

@@ -170,7 +170,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
     Shared statPlyrNames$(), tmLeaderTeams$()
 
     Shared plyrLdrStats!(), plyrLdrVal!()
-    Shared plyrLeaderGames!(), playerRatings!()
+    Shared plyrLeaderGames!(), statPlyrVal!()
     Shared teamLdrVal!(), totGames!(), tmLeaderGames!()
 
     Shared leader3FGM!(), leader3FGA!()
@@ -178,16 +178,13 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
     Shared statsOffTot!(), statsDefTot!()
 
     Erase expPlyrLdrName$, expPlyrLdrTeam$
-    Erase plyLeaderTeams$
-    Erase statPlyrNames$, tmLeaderTeams$
+    Erase plyLeaderTeams$, tmLeaderTeams$
 
     Erase plyrLdrStats!, plyrLdrVal!
-    Erase plyrLeaderGames!, playerRatings!
+    Erase plyrLeaderGames!
     Erase teamLdrVal!, totGames!, tmLeaderGames!
 
     Erase leader3FGM!, leader3FGA!
-    Erase stats3FGM!, stats3FGA!
-    Erase statsOffTot!, statsDefTot!
 
     Color 15, 0
     Cls
@@ -204,7 +201,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
             If _FileExists(diskPaths$(1) + memberName$(KK)) Then
 
-                Call ReadTeamStats (teamName$, memberName$(KK))
+                Call ReadTeamStats(teamName$, memberName$(KK))
 
                 Open diskPaths$(1) + memberName$(KK) + "S" For Input As #2
                 Input #2, nbrGames
@@ -239,7 +236,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
                         For I1 = 0 To 13
                             K1 = K1 + 1
-                            plyrLdrStats!(JB, K1) = playerRatings!(I, I1)
+                            plyrLdrStats!(JB, K1) = statPlyrVal!(I, I1)
                         Next I1
 
                         leader3FGM!(JB) = stats3FGM!(I)
@@ -515,7 +512,6 @@ Sub ViewIndividualleaders (printOrView, JB)
 
         ZZ = 1
 
-        'Call MenuBox(2, 4, 66, 20, 15, 12)
         Call ShadowBox(2, 4, 66, 20, 15, 12)
         Locate 10, 15
 
@@ -895,8 +891,7 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
         ZZ = 3
 
-        'Call MenuBox(1, 4, 66, 21, 15, 6)
-        Call ShadowBox(1, 4, 66, 21, 15, 6)
+        Call ShadowBox(1, 4, 66, 21, 7, 6)
         Locate 10, 15
 
         For I = 0 To 19:
@@ -1423,7 +1418,7 @@ Sub DisplayTeamView (printOrView, TVN, maxRecords, categoryId)
 
                             Color 14, 0
                             Cls
-                        
+
                         End If
 
                         ' Print page header
@@ -1516,9 +1511,8 @@ Sub DisplayTeamView (printOrView, TVN, maxRecords, categoryId)
 
                 For W = 1 To maxRecords
 
-                    Print #1, Using "###"; W;
-                    Print #1, " "; expLdrTeam$(W);
-                    Color 15
+                    Print #1, Using "### "; W;
+                    Print #1, expLdrTeam$(W);
 
                     Select Case TVN
 
@@ -1574,17 +1568,16 @@ Sub Leaders_Report (printDest, destFile$, TVN, maxRecords, categoryId)
 
     Open destFile$ For Output As #1
 
-    Print #1, "     PLAYER                  TEAM                     "; expIndCategory$(categoryId)
-
     For W = 1 To maxRecords
 
-        If (W <> 1 And W Mod 50 = 1) Then
+        If (W - 1) Mod 55 = 0 Then
             Print #1, Chr$(12)
             Print #1, "     PLAYER                  TEAM                     "; expIndCategory$(categoryId)
+            Print #1, "     ------                  ----                     ";
+            Print #1, String$(Len(expIndCategory$(categoryId)), 45)
         End If
 
-        Print #1, Using "###"; W;
-        Print #1, " ";
+        Print #1, Using "### "; W;
         Print #1, expLdrPlyrName$(W);
         Print #1, Tab(25); expLdrTeam$(W);
 
@@ -1640,12 +1633,6 @@ Sub GetListLength (printOrView, listLength, maxItems)
         Do
             Color , 0
             Cls
-
-            Print
-            Print
-            Print
-            Print
-            Print
 
             Call MenuBox(10, 20, 30, 2, 4, 15)
             Locate 11
