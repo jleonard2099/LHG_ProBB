@@ -10159,7 +10159,6 @@ Sub SHOTPERCENT (useAssist)
 
                 End If
 
-                '-- This sometimes throws an error
                 shotChance = shotChance + penetrationDefAdj(rndTeam, I2)
 
                 offStatus = 0
@@ -12454,7 +12453,8 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx, dataOK)
 
                 For I1 = 2 To 14
                     plyrRat_GAME(gameIdx, I, I1) = plyrRat_GAME(gameIdx, I, I1) * gamesPlayed * minsPerGame!
-                    plyrRat_GAME(gameIdx, I, 0) = plyrRat_GAME(gameIdx, I, 16) * -1: plyrRat_GAME(gameIdx, I, 1) = plyrRat_GAME(gameIdx, I, 17) * -1
+                    plyrRat_GAME(gameIdx, I, 0) = plyrRat_GAME(gameIdx, I, 16) * -1
+                    plyrRat_GAME(gameIdx, I, 1) = plyrRat_GAME(gameIdx, I, 17) * -1
                 Next I1
 
             End If
