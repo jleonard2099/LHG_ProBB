@@ -250,60 +250,253 @@ Sub PrintRoster (printDest, destFile$, YN$)
 
     Open destFile$ For Output As #1
 
+    XCoord = (80 - Len(teamInfo$(0))) / 2
+
     Print #1,
-    Print #1, "DISK ID:"; YN$
-    Print #1, "TEAM NAME: "; teamInfo$(0); " "; teamInfo$(1)
-    Print #1, Using "RECORD ##"; teamRatings(1) + teamRatings(3);
-    Print #1, "-";
-    Print #1, Using "##    HOME ##"; teamRatings(2) + teamRatings(4); teamRatings(1);
-    Print #1, "-";
-    Print #1, Using "##    ROAD ##"; teamRatings(2); teamRatings(3);
-    Print #1, "-";
-    Print #1, Using "##"; teamRatings(4)
+    Print #1, Tab(XCoord); teamInfo$(0); " "; teamInfo$(1)
+    Print #1, Tab(30); "WON - ";
+    Print #1, Using "##"; teamRatings(1) + teamRatings(3);
+    Print #1, Tab(43); "LOST - ";
+    Print #1, Using "##"; teamRatings(2) + teamRatings(4)
+
+    'Print #1, Using "RECORD ##"; teamRatings(1) + teamRatings(3);
+    'Print #1, "-";
+    'Print #1, Using "##    HOME ##"; teamRatings(2) + teamRatings(4); teamRatings(1);
+    'Print #1, "-";
+    'Print #1, Using "##    ROAD ##"; teamRatings(2); teamRatings(3);
+    'Print #1, "-";
+    'Print #1, Using "##"; teamRatings(4)
     Print #1,
     Print #1, "                                                      OFF DEF  TOT"
-    Print #1, "PLAYER        PS  G  MIN  FGA  FGM  PCT  FTA FTM  PCT REB REB  REB  AST  PF STL BLK  PTS  AVG HI"
+    Print #1, "NAME          POS   G  MIN  FGA  FGM  PCT  FTA  FTM  PCT OREB DREB ASST  FLS"
 
     For I = 0 To 14
 
         If playerNames$(I, 0) <> "" And playerNames$(I, 0) <> "XXX" Then
 
-            'Player Name / PS
-            Print #1, Left$(playerNames$(I, 0), 14); Tab(15); playerNames$(I, 1); Tab(18);
+            'Name
+            Print #1, Left$(playerNames$(I, 0), 14);
 
-            'G, MIN, FGA, FGM
-            Print #1, Using "## #### #### #### "; playerRatings!(I, 0); playerRatings!(I, 1); playerRatings!(I, 2); playerRatings!(I, 3);
+            'Position
+            Print #1, Tab(15); playerNames$(I, 1);
+
+            'Games
+            Print #1, Tab(20); Using "##"; playerRatings!(I, 0);
+
+            'Minutes
+            Print #1, Tab(23); Using "####"; playerRatings!(I, 1);
+
+            'FGA
+            Print #1, Tab(28); Using "####"; playerRatings!(I, 2);
+
+            'FGM
+            Print #1, Tab(33); Using "####"; playerRatings!(I, 3);
 
             'FG PCT
-            If playerRatings!(I, 2) = playerRatings!(I, 3) And playerRatings!(I, 3) <> 0 Then
-                Print #1, "1.000";
+            If playerRatings!(I, 3) = 0 Then 
+                Print #1, Tab(38); ".000";
             End If
-            If playerRatings!(I, 2) <> playerRatings!(I, 3) Then
+            If playerRatings!(I, 3) > 0 Then 
                 fgPCT! = playerRatings!(I, 3) / playerRatings!(I, 2)
-                Print #1, Using ".###"; fgPCT!;
+                Print #1, Tab(38); Using ".###"; fgPCT!;
             End If
 
-            Print #1, Tab(42);
-            'FTA, FTM
-            Print #1, Using "### ### "; playerRatings!(I, 4); playerRatings!(I, 5);
+            'FTA
+            Print #1, Tab(43); Using "####"; playerRatings!(I, 4);
+
+            'FTM
+            Print #1, Tab(48); Using "####"; playerRatings!(I, 5);
 
             'FT PCT
-            If playerRatings!(I, 4) = playerRatings!(I, 5) And playerRatings!(I, 5) <> 0 Then
-                Print #1, "1.000 ";
+            If playerRatings!(I, 5) = 0 Then 
+                Print #1, Tab(53); ".000";
             End If
-            If playerRatings!(I, 4) <> playerRatings!(I, 5) Then
+            If playerRatings!(I, 5) > 0 Then 
                 ftPCT! = playerRatings!(I, 5) / playerRatings!(I, 4)
-                Print #1, Using ".### "; ftPCT!;
+                Print #1, Tab(53); Using ".###"; ftPCT!;
             End If
 
-            Print #1, Tab(55);
-            'Rebounds / AST / Fouls / STL / BLK / PTS / AVG HI
-            Print #1, Using "### ### #### #### ### ### ### #### "; playerRatings!(I, 6); playerRatings!(I, 7); playerRatings!(I, 6) + playerRatings!(I, 7); playerRatings!(I, 8); playerRatings!(I, 9); playerRatings!(I, 11); playerRatings!(I, 12); playerRatings!(I, 3) * 2 + playerRatings!(I, 5) + playerRatings!(I, 14);
-            Print #1, Using "###.# ##"; (playerRatings!(I, 3) * 2 + playerRatings!(I, 5) + playerRatings!(I, 14)) / playerRatings!(I, 0); playerRatings!(I, 15)
+            'Off Reb
+            Print #1, Tab(58); Using "####"; playerRatings!(I, 6);
+
+            'Def Reb
+            Print #1, Tab(63); Using "####"; playerRatings!(I, 7);
+
+            'Assists
+            Print #1, Tab(68); Using "####"; playerRatings!(I, 8);
+
+            'Fouls
+            Print #1, Tab(73); Using "####"; playerRatings!(I, 9)
 
         End If
 
     Next
+
+    Print
+    Print #1, "TOTALS - OFF";
+
+    'Games
+    Print #1, Tab(20); Using "##"; leagueRatings(0);
+
+    'FGA
+    Print #1, Tab(28); Using "####"; teamRatings(5);
+
+    'FGM
+    Print #1, Tab(33); Using "####"; teamRatings(6);
+
+    'FG PCT
+    fgPCT! = teamRatings(6) / teamRatings(5)
+    Print #1, Tab(38); Using ".###"; fgPCT!;
+
+    'FTA
+    Print #1, Tab(43); Using "####"; teamRatings(7);
+
+    'FTM
+    Print #1, Tab(48); Using "####"; teamRatings(8);
+
+    'FT PCT
+    ftPCT! = teamRatings(8) / teamRatings(7)
+    Print #1, Tab(53); Using ".###"; ftPCT!;
+
+    'Off Reb
+    Print #1, Tab(58); Using "####"; teamRatings(9);
+
+    'Def Reb
+    Print #1, Tab(63); Using "####"; teamRatings(10);
+
+    'Assists
+    Print #1, Tab(68); Using "####"; teamRatings(11);
+
+    'Fouls
+    Print #1, Tab(73); Using "####"; teamRatings(12)
+
+    Print #1, "TOTALS - DEF";
+
+    'FGA
+    Print #1, Tab(28); Using "####"; teamRatings(19);
+
+    'FGM
+    Print #1, Tab(33); Using "####"; teamRatings(20);
+
+    'FG PCT
+    fgPCT! = teamRatings(20) / teamRatings(19)
+    Print #1, Tab(38); Using ".###"; fgPCT!;
+
+    'FTA
+    Print #1, Tab(43); Using "####"; teamRatings(21);
+
+    'FTM
+    Print #1, Tab(48); Using "####"; teamRatings(22);
+
+    ftPCT! = teamRatings(22) / teamRatings(21)
+    Print #1, Tab(53); Using ".###"; ftPCT!;
+
+    'Off Reb
+    Print #1, Tab(58); Using "####"; teamRatings(23);
+
+    'Def Reb
+    Print #1, Tab(63); Using "####"; teamRatings(24);
+
+    'Assists
+    Print #1, Tab(68); Using "####"; teamRatings(25);
+
+    'Fouls
+    Print #1, Tab(73); Using "####"; teamRatings(26)
+
+    'NEW PAGE
+    Print #1, Chr$(12)
+
+    Print #1,
+    Print #1, Tab(XCoord); teamInfo$(0); " "; teamInfo$(1)
+    Print #1, Tab(30); "WON - ";
+    Print #1, Using "##"; teamRatings(1) + teamRatings(3);
+    Print #1, Tab(43); "LOST - ";
+    Print #1, Using "##"; teamRatings(2) + teamRatings(4)
+    
+    ' Second page of ratings
+    Print #1, "NAME           STL  BLK 3FGA 3FGM  PCT   HI-GAME"
+    For I = 0 To 14
+
+        If Left$(playerNames$(I, 0), 3) <> "XXX" Then
+
+            'Name
+            Print #1,  Left$(playerNames$(I, 0), 14);
+
+            'Steals
+            Print #1, Tab(15); Using "####"; playerRatings!(I, 11);
+
+            'Blocks
+            Print #1, Tab(20); Using "####"; playerRatings!(I, 12);
+
+            '3FGA
+            Print #1, Tab(25); Using "####"; playerRatings!(I, 13);
+
+            '3FGM
+            Print #1, Tab(30); Using "####"; playerRatings!(I, 14);
+
+            '3FG PCT
+            If playerRatings!(I, 14) = 0 Then 
+                Print #1, Tab(35); ".000";
+            End If
+            If playerRatings!(I, 14) > 0 Then 
+                threeFGPCT! = playerRatings!(I, 14) / playerRatings!(I, 13)
+                Print #1, Tab(35); Using ".###"; threeFGPCT!;
+            End If
+
+            'HI GAME
+            Print #1, Tab(43); Using "####"; playerRatings!(I, 15)
+            'Print #1, Tab(53); USING "####"; playerRatings!(I, 16);
+            'Print #1, Tab(65); USING "####"; playerRatings!(I, 17)
+
+        End If
+
+    Next
+
+    Print
+    Print #1, "TOTALS - OFF";
+
+    'Steals
+    Print #1, Tab(80); Using "####"; teamRatings(14);
+
+    'Blocks
+    Print #1, Tab(85); Using "####"; teamRatings(16);
+
+    '3FGA
+    Print #1, Tab(95); Using "####"; teamRatings(17);
+
+    '3FGM
+    Print #1, Tab(100); Using "####"; teamRatings(18);
+
+    '3FG PCT
+    If teamRatings(18) = 0 Then Print #1, Tab(35); ".000"
+
+    If teamRatings(18) > 0 Then
+        statPCT! = teamRatings(18) / teamRatings(17)
+        Print #1, Tab(35); Using ".###"; statPCT!
+    End If
+
+    Print #1, "TOTALS - DEF";
+
+    'Steals
+    Print #1, Tab(15); Using "####"; teamRatings(28);
+
+    'Blocks
+    Print #1, Tab(20); Using "####"; teamRatings(30);
+
+    '3FGA
+    Print #1, Tab(25); Using "####"; teamRatings(31);
+
+    '3FGM
+    Print #1, Tab(30); Using "####"; teamRatings(32);
+
+    '3FG PCT
+    If teamRatings(32) = 0 Then Print #1, Tab(35); ".000"
+
+    If teamRatings(32) > 0 Then
+        statPCT! = teamRatings(32) / teamRatings(31)
+        Print #1, Tab(35); Using ".###"; statPCT!
+    End If
+
 
     If printDest = 1 Then
 
@@ -340,24 +533,24 @@ Sub ViewRoster ()
         Color 0, 0
         Cls
 
-        Color teamRatings(33), teamRatings(34): Print teamInfo$(0); " "; teamInfo$(1);
+        XCoord = (80 - Len(teamInfo$(0))) / 2
+        Locate 2, XCoord
+        Color teamRatings(33), teamRatings(34): Print teamInfo$(0); " "; teamInfo$(1)
 
         Color 14, 0
-        Print Tab(40); "WON - ";
+        Print Tab(30); "WON - ";
         Color 15
         Print Using "##"; teamRatings(1) + teamRatings(3);
 
         Color 14
-        Print Tab(50); "LOST - ";
+        Print Tab(43); "LOST - ";
         Color 15
         Print Using "##"; teamRatings(2) + teamRatings(4)
 
-        Color 15
-
-        Locate 3
+        Locate 5, 1
+        Color 14
         Print "NAME          POS   G  MIN  FGA  FGM  PCT  FTA  FTM  PCT OREB DREB ASST  FLS"
-
-        Locate 4
+        Color 15
 
         For I = 0 To 14
 
@@ -382,8 +575,13 @@ Sub ViewRoster ()
                 Print Tab(33); Using "####"; playerRatings!(I, 3);
 
                 'FG PCT
-                If playerRatings!(I, 3) = 0 Then Print Tab(38); ".000";
-                If playerRatings!(I, 3) > 0 Then fgPCT! = playerRatings!(I, 3) / playerRatings!(I, 2): Print Tab(38); Using ".###"; fgPCT!;
+                If playerRatings!(I, 3) = 0 Then 
+                    Print Tab(38); ".000";
+                End If
+                If playerRatings!(I, 3) > 0 Then 
+                    fgPCT! = playerRatings!(I, 3) / playerRatings!(I, 2)
+                    Print Tab(38); Using ".###"; fgPCT!;
+                End If
 
                 'FTA
                 Print Tab(43); Using "####"; playerRatings!(I, 4);
@@ -392,8 +590,13 @@ Sub ViewRoster ()
                 Print Tab(48); Using "####"; playerRatings!(I, 5);
 
                 'FT PCT
-                If playerRatings!(I, 5) = 0 Then Print Tab(53); ".000";
-                If playerRatings!(I, 5) > 0 Then ftPCT! = playerRatings!(I, 5) / playerRatings!(I, 4): Print Tab(53); Using ".###"; ftPCT!;
+                If playerRatings!(I, 5) = 0 Then 
+                    Print Tab(53); ".000";
+                End If
+                If playerRatings!(I, 5) > 0 Then 
+                    ftPCT! = playerRatings!(I, 5) / playerRatings!(I, 4)
+                    Print Tab(53); Using ".###"; ftPCT!;
+                End If
 
                 'Off Reb
                 Print Tab(58); Using "####"; playerRatings!(I, 6);
@@ -411,9 +614,9 @@ Sub ViewRoster ()
 
         Next
 
-        Color 14
+        Color 12
         Print
-        Print "TOTALS-OFF";
+        Print "TOTALS - OFF";
 
         'Games
         Print Tab(20); Using "##"; leagueRatings(0);
@@ -450,7 +653,8 @@ Sub ViewRoster ()
         'Fouls
         Print Tab(73); Using "####"; teamRatings(12)
 
-        Color 11: Print "TOTALS-DEF";
+        Color 6
+        Print "TOTALS - DEF";
 
         'FGA
         Print Tab(28); Using "####"; teamRatings(19);
@@ -483,19 +687,31 @@ Sub ViewRoster ()
         'Fouls
         Print Tab(73); Using "####"; teamRatings(26)
 
-        Color 15
-
-        Locate LAST_ROW - 2: Print "HIT ANY KEY TO CONTINUE"
+        Color 14
+        Locate LAST_ROW - 2, 28
+        Print "HIT ANY KEY TO CONTINUE"
         I$ = GetKeyPress$
 
         Cls
+
+        XCoord = (80 - Len(teamInfo$(0))) / 2
+        Locate 2, XCoord
         Color teamRatings(33), teamRatings(34): Print teamInfo$(0); " "; teamInfo$(1)
 
-        Color 15, 0
+        Color 14, 0
+        Print Tab(30); "WON - ";
+        Color 15
+        Print Using "##"; teamRatings(1) + teamRatings(3);
 
-        Locate 3
+        Color 14
+        Print Tab(43); "LOST - ";
+        Color 15
+        Print Using "##"; teamRatings(2) + teamRatings(4)
+
+        Locate 5, 1
+        Color 14
         Print "NAME           STL  BLK 3FGA 3FGM  PCT   HI-GAME"
-        Locate 4
+        Color 15
 
         For I = 0 To 14
 
@@ -517,8 +733,13 @@ Sub ViewRoster ()
                 Print Tab(30); Using "####"; playerRatings!(I, 14);
 
                 '3FG PCT
-                If playerRatings!(I, 14) = 0 Then Print Tab(35); ".000";
-                If playerRatings!(I, 14) > 0 Then threeFGPCT! = playerRatings!(I, 14) / playerRatings!(I, 13): Print Tab(35); Using ".###"; threeFGPCT!;
+                If playerRatings!(I, 14) = 0 Then 
+                    Print Tab(35); ".000";
+                End If
+                If playerRatings!(I, 14) > 0 Then 
+                    threeFGPCT! = playerRatings!(I, 14) / playerRatings!(I, 13)
+                    Print Tab(35); Using ".###"; threeFGPCT!;
+                End If
 
                 'HI GAME
                 Print Tab(43); Using "####"; playerRatings!(I, 15)
@@ -529,9 +750,9 @@ Sub ViewRoster ()
 
         Next
 
-        Color 14
+        Color 12
         Print
-        Print "TOTALS-OFF";
+        Print "TOTALS - OFF";
 
         'Steals
         Print Tab(15); Using "####"; teamRatings(14);
@@ -553,8 +774,8 @@ Sub ViewRoster ()
             Print Tab(35); Using ".###"; statPCT!
         End If
 
-        Color 11
-        Print "TOTALS-DEF";
+        Color 6
+        Print "TOTALS - DEF";
 
         'Steals
         Print Tab(15); Using "####"; teamRatings(28);
@@ -576,11 +797,11 @@ Sub ViewRoster ()
             Print Tab(35); Using ".###"; statPCT!
         End If
 
-        Color 15
-        Print
-        Print "VIEW AGAIN? (Y/N)"
-
         Do
+            Color 15
+            Locate LAST_ROW - 2, 31
+            Color 14
+            Print "VIEW AGAIN? (Y/N)"
             I$ = GetKeyPress$
         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
