@@ -44,7 +44,7 @@ Sub HD2HDLEAG ()
                     MsgText$ = "NO COMPILED STATS COULD BE FOUND FOR THIS TEAM. PRESS ANY KEY TO RETURN TO THE MAIN MENU"
                     BoxWidth = 24
                     BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-                    Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                    Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
                     Call CSMsgBox(MsgText$, BoxWidth, Pass)
                     J$ = GetKeyPress$
                     Call CSMsgBox("", 0, Pass)
@@ -973,7 +973,7 @@ Sub Hd2HdPro_Screen (teamName$)
             Locate , 59: Print Using "###"; totHomeLosses(RDD) + totAwayLosses(RDD)
 
             Color 14
-            Locate 23, 5: Print "HIT ANY KEY TO CONTINUE"
+            Locate LAST_ROW - 2, 5: Print "HIT ANY KEY TO CONTINUE"
 
             I$ = GetKeyPress$
 
@@ -1230,7 +1230,7 @@ Sub Hd2HdPro_Screen (teamName$)
     End If
 
     Color 14
-    Locate 23, 5: Print "HIT ANY KEY TO CONTINUE";
+    Locate LAST_ROW - 2, 5: Print "HIT ANY KEY TO CONTINUE";
 
     I$ = GetKeyPress$
 

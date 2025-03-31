@@ -23,9 +23,13 @@ Sub GPMIN ()
 
             Color , 0
             Cls
+
+            XCoord = (80 - Len(teamInfo$(0))) / 2
+            Locate 2, XCoord
             Color teamRatings(33), teamRatings(34): Print teamInfo$(0)
-            Color 15, 0
-            Color 12
+
+            Color 12, 0
+            Locate 4, 1
             Print "   PLAYERS                 ACTUAL           ADJUSTED"
             Color 14
             Print "                          GP   MPG         GP    MPG"
@@ -52,34 +56,39 @@ Sub GPMIN ()
                     adjustedMPG! = playerRatings!(I, 17) / playerRatings!(I, 16)
                     adjustedGP! = playerRatings!(I, 16) * -1
 
-                    Print Using "##"; playerRatings!(I, 0);
-                    Print "  ";
-                    Print Using "##.#"; actualMPG!;
-                    Print "         ";
-                    Print Using "##"; adjustedGP!;
-                    Print "   ";
+                    Print Using "##  "; playerRatings!(I, 0);
+                    Print Using "##.#         "; actualMPG!;
+                    Print Using "##   "; adjustedGP!;
                     Print Using "##.#"; adjustedMPG!
                 End If
+
             Next
 
             Color 14: Print "15 ";
             Color 15: Print "END AND SAVE CHANGES"
-            Print
-            Print "TEAM MIN/G SHOULD BE APPROXIMATELY 240, OVERTIME WILL INCREASE THIS FIGURE"
             teamTotalMins! = MIN / teamRatings(0)
-            Print Using "TEAM MIN/G = ###.#"; teamTotalMins!
+            Locate 23, 1
+            Color 14: Print "TEAM MIN/G = ";
+            Color 15
+            Print Using "###.#"; teamTotalMins!
+            Print "SHOULD BE APPROXIMATELY 240"
+            Print "(OVERTIME WILL INCREASE THIS FIGURE)"
 
             Do
-                Locate 23, 1
-                Input "ENTER SELECTION "; B1
+
+                Locate 27, 1
+                Color 12: Print "ENTER SELECTION ";
+                Color 15
+                Input B1
 
                 If B1 < 15 Then
-                    Locate 23, 1: Print Space$(38);
-                    Locate 23, 1: Print playerNames$(B1, 0); " ";
+
+                    Locate 28, 1: Print Space$(38);
+                    Locate 28, 1: Print playerNames$(B1, 0); " ";
                     Input "GAMES PLAYED "; gamesPlayed
 
-                    Locate 23, 1: Print Space$(38);
-                    Locate 23, 1: Print playerNames$(B1, 0); " ";
+                    Locate 28, 1: Print Space$(38);
+                    Locate 28, 1: Print playerNames$(B1, 0); " ";
                     Input "MINUTES PER GAME "; minutesPerGame
 
                     playerRatings!(B1, 16) = gamesPlayed * -1
@@ -148,3 +157,4 @@ Sub GPMIN ()
     End If 'Done checking for ESC
 
 End Sub
+

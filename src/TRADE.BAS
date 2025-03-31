@@ -119,7 +119,7 @@ Sub LoadStatsForTrade (tradeIdx)
             MsgText$ = "NO COMPILED STATS COULD BE FOUND FOR THIS TEAM. PRESS ANY KEY TO RETURN TO THE MAIN MENU"
             BoxWidth = 24
             BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-            Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+            Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
             Call CSMsgBox(MsgText$, BoxWidth, Pass)
             I$ = GetKeyPress$
             Call CSMsgBox("", 0, Pass)
@@ -247,7 +247,7 @@ Sub ContinueTrade ()
                     Color 15, 0
 
                     Do
-                        Locate 23, 1: Print "ANY CHANGE? (Y/N) ";
+                        Locate LAST_ROW - 2, 1: Print "ANY CHANGE? (Y/N) ";
                         J$ = GetKeyPress$
                     Loop Until UCase$(J$) = "Y" Or UCase$(J$) = "N"
 
@@ -256,7 +256,7 @@ Sub ContinueTrade ()
                 Call PrintTradeSummary(I1, I2)
 
                 Color 15
-                Locate 23, 1: Print "HIT ANY KEY TO TRADE";
+                Locate LAST_ROW - 2, 1: Print "HIT ANY KEY TO TRADE";
                 K$ = GetKeyPress$
 
                 For I3 = 0 To 1:
@@ -295,7 +295,7 @@ Sub ContinueTrade ()
                 Call PrintTradeSummary(I1, I2)
 
                 Color 15
-                Locate 23, 1: Print "HIT ANY KEY TO CONTINUE";
+                Locate LAST_ROW - 2, 1: Print "HIT ANY KEY TO CONTINUE";
                 K$ = GetKeyPress$
 
             Case 2
@@ -571,7 +571,7 @@ Sub ChooseTradeTeam (yearNumber$, numberTeams, chosenIdx, teamName$, tradeIdx)
                         MsgText$ = "NO TEAM FILES COULD BE FOUND MATCHING THIS ID. PRESS ANY KEY TO RETURN TO THE MAIN MENU"
                         BoxWidth = 24
                         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-                        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                        Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
                         Call CSMsgBox(MsgText$, BoxWidth, Pass)
                         I$ = GetKeyPress$
                         Call CSMsgBox("", 0, Pass)
@@ -658,21 +658,27 @@ Sub SelectTradeTeam (numberTeams, yearNumber$, selectedIdx, ExitCode%, tradeIdx)
         Start% = 1
         FileFGColor = 15: FileBGColor = 4
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
-        Rows% = 20
+        Rows% = LAST_ROW - 6
         Columns% = 4
         Spacing% = 6
-        Row% = 4
+        Row% = 5
         Column% = 1
 
         Color , 4
         Cls
+
         Color 14
-        Locate , 33: Print "TEAM"; tradeIdx; "SELECTION"
-        Locate 25, 1
-        Color 14: Print "ESC";
-        Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";
-        Color 14: Print "ENTER";
+        Locate , 33: Print "TEAM SELECTION"
+        Locate LAST_ROW, 1
+        Color 14
+        Print Tab(3); "PG DN";
+        Print Tab(18); "ENTER";
         Color 15: Print "-SELECTS TEAM";
+        Color 14
+        Print Tab(39); "ESC";
+        Color 15: Print "-SELECT NEW ID";
+        Color 14
+        Print Tab(72); "PG UP";
 
         _MouseShow "DEFAULT"
         MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%

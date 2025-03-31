@@ -170,24 +170,21 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
     Shared statPlyrNames$(), tmLeaderTeams$()
 
     Shared plyrLdrStats!(), plyrLdrVal!()
-    Shared plyrLeaderYears!(), playerRatings!()
-    Shared teamLdrVal!(), totGames!(), tmLeaderYears!()
+    Shared plyrLeaderGames!(), statPlyrVal!()
+    Shared teamLdrVal!(), totGames!(), tmLeaderGames!()
 
     Shared leader3FGM!(), leader3FGA!()
     Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
 
     Erase expPlyrLdrName$, expPlyrLdrTeam$
-    Erase memberName$, plyLeaderTeams$
-    Erase statPlyrNames$, tmLeaderTeams$
+    Erase plyLeaderTeams$, tmLeaderTeams$
 
     Erase plyrLdrStats!, plyrLdrVal!
-    Erase plyrLeaderYears!, playerRatings!
-    Erase teamLdrVal!, totGames!, tmLeaderYears!
+    Erase plyrLeaderGames!
+    Erase teamLdrVal!, totGames!, tmLeaderGames!
 
     Erase leader3FGM!, leader3FGA!
-    Erase stats3FGM!, stats3FGA!
-    Erase statsOffTot!, statsDefTot!
 
     Color 15, 0
     Cls
@@ -204,10 +201,10 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
             If _FileExists(diskPaths$(1) + memberName$(KK)) Then
 
-                Call ReadTeamStats (teamName$, memberName$(KK))
+                Call ReadTeamStats(teamName$, memberName$(KK))
 
                 Open diskPaths$(1) + memberName$(KK) + "S" For Input As #2
-                Input #2, year
+                Input #2, nbrGames
                 Close #2
 
                 plyrTotalStats = plyrTotalStats + 1
@@ -215,7 +212,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
                 For I = 0 To 14:
                     plyrLdrVal!(plyrTotalStats, I) = statsOffTot!(I)
                     plyLeaderTeams$(plyrTotalStats, I) = teamName$
-                    plyrLeaderYears!(plyrTotalStats) = year
+                    plyrLeaderGames!(plyrTotalStats) = nbrGames
                 Next
 
                 teamTotalStats = teamTotalStats + 1
@@ -223,7 +220,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
                 For I = 0 To 14:
                     teamLdrVal!(teamTotalStats, I) = statsDefTot!(I)
                     tmLeaderTeams$(teamTotalStats, I) = teamName$
-                    tmLeaderYears!(teamTotalStats) = year
+                    tmLeaderGames!(teamTotalStats) = nbrGames
                 Next
 
                 For I = 0 To 14
@@ -234,12 +231,12 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
                         expPlyrLdrName$(JB) = statPlyrNames$(I)
                         TBN = TBN + 1
                         expPlyrLdrTeam$(TBN) = teamName$
-                        totGames!(JB) = year
+                        totGames!(JB) = nbrGames
                         K1 = 0
 
                         For I1 = 0 To 13
                             K1 = K1 + 1
-                            plyrLdrStats!(JB, K1) = playerRatings!(I, I1)
+                            plyrLdrStats!(JB, K1) = statPlyrVal!(I, I1)
                         Next I1
 
                         leader3FGM!(JB) = stats3FGM!(I)
@@ -269,7 +266,7 @@ Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
     Shared expPlyrLdrTeam$(), tmLeaderTeams$()
 
     Shared plyrLdrStats!()
-    Shared plyrLeaderYears!(), totGames!(), tmLeaderYears!()
+    Shared plyrLeaderGames!(), totGames!(), tmLeaderGames!()
     Shared plyrLdrVal!(), teamLdrVal!()
     Shared leader3FGM!(), leader3FGA!()
 
@@ -317,7 +314,7 @@ Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
         Locate 18, 38
         TMR = TMR - 1
         Print Using "#####"; TMR
-        Write #1, plyrLeaderYears!(I)
+        Write #1, plyrLeaderGames!(I)
 
     Next
 
@@ -331,7 +328,7 @@ Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
         Locate 18, 38
         TMR = TMR - 1
         Print Using "#####"; TMR
-        Write #1, tmLeaderYears!(I)
+        Write #1, tmLeaderGames!(I)
 
     Next
 
@@ -351,7 +348,7 @@ Sub ReadLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
     Shared plyLeaderTeams$(), tmLeaderTeams$()
 
     Shared plyrLdrStats!()
-    Shared plyrLeaderYears!(), tmLeaderYears!(), totGames!()
+    Shared plyrLeaderGames!(), tmLeaderGames!(), totGames!()
     Shared plyrLdrVal!(), teamLdrVal!()
     Shared leader3FGM!(), leader3FGA!()
 
@@ -367,7 +364,7 @@ Sub ReadLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
         MsgText$ = "NO COMPILED LEADER FILES WERE FOUND. PRESS ANY KEY TO RETURN TO MAIN MENU"
         BoxWidth = 20
         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+        Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
         Call CSMsgBox(MsgText$, BoxWidth, Pass)
         I$ = GetKeyPress$
         Call CSMsgBox("", 0, Pass)
@@ -411,7 +408,7 @@ Sub ReadLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
             Locate 18, 38
             TMR = TMR - 1
             Print Using "#####"; TMR
-            Input #1, plyrLeaderYears!(I)
+            Input #1, plyrLeaderGames!(I)
 
         Next
 
@@ -425,7 +422,7 @@ Sub ReadLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
             Locate 18, 38
             TMR = TMR - 1
             Print Using "#####"; TMR
-            Input #1, tmLeaderYears!(I)
+            Input #1, tmLeaderGames!(I)
 
         Next
 
@@ -515,7 +512,7 @@ Sub ViewIndividualleaders (printOrView, JB)
 
         ZZ = 1
 
-        Call MenuBox (2, 4, 66, 20, 15, 12)
+        Call ShadowBox(2, 4, 66, 20, 15, 12)
         Locate 10, 15
 
         Do
@@ -881,7 +878,7 @@ End Sub
 'routines to sort and display the results.
 Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
-    Shared plyrLeaderYears!(), tmLeaderYears!()
+    Shared plyrLeaderGames!(), tmLeaderGames!()
     Shared plyrLdrVal!(), teamLdrVal!(), expLdrVal!()
 
     Shared expTeamCategory$(), plyLeaderTeams$()
@@ -891,14 +888,10 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
         Color , 0
         Cls
-        Print
-        Print
-        Print
-        Print
 
         ZZ = 3
 
-        Call MenuBox(1, 4, 66, 21, 15, 6)
+        Call ShadowBox(1, 4, 66, 21, 7, 6)
         Locate 10, 15
 
         For I = 0 To 19:
@@ -1015,7 +1008,7 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
                 Case 12:
                     For I = 1 To plyrTotalStats
                         expLdrTeam$(I) = plyLeaderTeams$(I, X0)
-                        expLdrVal!(I) = plyrLdrVal!(I, X0) / plyrLeaderYears!(I)
+                        expLdrVal!(I) = plyrLdrVal!(I, X0) / plyrLeaderGames!(I)
                     Next
 
                     Call SortTeam(teamTotalStats, stpl, sortType)
@@ -1025,7 +1018,7 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
                 Case 18:
                     For I = 1 To plyrTotalStats
                         expLdrTeam$(I) = plyLeaderTeams$(I, X0)
-                        expLdrVal!(I) = ((plyrLdrVal!(I, X0) * 2) + plyrLdrVal!(I, X1) + plyrLdrVal!(I, X2)) / plyrLeaderYears!(I)
+                        expLdrVal!(I) = ((plyrLdrVal!(I, X0) * 2) + plyrLdrVal!(I, X1) + plyrLdrVal!(I, X2)) / plyrLeaderGames!(I)
                     Next
 
                     Call SortTeam(teamTotalStats, stpl, sortType)
@@ -1072,7 +1065,7 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
                 Case 31:
                     For I = 1 To teamTotalStats
                         expLdrTeam$(I) = tmLeaderTeams$(I, X0)
-                        expLdrVal!(I) = teamLdrVal!(I, X0) / tmLeaderYears!(I)
+                        expLdrVal!(I) = teamLdrVal!(I, X0) / tmLeaderGames!(I)
                     Next
 
                     Call SortTeam(teamTotalStats, stpl, sortType)
@@ -1082,7 +1075,7 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
                 Case 37:
                     For I = 1 To teamTotalStats
                         expLdrTeam$(I) = tmLeaderTeams$(I, X0)
-                        expLdrVal!(I) = ((teamLdrVal!(I, X0) * 2) + teamLdrVal!(I, X1) + teamLdrVal!(I, X2)) / tmLeaderYears!(I)
+                        expLdrVal!(I) = ((teamLdrVal!(I, X0) * 2) + teamLdrVal!(I, X1) + teamLdrVal!(I, X2)) / tmLeaderGames!(I)
                     Next
 
                     Call SortTeam(teamTotalStats, stpl, sortType)
@@ -1186,9 +1179,12 @@ Sub PrintViewReselect (userOpt$)
 
     Color 12
     Locate , 30: Print "SELECT OPTION:"
-    Locate , 30: Color 14: Print "P";: Color 7: Print "RINT"
-    Locate , 30: Color 14: Print "V";: Color 7: Print "IEW"
-    Locate , 30: Color 14: Print "R";: Color 7: Print "E-SELECT OPTION"
+    Locate , 30: Color 14: Print "P";
+    Color 7: Print "RINT"
+    Locate , 30: Color 14: Print "V";
+    Color 7: Print "IEW"
+    Locate , 30: Color 14: Print "R";
+    Color 7: Print "E-SELECT OPTION"
 
     Do
         userOpt$ = GetKeyPress$
@@ -1295,33 +1291,40 @@ Sub DisplayLeaders (TVN, maxRecords, categoryId)
 
         Color 14, 0
         Cls
-        Print "     PLAYER                  TEAM                     "; expIndCategory$(categoryId)
 
         For W = 1 To maxRecords
 
-            If W <> 1 And (W Mod 20 = 1) Then
+            ' Every 25 records ? new page (but skip prompt on the first page)
+            If (W - 1) Mod 25 = 0 Then
 
-                Color 14
-                Locate 23: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
-                Color 15
+                If W > 1 Then
 
-                I$ = GetKeyPress$
+                    Color 14
+                    Locate LAST_ROW - 1, 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)";
+                    Color 15
 
-                If I$ = Chr$(27) Then
-                    userExit% = 1
-                Else
+                    I$ = GetKeyPress$
+
+                    If I$ = Chr$(27) Then
+                        userExit% = 1
+                        Exit For
+                    End If
+
                     Color 14, 0
                     Cls
-                    Print "     PLAYER                  TEAM                     "; expIndCategory$(categoryId)
+
                 End If
+
+                ' Print page header
+                Locate 2, 1
+                Print "     PLAYER                  TEAM                     "; expIndCategory$(categoryId)
 
             End If
 
             If userExit% <> 1 Then
 
                 Color 12
-                Print Using "###"; W;
-                Print " ";
+                Print Using "### "; W;
                 Color 3: Print expLdrPlyrName$(W);
                 Color 15
                 Print Tab(25); expLdrTeam$(W);
@@ -1348,19 +1351,20 @@ Sub DisplayLeaders (TVN, maxRecords, categoryId)
         If userExit% <> 1 Then
 
             Color 14
-            Locate 23: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+            Locate LAST_ROW - 1, 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)";
             Color 15
 
             I$ = GetKeyPress$
 
             If I$ <> Chr$(27) Then
 
-                Locate 22: Print Space$(64)
                 Color 14
+                Locate LAST_ROW - 1, 15
+                Print Space$(50);
+                Locate LAST_ROW - 1, 32
+                Print "VIEW AGAIN? (Y/N)";
 
                 Do
-                    Locate 22
-                    Print "VIEW AGAIN? (Y/N)"
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
@@ -1394,36 +1398,39 @@ Sub DisplayTeamView (printOrView, TVN, maxRecords, categoryId)
                 Color 14, 0
                 Cls
 
-                Print "     TEAM                     "; expTeamCategory$(categoryId)
-
                 For W = 1 To maxRecords
 
-                    If W <> 1 And (W Mod 20 = 1) Then
+                    ' Every 25 records ? new page (but skip prompt on the first page)
+                    If (W - 1) Mod 25 = 0 Then
 
-                        Color 14
-                        Locate 23: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
-                        Color 15
+                        If W > 1 Then
 
-                        I$ = GetKeyPress$
+                            Color 14
+                            Locate LAST_ROW - 2: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+                            Color 15
 
-                        If I$ = Chr$(27) Then
-                            userExit% = 1
-                        Else
+                            I$ = GetKeyPress$
+
+                            If I$ = Chr$(27) Then
+                                userExit% = 1
+                                Exit For
+                            End If
 
                             Color 14, 0
                             Cls
 
-                            Print "     TEAM                     "; expTeamCategory$(categoryId)
-
                         End If
+
+                        ' Print page header
+                        Locate 2, 1
+                        Print "     TEAM                     "; expTeamCategory$(categoryId)
 
                     End If
 
                     If userExit% <> 1 Then
 
                         Color 12
-                        Print Using "###"; W;
-                        Print " ";
+                        Print Using "### "; W;
                         Color 3: Print expLdrTeam$(W);
                         Color 15
 
@@ -1440,6 +1447,10 @@ Sub DisplayTeamView (printOrView, TVN, maxRecords, categoryId)
 
                         End Select
 
+                    Else
+
+                        Exit Do
+
                     End If
 
                 Next W
@@ -1447,17 +1458,20 @@ Sub DisplayTeamView (printOrView, TVN, maxRecords, categoryId)
                 If userExit% <> 1 Then
 
                     Color 14
-                    Locate 23: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+                    Locate LAST_ROW - 1, 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
                     Color 15
 
                     I$ = GetKeyPress$
 
                     If I$ <> Chr$(27) Then
 
+                        Color 14
+                        Locate LAST_ROW - 1, 15
+                        Print Space$(50);
+                        Locate LAST_ROW - 1, 32
+                        Print "VIEW AGAIN? (Y/N)";
+
                         Do
-                            Locate 22: Print Space$(64)
-                            Color 14
-                            Locate 22: Print "VIEW AGAIN? (Y/N)"
                             A$ = GetKeyPress$
                         Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
 
@@ -1497,9 +1511,8 @@ Sub DisplayTeamView (printOrView, TVN, maxRecords, categoryId)
 
                 For W = 1 To maxRecords
 
-                    Print #1, Using "###"; W;
-                    Print #1, " "; expLdrTeam$(W);
-                    Color 15
+                    Print #1, Using "### "; W;
+                    Print #1, expLdrTeam$(W);
 
                     Select Case TVN
 
@@ -1555,17 +1568,16 @@ Sub Leaders_Report (printDest, destFile$, TVN, maxRecords, categoryId)
 
     Open destFile$ For Output As #1
 
-    Print #1, "     PLAYER                  TEAM                     "; expIndCategory$(categoryId)
-
     For W = 1 To maxRecords
 
-        If (W <> 1 And W Mod 50 = 1) Then
+        If (W - 1) Mod 55 = 0 Then
             Print #1, Chr$(12)
             Print #1, "     PLAYER                  TEAM                     "; expIndCategory$(categoryId)
+            Print #1, "     ------                  ----                     ";
+            Print #1, String$(Len(expIndCategory$(categoryId)), 45)
         End If
 
-        Print #1, Using "###"; W;
-        Print #1, " ";
+        Print #1, Using "### "; W;
         Print #1, expLdrPlyrName$(W);
         Print #1, Tab(25); expLdrTeam$(W);
 
@@ -1621,12 +1633,6 @@ Sub GetListLength (printOrView, listLength, maxItems)
         Do
             Color , 0
             Cls
-
-            Print
-            Print
-            Print
-            Print
-            Print
 
             Call MenuBox(10, 20, 30, 2, 4, 15)
             Locate 11

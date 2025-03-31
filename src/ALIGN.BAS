@@ -25,9 +25,14 @@ Sub ALIGN ()
 
     Do
 
-        Call GetMergePaths(pathCurrentStats$, pathRoadStats$, I$)
+        'Call GetMergePaths(pathCurrentStats$, pathRoadStats$, I$)
+        pathCurrentStats$ = diskPaths$(1)
+        pathRoadStats$ = _SelectFolderDialog$("Select folder with ROAD stats", diskPaths$(1))
 
-        If UCase$(I$) = "N" And I$ <> Chr$(27) Then
+        'If UCase$(I$) = "N" And I$ <> Chr$(27) Then
+        If pathRoadStats$ <> "" Then
+
+            pathRoadStats$ = pathRoadStats$ + "\"
 
             Locate 15, 5: Print Space$(55)
             Locate 16, 5: Print Space$(55)
@@ -159,16 +164,16 @@ Sub AlignStats (pathRoadStats$, statFile$)
 
     Cls
 
-    Locate 1, 34
-    Color 12: Print "STAT ROSTERS"
+    Color 12
+    Locate 1, 34: Print "STAT ROSTERS"
 
     Color 15
-    Locate , 26: Print "CURRENT  ";
-    Color 7: Print "             ROAD"
+    Locate 3, 26: Print "CURRENT";
+    Color 7: Print Tab(48); "ROAD"
 
     For I = 0 To 14
 
-        Locate I + 4, 22
+        Locate I + 5, 22
 
         Color 12: Print Using "##"; I;
         Print " ";
@@ -180,8 +185,7 @@ Sub AlignStats (pathRoadStats$, statFile$)
     Next
 
     Color 11
-    Locate 22: Line Input "HIT ENTER TO ALIGN"; DUMMY$
-    Locate 22: Print "ALIGNING FILES . . .             "
+    Locate 24, 31: Line Input "HIT ENTER TO ALIGN"; DUMMY$
 
     N = 0
 
@@ -224,10 +228,10 @@ Sub AlignStats (pathRoadStats$, statFile$)
             Else
                 Color 14
                 Locate 20
-                Print "WARNING !! - - ROAD STAT FILE CONTAINS PLAYERS NOT IN EXISTING STATS.  YOU MUST"
-                Print "CHANGE ROAD STAT FILE USING OPTION #6 ON GAME MENU BEFORE ATTEMPTING STAT MERGE."
+                Print "WARNING !! ROAD STAT FILE CONTAINS PLAYERS NOT IN EXISTING STATS."
+                Print "YOU MUST MODIFY ROAD STAT FILE BEFORE ATTEMPTING MERGE."
                 Color 13
-                Locate 23, 30
+                Locate LAST_ROW - 2, 30
                 Line Input "HIT ENTER TO CONTINUE"; DUMMY$
             End If 'Done checking if players are in sequence
 
@@ -239,7 +243,7 @@ End Sub
 
 
 '----------------------------------------
-'    ReviewAndSaveAlignment Subroutine
+'   ReviewAndSaveAlignment Subroutine
 '----------------------------------------
 'This routine displays the results of the 
 'player name alignment, then gives the end
@@ -256,16 +260,16 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
 
     Cls
 
-    Locate 1, 32
-    Color 12: Print "STAT ROSTERS"
+    Color 12
+    Locate 1, 34: Print "STAT ROSTERS"
 
     Color 15
-    Locate , 26: Print "CURRENT  ";
-    Color 7: Print "             ROAD"
+    Locate 3, 26: Print "CURRENT";
+    Color 7: Print Tab(48); "ROAD"
 
     For I = 0 To 14:
         Color 12
-        Locate I + 4, 22: Print Using "##"; I;
+        Locate I + 5, 22: Print Using "##"; I;
         Print " ";
         Color 15: Print statPlyrNames$(I);
         Color 12: Print Tab(44); Using "##"; I;
@@ -274,8 +278,11 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
     Next
 
     Color 11
-    Locate 22: Line Input "HIT ENTER TO ALIGN"; DUMMY$
-    Locate 22: Print "ALIGNING FILES . . .             "
+    Locate 24, 26: Line Input "HIT ENTER TO SAVE ALIGNMENT"; DUMMY$
+
+    Cls
+
+    Locate 6, 30: Print "ALIGNING FILES . . ."
 
     Open pathRoadStats$ + statFile$ For Output As #1
 
@@ -304,11 +311,9 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
 
     Close #1
 
-    Cls
-
-    Locate 8, 20: Print "RE-ALIGNMENT COMPLETED"
+    Locate 8, 30: Print "RE-ALIGNMENT COMPLETED"
     Color 12
-    Locate 12, 20
+    Locate 10, 30
     Line Input "HIT ENTER TO CONTINUE"; DUMMY$
 
     Cls

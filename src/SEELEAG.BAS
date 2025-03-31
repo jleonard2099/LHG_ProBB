@@ -115,7 +115,7 @@ Sub StatOptions_Pro ()
             Color 15, 0
             Cls
 
-            Call box0(6, 8, 11, 70, 2, 15, 1)
+            Call box0(6, 20, 10, 60, 2, 15, 1)
 
             Do
                 Color 15, 1
@@ -156,17 +156,13 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Locate , Int((80 - Len(leagueName$) - 17) / 2)
+    Locate 2, Int((80 - Len(leagueName$) - 17) / 2)
     Print leagueName$; " LEAGUE STANDINGS"
-    Print
 
     ' Division 1 Standings
     Color 2
-    If div1Name$ <> "" Then
-        Print "    " + RTrim$(div1Name$) + " DIVISION"
-    End If
-
-    Print
+    Locate 4, 1
+    Print "    " + RTrim$(div1Name$) + " DIVISION"
 
     Color 14
     Print "                   W    L     PCT   GB"
@@ -199,7 +195,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -207,48 +203,50 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Locate , Int((80 - Len(leagueName$) - 17) / 2)
+    Locate 2, Int((80 - Len(leagueName$) - 17) / 2)
     Print leagueName$; " LEAGUE STANDINGS"
-    Print
 
     ' Division 2 Standings
+    If div2Name$ <> "" Then 
 
-    Color 2
-    If div2Name$ <> "" Then Print "    " + RTrim$(div2Name$) + " DIVISION"
-    Print
+        Color 2
+        Locate 4, 1
+        Print "    " + RTrim$(div2Name$) + " DIVISION"
 
-    Color 14
-    Print "                   W    L     PCT   GB"
-    Color 15
+        Color 14
+        Print "                   W    L     PCT   GB"
+        Color 15
 
-    For P = 11 To 20
+        For P = 11 To 20
 
-        If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
+            If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
 
-            D1 = divWins(11) - divLosses(11)
-            D = divWins(P) - divLosses(P)
-            D = D1 - D
-            BK$ = "     " + Str$(Int(D / 2))
-            If D = 0 Then BK$ = "   ---"
-            If D = 1 Then BK$ = "     "
-            If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
-            If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
+                D1 = divWins(11) - divLosses(11)
+                D = divWins(P) - divLosses(P)
+                D = D1 - D
+                BK$ = "     " + Str$(Int(D / 2))
+                If D = 0 Then BK$ = "   ---"
+                If D = 1 Then BK$ = "     "
+                If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
+                If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            Print "    "; compLdrTeam$(P); Tab(16);
+                Print "    "; compLdrTeam$(P); Tab(16);
 
-            'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
-            PCT! = divWins(P) / (divWins(P) + divLosses(P))
+                'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
+                PCT! = divWins(P) / (divWins(P) + divLosses(P))
 
-            Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
-            Print BK$
+                Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
+                Print BK$
 
-        End If
+            End If
 
-    Next P
+        Next P
+
+    End If
 
     '-----
     Color 12
-    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -256,46 +254,49 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Locate , Int((80 - Len(leagueName$) - 17) / 2)
+    Locate 2, Int((80 - Len(leagueName$) - 17) / 2)
     Print leagueName$; " LEAGUE STANDINGS"
     Print
 
     ' Division 3 Standings
+    If div3Name$ <> "" Then 
 
-    Color 2
-    If div3Name$ <> "" Then Print "    " + RTrim$(div3Name$) + " DIVISION"
-    Print
+        Color 2
+        Locate 4, 1
+        Print "    " + RTrim$(div3Name$) + " DIVISION"
 
-    Color 14
-    Print "                   W    L     PCT   GB"
-    Color 15
+        Color 14
+        Print "                   W    L     PCT   GB"
+        Color 15
 
-    For P = 21 To 30
+        For P = 21 To 30
 
-        If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
-            D1 = divWins(21) - divLosses(21)
-            D = divWins(P) - divLosses(P)
-            D = D1 - D
-            BK$ = "     " + Str$(Int(D / 2))
-            If D = 0 Then BK$ = "   ---"
-            If D = 1 Then BK$ = "     "
-            If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
-            If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
+            If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
+                D1 = divWins(21) - divLosses(21)
+                D = divWins(P) - divLosses(P)
+                D = D1 - D
+                BK$ = "     " + Str$(Int(D / 2))
+                If D = 0 Then BK$ = "   ---"
+                If D = 1 Then BK$ = "     "
+                If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
+                If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
-            PCT! = divWins(P) / (divWins(P) + divLosses(P))
+                'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
+                PCT! = divWins(P) / (divWins(P) + divLosses(P))
 
-            Print "    "; compLdrTeam$(P); Tab(16);
-            Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
-            Print BK$
+                Print "    "; compLdrTeam$(P); Tab(16);
+                Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
+                Print BK$
 
-        End If
+            End If
 
-    Next P
+        Next P
+
+    End If
 
     '-----
     Color 12
-    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -303,86 +304,87 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 12
-    Locate , Int((80 - Len(leagueName$) - 17) / 2)
+    Locate 2, Int((80 - Len(leagueName$) - 17) / 2)
     Print leagueName$; " LEAGUE STANDINGS"
     Print
 
     ' Division 4 Standings
-
     Color 2
-    If div4Name$ <> "" Then Print "    " + RTrim$(div4Name$) + " DIVISION"
-    Print
+    If div4Name$ <> "" Then 
 
-    Color 14
-    Print "                   W    L     PCT   GB"
-    Color 15
+        Color 2
+        Locate 4, 1
+        Print "    " + RTrim$(div4Name$) + " DIVISION"
 
-    For P = 31 To 40
+        Color 14
+        Print "                   W    L     PCT   GB"
+        Color 15
 
-        If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
-            D1 = divWins(31) - divLosses(31)
-            D = divWins(P) - divLosses(P)
-            D = D1 - D
-            BK$ = "     " + Str$(Int(D / 2))
-            If D = 0 Then BK$ = "   ---"
-            If D = 1 Then BK$ = "     "
-            If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
-            If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
+        For P = 31 To 40
 
-            'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
-            PCT! = divWins(P) / (divWins(P) + divLosses(P))
+            If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
+                D1 = divWins(31) - divLosses(31)
+                D = divWins(P) - divLosses(P)
+                D = D1 - D
+                BK$ = "     " + Str$(Int(D / 2))
+                If D = 0 Then BK$ = "   ---"
+                If D = 1 Then BK$ = "     "
+                If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
+                If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
 
-            Print "    "; compLdrTeam$(P); Tab(16);
-            Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
-            Print BK$
-        End If
-    Next P
+                'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
+                PCT! = divWins(P) / (divWins(P) + divLosses(P))
+
+                Print "    "; compLdrTeam$(P); Tab(16);
+                Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
+                Print BK$
+            End If
+        Next P
+
+    End If
 
     '-----
     Color 12
-    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "FIELD GOAL % (MIN 5 FGA/G)"
-    Print "                            PCT   FGA"
+    Print "                            PCT    FGA"
     Color 15
 
     For P = 41 To 60
-
         If leagLdrPlayer$(P) <> "*" And leagLdrPlayer$(P) <> "" Then
             Print Left$(leagLdrPlayer$(P), 10) + ", " + leagLdrTeam$(P);
             Locate , 28
             Print Using "##.#  ####"; compLgStatVal!(P) * 100; compLgStatAtt!(P)
         End If
-
     Next
 
     Color 14
-    Locate 1, 41
+    Locate 2, 41
     Print "FREE THROW % (MIN 2 FTA/G)"
     Locate , 41
     Print "                            PCT   FTA"
     Color 15
 
     For P = 61 To 80
-
         If leagLdrPlayer$(P) <> "*" And leagLdrPlayer$(P) <> "" Then
             Locate , 41
             Print Left$(leagLdrPlayer$(P), 10) + ", " + leagLdrTeam$(P);
             Locate , 68
             Print Using "##.#  ####"; compLgStatVal!(P) * 100; compLgStatAtt!(P)
         End If
-
     Next
 
     '-----
     Color 12
-    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -390,323 +392,312 @@ Sub LeaderStats_Screen ()
     Cls
 
     Color 14
+    Locate 2, 1
     Print "SCORING"
-    Print "                                PTS/G"
+    Print Tab(33); "PTS/G"
     Color 15
 
     For P = 1 To 20
-
         If leagLdrPlayer$(P) <> "*" Then
             Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 34: Print Using "###.#"; compLgStatVal!(P)
+            Locate , 34
+            Print Using "###.#"; compLgStatVal!(P)
         End If
-
     Next
 
+    Locate 2, 41
     Color 14
-    Locate 1, 41
     Print "TOTAL POINTS"
-    Locate , 41
-    Print "                                  PTS"
+    Locate, 75
+    Print "PTS"
     Color 15
 
     For P = 21 To 40
         If leagLdrPlayer$(P) <> "*" Then
             Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 74: Print Using "####"; compLgStatVal!(P)
+            Locate , 74
+            Print Using "####"; compLgStatVal!(P)
         End If
     Next
 
     '-----
     Color 12
-    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "STEALS PER GAME"
     Color 15
 
     For P = 81 To 90
-
         If leagLdrPlayer$(P) <> "*" Then
             Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 34: Print Using "###.#"; compLgStatVal!(P)
+            Locate , 34
+            Print Using "###.#"; compLgStatVal!(P)
         End If
-
     Next
 
-    Locate 1, 41
+    Locate 2, 41
     Color 14
     Print "STEALS"
     Color 15
 
     For P = 91 To 100
-
         If leagLdrPlayer$(P) <> "*" Then
             Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 74: Print Using "####"; compLgStatVal!(P)
+            Locate , 74
+            Print Using "####"; compLgStatVal!(P)
         End If
-
     Next
 
-    Locate 13
     Color 14
-    Print "ASSISTS PER GAME"
+    Locate 14: Print "ASSISTS PER GAME"
     Color 15
 
     For P = 101 To 110
-
         If leagLdrPlayer$(P) <> "*" Then
             Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 34: Print Using "###.#"; compLgStatVal!(P)
+            Locate , 34
+            Print Using "###.#"; compLgStatVal!(P)
         End If
-
     Next
 
-    Locate 13, 41
+    Locate 14, 41
     Color 14
     Print "ASSISTS"
     Color 15
 
     For P = 111 To 120
-
         If leagLdrPlayer$(P) <> "*" Then
             Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 74: Print Using "####"; compLgStatVal!(P)
+            Locate , 74
+            Print Using "####"; compLgStatVal!(P)
         End If
-
     Next
 
     '-----
     Color 12
-    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "THREE FIELD GOAL %"
     Color 15
 
     For P = 121 To 130
-
         If leagLdrPlayer$(P) <> "" Then
             Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 34: Print Using "###.#"; compLgStatVal!(P) * 100
+            Locate , 34
+            Print Using "###.#"; compLgStatVal!(P) * 100
         End If
-
     Next P
 
-    Locate 1, 41
+    Locate 2, 41
     Color 14
     Print "MINUTES PER GAME"
     Color 15
 
     For P = 141 To 150
-
         If leagLdrPlayer$(P) <> "*" Then
             Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 74: Print Using "###.#"; compLgStatVal!(P)
+            Locate , 74
+            Print Using "###.#"; compLgStatVal!(P)
         End If
-
     Next P
 
-    Locate 13
+    Locate 14
     Color 14
     Print "THREE POINT FIELD GOALS MADE"
     Color 15
 
     For P = 131 To 140
-
         If leagLdrPlayer$(P) <> "" Then
             Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
             Locate , 34: Print Using "####"; compLgStatVal!(P)
         End If
-
     Next
 
-    Locate 13, 41
+    Locate 14, 41
     Color 14
     Print "TOTAL MINUTES"
     Color 15
 
     For P = 151 To 160
-
         If leagLdrPlayer$(P) <> "*" Then
             Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 74: Print Using "####"; compLgStatVal!(P)
+            Locate , 74
+            Print Using "####"; compLgStatVal!(P)
         End If
-
     Next
 
     '-----
     Color 12
-    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "REBOUNDS PER GAME   "
     Color 15
 
     For P = 161 To 170
-
         If leagLdrPlayer$(P) <> "*" Then
             Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
             Locate , 34: Print Using "###.#"; compLgStatVal!(P)
         End If
-
     Next
 
-    Locate 1, 41
+    Locate 2, 41
     Color 14
     Print "REBOUNDS"
     Color 15
 
     For P = 171 To 180
-
         If leagLdrPlayer$(P) <> "*" Then
             Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 74: Print Using "####"; compLgStatVal!(P)
+            Locate , 74
+            Print Using "####"; compLgStatVal!(P)
         End If
-
     Next
 
-    Locate 13
+    Locate 14
     Color 14
     Print "BLOCKS PER GAME"
     Color 15
 
     For P = 181 To 190
-
         If leagLdrPlayer$(P) <> "*" Then
             Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 34: Print Using "###.#"; compLgStatVal!(P)
+            Locate , 34
+            Print Using "###.#"; compLgStatVal!(P)
         End If
-
     Next
 
-    Locate 13, 41
+    Locate 14, 41
     Color 14
     Print "BLOCKS"
     Color 15
 
     For P = 191 To 200
-
         If leagLdrPlayer$(P) <> "*" Then
             Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 74: Print Using "####"; compLgStatVal!(P)
+            Locate , 74
+            Print Using "####"; compLgStatVal!(P)
         End If
-
     Next
 
     '-----
     Color 12
-    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
+
+    Locate 2, 1
     Color 14
     Print "FIELD GOALS MADE "
     Color 15
 
     For P = 201 To 210
-
         If leagLdrPlayer$(P) <> "*" Then
             Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 34: Print Using "####"; compLgStatVal!(P)
+            Locate , 34
+            Print Using "####"; compLgStatVal!(P)
         End If
-
     Next
 
-    Locate 1, 41
+    Locate 2, 41
     Color 14
     Print "FREE THROWS MADE"
     Color 15
 
     For P = 211 To 220
-
         If leagLdrPlayer$(P) <> "*" Then
             Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 74: Print Using "####"; compLgStatVal!(P)
+            Locate , 74
+            Print Using "####"; compLgStatVal!(P)
         End If
-
     Next
 
-    Locate 13
+    Locate 14
     Color 14
     Print "FOULS PER GAME"
     Color 15
 
     For P = 221 To 230
-
         If leagLdrPlayer$(P) <> "*" Then
             Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 34: Print Using "###.#"; compLgStatVal!(P)
+            Locate , 34
+            Print Using "###.#"; compLgStatVal!(P)
         End If
-
     Next
 
-    Locate 13, 41
+    Locate 14, 41
     Color 14
     Print "FOULS"
     Color 15
 
     For P = 231 To 240
-
         If leagLdrPlayer$(P) <> "*" Then
             Locate , 41: Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 74: Print Using "####"; compLgStatVal!(P)
+            Locate , 74
+            Print Using "####"; compLgStatVal!(P)
         End If
-
     Next
 
     '-----
     Color 12
-    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "MOST VALUABLE PLAYER POINTS"
     Color 15
 
     For P = 241 To 250
-
         If leagLdrPlayer$(P) <> "*" Then
             Print leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Locate , 34: Print Using "####"; compLgStatVal!(P)
+            Locate , 34
+            Print Using "####"; compLgStatVal!(P)
         End If
-
     Next
 
     '-----
     Color 12
-    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 12
     Print Tab(32); "OFFENSIVE TOTALS"
+
+    Locate 4, 1
     Color 14
-    Print
     Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
@@ -769,17 +760,19 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+
+    Locate 2, 1
     Color 12
     Print Tab(27); "OFFENSIVE TOTALS (cont'd)"
+    Locate 4, 1
     Color 14
-    Print
     Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
@@ -842,17 +835,19 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 12
     Print Tab(32); "DEFENSIVE TOTALS"
+
+    Locate 4, 1
     Color 14
-    Print
     Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
@@ -915,17 +910,19 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 12
     Print Tab(27); "DEFENSIVE TOTALS (cont'd)"
+
+    Locate 4, 1
     Color 14
-    Print
     Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
@@ -988,7 +985,7 @@ Sub LeaderStats_Screen ()
 
     '-----
     Color 12
-    'Locate LAST_LINE: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
