@@ -13,6 +13,7 @@ Declare Sub CalcStatLeadersPro (teamName$, numberGames)
 Declare Sub CalcStatTotalsPro (numberGames, teamName$, finalUpdate$)
 Declare Sub CareerLeaderOptions ()
 Declare Sub CareerRecords_Report (printDest, destFile$)
+Declare Sub CareerRecords_Screen
 Declare Sub CareerStatsPlayer_Report (printDest, destFile$, careerFile$, playerIdx)
 Declare Sub CareerStats_Report (printDest, destFile$, careerFile$)
 Declare Sub CareerStats_Screen (careerFile$)
