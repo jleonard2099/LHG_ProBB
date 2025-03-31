@@ -333,7 +333,6 @@ Sub ReviewCareerRecords ()
 End Sub
 
 
-
 '----------------------------------------
 '    CareerRecords_Screen Subroutine
 '----------------------------------------
