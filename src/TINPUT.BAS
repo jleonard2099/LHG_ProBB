@@ -254,6 +254,9 @@ Sub PrintRoster (printDest, destFile$, YN$)
 
     Print #1,
     Print #1, Tab(XCoord); teamInfo$(0); " "; teamInfo$(1)
+    Print #1, Tab(20); 
+    Print #1, "TEXT COLOR:"; teamRatings(33); Tab(38);
+    Print #1, "BACKGROUND COLOR:"; teamRatings(34)
     Print #1, Tab(30); "WON - ";
     Print #1, Using "##"; teamRatings(1) + teamRatings(3);
     Print #1, Tab(43); "LOST - ";
@@ -267,7 +270,6 @@ Sub PrintRoster (printDest, destFile$, YN$)
     'Print #1, "-";
     'Print #1, Using "##"; teamRatings(4)
     Print #1,
-    Print #1, "                                                      OFF DEF  TOT"
     Print #1, "NAME          POS   G  MIN  FGA  FGM  PCT  FTA  FTM  PCT OREB DREB ASST  FLS"
 
     For I = 0 To 14
@@ -332,7 +334,7 @@ Sub PrintRoster (printDest, destFile$, YN$)
 
     Next
 
-    Print
+    Print #1, 
     Print #1, "TOTALS - OFF";
 
     'Games
@@ -452,20 +454,20 @@ Sub PrintRoster (printDest, destFile$, YN$)
 
     Next
 
-    Print
+    Print #1, 
     Print #1, "TOTALS - OFF";
 
     'Steals
-    Print #1, Tab(80); Using "####"; teamRatings(14);
+    Print #1, Tab(15); Using "####"; teamRatings(14);
 
     'Blocks
-    Print #1, Tab(85); Using "####"; teamRatings(16);
+    Print #1, Tab(20); Using "####"; teamRatings(16);
 
     '3FGA
-    Print #1, Tab(95); Using "####"; teamRatings(17);
+    Print #1, Tab(25); Using "####"; teamRatings(17);
 
     '3FGM
-    Print #1, Tab(100); Using "####"; teamRatings(18);
+    Print #1, Tab(30); Using "####"; teamRatings(18);
 
     '3FG PCT
     If teamRatings(18) = 0 Then Print #1, Tab(35); ".000"
@@ -547,7 +549,12 @@ Sub ViewRoster ()
         Color 15
         Print Using "##"; teamRatings(2) + teamRatings(4)
 
-        Locate 5, 1
+        Color 15, 0
+        Locate , 20
+        Print "TEXT COLOR      : "; teamRatings(33); Tab(38);
+        Print "BACKGROUND COLOR: "; teamRatings(34)
+
+        Locate 6, 1
         Color 14
         Print "NAME          POS   G  MIN  FGA  FGM  PCT  FTA  FTM  PCT OREB DREB ASST  FLS"
         Color 15
@@ -708,7 +715,13 @@ Sub ViewRoster ()
         Color 15
         Print Using "##"; teamRatings(2) + teamRatings(4)
 
-        Locate 5, 1
+        Color 15, 0
+        Locate , 15
+        Print "TEXT COLOR      : "; teamRatings(33); Tab(45);
+        Print "BACKGROUND COLOR: "; teamRatings(34)
+
+        Locate 6, 1
+
         Color 14
         Print "NAME           STL  BLK 3FGA 3FGM  PCT   HI-GAME"
         Color 15
