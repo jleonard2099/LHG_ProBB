@@ -8,7 +8,7 @@ Sub CAREER ()
 
     _Title "Basketball: The Pro Game - Career Stats"
 
-    ReDim menuChoices$(7)
+    ReDim menuChoices$(1 to 7)
 
     Do
 
@@ -17,13 +17,13 @@ Sub CAREER ()
 
         Call TITLE_CAREER
 
-        menuChoices$(1) = "CREATE INITIAL CAREER STATS FILE "
-        menuChoices$(2) = "ADD CAREER YEAR TO STATS         "
-        menuChoices$(3) = "REMOVE PLAYERS FROM CAREER STATS "
-        menuChoices$(4) = "VIEW / PRINT CAREER STATS        "
-        menuChoices$(5) = "VIEW / PRINT CAREER RECORDS      "
-        menuChoices$(6) = "UPDATE / VIEW TEAM CAREER LEADERS"
-        menuChoices$(7) = "RETURN TO MAIN MENU              "
+        menuChoices$(1) = "CREATE INITIAL CAREER STATS FILE"
+        menuChoices$(2) = "ADD CAREER YEAR TO STATS        "
+        menuChoices$(3) = "REMOVE PLAYERS FROM CAREER STATS"
+        menuChoices$(4) = "REVIEW CAREER STATS             "
+        menuChoices$(5) = "REVIEW CAREER RECORDS           "
+        menuChoices$(6) = "MANAGE TEAM CAREER LEADERS      "
+        menuChoices$(7) = "RETURN TO MAIN MENU             "
         SELECTION% = 1
         Count% = 7
         Start% = 1
@@ -75,7 +75,7 @@ End Sub
 
 
 '----------------------------------------
-'       CreateCareerFile Subroutine
+'      CreateCareerFile Subroutine
 '----------------------------------------
 'This routine assists the user with the
 'creation of a team's first career file.
@@ -133,6 +133,8 @@ Sub MergeFirstYear ()
     Shared carPlyrStat!(), car3FGM!(), car3FGA!()
     Shared statsOffTot!(), statsDefTot!()
 
+    Dim TMR
+
     NB = -1
 
     Do
@@ -140,13 +142,8 @@ Sub MergeFirstYear ()
         Color 11, 0
         Cls
 
-        For J = 15 To 18:
-            Locate J
-            Print Space$(68)
-        Next
-
-        Locate 15, 5
-        Input "ENTER NAME OF CAREER STAT FILE "; careerFile$
+        careerFile$ = _INPUTBOX$("Career File", "Enter name for Career stats file")
+        'careerFile$ = _SAVEFILEDIALOG$("Save Career File", "", "*.CAR", "Career files")
 
         teamNbr = 0
         Call ChooseTeam(YN$, NTMS, teamNbr, team$)
@@ -170,7 +167,7 @@ Sub MergeFirstYear ()
             If UCase$(J$) = "N" Then
 
                 Do
-                    Locate , 5
+                    Locate 11, 18
                     Print "WOULD YOU LIKE TO POST CAREER RECORDS? (Y/N)"
                     K$ = GetKeyPress$
                 Loop Until UCase$(K$) = "Y" Or UCase$(K$) = "N" Or K$ = Chr$(27)
@@ -197,8 +194,6 @@ Sub MergeFirstYear ()
                     Color 15
                     Print "MERGING AND UPDATING CAREER STATS . . . . PLEASE WAIT"
 
-                    TMR = 15 * (14 + 2) + (16 * 2) + (62 * (14 + 4))
-
                     Open diskPaths$(1) + statFile$ For Input As #1
 
                     Input #1, B$
@@ -213,30 +208,14 @@ Sub MergeFirstYear ()
 
                         Input #1, careerW0!(I)
                         Input #1, careerW1!(I)
-
-                        Color 5
-                        Locate 21, 38
-                        TMR = TMR - 1
-                        Print Using "####"; TMR
-
                     Next
 
                     For L = 0 To 15:
                         Input #1, statsOffTot!(L)
-
-                        Color 5
-                        Locate 21, 38
-                        TMR = TMR - 1
-                        Print Using "####"; TMR
                     Next
 
                     For L = 0 To 15:
                         Input #1, statsDefTot!(L)
-
-                        Color 5
-                        Locate 21, 38
-                        TMR = TMR - 1
-                        Print Using "####"; TMR
                     Next
 
                     Close #1
@@ -263,9 +242,9 @@ Sub MergeFirstYear ()
 
                     Next I
 
-                    If doPostLeaders = 1 Then Call UpdateCareerRecords(careerFile$)
+                    If doPostLeaders = 1 Then Call UpdateCareerRecords(diskPaths$(2) + careerFile$ + ".CLD")
 
-                    Call SaveCareerFile(careerFile$)
+                    Call SaveCareerFile (diskPaths$(1) + careerFile$ + ".CAR")
 
                 End If 'Done checking for stat file
 
@@ -288,23 +267,14 @@ End Sub
 'formats the results for them as directed.
 Sub ReviewCareerRecords ()
 
-    Shared carRecVal!(), carRecYear!()
-    Shared BL$()
+    recordFile$ = _OpenFileDialog$("Choose Career Leader file", diskPaths$(2), "*.CLD", "Career Leader files")
 
-    recordFile$ = ChooseFile$(diskPaths$(2) + "*.CLD", "CAREER RECORD", ExitCode%)
-
-    If ExitCode% <> 27 And ExitCode% <> 0 Then
+    If recordFile$ <> "" Then
 
         Color 15, 0
         Cls
 
-        Open diskPaths$(2) + recordFile$ + ".CLD" For Input As #1
-
-        For I = 0 To 20
-            Input #1, carRecYear!(I), BL$(I), carRecVal!(I)
-        Next
-
-        Close #1
+        Call LoadCareerLeaders(recordFile$)
 
         userKey$ = GetOutputOptions$
 
@@ -418,7 +388,7 @@ Sub CareerRecords_Screen ()
 
         Do
             Color 14
-            Locate LAST_ROW - 2: Print "VIEW AGAIN? (Y/N)"
+            Locate LAST_ROW - 1, 31: Print "VIEW AGAIN? (Y/N)";
             I$ = GetKeyPress$
             Color 15
         Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y" Or I$ = Chr$(27)
@@ -600,9 +570,9 @@ Sub MergeCareerFiles ()
 
     If UCase$(I$) = "Y" Then
 
-        careerFile$ = ChooseFile$(diskPaths$(1) + "*.CAR", "CAREER", ExitCode%)
+        careerFile$ = _OpenFileDialog$("Choose Career file", diskPaths$(1), "*.CAR", "Career Career files")
 
-        If ExitCode% <> 27 And ExitCode% <> 0 Then
+        If careerFile$ <> "" Then
 
             teamNbr = 0
             Call ChooseTeam(YN$, NTMS, teamNbr, team$)
@@ -668,7 +638,7 @@ Sub MergeAddYear (selectedFile$, statFile$)
 
         Call AddCareerYear(statYear, doPostLeaders, selectedFile$, statFile$)
 
-    End If 'Done checking user confirmation
+    End If ' Done checking for year to add
 
 End Sub
 
@@ -696,12 +666,12 @@ Sub AddCareerYear (targetYear, finalUpdate, careerFile$, statFile$)
 
     NB = -1
 
-    Call LoadCareerFile(careerFile$)
+    Call LoadCareerFile (careerFile$)
 
-    Locate 20, 5
+    Locate 20, 21
     Print "LOADING STATS FILE . . . . PLEASE WAIT"
 
-    TMR1% = 15 * (14 + 2) + (16 * 2)
+    TMR1% = 15 * (14 + 3) + (16 * 2)
 
     Open diskPaths$(1) + statFile$ For Input As #2
 
@@ -749,6 +719,7 @@ Sub AddCareerYear (targetYear, finalUpdate, careerFile$, statFile$)
 
         RR = 0
         CHK = 0
+        matchFound = 0
 
         For J = 0 To 61
 
@@ -760,6 +731,8 @@ Sub AddCareerYear (targetYear, finalUpdate, careerFile$, statFile$)
                         CHK = CHK + 1
                     End If
                 Next W
+
+                N = 0
 
                 'Look at number of years from previous
                 For Z = 1 To MAX_CAREER_YEARS
@@ -779,6 +752,9 @@ Sub AddCareerYear (targetYear, finalUpdate, careerFile$, statFile$)
                 carPlyrStat!(N, J, 15) = targetYear
                 car3FGM!(N, J) = careerW0!(J)
                 car3FGA!(N, J) = careerW1!(J)
+
+                'matchFound = 1
+                'Exit For
 
             Else
 
@@ -804,11 +780,14 @@ Sub AddCareerYear (targetYear, finalUpdate, careerFile$, statFile$)
 
                 End If
 
-            End If 'Done comparing careerPlayers$() to carStatPlyr$()
+            End If
 
         Next J
 
     Next I
+
+    Locate 20, 21
+    Print Space$(38)
 
     If doPostLeaders = 1 Then Call UpdateCareerRecords(careerFile$)
 
@@ -833,11 +812,13 @@ Sub LoadCareerFile (loadFile$)
     Color 15, 0
     Cls
 
-    Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
+    Locate 12, 21
+    Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 
-    TMR = 15 * 62 * (16 + 2)
+    TMR = MAX_CAREER_YEARS * 62 
+    ' * (1 + 16 + 2))
 
-    Open diskPaths$(1) + loadFile$ + ".CAR" For Input As #1
+    Open loadFile$ For Input As #1
 
     Input #1, NB, NP
 
@@ -866,6 +847,9 @@ Sub LoadCareerFile (loadFile$)
 
     Close #1
 
+    Locate 12, 21
+    Print Space$(39)
+
 End Sub
 
 
@@ -884,11 +868,13 @@ Sub SaveCareerFile (saveFile$)
 
     Cls
     Color 15
-    Locate 12, 6: Print "SAVING UPDATED CAREER FILE . . . PLEASE WAIT"
+
+    Locate 12, 18
+    Print "SAVING UPDATED CAREER FILE . . . PLEASE WAIT"
 
     TMR = 15 * 62 * (16 + 2)
 
-    Open diskPaths$(1) + saveFile$ + ".CAR" For Output As #3
+    Open saveFile$ For Output As #3
 
     Write #3, NB, NP
 
@@ -920,6 +906,30 @@ Sub SaveCareerFile (saveFile$)
 
     Close #3
 
+    Locate 12, 18
+    Print Space$(44)
+
+End Sub
+
+
+'----------------------------------------
+'      LoadCareerLeaders Subroutine
+'----------------------------------------
+'This routine loads the existing career
+'leaders file data into arrays.
+Sub LoadCareerLeaders (leaderFile$)
+
+    Shared carRecVal!(), carRecYear!()
+    Shared BL$()
+
+    Open leaderFile$ For Input As #1
+
+    For I = 0 To 20:
+        Input #1, carRecYear!(I), BL$(I), carRecVal!(I)
+    Next
+
+    Close #1
+
 End Sub
 
 
@@ -930,7 +940,7 @@ End Sub
 'leader files (.CLD), adds the new stats,
 'and then saves the changes back to the
 'career leader file (.CLD)
-Sub UpdateCareerRecords (careerFile$)
+Sub UpdateCareerRecords (careerRecordFile$)
 
     Dim carRecVal!(62), carRecYear!(21)
     Dim BL$(0 To 20)
@@ -938,16 +948,8 @@ Sub UpdateCareerRecords (careerFile$)
     Shared careerPlayers$()
     Shared carPlyrStat!(), car3FGM!(), car3FGA!()
 
-    If _FileExists(diskPaths$(2) + careerFile$ + ".CLD") Then
-
-        Open diskPaths$(2) + careerFile$ + ".CLD" For Input As #1
-
-        For I = 0 To 20
-            Input #1, carRecYear!(I), BL$(I), carRecVal!(I)
-        Next
-
-        Close #1
-
+    If _FileExists(careerRecordFile$) Then
+        Call LoadCareerLeaders(careerRecordFile$)
     End If
 
     For I = 0 To 61
@@ -1102,12 +1104,12 @@ Sub UpdateCareerRecords (careerFile$)
 
     Next I
 
-    Open diskPaths$(2) + careerFile$ + ".CLD" For Output As #2
+    Open careerRecordFile$ For Output As #1
 
     For I = 0 To 20
-        Write #2, carRecYear!(I), BL$(I), carRecVal!(I)
+        Write #1, carRecYear!(I), BL$(I), carRecVal!(I)
     Next
 
-    Close #2
+    Close #1
 
 End Sub

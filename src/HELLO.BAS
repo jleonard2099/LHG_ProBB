@@ -543,7 +543,7 @@ Sub TeamMgt_Menu ()
                     Call GPMIN
 
                 Case 8:
-                    targetFile$ = _OpenFileDialog$("Select team file", diskPaths$(0), "PROBBTMS.*", "Team files")
+                    targetFile$ = _OpenFileDialog$("Choose Team file", diskPaths$(0), "PROBBTMS.*", "Team files")
 
                     Call ConvertTeam4to5(targetFile$, 0)
 
@@ -575,7 +575,7 @@ Sub Replay_Menu ()
 
         ReDim menuChoices$(1 To 6)
 
-        menuChoices$(1) = "VIEW / PRINT COMPILED STATS     "
+        menuChoices$(1) = "REVIEW COMPILED STATS           "
         menuChoices$(2) = "COMPARE REPLAY STATS TO ACTUAL  "
         menuChoices$(3) = "MODIFY REPLAY STATS             "
         menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES"

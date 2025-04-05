@@ -34,7 +34,7 @@ Sub NEWLDR ()
         menuChoices$(1) = "UPDATE EXPANDED LEAGUE LEADERS        "
         menuChoices$(2) = "VIEW EXPANDED LEAGUE LEADER FILES     "
         menuChoices$(3) = "UPDATE EXPANDED LEAGUE STANDINGS      "
-        menuChoices$(4) = "VIEW / PRINT EXPANDED LEAGUE STANDINGS"
+        menuChoices$(4) = "REVIEW EXPANDED LEAGUE STANDINGS"
         menuChoices$(5) = "RETURN TO LEAGUE LEADER MAIN MENU     "
         SELECTION% = 1
         Count% = 5
