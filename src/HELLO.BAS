@@ -24,21 +24,13 @@ DefInt A-Z
 ' General purpose
 '$Include: 'KeyInput.bi'
 '$Include: 'QPProEqu.bi'
-'$Include: 'PadRight.bi'
+'$Include: 'StringManip.bi'
 '$Include: 'QBWRITE.bi'
 
 ' For Utils
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-Dim memberName$(TEAMS_PER_LEAGUE)
-
-Dim plyrLdrStats!(0 To 600, 0 To 14)
-Dim plyrLeaderGames!(40), tmLeaderGames!(40)
-Dim plyrLdrVal!(40, 15), teamLdrVal!(40, 15)
-Dim expIndCategory$(0 To 31), expTeamCategory$(0 To 38)
-Dim expPlyrLdrName$(600), expPlyrLdrTeam$(600), expLdrTeam$(600), expLdrPlyrName$(600)
-
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -714,7 +706,7 @@ End Sub
 ' General purpose
 '$Include: 'KeyInput.bm'
 '$Include: 'QPProEqu.bm'
-'$Include: 'PadRight.bm'
+'$Include: 'StringManip.bm'
 '$Include: 'QBWRITE.bm'
 
 ' For Utils
@@ -7982,8 +7974,7 @@ Sub SCOREBOARD ()
     Locate , 58: Print Chr$(192); String$(5, 196); Chr$(217)
 
     'Team 1
-    Locate 2, 1
-    Locate , 9
+    Locate 2, 14 - (Len(gameTeams$(0)) / 2)
     Color teamRat_GAME(0, 33), teamRat_GAME(0, 34): Print gameTeams$(0);
 
     'Game Clock - Minutes
@@ -8005,7 +7996,7 @@ Sub SCOREBOARD ()
     End If
 
     'Team 2
-    Locate 2, 56
+    Locate 2, 62 - (Len(gameTeams$(1)) / 2)
     Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1)
 
     'Score Team 1
@@ -10921,9 +10912,6 @@ Sub UPDATESCREEN ()
 
     Call TICKERUPDATE
 
-    'Team 2
-    '---
-
     'Game Clock - Minutes
     Color 15, 0
     Locate 1, 37
@@ -10941,9 +10929,6 @@ Sub UPDATESCREEN ()
     Else
         Print Using "##"; gcSeconds!;
     End If
-
-    'Team 2
-    '---
 
     'Score Team 1
     Color 14, 0

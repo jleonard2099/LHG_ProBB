@@ -6,6 +6,7 @@ Declare Sub ScheduleFilePrompt (scheduleFile$)
 
 Declare Sub ReadTeamStats (teamName$, statFile$)
 Declare Sub ReadScheduleStats (statFile$, numberGames)
+Declare Sub SaveScheduleStats (saveFile$, numberGames)
 Declare Sub ReadSeasonRecords (recordFile$)
 Declare Sub ReadGameRecords (recordFile$)
 Declare Sub ReadLeagueIndex (indexFile$)

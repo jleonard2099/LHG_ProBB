@@ -8,7 +8,7 @@ Sub CAREER ()
 
     _Title "Basketball: The Pro Game - Career Stats"
 
-    ReDim menuChoices$(1 to 7)
+    ReDim menuChoices$(1 To 7)
 
     Do
 
@@ -142,8 +142,8 @@ Sub MergeFirstYear ()
         Color 11, 0
         Cls
 
-        careerFile$ = _INPUTBOX$("Career File", "Enter name for Career stats file")
-        'careerFile$ = _SAVEFILEDIALOG$("Save Career File", "", "*.CAR", "Career files")
+        'careerFile$ = _INPUTBOX$("Career File", "Enter name for Career stats file")
+        careerFile$ = _SAVEFILEDIALOG$("Save Career File", "", "*.CAR", "Career files")
 
         teamNbr = 0
         Call ChooseTeam(YN$, NTMS, teamNbr, team$)
@@ -242,9 +242,11 @@ Sub MergeFirstYear ()
 
                     Next I
 
-                    If doPostLeaders = 1 Then Call UpdateCareerRecords(diskPaths$(2) + careerFile$ + ".CLD")
+                    If doPostLeaders = 1 Then 
+                        Call UpdateCareerRecords(diskPaths$(2) + GetFileBaseName$(careerFile$) + ".CLD")
+                    End If
 
-                    Call SaveCareerFile (diskPaths$(1) + careerFile$ + ".CAR")
+                    Call SaveCareerFile (careerFile$)
 
                 End If 'Done checking for stat file
 
@@ -267,7 +269,7 @@ End Sub
 'formats the results for them as directed.
 Sub ReviewCareerRecords ()
 
-    recordFile$ = _OpenFileDialog$("Choose Career Leader file", diskPaths$(2), "*.CLD", "Career Leader files")
+    recordFile$ = _OpenFileDialog$("Choose Career Record file", diskPaths$(2), "*.CLD", "Career Record files")
 
     If recordFile$ <> "" Then
 
@@ -285,14 +287,14 @@ Sub ReviewCareerRecords ()
                 Case "F"
                     userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Career", "*.txt", "Text File")
                     If userFile$ <> "" Then
-                        Call CareerRecords_Report(0, userFile$)
+                        Call CareerRecords_Report(GetFileBaseName$(recordFile$), 0, userFile$)
                     End If
 
                 Case "P"
-                    Call CareerRecords_Report(1, "CAREER")
+                    Call CareerRecords_Report(GetFileBaseName$(recordFile$), 1, "CAREER")
 
                 Case "S":
-                    Call CareerRecords_Screen
+                    Call CareerRecords_Screen(GetFileBaseName$(recordFile$))
 
             End Select
 
@@ -308,7 +310,7 @@ End Sub
 '----------------------------------------
 'This routine formats career records for
 'output to the screen.
-Sub CareerRecords_Screen ()
+Sub CareerRecords_Screen (careerName$)
 
     Shared carRecVal!(), carRecYear!()
     Shared BL$()
@@ -317,6 +319,9 @@ Sub CareerRecords_Screen ()
 
         Cls
         Color 15, 0
+
+        Locate 1, 80 - Int(Len(careerName$) / 2)
+        Print careerName$
 
         Locate 2, 1
         Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
@@ -408,7 +413,7 @@ End Sub
 'involve creating a file first, that can
 'then be looped through if sending to
 'printer
-Sub CareerRecords_Report (printDest, destFile$)
+Sub CareerRecords_Report (careerName$, printDest, destFile$)
 
     Shared carRecVal!(), carRecYear!()
     Shared BL$()
@@ -417,6 +422,10 @@ Sub CareerRecords_Report (printDest, destFile$)
     Cls
 
     Open destFile$ For Output As #1
+
+    Print #1, Tab(80 - Int(Len(careerName$) / 2))
+    Print #1, careerName$
+    Print #1,
 
     Print #1, "CATEGORY                     RECORD           PLAYER              YEAR"
     Print #1,
@@ -673,6 +682,8 @@ Sub AddCareerYear (targetYear, finalUpdate, careerFile$, statFile$)
 
     TMR1% = 15 * (14 + 3) + (16 * 2)
 
+    'Call ReadTeamStats(temp$, statFile$)
+
     Open diskPaths$(1) + statFile$ For Input As #2
 
     Input #2, team$
@@ -816,7 +827,6 @@ Sub LoadCareerFile (loadFile$)
     Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 
     TMR = MAX_CAREER_YEARS * 62 
-    ' * (1 + 16 + 2))
 
     Open loadFile$ For Input As #1
 
@@ -872,7 +882,7 @@ Sub SaveCareerFile (saveFile$)
     Locate 12, 18
     Print "SAVING UPDATED CAREER FILE . . . PLEASE WAIT"
 
-    TMR = 15 * 62 * (16 + 2)
+    TMR = MAX_CAREER_YEARS * 62 
 
     Open saveFile$ For Output As #3
 

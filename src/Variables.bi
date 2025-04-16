@@ -35,7 +35,7 @@ Dim tiedGames
 
 ' Conferences / Orgs
 Dim memberIdx(TEAMS_PER_LEAGUE)
-'Dim memberName$(TEAMS_PER_LEAGUE)
+Dim memberName$(TEAMS_PER_LEAGUE)
 Dim memberYear$(TEAMS_PER_LEAGUE)
 
 '-- For Road Data
@@ -110,13 +110,13 @@ Dim carRecVal!(62), carRecYear!(21)
 
 Dim plyLeaderTeams$(40, 15), tmLeaderTeams$(40, 15)
 
-'Dim plyrLdrStats!(0 To 600, 0 To 14)
-'Dim plyrLeaderGames!(40), tmLeaderGames!(40)
-'Dim plyrLdrVal!(40, 15), teamLdrVal!(40, 15)
+Dim plyrLdrStats!(0 To 600, 0 To 14)
+Dim plyrLeaderGames!(40), tmLeaderGames!(40)
+Dim plyrLdrVal!(40, 15), teamLdrVal!(40, 15)
 
 ' For Expanded Leaders
-'Dim expIndCategory$(0 To 31), expTeamCategory$(0 To 38)
-'Dim expPlyrLdrName$(600), expPlyrLdrTeam$(600), expLdrTeam$(600), expLdrPlyrName$(600)
+Dim expIndCategory$(0 To 31), expTeamCategory$(0 To 38)
+Dim expPlyrLdrName$(600), expPlyrLdrTeam$(600), expLdrTeam$(600), expLdrPlyrName$(600)
 
 Dim totGames!(600), expLdrVal!(600)
 

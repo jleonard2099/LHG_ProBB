@@ -273,7 +273,7 @@ Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
     'Our first set of stats is 600 entries
     'Our next 2 sets are loops around each
     'team in the league
-    TMR = 600 + (2 * TEAMS_PER_LEAGUE)
+    TMR = 600 + (TEAMS_PER_LEAGUE * (15+1) * 2)
 
     Print "SAVING LEADER FILES . . . . PLEASE WAIT"
 
@@ -285,11 +285,6 @@ Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
         Write #1, expPlyrLdrName$(I), expPlyrLdrTeam$(I), totGames!(I)
 
-        Color 14
-        Locate 18, 38
-        TMR = TMR - 1
-        Print Using "#####"; TMR
-
         For I1 = 1 To 14:
             Write #1, plyrLdrStats!(I, I1)
         Next I1
@@ -300,7 +295,7 @@ Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
         Color 14
         Locate 18, 38
         TMR = TMR - 1
-        Print Using "#####"; TMR:
+        Print Using "#####"; TMR
 
     Next I
 
@@ -308,13 +303,20 @@ Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
         For I1 = 0 To 14:
             Write #1, plyrLdrVal!(I, I1), plyLeaderTeams$(I, I1)
+
+            Color 14
+            Locate 18, 38
+            TMR = TMR - 1
+            Print Using "#####"; TMR
+
         Next
+
+        Write #1, plyrLeaderGames!(I)
 
         Color 14
         Locate 18, 38
         TMR = TMR - 1
         Print Using "#####"; TMR
-        Write #1, plyrLeaderGames!(I)
 
     Next
 
@@ -322,13 +324,20 @@ Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
         For I1 = 0 To 14:
             Write #1, teamLdrVal!(I, I1), tmLeaderTeams$(I, I1)
+
+            Color 14
+            Locate 18, 38
+            TMR = TMR - 1
+            Print Using "#####"; TMR
+
         Next
+
+        Write #1, tmLeaderGames!(I)
 
         Color 14
         Locate 18, 38
         TMR = TMR - 1
         Print Using "#####"; TMR
-        Write #1, tmLeaderGames!(I)
 
     Next
 
@@ -837,7 +846,7 @@ Sub ViewIndividualleaders (printOrView, JB)
             Select Case printOrView
 
                 Case 1
-                    Call DisplayLeaders(TVN, QW, categoryId)
+                    Call NewLeaders_Screen(TVN, QW, categoryId)
 
                 Case 2
                     Call GetListLength(printOrView, LG, QW)
@@ -851,11 +860,11 @@ Sub ViewIndividualleaders (printOrView, JB)
                             Case "F"
                                 userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
                                 If userFile$ <> "" Then
-                                    Call Leaders_Report(0, userFile$, TVN, LG, categoryId)
+                                    Call NewLeaders_Report(0, userFile$, TVN, LG, categoryId)
                                 End If
 
                             Case "P"
-                                Call Leaders_Report(1, "REPORT", TVN, LG, categoryId)
+                                Call NewLeaders_Report(1, "REPORT", TVN, LG, categoryId)
 
                         End Select
 
@@ -1276,11 +1285,11 @@ End Sub
 
 
 '----------------------------------------
-'       DisplayLeaders Subroutine
+'       NewLeaders_Screen Subroutine
 '----------------------------------------
 'This subroutine displays individual player
 'stat categories to the user display
-Sub DisplayLeaders (TVN, maxRecords, categoryId)
+Sub NewLeaders_Screen (TVN, maxRecords, categoryId)
 
     Shared expLdrVal!()
     Shared expIndCategory$(), expLdrTeam$(), expLdrPlyrName$()
@@ -1554,11 +1563,11 @@ End Sub
 
 
 '----------------------------------------
-'        Leaders_Report Subroutine
+'        NewLeaders_Report Subroutine
 '----------------------------------------
 'This subroutine displays individual player
 'stat categories to the default printer
-Sub Leaders_Report (printDest, destFile$, TVN, maxRecords, categoryId)
+Sub NewLeaders_Report (printDest, destFile$, TVN, maxRecords, categoryId)
 
     Shared expLdrVal!()
     Shared expIndCategory$(), expLdrTeam$(), expLdrPlyrName$()

@@ -9,9 +9,10 @@ Sub SEELEAG ()
 
     _Title "Basketball: The Pro Game - View League Stats"
 
-    leaderFile$ = ChooseFile$(diskPaths$(2) + "*.LDR", "LEADER", ExitCode%)
+    leaderFile$ = _OpenFileDialog$("Choose League Stats file", diskPaths$(2), "*.LDR", "League Stats files")
+    'ChooseFile$(diskPaths$(2) + "*.LDR", "LEADER", ExitCode%)
 
-    If ExitCode% <> 27 And ExitCode% <> 0 Then
+    If leaderFile$ <> "" Then
 
         Call LoadLeaderFiles_Pro(leaderFile$)
         Call StatOptions_Pro
@@ -38,7 +39,7 @@ Sub LoadLeaderFiles_Pro (targetFile$)
 
     Shared leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
-    Open diskPaths$(2) + targetFile$ + ".TMS" For Input As #1
+    Open diskPaths$(2) + GetFileBaseName$(targetFile$) + ".TMS" For Input As #1
     Input #1, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
     Close #1
 
@@ -49,9 +50,10 @@ Sub LoadLeaderFiles_Pro (targetFile$)
 
     Cls
 
-    Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
+    Locate 9, 6
+    Print "PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
 
-    Open diskPaths$(2) + targetFile$ + ".LDR" For Input As #2
+    Open targetFile$ For Input As #2
 
     For X = 1 To TEAMS_PER_LEAGUE
         Input #2, compLdrTeam$(X), divWins(X), divLosses(X)
@@ -77,7 +79,6 @@ Sub LoadLeaderFiles_Pro (targetFile$)
 
     Close #2
 
-
 End Sub
 
 
@@ -88,6 +89,8 @@ End Sub
 'options for viewing the previously loaded
 'stats, and then calastLoseStreak routines for each
 Sub StatOptions_Pro ()
+
+    Shared leagueName$
 
     Do
 
@@ -102,12 +105,13 @@ Sub StatOptions_Pro ()
 
                 Case "F":
                     userFile$ = _SaveFileDialog$("Save League Report", _CWD$ + "\Report", "*.txt", "Text File")
-                    Call SavePrintLeagueLeaders(0, userFile$)
+                    Call ProLeadersReport(0, userFile$)
 
                 Case "P":
-                    Call SavePrintLeagueLeaders(0, "REPORT")
+                    Call ProLeadersReport(0, "REPORT")
 
                 Case "S":
+                    Call LeagStdgs_Screen
                     Call LeaderStats_Screen
 
             End Select
@@ -134,22 +138,19 @@ Sub StatOptions_Pro ()
 End Sub
 
 
+
+
 '----------------------------------------
-'     LeaderStats_Screen Subroutine
+'     LeagStdgs_Screen Subroutine
 '----------------------------------------
 'This subroutine formats the previously
 'loaded stats and outputs them to the end
 'user display.
-Sub LeaderStats_Screen ()
+Sub LeagStdgs_Screen ()
 
     Shared divWins(), divLosses()
 
-    Shared defLeaders!(), offLeaders!()
-    Shared compLgStatVal!(), compLgStatAtt!()
-
-    Shared defLeaderTeams$(), offLeaderNames$(), offLeaders!()
-    Shared compLdrTeam$(), leagLdrPlayer$(), leagLdrTeam$()
-
+    Shared compLdrTeam$()
     Shared leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
     Color 15, 0
@@ -207,7 +208,7 @@ Sub LeaderStats_Screen ()
     Print leagueName$; " LEAGUE STANDINGS"
 
     ' Division 2 Standings
-    If div2Name$ <> "" Then 
+    If div2Name$ <> "" Then
 
         Color 2
         Locate 4, 1
@@ -259,7 +260,7 @@ Sub LeaderStats_Screen ()
     Print
 
     ' Division 3 Standings
-    If div3Name$ <> "" Then 
+    If div3Name$ <> "" Then
 
         Color 2
         Locate 4, 1
@@ -310,7 +311,7 @@ Sub LeaderStats_Screen ()
 
     ' Division 4 Standings
     Color 2
-    If div4Name$ <> "" Then 
+    If div4Name$ <> "" Then
 
         Color 2
         Locate 4, 1
@@ -349,6 +350,25 @@ Sub LeaderStats_Screen ()
     Color 15
     QK$ = GetKeyPress$
     '-----
+
+End Sub
+
+
+'----------------------------------------
+'     LeaderStats_Screen Subroutine
+'----------------------------------------
+'This subroutine formats the previously
+'loaded stats and outputs them to the end
+'user display.
+Sub LeaderStats_Screen ()
+
+    Shared defLeaders!(), offLeaders!()
+    Shared compLgStatVal!(), compLgStatAtt!()
+
+    Shared defLeaderTeams$(), offLeaderNames$(), offLeaders!()
+    Shared compLdrTeam$(), leagLdrPlayer$(), leagLdrTeam$()
+
+    Shared leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
     Cls
 
@@ -408,7 +428,7 @@ Sub LeaderStats_Screen ()
     Locate 2, 41
     Color 14
     Print "TOTAL POINTS"
-    Locate, 75
+    Locate , 75
     Print "PTS"
     Color 15
 
@@ -994,7 +1014,7 @@ End Sub
 
 
 '----------------------------------------
-'    SavePrintLeagueLeaders Subroutine
+'    ProLeadersReport Subroutine
 '----------------------------------------
 'This subroutine formats the previously
 'loaded stats and outputs them to a file.
@@ -1004,7 +1024,7 @@ End Sub
 'Destination
 '   0 = File
 '   1 = Printer
-Sub SavePrintLeagueLeaders (printDest, destFile$)
+Sub ProLeadersReport (printDest, destFile$)
 
     Shared divWins(), divLosses()
     Shared defLeaders!(), offLeaders!()
@@ -1526,3 +1546,4 @@ Sub SavePrintLeagueLeaders (printDest, destFile$)
     End If
 
 End Sub
+
