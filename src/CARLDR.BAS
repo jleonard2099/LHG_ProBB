@@ -82,7 +82,7 @@ Sub UpdateCareerLeaders ()
     Erase carLdrPlyrName$
     Erase carLdrVal!
 
-    careerFile$ = _OpenFileDialog$("Choose Career file", diskPaths$(1), "*.CAR", "Career Career files")
+    careerFile$ = _OpenFileDialog$("Choose Career file", diskPaths$(1), "*.CAR", "Career Career files [.CAR]")
 
     If careerFile$ <> "" Then
 
@@ -327,7 +327,7 @@ Sub CareerLeaderOptions ()
 
     Cls
 
-    leaderFile$ = _OpenFileDialog$("Choose Career Leader file", diskPaths$(2), "*.TCL", "Career Leader files")
+    leaderFile$ = _OpenFileDialog$("Choose Career Leader file", diskPaths$(2), "*.TCL", "Career Leader files [.TCL]")
 
     If leaderFile$ <> "" Then
 
@@ -388,7 +388,7 @@ Sub CareerLeaders_Report (careerName$, printDest, destFile$)
 
     Open destFile$ For Output As #1
 
-    Print #1, Tab(80 - Int(Len(careerName$) / 2))
+    Print #1, Tab(((80 - Len(careerName$)) / 2))
     Print #1, careerName$
     Print #1, 
 
@@ -532,18 +532,19 @@ Sub CareerLeaders_Screen (careerName$)
     Color 15, 0
 
     Cls
-    Color 12
 
-    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Locate 1, ((80 - Len(careerName$)) / 2)
+    Color 11
     Print careerName$
 
     ' Category #1, 2
-    Locate 2, 1
+    Locate 3, 1
+    Color 12
     Print Tab(5); "GAMES"; Tab(44); "FGA"
 
     For I = 0 To 19
         Color 3
-        Locate I + 3: Print Using "##"; I + 1;
+        Locate I + 4: Print Using "##"; I + 1;
         Print ". ";
         Color 15: Print carLdrPlyrName$(0, I);
         Print Tab(20); Using "####"; carLdrVal!(0, I);:
@@ -560,17 +561,18 @@ Sub CareerLeaders_Screen (careerName$)
     I$ = GetKeyPress$
 
     Cls
-    Color 12
 
-    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Locate 1, ((80 - Len(careerName$)) / 2)
+    Color 11
     Print careerName$
 
-    Locate 2, 1
+    Locate 3, 1
+    Color 12
     Print Tab(5); "FGM"; Tab(44); "FG %"
 
     For I = 0 To 19
         Color 3
-        Locate I + 3: Print Using "##"; I + 1;
+        Locate I + 4: Print Using "##"; I + 1;
         Print ". ";
         Color 15: Print carLdrPlyrName$(2, I);
         Print Tab(20); Using "####"; carLdrVal!(2, I);:
@@ -587,17 +589,18 @@ Sub CareerLeaders_Screen (careerName$)
     I$ = GetKeyPress$
 
     Cls
-    Color 12
 
-    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Locate 1, ((80 - Len(careerName$)) / 2)
+    Color 11
     Print careerName$
 
-    Locate 2, 1
+    Locate 3, 1
+    Color 12
     Print Tab(5); "3FGA"; Tab(44); "3FGM"
 
     For I = 0 To 19
         Color 3
-        Locate I + 3: Print Using "##"; I + 1;
+        Locate I + 4: Print Using "##"; I + 1;
         Print ". ";
         Color 15: Print carLdrPlyrName$(4, I);
         Print Tab(20); Using "####"; carLdrVal!(4, I);:
@@ -614,17 +617,18 @@ Sub CareerLeaders_Screen (careerName$)
     I$ = GetKeyPress$
 
     Cls
-    Color 12
 
-    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Locate 1, ((80 - Len(careerName$)) / 2)
+    Color 11
     Print careerName$
 
-    Locate 2, 1
+    Locate 3, 1
+    Color 12
     Print Tab(5); "3FG %"; Tab(44); "FTA"
 
     For I = 0 To 19
         Color 3
-        Locate I + 3: Print Using "##"; I + 1;
+        Locate I + 4: Print Using "##"; I + 1;
         Print ". ";
         Color 15: Print carLdrPlyrName$(6, I);
         Print Tab(20); Using "##.#"; carLdrVal!(6, I) * 100;
@@ -641,17 +645,18 @@ Sub CareerLeaders_Screen (careerName$)
     I$ = GetKeyPress$
 
     Cls
-    Color 12
 
-    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Locate 1, ((80 - Len(careerName$)) / 2)
+    Color 11
     Print careerName$
 
-    Locate 2, 1
+    Locate 3, 1
+    Color 12
     Print Tab(5); "FTM"; Tab(44); "FT %"
 
     For I = 0 To 19
         Color 3
-        Locate I + 3: Print Using "##"; I + 1;
+        Locate I + 4: Print Using "##"; I + 1;
         Print ". ";
         Color 15: Print carLdrPlyrName$(8, I);
         Print Tab(20); Using "####"; carLdrVal!(8, I);:
@@ -668,17 +673,18 @@ Sub CareerLeaders_Screen (careerName$)
     I$ = GetKeyPress$
 
     Cls
-    Color 12
 
-    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Locate 1, ((80 - Len(careerName$)) / 2)
+    Color 11
     Print careerName$
 
-    Locate 2, 1
+    Locate 3, 1
+    Color 12
     Print Tab(5); "TOTAL REBOUNDS"; Tab(44); "PERSONAL FOULS"
 
     For I = 0 To 19
         Color 3
-        Locate I + 3: Print Using "##"; I + 1;
+        Locate I + 4: Print Using "##"; I + 1;
         Print ". ";
         Color 15: Print carLdrPlyrName$(10, I);
         Print Tab(20); Using "####"; carLdrVal!(10, I);
@@ -695,17 +701,18 @@ Sub CareerLeaders_Screen (careerName$)
     I$ = GetKeyPress$
 
     Cls
-    Color 12
 
-    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Locate 1, ((80 - Len(careerName$)) / 2)
+    Color 11
     Print careerName$
 
-    Locate 2, 1
+    Locate 3, 1
+    Color 12
     Print Tab(5); "STEALS"; Tab(44); "ASSISTS"
 
     For I = 0 To 19
         Color 3
-        Locate I + 3: Print Using "##"; I + 1;
+        Locate I + 4: Print Using "##"; I + 1;
         Print ". ";
         Color 15: Print carLdrPlyrName$(12, I);
         Print Tab(20); Using "####"; carLdrVal!(12, I);:
@@ -722,17 +729,18 @@ Sub CareerLeaders_Screen (careerName$)
     I$ = GetKeyPress$
 
     Cls
-    Color 12
 
-    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Locate 1, ((80 - Len(careerName$)) / 2)
+    Color 11
     Print careerName$
 
-    Locate 2, 1
+    Locate 3, 1
+    Color 12
     Print Tab(5); "BLOCKS"; Tab(44); "MINUTES PLAYED"
 
     For I = 0 To 19
         Color 3
-        Locate I + 3: Print Using "##"; I + 1;
+        Locate I + 4: Print Using "##"; I + 1;
         Print ". ";
         Color 15: Print carLdrPlyrName$(14, I);
         Print Tab(20); Using "####"; carLdrVal!(14, I);
@@ -749,17 +757,18 @@ Sub CareerLeaders_Screen (careerName$)
     I$ = GetKeyPress$
 
     Cls
-    Color 12
 
-    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Locate 1, ((80 - Len(careerName$)) / 2)
+    Color 11
     Print careerName$
 
-    Locate 2, 1
+    Locate 3, 1
+    Color 12
     Print Tab(5); "POINTS"; Tab(44); "OFFENSIVE REBOUNDS"
 
     For I = 0 To 19
         Color 3
-        Locate I + 3: Print Using "##"; I + 1;
+        Locate I + 4: Print Using "##"; I + 1;
         Print ". ";
         Color 15: Print carLdrPlyrName$(16, I);
         Print Tab(20); Using "####"; carLdrVal!(16, I);
@@ -776,17 +785,18 @@ Sub CareerLeaders_Screen (careerName$)
     I$ = GetKeyPress$
 
     Cls
-    Color 12
 
-    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Locate 1, ((80 - Len(careerName$)) / 2)
+    Color 11
     Print careerName$
 
-    Locate 2, 1
+    Locate 3, 1
+    Color 12
     Print Tab(5); "HIGHEST POINTS"
 
     For I = 0 To 19
         Color 3
-        Locate I + 3: Print Using "##"; I + 1;
+        Locate I + 4: Print Using "##"; I + 1;
         Print ". ";
         Color 15: Print carLdrPlyrName$(18, I);
         Print Tab(20); Using "####"; carLdrVal!(18, I)
