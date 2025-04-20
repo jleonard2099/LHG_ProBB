@@ -78,7 +78,7 @@ Sub SCHEDULE ()
                     scheduleFile$ = _InputBox$("Schedule File Name", "Enter name for schedule file")
 
                     If scheduleFile$ <> "" Then
-                        Call NewSchedule(scheduleFile$)
+                        Call NewSchedule(GetFileBaseName$(scheduleFile$))
                     End If
 
                 Case 2 To 5:
@@ -86,9 +86,10 @@ Sub SCHEDULE ()
                     Do
 
                         'Have the user pick a schedule
-                        scheduleFile$ = ChooseFile$(diskPaths$(3) + "*.SCD", "SCHEDULE", FileExit%)
+                        scheduleFile$ = _OpenFileDialog$("Choose Schedule file", diskPaths$(3), "*.SCD", "Schedule files [.SCD]")
+                        'ChooseFile$(diskPaths$(3) + "*.SCD", "SCHEDULE", FileExit%)
 
-                        If FileExit% <> 27 And FileExit% <> 0 Then
+                        If scheduleFile$ <> "" Then
 
                             Call LoadScheduleInfo(scheduleFile$)
 
@@ -101,7 +102,7 @@ Sub SCHEDULE ()
                             Else
                                 'Retrieve / Edit Play
                                 Color 15, 0
-                                Call NewSchedule(scheduleFile$)
+                                Call NewSchedule(GetFileBaseName$(scheduleFile$))
                             End If
 
                         End If
@@ -450,7 +451,9 @@ Sub NewSchedule (scheduleFile$)
                 ReDim scheduleH$(1)
                 ReDim scheduleV$(1)
 
-                Call PROHOOP
+                Do
+                    Call PROHOOP
+                Loop Until schedGame(0) + schedGame(2) > schedGame(1)
 
                 'Restore memory so we can populate again
                 ReDim scheduleNG%(MAX_SCHEDULE_GAMES, 20)
@@ -882,7 +885,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
         Case 5
             Call ChangeGlobalSettings
             Call SaveScheduleFile(scheduleFile$)
-            Call NewSchedule(scheduleFile$)
+            Call NewSchedule(GetFileBaseName$(scheduleFile$))
 
         Case 3, 4
 
@@ -1213,9 +1216,9 @@ Sub SaveScheduleFile (saveFile$)
     Shared scheduleAP%(), scheduleNG%()
     Shared scheduleYN$()
 
-    If _FileExists(diskPaths$(3) + saveFile$ + ".SCD") Then Kill diskPaths$(3) + saveFile$ + ".SCD"
+    If _FileExists(saveFile$) Then Kill saveFile$
 
-    Open diskPaths$(3) + saveFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
+    Open saveFile$ For Random As #1 Len = SCHEDULE_SIZE_BYTES
 
     For X = 0 To 21
         Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
@@ -1590,7 +1593,7 @@ Sub LoadScheduleInfo (targetFile$)
     Shared homeScores(), visitorScores()
     Shared scheduleNG%(), scheduleYN$()
 
-    Open diskPaths$(3) + targetFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
+    Open targetFile$ For Random As #1 Len = SCHEDULE_SIZE_BYTES
 
     fileLength& = LOF(1)
     scheduleAP%(0) = fileLength& / SCHEDULE_SIZE_BYTES

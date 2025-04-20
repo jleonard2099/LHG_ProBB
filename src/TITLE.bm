@@ -71,7 +71,7 @@ Sub TITLE_HEADER ()
     Print Tab(80); " ";
 
     Locate , 25
-    Print "BASKETBALL: THE PRO GAME V" + GAME_VERSION$
+    Print "BASKETBALL: THE PRO GAME v" + GAME_VERSION$
 
     Locate 3, 1
     Color 2, 0
@@ -288,7 +288,7 @@ Sub TITLE ()
 
     Color 12
     Locate , 25
-    Print "BASKETBALL: THE PRO GAME V" + GAME_VERSION$
+    Print "BASKETBALL: THE PRO GAME v" + GAME_VERSION$
 
     'Footer
     Locate LAST_ROW, 1

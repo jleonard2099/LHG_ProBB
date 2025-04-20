@@ -31,11 +31,11 @@ Sub NEWLDR ()
 
         Call TITLE
 
-        menuChoices$(1) = "UPDATE EXPANDED LEAGUE LEADERS        "
-        menuChoices$(2) = "VIEW EXPANDED LEAGUE LEADER FILES     "
-        menuChoices$(3) = "UPDATE EXPANDED LEAGUE STANDINGS      "
-        menuChoices$(4) = "REVIEW EXPANDED LEAGUE STANDINGS"
-        menuChoices$(5) = "RETURN TO LEAGUE LEADER MAIN MENU     "
+        menuChoices$(1) = "UPDATE EXPANDED LEAGUE LEADERS  "
+        menuChoices$(2) = "VIEW EXPANDED LEAGUE LEADERS    "
+        menuChoices$(3) = "UPDATE EXPANDED LEAGUE STANDINGS"
+        menuChoices$(4) = "VIEW EXPANDED LEAGUE STANDINGS  "
+        menuChoices$(5) = "RETURN TO LEAGUE LEADERS MENU   "
         SELECTION% = 1
         Count% = 5
         Start% = 1
@@ -62,91 +62,83 @@ Sub NEWLDR ()
             Select Case SELECTION%
 
                 Case 1:
-                    Do
-                        leagStatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE STATS", FileExit%)
+                    leagStatFile$ = _OpenFileDialog$("Choose League Stats file", diskPaths$(2), "*.TMS", "League Stats files [.TMS]")
+                    'ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE STATS", FileExit%)
 
-                        If FileExit% <> 27 And FileExit% <> 0 Then
+                    If leagStatFile$ <> "" Then
 
-                            For X = 1 To TEAMS_PER_LEAGUE
-                                memberName$(X) = "XXX"
-                            Next
+                        For X = 1 To TEAMS_PER_LEAGUE
+                            memberName$(X) = "XXX"
+                        Next
 
-                            Call ReadLeagueStats(leagStatFile$)
-                            Call UpdateExpandedLeaders(JB, PTS, TTS)
-                            Call SaveLeaderStdg(leagStatFile$, JB, PTS, TTS)
+                        Call ReadLeagueStats(leagStatFile$)
+                        Call UpdateExpandedLeaders(JB, PTS, TTS)
+                        Call SaveExpandedLeaders(GetFileBaseName$(leagStatFile$), JB, PTS, TTS)
 
-                        End If
-
-                    Loop Until FileExit% = 27 Or FileExit% = 0
+                    End If
 
                 Case 2:
-                    Do
-                        leaderFile$ = ChooseFile$(diskPaths$(2) + "*.LDS", "LEAGUE LEADERS", FileExit%)
+                    leaderFile$ = _OpenFileDialog$("Choose Expanded Leaders file", diskPaths$(2), "*.LDS", "Expanded Leader files [.LDS]")
+                    'ChooseFile$(diskPaths$(2) + "*.LDS", "CONFERENCE LEADERS", FileExit%)
 
-                        If FileExit% <> 27 And FileExit% <> 0 Then
-                            Call ReadLeaderStdg(leaderFile$, JB, PTS, TTS)
-                            Call ExpandedLeaders_Menu(printOrView, JB, PTS, TTS)
-                        End If
-
-                    Loop Until FileExit% = 27 Or FileExit% = 0
+                    If leaderFile$ <> "" Then
+                        Call ReadExpandedLeaders(leaderFile$, JB, PTS, TTS)
+                        Call ExpandedLeaders_Menu(printOrView, JB, PTS, TTS)
+                    End If
 
                 Case 3:
-                    Do
-                        leagStatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE STATS", FileExit%)
+                    leagStatFile$ = _OpenFileDialog$("Choose League Stats file", diskPaths$(2), "*.TMS", "League Stats files [.TMS]")
+                    'ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE STATS", FileExit%)
 
-                        If FileExit% <> 27 And FileExit% <> 0 Then
+                    If leagStatFile$ <> "" Then
 
-                            Color 15, 0
-                            Cls
+                        Color 15, 0
+                        Cls
 
-                            Call ReadLeagueStats(leagStatFile$)
-                            Call UpdateExpandedStandings
+                        Call ReadLeagueStats(leagStatFile$)
+                        Call UpdateExpandedStandings
 
-                        End If
-
-                    Loop Until FileExit% = 27 Or FileExit% = 0
+                    End If
 
                 Case 4:
-                    Do
-                        standingsFile$ = ChooseFile$(diskPaths$(2) + "*.STD", "LEAGUE STANDINGS", FileExit%)
+                    standingsFile$ = _OpenFileDialog$("Choose Expanded Standings file", diskPaths$(2), "*.STD", "Expanded Standings files [.STD]")
+                    'ChooseFile$(diskPaths$(2) + "*.STD", "CONFERENCE STANDINGS", FileExit%)
 
-                        If FileExit% <> 27 And FileExit% <> 0 Then
+                    If standingsFile$ <> "" Then
 
-                            Open diskPaths$(2) + standingsFile$ + ".STD" For Input As #2
+                        Open standingsFile$ For Input As #2
 
-                            Input #2, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
+                        Input #2, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
-                            For I = 1 To TEAMS_PER_LEAGUE
-                                Input #2, expStdLeagName$(I), totTeamWins(I), totHomeWins(I), totAwayWins(I), lastTenWins(I), totTeamLosses(I), totHomeLosses(I), totAwayLosses(I), lastTenLosses(I), teamWinStreak(I), teamLoseStreak(I)
-                            Next
+                        For I = 1 To TEAMS_PER_LEAGUE
+                            Input #2, expStdLeagName$(I), totTeamWins(I), totHomeWins(I), totAwayWins(I), lastTenWins(I), totTeamLosses(I), totHomeLosses(I), totAwayLosses(I), lastTenLosses(I), teamWinStreak(I), teamLoseStreak(I)
+                        Next
 
-                            Close #2
+                        Close #2
 
-                            userKey$ = GetOutputOptions$
+                        userKey$ = GetOutputOptions$
 
-                            If userKey$ <> Chr$(27) Then
+                        If userKey$ <> Chr$(27) Then
 
-                                Select Case userKey$
+                            Select Case userKey$
 
-                                    Case "F"
-                                        userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
-                                        If userFile$ <> "" Then
-                                            Call NewStandings_Report(0, userFile$, leagueName$)
-                                        End If
+                                Case "F"
+                                    userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
+                                    If userFile$ <> "" Then
+                                        Call NewStandings_Report(0, userFile$, leagueName$)
+                                    End If
 
-                                    Case "P"
-                                        Call NewStandings_Report(1, "REPORT", leagueName$)
+                                Case "P"
+                                    Call NewStandings_Report(1, "REPORT", leagueName$)
 
-                                    Case "S":
-                                        Call NewStandings_Screen(leagueName$)
+                                Case "S":
+                                    Call NewStandings_Screen(leagueName$)
 
-                                End Select
-
-                            End If
+                            End Select
 
                         End If
 
-                    Loop Until FileExit% = 27 Or FileExit% = 0
+                    End If
 
             End Select
 
@@ -193,7 +185,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
     For KK = 1 To TEAMS_PER_LEAGUE:
 
-        YY = YY + 1
+        'YY = YY + 1
 
         If memberName$(KK) <> "*" And memberName$(KK) <> "XXX" And memberName$(KK) <> "" Then
 
@@ -256,11 +248,11 @@ End Sub
 
 
 '----------------------------------------
-'        SaveLeaderStdg Subroutine
+'     SaveExpandedLeaders Subroutine
 '----------------------------------------
 'This subroutine compiles the leader files
 '(.LDS) for the expanded standings modules
-Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
+Sub SaveExpandedLeaders (leaderFile$, JB, plyrTotalStats, teamTotalStats)
 
     Shared expPlyrLdrName$(), plyLeaderTeams$()
     Shared expPlyrLdrTeam$(), tmLeaderTeams$()
@@ -277,7 +269,7 @@ Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Print "SAVING LEADER FILES . . . . PLEASE WAIT"
 
-    Open diskPaths$(2) + statFile$ + ".LDS" For Output As #1
+    Open diskPaths$(2) + leaderFile$ + ".LDS" For Output As #1
 
     Write #1, JB, plyrTotalStats, teamTotalStats
 
@@ -347,11 +339,11 @@ End Sub
 
 
 '----------------------------------------
-'        ReadLeaderStdg Subroutine
+'     ReadExpandedLeaders Subroutine
 '----------------------------------------
 'This subroutine reads in the leader files
 '(.LDS) for the expanded standings modules
-Sub ReadLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
+Sub ReadExpandedLeaders (leaderFile$, JB, plyrTotalStats, teamTotalStats)
 
     Shared expPlyrLdrName$(), expPlyrLdrTeam$()
     Shared plyLeaderTeams$(), tmLeaderTeams$()
@@ -368,7 +360,7 @@ Sub ReadLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     'Print "READING LEADER FILES . . . . PLEASE WAIT"
 
-    If Not _FileExists(diskPaths$(2) + statFile$ + ".LDS") Then
+    If Not _FileExists(leaderFile$) Then
 
         MsgText$ = "NO COMPILED LEADER FILES WERE FOUND. PRESS ANY KEY TO RETURN TO MAIN MENU"
         BoxWidth = 20
@@ -380,7 +372,7 @@ Sub ReadLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Else
 
-        Open diskPaths$(2) + statFile$ + ".LDS" For Input As #1
+        Open leaderFile$ For Input As #1
 
         Input #1, JB, plyrTotalStats, teamTotalStats
 

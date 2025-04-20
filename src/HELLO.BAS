@@ -364,7 +364,8 @@ Close #3
 'Run main menu
 SELECTION% = 1
 
-Screen _NewImage(640, 480, 256)
+menu& = _NewImage(640, 480, 256)
+Screen menu&
 
 Do
 
@@ -438,7 +439,15 @@ Sub Main_Menu (menuSelection)
             Select Case menuSelection
 
                 Case 1:
-                    Call PROHOOP
+                    If schedGame(0) + schedGame(2) <= schedGame(1) Then
+                        activeSchedule = 1
+                    Else
+                        activeSchedule = 0
+                    End If
+
+                    Do
+                        Call PROHOOP
+                    Loop Until activeSchedule = 0
 
                 Case 2:
                     Call TeamMgt_Menu
@@ -12529,11 +12538,8 @@ Sub EndOfGame
     End If
 
     If UCase$(I$) = "Y" Or (autoPlay = 1 And endAllGames <> 1) Then
-
         Cls
         Print "PLEASE WAIT ..."
-        Call PROHOOP
-
     End If
 
 End Sub

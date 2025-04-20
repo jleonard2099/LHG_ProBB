@@ -199,10 +199,10 @@ Sub NewStandings_Screen (league$)
 
             Color 11
             Locate 2, 35: Print league$
-            Color 14
-            Locate 4: Print Tab(20); "                     MAJ          HOME    ROAD    LAST 10"
-
             Print RTrim$(targetDiv$)
+
+            Color 14
+            Locate 4: Print Tab(41); "MAG          HOME    ROAD    LAST 10"
             Print Tab(20); "G   W   L   PCT   GB  #  WS  LS   W- L    W- L    W- L "
 
             For I = AA To ZZ
@@ -252,11 +252,12 @@ Sub NewStandings_Screen (league$)
             MJ = 83 - totTeamWins(AA) - totTeamLosses(AA + 1)
             If MJ < 0 Then MJ = 0
 
+            Color 15
             Locate 6, 42
             Print Using "##"; MJ;
 
             Color 14
-            Locate LAST_ROW - 1: Print "HIT ANY KEY TO CONTINUE";
+            Locate LAST_ROW - 1, 28: Print "HIT ANY KEY TO CONTINUE";
             I$ = GetKeyPress$
             
         End If
