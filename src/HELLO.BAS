@@ -379,16 +379,21 @@ System
 '----------------------------------------
 
 Errhandler:
+
 Open "errlog" For Append As #10
+'Print #10, "An error occurred. Please contact support with the following information:"
 Print #10, "Error #"; Err; "on program file line"; _ErrorLine
-If _FileExists("GAME82") Then
-    Print #10, "Schedule game # "; Using "###"; schedGame(0) + schedGame(2)
-    Print #10, gameTeams$(0) + " vs. " + gameTeams$(1)
-    Print #10, I2
+
+If _InclErrorLine Then
+    Print #10, "    in module "; _InclErrorFile$; " line "; _InclErrorLine
 End If
+
+'If _FileExists("GAME82") Then
+'Print #10, "Schedule game # "; Using "###"; schedGame(0) + schedGame(2)
+'Print #10, gameTeams$(0) + " vs. " + gameTeams$(1)
+'End If
 Print #10,
 Close #10
-
 Resume Next ' moves program to code following the error.
 
 '----------------------------------------
@@ -1049,7 +1054,7 @@ Sub PROHOOP ()
             Locate 23, 2: Color 14
             Print "NOTE:: "
             Color 15
-            
+
             Locate , 2: Print "* 30-SEC CLOCK FOR ABA THROUGH 73-74; 24-SEC CLOCK FOR NBA IN 54";
             Locate , 2: Print "* WNBA WENT FROM 20-MIN HALVES TO 10-MIN QUARTERS IN 06";
             Locate , 2: Print "* NBA - 6 TOs UNTIL 00-01; 7 TOs (01-02+); WNBA - 4 TOs UNTIL 23-24"
@@ -1057,7 +1062,7 @@ Sub PROHOOP ()
             Locate , 2: Print "* FREE THROWS AWARDED ON ALL FOULS UNTIL 72-73"
             Locate , 2: Print "* BONUS FTs: 3 TO MAKE 2 | 2 TO MAKE 1 UNTIL 72-73"
             Locate , 2: Print "* BONUS ON 7TH FOUL UNTIL 72-73; 6TH FOUL (72-73), 5TH FOUL (73-74+)";
-            
+
             Do
 
                 Color 7
@@ -1155,7 +1160,7 @@ Sub PROHOOP ()
 
                     Case 17:
                         pbpOpt = 1 - pbpOpt
- 
+
                     Case 18:
                         sndOpt = 1 - sndOpt
 
@@ -1690,15 +1695,15 @@ Sub PROHOOP ()
 
                         'Check for steal
                         Select Case defStyles(D)
-                            
+
                             Case 1, 4
                                 stealBaseAdj = 24
-                                
+
                             Case 7
                                 stealBaseAdj = 45
 
                         End Select
-                        
+
                         'Compare roll to 24 + several adjustments for steals
                         If RN0 <= stealBaseAdj + teamAdj(P, 0) + teamAdj(P, 1) + teamAdj(D, 2) + gameRatings!(D, lineupIdx(D, P9), 5) + stealAdj(offStyles(P)) Then
 
@@ -1718,7 +1723,7 @@ Sub PROHOOP ()
                         End If
 
                 End Select
-            
+
             Case 2, 5, 6, 8, 9
                 ' *** SHOT VS LOOSE M-M, SAG M-M, ALL ZONE EXCEPT 1-3-1 ***
 
@@ -1847,7 +1852,7 @@ Sub PROHOOP ()
                 Call UPDATESCREEN
                 offStatus = 88
                 Call FoulCalled(1)
-                
+
                 GoTo 566
 
             Case 50 To 50 + teamAdj(P, 1) + teamAdj(D, 2)
@@ -2634,7 +2639,7 @@ Sub PROHOOP ()
     '2 = Timeout
     '3 = Foul
     '4 = Shoot (3FGA)
-    
+
     'There's alot here missing!!!!
 
     'Foul was chosen | Computer on offense and last 4 minutes of game
@@ -8809,8 +8814,9 @@ Sub SETUPRATINGS (teamStyle)
                 'Player FGA / (Player FGA + Player FTA) as %
                 X3! = Int(plyrRat_GAME(I, I1, 2) / (plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 4)) * 100 + .5)
 
-                'Calculate penetration rating
+                'Calculate penetration rating from position
                 If Left$(players_GAME$(I, I1, 1), 1) <> "F" And Left$(players_GAME$(I, I1, 1), 1) <> "C" Then
+
                     'Guards
                     Select Case X3!
 
@@ -12442,6 +12448,10 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx, dataOK)
 
         For I = 0 To 14
 
+            'This will never get reached
+            'These values were only ever asssigned mid-range (0 | 5)
+            'They were never calculated  / entered for players
+            'It is not clear if perhaps these were used in some other way in the past
             If plyrRat_GAME(gameIdx, I, 16) < 0 And plyrRat_GAME(gameIdx, I, 17) < 0 Then
 
                 gamesPlayed = plyrRat_GAME(gameIdx, I, 16) / plyrRat_GAME(gameIdx, I, 0)
