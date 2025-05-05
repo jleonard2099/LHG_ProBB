@@ -452,7 +452,7 @@ Sub Main_Menu (menuSelection)
 
                     Do
                         Call PROHOOP
-                    Loop Until activeSchedule = 0
+                    Loop Until activeSchedule = 0 or earlyExit = 1
 
                 Case 2:
                     Call TeamMgt_Menu
@@ -1133,7 +1133,7 @@ Sub PROHOOP ()
 
                     Case 10:
                         Do
-                            Locate 12, 32
+                            Locate 13, 32
                             Input pbpDelay!
                         Loop Until pbpDelay! >= 0
 
@@ -5258,7 +5258,7 @@ Sub MAKEPBP (pbpType)
                             Case 11: pbpString$ = pbpString$ + " FROM THE TOP OF THE KEY"
                             Case 12: pbpString$ = pbpString$ + " FIRES FROM THE LEFT WING"
                             Case 13: pbpString$ = pbpString$ + " TRIES THE 12 FOOTER"
-                            Case 14: pbpString$ = pbpString$ + " PUlastLoseStreak UP AND POPS"
+                            Case 14: pbpString$ = pbpString$ + " PULLS UP AND POPS"
                             Case 15: pbpString$ = pbpString$ + " FIRES FROM 15"
                             Case 16: pbpString$ = pbpString$ + " FROM THE PERIMETER"
                             Case 17: pbpString$ = pbpString$ + " TURNS AND SHOOTS"
@@ -5297,7 +5297,7 @@ Sub MAKEPBP (pbpType)
                             Case 43: pbpString$ = pbpString$ + " FROM AROUND 16 FEET"
                             Case 44: pbpString$ = pbpString$ + " PUTS IT UP"
                             Case 45: pbpString$ = pbpString$ + " WITH A RUNNING ONE-HANDER"
-                            Case 46: pbpString$ = pbpString$ + " PUlastLoseStreak UP"
+                            Case 46: pbpString$ = pbpString$ + " PULLS UP"
                             Case 47: pbpString$ = pbpString$ + " KISSES THE GLASS"
                             Case 48: pbpString$ = pbpString$ + " SPINS AND SHOOTS"
                             Case 49: pbpString$ = pbpString$ + " PUTS IT UP FROM 16"
@@ -5418,7 +5418,7 @@ Sub MAKEPBP (pbpType)
                     Case 1 To 6
                         pbpString$ = teamGender$(P) + " DRAINS THE THREE!"
                     Case 7 To 10
-                        pbpString$ = teamGender$(P) + " FIlastLoseStreak UP THE BASKET!!!"
+                        pbpString$ = teamGender$(P) + " FILLS UP THE BASKET!!!"
                     Case 11 To 20:
                         pbpString$ = pbpString$ + " HITS THE TREY!!!"
                     Case 21 To 30:
@@ -5616,7 +5616,7 @@ Sub MAKEPBP (pbpType)
                         Case 11: pbpString$ = teamGender$(P) + " MISSES"
                         Case 12: pbpString$ = "DOESN'T GET THE ROll"
                         Case 13: pbpString$ = "OFF THE GLASS"
-                        Case 14: pbpString$ = "FAlastLoseStreak SHORT"
+                        Case 14: pbpString$ = "FALLS SHORT"
                         Case 15: pbpString$ = "NO GOOD"
                         Case 16: pbpString$ = "NO"
                         Case 17: pbpString$ = teamGender$(P) + " MISSES"
@@ -5628,7 +5628,7 @@ Sub MAKEPBP (pbpType)
                         Case 23: pbpString$ = "IT RATTLES OUT"
                         Case 24: pbpString$ = "IT DOESN'T FALL"
                         Case 25: pbpString$ = "IT BOUNCES OFF"
-                        Case 26: pbpString$ = "IT ROlastLoseStreak OFF"
+                        Case 26: pbpString$ = "IT ROLLS OFF"
                         Case 27: pbpString$ = "SHORT"
                         Case 28: pbpString$ = "IT DOESN'T GO DOWN"
                         Case 29: pbpString$ = "IT'S NO GOOD"
@@ -5638,18 +5638,18 @@ Sub MAKEPBP (pbpType)
                         Case 33: pbpString$ = teamGender$(P) + " FAILS TO CONNECT"
                         Case 34: pbpString$ = "OFF THE SIDE OF THE RIM"
                         Case 35: pbpString$ = "IT COMES UP SHORT"
-                        Case 36: pbpString$ = "IT ROlastLoseStreak OUT"
+                        Case 36: pbpString$ = "IT ROLLS OUT"
                         Case 37: pbpString$ = "AROUND AND OUT"
                         Case 38: pbpString$ = "OFF THE BACK OF THE IRON"
-                        Case 39: pbpString$ = "ON THE FRONT RIM...ROlastLoseStreak OFF"
+                        Case 39: pbpString$ = "ON THE FRONT RIM...ROLLS OFF"
                         Case 40: pbpString$ = "IN THE AIR...NO GOOD"
                         Case 41: pbpString$ = "TOO SHORT"
                         Case 42: pbpString$ = "NO GOOD"
                         Case 43: pbpString$ = "IT COMES UP SHORT"
-                        Case 44: pbpString$ = "IT ROlastLoseStreak OUT"
+                        Case 44: pbpString$ = "IT ROLLS OUT"
                         Case 45: pbpString$ = "IN AND OUT"
                         Case 46: pbpString$ = "OFF THE FRONT OF THE IRON"
-                        Case 47: pbpString$ = "ON THE RIM...ROlastLoseStreak OFF"
+                        Case 47: pbpString$ = "ON THE RIM...ROLLS OFF"
                         Case 48: pbpString$ = "OFF THE FRONT OF THE RIM"
                         Case 49: pbpString$ = "TOO SHORT"
                         Case 50: pbpString$ = "TOO STRONG"
@@ -7549,7 +7549,7 @@ Sub DEADBALLOPTIONS (userTakeTO)
 
             Call WINDEX
 
-            pbpString$ = gameTeams$(chargeTeam) + " WIll BE CHARGED"
+            pbpString$ = gameTeams$(chargeTeam) + " WILL BE CHARGED"
             Call SELECTPBP(chargeTeam, 0)
             pbpString$ = "WITH A MANDATORY TIMEOUT"
             Call SELECTPBP(chargeTeam, 0)
@@ -7574,7 +7574,7 @@ Sub DEADBALLOPTIONS (userTakeTO)
 
             Call WINDEX
 
-            pbpString$ = gameTeams$(chargeTeam) + " WIll BE CHARGED"
+            pbpString$ = gameTeams$(chargeTeam) + " WILL BE CHARGED"
             Call SELECTPBP(chargeTeam, 0)
             pbpString$ = "WITH A MANDATORY TIMEOUT"
             Call SELECTPBP(chargeTeam, 0)
@@ -9164,88 +9164,87 @@ Sub CHANGESTRATEGY (I$)
 
     Shared yesNoText$()
 
-    If Not (UCase$(I$) = "Z" And playerMode = 1 And compTeam = 0 Or playerMode = 2) Then
+    If Not ((UCase$(I$) = "Z" Or I$ = "/") And playerMode = 1 And compTeam = 0 Or playerMode = 2) Then
 
-        If Not (I$ = "/" And playerMode = 1 And compTeam = 1 Or playerMode = 2) Then
-
+        If UCase$(I$) = "Z" Then 
+            teamSelected = 0
+        Else
             teamSelected = 1
+        End If
 
-            If UCase$(I$) = "Z" Then teamSelected = 0
+        Do
+            Call FRAMEOPTION(8, teamSelected)
+            Locate 10, 15
+            Print gameTeams$(teamSelected); " SELECT STRATEGY:"
+
+            Locate 12, 14
+            Locate , 14: Print "0 - RETURN TO GAME"
+            Locate , 14: Print "1 - SELECT OFFENSIVE STYLE OF PLAY"
+            Locate , 14: Print "2 - SELECT DEFENSIVE STYLE OF PLAY"
+            Locate , 14: Print "3 - FULL COURT PRESS "; yesNoText$(fullCtOpt(teamSelected))
 
             Do
-                Call FRAMEOPTION(8, teamSelected)
-                Locate 10, 15
-                Print gameTeams$(teamSelected); " SELECT STRATEGY:"
+                I$ = GetKeyPress$
+                I1 = Val(I$)
+            Loop Until I1 >= 0 And I1 <= 3
 
-                Locate 12, 14
-                Locate , 14: Print "0 - RETURN TO GAME"
-                Locate , 14: Print "1 - SELECT OFFENSIVE STYLE OF PLAY"
-                Locate , 14: Print "2 - SELECT DEFENSIVE STYLE OF PLAY"
-                Locate , 14: Print "3 - FULL COURT PRESS "; yesNoText$(fullCtOpt(teamSelected))
+            Select Case I1
 
-                Do
-                    I$ = GetKeyPress$
-                    I1 = Val(I$)
-                Loop Until I1 >= 0 And I1 <= 3
+               Case 1:
+                    'OFFENSE
+                    Call FRAMEOPTION(8, teamSelected)
+                    Locate 10, 15
+                    Print gameTeams$(teamSelected); " SELECT OFFENSE:"
 
-                Select Case I1
-                    Case 1:
-                        'DEFENSE
-                        Call FRAMEOPTION(8, teamSelected)
-                        Locate 10, 15
-                        Print gameTeams$(teamSelected); " SELECT OFFENSE:"
+                    Locate 12, 14
+                    Locate , 14: Print "0 - NORMAL"
+                    Locate , 14: Print "1 - AGGRESSIVE"
+                    Locate , 14: Print "2 - SAFE"
 
-                        Locate 12, 14
-                        Locate , 14: Print "0 - NORMAL"
-                        Locate , 14: Print "1 - AGGRESSIVE"
-                        Locate , 14: Print "2 - SAFE"
+                    Do
+                        I$ = GetKeyPress$
+                        I1 = Val(I$)
+                    Loop Until I1 >= 0 And I1 <= 2
 
-                        Do
-                            I$ = GetKeyPress$
-                            I1 = Val(I$)
-                        Loop Until I1 >= 0 And I1 <= 2
+                    offStyles(teamSelected) = I1
 
-                        offStyles(teamSelected) = I1
+                Case 2:
+                    'DEFENSE
+                    Call FRAMEOPTION(13, teamSelected)
+                    Locate 10, 15
+                    Print gameTeams$(teamSelected); " SELECT DEFENSE:"
 
-                    Case 2:
-                        'DEFENSE
-                        Call FRAMEOPTION(13, teamSelected)
-                        Locate 10, 15
-                        Print gameTeams$(teamSelected); " SELECT DEFENSE:"
+                    Locate 12, 14
+                    Locate , 14: Print "1 - REGULAR MAN-TO-MAN"
+                    Locate , 14: Print "2 - SAGGING MAN-TO-MAN"
+                    Locate , 14: Print "3 - TRAPPING MAN-TO-MAN"
+                    Locate , 14: Print "4 - TIGHT MAN-TO-MAN"
+                    Locate , 14: Print "5 - LOOSE MAN-TO-MAN"
+                    maxChoice = 5
 
-                        Locate 12, 14
-                        Locate , 14: Print "1 - REGULAR MAN-TO-MAN"
-                        Locate , 14: Print "2 - SAGGING MAN-TO-MAN"
-                        Locate , 14: Print "3 - TRAPPING MAN-TO-MAN"
-                        Locate , 14: Print "4 - TIGHT MAN-TO-MAN"
-                        Locate , 14: Print "5 - LOOSE MAN-TO-MAN"
-                        maxChoice = 5
+                    If teamYears(teamSelected) >= 2001 Then
+                        Locate , 14: Print "6 - 1-2-2 ZONE"
+                        Locate , 14: Print "7 - 1-3-1 ZONE"
+                        Locate , 14: Print "8 - 2-3 ZONE"
+                        Locate , 14: Print "9 - 3-2 ZONE"
+                        maxChoice = 9
+                    End If
 
-                        If teamYears(teamSelected) >= 2001 Then
-                            Locate , 14: Print "6 - 1-2-2 ZONE"
-                            Locate , 14: Print "7 - 1-3-1 ZONE"
-                            Locate , 14: Print "8 - 2-3 ZONE"
-                            Locate , 14: Print "9 - 3-2 ZONE"
-                            maxChoice = 9
-                        End If
+                    Do
+                        I$ = GetKeyPress$
+                        I1 = Val(I$)
+                    Loop Until I1 >= 1 And I1 <= maxChoice
 
-                        Do
-                            I$ = GetKeyPress$
-                            I1 = Val(I$)
-                        Loop Until I1 >= 1 And I1 <= maxChoice
+                    defStyles(teamSelected) = I1
 
-                        defStyles(teamSelected) = I1
+                    Screen , , 0, 0
 
-                        Screen , , 0, 0
+                Case 3
+                    fullCtOpt(teamSelected) = 1 - fullCtOpt(teamSelected)
 
-                    Case 3
-                        fullCtOpt(teamSelected) = 1 - fullCtOpt(teamSelected)
+            End Select
 
-                End Select
-
-            Loop Until I1 = 0
-
-        End If
+        Loop Until I1 = 0
 
     End If
 
@@ -9709,7 +9708,7 @@ End Sub
 '----------------------------------------
 'This subroutine essentially handles the
 'AI for the computer coach. After an
-'evaluation of substitutions, it then calastLoseStreak
+'evaluation of substitutions, it then caLLS
 'another routine to decide on strategies
 Sub ComputerCoach ()
 
@@ -11178,7 +11177,8 @@ Sub BOXOPTIONS (outputChoice)
                     'boxName$ = boxName$ + ".SPC"
                 Else
                     'ScheduleName_GameXXX.BS
-                    boxName$ = Mid$(scheduleFile$, 1, Len(scheduleFile$) - 4) + "_GAME" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2)))) + ".BS"
+                    baseFile$ = GetFileBaseName$(scheduleFile$)
+                    boxName$ = Mid$(baseFile$, 1, Len(baseFile$) - 4) + "_GAME" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2)))) + ".BS"
                     'boxName$ = "BOX" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2))))
                 End If
 

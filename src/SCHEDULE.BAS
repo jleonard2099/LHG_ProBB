@@ -149,8 +149,10 @@ Sub NewSchedule (scheduleFile$)
 
     Shared modeAbbrev$(), sClockOpt$(), yesNo$()
 
-    DT$ = "10-22-24"
+    DT$ = "10-22-25"
     TM$ = "07:30P"
+
+    baseFile$ = GetFileBaseName$(scheduleFile$)
 
     Do
 
@@ -197,7 +199,7 @@ Sub NewSchedule (scheduleFile$)
         Color 14: Print "-RESET SCORES";
 
         Locate 1, 1: Print Tab(80); " ";
-        Locate 1, 1: Print scheduleFile$
+        Locate 1, 1: Print baseFile$
         Locate 1, 33
 
         Color 14: Print "AUTO SCHEDULER"
@@ -336,7 +338,7 @@ Sub NewSchedule (scheduleFile$)
                 NS% = Int((targetGame% - 1) / 20)
 
                 'boxName$ = diskPaths$(1) + "BOX" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%)))
-                boxName$ = diskPaths$(1) + scheduleFile$ + "_GAME" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%))) + ".BS"
+                boxName$ = diskPaths$(1) + baseFile$ + "_GAME" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%))) + ".BS"
 
                 Call EditBoxscore(boxName$)
                 Color 15, 0
