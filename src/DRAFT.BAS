@@ -194,6 +194,8 @@ Sub NewTeamParameters_Base (teamYear$, teamName$, normYrIdx)
     Do
 
         Do
+            Locate 20, 53
+            Print Space$(10)
             Locate 20, 25
             Input "# TO CHANGE (0 TO CONTINUE) "; B9
         Loop Until B9 >= 0 And B9 <= 8
@@ -253,9 +255,6 @@ Sub NewTeamParameters_Base (teamYear$, teamName$, normYrIdx)
                     End If
 
             End Select
-
-            Locate 20, 53
-            Print Space$(10)
 
         End If
 
@@ -324,6 +323,8 @@ Sub NewTeamParameters_OffDef ()
     Do
 
         Do
+            Locate 18, 29
+            Print Space$(10)            
             Locate 18
             Input "# TO CHANGE (0 TO CONTINUE) "; B9
         Loop Until B9 >= 0 And B9 <= 14
@@ -413,9 +414,6 @@ Sub NewTeamParameters_OffDef ()
 
             End Select
 
-            Locate 18, 29
-            Print Space$(10)
-            
         End If
 
     Loop Until B9 = 0
@@ -454,6 +452,8 @@ Sub NewTeamParameters_OffDef ()
     Do
 
         Do
+            Locate 18, 29
+            Print Space$(10)
             Locate 18
             Input "# TO CHANGE (0 TO CONTINUE) "; B9
         Loop Until B9 >= 0 And B9 <= 14
@@ -542,9 +542,6 @@ Sub NewTeamParameters_OffDef ()
                     Locate 16, 10: Print " "
 
             End Select
-
-            Locate 18, 29
-            Print Space$(10)
 
         End If
 

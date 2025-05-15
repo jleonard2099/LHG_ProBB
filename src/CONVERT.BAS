@@ -356,44 +356,44 @@ End Sub
 '  been included for.
 Sub ReadSchedOld (targetFile$)
 
-    Shared BS%, NS%
-
-    Shared scheduleAP%()
+    Shared scheduleNG%()
     Shared homeScores(), visitorScores()
-    Shared scheduleNG%(), scheduleYN$()
+    Shared scheduleYN$()
 
-    Open targetFile$ For Random As #1 Len = (SCHEDULE_SIZE_BYTES - 10)
+    ReDim scheduleNG%(MAX_SCHEDULE_GAMES, 21)
+    ReDim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
+    ReDim homeScores(MAX_SCHEDULE_GAMES)
+    ReDim visitorScores(MAX_SCHEDULE_GAMES)
+
+    Open targetFile$ For Random As #1 Len = SCHEDULE_SIZE_BYTES - 2
 
     fileLength& = LOF(1)
-    scheduleAP%(0) = fileLength& / (SCHEDULE_SIZE_BYTES - 10)
-    BS% = Int((scheduleAP%(0) - 1) / 20)
+    totalGames = fileLength& / (SCHEDULE_SIZE_BYTES - 2)
 
-    For X = 0 To 18
-        Field #1, X * 2 As X$, 2 As Q$(X + 1), (SCHEDULE_SIZE_BYTES - 10) - 2 - 2 * X As X$
+    For X = 0 To 20
+        Field #1, X * 2 As X$, 2 As Q$(X + 1), (SCHEDULE_SIZE_BYTES - 2) - 2 - 2 * X As X$
     Next
 
-    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+    Field #1, 42 As X$, 2 As Q$(24), 2 As Q$(25), 5 As Q$(22), 5 As Q$(23)
 
-    For I = 1 To scheduleAP%(0)
+    For I = 1 To totalGames
 
         Get #1, I
 
-        For X = 0 To 18:
+        For X = 0 To 20:
             scheduleNG%(I, X) = CVI(Q$(X + 1))
         Next
 
         For X = 0 To 1:
-            scheduleYN$(I, X) = RTrim$(Q$(20 + X))
+            scheduleYN$(I, X) = RTrim$(Q$(22 + X))
         Next
 
-        visitorScores(I) = CVI(Q$(22))
-        homeScores(I) = CVI(Q$(23))
+        visitorScores(I) = CVI(Q$(24))
+        homeScores(I) = CVI(Q$(25))
 
     Next
 
     Close #1
-
-    NS% = 0
 
 End Sub
 
@@ -511,7 +511,7 @@ Sub ConvertSched4to5 (targetFile$, silent)
 
         numberGames = fileLength& / (SCHEDULE_SIZE_BYTES - 10)
 
-        Call LoadSchedA(GetFileBaseName$(targetFile$))
+        Call ReadSchedOld(targetFile$)
 
         For currGame = 1 To numberGames
 
@@ -585,53 +585,5 @@ Sub ConvertAllSched ()
         Print "Converting "; target$
         Call ConvertSched4to5(target$, 1)
     Next X
-
-End Sub
-
-
-
-
-
-
-Sub LoadSchedA (targetFile$)
-
-    Shared scheduleNG%()
-    Shared homeScores(), visitorScores()
-    Shared scheduleYN$()
-
-    ReDim scheduleNG%(MAX_SCHEDULE_GAMES, 21)
-    ReDim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
-    ReDim homeScores(MAX_SCHEDULE_GAMES)
-    ReDim visitorScores(MAX_SCHEDULE_GAMES)
-
-    Open targetFile$ For Random As #1 Len = SCHEDULE_SIZE_BYTES - 2
-
-    fileLength& = LOF(1)
-    totalGames = fileLength& / (SCHEDULE_SIZE_BYTES - 2)
-
-    For X = 0 To 20
-        Field #1, X * 2 As X$, 2 As Q$(X + 1), (SCHEDULE_SIZE_BYTES - 2) - 2 - 2 * X As X$
-    Next
-
-    Field #1, 42 As X$, 2 As Q$(24), 2 As Q$(25), 5 As Q$(22), 5 As Q$(23)
-
-    For I = 1 To totalGames
-
-        Get #1, I
-
-        For X = 0 To 20:
-            scheduleNG%(I, X) = CVI(Q$(X + 1))
-        Next
-
-        For X = 0 To 1:
-            scheduleYN$(I, X) = RTrim$(Q$(22 + X))
-        Next
-
-        visitorScores(I) = CVI(Q$(24))
-        homeScores(I) = CVI(Q$(25))
-
-    Next
-
-    Close #1
 
 End Sub

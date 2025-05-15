@@ -894,7 +894,8 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
     Do
 
         Do
-            Locate 12
+            Locate 12, 29
+            Print Space$(29)
             Color 11
             Input "# TO CHANGE (0 TO CONTINUE) "; B9
             Color 15
@@ -938,9 +939,6 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
                 Locate 10, 20: Print " "
 
         End Select
-
-        Locate 12, 29
-        Print Space$(29)
 
     Loop Until B9 = 0
 
@@ -1031,6 +1029,8 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
     Do
 
         Do
+            Locate 22, 28
+            Print Space$(10)
             Color 11
             Locate 22, 1
             Input "# TO CHANGE (0 TO CONTINUE)"; B9
@@ -1056,10 +1056,22 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
                     Locate 6, 1: Input "3. TEAM NAME"; teamInfo$(0)
                     Locate 6, 13: Print " "
 
+                    Locate 20
+                    Print "TEAM APPEARANCE: ";
+                    Color teamRatings(33), teamRatings(34)
+                    Print RTrim$(teamInfo$(0)) + " " + RTrim$(teamInfo$(1))
+                    Color 15, 0
+
                 Case 4
                     Locate 7, 17: Print Space$(15)
                     Locate 7, 1: Input "4. TEAM NICKNAME"; teamInfo$(1)
                     Locate 7, 17: Print " "
+
+                    Locate 20
+                    Print "TEAM APPEARANCE: ";
+                    Color teamRatings(33), teamRatings(34)
+                    Print RTrim$(teamInfo$(0)) + " " + RTrim$(teamInfo$(1))
+                    Color 15, 0
 
                 Case 5
                     Locate 8, 21: Print Space$(10)
@@ -1129,9 +1141,6 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
                     Locate 18, 15: Print " "
 
             End Select
-
-            Locate 22, 28
-            Print Space$(10)
 
         End If
 
@@ -1290,6 +1299,8 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
     Do
 
         Do
+            Locate 20, 28
+            Print Space$(10)
             Locate 20, 1
             Color 11
             Input "# TO CHANGE (0 TO CONTINUE)"; B9
@@ -1451,9 +1462,6 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
                     Locate 18, 29: Print " "
 
             End Select
-
-            Locate 20, 28
-            Print Space$(10)
 
         End If
 
@@ -1724,6 +1732,8 @@ Sub EditPlayer (playerIdx, action)
     Do
 
         Do
+            Locate 26, 29
+            Print Space$(29)
             Locate 26, 1
             Color 11
             Input "# TO CHANGE (0 TO CONTINUE)"; B9
@@ -1846,9 +1856,6 @@ Sub EditPlayer (playerIdx, action)
 
         End Select
 
-        Locate 26, 29
-        Print Space$(29)
-
     Loop Until B9 = 0
 
     playerRatings!(playerIdx, 16) = 5
@@ -1943,4 +1950,3 @@ Sub SaveTeamFile (yearNumber$, teamIdx, action%)
     Call CSMsgBox("", 0, Pass)
 
 End Sub
-
