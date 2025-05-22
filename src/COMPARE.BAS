@@ -364,6 +364,7 @@ Sub TeamComparisons_Screen (teamName$)
     Locate 7, 45: Print Using "#### "; homeLosses;
 
     ' *** ACTUAL VALUES ***
+    'Print out values from COLBBTMS
 
     '--> OFFENSE
 
@@ -488,8 +489,6 @@ Sub TeamComparisons_Screen (teamName$)
 
     '--> DEFENSE
 
-
-
     'Road Record - Actual
     Color 3, 0
     Locate 16, 41: Print Using "####"; teamRatings(3);
@@ -500,7 +499,9 @@ Sub TeamComparisons_Screen (teamName$)
     Locate 17, 41: Print Using "####"; roadWins;
     Locate 17, 45: Print Using "#### "; roadLosses;
 
+
     ' *** REPLAY VALUES ***
+    'Print out values from stat files
 
     '--> OFFENSE
 
@@ -646,7 +647,7 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
     Locate 1, 2: Print teamName$
 
     Color 15, 0
-    Locate 1, 14: Print String$(34, 177)
+    Locate 2, 16: Print String$(34, 177)
 
     Color 14
 
@@ -710,12 +711,22 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
     Locate , 62: Print " PTS/G ";
     Locate , 69: Print " MIN/G"
 
+    ' *** ACTUAL VALUES ***
+    'Print out values from COLBBTMS
+
     Color 1, 11
+
+    'Games
     Locate 5, 14: Print Using "###"; playerRatings!(idx, 0);
+
+    'Minutes
     Locate , 17: Print Using "#####"; playerRatings!(idx, 1);
+
+    'FGM / FGA
     Locate , 22: Print Using "#####"; playerRatings!(idx, 3);
     Locate , 27: Print Using "#####"; playerRatings!(idx, 2);
 
+    'FG %
     Locate , 32
     If playerRatings!(idx, 3) = 0 Then
         Print "    0.0%";
@@ -725,9 +736,11 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print "%";
     End If
 
+    'FTM / FTA
     Locate , 40: Print Using "#####"; playerRatings!(idx, 5);
     Locate , 45: Print Using "#####"; playerRatings!(idx, 4);
 
+    'FT %
     Locate , 50
     If playerRatings!(idx, 5) = 0 Then
         Print "    0.0%";
@@ -737,8 +750,10 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print "%";
     End If
 
+    'OREB
     Locate , 58: Print Using "#######"; playerRatings!(idx, 6);
 
+    'OREB / Game
     Locate , 65
     If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 6) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 6) = 0) Then 
         Print "      0.0";
@@ -748,10 +763,13 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
     End If
 
     Color 7, 0: Print String$(2, 177)
+    Locate , 16: Print String$(60, 177)
+    Color 4, 11
 
-    Color 1, 11
+    'DREB
     Locate 10, 14: Print Using "######"; playerRatings!(idx, 7);
 
+    'DREB / Game
     Locate , 20
     If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 7) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 7) = 0) Then 
         Print "      0.0";
@@ -760,8 +778,10 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "#######.#"; playerRatings!(idx, 7) / playerRatings!(idx, 0);
     End If
 
+    'Assists
     Locate , 29: Print Using "######"; playerRatings!(idx, 8);
 
+    'Assist / Game
     Locate , 35
     If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 8) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 8) = 0) Then 
         Print "     0.0";
@@ -770,8 +790,10 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "######.#"; playerRatings!(idx, 8) / playerRatings!(idx, 0);
     End If
 
+    'Fouls
     Locate , 43: Print Using "#######"; playerRatings!(idx, 9);
 
+    'Fouls / Game
     Locate , 50
     If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 9) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 9) = 0) Then 
         Print "  0.0";
@@ -780,9 +802,13 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "###.#"; playerRatings!(idx, 9) / playerRatings!(idx, 0);
     End If
 
+    'TREB
     Locate , 55: Print Using "######"; playerRatings!(idx, 6) + playerRatings!(idx, 7);
+
+    'Steals
     Locate , 61: Print Using "#####"; playerRatings!(idx, 11);
 
+    'Steals / Game
     Locate , 66
     If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 11) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 11) = 0) Then 
         Print "    0.0";
@@ -792,10 +818,12 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
     End If
 
     Color 7, 0: Print String$(2, 177)
-
     Color 1, 11
+
+    'Blocks
     Locate 15, 14: Print Using "####"; playerRatings!(idx, 12);
 
+    'Blocks / Game
     Locate , 18
     If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 12) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 12) = 0) Then 
         Print "    0.0";
@@ -804,9 +832,11 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "#####.#"; playerRatings!(idx, 12) / playerRatings!(idx, 0);
     End If
 
+    '3FGM / FGA
     Locate , 25: Print Using "#######"; playerRatings!(idx, 14);
     Locate , 32: Print Using "#######"; playerRatings!(idx, 13);
 
+    '3FG %
     Locate , 39
     If playerRatings!(idx, 14) = 0 Then 
         Print "      0.0%";
@@ -816,9 +846,13 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print "%";
     End If
 
+    'Reb / Game
     Locate , 49: Print Using "#######"; playerRatings!(idx, 15);
+
+    'Pts
     Locate , 56: Print Using "######"; (playerRatings!(idx, 3) * 2) + playerRatings!(idx, 5) + playerRatings!(idx, 14);
 
+    'Pts / Game
     Locate , 62
     If (playerRatings!(idx, 3) * 2) + playerRatings!(idx, 5) + playerRatings!(idx, 14) = 0 Then 
         Print "   0.0";
@@ -827,6 +861,7 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "####.#"; ((playerRatings!(idx, 3) * 2) + playerRatings!(idx, 5) + playerRatings!(idx, 14)) / playerRatings!(idx, 0);
     End If
 
+    'Min / Game
     Locate , 68
     If playerRatings!(idx, 1) = 0 Then 
         Print "    0.0";
@@ -835,11 +870,15 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "#####.#"; playerRatings!(idx, 1) / playerRatings!(idx, 0);
     End If
 
+    ' *** REPLAY VALUES ***
+    'Print out values from stat files
     Color 7, 0: Print String$(2, 177)
+    Color 4, 11
 
-    Color 14, 11
+    'Games
     Locate 6, 14: Print Using "###"; playerRatings!(idx, 0);
 
+    'Minutes
     Locate , 17
     If playerRatings!(idx, 10) = 0 Then 
         Print "    0";
@@ -848,9 +887,11 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "#####"; (playerRatings!(idx, 10) + 30) / 60;
     End If
 
+    'FGM / FGA
     Locate , 22: Print Using "#####"; playerRatings!(idx, 2);
     Locate , 27: Print Using "#####"; playerRatings!(idx, 1);
 
+    'FG %
     Locate , 32
     If playerRatings!(idx, 2) = 0 Then 
         Print "    0.0%";
@@ -860,9 +901,11 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print "%";
     End If
 
+    'FTM / FTA
     Locate 6, 40: Print Using "#####"; playerRatings!(idx, 4);
     Locate 6, 45: Print Using "#####"; playerRatings!(idx, 3);
 
+    'FT %
     Locate , 50
     If playerRatings!(idx, 4) = 0 Then 
         Print "    0.0%";
@@ -872,8 +915,10 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print "%";
     End If
 
+    'OREB
     Locate , 58: Print Using "#######"; playerRatings!(idx, 12);
 
+    'OREB / Game
     Locate , 65
     If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 12) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 12) = 0) Then
         Print "      0.0";
@@ -884,10 +929,12 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
 
     Color 7, 0: Print String$(2, 177)
     Locate , 16: Print String$(60, 177)
+    Color 4, 11
 
-    Color 14, 11
+    'DREB
     Locate 11, 14: Print Using "######"; playerRatings!(idx, 5) - playerRatings!(idx, 12);
 
+    'DREB / Game
     Locate , 20
     If playerRatings!(idx, 0) = 0 Or (playerRatings!(idx, 5) - playerRatings!(idx, 12)) = 0 Or (playerRatings!(idx, 0) > 0 And (playerRatings!(idx, 5) - playerRatings!(idx, 12)) = 0) Then
         Print "      0.0";
@@ -896,8 +943,10 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "#######.#"; (playerRatings!(idx, 5) - playerRatings!(idx, 12)) / playerRatings!(idx, 0);
     End If
 
+    'Assists
     Locate , 29: Print Using "######"; playerRatings!(idx, 8);
 
+    'Assist / Game
     Locate , 35
     If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 8) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 8) = 0) Then
         Print "     0.0";
@@ -906,8 +955,10 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "######.#"; playerRatings!(idx, 8) / playerRatings!(idx, 0);
     End If
 
+    'Fouls
     Locate , 43: Print Using "#######"; playerRatings!(idx, 6);
 
+    'Fouls / Game
     Locate , 50
     If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 6) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 6) = 0) Then
         Print "  0.0";
@@ -916,9 +967,13 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "###.#"; playerRatings!(idx, 6) / playerRatings!(idx, 0);
     End If
 
+    'TREB
     Locate , 55: Print Using "######"; playerRatings!(idx, 5);
+
+    'Steals
     Locate , 61: Print Using "#####"; playerRatings!(idx, 7);
 
+    'Steals / Game
     Locate , 66
     If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 7) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 7) = 0) Then
         Print "    0.0";
@@ -929,10 +984,12 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
 
     Color 7, 0: Print String$(2, 177)
     Locate , 16: Print String$(59, 177)
+    Color 4, 11
 
-    Color 14, 11
+    'Blocks
     Locate 16, 14: Print Using "####"; playerRatings!(idx, 9);
 
+    'Blocks / Game
     Locate , 18
     If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 9) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 9) = 0) Then
         Print "    0.0";
@@ -941,9 +998,11 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "#####.#"; playerRatings!(idx, 9) / playerRatings!(idx, 0);
     End If
 
+    '3FGM / FGA
     Locate , 25: Print Using "#######"; stats3FGM!(idx);
     Locate , 32: Print Using "#######"; stats3FGA!(idx);
 
+    '3FG %
     Locate , 39
     If stats3FGM!(idx) = 0 Then
         Print "      0.0%";
@@ -953,9 +1012,13 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print "%";
     End If
 
+    'Reb / Game
     Locate , 49: Print Using "#######"; playerRatings!(idx, 13);
+
+    'Pts
     Locate , 56: Print Using "######"; (playerRatings!(idx, 2) * 2) + playerRatings!(idx, 4) + stats3FGM!(idx);
 
+    'Pts / Game
     Locate , 62
     If (playerRatings!(idx, 2) * 2) + playerRatings!(idx, 4) + stats3FGM!(idx) = 0 Then
         Print "   0.0";
@@ -964,7 +1027,8 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "####.#"; ((playerRatings!(idx, 2) * 2) + playerRatings!(idx, 4) + stats3FGM!(idx)) / playerRatings!(idx, 0);
     End If
 
-    Locate , 68
+    Locate , 68    'Min / Game
+
     If playerRatings!(idx, 10) = 0 Then
         Print "    0.0";
     End If

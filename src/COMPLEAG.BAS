@@ -141,7 +141,7 @@ Sub CompileLeague ()
                         Next
 
                         Call CalcStatTotalsPro(totalGames, TN$, finalUpdate$)
-                        Call CalcStatLeadersPro(TN$, totalGames)
+                        Call CalcStatLeadersPro(totalGames, TN$)
 
                     End If
 
@@ -164,7 +164,7 @@ End Sub
 '----------------------------------------
 'This subroutine compares pre-loaded stats
 'to existing leaders and updates as needed
-Sub CalcStatLeadersPro (teamName$, totalGames)
+Sub CalcStatLeadersPro (totalGames, teamName$)
 
     Shared defTotals!(), offTotals!()
     Shared defLeaders!(), offLeaders!()
@@ -178,19 +178,19 @@ Sub CalcStatLeadersPro (teamName$, totalGames)
     Select Case totalGames
 
         Case 40
-            minFG = 100
+            minFGA = 100
             min3FGM = 25
-            minFT = 50
+            minFTA = 50
 
         Case 82
-            minFG = 300
+            minFGA = 300
             min3FGM = 82
-            minFT = 125
+            minFTA = 125
 
         Case Else
-            minFG = totalGames * 5
+            minFGA = totalGames * 5
             min3FGM = totalGames
-            minFT = totalGames * 2
+            minFTA = totalGames * 2
 
     End Select
 
@@ -255,7 +255,7 @@ Sub CalcStatLeadersPro (teamName$, totalGames)
 
         'Field Goal %
         'Need at least 5 FGA/G or FGM/G
-        If statPlyrVal!(X, 19) > leaderVals!(60, 1) And (statPlyrVal!(X, 2) >= minFG Or statPlyrVal!(X, 1) >= minFG) Then
+        If statPlyrVal!(X, 19) > leaderVals!(60, 1) And (statPlyrVal!(X, 2) >= minFGA Or statPlyrVal!(X, 1) >= minFGA) Then
 
             leaderVals!(60, 1) = statPlyrVal!(X, 19) 'FG%
             leaderVals!(60, 2) = statPlyrVal!(X, 1) 'FGA
@@ -280,7 +280,7 @@ Sub CalcStatLeadersPro (teamName$, totalGames)
 
         'Free Throw %
         'Need at least 2 FTA/G or 2 FTM/G
-        If statPlyrVal!(X, 20) > leaderVals!(80, 1) And (statPlyrVal!(X, 4) >= minFT Or statPlyrVal!(X, 3) >= minFT) Then
+        If statPlyrVal!(X, 20) > leaderVals!(80, 1) And (statPlyrVal!(X, 4) >= minFTA Or statPlyrVal!(X, 3) >= minFTA) Then
 
             leaderVals!(80, 1) = statPlyrVal!(X, 20) 'FT%
             leaderVals!(80, 2) = statPlyrVal!(X, 3) 'FTA

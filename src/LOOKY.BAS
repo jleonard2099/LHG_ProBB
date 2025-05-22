@@ -40,7 +40,7 @@ Sub LOOKY ()
 
         End If
 
-    Loop Until menuExit = 1 Or teamNbr = 0
+    Loop Until (menuExit = 1 And teamNbr > 0) Or teamNbr = 0
 
 End Sub
 
