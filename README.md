@@ -3,7 +3,7 @@
 ### Game Description ###
 Basketball: The Pro Game lets you slam out a quick game of hoops with your favorite pro teams. Choose from NBA or ABA, modern teams or greats of the past! Choose from several offense and defense strategies for a realistic pressure. Save and compile stats, input your own teams or draft or trade players. Challenge a friend, challenge the computer, or watch your dream matchup simulated at your own pace. Each team plays in the style of their own era, and are rated in several categories with real-world stats, so the outcomes are not only possible - they feel real.
 
-**· Each player contributes as they did in real life! · Stats Compiler · YOU determine starting lineup, substitutions, shot selection, passing, offensive and defensive styles of play and more! ·**
+**· YOU determine starting lineup, substitutions, shot selection, passing, offensive and defensive styles of play and more! · Each player contributes as they did in real life! · Track team stats and records across a full season or an entire career! · Compare replays against real stats to gauge accuracy ·**
 
 ### About Project ###
 With permission from Lance Haffner himself, this effort is being made to bring his original source code from the DOS world into the modern world. This is due in part to cross-platform compilers for BASIC such as [QB64pe](https://github.com/QB64-Phoenix-Edition/QB64pe). But this effort aims to restore his original vision for a cross-platform sports sim empire, while also opening the door for improvements to accuracy, usability and portability.
