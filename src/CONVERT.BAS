@@ -293,7 +293,7 @@ Sub ConvertTeam4to5 (targetFile$, silent)
 
         Kill targetFile$
 
-        Call FCopy(newFile$, targetFile$, Buff$, copyErr%)
+        result$ = CopyFile$(newFile$, targetFile$)
 
         Kill newFile$
 
@@ -314,7 +314,7 @@ Sub ConvertTeam5to4 (targetFile$, silent)
     diskID$ = Right$(targetFile$, Len(targetFile$) - InStr(targetFile$, "PROBBTMS.") - 8)
     oldFile$ = targetFile$ + ".OLD"
 
-    Call FCopy(targetFile$, oldFile$, Buff$, copyErr%)
+    result$ = CopyFile$(targetFile$, oldFile$)
 
     If targetFile$ <> "" Then
 
@@ -526,7 +526,7 @@ Sub ConvertSched4to5 (targetFile$, silent)
 
         'Kill targetFile$
 
-        'Call FCopy(newFile$, targetFile$, Buff$, copyErr%)
+        'result$ = CopyFile$(newFile$, targetFile$)
 
         'Kill newFile$
 
