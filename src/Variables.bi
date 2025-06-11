@@ -236,7 +236,7 @@ Dim alpha$(4), tickerPeriod$(14)
 Dim Shared D, P, P9
 Dim Shared earlyExit
 
-Dim Shared assistShotBoost, autoPlay, ballCarrier, bonusFoulNum
+'Dim Shared assistShotBoost, autoPlay, ballCarrier, bonusFoulNum
 Dim Shared coachOpt, compTeam, currGame
 Dim Shared defPress, gameOver, endAllGames, eraAdj, eraChoice
 Dim Shared fastBreak, forcedThree, ftRulesOpt, freeThrowVal, fullCtOpt
@@ -267,22 +267,27 @@ Dim Shared P4(5), P5(5)
 Dim Shared gameStat3FGM(1, 14), gameStat3FGA(1, 14)
 Dim Shared leagRat_GAME(1, 6), lineupIdx(0 To 1, 0 To 4)
 Dim Shared mandatoryTO(0 To 1), miscAdj(1, 4)
-Dim Shared paceAdj(1), pbpFG(1 To 8), pbpBG(1 To 8)
+Dim Shared pbpFG(1 To 8), pbpBG(1 To 8)
+Dim Shared plyrStaminaGame(14), plyrRebIdx(14), plyrRebVal(14)
 Dim Shared perFoulAdj(0 To 32), plyrRat_GAME(1, 14, 19)
+
+
 Dim Shared QQ(1, 8, 14, 14), QR(1, 7, 14)
-Dim Shared rebRatings(0 To 10), rosterStatus(1, 13)
+'Dim Shared rebRatings(0 To 10), rosterIdx(14), rosterStatus(1, 13)
 Dim Shared score(1, 14), scSettings(0 To 2)
 Dim Shared schedGame(2), schedOptions(21), statTotals(14)
-Dim Shared teamAdj(1, 9), teamFouls(1), teamRat_GAME(0 To 1, 0 To 34), teamYears(1)
+Dim Shared teamAdj(1, 9), teamFouls(1)
+Dim Shared teamRat_GAME(0 To 1, 0 To 34), teamYears(1)
 Dim Shared timePlayed(2, 14), timeouts(1), totalFouls(1), threeFG(1, 14, 1)
 Dim Shared totRebounds(1), turnoverAdj(0 To 32), turnovers(1)
 Dim Shared teamRecWins(1), teamRecLoss(1)
 
-Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), rebAdj!(1)
+'Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), rebAdj!(1)
 Dim game3FGM!(1, 14), game3FGA!(1, 14)
 
 Dim Shared defStyleDesc$(9), diskIDs$(0 To 1)
 Dim Shared gameCoach$(3), gameMascots$(3), gameArena$(3), gameTeams$(3)
 Dim Shared offStyleDesc$(2), pbpStyle$(1), players_GAME$(1, 14, 1), posnName$(0 To 4)
+
 Dim Shared SX$(32, 1)
 Dim Shared teamAbbrev$(3), teamGender$(0 To 1)

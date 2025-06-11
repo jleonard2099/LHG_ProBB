@@ -347,7 +347,7 @@ Sub NewSchedule (scheduleFile$)
             Case "D"
                 ' *** DELETE A GAME FROM THE SCHEDULE ***
                 Do
-                    Locate 24, 1: Input "ENTER GAME # TO DELETE "; targetGame%
+                    Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO DELETE "; targetGame%
                 Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
 
                 For X = targetGame% To scheduleAP%(0) - 1
@@ -447,7 +447,7 @@ Sub NewSchedule (scheduleFile$)
                 Close #2
 
                 'Free up used memory so games can load faster
-                ReDim scheduleNG%(1, 20)
+                ReDim scheduleNG%(1, 21)
                 ReDim scheduleYN$(1, 1)
                 ReDim homeScores(1)
                 ReDim visitorScores(1)
@@ -459,7 +459,7 @@ Sub NewSchedule (scheduleFile$)
                 Loop Until schedGame(0) + schedGame(2) > schedGame(1)
 
                 'Restore memory so we can populate again
-                ReDim scheduleNG%(MAX_SCHEDULE_GAMES, 20)
+                ReDim scheduleNG%(MAX_SCHEDULE_GAMES, 21)
                 ReDim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
                 ReDim homeScores(MAX_SCHEDULE_GAMES)
                 ReDim visitorScores(MAX_SCHEDULE_GAMES)
@@ -1607,6 +1607,8 @@ Sub LoadScheduleInfo (targetFile$)
     Next
 
     Field #1, 44 As X$, 2 As Q$(25), 2 As Q$(26), 5 As Q$(23), 5 As Q$(24)
+
+    testVar = scheduleAP%(0)
 
     For I = 1 To scheduleAP%(0)
 
