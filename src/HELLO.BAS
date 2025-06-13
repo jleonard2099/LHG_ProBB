@@ -2493,6 +2493,7 @@ Sub PROHOOP ()
 
             '985
             pbpString$ = Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " FT%  INTENTIONAL FOUL? (Y/N)"
+            Call SELECTPBP(P, 0)
 
             Do
                 I$ = GetKeyPress$
@@ -6765,19 +6766,21 @@ Sub PlayStyle ()
             Print "ENTER "; posnName$(M); " # ";
 
             Z = lineupIdx(P9, M)
-            CV% = 0
+            nonPlayers = 0
 
             For IP% = 0 To Z
-                '-- College BB also checks for player Name
-                '   ... Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX"
-                If plyrRat_GAME(P9, IP%, 18) <> 0 Then CV% = CV% + 1
+                If playerActive%(P9, IP%) = 0 Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX" Then 
+                    nonPlayers = nonPlayers + 1
+                End If
             Next
 
-            Print players_GAME$(P9, Z, 0);
-            Locate Z + 3 - CV%, 3
-            Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34)
-            Print Left$(players_GAME$(P9, Z, 0), 12)
-            Color 15, 0
+            If playerActive%(P9, Z) = 1 Then
+                Print players_GAME$(P9, Z, 0);
+                Locate Z + 3 - nonPlayers, 3
+                Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34)
+                Print Left$(players_GAME$(P9, Z, 0), 12)
+                Color 15, 0
+            End If
 
         Next
 
@@ -6786,18 +6789,20 @@ Sub PlayStyle ()
         For I = 0 To 4
 
             Do
+
                 Locate I + 20, 1
                 Color 2, 0: Print Using "# "; I;
-                Color 15: Print "ENTER "; posnName$(I); " # ";
+                Color 15
+                Print "ENTER "; posnName$(I); " # ";
 
                 I$ = GetKeyPress$
-                Call LetterToNumber(I$, J)
+                Call LetterToNumber(I$, posn)
 
                 If UCase$(I$) = "O" Or UCase$(I$) = "P" Then
-                    J = 15
+                    posn = 15
                 End If
 
-                If J = 15 Then
+                If posn = 15 Then
 
                     If UCase$(I$) = "P" Then
                         fullCtOpt(P9) = 1 - fullCtOpt(P9)
@@ -6844,32 +6849,31 @@ Sub PlayStyle ()
 
                 Else
 
-                    If J >= 0 And J <= 14 And gameRatings!(P9, J, 12) < FOULS_TO_DQ And players_GAME$(P9, J, 0) <> "XXX" And playerActive%(P9, J) = 1 Then
+                    If posn >= 0 And posn <= 14 And gameRatings!(P9, posn, 12) < FOULS_TO_DQ And players_GAME$(P9, posn, 0) <> "XXX" And playerActive%(P9, posn) = 1 Then
                         For I2 = 0 To 4
-                            If lineupIdx(P9, I2) = J Then Exit For
+                            If lineupIdx(P9, I2) = posn Then Exit For
                         Next I2
                     End If
 
                 End If
 
-            Loop Until J >= 0 And J <= 14
+            Loop Until posn >= 0 And posn <= 14
 
-            lineupIdx(P9, I) = J
-            Z = J
-            CV% = 0
+            lineupIdx(P9, I) = posn
+            nonPlayers = 0
 
-            For IP% = 0 To Z
-                '--College BB also checks for player name
-                '    Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX"
-                If plyrRat_GAME(P9, IP%, 18) <> 0 Then
-                    CV% = CV% + 1
+            For IP% = 0 To lineupIdx(P9, I)
+                If playerActive%(P9, IP%) = 0 Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX" Then
+                    nonPlayers = nonPlayers + 1
                 End If
             Next
 
-            Print players_GAME$(P9, J, 0);
-            Locate J + 3 - CV%, 3
-            Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34): Print Left$(players_GAME$(P9, J, 0), 12)
-            Color 15, 0
+            If playerActive%(P9, posn) = 1 Then
+                Print players_GAME$(P9, J, 0);
+                Locate J + 3 - nonPlayers, 3
+                Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34): Print Left$(players_GAME$(P9, J, 0), 12)
+                Color 15, 0
+            End If
 
         Next
 
@@ -6877,150 +6881,184 @@ Sub PlayStyle ()
 
     Do
 
-        Do
-            Locate 25, 1
-            Color 12, 0: Print "# TO CHANGE (0-4) 6=NONE";
-            Locate 1, 1
+        goodLineup = 1
 
+        Do
+            Locate LAST_ROW, 1
+            Color 12, 0
+            Print "# TO CHANGE (0-4) 6=NONE";
+            Locate 1, 1
             I$ = GetKeyPress$
-            I1 = Val(I$)
+            K = Val(I$)
 
             Select Case UCase$(I$)
-                Case "O": I1 = 5
-                Case "F": I1 = 5
-                Case "P": I1 = 5
+                Case "O": K = 5
+                Case "F": K = 5
+                Case "P": K = 5
             End Select
 
-        Loop Until I1 >= 0 And I1 <= 4 Or I1 = 6
+        Loop Until K >= 0 And K <= 4 Or K = 6
 
-        If I1 = 5 Then
-            If UCase$(I$) = "P" Then
-                fullCtOpt(P9) = 1 - fullCtOpt(P9) ': GoSub 105
-            End If
+        Select Case K
 
-            If UCase$(I$) = "F" Then
-                defStyles(P9) = defStyles(P9) + 1
-                If defStyles(P9) > 5 Then defStyles(P9) = 1
-            End If
+            Case Is <= 4 Then
 
-            If UCase$(I$) = "O" Then
-                offStyles(P9) = offStyles(P9) + 1
-                If offStyles(P9) > 2 Then offStyles(P9) = 0
-            End If
+                If offStatus = 50 And K = ballCarrier And P9 = P Then
 
-            Color 14
-            Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
+                    'We've chosen someone who has been fouled on
+                    Locate 20, 29
+                    Color 14, 0: Print players_GAME$(P9, lineupIdx(P9, K), 0); " IS AT THE FT LINE"
+                    goodLineup = 0
 
-            Locate 21, 32
-            Color 15: Print "O";
-            Color 3: Print "FFENSE STYLE-";
-            Color 7: Print offStyleDesc$(offStyles(P9))
+                Else
 
-            Locate 22, 32
-            Color 3: Print "DE";
-            Color 15: Print "F";
-            Color 3: Print "ENSE STYLE-";
-            Color 7: Print defStyleDesc$(defStyles(P9))
+                    Locate LAST_ROW, 1: Print Space$(25);
 
-            Locate 23, 32
-            Color 3: Print "FULL COURT ";
-            Color 15: Print "P";
-            Color 3: Print "RESS-";
-            Color 7: Print yesNoText$(fullCtOpt(P9))
+                    Z = lineupIdx(P9, K)
+                    nonPlayers = 0
 
-        End If
+                    For IP% = 0 To Z:
+                        If playerActive%(P9, IP%) = 0 Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX" Then
+                            nonPlayers = nonPlayers + 1
+                        End If
+                    Next
 
-        If I1 <= 4 Then
+                    Locate Z + 3 - nonPlayers, 3
+                    Color 15, 0
+                    Print Left$(players_GAME$(P9, Z, 0), 12)
 
-            If offStatus = 50 And I1 = ballCarrier And P9 = P Then
+                    Do
 
-                Locate 20, 29
-                Color 14, 0: Print players_GAME$(P9, lineupIdx(P9, I1), 0); " IS AT THE FT LINE"
+                        Locate K + 20, 1: Print Space$(26);
 
-            Else
+                        lineupIdx(P9, K) = -1
 
-                Locate 25, 1: Print Space$(25);
+                        Locate , 1
+                        Color 2: Print Using "# "; K;
+                        Color 15
+                        Print "ENTER "; posnName$(K); " # ";
 
-                J = lineupIdx(P9, I1)
-                Z = J
-                CV% = 0
+                        I$ = GetKeyPress$
+                        Call LetterToNumber(I$, posn)
 
-                For IP% = 0 To Z:
-                    '-- College BB also checks for player Name
-                    '   ... Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX"
-                    If plyrRat_GAME(P9, IP%, 18) <> 0 Then CV% = CV% + 1
-                Next
+                        If UCase$(I$) = "O" Or UCase$(I$) = "P" Then
+                            posn = 15
+                        End If
 
-                Locate J + 3 - CV%, 3
-                Color 15, 0: Print Left$(players_GAME$(P9, J, 0), 12)
+                        If posn = 15 Then
 
-                Do
+                            If UCase$(I$) = "P" Then
+                                fullCtOpt(P9) = 1 - fullCtOpt(P9)
+                            End If
 
-                    Locate I1 + 20, 1: Print Space$(26);
+                            If UCase$(I$) = "F" Then
+                                defStyles(P9) = defStyles(P9) + 1
+                                If defStyles(P9) > 5 Then defStyles(P9) = 1
+                            End If
 
-                    lineupIdx(P9, I1) = -1
+                            If UCase$(I$) = "O" Then
+                                offStyles(P9) = offStyles(P9) + 1
+                                If offStyles(P9) > 2 Then offStyles(P9) = 0
+                            End If
 
-                    Locate , 1
-                    Color 2: Print Using "# "; I1;
-                    Color 15: Print "ENTER "; posnName$(I1); " # ";
+                        Else
 
-                    I$ = GetKeyPress$
-                    Call LetterToNumber(I$, J)
+                            If posn >= 0 And posn <= 14 And gameRatings!(P9, posn, 12) < FOULS_TO_DQ And players_GAME$(P9, posn, 0) <> "XXX" And playerActive%(P9, posn) = 1 Then
+                                For I2 = 0 To 4:
+                                    If lineupIdx(P9, I2) = posn Then Exit For
+                                Next I2
+                            End If
 
-                    If UCase$(I$) = "O" Or UCase$(I$) = "P" Then
-                        J = 15
+                        End If
+
+                    Loop Until posn >= 0 And posn <= 14
+
+                    lineupIdx(P9, K) = posn
+                    nonPlayers = 0
+
+                    For IP% = 0 To lineupIdx(P9, K)
+                        If playerActive%(P9, IP%) = 0 Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX" Then
+                            nonPlayers = nonPlayers + 1
+                        End If
+                    Next
+
+                    If playerActive%(P9, posn) = 1 Then
+                        Print players_GAME$(P9, J, 0);
+
+                        'Print player name in team colors (activated)
+                        Locate J + 3 - nonPlayers, 3
+                        Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34): Print Left$(players_GAME$(P9, J, 0), 12)
+                        Color 15, 0
                     End If
 
-                    If J = 15 Then
+            Case 5
+            
+                If UCase$(I$) = "P" Then
+                    fullCtOpt(P9) = 1 - fullCtOpt(P9)
+                End If
 
-                        If UCase$(I$) = "P" Then
-                            fullCtOpt(P9) = 1 - fullCtOpt(P9)
-                        End If
+                If UCase$(I$) = "F" Then
+                    defStyles(P9) = defStyles(P9) + 1
+                    If defStyles(P9) > 5 Then defStyles(P9) = 1
+                End If
 
-                        If UCase$(I$) = "F" Then
-                            defStyles(P9) = defStyles(P9) + 1
-                            If defStyles(P9) > 5 Then defStyles(P9) = 1
-                        End If
+                If UCase$(I$) = "O" Then
+                    offStyles(P9) = offStyles(P9) + 1
+                    If offStyles(P9) > 2 Then offStyles(P9) = 0
+                End If
 
-                        If UCase$(I$) = "O" Then
-                            offStyles(P9) = offStyles(P9) + 1
-                            If offStyles(P9) > 2 Then offStyles(P9) = 0
-                        End If
+                Color 14
+                Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
 
-                    Else
+                Locate 21, 32
+                Color 15: Print "O";
+                Color 3: Print "FFENSE STYLE-";
+                Color 7: Print offStyleDesc$(offStyles(P9))
 
-                        If J >= 0 And J <= 14 And gameRatings!(P9, J, 12) < FOULS_TO_DQ And players_GAME$(P9, J, 0) <> "XXX" And playerActive%(P9, J) = 1 Then
-                            For I2 = 0 To 4:
-                                If lineupIdx(P9, I2) = J Then Exit For
-                            Next I2
-                        End If
+                Locate 22, 32
+                Color 3: Print "DE";
+                Color 15: Print "F";
+                Color 3: Print "ENSE STYLE-";
+                Color 7: Print defStyleDesc$(defStyles(P9))
 
+                Locate 23, 32
+                Color 3: Print "FULL COURT ";
+                Color 15: Print "P";
+                Color 3: Print "RESS-";
+                Color 7: Print yesNoText$(fullCtOpt(P9))
+
+            Case 6
+                nonPlayers = 0
+
+                For I1 = 0 To 14
+                    If goodPlayer%(P9, I1) = 0 Then
+                        nonPlayers = nonPlayers + 1
                     End If
-
-                Loop Until J >= 0 And J <= 14
-
-                lineupIdx(P9, I1) = J
-                Z = J
-                CV% = 0
-
-                For IP% = 0 To Z
-                    '-- College BB also checks for player Name
-                    '   ... Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX"
-                    If plyrRat_GAME(P9, IP%, 18) <> 0 Then CV% = CV% + 1
                 Next
 
-                Print players_GAME$(P9, J, 0);
-                Locate J + 3 - CV%, 3
-                Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34): Print Left$(players_GAME$(P9, J, 0), 12)
-                Color 15, 0
+                If 15 - nonPlayers >= 5 Then
 
-            End If
+                    For I1 = 0 To 4
 
-        End If
+                        If gameRatings!(P9, I1, 12) >= FOULS_TO_DQ Then
+                            Locate 20, 29
+                            Color 14, 0
+                            Print players_GAME$(P9, lineupIdx(P9, I1)); " HAS FOULED OUT"
+                            goodLineup = 0
+                            Exit For
+                        End If
 
-    Loop Until I1 = 6
+                    Next
 
-    'Cls
+                End If
+
+                If goodLineup = 1 Then
+                    Call CHANGESTRATEGY(I$)
+                End If
+
+        End Select
+
+    Loop Until K = 6 And goodLineup = 1
 
 End Sub
 
@@ -7888,25 +7926,27 @@ Sub FoulCalled (randomFouler)
         _SndPlay whistle&
     End If
 
+    'Determine who fouled
     If randomFouler = 1 Then
 
-        foulPlayer = 0
+        foulContrib = 0
+
         'Random # from 1 to FC rating
-        M9 = Int(Rnd(1) * miscAdj(D, 0)) + 1
+        foulRoll = Int(Rnd(1) * miscAdj(D, 0)) + 1
 
         'Determine fouler based on % contribution
-        For M8 = 0 To 4:
-            foulPlayer = foulPlayer + gameRatings!(D, lineupIdx(D, M8), 17)
-            If M9 <= foulPlayer Then
+        For luPlayer = 0 To 4:
+            foulContrib = foulContrib + gameRatings!(D, lineupIdx(D, luPlayer), 17)
+            If foulRoll <= foulContrib Then
                 Exit For
             End If
-        Next M8
+        Next luPlayer
 
-        If M8 < 0 Or M8 > 4 Then
-            M8 = Int(Rnd(1) * 5)
+        If luPlayer < 0 Or luPlayer > 4 Then
+            luPlayer = Int(Rnd(1) * 5)
         End If
 
-        foulPlayer = M8
+        foulPlayer = luPlayer
 
     End If
 
@@ -7922,12 +7962,14 @@ Sub FoulCalled (randomFouler)
 
     If gameRatings!(D, lineupIdx(D, foulPlayer), 12) < FOULS_TO_DQ Then
 
-        If pbpOpt = 1 And pbpDelay! > 0 Then
-            Call WINDEX
-            Print "FOUL ON "; players_GAME$(D, lineupIdx(D, foulPlayer), 0)
-            Call DELAY
-            Print teamGender$(P) + " HAS"; gameRatings!(D, lineupIdx(D, foulPlayer), 12)
-            Call DELAY
+        If pbpOpt = 1 Then
+            If pbpDelay! > 0 Then
+                Call WINDEX
+                Print "FOUL ON "; players_GAME$(D, lineupIdx(D, foulPlayer), 0)
+                Call DELAY
+                Print teamGender$(P) + " HAS"; gameRatings!(D, lineupIdx(D, foulPlayer), 12)
+                Call DELAY
+            End If
         Else
             pbpString$ = "FOUL NUMBER" + Str$(gameRatings!(D, lineupIdx(D, foulPlayer), 12)) + " CALLED ON " + players_GAME$(D, lineupIdx(D, foulPlayer), 0)
             Call PBP(D)
@@ -7937,24 +7979,26 @@ Sub FoulCalled (randomFouler)
 
     Else
 
-        M9 = 0
+        plyrCount = 0
 
         For I3 = 0 To 14
+            'Count valid players in the roster
             If I3 <> lineupIdx(D, foulPlayer) And players_GAME$(D, I3, 1) <> "XXX" And playerActive%(D, I3) = 1 Then
-                M9 = M9 + 1
+                plyrCount = plyrCount + 1
             End If
         Next
 
         For I3 = 0 To 14
-
             If I3 <> lineupIdx(D, foulPlayer) And players_GAME$(D, I3, 1) <> "XXX" And playerActive%(D, I3) = 1 Then
+                'If current player FG% <= foul player's FG%
                 If gameRatings!(D, I3, 0) <= gameRatings!(D, lineupIdx(D, foulPlayer), 0) Then
-                    gameRatings!(D, I3, 3) = gameRatings!(D, I3, 3) + Int((gameRatings!(D, lineupIdx(D, foulPlayer), 3) / M9) + .5)
+                    'Redistribute contribution % from fouled out player
+                    gameRatings!(D, I3, 3) = gameRatings!(D, I3, 3) + Int((gameRatings!(D, lineupIdx(D, foulPlayer), 3) / plyrCount) + .5)
                 End If
             End If
-
         Next I3
 
+        'Player fouled
         If pbpOpt = 1 Then
             If pbpDelay! > 0 Then
                 Call WINDEX
@@ -7967,7 +8011,6 @@ Sub FoulCalled (randomFouler)
         End If
 
         pbpString$ = teamGender$(P) + " HAS JUST FOULED OUT !!!"
-
         Call SELECTPBP(D, 1)
         Call DELAY
 
@@ -7980,13 +8023,11 @@ Sub FoulCalled (randomFouler)
 
         P3 = 1
 
-        If playerMode = 0 Or playerMode = 1 And D = 1 - compTeam Then
-
+        If playerMode = 0 Or playerMode = 1 And D <> compTeam Then
             P9 = D
             C1 = 1
             Call PlayStyle
             Call PlayItSafe
-
         End If
 
         Call Substitutions
@@ -8161,6 +8202,7 @@ Sub SCOREBOARD ()
         Color 15: Print "-PASS"
         Locate , 41:
         Color 14: Print "(2) ";
+        Print Space$(30)
         Color 15: Print gameTeams$(P);
         Print " CALL TIMEOUT      "
         Locate , 41:
@@ -10635,13 +10677,16 @@ Sub DisplayLineups ()
 
     Next R1
 
-    Locate 18, 1
     Color 9, 0
+    Locate 18, 1
     Print String$(27, 205); Chr$(203); String$(51, 205)
 
-    For R1 = 1 To 7:
+    For R1 = 1 To 11:
         Locate R1 + 18, 28: Print Chr$(186);
     Next
+
+    Locate 29, 1
+    Print String$(27, 205); Chr$(188); String$(51, 205);
 
 End Sub
 
