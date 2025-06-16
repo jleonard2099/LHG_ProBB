@@ -155,14 +155,14 @@ Dim leagLdrPlayer$(260), leagLdrTeam$(260)
 '----------------------------------------
 ' Used in DRAFT routines
 '---------------------------------------
-Dim leagueAverages%(1 To 80, 0 To 5)
+Dim leagueAverages%(1 To DRAFT_NBR_YEARS, 0 To 5)
 
 Dim tmAtt_DRAFT&(0 To 1)
 
 Dim leagRat_DRAFT(0 To 1, 0 To 6), leagTot_DRAFT(0 To 14, 0 To 34)
 Dim plyrRat_DRAFT(0 To 1, 0 To 14, 0 To 19), teamRat_DRAFT(0 To 1, 0 To 34)
 
-Dim draftYears$(1 To 80)
+Dim draftYears$(1 To DRAFT_NBR_YEARS)
 Dim plyrNames_DRAFT$(1, 14, 1)
 Dim tmInfo_DRAFT$(1, 4), tmYears_DRAFT$(0 To 1)
 
@@ -233,13 +233,13 @@ Dim tickerStart
 Dim alpha$(4), tickerPeriod$(14)
 
 ' Shared / Global
-Dim Shared D, P, P9
+Dim Shared C1, D, P, P9
 Dim Shared earlyExit
 
-'Dim Shared assistShotBoost, autoPlay, ballCarrier, bonusFoulNum
+Dim Shared assistShotBoost, autoPlay, ballCarrier, bonusFoulNum
 Dim Shared coachOpt, compTeam, currGame
 Dim Shared defPress, gameOver, endAllGames, eraAdj, eraChoice
-Dim Shared fastBreak, forcedThree, ftRulesOpt, freeThrowVal, fullCtOpt
+Dim Shared fastBreak, forcedThree, foulPlayer, freeThrowVal, ftRulesOpt, fullCtOpt
 Dim Shared gameLoc, halfTime, JY, maxTimeouts, MJ, nbrFTMade, nbrLines
 Dim Shared offStatus, passes, playerMode, playerOpt, playoffOpt, pbpOpt, playChoice
 Dim Shared quarter, quarterOpt, rebFoulChance, S2
@@ -250,16 +250,15 @@ Dim Shared MINS_PER_GAME
 
 Dim Shared gameClock!, pbpDelay!, possTime!, timeElapsed!
 
-Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
+'Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
+Dim Shared pbpLines$(1 To 13)
 Dim Shared activePosition$, pbpString$, prevBall$
 
-Dim Shared CF%(1, 9), F%(1, 9)
-Dim Shared G9%(1), offStyles(1)
+Dim Shared F%(1, 9), G9%(1), offStyles(1)
 Dim Shared penetrationDefAdj(2, 9), penetrationOffAdj(2)
 Dim Shared stealAdj(2)
 Dim Shared ST%(32), SX%(32, 1, 14)
 
-Dim Shared C1(1, 14)
 Dim Shared dFGPA(1), defStyles(1), fullCtOpt(0 To 1)
 
 Dim Shared P4(5), P5(5)
@@ -273,7 +272,7 @@ Dim Shared perFoulAdj(0 To 32), plyrRat_GAME(1, 14, 19)
 
 
 Dim Shared QQ(1, 8, 14, 14), QR(1, 7, 14)
-'Dim Shared rebRatings(0 To 10), rosterIdx(14), rosterStatus(1, 13)
+Dim Shared rebRatings(0 To 10), rosterIdx(14), rosterStatus(1, 13)
 Dim Shared score(1, 14), scSettings(0 To 2)
 Dim Shared schedGame(2), schedOptions(21), statTotals(14)
 Dim Shared teamAdj(1, 9), teamFouls(1)
@@ -282,12 +281,14 @@ Dim Shared timePlayed(2, 14), timeouts(1), totalFouls(1), threeFG(1, 14, 1)
 Dim Shared totRebounds(1), turnoverAdj(0 To 32), turnovers(1)
 Dim Shared teamRecWins(1), teamRecLoss(1)
 
-'Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), rebAdj!(1)
+Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), rebAdj!(1)
 Dim game3FGM!(1, 14), game3FGA!(1, 14)
 
 Dim Shared defStyleDesc$(9), diskIDs$(0 To 1)
 Dim Shared gameCoach$(3), gameMascots$(3), gameArena$(3), gameTeams$(3)
-Dim Shared offStyleDesc$(2), pbpStyle$(1), players_GAME$(1, 14, 1), posnName$(0 To 4)
+Dim Shared offStyleDesc$(2), offStylesNew$(0 To 8)
+Dim Shared pbpStyle$(1), players_GAME$(1, 14, 1), posnName$(0 To 4)
 
 Dim Shared SX$(32, 1)
 Dim Shared teamAbbrev$(3), teamGender$(0 To 1)
+

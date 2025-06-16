@@ -34,6 +34,7 @@ Declare Sub PRESSGUARD ()
 Declare Sub ChangePossession
 Declare Sub FoulCalled (randomFouler)
 Declare Sub LOADSTATS ()
+Declare Sub DisplayUserOpts
 Declare Sub SCOREBOARD ()
 Declare Sub PrintActiveLineup (teamIdx)
 Declare Sub ColorChange ()
