@@ -232,7 +232,10 @@ Dim tickerStart
 
 Dim alpha$(4), tickerPeriod$(14)
 
+
 ' Shared / Global
+Dim Shared activePosition$, pbpString$, prevBall$
+
 Dim Shared C1, D, P, P9
 Dim Shared earlyExit
 
@@ -250,9 +253,7 @@ Dim Shared MINS_PER_GAME
 
 Dim Shared gameClock!, pbpDelay!, possTime!, timeElapsed!
 
-'Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
 Dim Shared pbpText$(1 To MAX_PBP_LINES)
-Dim Shared activePosition$, pbpString$, prevBall$
 
 Dim Shared F%(1, 9), G9%(1), offStyles(1)
 Dim Shared penetrationDefAdj(2, 9), penetrationOffAdj(2)
