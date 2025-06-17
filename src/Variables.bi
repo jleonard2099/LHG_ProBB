@@ -251,7 +251,7 @@ Dim Shared MINS_PER_GAME
 Dim Shared gameClock!, pbpDelay!, possTime!, timeElapsed!
 
 'Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
-Dim Shared pbpLines$(1 To 13)
+Dim Shared pbpText$(1 To MAX_PBP_LINES)
 Dim Shared activePosition$, pbpString$, prevBall$
 
 Dim Shared F%(1, 9), G9%(1), offStyles(1)
@@ -266,7 +266,7 @@ Dim Shared P4(5), P5(5)
 Dim Shared gameStat3FGM(1, 14), gameStat3FGA(1, 14)
 Dim Shared leagRat_GAME(1, 6), lineupIdx(0 To 1, 0 To 4)
 Dim Shared mandatoryTO(0 To 1), miscAdj(1, 4)
-Dim Shared pbpFG(1 To 8), pbpBG(1 To 8)
+Dim Shared pbpFG(1 TO MAX_PBP_LINES), pbpBG(1 TO MAX_PBP_LINES)
 Dim Shared plyrStaminaGame(14), plyrRebIdx(14), plyrRebVal(14)
 Dim Shared perFoulAdj(0 To 32), plyrRat_GAME(1, 14, 19)
 
