@@ -226,26 +226,28 @@ Dim indRecordDesc$(25), teamRecordDesc$(20)
 Dim scheduleFile$
 
 Dim actualAttendance&
-Dim avgAttendance&(1)
 
-Dim tickerStart
+Dim JY, tickerStart
 
 Dim alpha$(4), tickerPeriod$(14)
 
+Dim avgAttendance&(1)
 
 ' Shared / Global
 Dim Shared activePosition$, pbpString$, prevBall$
 
-Dim Shared C1, D, P, P9
-Dim Shared earlyExit
+Dim Shared C1, D, MJ, P, P9
 
 Dim Shared assistShotBoost, autoPlay, ballCarrier, bonusFoulNum
-Dim Shared coachOpt, compTeam, currGame
-Dim Shared defPress, gameOver, endAllGames, eraAdj, eraChoice
-Dim Shared fastBreak, forcedThree, foulPlayer, freeThrowVal, ftRulesOpt, fullCtOpt
-Dim Shared gameLoc, halfTime, JY, maxTimeouts, MJ, nbrFTMade, nbrLines
-Dim Shared offStatus, passes, playerMode, playerOpt, playoffOpt, pbpOpt, playChoice
-Dim Shared quarter, quarterOpt, rebFoulChance, S2
+Dim Shared coachOpt, compTeam, currGame, defPress
+Dim Shared gameOver, earlyExit, endAllGames, eraAdj, eraChoice
+Dim Shared fastBreak, forcedThree, foulPlayer
+Dim Shared freeThrowVal, ftRulesOpt, fullCtOpt
+Dim Shared gameLoc
+Dim Shared halfTime, maxTimeouts, nbrLines, offStatus
+Dim Shared passes, periodEnd, playerMode, playerOpt, playoffOpt, pbpOpt
+Dim Shared quarter, quarterOpt
+Dim Shared rebFoulChance, ruleOptType
 Dim Shared sClockVal, shotChance, shotClock, shotPctOpt, shotType, sndOpt
 Dim Shared threePtOpt, tickerGames, timeoutOpt, twoTimeouts, willDunk
 
@@ -255,34 +257,29 @@ Dim Shared gameClock!, pbpDelay!, possTime!, timeElapsed!
 
 Dim Shared pbpText$(1 To MAX_PBP_LINES)
 
-Dim Shared F%(1, 9), G9%(1), offStyles(1)
-Dim Shared penetrationDefAdj(2, 9), penetrationOffAdj(2)
-Dim Shared stealAdj(2)
 Dim Shared ST%(32), SX%(32, 1, 14)
 
-Dim Shared dFGPA(1), defStyles(1), fullCtOpt(0 To 1)
-
-Dim Shared P4(5), P5(5)
+Dim Shared d3FG_Pct_Adj(1), dFG_Pct_Adj(1)
+Dim Shared defStyles(1), fullCtOpt(0 To 1)
 
 Dim Shared gameStat3FGM(1, 14), gameStat3FGA(1, 14)
-Dim Shared leagRat_GAME(1, 6), lineupIdx(0 To 1, 0 To 4)
-Dim Shared mandatoryTO(0 To 1), miscAdj(1, 4)
-Dim Shared pbpFG(1 TO MAX_PBP_LINES), pbpBG(1 TO MAX_PBP_LINES)
-Dim Shared plyrStaminaGame(14), plyrRebIdx(14), plyrRebVal(14)
+'Dim Shared leagRat_GAME(1, 6), lineupIdx(0 To 1, 0 To 4)
+Dim Shared mandatoryTO(0 To 1), miscAdj(1, 4), offStyles(1)
+Dim Shared pbpFG(1 To MAX_PBP_LINES), pbpBG(1 To MAX_PBP_LINES)
+Dim Shared penetrationDefAdj(2, 9), penetrationOffAdj(2)
+Dim Shared periodPlayerTot(1, 8, 14, 14), periodTeamTot(1, 7, 14)
 Dim Shared perFoulAdj(0 To 32), plyrRat_GAME(1, 14, 19)
-
-
-Dim Shared QQ(1, 8, 14, 14), QR(1, 7, 14)
+Dim Shared plyrRebIdx(14), plyrRebVal(14), plyrStaminaGame(14)
 Dim Shared rebRatings(0 To 10), rosterIdx(14), rosterStatus(1, 13)
-Dim Shared score(1, 14), scSettings(0 To 2)
-Dim Shared schedGame(2), schedOptions(21), statTotals(14)
-Dim Shared teamAdj(1, 9), teamFouls(1)
+Dim Shared schedGame(2), schedOptions(21)
+Dim Shared score(1, 14), scSettings(0 To 2), statTotals(14)
+Dim Shared stealAdj(2), teamAdj(1, 9), teamFouls(1)
 Dim Shared teamRat_GAME(0 To 1, 0 To 34), teamYears(1)
-Dim Shared timePlayed(2, 14), timeouts(1), totalFouls(1), threeFG(1, 14, 1)
-Dim Shared totRebounds(1), turnoverAdj(0 To 32), turnovers(1)
+Dim Shared threeFG(1, 14, 1), timeouts(1), timePlayed(2, 14)
+Dim Shared totalFouls(1), totRebounds(1), turnoverAdj(0 To 32), turnovers(1)
 Dim Shared teamRecWins(1), teamRecLoss(1)
 
-Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), rebAdj!(1)
+'Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), rebAdj!(1)
 Dim game3FGM!(1, 14), game3FGA!(1, 14)
 
 Dim Shared defStyleDesc$(9), diskIDs$(0 To 1)
@@ -291,5 +288,4 @@ Dim Shared offStyleDesc$(2), offStylesNew$(0 To 8)
 Dim Shared pbpStyle$(1), players_GAME$(1, 14, 1), posnName$(0 To 4)
 
 Dim Shared SX$(32, 1)
-Dim Shared teamAbbrev$(3), teamGender$(0 To 1)
-
+Dim Shared teamAbbrev$(3), teamGender$(0 To 1), teamLeague$(0 To 1)

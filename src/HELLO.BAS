@@ -35,6 +35,9 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
+Dim Shared leagRat_GAME(1, 6), lineupIdx(0 To 1, 0 To 4)
+Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), rebAdj!(1)
+
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -791,6 +794,10 @@ Sub PROHOOP ()
 
     _Title "Basketball: The Pro Game v" + GAME_VERSION$ + " - HOOPS!"
 
+    Dim playChoice, pbpType
+    Dim threePtShotChance
+    Dim invalid3FG
+
     Shared actualAttendance&
     Shared avgAttendance&()
 
@@ -929,7 +936,7 @@ Sub PROHOOP ()
         currGame = schedGame(0) + schedGame(2)
 
         'Open "pbplog" + Str$(currGame) For Append As #11
-        'Open "pbplog" For Append As #11
+        Open "pbplog" For Append As #11
 
         If Not _FileExists(scheduleFile$) Then
 
@@ -976,7 +983,7 @@ Sub PROHOOP ()
 
     Else
 
-        'Open "pbplog" For Append As #11
+        Open "pbplog" For Append As #11
 
     End If
 
@@ -1166,7 +1173,6 @@ Sub PROHOOP ()
 
                     Case 11:
                         coachOpt = 1 - coachOpt
-                        'shotPctOpt = 1 - shotPctOpt
 
                     Case 12:
                         playoffOpt = 1 - playoffOpt
@@ -1326,7 +1332,7 @@ Sub PROHOOP ()
         Else
             Call ChooseLineup
             Call CHANGESTRATEGY(P9)
-            Call PlayItSafe
+            Call DefPlaySafeNormal
         End If
 
     Next P9
@@ -1339,6 +1345,7 @@ Sub PROHOOP ()
         whistle& = _SndOpen("whistle.mp3")
         swish& = _SndOpen("swish.mp3")
         backboard& = _SndOpen("backboard.mp3")
+        buzzer& = _SndOpen("buzzer.mp3")
     End If
 
     '10 minutes quarters have fewer timeouts.
@@ -1516,7 +1523,7 @@ Sub PROHOOP ()
         Call TICKER
         halfTime = 0
 
-        Call FOULHARD
+        'Call DefResetPlaySafe
 
     End If
 
@@ -1970,11 +1977,20 @@ Sub PROHOOP ()
     End If
 
     '-- No code for TIEUP
+    'offStatus = 0
+
+    'Working free - 50% chance
+    'If shotType = 2 And d100% <= 50 Then
+    '    shotType = 3   'Player freed up
+    '    playChoice = 1 'Shoot
+    'End If
+
     GoTo 520
 
     '----- NOODLE -----
 
     445 '
+    'All but last 2 mins / Overtime
     If Not ((quarter = 4 And gameClock! <= 120) Or quarter > 4) Then
 
         If playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0 Then
@@ -1998,8 +2014,7 @@ Sub PROHOOP ()
             'it's not clear to me why this happens.
             threeFGChance = gameRatings!(P, lineupIdx(P, ballCarrier), 19) - 3
         Else
-            'Favor modern outcomes if teams are
-            'from different eras
+            'Favor modern outcomes if teams are from different eras
             threeFGChance = gameRatings!(P, lineupIdx(P, ballCarrier), 19)
         End If
 
@@ -2014,6 +2029,10 @@ Sub PROHOOP ()
             offStatus = 0
             threePtShotChance = threePtShotChance + Int(Rnd(1) * 7) - 3
             GoTo 520
+        Else
+            '-- Take a regular shot (should we pass?)
+            'shotType = 3
+            'playChoice = 1
         End If
 
         '3 Point Shot chosen by user
@@ -2042,7 +2061,6 @@ Sub PROHOOP ()
                 shotType = 4
                 offStatus = 0
                 GoTo 520
-
             End If
 
         End If
@@ -2053,6 +2071,7 @@ Sub PROHOOP ()
     'playChoice = 1
     Call SHOTPERCENT(1)
 
+    offStatus = 0
     GoTo 520
 
     '----- NOODLE -----
@@ -2065,6 +2084,7 @@ Sub PROHOOP ()
     Call LastShot
     Call ResetShotClock
 
+    'Increase player TOs
     gameRatings!(P, lineupIdx(P, ballCarrier), 23) = gameRatings!(P, lineupIdx(P, ballCarrier), 23) + 1
 
     If (autoPlay = 0 Or pbpDelay! > 0) Then
@@ -2089,6 +2109,9 @@ Sub PROHOOP ()
 
                 Case 7 To 10:
                     pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " GETS A HAND ON THE BALL!"
+
+                Case Else
+                    pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " REACHES FOR IT!"
 
             End Select
 
@@ -2146,7 +2169,7 @@ Sub PROHOOP ()
 
     End If
 
-    'Increase steals (as well as team TOs)
+    'Increase steals + team TOs
     gameRatings!(D, lineupIdx(D, P9), 13) = gameRatings!(D, lineupIdx(D, P9), 13) + 1
     turnovers(P) = turnovers(P) + 1
 
@@ -2177,9 +2200,10 @@ Sub PROHOOP ()
     gameRatings!(P, lineupIdx(P, ballCarrier), 23) = gameRatings!(P, lineupIdx(P, ballCarrier), 23) + 1
     turnovers(P) = turnovers(P) + 1
 
-    If shotViolation <> 1 Then
+    If shotViolation = 0 Then
         pbpType = 1
         Call MAKEPBP(pbpType)
+        Call PBP(P)
     End If
 
     shotViolation = 0
@@ -2226,7 +2250,6 @@ Sub PROHOOP ()
             pbpType = 6
             shotType = 8
             Call MAKEPBP(pbpType)
-            Call PBP(P)
 
         Else
 
@@ -2261,7 +2284,8 @@ Sub PROHOOP ()
 
             prevBall$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0)
             activePosition$ = Left$(players_GAME$(P, lineupIdx(P, ballCarrier), 1), 1)
-
+    
+            'Shooting Guard or Point Guard --> treat as Guard
             If activePosition$ = "S" Or activePosition$ = "P" Then
                 activePosition$ = Right$(players_GAME$(P, lineupIdx(P, ballCarrier), 1), 1)
             End If
@@ -2277,37 +2301,50 @@ Sub PROHOOP ()
                         RN0 = Int(Rnd(1) * 12) + 1
 
                         Select Case RN0
+
                             Case 1:
                                 pbpString$ = teamGender$(P) + "'S HEAVILY GUARDED"
+
                             Case 2:
                                 pbpString$ = teamGender$(P) + "'S GUARDED"
+
                             Case 3:
                                 pbpString$ = teamGender$(P) + "'S GUARDED BY " + tgtDefender$
+
                             Case 4, 5:
                                 If teamGender$(P) = "SHE" Then
                                     pbpString$ = teamGender$(P) + " HAS A DEFENDER ON HER"
                                 Else
                                     pbpString$ = teamGender$(P) + " HAS A MAN ON HIM"
                                 End If
+
                             Case 6:
                                 pbpString$ = teamGender$(P) + "'S COVERED"
+
                             Case 7:
                                 pbpString$ = teamGender$(P) + " CAN'T GET AROUND THE DEFENDER"
+
                             Case 8:
                                 pbpString$ = teamGender$(P) + "'S PRESSURED"
+
                             Case 9:
                                 pbpString$ = teamGender$(P) + " HAS NOWHERE TO GO"
+
                             Case 10:
                                 If teamGender$(P) = "SHE" Then
                                     pbpString$ = teamGender$(P) + " HAS A HAND IN HER FACE"
                                 Else
                                     pbpString$ = teamGender$(P) + " HAS A HAND IN HIS FACE"
                                 End If
+
                             Case 11:
                                 pbpString$ = teamGender$(P) + "'S WATCHED BY " + tgtDefender$
+
                             Case 12:
                                 pbpString$ = teamGender$(P) + "'S WORKING ON " + tgtDefender$
+
                         End Select
+
                     End If
 
                     Call PBP(P)
@@ -2386,27 +2423,27 @@ Sub PROHOOP ()
 
                             Select Case RN0
 
-                                Case 1 To 25:
+                                Case 1 To 33:
                                     pbpString$ = teamGender$(P) + " DRIVES THE LANE"
                                     Call PBP(P)
-                                    pbpString$ = teamGender$(P) + " HAS A GOOD SHOT CLOSE IN"
 
-                                Case 26 To 50:
+                                Case 34 To 66:
                                     pbpString$ = teamGender$(P) + " DRIVES THROUGH THE KEY"
                                     Call PBP(P)
                                     pbpString$ = teamGender$(P) + "'S INTO THE LANE"
                                     Call PBP(P)
-                                    pbpString$ = teamGender$(P) + " HAS A GOOD SHOT CLOSE IN"
 
-                                Case 51 To 75
+                                Case 67 To 100
                                     pbpString$ = teamGender$(P) + " DRIVES TO THE BASKET"
                                     Call PBP(P)
-                                    pbpString$ = teamGender$(P) + " HAS A GOOD SHOT CLOSE IN"
+
                             End Select
 
+                            pbpString$ = teamGender$(P) + " HAS A GOOD SHOT CLOSE IN"
                             Call PBP(P)
 
                         Else
+
                             pbpString$ = teamGender$(P) + " DRIVES THROUGH AN OPENING"
                             Call PBP(P)
 
@@ -2675,7 +2712,7 @@ Sub PROHOOP ()
 
 
     ' *** Determine value for playChoice ***
-    'playChoice
+    'playChoice = play type
     '0 = Pass
     '1 = Shoot (2FGA)
     '2 = Timeout
@@ -2754,7 +2791,7 @@ Sub PROHOOP ()
             scoreDiff = score(D, 0) - score(P, 0)
 
             'If Not (quarter > 3 And gameClock! <= 30 And (scoreDiff = 2 Or scoreDiff = 0)) THen
-            If quarter <= 3 Or gameClock! > 30 Or (scoreDiff > 2 And scoreDiff < 0) Then
+            If quarter <= 3 Or gameClock! > 30 Or (scoreDiff <> 2 And scoreDiff <> 0) Then
 
                 'Player attempt to draw FOUL
                 'Compare roll to Foul Draw Rating + Def Foul Adj
@@ -2802,6 +2839,7 @@ Sub PROHOOP ()
                         If teamGender$(P) = "SHE" And d100% > 5 Then
                             pbpType = 3
                         Else
+                            'Failed dunk
                             pbpType = 2
                         End If
 
@@ -2809,7 +2847,15 @@ Sub PROHOOP ()
 
                     End If
 
-                    pbpString$ = "STUFF BY " + players_GAME$(P, lineupIdx(P, ballCarrier), 0)
+                    Call PBP(P)
+
+                    rndPlayer = Int(Rnd(1) * 5)
+                    pbpString$ = "STUFF BY " + players_GAME$(D, lineupIdx(D, rndPlayer), 0)
+                    'Technically, interrupting a dunk is a block, but the play is being fouled
+                    'I'm not sure why this is the only circumstance in which a dunk is stuffed
+                    '(it happens on ~2.7% of attempts)
+                    'Commented line below would credit block
+                    'gameRatings!(D, lineupIdx(D, rndPlayer), 15) = gameRatings!(D, lineupIdx(D, rndPlayer), 15) + 1
                     Call PBP(D)
                     Call DELAY
 
@@ -3344,9 +3390,9 @@ Sub PROHOOP ()
                         _SndPlay swish&
                     End If
 
-                    If XX% = 1 Then
+                    If invalid3FG = 1 Then
                         'Foot was on the line - it's only a 2FGA
-                        XX% = 0
+                        invalid3FG = 0
                         score(P, quarter) = score(P, quarter) + 2
                         score(P, 0) = score(P, 0) + 2
                     Else
@@ -4111,7 +4157,6 @@ Sub PROHOOP ()
         fastBreak = 1
 
         'No chance to choose new strategy?
-
         GoTo 300
 
     End If
@@ -4155,6 +4200,8 @@ End Sub
 ' Does not process any that will be read
 ' in from file or assigned elsewhere
 Sub InitVar ()
+
+    Shared JY
 
     Shared actualAttendance&
 
@@ -4218,12 +4265,15 @@ Sub InitVar ()
     mandatoryTO(0) = 0
     mandatoryTO(1) = 0
 
+    D = 0
+    P = 0
+    P9 = 0
+
     assigned2TOs = 0
     autoPlay = 0
     ballCarrier = 0
     bonusFoulNum = 5
     compTeam = 0
-    D = 0
     endAllGames = 0
     gameOver = 0
     fastBreak = 0
@@ -4236,18 +4286,15 @@ Sub InitVar ()
     nbrFTMade = 0
     nbrLines = 1
     offStatus = 0
-    P = 0
-    P9 = 0
     passes = 0
     penetrationOffAdj = 0
-    pbpType = 0
     quarter = 1
     quarterOpt = 0
+    ruleOptType = 0
     shotClock = 0
     shotType = 0
     sndOpt = 1
     statSpecial = 0
-    threePtShotChance = 0
     timeoutOpt = 3
     tickerGames = 0
     willDunk = 0
@@ -4272,11 +4319,10 @@ Sub InitVar ()
     'Erase gameCoach$, gameMascots$, gameArena$, players_GAME$
     Erase leagRat_GAME, plyrRat_GAME, teamRat_GAME
 
-    Erase dFGPA, eventSettings, fullCtOpt
+    Erase dFG_Pct_Adj, eventSettings, fullCtOpt
     Erase gameStat3FGM, gameStat3FGA
     Erase miscAdj, offStyles, oppScore
-    Erase P4, P5
-    Erase pbpFG, pbpBG, QQ, QR, rebRatings
+    Erase pbpFG, pbpBG, periodPlayerTot, periodTeamTot, rebRatings
     Erase score, schedGame, schedOptions, statTotals
     Erase teamAdj, teamIndex
     Erase teamFouls, teamScore, threeFG, timePlayed
@@ -4293,7 +4339,7 @@ Sub InitVar ()
     Erase Q$, SX$
     Erase teamAbbrev$, teamNames$, teamRecDesc$
 
-    Erase F%, G9%
+    Erase d3FG_Pct_Adj
     Erase ST%, SX%
 
     actualAttendance& = 0
@@ -4334,6 +4380,7 @@ Sub AUTOSETUP (validTeam)
         'Call StartingLineup(tgtTeam)
 
         teamGender$(tgtTeam) = GetTeamGender$(tgtYear$)
+        teamLeague$(I) = GetTeamLeague$(tgtYear$)
 
         schedOptions(tgtTeam) = tgtId
 
@@ -4530,7 +4577,7 @@ Sub DISABLEPLAYERS (teamIdx)
 
         Print
         Print
-        Print "NOTE:: THE COMPUTER WIll AUTOMATICALLY DISABLE PLAYERS BASED ON"
+        Print "NOTE:: THE COMPUTER WILL AUTOMATICALLY DISABLE PLAYERS BASED ON"
         Print "       THE RATIO OF GAMES PLAYED FOR EACH PLAYER TO THE TOTAL"
         Print "       NUMBER OF GAMES PLAYED BY THE TEAM. YOU MAY WANT TO CHECK"
         Print "       TO ACTIVATE ANY COMPUTER DEACTIVATED PLAYERS."
@@ -4653,10 +4700,6 @@ Sub PBP (teamIdx)
             Call BOXOPTIONS(0)
             Call SCOREBOARD
 
-        Case "D"
-            Call ZONECHANGE
-            Call SCOREBOARD
-
         Case "O"
             Call OPTIONS
 
@@ -4670,6 +4713,8 @@ Sub PBP (teamIdx)
 
     End Select
 
+    Call pbplog(4673)
+
     'Positive delay
     If (autoPlay = 0 Or pbpDelay! > 0) And pbpOpt = 0 Then
 
@@ -4677,8 +4722,8 @@ Sub PBP (teamIdx)
 
         If nbrLines <= MAX_PBP_LINES Then
             pbpText$(nbrLines) = pbpString$
-            pbpFG(nbrLines) = teamRat_GAME(teamIdx, 0)
-            pbpBG(nbrLines) = teamRat_GAME(teamIdx, 1)
+            pbpFG(nbrLines) = teamRat_GAME(teamIdx, 33)
+            pbpBG(nbrLines) = teamRat_GAME(teamIdx, 34)
         Else
             For I = 1 To MAX_PBP_LINES - 1
                 pbpText$(I) = pbpText$(I + 1)
@@ -4686,8 +4731,8 @@ Sub PBP (teamIdx)
                 pbpBG(I) = pbpBG(I + 1)
             Next
             pbpText$(MAX_PBP_LINES) = pbpString$
-            pbpFG(MAX_PBP_LINES) = teamRat_GAME(teamIdx, 0)
-            pbpBG(MAX_PBP_LINES) = teamRat_GAME(teamIdx, 1)
+            pbpFG(MAX_PBP_LINES) = teamRat_GAME(teamIdx, 33)
+            pbpBG(MAX_PBP_LINES) = teamRat_GAME(teamIdx, 34)
         End If
 
         nbrLines = nbrLines + 1
@@ -4780,33 +4825,60 @@ Sub MAKEPBP (pbpType)
 
                 Select Case RN1
 
-                    Case 1: pbpString$ = "DIPSY-DOO DUNK-A-ROO!!!"
-                    Case 2: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " MAKES IT HAMMER TIME!!!"
-                    Case 3: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " SLAMS IT IN!!!"
-                    Case 4: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE 2-HANDED SLAM!!!"
-                    Case 5: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " SLAMS IT HOME!!!"
-                    Case 6: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " JAMS IT HOME!!!"
-                    Case 7: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " THROWS IT DOWN!!!"
-                    Case 8: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " THUNDERSLAM!!!"
-                    Case 9: pbpString$ = "RIM ROCKING JAM!!!"
-                    Case 10: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE MONSTER SLAM!!"
-                    Case 11: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + "POWER SLAMS IT!!!"
-                    Case 12: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE 2-HANDED STUFF!!!"
-                    Case 13: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " BACKWARDS JAM!!!"
-                    Case 14: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE 1-HANDED SLAM!!!"
-                    Case 15: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE REVERSE SLAM!!!"
-                    Case 16: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE REVERSE JAM!!!"
-                    Case 17: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE WINDMILL JAM!!!"
-                    Case 18: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE WINDMILL SLAM!!!"
-                    Case 19: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE TOMAHAWK SLAM!!!"
-                    Case 20: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE 360 SLAM!!!"
-                    Case 21: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE SPINNING SLAM!!!"
-                    Case 22: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE LEFT HANDED DUNK!!!"
-                    Case 23: pbpString$ = "DOUBLE CLUTCH JAM!!!"
-                    Case 24: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " GETS THE FLUSH!!!"
-                    Case 25: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " PUNCHES IT HOME!!!"
-                    Case 26: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + "...DOUBLE PUMP SLAM!!!"
-                    Case 27: pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + "...IN YOUR FACE SLAM!!!"
+                    Case 1:
+                        pbpString$ = "DIPSY-DOO DUNK-A-ROO!!!"
+                    Case 2:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " MAKES IT HAMMER TIME!!!"
+                    Case 3:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " SLAMS IT IN!!!"
+                    Case 4:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE 2-HANDED SLAM!!!"
+                    Case 5:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " SLAMS IT HOME!!!"
+                    Case 6:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " JAMS IT HOME!!!"
+                    Case 7:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " THROWS IT DOWN!!!"
+                    Case 8:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " THUNDERSLAM!!!"
+                    Case 9:
+                        pbpString$ = "RIM ROCKING JAM!!!"
+                    Case 10:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE MONSTER SLAM!!"
+                    Case 11:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + "POWER SLAMS IT!!!"
+                    Case 12:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE 2-HANDED STUFF!!!"
+                    Case 13:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " BACKWARDS JAM!!!"
+                    Case 14:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE 1-HANDED SLAM!!!"
+                    Case 15:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE REVERSE SLAM!!!"
+                    Case 16:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE REVERSE JAM!!!"
+                    Case 17:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE WINDMILL JAM!!!"
+                    Case 18:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE WINDMILL SLAM!!!"
+                    Case 19:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE TOMAHAWK SLAM!!!"
+                    Case 20:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE 360 SLAM!!!"
+                    Case 21:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE SPINNING SLAM!!!"
+                    Case 22:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " WITH THE LEFT HANDED DUNK!!!"
+                    Case 23:
+                        pbpString$ = "DOUBLE CLUTCH JAM!!!"
+                    Case 24:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " GETS THE FLUSH!!!"
+                    Case 25:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " PUNCHES IT HOME!!!"
+                    Case 26:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + "...DOUBLE PUMP SLAM!!!"
+                    Case 27:
+                        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + "...IN YOUR FACE SLAM!!!"
                     Case 28, 37:
                         pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " IS UP"
                         Call PBP(P)
@@ -4847,16 +4919,26 @@ Sub MAKEPBP (pbpType)
 
                         Select Case RN0
 
-                            Case 1 To 40: pbpString$ = pbpString$ + " TAKES A TOUGH SHOT"
-                            Case 41 To 45: pbpString$ = pbpString$ + " SHOOTS OFF BALANCE"
-                            Case 46 To 50: pbpString$ = pbpString$ + " FORCES ONE UP"
-                            Case 51 To 60: pbpString$ = pbpString$ + " SHOOTS UNDER PRESSURE"
-                            Case 61 To 65: pbpString$ = pbpString$ + " WITH A BAD SHOT"
-                            Case 66 To 70: pbpString$ = pbpString$ + " SHOOTS IN HEAVY TRAFFIC"
-                            Case 71 To 75: pbpString$ = pbpString$ + " THROWS UP A PRAYER"
-                            Case 76 To 80: pbpString$ = pbpString$ + " TAKES A BAD SHOT"
-                            Case 81 To 85: pbpString$ = pbpString$ + " FORCES THE INSIDE SHOT"
-                            Case 86 To 100: pbpString$ = pbpString$ + " TURNS AND SHOOTS"
+                            Case 1 To 40:
+                                pbpString$ = pbpString$ + " TAKES A TOUGH SHOT"
+                            Case 41 To 45:
+                                pbpString$ = pbpString$ + " SHOOTS OFF BALANCE"
+                            Case 46 To 50:
+                                pbpString$ = pbpString$ + " FORCES ONE UP"
+                            Case 51 To 60:
+                                pbpString$ = pbpString$ + " SHOOTS UNDER PRESSURE"
+                            Case 61 To 65:
+                                pbpString$ = pbpString$ + " WITH A BAD SHOT"
+                            Case 66 To 70:
+                                pbpString$ = pbpString$ + " SHOOTS IN HEAVY TRAFFIC"
+                            Case 71 To 75:
+                                pbpString$ = pbpString$ + " THROWS UP A PRAYER"
+                            Case 76 To 80:
+                                pbpString$ = pbpString$ + " TAKES A BAD SHOT"
+                            Case 81 To 85:
+                                pbpString$ = pbpString$ + " FORCES THE INSIDE SHOT"
+                            Case 86 To 100:
+                                pbpString$ = pbpString$ + " TURNS AND SHOOTS"
 
                         End Select
 
@@ -5013,7 +5095,7 @@ Sub MAKEPBP (pbpType)
                                     pbpString$ = teamGender$(P) + " PENETRATES"
 
                                     Call PBP(P)
-                                    pbpString$ = "GORGEOUS FINGER ROll!"
+                                    pbpString$ = "GORGEOUS FINGER ROLL!"
 
                                 Case 60 To 75:
                                     pbpString$ = teamGender$(P) + " TAKES THE JUMPER"
@@ -5130,7 +5212,7 @@ Sub MAKEPBP (pbpType)
                                     pbpString$ = teamGender$(P) + " PENETRATES"
 
                                     Call PBP(P)
-                                    pbpString$ = "GORGEOUS FINGER ROll!"
+                                    pbpString$ = "GORGEOUS FINGER ROLL!"
 
                                 Case 75 To 80:
                                     pbpString$ = teamGender$(P) + " SHOOTS"
@@ -5252,7 +5334,7 @@ Sub MAKEPBP (pbpType)
                                 Case 41 To 50: pbpString$ = pbpString$ + " FIRES FROM THE 3-POINT LINE!"
                                 Case 51 To 60: pbpString$ = pbpString$ + " SHOOTS FOR THREE!"
                                 Case 61 To 70: pbpString$ = pbpString$ + " SHOOTS THE 3-POINTER!"
-                                Case 71 To 80: pbpString$ = pbpString$ + " FOR 3...!"
+                                Case 71 To 80: pbpString$ = pbpString$ + " FOR 3..."
                                 Case 81 To 90: pbpString$ = pbpString$ + " PUTS UP THE TREY!"
                                 Case 91 To 100: pbpString$ = pbpString$ + " TAKES THE 3-POINTER!"
 
@@ -5365,7 +5447,7 @@ Sub MAKEPBP (pbpType)
                             Case 56: pbpString$ = pbpString$ + " WITH A RUNNING LEFT HANDER"
                             Case 57: pbpString$ = pbpString$ + " WITH A RUNNING SCOOP SHOT"
                             Case 58: pbpString$ = pbpString$ + " WITH THE SCOOP SHOT"
-                            Case 59: pbpString$ = pbpString$ + " WITH THE FINGER ROll"
+                            Case 59: pbpString$ = pbpString$ + " WITH THE FINGER ROLL"
 
                         End Select
 
@@ -5439,7 +5521,7 @@ Sub MAKEPBP (pbpType)
                             Case 56: pbpString$ = pbpString$ + " WITH A RUNNING LEFT HANDER"
                             Case 57: pbpString$ = pbpString$ + " WITH A RUNNING SCOOP SHOT"
                             Case 58: pbpString$ = pbpString$ + " WITH THE SCOOP SHOT"
-                            Case 59: pbpString$ = pbpString$ + " WITH THE FINGER ROll"
+                            Case 59: pbpString$ = pbpString$ + " WITH THE FINGER ROLL"
 
                         End Select
 
@@ -5580,7 +5662,7 @@ Sub MAKEPBP (pbpType)
 
                     pbpString$ = pbpString$ + " FOOT IS ON THE 3-POINT LINE"
 
-                    XX% = 1
+                    invalid3FG = 1
 
                 End If
 
@@ -5743,7 +5825,7 @@ Sub MAKEPBP (pbpType)
                         Case 9: pbpString$ = "NOT EVEN CLOSE!"
                         Case 10: pbpString$ = "NO GOOD"
                         Case 11: pbpString$ = teamGender$(P) + " MISSES"
-                        Case 12: pbpString$ = "DOESN'T GET THE ROll"
+                        Case 12: pbpString$ = "DOESN'T GET THE ROLL"
                         Case 13: pbpString$ = "OFF THE GLASS"
                         Case 14: pbpString$ = "FALLS SHORT"
                         Case 15: pbpString$ = "NO GOOD"
@@ -6068,35 +6150,47 @@ Sub TICKER ()
 
         If halfTime = 1 Then
 
-            If G9 = 0 Then
+            If ruleOptType = 0 Then
+
                 If RN <= 50 Then
                     Locate , 23: Print "PRUDENTIAL AT THE HALF SCOREBOARD"
                 Else
                     Locate , 28: Print "RED MAN HALFTIME REPORT"
                 End If
+
             Else
+
                 If RN <= 50 Then
                     Locate , 29: Print "TOYOTA HALFTIME REPORT"
                 Else
                     Locate , 29: Print "HONDA HALFTIME REPORT"
                 End If
+
             End If
 
         Else
 
             If gameOver = 1 Then
 
-                If G9 = 0 Then
+                If ruleOptType = 0 Then
                     Locate , 27: Print "CHEVROLET FINAL SCOREBOARD"
                 Else
                     Select Case RN
-                        Case 1 To 33: Locate , 27: Print "USA TODAY FINAL SCOREBOARD"
-                        Case 34 To 67: Locate , 24: Print "FEDERAL EXPRESS FINAL SCOREBOARD"
-                        Case 67 To 100: Locate , 23: Print "ESPN SPORTSCENTER FINAL SCOREBOARD"
+                        Case 1 To 33:
+                            Locate , 27: Print "USA TODAY FINAL SCOREBOARD"
+                        Case 34 To 67:
+                            Locate , 24: Print "FEDERAL EXPRESS FINAL SCOREBOARD"
+                        Case 67 To 100:
+                            Locate , 23: Print "ESPN SPORTSCENTER FINAL SCOREBOARD"
                     End Select
                 End If
+
             Else
-                If halfTime = 0 Then Locate , 30: Print "LANCE HAFFNER GAMES SCOREBOARD"
+
+                If halfTime = 0 Then
+                    Locate , 30: Print "LANCE HAFFNER GAMES SCOREBOARD"
+                End If
+
             End If
 
         End If
@@ -6109,27 +6203,84 @@ Sub TICKER ()
 
         Else
 
-            If quarter = 1 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 1
-            If quarter = 1 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 2
-            If quarter = 1 And gameClock! < 240 Then timeInterval = 3
+            If quarter = 1 Then
 
-            If quarter = 2 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 4
-            If quarter = 2 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 5
-            If quarter = 2 And gameClock! < 240 Then timeInterval = 6
+                Select Case gameClock!
 
-            If quarter = 3 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 9
-            If quarter = 3 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 10
-            If quarter = 3 And gameClock! < 240 Then timeInterval = 11
+                    Case 480 To 719
+                        timeInterval = 1
+                    Case 240 To 479
+                        timeInterval = 2
+                    Case Is < 240
+                        timeInterval = 3
 
-            If quarter = 4 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 12
-            If quarter = 4 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 13
-            If quarter = 4 And gameClock! < 240 Then timeInterval = 14
+                End Select
 
-            If quarter = 5 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 15
-            If quarter = 5 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 16
-            If quarter = 5 And gameClock! < 240 Then timeInterval = 17
+            End If
 
-            If oppScore = 1 Then timeInterval = 8
+            If quarter = 2 Then
+
+                Select Case gameClock!
+
+                    Case 480 To 719
+                        timeInterval = 4
+                    Case 240 To 479
+                        timeInterval = 5
+                    Case Is < 240
+                        timeInterval = 6
+
+                End Select
+
+            End If
+
+            If quarter = 3 Then
+
+                Select Case gameClock!
+
+                    Case 480 To 719
+                        timeInterval = 9
+                    Case 240 To 479
+                        timeInterval = 10
+                    Case Is < 240
+                        timeInterval = 11
+
+                End Select
+
+            End If
+
+            If quarter = 4 Then
+
+                Select Case gameClock!
+
+                    Case 480 To 719
+                        timeInterval = 12
+                    Case 240 To 479
+                        timeInterval = 13
+                    Case Is < 240
+                        timeInterval = 14
+
+                End Select
+
+            End If
+
+            If quarter = 5 Then
+
+                Select Case gameClock!
+
+                    Case 480 To 719
+                        timeInterval = 15
+                    Case 240 To 479
+                        timeInterval = 16
+                    Case Is < 240
+                        timeInterval = 17
+
+                End Select
+
+            End If
+
+            If halfTime = 1 Then
+                timeInterval = 8
+            End If
 
             If Left$(SX$(1, 0), 3) <> "XXX" Then
                 Locate 2, 1
@@ -6589,6 +6740,7 @@ End Sub
 'display should be using.
 Function TickerTime% (timeInterval, X)
 
+    Dim tickerIdx
     Shared tickerStart
 
     tickerIdx = timeInterval + (tickerStart - ST%(X)) * 3
@@ -6609,7 +6761,9 @@ End Function
 'scores for the ticker games.
 Sub TICKERUPDATE ()
 
+    'Should this be <= 32???
     If autoPlay = 1 And schedGame(2) <= 31 Then
+
         done = 0
 
         ' Quarter 1 block
@@ -6830,6 +6984,7 @@ Sub ChooseLineup ()
         For slot = 0 To 4
 
             Locate slot + 20, 1
+
             Color 2, 0
             Print Using "# "; slot;
             Color 15, 0
@@ -6864,6 +7019,7 @@ Sub ChooseLineup ()
             Do
 
                 Locate slot + 20, 1
+
                 Color 2, 0
                 Print Using "# "; slot;
                 Color 15
@@ -6917,7 +7073,14 @@ Sub ChooseLineup ()
                     'Valid position #, player has not fouled out, and is active / eligible
                     If posn >= 0 And posn <= 14 And gameRatings!(P9, posn, 12) < FOULS_TO_DQ And players_GAME$(P9, posn, 0) <> "XXX" And playerActive%(P9, posn) = 1 Then
                         For I2 = 0 To 4
-                            If lineupIdx(P9, I2) = posn Then 
+                            If lineupIdx(P9, I2) = posn And lineupIdx(P9, I2) >= 0 Then
+                                Color 14, 0
+                                Locate 25, 30
+                                Print Space$(40)
+                                Locate 25, 30
+                                Print players_GAME$(P9, lineupIdx(P9, I2), 0); " IS ALREADY IN THE LINEUP!"
+                                posn = -1
+                                'lineupIdx(P9, I2) = -1
                                 Exit For
                             End If
                         Next I2
@@ -6929,34 +7092,14 @@ Sub ChooseLineup ()
 
             lineupIdx(P9, slot) = posn
             nonPlayers = 0
-            alreadyAssigned = 0
 
             For IP% = 0 To lineupIdx(P9, slot)
-
                 If playerActive%(P9, IP%) = 0 Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX" Then
                     nonPlayers = nonPlayers + 1
                 End If
-
-
             Next
 
-            For X = 0 To (slot - 1)
-
-                If lineupIdx(P9, X) = posn Then
-                    alreadyAssigned = 1
-                    Color 14, 0
-                    Locate 25, 30
-                    Print Space$(40)
-                    Locate 25, 30
-                    Print players_GAME$(P9, lineupIdx(P9, X)); " IS ALREADY IN THE LINEUP!"
-                    lineupIdx(P9, slot) = -1
-                    slot = slot - 1
-                    If slot < 0 Then slot = 0
-                End If
-
-            Next X
-
-            If playerActive%(P9, posn) = 1 And alreadyAssigned = 0 Then
+            If playerActive%(P9, posn) = 1 Then
                 Print players_GAME$(P9, posn, 0);
 
                 'Print player name in team colors (activated)
@@ -7001,13 +7144,13 @@ Sub ChooseLineup ()
                     Locate 25, 30
                     Print Space$(40)
                     Locate 25, 30
-                    Color 14, 0: Print players_GAME$(P9, lineupIdx(P9, slot), 0); " IS AT THE FT LINE"
+                    Print players_GAME$(P9, lineupIdx(P9, slot), 0); " IS AT THE FT LINE"
 
                     goodLineup = 0
 
                 Else
 
-                    Locate LAST_ROW, 1: Print Space$(25);
+                    Locate LAST_ROW, 1: Print Space$(30);
 
                     Z = lineupIdx(P9, slot)
                     nonPlayers = 0
@@ -7020,7 +7163,8 @@ Sub ChooseLineup ()
 
                     Locate Z + 3 - nonPlayers, 3
                     Color 15, 0
-                    Print Left$(players_GAME$(P9, Z, 0), 12)
+                    'Only print valid roster indices
+                    If Z >= 0 Then Print Left$(players_GAME$(P9, Z, 0), 12)
 
                     Do
 
@@ -7060,7 +7204,13 @@ Sub ChooseLineup ()
                             If posn >= 0 And posn <= 14 And gameRatings!(P9, posn, 12) < FOULS_TO_DQ And players_GAME$(P9, posn, 0) <> "XXX" And playerActive%(P9, posn) = 1 Then
 
                                 For I2 = 0 To 4:
-                                    If lineupIdx(P9, I2) = posn Then 
+                                    If lineupIdx(P9, I2) = posn And lineupIdx(P9, I2) >= 0 Then
+                                        Color 14, 0
+                                        Locate 25, 30
+                                        Print Space$(40)
+                                        Locate 25, 30
+                                        Print players_GAME$(P9, lineupIdx(P9, I2), 0); " IS ALREADY IN THE LINEUP!"
+                                        posn = -1
                                         Exit For
                                     End If
                                 Next I2
@@ -7073,31 +7223,23 @@ Sub ChooseLineup ()
 
                     nonPlayers = 0
 
-                    For X = 0 To 4
+                    'Clear any warnings during lineup selection
+                    Locate 25, 30
+                    Print Space$(40)
 
-                        If lineupIdx(P9, X) = posn Then
-                            goodLineup = 0
-                            Color 14, 0
-                            Locate 25, 30
-                            Print Space$(40)
-                            Locate 25, 30
-                            Print players$(P9, lineupIdx(P9, X)); " IS ALREADY IN THE LINEUP!"
-                            'lineupIdx(P9, slot) = -1
-                        End If
-
-                    Next X
-
-                    If goodLineup = 1 Then lineupIdx(P9, slot) = posn
+                    If goodLineup = 1 Then
+                        lineupIdx(P9, slot) = posn
+                    End If
 
                     For IP% = 0 To lineupIdx(P9, slot)
-
                         If playerActive%(P9, IP%) = 0 Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX" Then
                             nonPlayers = nonPlayers + 1
                         End If
-
                     Next
 
-                    If playerActive%(P9, posn) = 1  And goodLineup = 1 Then
+                    If playerActive%(P9, posn) = 1 And goodLineup = 1 Then
+                        Color 15, 0
+                        Locate slot + 20, 13
                         Print players_GAME$(P9, posn, 0);
 
                         'Print player name in team colors (activated)
@@ -7153,18 +7295,42 @@ Sub ChooseLineup ()
                     End If
                 Next
 
+                'We have enough roster players enabled
                 If 15 - nonPlayers >= 5 Then
 
-                    For I1 = 0 To 4
+                    'Check for invalid players
+                    duplicatesFound = 0
+                    For I = 0 To 3
+                        For J = I + 1 To 4
+                            If lineupIdx(P9, I) = lineupIdx(P9, J) Then
+                                duplicatesFound = 1
+                                Exit For
+                            End If
+                        Next J
 
-                        If gameRatings!(P9, lineupIdx(P9, I1), 12) >= FOULS_TO_DQ Then
+                        If duplicatesFound = 1 Then
                             Color 14, 0
                             Locate 25, 30
                             Print Space$(40)
                             Locate 25, 30
-                            Print players_GAME$(P9, lineupIdx(P9, I1), 0); " HAS FOULED OUT"
+                            Print "LINEUP CAN'T CONTAIN DUPLICATE PLAYERS!"
                             goodLineup = 0
                             Exit For
+                        End If
+                    Next I
+
+                    For I1 = 0 To 4
+
+                        If lineupIdx(P9, I1) >= 0 Then
+                            If gameRatings!(P9, lineupIdx(P9, I1), 12) >= FOULS_TO_DQ Then
+                                Color 14, 0
+                                Locate 25, 30
+                                Print Space$(40)
+                                Locate 25, 30
+                                Print players_GAME$(P9, lineupIdx(P9, I1), 0); " HAS FOULED OUT"
+                                goodLineup = 0
+                                Exit For
+                            End If
                         End If
 
                     Next
@@ -7179,46 +7345,57 @@ End Sub
 
 
 '----------------------------------------
-'         PlayItSafe Subroutine
+'      DefPlaySafeNormal Subroutine
 '----------------------------------------
 'This subroutine lets the user review all
 'players who are taking it safe on defense
 'and determine if they should play normal.
-Sub PlayItSafe ()
+Sub DefPlaySafeNormal ()
 
-    skipSELECTION% = 0
-    skipPlaySafe% = 0
+    Dim playerPos(5), menuPos(5)
 
     Cls
 
-    A = 0
-    S2 = 1
-    S3 = 1
-    SW = 0
+    Color 15
 
-    For ZZ = 0 To 4
+    checkNormal = 1
+    skipHeader = 0
 
-        If gameRatings!(P9, lineupIdx(P9, ZZ), 22) = 50 Then
-            A = A + 1
-            If SW = 0 Then Print: Print "THE FOLLOWING PLAYER(S) ARE PLAYING SAFE BUT CAN NOW PLAY NORMAL IF YOU WISH": SW = 1
+    safePlyrCnt = 0
+    currIdx = 1
+    assignNormal = 1
+
+    For slot = 0 To 4
+
+        safeStatus = gameRatings!(P9, lineupIdx(P9, slot), 22)
+
+        If safeStatus = 50 Then
+
+            safePlyrCnt = safePlyrCnt + 1
+
+            If skipHeader = 0 Then
+                Locate 4, 1
+                Print "THE FOLLOWING PLAYER(S) ARE PLAYING SAFE, BUT CAN NOW PLAY NORMAL:"
+                Locate 6, 1
+                skipHeader = 1
+            End If
+
         End If
 
-        If gameRatings!(P9, lineupIdx(P9, ZZ), 22) = 50 And SW = 1 And S2 < 6 Then
-            Locate S2 + 3, 1
-            Print S2; "-"; players_GAME$(P9, lineupIdx(P9, ZZ), 0)
-            P5(A) = S2
-            P4(A) = ZZ
-            S2 = S2 + 1
-            S3 = S3 + 1
+        If safeStatus = 50 And skipHeader = 1 Then
+            Locate currIdx + 5, 1
+            Print currIdx; "- "; players_GAME$(P9, lineupIdx(P9, slot), 0)
+            menuPos(safePlyrCnt) = currIdx
+            playerPos(safePlyrCnt) = slot
+            currIdx = currIdx + 1
         End If
 
-    Next ZZ
+    Next slot
 
-    If SW <> 0 Then
+    If skipHeader = 1 Then
 
-        A = 1
         Print
-        Print "Z - CONTINUE"
+        Print " Z - CONTINUE"
 
         Do
 
@@ -7227,79 +7404,78 @@ Sub PlayItSafe ()
                 I$ = GetKeyPress$
 
                 If UCase$(I$) = "Z" Then
-                    If MJ = 0 Then skipSELECTION% = 1
-                    If MJ = 25 Then skipPlaySafe% = 1
+                    If MJ = 0 Then assignNormal = 0
+                    If MJ = 25 Then checkNormal = 0
                 Else
-                    playChoice = Val(I$)
+                    plyrNum = Val(I$)
                 End If
 
-            Loop Until playChoice <= 1 And playChoice <= (S2 + 1) Or UCase$(I$) = "Z"
+            Loop Until plyrNum <= 1 And plyrNum <= (currIdx + 1) Or UCase$(I$) = "Z"
 
-            If skipSELECTION% <> 1 Then
+            If assignNormal = 1 Then
 
-                A = playChoice
+                safeIdx = plyrNum
 
-                If playChoice = P5(playChoice) Then
+                If plyrNum = menuPos(plyrNum) Then
 
-                    gameRatings!(P9, lineupIdx(P9, P4(A)), 17) = gameRatings!(P9, lineupIdx(P9, P4(A)), 17) * 3
-                    gameRatings!(P9, lineupIdx(P9, P4(A)), 22) = 0
+                    gameRatings!(P9, lineupIdx(P9, playerPos(safeIdx)), 17) = gameRatings!(P9, lineupIdx(P9, playerPos(safeIdx)), 17) * 3
+                    gameRatings!(P9, lineupIdx(P9, playerPos(safeIdx)), 22) = 0
 
-                    Locate P5(A) + 3, 20
-                    Print players_GAME$(P9, lineupIdx(P9, P4(A)), 0); " WIll NOW PLAY NORMAL DEFENSE!"
+                    Locate menuPos(safeIdx) + 5, 20
+                    Print players_GAME$(P9, lineupIdx(P9, playerPos(safeIdx)), 0); " WILL NOW PLAY NORMAL DEFENSE!"
                     Call StealAdjustments
 
-                    dFGPA(P9) = dFGPA(P9) - 1
-                    A = A + 1
+                    dFG_Pct_Adj(P9) = dFG_Pct_Adj(P9) - 1
+                    safeIdx = safeIdx + 1
                     MJ = 25
 
                 End If
 
             End If
 
-        Loop Until playChoice <> P5(6) Or UCase$(I$) = "Z"
+        Loop Until UCase$(I$) = "Z"
+        'Or plyrNum <> menuPos(5)
 
     End If
 
-    If skipPlaySafe% <> 1 Then
+    'Check for normal players to play safe
+    If checkNormal = 1 Then
 
-        A = 0
-        S2 = 1
-        skipKey% = 0
+        dangerPlyrCnt = 0
+        currIdx = 1
+        assignSafe = 1
 
-        For ZZ = 0 To 4
+        For slot = 0 To 4
 
-            If gameRatings!(P9, lineupIdx(P9, ZZ), 22) = 0 And _
-                ((quarter <= 2 And gameRatings!(P9, lineupIdx(P9, ZZ), 12) >= FOULS_TO_DQ - 3) Or _ 
-                (gameRatings!(P9, lineupIdx(P9, ZZ), 12) = FOULS_TO_DQ - 1)) Then
+            If gameRatings!(P9, lineupIdx(P9, slot), 22) = 0 And foulTrouble%(P9, lineupIdx(P9, slot)) = 1 Then
 
-                A = A + 1
+                dangerPlyrCnt = dangerPlyrCnt + 1
 
-                If S2 = 1 Then
+                If currIdx = 1 Then
                     Cls
-                    Print
-                    Print "THE FOLLOWING PLAYER(S) CAN BE MADE TO PLAY SAFE IF YOU WISH"
-                    Print
+                    Locate 4, 1
+                    Print "THE FOLLOWING PLAYER(S) CAN BE MADE TO PLAY SAFE:"
+                    Locate 6, 1
                 End If
 
             End If
 
-            If A = 0 And ZZ > 3 Then
-                skipKey% = 1
+            If dangerPlyrCnt = 0 And slot > 3 Then
+                assignSafe = 0
             Else
-                If S2 = A And S2 < 6 Then
-                    Print S2; "- "; players_GAME$(P9, lineupIdx(P9, ZZ), 0)
-                    P5(A) = S2
-                    P4(A) = ZZ
-                    S2 = S2 + 1
-                    S3 = S3 + 1
+                If currIdx = dangerPlyrCnt Then
+                    Print currIdx; "- "; players_GAME$(P9, lineupIdx(P9, slot), 0)
+                    menuPos(dangerPlyrCnt) = currIdx
+                    playerPos(dangerPlyrCnt) = slot
+                    currIdx = currIdx + 1
                 End If
             End If
 
-        Next ZZ
+        Next slot
 
-        If skipKey% <> 1 Then
+        If assignSafe = 1 Then
 
-            A = 1
+            normIdx = 1
             Print
             Print " Z - CONTINUE"
 
@@ -7307,40 +7483,41 @@ Sub PlayItSafe ()
 
                 I$ = GetKeyPress$
 
-                playChoice = Val(I$)
+                plyrNum = Val(I$)
 
                 If UCase$(I$) <> "Z" Then
 
-                    A = playChoice
+                    normIdx = plyrNum
 
-                    If playChoice = P5(playChoice) Then
+                    If plyrNum = menuPos(plyrNum) Then
 
-                        gameRatings!(P9, lineupIdx(P9, P4(A)), 17) = Int((gameRatings!(P9, lineupIdx(P9, P4(A)), 17) + 1) / 3)
-                        gameRatings!(P9, lineupIdx(P9, P4(A)), 22) = 50
+                        gameRatings!(P9, lineupIdx(P9, playerPos(normIdx)), 17) = Int((gameRatings!(P9, lineupIdx(P9, playerPos(normIdx)), 17) + 1) / 3)
+                        gameRatings!(P9, lineupIdx(P9, playerPos(normIdx)), 22) = 50
 
-                        Locate P5(A) + 3, 20
-                        Print players_GAME$(P9, lineupIdx(P9, P4(A)), 0); " WIll NOW PLAY SAFE!"
+                        Locate menuPos(normIdx) + 5, 20
+                        Print players_GAME$(P9, lineupIdx(P9, playerPos(normIdx)), 0); " WILL NOW PLAY SAFE!"
                         Call StealAdjustments
 
-                        dFGPA(P9) = dFGPA(P9) + 1
-                        A = A + 1
-                        S3 = S3 + 1
+                        dFG_Pct_Adj(P9) = dFG_Pct_Adj(P9) + 1
+                        normIdx = normIdx + 1
 
                     End If
 
                 End If
 
-            Loop Until playChoice >= 1 And playChoice <= (S2 + 1) Or UCase$(I$) = "Z"
+            Loop Until UCase$(I$) = "Z"
+            'plyrNum >= 1 And plyrNum <= (currIdx + 1) Or
 
         End If
 
     End If
 
-    'Cls
     MJ = 0
     FO = 99
 
-    If quarter = 1 And ((quarterOpt = 0 And gameClock! = 720) Or (quarterOpt = 0 And gameClock! = 600)) Then FO = 0
+    If quarter = 1 And ((quarterOpt = 0 And gameClock! = 720) Or (quarterOpt = 0 And gameClock! = 600)) Then
+        FO = 0
+    End If
 
     Call SCOREBOARD
 
@@ -7348,24 +7525,30 @@ End Sub
 
 
 '----------------------------------------
-'          FOULHARD Subroutine
+'      DefResetPlaySafe Subroutine
 '----------------------------------------
-' ...explanation...
-Sub FOULHARD
+'Reset all players who are playing safe
+'defense so that they play normal again
+Sub DefResetPlaySafe
 
     For I = 0 To 1
 
         For I1 = 0 To 14
 
+            'If playing Safe defense
             If gameRatings!(I, I1, 22) = 50 Then
+                'Switch to normal
                 gameRatings!(I, I1, 22) = 0
+                'Undo penalty for playing safe
                 gameRatings!(I, I1, 17) = gameRatings!(I, I1, 17) * 3
-                dFGPA(I) = dFGPA(I) - 1
+                'Improve team defense
+                dFG_Pct_Adj(I) = dFG_Pct_Adj(I) - 1
                 MJ = 50
             End If
 
         Next I1
 
+        'Recalculate team foul ratings
         If MJ = 50 Then
 
             MJ = 0
@@ -7581,17 +7764,11 @@ Sub COMPUTERSUBS ()
         'Some notes about these conditions:
         '-- XS = 0 during regular play
         '-- XS = 1 when the quarter is over
-        '-- Commented line from below would match CBB
-        If (tiredPlayers >= 1 And 5 - tiredPlayers < 15 - fatiguePlayers) Or (foulPlayers >= 1 And disabledPlayers < 14) Or (quarter = 4 And gameClock! < 120 And XS = 0 And G9%(P9) = 0) Or quarter > 4 Or computerTimeout = 1 Then
-            'If (tiredPlayers >= 1 And 5 - tiredPlayers < 15 - fatiguePlayers) Or (foulPlayers >= 1 And disabledPlayers < 14) Or (quarter = 4 And gameClock! < 120) Or quarter > 4 Or computerTimeout = 1 Then
+        If (tiredPlayers >= 1 And 5 - tiredPlayers < 15 - fatiguePlayers) Or (foulPlayers >= 1 And disabledPlayers < 14) Or (quarter = 4 And gameClock! < 120 And XS = 0) Or quarter > 4 Or computerTimeout = 1 Then
             computerTimeout = 0
             Call ComputerCoach
         End If
 
-    End If
-
-    If quarter = 4 And gameClock! <= 120 Then
-        G9%(P9) = 1
     End If
 
 End Sub
@@ -7651,14 +7828,18 @@ End Sub
 'to load and play a sound file
 Sub HORN ()
 
-    If _FileExists("buzzer.mp3") Then
-        _SndPlayFile ("buzzer.mp3")
-    Else
-        For PP = 1 To 70
-            Sound 50, .05
-            Sound 100, .05
-            Sound 317, .3
-        Next PP
+    If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 Then
+
+        If buzzer& Then
+            _SndPlay buzzer&
+        Else
+            For PP = 1 To 70
+                Sound 50, .05
+                Sound 100, .05
+                Sound 317, .3
+            Next PP
+        End If
+
     End If
 
 End Sub
@@ -7845,7 +8026,6 @@ Sub DEADBALLOPTIONS (userTakeTO)
         'User options to continue play
         If playerMode = 2 Or playerMode = 1 And P = compTeam Then
 
-            S2 = 0
             P9 = P
             C1 = 2
             Call CheckGameClock
@@ -7858,7 +8038,7 @@ Sub DEADBALLOPTIONS (userTakeTO)
             Color 14, 0
             Print "<ENTER>";
             Color 15, 0
-            Print "-CONTINUE"
+            Print " - CONTINUE"
 
             If playerMode = 0 Then
 
@@ -7898,7 +8078,6 @@ Sub DEADBALLOPTIONS (userTakeTO)
 
                 'When ENTER is pressed (to continue),
                 'team has no timeouts or computer team
-                S2 = 0
                 P9 = P
                 C1 = 2
                 Call CheckGameClock
@@ -7948,13 +8127,13 @@ Sub DEADBALLOPTIONS (userTakeTO)
 
 End Sub
 
+
 '----------------------------------------
-'          STOPPAGE Subroutine
+'           STOPPAGE Subroutine
 '----------------------------------------
-'This routine handles all the
-'things that can happen when
-'the clock is stopped, including
-'substitutions, strategy and
+'This routine presents a team all options
+'needed for when the clock is stopped,
+'including, substitutions, strategy and
 'time-outs.
 Sub STOPPAGE (userTakeTO)
 
@@ -7986,7 +8165,6 @@ Sub STOPPAGE (userTakeTO)
         'User options to continue play
         If playerMode = 2 Or playerMode = 1 And P = compTeam Then
 
-            S2 = 0
             P9 = P
             C1 = 2
             Call CheckGameClock
@@ -7999,7 +8177,7 @@ Sub STOPPAGE (userTakeTO)
             Color 14, 0
             Print "<ENTER>";
             Color 15, 0
-            Print "-CONTINUE"
+            Print " - CONTINUE"
 
             If playerMode = 0 Then
                 Print "1 - SUB "; gameTeams$(P)
@@ -8039,7 +8217,6 @@ Sub STOPPAGE (userTakeTO)
 
                 'When ENTER is pressed (to continue),
                 'team has no timeouts or computer team
-                S2 = 0
                 P9 = P
                 C1 = 2
 
@@ -8062,22 +8239,20 @@ Sub STOPPAGE (userTakeTO)
 
                     Case 1
                         'Substitution - Offense
-                        S2 = P
                         C1 = 1
-                        P9 = S2
+                        P9 = P
                         Call ChooseLineup
-                        Call PlayItSafe
+                        Call DefPlaySafeNormal
                         P9 = P
                         lineupChanged = 1
                         Call SCOREBOARD
 
                     Case 2
                         'Substitution - Defense
-                        S2 = D
                         C1 = 1
-                        P9 = S2
+                        P9 = D
                         Call ChooseLineup
-                        Call PlayItSafe
+                        Call DefPlaySafeNormal
                         P9 = P
                         lineupChanged = 1
                         Call SCOREBOARD
@@ -8277,7 +8452,7 @@ Sub FoulCalled (randomFouler)
             C1 = 1
             Call ChooseLineup
             Call CHANGESTRATEGY(P9)
-            Call PlayItSafe
+            Call DefPlaySafeNormal
         End If
 
         'Allow the player to be subbed out
@@ -8856,20 +9031,20 @@ Sub QUARTERTOTAL ()
         If quarter = 1 Or quarter = 2 Then
 
             For I2 = 0 To 14
-                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2)
+                periodTeamTot(I, quarter, I2) = statTotals(I2) - periodTeamTot(I, quarter - 1, I2)
             Next
 
             For I1 = 0 To 14
 
                 For I2 = 7 To 15
-                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6)
+                    periodPlayerTot(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - periodPlayerTot(I, quarter - 1, I1, I2 - 6)
                 Next
 
-                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10)
-                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11)
-                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12)
-                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13)
-                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14)
+                periodPlayerTot(I, quarter, I1, 10) = threeFG(I, I1, 0) - periodPlayerTot(I, quarter - 1, I1, 10)
+                periodPlayerTot(I, quarter, I1, 11) = threeFG(I, I1, 1) - periodPlayerTot(I, quarter - 1, I1, 11)
+                periodPlayerTot(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - periodPlayerTot(I, quarter - 1, I1, 12)
+                periodPlayerTot(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - periodPlayerTot(I, quarter - 1, I1, 13)
+                periodPlayerTot(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - periodPlayerTot(I, quarter - 1, I1, 14)
 
             Next
 
@@ -8878,20 +9053,20 @@ Sub QUARTERTOTAL ()
         If quarter = 3 Then
 
             For I2 = 0 To 14
-                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2) - QR(I, quarter - 2, I2)
+                periodTeamTot(I, quarter, I2) = statTotals(I2) - periodTeamTot(I, quarter - 1, I2) - periodTeamTot(I, quarter - 2, I2)
             Next
 
             For I1 = 0 To 14
 
                 For I2 = 7 To 15
-                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6)
+                    periodPlayerTot(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - periodPlayerTot(I, quarter - 1, I1, I2 - 6) - periodPlayerTot(I, quarter - 2, I1, I2 - 6)
                 Next
 
-                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10)
-                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11)
-                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12)
-                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13)
-                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14)
+                periodPlayerTot(I, quarter, I1, 10) = threeFG(I, I1, 0) - periodPlayerTot(I, quarter - 1, I1, 10) - periodPlayerTot(I, quarter - 2, I1, 10)
+                periodPlayerTot(I, quarter, I1, 11) = threeFG(I, I1, 1) - periodPlayerTot(I, quarter - 1, I1, 11) - periodPlayerTot(I, quarter - 2, I1, 11)
+                periodPlayerTot(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - periodPlayerTot(I, quarter - 1, I1, 12) - periodPlayerTot(I, quarter - 2, I1, 12)
+                periodPlayerTot(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - periodPlayerTot(I, quarter - 1, I1, 13) - periodPlayerTot(I, quarter - 2, I1, 13)
+                periodPlayerTot(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - periodPlayerTot(I, quarter - 1, I1, 14) - periodPlayerTot(I, quarter - 2, I1, 14)
 
             Next
 
@@ -8900,20 +9075,20 @@ Sub QUARTERTOTAL ()
         If quarter = 4 Then
 
             For I2 = 0 To 14
-                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2) - QR(I, quarter - 2, I2) - QR(I, quarter - 3, I2)
+                periodTeamTot(I, quarter, I2) = statTotals(I2) - periodTeamTot(I, quarter - 1, I2) - periodTeamTot(I, quarter - 2, I2) - periodTeamTot(I, quarter - 3, I2)
             Next
 
             For I1 = 0 To 14
 
                 For I2 = 7 To 15
-                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6) - QQ(I, quarter - 3, I1, I2 - 6)
+                    periodPlayerTot(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - periodPlayerTot(I, quarter - 1, I1, I2 - 6) - periodPlayerTot(I, quarter - 2, I1, I2 - 6) - periodPlayerTot(I, quarter - 3, I1, I2 - 6)
                 Next
 
-                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10)
-                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11)
-                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12) - QQ(I, quarter - 3, I1, 12)
-                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13)
-                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14) - QQ(I, quarter - 3, I1, 14)
+                periodPlayerTot(I, quarter, I1, 10) = threeFG(I, I1, 0) - periodPlayerTot(I, quarter - 1, I1, 10) - periodPlayerTot(I, quarter - 2, I1, 10) - periodPlayerTot(I, quarter - 3, I1, 10)
+                periodPlayerTot(I, quarter, I1, 11) = threeFG(I, I1, 1) - periodPlayerTot(I, quarter - 1, I1, 11) - periodPlayerTot(I, quarter - 2, I1, 11) - periodPlayerTot(I, quarter - 3, I1, 11)
+                periodPlayerTot(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - periodPlayerTot(I, quarter - 1, I1, 12) - periodPlayerTot(I, quarter - 2, I1, 12) - periodPlayerTot(I, quarter - 3, I1, 12)
+                periodPlayerTot(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - periodPlayerTot(I, quarter - 1, I1, 13) - periodPlayerTot(I, quarter - 2, I1, 13) - periodPlayerTot(I, quarter - 3, I1, 13)
+                periodPlayerTot(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - periodPlayerTot(I, quarter - 1, I1, 14) - periodPlayerTot(I, quarter - 2, I1, 14) - periodPlayerTot(I, quarter - 3, I1, 14)
 
             Next
 
@@ -8922,20 +9097,20 @@ Sub QUARTERTOTAL ()
         If quarter = 5 Then
 
             For I2 = 0 To 14
-                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2) - QR(I, quarter - 2, I2) - QR(I, quarter - 3, I2) - QR(I, quarter - 4, I2)
+                periodTeamTot(I, quarter, I2) = statTotals(I2) - periodTeamTot(I, quarter - 1, I2) - periodTeamTot(I, quarter - 2, I2) - periodTeamTot(I, quarter - 3, I2) - periodTeamTot(I, quarter - 4, I2)
             Next
 
             For I1 = 0 To 14
 
                 For I2 = 7 To 15
-                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6) - QQ(I, quarter - 3, I1, I2 - 6) - QQ(I, quarter - 4, I1, I2 - 6)
+                    periodPlayerTot(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - periodPlayerTot(I, quarter - 1, I1, I2 - 6) - periodPlayerTot(I, quarter - 2, I1, I2 - 6) - periodPlayerTot(I, quarter - 3, I1, I2 - 6) - periodPlayerTot(I, quarter - 4, I1, I2 - 6)
                 Next
 
-                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10) - QQ(I, quarter - 4, I1, 10)
-                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11) - QQ(I, quarter - 4, I1, 11)
-                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12) - QQ(I, quarter - 3, I1, 12) - QQ(I, quarter - 4, I1, 12)
-                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13) - QQ(I, quarter - 4, I1, 13)
-                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14) - QQ(I, quarter - 3, I1, 14) - QQ(I, quarter - 4, I1, 14)
+                periodPlayerTot(I, quarter, I1, 10) = threeFG(I, I1, 0) - periodPlayerTot(I, quarter - 1, I1, 10) - periodPlayerTot(I, quarter - 2, I1, 10) - periodPlayerTot(I, quarter - 3, I1, 10) - periodPlayerTot(I, quarter - 4, I1, 10)
+                periodPlayerTot(I, quarter, I1, 11) = threeFG(I, I1, 1) - periodPlayerTot(I, quarter - 1, I1, 11) - periodPlayerTot(I, quarter - 2, I1, 11) - periodPlayerTot(I, quarter - 3, I1, 11) - periodPlayerTot(I, quarter - 4, I1, 11)
+                periodPlayerTot(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - periodPlayerTot(I, quarter - 1, I1, 12) - periodPlayerTot(I, quarter - 2, I1, 12) - periodPlayerTot(I, quarter - 3, I1, 12) - periodPlayerTot(I, quarter - 4, I1, 12)
+                periodPlayerTot(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - periodPlayerTot(I, quarter - 1, I1, 13) - periodPlayerTot(I, quarter - 2, I1, 13) - periodPlayerTot(I, quarter - 3, I1, 13) - periodPlayerTot(I, quarter - 4, I1, 13)
+                periodPlayerTot(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - periodPlayerTot(I, quarter - 1, I1, 14) - periodPlayerTot(I, quarter - 2, I1, 14) - periodPlayerTot(I, quarter - 3, I1, 14) - periodPlayerTot(I, quarter - 4, I1, 14)
 
             Next
 
@@ -8944,19 +9119,19 @@ Sub QUARTERTOTAL ()
         If quarter = 6 Then
 
             For I2 = 0 To 14
-                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2) - QR(I, quarter - 2, I2) - QR(I, quarter - 3, I2) - QR(I, quarter - 4, I2) - QR(I, quarter - 5, I2)
+                periodTeamTot(I, quarter, I2) = statTotals(I2) - periodTeamTot(I, quarter - 1, I2) - periodTeamTot(I, quarter - 2, I2) - periodTeamTot(I, quarter - 3, I2) - periodTeamTot(I, quarter - 4, I2) - periodTeamTot(I, quarter - 5, I2)
             Next
 
             For I1 = 0 To 14
                 For I2 = 7 To 15
-                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6) - QQ(I, quarter - 3, I1, I2 - 6) - QQ(I, quarter - 4, I1, I2 - 6) - QQ(I, quarter - 5, I1, I2 - 6)
+                    periodPlayerTot(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - periodPlayerTot(I, quarter - 1, I1, I2 - 6) - periodPlayerTot(I, quarter - 2, I1, I2 - 6) - periodPlayerTot(I, quarter - 3, I1, I2 - 6) - periodPlayerTot(I, quarter - 4, I1, I2 - 6) - periodPlayerTot(I, quarter - 5, I1, I2 - 6)
                 Next
 
-                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10) - QQ(I, quarter - 4, I1, 10) - QQ(I, quarter - 5, I1, 10)
-                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11) - QQ(I, quarter - 4, I1, 11) - QQ(I, quarter - 5, I1, 11)
-                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12) - QQ(I, quarter - 3, I1, 12) - QQ(I, quarter - 4, I1, 12) - QQ(I, quarter - 5, I1, 12)
-                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13) - QQ(I, quarter - 4, I1, 13) - QQ(I, quarter - 5, I1, 13)
-                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14) - QQ(I, quarter - 3, I1, 14) - QQ(I, quarter - 4, I1, 14) - QQ(I, quarter - 5, I1, 14)
+                periodPlayerTot(I, quarter, I1, 10) = threeFG(I, I1, 0) - periodPlayerTot(I, quarter - 1, I1, 10) - periodPlayerTot(I, quarter - 2, I1, 10) - periodPlayerTot(I, quarter - 3, I1, 10) - periodPlayerTot(I, quarter - 4, I1, 10) - periodPlayerTot(I, quarter - 5, I1, 10)
+                periodPlayerTot(I, quarter, I1, 11) = threeFG(I, I1, 1) - periodPlayerTot(I, quarter - 1, I1, 11) - periodPlayerTot(I, quarter - 2, I1, 11) - periodPlayerTot(I, quarter - 3, I1, 11) - periodPlayerTot(I, quarter - 4, I1, 11) - periodPlayerTot(I, quarter - 5, I1, 11)
+                periodPlayerTot(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - periodPlayerTot(I, quarter - 1, I1, 12) - periodPlayerTot(I, quarter - 2, I1, 12) - periodPlayerTot(I, quarter - 3, I1, 12) - periodPlayerTot(I, quarter - 4, I1, 12) - periodPlayerTot(I, quarter - 5, I1, 12)
+                periodPlayerTot(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - periodPlayerTot(I, quarter - 1, I1, 13) - periodPlayerTot(I, quarter - 2, I1, 13) - periodPlayerTot(I, quarter - 3, I1, 13) - periodPlayerTot(I, quarter - 4, I1, 13) - periodPlayerTot(I, quarter - 5, I1, 13)
+                periodPlayerTot(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - periodPlayerTot(I, quarter - 1, I1, 14) - periodPlayerTot(I, quarter - 2, I1, 14) - periodPlayerTot(I, quarter - 3, I1, 14) - periodPlayerTot(I, quarter - 4, I1, 14) - periodPlayerTot(I, quarter - 5, I1, 14)
             Next
 
         End If
@@ -8964,20 +9139,20 @@ Sub QUARTERTOTAL ()
         If quarter = 7 Then
 
             For I2 = 0 To 14
-                QR(I, quarter, I2) = statTotals(I2) - QR(I, quarter - 1, I2) - QR(I, quarter - 2, I2) - QR(I, quarter - 3, I2) - QR(I, quarter - 4, I2) - QR(I, quarter - 5, I2) - QR(I, quarter - 6, I2)
+                periodTeamTot(I, quarter, I2) = statTotals(I2) - periodTeamTot(I, quarter - 1, I2) - periodTeamTot(I, quarter - 2, I2) - periodTeamTot(I, quarter - 3, I2) - periodTeamTot(I, quarter - 4, I2) - periodTeamTot(I, quarter - 5, I2) - periodTeamTot(I, quarter - 6, I2)
             Next
 
             For I1 = 0 To 14
 
                 For I2 = 7 To 15
-                    QQ(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - QQ(I, quarter - 1, I1, I2 - 6) - QQ(I, quarter - 2, I1, I2 - 6) - QQ(I, quarter - 3, I1, I2 - 6) - QQ(I, quarter - 4, I1, I2 - 6) - QQ(I, quarter - 5, I1, I2 - 6) - QQ(I, quarter - 6, I1, I2 - 6)
+                    periodPlayerTot(I, quarter, I1, I2 - 6) = gameRatings!(I, I1, I2) - periodPlayerTot(I, quarter - 1, I1, I2 - 6) - periodPlayerTot(I, quarter - 2, I1, I2 - 6) - periodPlayerTot(I, quarter - 3, I1, I2 - 6) - periodPlayerTot(I, quarter - 4, I1, I2 - 6) - periodPlayerTot(I, quarter - 5, I1, I2 - 6) - periodPlayerTot(I, quarter - 6, I1, I2 - 6)
                 Next
 
-                QQ(I, quarter, I1, 10) = threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 10) - QQ(I, quarter - 2, I1, 10) - QQ(I, quarter - 3, I1, 10) - QQ(I, quarter - 4, I1, 10) - QQ(I, quarter - 5, I1, 10) - QQ(I, quarter - 6, I1, 10)
-                QQ(I, quarter, I1, 11) = threeFG(I, I1, 1) - QQ(I, quarter - 1, I1, 11) - QQ(I, quarter - 2, I1, 11) - QQ(I, quarter - 3, I1, 11) - QQ(I, quarter - 4, I1, 11) - QQ(I, quarter - 5, I1, 11) - QQ(I, quarter - 6, I1, 11)
-                QQ(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - QQ(I, quarter - 1, I1, 12) - QQ(I, quarter - 2, I1, 12) - QQ(I, quarter - 3, I1, 12) - QQ(I, quarter - 4, I1, 12) - QQ(I, quarter - 5, I1, 12) - QQ(I, quarter - 6, I1, 12)
-                QQ(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - QQ(I, quarter - 1, I1, 13) - QQ(I, quarter - 2, I1, 13) - QQ(I, quarter - 3, I1, 13) - QQ(I, quarter - 4, I1, 13) - QQ(I, quarter - 5, I1, 13) - QQ(I, quarter - 6, I1, 13)
-                QQ(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - QQ(I, quarter - 1, I1, 14) - QQ(I, quarter - 2, I1, 14) - QQ(I, quarter - 3, I1, 14) - QQ(I, quarter - 4, I1, 14) - QQ(I, quarter - 5, I1, 14) - QQ(I, quarter - 6, I1, 14)
+                periodPlayerTot(I, quarter, I1, 10) = threeFG(I, I1, 0) - periodPlayerTot(I, quarter - 1, I1, 10) - periodPlayerTot(I, quarter - 2, I1, 10) - periodPlayerTot(I, quarter - 3, I1, 10) - periodPlayerTot(I, quarter - 4, I1, 10) - periodPlayerTot(I, quarter - 5, I1, 10) - periodPlayerTot(I, quarter - 6, I1, 10)
+                periodPlayerTot(I, quarter, I1, 11) = threeFG(I, I1, 1) - periodPlayerTot(I, quarter - 1, I1, 11) - periodPlayerTot(I, quarter - 2, I1, 11) - periodPlayerTot(I, quarter - 3, I1, 11) - periodPlayerTot(I, quarter - 4, I1, 11) - periodPlayerTot(I, quarter - 5, I1, 11) - periodPlayerTot(I, quarter - 6, I1, 11)
+                periodPlayerTot(I, quarter, I1, 12) = gameRatings!(I, I1, 24) - periodPlayerTot(I, quarter - 1, I1, 12) - periodPlayerTot(I, quarter - 2, I1, 12) - periodPlayerTot(I, quarter - 3, I1, 12) - periodPlayerTot(I, quarter - 4, I1, 12) - periodPlayerTot(I, quarter - 5, I1, 12) - periodPlayerTot(I, quarter - 6, I1, 12)
+                periodPlayerTot(I, quarter, I1, 13) = gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) - periodPlayerTot(I, quarter - 1, I1, 13) - periodPlayerTot(I, quarter - 2, I1, 13) - periodPlayerTot(I, quarter - 3, I1, 13) - periodPlayerTot(I, quarter - 4, I1, 13) - periodPlayerTot(I, quarter - 5, I1, 13) - periodPlayerTot(I, quarter - 6, I1, 13)
+                periodPlayerTot(I, quarter, I1, 14) = gameRatings!(I, I1, 23) - periodPlayerTot(I, quarter - 1, I1, 14) - periodPlayerTot(I, quarter - 2, I1, 14) - periodPlayerTot(I, quarter - 3, I1, 14) - periodPlayerTot(I, quarter - 4, I1, 14) - periodPlayerTot(I, quarter - 5, I1, 14) - periodPlayerTot(I, quarter - 6, I1, 14)
 
             Next
 
@@ -9050,7 +9225,7 @@ Sub SCOUTREPORT ()
     Locate , 52: Color teamRat_GAME(1, 33), teamRat_GAME(1, 34): Print gameTeams$(1)
     Color 0, 7
     Locate , 18: Print Using "###           POINTS PER GAME         ###"; (teamRat_GAME(0, 6) * 2 + teamRat_GAME(0, 8) + teamRat_GAME(0, 18)) / teamRat_GAME(0, 0); (teamRat_GAME(1, 6) * 2 + teamRat_GAME(1, 8) + teamRat_GAME(1, 18)) / teamRat_GAME(1, 0)
-    Locate , 18: Print Using " ##             FIELD GOAL %           ##"; teamRat_GAME(0, 6) / teamRat_GAME(0, 5) * 100 + dFGPA(1); teamRat_GAME(1, 6) / teamRat_GAME(1, 5) * 100 + dFGPA(0)
+    Locate , 18: Print Using " ##             FIELD GOAL %           ##"; teamRat_GAME(0, 6) / teamRat_GAME(0, 5) * 100 + dFG_Pct_Adj(1); teamRat_GAME(1, 6) / teamRat_GAME(1, 5) * 100 + dFG_Pct_Adj(0)
     Locate , 18: Print Using " ##             FREE THROW %           ##"; teamRat_GAME(0, 8) / teamRat_GAME(0, 7) * 100; teamRat_GAME(1, 8) / teamRat_GAME(1, 7) * 100
     Locate , 18: Print Using " ##          REBOUNDS PER GAME         ##"; (teamRat_GAME(0, 9) + teamRat_GAME(0, 10)) / teamRat_GAME(0, 0); (teamRat_GAME(1, 9) + teamRat_GAME(1, 10)) / teamRat_GAME(1, 0)
     Locate , 18: Print Using " ##      TURNOVERS FORCED PER GAME     ##"; teamRat_GAME(0, 29) / teamRat_GAME(0, 0); teamRat_GAME(1, 29) / teamRat_GAME(1, 0)
@@ -9059,7 +9234,7 @@ Sub SCOUTREPORT ()
     Locate , 18: Print Using " ##      PERSONAL FOULS PER GAME       ##"; teamRat_GAME(0, 12) / teamRat_GAME(0, 0); teamRat_GAME(1, 12) / teamRat_GAME(1, 0)
     Locate , 18: Print Using " ##          ASSISTS PER GAME          ##"; teamRat_GAME(0, 11) / teamRat_GAME(0, 0); teamRat_GAME(1, 11) / teamRat_GAME(1, 0)
     Locate , 18: Print Using " ##          BLOCKS PER GAME           ##"; teamRat_GAME(0, 16) / teamRat_GAME(0, 0); teamRat_GAME(1, 16) / teamRat_GAME(1, 0)
-    Locate , 18: Print Using " ##             3 POINT FG%            ##"; teamRat_GAME(0, 18) / (teamRat_GAME(0, 17) + 1) * 100 + F%(1, 4); teamRat_GAME(1, 18) / (teamRat_GAME(1, 17) + 1) * 100 + F%(0, 4)
+    Locate , 18: Print Using " ##             3 POINT FG%            ##"; teamRat_GAME(0, 18) / (teamRat_GAME(0, 17) + 1) * 100 + d3FG_Pct_Adj(1); teamRat_GAME(1, 18) / (teamRat_GAME(1, 17) + 1) * 100 + d3FG_Pct_Adj(0)
 
     I$ = GetKeyPress$
 
@@ -9077,11 +9252,15 @@ End Sub
 'adjust contribution ratings for players
 Sub SETUPRATINGS (teamStyle)
 
-    Dim FTF!, JX! ', X3!
+    Dim FTF!, JX!
     Dim turnoverFreq(1)
     Dim perFoulRat(1)
     Dim teamPossAdj(1)
-    
+
+    Shared JY
+
+    Shared leagueAverages%()
+
     teamStyle = 0
 
     For I = 0 To 1
@@ -9145,6 +9324,36 @@ Sub SETUPRATINGS (teamStyle)
             turnoverFreq(I) = 26
             'perFoulRat(I) = 0
         End If
+
+        'Opp 3FG% Adj
+        'Since we don't store league averages
+        'with teams, we need to calculate
+        'from our array of averages
+        '-- in game this is not really used in
+        '-- the way it is in CBB, but now it
+        '-- would be possible
+        If teamLeague$(I) = "ABA" Then
+            'ABA
+            tgtIdx = (teamYears(I) - 1950) + (2 * (teamYears(I) - 1968))
+        Else
+            'NBA
+            Select Case teamYears(I)
+
+                Case 1954 To 1967
+                    tgtIdx = teamYears(I) - 1953
+
+                Case 1968 To 1976
+                    tgtIdx = teamYears(I) - 1954 + (teamYear(I) - 1968)
+
+                Case Is >= 1977
+                    tgtIdx = (teamYears(I) - 1954) + 10
+
+            End Select
+
+        End If
+
+        'd3FG_Pct_Adj = opp3FGAPct! - leag3FGPct!
+        d3FG_Pct_Adj(I) = (teamRat_GAME(I, 32) / teamRat_GAME(I, 31)) - leagueAverages%(tgtIdx, 5)
 
     Next
 
@@ -9216,7 +9425,7 @@ Sub SETUPRATINGS (teamStyle)
     For I = 0 To 1
 
         '           FG % - League FG%
-        dFGPA(I) = CInt(teamRat_GAME(I, 20) / teamRat_GAME(I, 19) * 100) - leagRat_GAME(I, 3)
+        dFG_Pct_Adj(I) = CInt(teamRat_GAME(I, 20) / teamRat_GAME(I, 19) * 100) - leagRat_GAME(I, 3)
 
         ' ** Calculate time team does not spend on FGA
         '(Seconds In A Half) - ((Team FGA / G + Opp FGA / Game) * 2)
@@ -9567,6 +9776,8 @@ End Sub
 'shot clock.
 Function DecideShot%
 
+    Shared JY
+
     'In general, adjusting paceFactor
     'can work as follows:
     'value +10 yields -5% chance
@@ -9745,9 +9956,9 @@ End Sub
 '----------------------------------------
 'This subroutine handles Play-by-Play for
 'missed FT's when there are 3 attempts.
-Sub BADFT ()
+Sub BADFT (ftNumber)
 
-    Select Case freeThrowNbr
+    Select Case ftNumber
         Case 1
             pbpString$ = "FIRST FREE THROW IS MISSED"
         Case 2
@@ -9769,21 +9980,23 @@ Sub CHANGESTRATEGY (teamSelected)
 
     Shared yesNoText$()
 
-    Cls
-
     If playerMode = 0 Or (playerMode = 1 And compTeam <> teamSelected) Then
 
         Do
 
-            Call FRAMEOPTION(8, teamSelected)
+            Color 15, 0
+            Cls
+
+            Call FRAMEOPTION(9, teamSelected)
             Locate 10, 15
             Print gameTeams$(teamSelected); " SELECT STRATEGY:"
 
             Locate 12, 14
-            Locate , 14: Print "0 - RETURN TO GAME"
             Locate , 14: Print "1 - SELECT OFFENSIVE STYLE OF PLAY"
             Locate , 14: Print "2 - SELECT DEFENSIVE STYLE OF PLAY"
             Locate , 14: Print "3 - FULL COURT PRESS "; yesNoText$(fullCtOpt(teamSelected))
+            Print
+            Locate , 14: Print "<ENTER> - DONE WITH SELECTIONS"
 
             Do
                 I$ = GetKeyPress$
@@ -9794,6 +10007,9 @@ Sub CHANGESTRATEGY (teamSelected)
 
                 Case 1:
                     'OFFENSE
+                    Color 15, 0
+                    Cls
+
                     Call FRAMEOPTION(8, teamSelected)
                     Locate 10, 15
                     Print gameTeams$(teamSelected); " SELECT OFFENSE:"
@@ -9816,6 +10032,9 @@ Sub CHANGESTRATEGY (teamSelected)
 
                 Case 2:
                     'DEFENSE
+                    Color 15, 0
+                    Cls
+
                     Call FRAMEOPTION(13, teamSelected)
                     Locate 10, 15
                     Print gameTeams$(teamSelected); " SELECT DEFENSE:"
@@ -9839,8 +10058,6 @@ Sub CHANGESTRATEGY (teamSelected)
                     Loop Until I2 >= 1 And I2 <= maxChoice
 
                     defStyles(teamSelected) = I2
-
-                    Screen , , 0, 0
 
                 Case 3
                     fullCtOpt(teamSelected) = 1 - fullCtOpt(teamSelected)
@@ -9875,7 +10092,7 @@ Sub ComputerStrategy ()
 
     'Where is our score compared to opponent?
     scoreDiffTm = score(P9, 0) - score(defTeam, 0)
-    
+
     If scoreDiffTm < 0 Then
         'Current team is behind is behind
 
@@ -10832,15 +11049,15 @@ End Sub
 '----------------------------------------
 'This subroutine handles score, stats and
 'Play-by-Play for a successful free throw
-Sub MADEFT (currFreeThrow)
+Sub MADEFT (ftNumber)
 
     'Increase FTM
     gameRatings!(P, lineupIdx(P, ballCarrier), 10) = gameRatings!(P, lineupIdx(P, ballCarrier), 10) + 1
 
     If (pbpDelay! > 0) Then
-        Locate currFreeThrow + 9, 1
+        Locate ftNumber + 9, 1
         Call DELAY
-        Print currFreeThrow; " GOOD"
+        Print ftNumber; " GOOD"
     End If
 
     score(P, quarter) = score(P, quarter) + 1
@@ -10857,13 +11074,13 @@ End Sub
 '----------------------------------------
 'This subroutine handles Play-by-Play
 'for a missed free throw
-Sub MISSFT (currFreeThrow)
+Sub MISSFT (ftNumber)
 
     If (pbpDelay! > 0) Then
 
         Call DELAY
-        Locate currFreeThrow + 9, 1
-        Print currFreeThrow; " MISSED"
+        Locate ftNumber + 9, 1
+        Print ftNumber; " MISSED"
 
         Call UPDATESCREEN
         Call DELAY
@@ -10933,6 +11150,7 @@ Sub DisplayRoster ()
 
             'Contribution
             L = 0
+            'Why are FOULS added???
             L = gameRatings!(P9, R1, 7) + gameRatings!(P9, R1, 11) + gameRatings!(P9, R1, 12)
             Print Using "### "; gameRatings!(P9, R1, 3) - L;
 
@@ -10989,7 +11207,7 @@ End Sub
 'defense / offense / players.
 Sub SHOTPERCENT (useAssist)
 
-    shotChance = gameRatings!(P, lineupIdx(P, ballCarrier), 0) + dFGPA(D)
+    shotChance = gameRatings!(P, lineupIdx(P, ballCarrier), 0) + dFG_Pct_Adj(D)
 
     'Shift shot chance towards team with homefield advantage
     If gameLoc = P Then
@@ -11073,6 +11291,7 @@ Sub SHOTPERCENT (useAssist)
 
     Else
 
+        'All but last 2 mins / Overtime
         If Not (quarter > 4 Or quarter = 4 And gameClock! <= 120) Then
             If playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0 Then
                 shotChance = shotChance * .6
@@ -11359,7 +11578,7 @@ Sub FreeThrow_One (missedLastFT)
         If pbpOpt = 1 Then
             Call MISSFT(freeThrowNbr)
         Else
-            Call BADFT
+            Call BADFT(freeThrowNbr)
         End If
 
         If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& And d100% < 10 Then
@@ -11427,7 +11646,7 @@ Sub FreeThrow_Three (missedLastFT)
             If pbpOpt = 1 Then
                 Call MISSFT(freeThrowNbr)
             Else
-                Call BADFT
+                Call BADFT(freeThrowNbr)
             End If
 
             If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& And d100% < 10 Then
@@ -11513,7 +11732,7 @@ Sub FreeThrow_Make1 (missedLastFT)
             If pbpOpt = 1 Then
                 Call MISSFT(freeThrowNbr)
             Else
-                Call BADFT
+                Call BADFT(freeThrowNbr)
             End If
 
             If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And backboard& And d100% < 10 Then
@@ -11608,7 +11827,7 @@ Sub FreeThrow_Make2 (missedLastFT)
             If pbpOpt = 1 Then
                 Call MISSFT(freeThrowNbr)
             Else
-                Call BADFT
+                Call BADFT(freeThrowNbr)
             End If
 
             If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& And d100% < 10 Then
@@ -12981,12 +13200,12 @@ Sub pbplog (lineNumber)
 
     'Print #11, "Called from line # "; lineNumber
     'Print #11, gameTeams$(0); " vs "; gameTeams$(1)
-    'Print #11, pbpString$
-
+    If lineNumber = 4673 Then
+        Print #11, pbpString$
+    Else
+        Print #11, lineNumber
+    End If
     'Print #11, currGame; ","; ballCarrier; ","; lineNumber
-    Print #11, lineNumber
-    'Print #11, lineNumber, ballCarrier
-    'Print #11, defStyles(P9)
     'Print #11,
 
 End Sub
@@ -13568,8 +13787,8 @@ Sub CheckRecords ()
                 indRecDesc$(0, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 13) + QQ(I, 2, I1, 13) > indRecords!(1, 0) Then
-                indRecords!(1, 0) = QQ(I, 1, I1, 13) + QQ(I, 2, I1, 13) ' POINTS
+            If periodPlayerTot(I, 1, I1, 13) + periodPlayerTot(I, 2, I1, 13) > indRecords!(1, 0) Then
+                indRecords!(1, 0) = periodPlayerTot(I, 1, I1, 13) + periodPlayerTot(I, 2, I1, 13) ' POINTS
                 indRecords!(1, 1) = 1 ' TIMES DONE
                 indRecords!(1, 2) = 1 ' HALF
                 indRecDesc$(1, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13579,8 +13798,8 @@ Sub CheckRecords ()
                 indRecDesc$(1, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 13) + QQ(I, 4, I1, 13) > indRecords!(1, 0) Then
-                indRecords!(1, 0) = QQ(I, 3, I1, 13) + QQ(I, 4, I1, 13) ' POINTS
+            If periodPlayerTot(I, 3, I1, 13) + periodPlayerTot(I, 4, I1, 13) > indRecords!(1, 0) Then
+                indRecords!(1, 0) = periodPlayerTot(I, 3, I1, 13) + periodPlayerTot(I, 4, I1, 13) ' POINTS
                 indRecords!(1, 1) = 1 ' TIMES DONE
                 indRecords!(1, 2) = 2 ' HALF
                 indRecDesc$(1, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13591,8 +13810,8 @@ Sub CheckRecords ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 13) > indRecords!(2, 0) Then
-                    indRecords!(2, 0) = QQ(I, I2, I1, 13) ' POINTS
+                If periodPlayerTot(I, I2, I1, 13) > indRecords!(2, 0) Then
+                    indRecords!(2, 0) = periodPlayerTot(I, I2, I1, 13) ' POINTS
                     indRecords!(2, 1) = 1 ' TIMES DONE
                     indRecords!(2, 2) = I2 ' QTR
                     indRecDesc$(2, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13604,8 +13823,8 @@ Sub CheckRecords ()
             Next I2
 
             For I2 = 5 To 8
-                If QQ(I, I2, I1, 13) > indRecords!(3, 0) Then
-                    indRecords!(3, 0) = QQ(I, I2, I1, 13) ' POINTS
+                If periodPlayerTot(I, I2, I1, 13) > indRecords!(3, 0) Then
+                    indRecords!(3, 0) = periodPlayerTot(I, I2, I1, 13) ' POINTS
                     indRecords!(3, 1) = 1 ' TIMES DONE
                     indRecords!(3, 2) = I2 ' QTR
                     indRecDesc$(3, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13660,8 +13879,8 @@ Sub CheckRecords ()
                 indRecDesc$(7, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 2) + QQ(I, 2, I1, 2) > indRecords!(8, 0) Then
-                indRecords!(8, 0) = QQ(I, 1, I1, 2) + QQ(I, 2, I1, 2) ' FGM
+            If periodPlayerTot(I, 1, I1, 2) + periodPlayerTot(I, 2, I1, 2) > indRecords!(8, 0) Then
+                indRecords!(8, 0) = periodPlayerTot(I, 1, I1, 2) + periodPlayerTot(I, 2, I1, 2) ' FGM
                 indRecords!(8, 1) = 1 ' TIMES DONE
                 indRecords!(8, 2) = 1 ' HALF
                 indRecDesc$(8, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13671,8 +13890,8 @@ Sub CheckRecords ()
                 indRecDesc$(8, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 2) + QQ(I, 4, I1, 2) > indRecords!(8, 0) Then
-                indRecords!(8, 0) = QQ(I, 3, I1, 2) + QQ(I, 4, I1, 2) ' FGM
+            If periodPlayerTot(I, 3, I1, 2) + periodPlayerTot(I, 4, I1, 2) > indRecords!(8, 0) Then
+                indRecords!(8, 0) = periodPlayerTot(I, 3, I1, 2) + periodPlayerTot(I, 4, I1, 2) ' FGM
                 indRecords!(8, 1) = 1 ' TIMES DONE
                 indRecords!(8, 2) = 2 ' HALF
                 indRecDesc$(8, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13683,8 +13902,8 @@ Sub CheckRecords ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 2) > indRecords!(9, 0) Then
-                    indRecords!(9, 0) = QQ(I, I2, I1, 2) ' FGM
+                If periodPlayerTot(I, I2, I1, 2) > indRecords!(9, 0) Then
+                    indRecords!(9, 0) = periodPlayerTot(I, I2, I1, 2) ' FGM
                     indRecords!(9, 1) = 1 ' TIMES DONE
                     indRecords!(9, 2) = I2 ' QTR
                     indRecDesc$(9, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13696,8 +13915,8 @@ Sub CheckRecords ()
             Next I2
 
             For I2 = 5 To 8
-                If QQ(I, I2, I1, 2) > indRecords!(10, 0) Then
-                    indRecords!(10, 0) = QQ(I, I2, I1, 2) ' FGM
+                If periodPlayerTot(I, I2, I1, 2) > indRecords!(10, 0) Then
+                    indRecords!(10, 0) = periodPlayerTot(I, I2, I1, 2) ' FGM
                     indRecords!(10, 1) = 1 ' TIMES DONE
                     indRecords!(10, 2) = I2 ' QTR
                     indRecDesc$(10, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13720,8 +13939,8 @@ Sub CheckRecords ()
                 indRecDesc$(11, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 1) + QQ(I, 2, I1, 1) > indRecords!(12, 0) Then
-                indRecords!(12, 0) = QQ(I, 1, I1, 1) + QQ(I, 2, I1, 1) ' FGA
+            If periodPlayerTot(I, 1, I1, 1) + periodPlayerTot(I, 2, I1, 1) > indRecords!(12, 0) Then
+                indRecords!(12, 0) = periodPlayerTot(I, 1, I1, 1) + periodPlayerTot(I, 2, I1, 1) ' FGA
                 indRecords!(12, 1) = 1 ' TIMES DONE
                 indRecords!(12, 2) = 1 ' HALF
                 indRecDesc$(12, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13731,8 +13950,8 @@ Sub CheckRecords ()
                 indRecDesc$(12, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 1) + QQ(I, 4, I1, 1) > indRecords!(12, 0) Then
-                indRecords!(12, 0) = QQ(I, 3, I1, 1) + QQ(I, 4, I1, 1) ' FGA
+            If periodPlayerTot(I, 3, I1, 1) + periodPlayerTot(I, 4, I1, 1) > indRecords!(12, 0) Then
+                indRecords!(12, 0) = periodPlayerTot(I, 3, I1, 1) + periodPlayerTot(I, 4, I1, 1) ' FGA
                 indRecords!(12, 1) = 1 ' TIMES DONE
                 indRecords!(12, 2) = 2 ' HALF
                 indRecDesc$(12, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13743,8 +13962,8 @@ Sub CheckRecords ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 1) > indRecords!(13, 0) Then
-                    indRecords!(13, 0) = QQ(I, I2, I1, 1) ' FGA
+                If periodPlayerTot(I, I2, I1, 1) > indRecords!(13, 0) Then
+                    indRecords!(13, 0) = periodPlayerTot(I, I2, I1, 1) ' FGA
                     indRecords!(13, 1) = 1 ' TIMES DONE
                     indRecords!(13, 2) = I2 ' QTR
                     indRecDesc$(13, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13756,8 +13975,8 @@ Sub CheckRecords ()
             Next I2
 
             For I2 = 5 To 8
-                If QQ(I, I2, I1, 1) > indRecords!(14, 0) Then
-                    indRecords!(14, 0) = QQ(I, I2, I1, 1) ' FGA
+                If periodPlayerTot(I, I2, I1, 1) > indRecords!(14, 0) Then
+                    indRecords!(14, 0) = periodPlayerTot(I, I2, I1, 1) ' FGA
                     indRecords!(14, 1) = 1 ' TIMES DONE
                     indRecords!(14, 2) = I2 ' QTR
                     indRecDesc$(14, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13799,8 +14018,8 @@ Sub CheckRecords ()
                 indRecDesc$(17, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 10) + QQ(I, 2, I1, 10) > indRecords!(18, 0) Then
-                indRecords!(18, 0) = QQ(I, 1, I1, 10) + QQ(I, 2, I1, 10) ' 3FGM
+            If periodPlayerTot(I, 1, I1, 10) + periodPlayerTot(I, 2, I1, 10) > indRecords!(18, 0) Then
+                indRecords!(18, 0) = periodPlayerTot(I, 1, I1, 10) + periodPlayerTot(I, 2, I1, 10) ' 3FGM
                 indRecords!(18, 1) = 1 ' TIMES DONE
                 indRecords!(18, 2) = 1 ' HALF
                 indRecDesc$(18, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13810,8 +14029,8 @@ Sub CheckRecords ()
                 indRecDesc$(18, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) > indRecords!(18, 0) Then
-                indRecords!(18, 0) = QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) ' 3FGM
+            If periodPlayerTot(I, 3, I1, 10) + periodPlayerTot(I, 4, I1, 10) > indRecords!(18, 0) Then
+                indRecords!(18, 0) = periodPlayerTot(I, 3, I1, 10) + periodPlayerTot(I, 4, I1, 10) ' 3FGM
                 indRecords!(18, 1) = 1 ' TIMES DONE
                 indRecords!(18, 2) = 2 ' HALF
                 indRecDesc$(18, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13822,8 +14041,8 @@ Sub CheckRecords ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 10) > indRecords!(19, 0) Then
-                    indRecords!(19, 0) = QQ(I, I2, I1, 10) ' 3FGM
+                If periodPlayerTot(I, I2, I1, 10) > indRecords!(19, 0) Then
+                    indRecords!(19, 0) = periodPlayerTot(I, I2, I1, 10) ' 3FGM
                     indRecords!(19, 1) = 1 ' TIMES DONE
                     indRecords!(19, 2) = I2 ' QTR
                     indRecDesc$(19, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13835,8 +14054,8 @@ Sub CheckRecords ()
             Next I2
 
             For I2 = 5 To 8
-                If QQ(I, I2, I1, 10) > indRecords!(20, 0) Then
-                    indRecords!(20, 0) = QQ(I, I2, I1, 10) ' 3FGM
+                If periodPlayerTot(I, I2, I1, 10) > indRecords!(20, 0) Then
+                    indRecords!(20, 0) = periodPlayerTot(I, I2, I1, 10) ' 3FGM
                     indRecords!(20, 1) = 1 ' TIMES DONE
                     indRecords!(20, 2) = I2 ' QTR
                     indRecDesc$(20, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13859,8 +14078,8 @@ Sub CheckRecords ()
                 indRecDesc$(21, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 11) + QQ(I, 2, I1, 11) > indRecords!(22, 0) Then
-                indRecords!(22, 0) = QQ(I, 1, I1, 11) + QQ(I, 2, I1, 11) ' 3FGA
+            If periodPlayerTot(I, 1, I1, 11) + periodPlayerTot(I, 2, I1, 11) > indRecords!(22, 0) Then
+                indRecords!(22, 0) = periodPlayerTot(I, 1, I1, 11) + periodPlayerTot(I, 2, I1, 11) ' 3FGA
                 indRecords!(22, 1) = 1 ' TIMES DONE
                 indRecords!(22, 2) = 1 ' HALF
                 indRecDesc$(22, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13870,8 +14089,8 @@ Sub CheckRecords ()
                 indRecDesc$(22, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 11) + QQ(I, 4, I1, 11) > indRecords!(22, 0) Then
-                indRecords!(22, 0) = QQ(I, 3, I1, 10) + QQ(I, 4, I1, 10) ' 3FGA
+            If periodPlayerTot(I, 3, I1, 11) + periodPlayerTot(I, 4, I1, 11) > indRecords!(22, 0) Then
+                indRecords!(22, 0) = periodPlayerTot(I, 3, I1, 10) + periodPlayerTot(I, 4, I1, 10) ' 3FGA
                 indRecords!(22, 1) = 1 ' TIMES DONE
                 indRecords!(22, 2) = 2 ' HALF
                 indRecDesc$(22, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13912,8 +14131,8 @@ Sub CheckRecords ()
                 indRecDesc$(25, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 4) + QQ(I, 2, I1, 4) > indRecords!(26, 0) Then
-                indRecords!(26, 0) = QQ(I, 1, I1, 4) + QQ(I, 2, I1, 4) ' FTM
+            If periodPlayerTot(I, 1, I1, 4) + periodPlayerTot(I, 2, I1, 4) > indRecords!(26, 0) Then
+                indRecords!(26, 0) = periodPlayerTot(I, 1, I1, 4) + periodPlayerTot(I, 2, I1, 4) ' FTM
                 indRecords!(26, 1) = 1 ' TIMES DONE
                 indRecords!(26, 2) = 1 ' HALF
                 indRecDesc$(26, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13923,8 +14142,8 @@ Sub CheckRecords ()
                 indRecDesc$(26, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 4) + QQ(I, 4, I1, 4) > indRecords!(26, 0) Then
-                indRecords!(26, 0) = QQ(I, 3, I1, 4) + QQ(I, 4, I1, 4) ' FTM
+            If periodPlayerTot(I, 3, I1, 4) + periodPlayerTot(I, 4, I1, 4) > indRecords!(26, 0) Then
+                indRecords!(26, 0) = periodPlayerTot(I, 3, I1, 4) + periodPlayerTot(I, 4, I1, 4) ' FTM
                 indRecords!(26, 1) = 1 ' TIMES DONE
                 indRecords!(26, 2) = 2 ' HALF
                 indRecDesc$(26, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13935,8 +14154,8 @@ Sub CheckRecords ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 4) > indRecords!(27, 0) Then
-                    indRecords!(27, 0) = QQ(I, I2, I1, 4) ' FTM
+                If periodPlayerTot(I, I2, I1, 4) > indRecords!(27, 0) Then
+                    indRecords!(27, 0) = periodPlayerTot(I, I2, I1, 4) ' FTM
                     indRecords!(27, 1) = 1 ' TIMES DONE
                     indRecords!(27, 2) = I2 ' QTR
                     indRecDesc$(27, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13959,8 +14178,8 @@ Sub CheckRecords ()
                 indRecDesc$(28, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 3) + QQ(I, 2, I1, 3) > indRecords!(29, 0) Then
-                indRecords!(29, 0) = QQ(I, 1, I1, 3) + QQ(I, 2, I1, 3) ' FTA
+            If periodPlayerTot(I, 1, I1, 3) + periodPlayerTot(I, 2, I1, 3) > indRecords!(29, 0) Then
+                indRecords!(29, 0) = periodPlayerTot(I, 1, I1, 3) + periodPlayerTot(I, 2, I1, 3) ' FTA
                 indRecords!(29, 1) = 1 ' TIMES DONE
                 indRecords!(29, 2) = 1 ' HALF
                 indRecDesc$(29, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13970,8 +14189,8 @@ Sub CheckRecords ()
                 indRecDesc$(29, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 3) + QQ(I, 4, I1, 3) > indRecords!(29, 0) Then
-                indRecords!(29, 0) = QQ(I, 3, I1, 3) + QQ(I, 4, I1, 3) ' FTM
+            If periodPlayerTot(I, 3, I1, 3) + periodPlayerTot(I, 4, I1, 3) > indRecords!(29, 0) Then
+                indRecords!(29, 0) = periodPlayerTot(I, 3, I1, 3) + periodPlayerTot(I, 4, I1, 3) ' FTM
                 indRecords!(29, 1) = 1 ' TIMES DONE
                 indRecords!(29, 2) = 2 ' HALF
                 indRecDesc$(29, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -13982,8 +14201,8 @@ Sub CheckRecords ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 3) > indRecords!(30, 0) Then
-                    indRecords!(30, 0) = QQ(I, I2, I1, 3) ' FTM
+                If periodPlayerTot(I, I2, I1, 3) > indRecords!(30, 0) Then
+                    indRecords!(30, 0) = periodPlayerTot(I, I2, I1, 3) ' FTM
                     indRecords!(30, 1) = 1 ' TIMES DONE
                     indRecords!(30, 2) = I2 ' QTR
                     indRecDesc$(30, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14006,8 +14225,8 @@ Sub CheckRecords ()
                 indRecDesc$(31, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) > indRecords!(32, 0) Then
-                indRecords!(32, 0) = QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) ' RB
+            If periodPlayerTot(I, 1, I1, 5) + periodPlayerTot(I, 2, I1, 5) > indRecords!(32, 0) Then
+                indRecords!(32, 0) = periodPlayerTot(I, 1, I1, 5) + periodPlayerTot(I, 2, I1, 5) ' RB
                 indRecords!(32, 1) = 1 ' TIMES DONE
                 indRecords!(32, 2) = 1 ' HALF
                 indRecDesc$(32, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14017,8 +14236,8 @@ Sub CheckRecords ()
                 indRecDesc$(32, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) > indRecords!(32, 0) Then
-                indRecords!(32, 0) = QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) ' RB
+            If periodPlayerTot(I, 3, I1, 5) + periodPlayerTot(I, 4, I1, 5) > indRecords!(32, 0) Then
+                indRecords!(32, 0) = periodPlayerTot(I, 3, I1, 5) + periodPlayerTot(I, 4, I1, 5) ' RB
                 indRecords!(32, 1) = 1 ' TIMES DONE
                 indRecords!(32, 2) = 2 ' HALF
                 indRecDesc$(32, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14029,8 +14248,8 @@ Sub CheckRecords ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 5) > indRecords!(33, 0) Then
-                    indRecords!(33, 0) = QQ(I, I2, I1, 5) ' RB
+                If periodPlayerTot(I, I2, I1, 5) > indRecords!(33, 0) Then
+                    indRecords!(33, 0) = periodPlayerTot(I, I2, I1, 5) ' RB
                     indRecords!(33, 1) = 1 ' TIMES DONE
                     indRecords!(33, 2) = I2 ' QTR
                     indRecDesc$(33, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14053,8 +14272,8 @@ Sub CheckRecords ()
                 indRecDesc$(34, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12) > indRecords!(35, 0) Then
-                indRecords!(35, 0) = QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12) ' RB
+            If periodPlayerTot(I, 1, I1, 12) + periodPlayerTot(I, 2, I1, 12) > indRecords!(35, 0) Then
+                indRecords!(35, 0) = periodPlayerTot(I, 1, I1, 12) + periodPlayerTot(I, 2, I1, 12) ' RB
                 indRecords!(35, 1) = 1 ' TIMES DONE
                 indRecords!(35, 2) = 1 ' HALF
                 indRecDesc$(35, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14064,8 +14283,8 @@ Sub CheckRecords ()
                 indRecDesc$(35, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12) > indRecords!(35, 0) Then
-                indRecords!(35, 0) = QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12) ' RB
+            If periodPlayerTot(I, 3, I1, 12) + periodPlayerTot(I, 4, I1, 12) > indRecords!(35, 0) Then
+                indRecords!(35, 0) = periodPlayerTot(I, 3, I1, 12) + periodPlayerTot(I, 4, I1, 12) ' RB
                 indRecords!(35, 1) = 1 ' TIMES DONE
                 indRecords!(35, 2) = 2 ' HALF
                 indRecDesc$(35, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14076,8 +14295,8 @@ Sub CheckRecords ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 12) > indRecords!(36, 0) Then
-                    indRecords!(36, 0) = QQ(I, I2, I1, 12) ' RB
+                If periodPlayerTot(I, I2, I1, 12) > indRecords!(36, 0) Then
+                    indRecords!(36, 0) = periodPlayerTot(I, I2, I1, 12) ' RB
                     indRecords!(36, 1) = 1 ' TIMES DONE
                     indRecords!(36, 2) = I2 ' QTR
                     indRecDesc$(36, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14100,8 +14319,8 @@ Sub CheckRecords ()
                 indRecDesc$(37, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) - (QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12)) > indRecords!(38, 0) Then
-                indRecords!(38, 0) = QQ(I, 1, I1, 5) + QQ(I, 2, I1, 5) - (QQ(I, 1, I1, 12) + QQ(I, 2, I1, 12)) ' RB
+            If periodPlayerTot(I, 1, I1, 5) + periodPlayerTot(I, 2, I1, 5) - (periodPlayerTot(I, 1, I1, 12) + periodPlayerTot(I, 2, I1, 12)) > indRecords!(38, 0) Then
+                indRecords!(38, 0) = periodPlayerTot(I, 1, I1, 5) + periodPlayerTot(I, 2, I1, 5) - (periodPlayerTot(I, 1, I1, 12) + periodPlayerTot(I, 2, I1, 12)) ' RB
                 indRecords!(38, 1) = 1 ' TIMES DONE
                 indRecords!(38, 2) = 1 ' HALF
                 indRecDesc$(38, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14111,8 +14330,8 @@ Sub CheckRecords ()
                 indRecDesc$(38, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) - (QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12)) > indRecords!(38, 0) Then
-                indRecords!(38, 0) = QQ(I, 3, I1, 5) + QQ(I, 4, I1, 5) - (QQ(I, 3, I1, 12) + QQ(I, 4, I1, 12)) ' RB
+            If periodPlayerTot(I, 3, I1, 5) + periodPlayerTot(I, 4, I1, 5) - (periodPlayerTot(I, 3, I1, 12) + periodPlayerTot(I, 4, I1, 12)) > indRecords!(38, 0) Then
+                indRecords!(38, 0) = periodPlayerTot(I, 3, I1, 5) + periodPlayerTot(I, 4, I1, 5) - (periodPlayerTot(I, 3, I1, 12) + periodPlayerTot(I, 4, I1, 12)) ' RB
                 indRecords!(38, 1) = 1 ' TIMES DONE
                 indRecords!(38, 2) = 2 ' HALF
                 indRecDesc$(38, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14123,8 +14342,8 @@ Sub CheckRecords ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 5) - QQ(I, I2, I1, 12) > indRecords!(39, 0) Then
-                    indRecords!(39, 0) = QQ(I, I2, I1, 5) - QQ(I, I2, I1, 12) ' RB
+                If periodPlayerTot(I, I2, I1, 5) - periodPlayerTot(I, I2, I1, 12) > indRecords!(39, 0) Then
+                    indRecords!(39, 0) = periodPlayerTot(I, I2, I1, 5) - periodPlayerTot(I, I2, I1, 12) ' RB
                     indRecords!(39, 1) = 1 ' TIMES DONE
                     indRecords!(39, 2) = I2 ' QTR
                     indRecDesc$(39, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14147,8 +14366,8 @@ Sub CheckRecords ()
                 indRecDesc$(40, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 8) + QQ(I, 2, I1, 8) > indRecords!(41, 0) Then
-                indRecords!(41, 0) = QQ(I, 1, I1, 8) + QQ(I, 2, I1, 8) ' FTA
+            If periodPlayerTot(I, 1, I1, 8) + periodPlayerTot(I, 2, I1, 8) > indRecords!(41, 0) Then
+                indRecords!(41, 0) = periodPlayerTot(I, 1, I1, 8) + periodPlayerTot(I, 2, I1, 8) ' FTA
                 indRecords!(41, 1) = 1 ' TIMES DONE
                 indRecords!(41, 2) = 1 ' HALF
                 indRecDesc$(41, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14158,8 +14377,8 @@ Sub CheckRecords ()
                 indRecDesc$(41, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 8) + QQ(I, 4, I1, 8) > indRecords!(41, 0) Then
-                indRecords!(41, 0) = QQ(I, 3, I1, 8) + QQ(I, 4, I1, 8) ' FTM
+            If periodPlayerTot(I, 3, I1, 8) + periodPlayerTot(I, 4, I1, 8) > indRecords!(41, 0) Then
+                indRecords!(41, 0) = periodPlayerTot(I, 3, I1, 8) + periodPlayerTot(I, 4, I1, 8) ' FTM
                 indRecords!(41, 1) = 1 ' TIMES DONE
                 indRecords!(41, 2) = 2 ' HALF
                 indRecDesc$(41, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14170,8 +14389,8 @@ Sub CheckRecords ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 8) > indRecords!(42, 0) Then
-                    indRecords!(42, 0) = QQ(I, I2, I1, 8) ' FTM
+                If periodPlayerTot(I, I2, I1, 8) > indRecords!(42, 0) Then
+                    indRecords!(42, 0) = periodPlayerTot(I, I2, I1, 8) ' FTM
                     indRecords!(42, 1) = 1 ' TIMES DONE
                     indRecords!(42, 2) = I2 ' QTR
                     indRecDesc$(42, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14194,8 +14413,8 @@ Sub CheckRecords ()
                 indRecDesc$(43, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 7) + QQ(I, 2, I1, 7) > indRecords!(44, 0) Then
-                indRecords!(44, 0) = QQ(I, 1, I1, 7) + QQ(I, 2, I1, 7) ' FTA
+            If periodPlayerTot(I, 1, I1, 7) + periodPlayerTot(I, 2, I1, 7) > indRecords!(44, 0) Then
+                indRecords!(44, 0) = periodPlayerTot(I, 1, I1, 7) + periodPlayerTot(I, 2, I1, 7) ' FTA
                 indRecords!(44, 1) = 1 ' TIMES DONE
                 indRecords!(44, 2) = 1 ' HALF
                 indRecDesc$(44, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14205,8 +14424,8 @@ Sub CheckRecords ()
                 indRecDesc$(44, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 7) + QQ(I, 4, I1, 7) > indRecords!(44, 0) Then
-                indRecords!(44, 0) = QQ(I, 3, I1, 7) + QQ(I, 4, I1, 7) ' FTM
+            If periodPlayerTot(I, 3, I1, 7) + periodPlayerTot(I, 4, I1, 7) > indRecords!(44, 0) Then
+                indRecords!(44, 0) = periodPlayerTot(I, 3, I1, 7) + periodPlayerTot(I, 4, I1, 7) ' FTM
                 indRecords!(44, 1) = 1 ' TIMES DONE
                 indRecords!(44, 2) = 2 ' HALF
                 indRecDesc$(44, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14217,8 +14436,8 @@ Sub CheckRecords ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 7) > indRecords!(45, 0) Then
-                    indRecords!(45, 0) = QQ(I, I2, I1, 7) ' FTM
+                If periodPlayerTot(I, I2, I1, 7) > indRecords!(45, 0) Then
+                    indRecords!(45, 0) = periodPlayerTot(I, I2, I1, 7) ' FTM
                     indRecords!(45, 1) = 1 ' TIMES DONE
                     indRecords!(45, 2) = I2 ' QTR
                     indRecDesc$(45, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14241,8 +14460,8 @@ Sub CheckRecords ()
                 indRecDesc$(46, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 1, I1, 9) + QQ(I, 2, I1, 9) > indRecords!(47, 0) Then
-                indRecords!(47, 0) = QQ(I, 1, I1, 9) + QQ(I, 2, I1, 9) ' FTA
+            If periodPlayerTot(I, 1, I1, 9) + periodPlayerTot(I, 2, I1, 9) > indRecords!(47, 0) Then
+                indRecords!(47, 0) = periodPlayerTot(I, 1, I1, 9) + periodPlayerTot(I, 2, I1, 9) ' FTA
                 indRecords!(47, 1) = 1 ' TIMES DONE
                 indRecords!(47, 2) = 1 ' HALF
                 indRecDesc$(47, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14252,8 +14471,8 @@ Sub CheckRecords ()
                 indRecDesc$(47, 4) = Date$ ' DATE
             End If
 
-            If QQ(I, 3, I1, 9) + QQ(I, 4, I1, 9) > indRecords!(47, 0) Then
-                indRecords!(47, 0) = QQ(I, 3, I1, 9) + QQ(I, 4, I1, 9) ' FTM
+            If periodPlayerTot(I, 3, I1, 9) + periodPlayerTot(I, 4, I1, 9) > indRecords!(47, 0) Then
+                indRecords!(47, 0) = periodPlayerTot(I, 3, I1, 9) + periodPlayerTot(I, 4, I1, 9) ' FTM
                 indRecords!(47, 1) = 1 ' TIMES DONE
                 indRecords!(47, 2) = 2 ' HALF
                 indRecDesc$(47, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14264,8 +14483,8 @@ Sub CheckRecords ()
             End If
 
             For I2 = 1 To 4
-                If QQ(I, I2, I1, 9) > indRecords!(48, 0) Then
-                    indRecords!(48, 0) = QQ(I, I2, I1, 9) ' FTM
+                If periodPlayerTot(I, I2, I1, 9) > indRecords!(48, 0) Then
+                    indRecords!(48, 0) = periodPlayerTot(I, I2, I1, 9) ' FTM
                     indRecords!(48, 1) = 1 ' TIMES DONE
                     indRecords!(48, 2) = I2 ' QTR
                     indRecDesc$(48, 0) = players_GAME$(I, I1, 0) ' NAME
@@ -14674,8 +14893,8 @@ Sub CheckRecords ()
             teamRecDesc$(37, 3) = Date$
         End If
 
-        If QR(I, 1, 0) + QR(I, 2, 0) > teamRecords!(38, 0) Then
-            teamRecords!(38, 0) = QR(I, 1, 0) + QR(I, 2, 0)
+        If periodTeamTot(I, 1, 0) + periodTeamTot(I, 2, 0) > teamRecords!(38, 0) Then
+            teamRecords!(38, 0) = periodTeamTot(I, 1, 0) + periodTeamTot(I, 2, 0)
             teamRecords!(38, 1) = 1
             teamRecords!(38, 2) = 0
             teamRecDesc$(38, 0) = gameTeams$(I)
@@ -14684,8 +14903,8 @@ Sub CheckRecords ()
             teamRecDesc$(38, 3) = Date$
         End If
 
-        If QR(I, 3, 0) + QR(I, 4, 0) > teamRecords!(38, 0) Then
-            teamRecords!(38, 0) = QR(I, 3, 0) + QR(I, 4, 0)
+        If periodTeamTot(I, 3, 0) + periodTeamTot(I, 4, 0) > teamRecords!(38, 0) Then
+            teamRecords!(38, 0) = periodTeamTot(I, 3, 0) + periodTeamTot(I, 4, 0)
             teamRecords!(38, 1) = 2
             teamRecords!(38, 2) = 0
             teamRecDesc$(38, 0) = gameTeams$(I)
@@ -14694,8 +14913,8 @@ Sub CheckRecords ()
             teamRecDesc$(38, 3) = Date$
         End If
 
-        If QR(I, 1, 0) + QR(I, 2, 0) + QR(1 - I, 1, 0) + QR(1 - I, 2, 0) > teamRecords!(39, 0) Then
-            teamRecords!(39, 0) = QR(I, 1, 0) + QR(I, 2, 0) + QR(1 - I, 1, 0) + QR(1 - I, 2, 0)
+        If periodTeamTot(I, 1, 0) + periodTeamTot(I, 2, 0) + periodTeamTot(1 - I, 1, 0) + periodTeamTot(1 - I, 2, 0) > teamRecords!(39, 0) Then
+            teamRecords!(39, 0) = periodTeamTot(I, 1, 0) + periodTeamTot(I, 2, 0) + periodTeamTot(1 - I, 1, 0) + periodTeamTot(1 - I, 2, 0)
             teamRecords!(39, 1) = 1
             teamRecords!(39, 2) = 0
             teamRecDesc$(39, 0) = gameTeams$(I)
@@ -14704,8 +14923,8 @@ Sub CheckRecords ()
             teamRecDesc$(39, 3) = Date$
         End If
 
-        If QR(I, 3, 0) + QR(I, 4, 0) + QR(1 - I, 3, 0) + QR(1 - I, 4, 0) > teamRecords!(39, 0) Then
-            teamRecords!(39, 0) = QR(I, 3, 0) + QR(I, 4, 0) + QR(1 - I, 3, 0) + QR(1 - I, 4, 0)
+        If periodTeamTot(I, 3, 0) + periodTeamTot(I, 4, 0) + periodTeamTot(1 - I, 3, 0) + periodTeamTot(1 - I, 4, 0) > teamRecords!(39, 0) Then
+            teamRecords!(39, 0) = periodTeamTot(I, 3, 0) + periodTeamTot(I, 4, 0) + periodTeamTot(1 - I, 3, 0) + periodTeamTot(1 - I, 4, 0)
             teamRecords!(39, 1) = 2
             teamRecords!(39, 2) = 0
             teamRecDesc$(39, 0) = gameTeams$(I)
@@ -14715,8 +14934,8 @@ Sub CheckRecords ()
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 0) > teamRecords!(40, 0) Then
-                teamRecords!(40, 0) = QR(I, I2, 0)
+            If periodTeamTot(I, I2, 0) > teamRecords!(40, 0) Then
+                teamRecords!(40, 0) = periodTeamTot(I, I2, 0)
                 teamRecords!(40, 1) = I2
                 teamRecords!(40, 2) = 0
                 teamRecDesc$(40, 0) = gameTeams$(I)
@@ -14725,10 +14944,10 @@ Sub CheckRecords ()
                 teamRecDesc$(40, 3) = Date$
             End If
 
-            If QR(I, I2, 0) + QR(1 - I, I2, 0) > teamRecords!(41, 0) Then
-                teamRecords!(41, 0) = QR(I, I2, 0) + QR(1 - I, I2, 0)
+            If periodTeamTot(I, I2, 0) + periodTeamTot(1 - I, I2, 0) > teamRecords!(41, 0) Then
+                teamRecords!(41, 0) = periodTeamTot(I, I2, 0) + periodTeamTot(1 - I, I2, 0)
                 teamRecords!(41, 1) = I2
-                teamRecords!(41, 2) = QR(I, I2, 0)
+                teamRecords!(41, 2) = periodTeamTot(I, I2, 0)
                 teamRecDesc$(41, 0) = gameTeams$(I)
                 teamRecDesc$(41, 1) = VERSUS$(I)
                 teamRecDesc$(41, 2) = gameTeams$(1 - I)
@@ -14777,8 +14996,8 @@ Sub CheckRecords ()
             teamRecDesc$(45, 3) = Date$
         End If
 
-        If QR(I, 1, 1) + QR(I, 2, 1) > teamRecords!(46, 0) Then
-            teamRecords!(46, 0) = QR(I, 1, 1) + QR(I, 2, 1)
+        If periodTeamTot(I, 1, 1) + periodTeamTot(I, 2, 1) > teamRecords!(46, 0) Then
+            teamRecords!(46, 0) = periodTeamTot(I, 1, 1) + periodTeamTot(I, 2, 1)
             teamRecords!(46, 1) = 1
             teamRecords!(46, 2) = 0
             teamRecDesc$(46, 0) = gameTeams$(I)
@@ -14787,8 +15006,8 @@ Sub CheckRecords ()
             teamRecDesc$(46, 3) = Date$
         End If
 
-        If QR(I, 3, 1) + QR(I, 4, 1) > teamRecords!(46, 0) Then
-            teamRecords!(46, 0) = QR(I, 3, 1) + QR(I, 4, 1)
+        If periodTeamTot(I, 3, 1) + periodTeamTot(I, 4, 1) > teamRecords!(46, 0) Then
+            teamRecords!(46, 0) = periodTeamTot(I, 3, 1) + periodTeamTot(I, 4, 1)
             teamRecords!(46, 1) = 2
             teamRecords!(46, 2) = 0
             teamRecDesc$(46, 0) = gameTeams$(I)
@@ -14797,20 +15016,20 @@ Sub CheckRecords ()
             teamRecDesc$(46, 3) = Date$
         End If
 
-        If QR(I, 1, 1) + QR(I, 2, 1) + QR(1 - I, 1, 1) + QR(1 - I, 2, 1) > teamRecords!(47, 0) Then
-            teamRecords!(47, 0) = QR(I, 1, 1) + QR(I, 2, 1) + QR(1 - I, 1, 1) + QR(1 - I, 2, 1)
+        If periodTeamTot(I, 1, 1) + periodTeamTot(I, 2, 1) + periodTeamTot(1 - I, 1, 1) + periodTeamTot(1 - I, 2, 1) > teamRecords!(47, 0) Then
+            teamRecords!(47, 0) = periodTeamTot(I, 1, 1) + periodTeamTot(I, 2, 1) + periodTeamTot(1 - I, 1, 1) + periodTeamTot(1 - I, 2, 1)
             teamRecords!(47, 1) = 1
-            teamRecords!(47, 2) = QR(I, 1, 1) + QR(I, 2, 1)
+            teamRecords!(47, 2) = periodTeamTot(I, 1, 1) + periodTeamTot(I, 2, 1)
             teamRecDesc$(47, 0) = gameTeams$(I)
             teamRecDesc$(47, 1) = VERSUS$(I)
             teamRecDesc$(47, 2) = gameTeams$(1 - I)
             teamRecDesc$(47, 3) = Date$
         End If
 
-        If QR(I, 3, 1) + QR(I, 4, 1) + QR(1 - I, 3, 1) + QR(1 - I, 4, 1) > teamRecords!(47, 0) Then
-            teamRecords!(47, 0) = QR(I, 3, 1) + QR(I, 4, 1) + QR(1 - I, 3, 1) + QR(1 - I, 4, 1)
+        If periodTeamTot(I, 3, 1) + periodTeamTot(I, 4, 1) + periodTeamTot(1 - I, 3, 1) + periodTeamTot(1 - I, 4, 1) > teamRecords!(47, 0) Then
+            teamRecords!(47, 0) = periodTeamTot(I, 3, 1) + periodTeamTot(I, 4, 1) + periodTeamTot(1 - I, 3, 1) + periodTeamTot(1 - I, 4, 1)
             teamRecords!(47, 1) = 1
-            teamRecords!(47, 2) = QR(I, 3, 1) + QR(I, 4, 1)
+            teamRecords!(47, 2) = periodTeamTot(I, 3, 1) + periodTeamTot(I, 4, 1)
             teamRecDesc$(47, 0) = gameTeams$(I)
             teamRecDesc$(47, 1) = VERSUS$(I)
             teamRecDesc$(47, 2) = gameTeams$(1 - I)
@@ -14818,8 +15037,8 @@ Sub CheckRecords ()
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 1) > teamRecords!(48, 0) Then
-                teamRecords!(48, 0) = QR(I, I2, 1)
+            If periodTeamTot(I, I2, 1) > teamRecords!(48, 0) Then
+                teamRecords!(48, 0) = periodTeamTot(I, I2, 1)
                 teamRecords!(48, 1) = I2
                 teamRecords!(48, 2) = 0
                 teamRecDesc$(48, 0) = gameTeams$(I)
@@ -14828,10 +15047,10 @@ Sub CheckRecords ()
                 teamRecDesc$(48, 3) = Date$
             End If
 
-            If QR(I, I2, 1) + QR(1 - I, I2, 1) > teamRecords!(49, 0) Then
-                teamRecords!(49, 0) = QR(I, I2, 1) + QR(1 - I, I2, 1)
+            If periodTeamTot(I, I2, 1) + periodTeamTot(1 - I, I2, 1) > teamRecords!(49, 0) Then
+                teamRecords!(49, 0) = periodTeamTot(I, I2, 1) + periodTeamTot(1 - I, I2, 1)
                 teamRecords!(49, 1) = I2
-                teamRecords!(49, 2) = QR(I, I2, 1)
+                teamRecords!(49, 2) = periodTeamTot(I, I2, 1)
                 teamRecDesc$(49, 0) = gameTeams$(I)
                 teamRecDesc$(49, 1) = VERSUS$(I)
                 teamRecDesc$(49, 2) = gameTeams$(1 - I)
@@ -14894,8 +15113,8 @@ Sub CheckRecords ()
             teamRecDesc$(54, 3) = Date$
         End If
 
-        If QR(I, 1, 13) + QR(I, 2, 13) > teamRecords!(55, 0) Then
-            teamRecords!(55, 0) = QR(I, 1, 13) + QR(I, 2, 13)
+        If periodTeamTot(I, 1, 13) + periodTeamTot(I, 2, 13) > teamRecords!(55, 0) Then
+            teamRecords!(55, 0) = periodTeamTot(I, 1, 13) + periodTeamTot(I, 2, 13)
             teamRecords!(55, 1) = 1
             teamRecords!(55, 2) = 0
             teamRecDesc$(55, 0) = gameTeams$(I)
@@ -14904,8 +15123,8 @@ Sub CheckRecords ()
             teamRecDesc$(55, 3) = Date$
         End If
 
-        If QR(I, 3, 13) + QR(I, 4, 13) > teamRecords!(55, 0) Then
-            teamRecords!(55, 0) = QR(I, 3, 13) + QR(I, 4, 13)
+        If periodTeamTot(I, 3, 13) + periodTeamTot(I, 4, 13) > teamRecords!(55, 0) Then
+            teamRecords!(55, 0) = periodTeamTot(I, 3, 13) + periodTeamTot(I, 4, 13)
             teamRecords!(55, 1) = 2
             teamRecords!(55, 2) = 0
             teamRecDesc$(55, 0) = gameTeams$(I)
@@ -14915,8 +15134,8 @@ Sub CheckRecords ()
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 13) > teamRecords!(56, 0) Then
-                teamRecords!(56, 0) = QR(I, I2, 13)
+            If periodTeamTot(I, I2, 13) > teamRecords!(56, 0) Then
+                teamRecords!(56, 0) = periodTeamTot(I, I2, 13)
                 teamRecords!(56, 1) = I2
                 teamRecords!(56, 2) = 0
                 teamRecDesc$(56, 0) = gameTeams$(I)
@@ -14947,8 +15166,8 @@ Sub CheckRecords ()
             teamRecDesc$(58, 3) = Date$
         End If
 
-        If QR(I, 1, 14) + QR(I, 2, 14) > teamRecords!(59, 0) Then
-            teamRecords!(59, 0) = QR(I, 1, 14) + QR(I, 2, 14)
+        If periodTeamTot(I, 1, 14) + periodTeamTot(I, 2, 14) > teamRecords!(59, 0) Then
+            teamRecords!(59, 0) = periodTeamTot(I, 1, 14) + periodTeamTot(I, 2, 14)
             teamRecords!(59, 1) = 1
             teamRecords!(59, 2) = 0
             teamRecDesc$(59, 0) = gameTeams$(I)
@@ -14957,8 +15176,8 @@ Sub CheckRecords ()
             teamRecDesc$(59, 3) = Date$
         End If
 
-        If QR(I, 3, 14) + QR(I, 4, 14) > teamRecords!(59, 0) Then
-            teamRecords!(59, 0) = QR(I, 3, 14) + QR(I, 4, 14)
+        If periodTeamTot(I, 3, 14) + periodTeamTot(I, 4, 14) > teamRecords!(59, 0) Then
+            teamRecords!(59, 0) = periodTeamTot(I, 3, 14) + periodTeamTot(I, 4, 14)
             teamRecords!(59, 1) = 2
             teamRecords!(59, 2) = 0
             teamRecDesc$(59, 0) = gameTeams$(I)
@@ -15052,8 +15271,8 @@ Sub CheckRecords ()
             teamRecDesc$(67, 3) = Date$
         End If
 
-        If QR(I, 1, 2) + QR(I, 2, 2) > teamRecords!(68, 0) Then
-            teamRecords!(68, 0) = QR(I, 1, 2) + QR(I, 2, 2)
+        If periodTeamTot(I, 1, 2) + periodTeamTot(I, 2, 2) > teamRecords!(68, 0) Then
+            teamRecords!(68, 0) = periodTeamTot(I, 1, 2) + periodTeamTot(I, 2, 2)
             teamRecords!(68, 1) = 1
             teamRecords!(68, 2) = 0
             teamRecDesc$(68, 0) = gameTeams$(I)
@@ -15062,8 +15281,8 @@ Sub CheckRecords ()
             teamRecDesc$(68, 3) = Date$
         End If
 
-        If QR(I, 3, 2) + QR(I, 4, 2) > teamRecords!(68, 0) Then
-            teamRecords!(68, 0) = QR(I, 3, 2) + QR(I, 4, 2)
+        If periodTeamTot(I, 3, 2) + periodTeamTot(I, 4, 2) > teamRecords!(68, 0) Then
+            teamRecords!(68, 0) = periodTeamTot(I, 3, 2) + periodTeamTot(I, 4, 2)
             teamRecords!(68, 1) = 2
             teamRecords!(68, 2) = 0
             teamRecDesc$(68, 0) = gameTeams$(I)
@@ -15073,8 +15292,8 @@ Sub CheckRecords ()
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 2) > teamRecords!(70, 0) Then
-                teamRecords!(70, 0) = QR(I, I2, 2)
+            If periodTeamTot(I, I2, 2) > teamRecords!(70, 0) Then
+                teamRecords!(70, 0) = periodTeamTot(I, I2, 2)
                 teamRecords!(70, 1) = I2
                 teamRecords!(70, 2) = 0
                 teamRecDesc$(70, 0) = gameTeams$(I)
@@ -15126,8 +15345,8 @@ Sub CheckRecords ()
             teamRecDesc$(75, 3) = Date$
         End If
 
-        If QR(I, 1, 3) + QR(I, 2, 3) > teamRecords!(76, 0) Then
-            teamRecords!(76, 0) = QR(I, 1, 3) + QR(I, 2, 3)
+        If periodTeamTot(I, 1, 3) + periodTeamTot(I, 2, 3) > teamRecords!(76, 0) Then
+            teamRecords!(76, 0) = periodTeamTot(I, 1, 3) + periodTeamTot(I, 2, 3)
             teamRecords!(76, 1) = 1
             teamRecords!(76, 2) = 0
             teamRecDesc$(76, 0) = gameTeams$(I)
@@ -15136,8 +15355,8 @@ Sub CheckRecords ()
             teamRecDesc$(76, 3) = Date$
         End If
 
-        If QR(I, 3, 3) + QR(I, 4, 3) > teamRecords!(76, 0) Then
-            teamRecords!(76, 0) = QR(I, 3, 3) + QR(I, 4, 3)
+        If periodTeamTot(I, 3, 3) + periodTeamTot(I, 4, 3) > teamRecords!(76, 0) Then
+            teamRecords!(76, 0) = periodTeamTot(I, 3, 3) + periodTeamTot(I, 4, 3)
             teamRecords!(76, 1) = 2
             teamRecords!(76, 2) = 0
             teamRecDesc$(76, 0) = gameTeams$(I)
@@ -15146,20 +15365,20 @@ Sub CheckRecords ()
             teamRecDesc$(76, 3) = Date$
         End If
 
-        If QR(I, 1, 3) + QR(I, 2, 3) + QR(1 - I, 1, 3) + QR(1 - I, 2, 3) > teamRecords!(77, 0) Then
-            teamRecords!(77, 0) = QR(I, 1, 3) + QR(I, 2, 3) + QR(1 - I, 1, 3) + QR(1 - I, 2, 3)
+        If periodTeamTot(I, 1, 3) + periodTeamTot(I, 2, 3) + periodTeamTot(1 - I, 1, 3) + periodTeamTot(1 - I, 2, 3) > teamRecords!(77, 0) Then
+            teamRecords!(77, 0) = periodTeamTot(I, 1, 3) + periodTeamTot(I, 2, 3) + periodTeamTot(1 - I, 1, 3) + periodTeamTot(1 - I, 2, 3)
             teamRecords!(77, 1) = 1
-            teamRecords!(77, 2) = QR(I, 1, 3) + QR(I, 2, 3)
+            teamRecords!(77, 2) = periodTeamTot(I, 1, 3) + periodTeamTot(I, 2, 3)
             teamRecDesc$(77, 0) = gameTeams$(I)
             teamRecDesc$(77, 1) = VERSUS$(I)
             teamRecDesc$(77, 2) = gameTeams$(1 - I)
             teamRecDesc$(77, 3) = Date$
         End If
 
-        If QR(I, 3, 3) + QR(I, 4, 3) + QR(1 - I, 3, 3) + QR(1 - I, 4, 3) > teamRecords!(77, 0) Then
-            teamRecords!(77, 0) = QR(I, 3, 3) + QR(I, 4, 3) + QR(1 - I, 3, 3) + QR(1 - I, 4, 3)
+        If periodTeamTot(I, 3, 3) + periodTeamTot(I, 4, 3) + periodTeamTot(1 - I, 3, 3) + periodTeamTot(1 - I, 4, 3) > teamRecords!(77, 0) Then
+            teamRecords!(77, 0) = periodTeamTot(I, 3, 3) + periodTeamTot(I, 4, 3) + periodTeamTot(1 - I, 3, 3) + periodTeamTot(1 - I, 4, 3)
             teamRecords!(77, 1) = 2
-            teamRecords!(77, 2) = QR(I, 3, 3) + QR(I, 4, 3)
+            teamRecords!(77, 2) = periodTeamTot(I, 3, 3) + periodTeamTot(I, 4, 3)
             teamRecDesc$(77, 0) = gameTeams$(I)
             teamRecDesc$(77, 1) = VERSUS$(I)
             teamRecDesc$(77, 2) = gameTeams$(1 - I)
@@ -15167,8 +15386,8 @@ Sub CheckRecords ()
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 3) > teamRecords!(78, 0) Then
-                teamRecords!(78, 0) = QR(I, I2, 3)
+            If periodTeamTot(I, I2, 3) > teamRecords!(78, 0) Then
+                teamRecords!(78, 0) = periodTeamTot(I, I2, 3)
                 teamRecords!(78, 1) = I2
                 teamRecords!(78, 2) = 0
                 teamRecDesc$(78, 0) = gameTeams$(I)
@@ -15177,10 +15396,10 @@ Sub CheckRecords ()
                 teamRecDesc$(78, 3) = Date$
             End If
 
-            If QR(I, I2, 3) + QR(1 - I, I2, 3) > teamRecords!(79, 0) Then
-                teamRecords!(79, 0) = QR(I, I2, 3) + QR(1 - I, I2, 3)
+            If periodTeamTot(I, I2, 3) + periodTeamTot(1 - I, I2, 3) > teamRecords!(79, 0) Then
+                teamRecords!(79, 0) = periodTeamTot(I, I2, 3) + periodTeamTot(1 - I, I2, 3)
                 teamRecords!(79, 1) = I2
-                teamRecords!(79, 2) = QR(I, I2, 3)
+                teamRecords!(79, 2) = periodTeamTot(I, I2, 3)
                 teamRecDesc$(79, 0) = gameTeams$(I)
                 teamRecDesc$(79, 1) = VERSUS$(I)
                 teamRecDesc$(79, 2) = gameTeams$(1 - I)
@@ -15228,20 +15447,20 @@ Sub CheckRecords ()
             teamRecDesc$(83, 3) = Date$
         End If
 
-        If QR(I, 1, 4) + QR(I, 2, 4) > teamRecords!(84, 0) Then
-            teamRecords!(84, 0) = QR(I, 1, 4) + QR(I, 2, 4)
+        If periodTeamTot(I, 1, 4) + periodTeamTot(I, 2, 4) > teamRecords!(84, 0) Then
+            teamRecords!(84, 0) = periodTeamTot(I, 1, 4) + periodTeamTot(I, 2, 4)
             teamRecords!(84, 1) = 1
-            teamRecords!(84, 2) = QR(I, 1, 4) + QR(I, 2, 4)
+            teamRecords!(84, 2) = periodTeamTot(I, 1, 4) + periodTeamTot(I, 2, 4)
             teamRecDesc$(84, 0) = gameTeams$(I)
             teamRecDesc$(84, 1) = VERSUS$(I)
             teamRecDesc$(84, 2) = gameTeams$(1 - I)
             teamRecDesc$(84, 3) = Date$
         End If
 
-        If QR(I, 3, 4) + QR(I, 4, 4) > teamRecords!(84, 0) Then
-            teamRecords!(84, 0) = QR(I, 3, 4) + QR(I, 4, 4)
+        If periodTeamTot(I, 3, 4) + periodTeamTot(I, 4, 4) > teamRecords!(84, 0) Then
+            teamRecords!(84, 0) = periodTeamTot(I, 3, 4) + periodTeamTot(I, 4, 4)
             teamRecords!(84, 1) = 2
-            teamRecords!(84, 2) = QR(I, 3, 4) + QR(I, 4, 4)
+            teamRecords!(84, 2) = periodTeamTot(I, 3, 4) + periodTeamTot(I, 4, 4)
             teamRecDesc$(84, 0) = gameTeams$(I)
             teamRecDesc$(84, 1) = VERSUS$(I)
             teamRecDesc$(84, 2) = gameTeams$(1 - I)
@@ -15249,8 +15468,8 @@ Sub CheckRecords ()
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 4) > teamRecords!(85, 0) Then
-                teamRecords!(85, 0) = QR(I, I2, 4)
+            If periodTeamTot(I, I2, 4) > teamRecords!(85, 0) Then
+                teamRecords!(85, 0) = periodTeamTot(I, I2, 4)
                 teamRecords!(85, 1) = I2
                 teamRecords!(85, 2) = 0
                 teamRecDesc$(85, 0) = gameTeams$(I)
@@ -15290,20 +15509,20 @@ Sub CheckRecords ()
             teamRecDesc$(89, 3) = Date$
         End If
 
-        If QR(I, 1, 11) + QR(I, 2, 11) > teamRecords!(90, 0) Then
-            teamRecords!(90, 0) = QR(I, 1, 11) + QR(I, 2, 11)
+        If periodTeamTot(I, 1, 11) + periodTeamTot(I, 2, 11) > teamRecords!(90, 0) Then
+            teamRecords!(90, 0) = periodTeamTot(I, 1, 11) + periodTeamTot(I, 2, 11)
             teamRecords!(90, 1) = 1
-            teamRecords!(90, 2) = QR(I, 1, 11) + QR(I, 2, 11)
+            teamRecords!(90, 2) = periodTeamTot(I, 1, 11) + periodTeamTot(I, 2, 11)
             teamRecDesc$(90, 0) = gameTeams$(I)
             teamRecDesc$(90, 1) = VERSUS$(I)
             teamRecDesc$(90, 2) = gameTeams$(1 - I)
             teamRecDesc$(90, 3) = Date$
         End If
 
-        If QR(I, 3, 11) + QR(I, 4, 11) > teamRecords!(90, 0) Then
-            teamRecords!(90, 0) = QR(I, 3, 11) + QR(I, 4, 11)
+        If periodTeamTot(I, 3, 11) + periodTeamTot(I, 4, 11) > teamRecords!(90, 0) Then
+            teamRecords!(90, 0) = periodTeamTot(I, 3, 11) + periodTeamTot(I, 4, 11)
             teamRecords!(90, 1) = 2
-            teamRecords!(90, 2) = QR(I, 3, 11) + QR(I, 4, 11)
+            teamRecords!(90, 2) = periodTeamTot(I, 3, 11) + periodTeamTot(I, 4, 11)
             teamRecDesc$(90, 0) = gameTeams$(I)
             teamRecDesc$(90, 1) = VERSUS$(I)
             teamRecDesc$(90, 2) = gameTeams$(1 - I)
@@ -15351,8 +15570,8 @@ Sub CheckRecords ()
             teamRecDesc$(99, 3) = Date$
         End If
 
-        If QR(I, 1, 7) + QR(I, 2, 7) > teamRecords!(100, 0) Then
-            teamRecords!(100, 0) = QR(I, 1, 7) + QR(I, 2, 7)
+        If periodTeamTot(I, 1, 7) + periodTeamTot(I, 2, 7) > teamRecords!(100, 0) Then
+            teamRecords!(100, 0) = periodTeamTot(I, 1, 7) + periodTeamTot(I, 2, 7)
             teamRecords!(100, 1) = 1
             teamRecords!(100, 2) = 0
             teamRecDesc$(100, 0) = gameTeams$(I)
@@ -15361,8 +15580,8 @@ Sub CheckRecords ()
             teamRecDesc$(100, 3) = Date$
         End If
 
-        If QR(I, 3, 7) + QR(I, 4, 7) > teamRecords!(100, 0) Then
-            teamRecords!(100, 0) = QR(I, 3, 7) + QR(I, 4, 7)
+        If periodTeamTot(I, 3, 7) + periodTeamTot(I, 4, 7) > teamRecords!(100, 0) Then
+            teamRecords!(100, 0) = periodTeamTot(I, 3, 7) + periodTeamTot(I, 4, 7)
             teamRecords!(100, 1) = 2
             teamRecords!(100, 2) = 0
             teamRecDesc$(100, 0) = gameTeams$(I)
@@ -15372,8 +15591,8 @@ Sub CheckRecords ()
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 7) > teamRecords!(102, 0) Then
-                teamRecords!(102, 0) = QR(I, I2, 7)
+            If periodTeamTot(I, I2, 7) > teamRecords!(102, 0) Then
+                teamRecords!(102, 0) = periodTeamTot(I, I2, 7)
                 teamRecords!(102, 1) = I2
                 teamRecords!(102, 2) = 0
                 teamRecDesc$(102, 0) = gameTeams$(I)
@@ -15424,8 +15643,8 @@ Sub CheckRecords ()
             teamRecDesc$(107, 3) = Date$
         End If
 
-        If QR(I, 1, 6) + QR(I, 2, 6) > teamRecords!(108, 0) Then
-            teamRecords!(108, 0) = QR(I, 1, 6) + QR(I, 2, 6)
+        If periodTeamTot(I, 1, 6) + periodTeamTot(I, 2, 6) > teamRecords!(108, 0) Then
+            teamRecords!(108, 0) = periodTeamTot(I, 1, 6) + periodTeamTot(I, 2, 6)
             teamRecords!(108, 1) = 1
             teamRecords!(108, 2) = 0
             teamRecDesc$(108, 0) = gameTeams$(I)
@@ -15434,8 +15653,8 @@ Sub CheckRecords ()
             teamRecDesc$(108, 3) = Date$
         End If
 
-        If QR(I, 3, 6) + QR(I, 4, 6) > teamRecords!(108, 0) Then
-            teamRecords!(108, 0) = QR(I, 3, 6) + QR(I, 4, 6)
+        If periodTeamTot(I, 3, 6) + periodTeamTot(I, 4, 6) > teamRecords!(108, 0) Then
+            teamRecords!(108, 0) = periodTeamTot(I, 3, 6) + periodTeamTot(I, 4, 6)
             teamRecords!(108, 1) = 2
             teamRecords!(108, 2) = 0
             teamRecDesc$(108, 0) = gameTeams$(I)
@@ -15444,20 +15663,20 @@ Sub CheckRecords ()
             teamRecDesc$(108, 3) = Date$
         End If
 
-        If QR(I, 1, 6) + QR(I, 2, 6) + QR(1 - I, 1, 6) + QR(1 - I, 2, 6) > teamRecords!(109, 0) Then
-            teamRecords!(109, 0) = QR(I, 1, 6) + QR(I, 2, 6) + QR(1 - I, 1, 6) + QR(1 - I, 2, 6)
+        If periodTeamTot(I, 1, 6) + periodTeamTot(I, 2, 6) + periodTeamTot(1 - I, 1, 6) + periodTeamTot(1 - I, 2, 6) > teamRecords!(109, 0) Then
+            teamRecords!(109, 0) = periodTeamTot(I, 1, 6) + periodTeamTot(I, 2, 6) + periodTeamTot(1 - I, 1, 6) + periodTeamTot(1 - I, 2, 6)
             teamRecords!(109, 1) = 1
-            teamRecords!(109, 2) = QR(I, 1, 6) + QR(I, 2, 6)
+            teamRecords!(109, 2) = periodTeamTot(I, 1, 6) + periodTeamTot(I, 2, 6)
             teamRecDesc$(109, 0) = gameTeams$(I)
             teamRecDesc$(109, 1) = VERSUS$(I)
             teamRecDesc$(109, 2) = gameTeams$(1 - I)
             teamRecDesc$(109, 3) = Date$
         End If
 
-        If QR(I, 3, 6) + QR(I, 4, 6) + QR(1 - I, 3, 6) + QR(1 - I, 4, 6) > teamRecords!(109, 0) Then
-            teamRecords!(109, 0) = QR(I, 3, 6) + QR(I, 4, 6) + QR(1 - I, 3, 6) + QR(1 - I, 4, 6)
+        If periodTeamTot(I, 3, 6) + periodTeamTot(I, 4, 6) + periodTeamTot(1 - I, 3, 6) + periodTeamTot(1 - I, 4, 6) > teamRecords!(109, 0) Then
+            teamRecords!(109, 0) = periodTeamTot(I, 3, 6) + periodTeamTot(I, 4, 6) + periodTeamTot(1 - I, 3, 6) + periodTeamTot(1 - I, 4, 6)
             teamRecords!(109, 1) = 2
-            teamRecords!(109, 2) = QR(I, 3, 6) + QR(I, 4, 6)
+            teamRecords!(109, 2) = periodTeamTot(I, 3, 6) + periodTeamTot(I, 4, 6)
             teamRecDesc$(109, 0) = gameTeams$(I)
             teamRecDesc$(109, 1) = VERSUS$(I)
             teamRecDesc$(109, 2) = gameTeams$(1 - I)
@@ -15465,8 +15684,8 @@ Sub CheckRecords ()
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 6) > teamRecords!(110, 0) Then
-                teamRecords!(110, 0) = QR(I, I2, 6)
+            If periodTeamTot(I, I2, 6) > teamRecords!(110, 0) Then
+                teamRecords!(110, 0) = periodTeamTot(I, I2, 6)
                 teamRecords!(110, 1) = I2
                 teamRecords!(110, 2) = 0
                 teamRecDesc$(110, 0) = gameTeams$(I)
@@ -15475,10 +15694,10 @@ Sub CheckRecords ()
                 teamRecDesc$(110, 3) = Date$
             End If
 
-            If QR(I, I2, 6) + QR(1 - I, I2, 6) > teamRecords!(111, 0) Then
-                teamRecords!(111, 0) = QR(I, I2, 6) + QR(1 - I, I2, 6)
+            If periodTeamTot(I, I2, 6) + periodTeamTot(1 - I, I2, 6) > teamRecords!(111, 0) Then
+                teamRecords!(111, 0) = periodTeamTot(I, I2, 6) + periodTeamTot(1 - I, I2, 6)
                 teamRecords!(111, 1) = I2
-                teamRecords!(111, 2) = QR(I, I2, 6)
+                teamRecords!(111, 2) = periodTeamTot(I, I2, 6)
                 teamRecDesc$(111, 0) = gameTeams$(I)
                 teamRecDesc$(111, 1) = VERSUS$(I)
                 teamRecDesc$(111, 2) = gameTeams$(1 - I)
@@ -15507,8 +15726,8 @@ Sub CheckRecords ()
             teamRecDesc$(114, 3) = Date$
         End If
 
-        If QR(I, 1, 9) + QR(I, 2, 9) > teamRecords!(116, 0) Then
-            teamRecords!(116, 0) = QR(I, 1, 9) + QR(I, 2, 9)
+        If periodTeamTot(I, 1, 9) + periodTeamTot(I, 2, 9) > teamRecords!(116, 0) Then
+            teamRecords!(116, 0) = periodTeamTot(I, 1, 9) + periodTeamTot(I, 2, 9)
             teamRecords!(116, 1) = 1
             teamRecords!(116, 2) = 0
             teamRecDesc$(116, 0) = gameTeams$(I)
@@ -15517,8 +15736,8 @@ Sub CheckRecords ()
             teamRecDesc$(116, 3) = Date$
         End If
 
-        If QR(I, 3, 9) + QR(I, 4, 9) > teamRecords!(116, 0) Then
-            teamRecords!(116, 0) = QR(I, 3, 9) + QR(I, 4, 9)
+        If periodTeamTot(I, 3, 9) + periodTeamTot(I, 4, 9) > teamRecords!(116, 0) Then
+            teamRecords!(116, 0) = periodTeamTot(I, 3, 9) + periodTeamTot(I, 4, 9)
             teamRecords!(116, 1) = 2
             teamRecords!(116, 2) = 0
             teamRecDesc$(116, 0) = gameTeams$(I)
@@ -15528,8 +15747,8 @@ Sub CheckRecords ()
         End If
 
         For I2 = 1 To 4
-            If QR(I, I2, 9) > teamRecords!(117, 0) Then
-                teamRecords!(117, 0) = QR(I, I2, 9)
+            If periodTeamTot(I, I2, 9) > teamRecords!(117, 0) Then
+                teamRecords!(117, 0) = periodTeamTot(I, I2, 9)
                 teamRecords!(117, 1) = I2
                 teamRecords!(117, 2) = 0
                 teamRecDesc$(117, 0) = gameTeams$(I)
@@ -15671,6 +15890,11 @@ Function foulDanger% (teamIdx, playerIdx)
 
     playerFouls = gameRatings!(teamIdx, playerIdx, 12)
 
+    '1st quarter, 2 fouls
+    '2nd quarter, 4 fouls
+    '3rd quarter, 5 fouls
+    '4th quarter, 5 fouls
+    'Last 5 mins = don't sub!!!
     If playerFouls >= FOULS_TO_DQ Or _ 
         (quarter = 1 And playerFouls >= FOULS_TO_DQ - 4) Or _ 
         (quarter = 2 And playerFouls >= FOULS_TO_DQ - 2) Or _ 
@@ -15683,6 +15907,57 @@ Function foulDanger% (teamIdx, playerIdx)
 
         foulDanger% = 0
 
+    End If
+
+End Function
+
+
+'----------------------------------------
+'          foulTrouble% Function
+'----------------------------------------
+'This function will let you know if the
+'target player is getting fouls at a rate
+'that is troublesome. These players will
+'be suggested for "Playing Safe" defense.
+Function foulTrouble% (teamIdx, playerIdx)
+
+    playerFouls = gameRatings!(teamIdx, playerIdx, 12)
+
+    '1st quarter, 2 fouls
+    '2nd quarter, 3 fouls
+    '3rd quarter, 4 fouls
+    '4th quarter, 5 fouls
+    'Last 5 mins = don't sub!!!
+    If playerFouls >= FOULS_TO_DQ Or _
+        (quarter = 1 And playerFouls >= FOULS_TO_DQ - 4) Or _
+        (quarter = 2 And playerFouls >= FOULS_TO_DQ - 3) Or _
+        (quarter >= 3 And playerFouls >= FOULS_TO_DQ - 2) Then
+
+        foulTrouble% = 1
+
+    Else
+
+        foulTrouble% = 0
+
+    End If
+
+End Function
+
+
+'----------------------------------------
+'        GetTeamLeague$ Function
+'----------------------------------------
+'This function attempts to determine if
+'the team has been loaded from a disk of
+'ABA teams or not. This helps later to
+'determine how to index league averages
+'for seasons.
+Function GetTeamLeague$ (diskID$)
+
+    If Right$(diskID$, 1) = "A" Or Left$(diskID$, 1) = "A" Then
+        GetTeamLeague$ = "ABA"
+    Else
+        GetTeamLeague$ = "NBA"
     End If
 
 End Function
