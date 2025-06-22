@@ -35,9 +35,6 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-Dim Shared leagRat_GAME(1, 6), lineupIdx(0 To 1, 0 To 4)
-Dim Shared gameRatings!(0 To 1, 0 To 14, 0 To 25), rebAdj!(1)
-
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -4487,8 +4484,6 @@ Sub TimeoutCalled (chargeTeam)
         Call SELECTPBP(chargeTeam, 1)
         Call DELAY
 
-        Call STOPPAGE(takeTO)
-
     End If
 
 End Sub
@@ -7080,7 +7075,6 @@ Sub ChooseLineup ()
                                 Locate 25, 30
                                 Print players_GAME$(P9, lineupIdx(P9, I2), 0); " IS ALREADY IN THE LINEUP!"
                                 posn = -1
-                                'lineupIdx(P9, I2) = -1
                                 Exit For
                             End If
                         Next I2
@@ -8089,20 +8083,12 @@ Sub DEADBALLOPTIONS (userTakeTO)
 
                     Case 1
                         'Timeouts - Offense
-                        If timeouts(P) > 0 Then
-                            userTakeTO = 1
-                            timeouts(P) = timeouts(P) - 1
-                            Call SCOREBOARD
-                        End If
+                        Call TimeoutCalled(P)
 
                     Case 2
                         'Timeouts - Defense
-                        If timeouts(D) > 0 Then
-                            userTakeTO = 1
-                            timeouts(D) = timeouts(D) - 1
-                            Call SCOREBOARD
-                        End If
-
+                        Call TimeoutCalled(D)
+ 
                     Case 3
                         'Strategy - Offense
                         P9 = P

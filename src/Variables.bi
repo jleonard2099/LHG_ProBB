@@ -263,7 +263,7 @@ Dim Shared d3FG_Pct_Adj(1), dFG_Pct_Adj(1)
 Dim Shared defStyles(1), fullCtOpt(0 To 1)
 
 Dim Shared gameStat3FGM(1, 14), gameStat3FGA(1, 14)
-'Dim Shared leagRat_GAME(1, 6), lineupIdx(0 To 1, 0 To 4)
+Dim Shared leagRat_GAME(1, 6), lineupIdx(0 To 1, 0 To 4)
 Dim Shared mandatoryTO(0 To 1), miscAdj(1, 4), offStyles(1)
 Dim Shared pbpFG(1 To MAX_PBP_LINES), pbpBG(1 To MAX_PBP_LINES)
 Dim Shared penetrationDefAdj(2, 9), penetrationOffAdj(2)
