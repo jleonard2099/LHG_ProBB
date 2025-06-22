@@ -791,9 +791,11 @@ Sub PROHOOP ()
 
     _Title "Basketball: The Pro Game v" + GAME_VERSION$ + " - HOOPS!"
 
+    Dim invalid3FG
     Dim playChoice, pbpType
     Dim threePtShotChance
-    Dim invalid3FG
+
+    Shared threePtRange
 
     Shared actualAttendance&
     Shared avgAttendance&()
@@ -1940,6 +1942,8 @@ Sub PROHOOP ()
     ' ***BAD SHOT ***
 
     437 '
+    threePtRange = 0
+
     assistShotBoost = 0
     shotType = 1
     offStatus = 0
@@ -2054,7 +2058,6 @@ Sub PROHOOP ()
             'A 3-pointer wasn't chosen but we're in tight circumstances
             '...behind with 30 secs left and our ball carrier has shot 3FGA
             If quarter >= 4 And gameClock! < 30 And score(D, 0) - score(P, 0) >= 3 And gameRatings!(P, lineupIdx(P, ballCarrier), 19) >= 3 Then
-
                 shotType = 4
                 offStatus = 0
                 GoTo 520
@@ -2228,6 +2231,9 @@ Sub PROHOOP ()
     '----- NOODLE -----
 
     520 '
+    If threePtRange = 1 Then
+        shotType = 4
+    End If
 
     Call LastShot
 
@@ -2738,6 +2744,12 @@ Sub PROHOOP ()
     End If
 
     ' *** Decide if 3FGA ***
+    If threePtRange = 1 Then
+        If (playerMode = 1 And P = compTeam) Or (playerMode = 2) Then
+            playChoice = 4
+        End If
+    End If
+
     scoreDiff = score(D, 0) - score(P, 0)
 
     'Try for 3 near end of game when down by 3
@@ -3268,7 +3280,9 @@ Sub PROHOOP ()
         Case 5
             ' *** 3FG ATTEMPT ***
             359 '
-            Call Rolld100(shotRoll)
+            'Assign 0 now so that it won't 
+            'be considered after the shot
+            threePtRange = 0
 
             'Increase 3FGA
             threeFG(P, lineupIdx(P, ballCarrier), 1) = threeFG(P, lineupIdx(P, ballCarrier), 1) + 1
@@ -3280,6 +3294,7 @@ Sub PROHOOP ()
             Call MAKEPBP(pbpType)
             Call PBP(P)
 
+            Call Rolld100(shotRoll)
             Call Rolld100(foulChance)
 
             'Essentialy a 4% chance of being fouled on 3-pointer
@@ -11193,6 +11208,8 @@ End Sub
 'defense / offense / players.
 Sub SHOTPERCENT (useAssist)
 
+    Shared threePtRange
+
     shotChance = gameRatings!(P, lineupIdx(P, ballCarrier), 0) + dFG_Pct_Adj(D)
 
     'Shift shot chance towards team with homefield advantage
@@ -11281,6 +11298,9 @@ Sub SHOTPERCENT (useAssist)
         If Not (quarter > 4 Or quarter = 4 And gameClock! <= 120) Then
             If playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0 Then
                 shotChance = shotChance * .6
+                threePtRange = 0
+            Else
+                threePtRange = 1
             End If
         End If
 
