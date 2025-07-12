@@ -969,7 +969,7 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
         Locate 10: Input "7. HOME LOSSES "; teamRatings(2)
         Locate 10, 16: Print " "
         Locate 11: Input "8. ROAD WINS "; teamRatings(3)
-        Locate 11,14 : Print " "
+        Locate 11, 14: Print " "
         Locate 12: Input "9. ROAD LOSSES "; teamRatings(4)
         Locate 12, 16: Print " "
 
@@ -1483,6 +1483,9 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
         Color 15
 
         Do
+
+            Locate 4, 1
+            Print Space$(40)
 
             For I = 0 To 14:
                 Locate 4 + I, 1
