@@ -276,7 +276,7 @@ Dim Shared score(1, 14), scSettings(0 To 2), statTotals(14)
 Dim Shared teamAdj(1, 9), teamFouls(1)
 Dim Shared teamRat_GAME(0 To 1, 0 To 34), teamYears(1)
 Dim Shared threeFG(1, 14, 1), timeouts(1), timePlayed(2, 14)
-Dim Shared totalFouls(1), totRebounds(1), turnoverAdj(0 To 32), turnovers(1)
+Dim Shared totalFouls(1), teamRebounds(1), turnoverAdj(0 To 32), turnovers(1)
 Dim Shared teamRecWins(1), teamRecLoss(1)
 
 Dim Shared defStealAdj!(1 To 9), gameRatings!(0 To 1, 0 To 14, 0 To 25), offStealAdj!(0 To 8), rebAdj!(1)
