@@ -399,7 +399,7 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
 
         Locate 6, 1
         Print "NAME"; Tab(15);
-        Print " G  MIN AVG   FGM  FGA  PCT  3FGM 3FGA  PCT   FTM  FTA  PCT"
+        Print " G  MIN  AVG  FGM  FGA  PCT  3FGM 3FGA  PCT   FTM  FTA  PCT"
 
         For I = 0 To 14
 
@@ -417,7 +417,8 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
                 'Minutes
                 If statPlyrVal!(I, 10) > 0 Then
                     Locate , 18: Print Using "####"; Int((statPlyrVal!(I, 10) + 30) / 60);
-                    Locate , 24: Print Using "##"; CInt(((statPlyrVal!(I, 10) / 60) / statPlyrVal!(I, 0)));
+                    Locate , 24: Print Using "##.#"; (statPlyrVal!(I, 10) / 60) / statPlyrVal!(I, 0);
+                    'Locate , 24: Print Using "##"; CInt(((statPlyrVal!(I, 10) / 60) / statPlyrVal!(I, 0)));
                 End If
 
                 'FGM, FGA
@@ -686,7 +687,7 @@ Sub ViewDefenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
 
         Print Space$(29); "OFF  DEF  TOT"
         Print "NAME"; Tab(15);
-        Print " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
+        Print " PTS   AVG  HI REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
 
         For I = 0 To 14
 
@@ -705,7 +706,7 @@ Sub ViewDefenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
                 If statPlyrVal!(I, 0) > 0 Then Locate , 21: Print Using "##.#"; (statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + stats3FGM!(I)) / statPlyrVal!(I, 0);
 
                 'Highest Points, Rebounds
-                Locate , 26: Print Using "## #### #### ####"; statPlyrVal!(I, 13); statPlyrVal!(I, 12); statPlyrVal!(I, 5) - statPlyrVal!(I, 12); statPlyrVal!(I, 5);
+                Locate , 27: Print Using "## ### #### ####"; statPlyrVal!(I, 13); statPlyrVal!(I, 12); statPlyrVal!(I, 5) - statPlyrVal!(I, 12); statPlyrVal!(I, 5);
 
                 'Average
                 If statPlyrVal!(I, 0) > 0 Then Locate , 45: Print Using "##.#"; statPlyrVal!(I, 5) / statPlyrVal!(I, 0);
@@ -717,7 +718,7 @@ Sub ViewDefenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
 
         Next I
 
-        'Print "TEAM";: Locate , 39: Print Using "####"; statsOffTot!(15)
+        Print "TEAM";: Locate , 39: Print Using "####"; statsOffTot!(15)
 
         ' *** Team ***
         Color 12

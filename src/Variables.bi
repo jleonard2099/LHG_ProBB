@@ -51,7 +51,7 @@ Dim gameSite_Road$(MAX_SCHED_STATS), locIndicator_Road$(MAX_SCHED_STATS), oppNam
 ' -------------------------
 Dim BS%, NS%
 
-ReDim scheduleAP%(MAX_SCHEDULE_GAMES), scheduleNG%(MAX_SCHEDULE_GAMES, 21)
+ReDim scheduleAP%(MAX_SCHEDULE_GAMES), scheduleNG%(MAX_SCHEDULE_GAMES, 22)
 ReDim homeScores(MAX_SCHEDULE_GAMES), visitorScores(MAX_SCHEDULE_GAMES)
 
 ReDim scheduleH$(MAX_SCHEDULE_GAMES), scheduleV$(MAX_SCHEDULE_GAMES)
@@ -241,15 +241,16 @@ Dim Shared C1, D, MJ, P, P9
 Dim Shared assistShotBoost, autoPlay, ballCarrier, bonusFoulNum
 Dim Shared coachOpt, compTeam, currGame, defPress
 Dim Shared gameOver, earlyExit, endAllGames, eraAdj, eraChoice
-Dim Shared fastBreak, forcedThree, foulPlayer
+Dim Shared ft3PtFoul, fastBreak, forcedThree, foulPlayer
 Dim Shared freeThrowVal, ftRulesOpt, fullCtOpt
-Dim Shared gameLoc
+Dim Shared gameLoc, goaltendTOs
 Dim Shared halfTime, maxTimeouts, nbrLines, offStatus
 Dim Shared passes, periodEnd, playerMode, playerOpt, playoffOpt, pbpOpt
 Dim Shared quarter, quarterOpt
 Dim Shared rebFoulChance, ruleOptType
 Dim Shared sClockVal, shotChance, shotClock, shotPctOpt, shotType, sndOpt
 Dim Shared threePtOpt, threePtRange, tickerGames, timeoutOpt, twoTimeouts, willDunk
+
 
 Dim Shared MINS_PER_GAME
 
@@ -275,11 +276,13 @@ Dim Shared schedGame(2), schedOptions(21)
 Dim Shared score(1, 14), scSettings(0 To 2), statTotals(14)
 Dim Shared teamAdj(1, 9), teamFouls(1)
 Dim Shared teamRat_GAME(0 To 1, 0 To 34), teamYears(1)
-Dim Shared threeFG(1, 14, 1), timeouts(1), timePlayed(2, 14)
+Dim Shared threeFG(1, 14, 1), timeouts(1), timePlayed(2, 0 To 14)
 Dim Shared totalFouls(1), teamRebounds(1), turnoverAdj(0 To 32), turnovers(1)
 Dim Shared teamRecWins(1), teamRecLoss(1)
 
-Dim Shared defStealAdj!(1 To 9), gameRatings!(0 To 1, 0 To 14, 0 To 25), offStealAdj!(0 To 8), rebAdj!(1)
+Dim Shared defStealAdj!(1 To 9), gameRatings!(0 To 1, 0 To 14, 0 To 25)
+Dim Shared offRebPct!(0 To 1), offStealAdj!(0 To 8), rebAdj!(1)
+
 Dim game3FGM!(1, 14), game3FGA!(1, 14)
 
 Dim Shared defStyleDesc$(9), diskIDs$(0 To 1)
