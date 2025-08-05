@@ -17364,10 +17364,6 @@ Function playerSubValue% (teamIdx, playerIdx)
     ' Penalty for players over average mins FOR THE GAME
     currentMins = timePlayed(teamIdx, playerIdx) / 60
 
-    If currentMins = 0 Then
-        Print #11, playerName$; "; baseCX = "; baseCX
-    End If
-
     If currentMins > expectedMins Then
 
         timeDiff = currentMins - expectedMins
