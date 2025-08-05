@@ -159,13 +159,11 @@ For I = 1 To DRAFT_NBR_YEARS
     Next
 Next
 
-
 'Defaults for Event Settings
 Data 5,250,120,135,60,30,12,9,6,5,6,0,0
 For X = 1 To 13:
     Read eventSettings(X)
 Next
-
 
 Data NAME,G,MIN,MIN/G,FGM,FGA,FG PCT,3FGM,3FGA,3FG PCT,FTM,FTA,FT PCT
 Data NAME,PTS,PTG/G,HI,OFF REB,DEF REB,TOT REB,REB/G,PF,AST,BLK,STL,TO
@@ -218,13 +216,11 @@ For I = 0 To 32
     Read perFoulAdj(I)
 Next
 
-
 'For I = 0 To 2
 Data -2,1,-2.5,-2.5,3,0,-2,-3.5,0
 For I = 0 To 8
     Read penetrationOffAdj!(I)
 Next
-
 
 'Data -3,0,-5,-3,1,5,1,-5,-3
 Data -5,0,-7,-5,2,6,2,-7,-5
@@ -232,13 +228,11 @@ For I = 0 To 8
     Read offStealAdj!(I)
 Next
 
-
 'Data 24,8,40,24,8,24,45,16,28
 Data 17,6,28,17,6,17,32,11,20
 For I = 1 To 9
     Read defStealAdj!(I)
 Next
-
 
 Data "REGULAR MAN-TO-MAN              "
 Data "SAGGING MAN-TO-MAN (PACKLINE)   "
@@ -275,7 +269,6 @@ Data "ISOLATION                       "
 For I = 0 To 8:
     Read offStylesNew$(I)
 Next
-
 
 'This is used to adjust the chance
 'for a shot based on the defender's
@@ -10044,9 +10037,17 @@ Sub SETUPRATINGS (teamStyle)
     Erase rebAdj!
 
     For I = 0 To 1:
+
+        test1$ = gameTeams$(I)
+
         For I1 = 0 To 14
+
+            test1 = plyrRat_GAME(I, I1, 18)
+            test2$ = players_GAME$(I, I1, 0)
+
             If playerActive%(I, I1) = 1 Then
                 'ADD Player FGA + Player Off Reb + Player Def Reb + Player Fouls / Player Minutes
+                test2 = plyrRat_GAME(I, I1, 0)
                 rebAdj!(I) = rebAdj!(I) + Int((plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 6) + plyrRat_GAME(I, I1, 7) + plyrRat_GAME(I, I1, 9)) / plyrRat_GAME(I, I1, 0) + .5)
             End If
         Next I1
@@ -11592,7 +11593,7 @@ End Sub
 'another routine to decide on strategies
 Sub ComputerCoach ()
 
-    Dim relaxedPos$(0 To 8), targetPos$(0 To 8)
+    ReDim relaxedPos$(0 To 8), targetPos$(0 To 8)
     Dim usedPlayer(15) As Integer
     Dim bestCX, bestPlayer
 
@@ -11607,6 +11608,7 @@ Sub ComputerCoach ()
         bestCX = -999
         bestPlayer = -1
 
+        ReDim targetPos$(0 To 7)
         targetPos$(0) = "G"
         targetPos$(1) = "GC"
         targetPos$(2) = "CG"
@@ -11615,7 +11617,6 @@ Sub ComputerCoach ()
         targetPos$(5) = "CF"
         targetPos$(6) = "F"
         targetPos$(7) = "C"
-        targetPos$(8) = ""
 
         '--- First pass target positions ---
         For I1 = 0 To 14
@@ -11646,14 +11647,7 @@ Sub ComputerCoach ()
                     If alreadyAssigned = 0 Then
 
                         'Player's contribution
-                        CX = playerSubValue%(P9, I1)
-
-                        'Penalty for being emergency slot
-                        If Pos$ = "CG" Then CX = CX - 4
-                        If Pos$ = "GF" Then CX = CX - 4
-                        If Pos$ = "C" Then CX = CX - 17
-                        If Pos$ = "F" Then CX = CX - 17
-                        If Pos$ = "CF" Or Pos$ = "FC" Then CX = CX - 5
+                        CX = playerSubValue%(P9, I1) - PositionPenalty%(Pos$, slotIdx)
 
                         If CX > bestCX Then
                             bestCX = CX
@@ -11669,6 +11663,7 @@ Sub ComputerCoach ()
         Next I1
 
         '--- RelaxedSearch target positions (with penalty) ---
+        ReDim relaxedPos$(0 To 7)
         relaxedPos$(0) = "GC"
         relaxedPos$(1) = "CG"
         relaxedPos$(2) = "GF"
@@ -11677,7 +11672,6 @@ Sub ComputerCoach ()
         relaxedPos$(5) = "CF"
         relaxedPos$(6) = "F"
         relaxedPos$(7) = "C"
-        relaxedPos$(8) = ""
 
         If bestPlayer = -1 Then
 
@@ -11709,14 +11703,7 @@ Sub ComputerCoach ()
                         If alreadyAssigned = 0 Then
 
                             'Player's contribution
-                            CX = playerSubValue%(P9, I1)
-
-                            'Penalty for being relaxed slot
-                            If Pos$ = "CG" Then CX = CX - 4
-                            If Pos$ = "GF" Then CX = CX - 4
-                            If Pos$ = "C" Then CX = CX - 17
-                            If Pos$ = "F" Then CX = CX - 17
-                            If Pos$ = "CF" Or Pos$ = "FC" Then CX = CX - 5
+                            CX = playerSubValue%(P9, I1) - PositionPenalty%(Pos$, slotIdx)
 
                             If CX > bestCX Then
                                 bestCX = CX
@@ -11740,7 +11727,8 @@ Sub ComputerCoach ()
 
     Next slotIdx
 
-    'Print #11,"Finished assigning guards"
+    Call TryBlankPositionFallback(slotIdx, bestPlayer, bestCX)
+
 
     'Fill in next 2 positions as Forwards
     For slotIdx = 2 To 3
@@ -11748,6 +11736,7 @@ Sub ComputerCoach ()
         bestCX = -999
         bestPlayer = -1
 
+        ReDim targetPos$(0 To 6)
         targetPos$(0) = "F"
         targetPos$(1) = "FG"
         targetPos$(2) = "FC"
@@ -11755,8 +11744,6 @@ Sub ComputerCoach ()
         targetPos$(4) = "GF"
         targetPos$(5) = "C"
         targetPos$(6) = "G"
-        targetPos$(7) = ""
-        targetPos$(8) = ""
 
         '--- First pass target positions ---
         For I1 = 0 To 14
@@ -11787,14 +11774,7 @@ Sub ComputerCoach ()
                     If alreadyAssigned = 0 Then
 
                         'Player's contribution
-                        CX = playerSubValue%(P9, I1)
-
-                        'Penalty for being emergency slot
-                        If Pos$ = "GF" Then CX = CX - 8
-                        If Pos$ = "CF" Or Pos$ = "FC" Then CX = CX - 6
-                        If Pos$ = "C" Then CX = CX - 16
-                        'If Pos$ = "G" Then CX = CX - 6
-                        If Pos$ = "G" Then CX = CX - 10
+                        CX = playerSubValue%(P9, I1) - PositionPenalty%(Pos$, slotIdx)
 
                         If CX > bestCX Then
                             bestCX = CX
@@ -11810,6 +11790,7 @@ Sub ComputerCoach ()
         Next
 
         '--- RelaxedSearch target positions (with penalty) ---
+        ReDim relaxedPos$(0 To 6)
         relaxedPos$(0) = "F"
         relaxedPos$(1) = "FC"
         relaxedPos$(2) = "CF"
@@ -11817,8 +11798,6 @@ Sub ComputerCoach ()
         relaxedPos$(4) = "GF"
         relaxedPos$(5) = "C"
         relaxedPos$(6) = "G"
-        relaxedPos$(7) = ""
-        relaxedPos$(8) = ""
 
         If bestPlayer = -1 Then
 
@@ -11850,14 +11829,7 @@ Sub ComputerCoach ()
                         If alreadyAssigned = 0 Then
 
                             'Player's contribution
-                            CX = playerSubValue%(P9, I1)
-
-                            'Penalty for being relaxed slot
-                            If Pos$ = "GF" Then CX = CX - 8
-                            If Pos$ = "CF" Or Pos$ = "FC" Then CX = CX - 6
-                            If Pos$ = "C" Then CX = CX - 16
-                            'If Pos$ = "G" Then CX = CX - 6
-                            If Pos$ = "G" Then CX = CX - 10
+                            CX = playerSubValue%(P9, I1) - PositionPenalty%(Pos$, slotIdx)
 
                             If CX > bestCX Then
                                 bestCX = CX
@@ -11881,7 +11853,8 @@ Sub ComputerCoach ()
 
     Next slotIdx
 
-    'Print #11,"Finished assigning forwards"
+    Call TryBlankPositionFallback(slotIdx, bestPlayer, bestCX)
+
 
     'Fill in last position as CENTER
     slotIdx = 4
@@ -11889,6 +11862,7 @@ Sub ComputerCoach ()
     bestCX = -999
     bestPlayer = -1
 
+    ReDim targetPos$(0 To 8)
     targetPos$(0) = "C"
     targetPos$(1) = "FC"
     targetPos$(2) = "CF"
@@ -11928,16 +11902,7 @@ Sub ComputerCoach ()
                 If alreadyAssigned = 0 Then
 
                     'Player's contribution
-                    CX = playerSubValue%(P9, I1)
-
-                    'Penalty for being emergency slot
-                    'If Pos$ = "CG" Then CX = CX - 0
-                    'If Pos$ = "CF" Or Pos$ = "FC" Then CX = CX - 0
-                    'If Pos$ = "F" Then CX = CX - 24
-                    If Pos$ = "F" Then CX = CX - 30
-                    If Pos$ = "GC" Then CX = CX - 24
-                    If Pos$ = "GF" Then CX = CX - 30
-                    If Pos$ = "G" Then CX = CX - 40
+                    CX = playerSubValue%(P9, I1) - PositionPenalty%(Pos$, slotIdx)
 
                     If CX > bestCX Then
 
@@ -11953,6 +11918,7 @@ Sub ComputerCoach ()
     Next
 
     '--- RelaxedSearch target positions (with penalty) ---
+    ReDim relaxedPos$(0 To 6)
     relaxedPos$(0) = "C"
     relaxedPos$(1) = "CG"
     relaxedPos$(2) = "FC"
@@ -11960,8 +11926,6 @@ Sub ComputerCoach ()
     relaxedPos$(4) = "F"
     relaxedPos$(5) = "GF"
     relaxedPos$(6) = "FG"
-    relaxedPos$(7) = ""
-    relaxedPos$(8) = ""
 
     If bestPlayer = -1 Then
 
@@ -11993,16 +11957,7 @@ Sub ComputerCoach ()
                     If alreadyAssigned = 0 Then
 
                         'Player's contribution
-                        CX = playerSubValue%(P9, I1)
-
-                        'Penalty for being relaxed slot
-                        'If Pos$ = "CG" Then CX = CX - 0
-                        'If Pos$ = "CF" Or Pos$ = "FC" Then CX = CX - 0
-                        'If Pos$ = "F" Then CX = CX - 24
-                        If Pos$ = "F" Then CX = CX - 30
-                        If Pos$ = "GC" Then CX = CX - 24
-                        If Pos$ = "GF" Then CX = CX - 30
-                        If Pos$ = "G" Then CX = CX - 40
+                        CX = playerSubValue%(P9, I1) - PositionPenalty%(Pos$, slotIdx)
 
                         If CX > bestCX Then
                             bestCX = CX
@@ -12018,6 +11973,8 @@ Sub ComputerCoach ()
         Next
 
     End If
+
+    Call TryBlankPositionFallback(slotIdx, bestPlayer, bestCX)
 
 
     '--- Assign best player to lineup slot ---
@@ -12084,6 +12041,56 @@ Sub ComputerCoach ()
 
 End Sub
 
+
+'----------------------------------------
+'   TryBlankPositionFallback Subroutine
+'----------------------------------------
+Sub TryBlankPositionFallback (slotIdx%, bestPlayer%, bestCX!)
+
+    For I1 = 0 To 14
+
+        alreadyAssigned = 0
+
+        If playerActive%(P9, I1) = 1 Then
+
+            If players_GAME$(P9, I1, 1) = "" Then
+
+                ' Skip already used players
+                For X = 0 To 4
+                    If I1 = lineupIdx(P9, X) Then
+                        alreadyAssigned = 1
+                        Exit For
+                    End If
+                Next X
+
+                If alreadyAssigned = 0 Then
+
+                    CX = playerSubValue%(P9, I1)
+
+                    ' Apply slot-specific penalty for missing position
+                    Select Case slotIdx%
+                        Case 0, 1 ' Guards
+                            CX = CX - 16
+                        Case 2, 3 ' Forwards
+                            CX = CX - 20
+                        Case 4 ' Center
+                            CX = CX - 28
+                    End Select
+
+                    If CX > bestCX! Then
+                        bestCX! = CX
+                        bestPlayer% = I1
+                    End If
+
+                End If
+
+            End If
+
+        End If
+
+    Next I1
+
+End Sub
 
 '----------------------------------------
 '     ComputerCoach_Legacy Subroutine
@@ -12363,7 +12370,6 @@ Sub DisplayRoster ()
 
             'Contribution
             L = 0
-            'Why are FOULS added???
             L = gameRatings!(P9, R1, 7) + gameRatings!(P9, R1, 11) + gameRatings!(P9, R1, 12)
             Print Using "### "; gameRatings!(P9, R1, 3) - L;
 
@@ -17018,6 +17024,11 @@ End Sub
 '----------------------------------------
 '   ExceededTimeContribution% Function
 '----------------------------------------
+'This function determines if a player has
+'contributed more time than average, based
+'on their per game minutes contributions
+'and what they should be at that time
+'in the game.
 Function ExceededTimeContribution% (teamIdx, playerIdx)
 
     'Player's target is their MIN/GAME
@@ -17247,13 +17258,37 @@ End Function
 '----------------------------------------
 Function playerActive% (teamIdx, playerIdx)
 
-    If plyrRat_GAME(teamIdx, playerIdx, 18) = -1 Then
-        'This should be -1
+    If plyrRat_GAME(teamIdx, playerIdx, 18) <> 0 Then
+        'This should be -1, but will be 1
+        'with a new lineup
         playerActive% = 0
     Else
         'This should only be 0 value
         playerActive% = 1
     End If
+
+End Function
+
+
+'----------------------------------------
+'       PlayerPrevAssigned% Function
+'----------------------------------------
+'This function determines if a player
+'being evaluated for lineup has already
+'been assigned to a slot
+Function PlayerPrevAssigned% (I1%)
+
+    found% = 0
+    X% = 0
+
+    Do Until X% > 4 Or found%
+        If I1 = lineupIdx(P9, X%) Then
+            found% = -1
+        End If
+        X% = X% + 1
+    Loop
+
+    PlayerPrevAssigned% = found%
 
 End Function
 
@@ -17292,17 +17327,29 @@ Function playerSubValue% (teamIdx, playerIdx)
     If playerPos$ = "SG" Or playerPos$ = "PG" Then playerPos$ = "G"
 
     'Player's contribution
-    baseCX = gameRatings!(teamIdx, playerIdx, 3)
     offRebRating = gameRatings!(teamIdx, playerIdx, 21)
     defRebRating = gameRatings!(teamIdx, playerIdx, 2)
 
     usedStamina = gameRatings!(teamIdx, playerIdx, 7) + gameRatings!(teamIdx, playerIdx, 11) + gameRatings!(teamIdx, playerIdx, 12)
+
+    expectedMins = plyrRat_GAME(teamIdx, playerIdx, 1) / plyrRat_GAME(teamIdx, playerIdx, 0)
 
     ' Scale ORB% by stamina percentage
     rebBonus = (defRebRating * usedStamina) \ 100
 
     'Cap so that player with higher values don't dominate
     If rebBonus > 3 Then rebBonus = 3
+
+    If timePlayed(teamIdx, playerIdx) = 0 Then
+        'Starting lineup - CX needs a positive value
+        'This basically starts players primarily based
+        'on their season time contributions
+        baseCX = Int(expectedMins / 2)
+    Else
+        'During gameplay, this will increase as players
+        'are in the game longer
+        baseCX = gameRatings!(teamIdx, playerIdx, 3)
+    End If
 
     totalCX = baseCX + rebBonus
 
@@ -17315,8 +17362,11 @@ Function playerSubValue% (teamIdx, playerIdx)
     End If
 
     ' Penalty for players over average mins FOR THE GAME
-    expectedMins = plyrRat_GAME(teamIdx, playerIdx, 1) / plyrRat_GAME(teamIdx, playerIdx, 0)
     currentMins = timePlayed(teamIdx, playerIdx) / 60
+
+    If currentMins = 0 Then
+        Print #11, playerName$; "; baseCX = "; baseCX
+    End If
 
     If currentMins > expectedMins Then
 
@@ -17339,7 +17389,7 @@ Function playerSubValue% (teamIdx, playerIdx)
     'This would replace timeContribPenalty
     overusePenalty = 0
 
-    'Bonus for players who are being underitilized
+    'Bonus for players who are being underutilized
     deficit = expectedMins - currentMins
     If expectedMins > 30 Then
         'Star players don't get as large a bonus
@@ -17350,17 +17400,49 @@ Function playerSubValue% (teamIdx, playerIdx)
 
     finalCX = totalCX - staminaPenalty - timeContribPenalty - overusePenalty + deficitBonus
 
-    'Print #11, playerName$; _
-    '  " currMins:"; currentMins; _
-    '  " expMins:"; expectedMins; _
-    '  " usedStamina:"; usedStamina; _
-    '  " baseCX:"; baseCX; _
-    '  " rebBonus:"; rebBonus; _
-    '  " stamPen:"; staminaPenalty; _
-    '  " timePen:"; timeContribPenalty; _
-    '  " defBonus:"; deficitBonus; _
-    '  " finalCX:"; finalCX
-
     playerSubValue% = finalCX
 
 End Function
+
+
+'----------------------------------------
+'        PositionPenalty% Function
+'----------------------------------------
+'This routine applies penalties to each
+'position that is trying to flex into
+'slots they might not normally play.
+'This helps allow them still play, but
+'not overtake starters or better fits.
+Function PositionPenalty% (Pos$, slotIdx%)
+
+    Select Case slotIdx%
+
+        Case 0, 1 ' Guards
+            Select Case Pos$
+                Case "CG", "GF": penalty = 4
+                Case "C", "F": penalty = 17
+                Case "CF", "FC": penalty = 5
+            End Select
+
+        Case 2, 3 ' Forwards
+            Select Case Pos$
+                Case "GF": penalty = 8
+                Case "CF", "FC": penalty = 6
+                Case "C": penalty = 16
+                Case "G": penalty = 10
+            End Select
+
+        Case 4 ' Center
+            Select Case Pos$
+                Case "F": penalty = 30
+                Case "GC": penalty = 24
+                Case "GF": penalty = 30
+                Case "G": penalty = 40
+            End Select
+
+    End Select
+
+    PositionPenalty% = penalty
+
+End Function
+
