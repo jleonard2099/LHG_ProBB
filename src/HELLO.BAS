@@ -13129,46 +13129,43 @@ Sub EVENTS (specialCount, specialStat)
 
         checkSpecial% = 0
 
-        If quarter - 1 > eventSettings(1) Then
+        'Score / period / rebound conditions for special box score
+        If quarter - 1 > eventSettings(1) Or _ 
+            score(0, 0) > eventSettings(4) Or )
+            score(1, 0) > eventSettings(4) Or _ 
+            score(0, 0) + score(1, 0) > eventSettings(2) Or _
+            teamRebounds(0) > eventSettings(5) Or _ 
+            teamRebounds(1) > eventSettings(5) Or _
+            teamRebounds(0) + teamRebounds(1) > eventSettings(3) Then
+
             checkSpecial% = 1
-        Else
-            '--Combine into multiple Or
-            If score(1, 0) + score(0, 0) > eventSettings(2) Then
-                checkSpecial% = 1
-            Else
-                If teamRebounds(0) + teamRebounds(1) > eventSettings(3) Then
-                    checkSpecial% = 1
-                Else
-                    If score(1, 0) > eventSettings(4) Or score(0, 0) > eventSettings(4) Then
-                        checkSpecial% = 1
-                    Else
-                        If teamRebounds(1) > eventSettings(5) Or teamRebounds(0) > eventSettings(5) Then
-                            checkSpecial% = 1
-                        End If
-                    End If
-                End If
-            End If
+
         End If
 
+        'Still haven't found? Keep looking
         If checkSpecial% <> 1 Then
 
-            For I = 0 To 1
+            I = 0
+            Do While I <= 1 And checkSpecial% = 0
 
-                For I1 = 0 To 14
+                I1 = 0
+                Do While I1 <= 14 And checkSpecial% = 0
 
-                    If gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) > eventSettings(6) Then
+                    'Player stat conditions for special box score
+                    If gameRatings!(I, I1, 8) * 2 + gameRatings!(I, I1, 10) + threeFG(I, I1, 0) > eventSettings(6) Or _ 
+                        gameRatings!(I, I1, 11) > eventSettings(7) Or _ 
+                        gameRatings!(I, I1, 14) > eventSettings(8) Or _ 
+                        gameRatings!(I, I1, 15) > eventSettings(9) Or _ 
+                        gameRatings!(I, I1, 13) > eventSettings(10) Or _
+                        threeFG(I, I1, 0) > eventSettings(11) Then
                         checkSpecial% = 1
                     Else
-                        If gameRatings!(I, I1, 11) > eventSettings(7) Or gameRatings!(I, I1, 14) > eventSettings(8) Or gameRatings!(I, I1, 15) > eventSettings(9) Or gameRatings!(I, I1, 13) > eventSettings(10) Or threeFG(I, I1, 0) > eventSettings(11) Then
-                            checkSpecial% = 1
-                        End If
+                        I1 = I1 + 1
                     End If
 
-                    If checkSpecial% = 1 Then Exit For
+                Loop
 
-                Next
-
-            Next 'done checking if special event already found
+            Loop 'done checking if special event already found
 
         End If
 
