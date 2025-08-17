@@ -809,7 +809,7 @@ End Sub
 'disable, etc.
 Sub PROHOOP ()
 
-    _Title "Basketball: The Pro Game v" + GAME_VERSION$ + " - HOOPS!"
+    _Title "Basketball: The Pro Game v" + GAME_VERSION$ + " - LET'S HOOP!"
 
     Dim invalid3FG
     Dim playChoice, pbpType
@@ -14842,6 +14842,7 @@ Sub EndOfGame
 
     If UCase$(I$) = "Y" Or (autoPlay = 1 And endAllGames <> 1) Then
         Cls
+        Locate LAST_ROW / 2, 33
         Print "PLEASE WAIT ..."
     End If
 
