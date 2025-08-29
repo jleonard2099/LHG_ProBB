@@ -7524,7 +7524,7 @@ Sub DefPlaySafeNormal ()
         End If
 
         If safeStatus = 50 And skipHeader = 1 Then
-            Locate currIdx + 5, 1
+            'Locate currIdx + 5, 1
             Print currIdx; "- "; players_GAME$(P9, lineupIdx(P9, slot), 0)
             menuPos(safePlyrCnt) = currIdx
             playerPos(safePlyrCnt) = slot
@@ -7562,7 +7562,7 @@ Sub DefPlaySafeNormal ()
                     gameRatings!(P9, lineupIdx(P9, playerPos(safeIdx)), 17) = gameRatings!(P9, lineupIdx(P9, playerPos(safeIdx)), 17) * 3
                     gameRatings!(P9, lineupIdx(P9, playerPos(safeIdx)), 22) = 0
 
-                    Locate menuPos(safeIdx) + 5, 20
+                    Locate menuPos(safeIdx) + 3, 20
                     Print players_GAME$(P9, lineupIdx(P9, playerPos(safeIdx)), 0); " WILL NOW PLAY NORMAL DEFENSE!"
                     Call StealAdjustments
 
@@ -7580,6 +7580,7 @@ Sub DefPlaySafeNormal ()
     End If
 
     'Check for normal players to play safe
+
     If checkNormal = 1 Then
 
         dangerPlyrCnt = 0
@@ -7635,7 +7636,7 @@ Sub DefPlaySafeNormal ()
                         gameRatings!(P9, lineupIdx(P9, playerPos(normIdx)), 17) = Int((gameRatings!(P9, lineupIdx(P9, playerPos(normIdx)), 17) + 1) / 3)
                         gameRatings!(P9, lineupIdx(P9, playerPos(normIdx)), 22) = 50
 
-                        Locate menuPos(normIdx) + 5, 20
+                        Locate menuPos(normIdx) + 3, 20
                         Print players_GAME$(P9, lineupIdx(P9, playerPos(normIdx)), 0); " WILL NOW PLAY SAFE!"
                         Call StealAdjustments
 
@@ -13131,7 +13132,7 @@ Sub EVENTS (specialCount, specialStat)
 
         'Score / period / rebound conditions for special box score
         If quarter - 1 > eventSettings(1) Or _ 
-            score(0, 0) > eventSettings(4) Or )
+            score(0, 0) > eventSettings(4) Or _
             score(1, 0) > eventSettings(4) Or _ 
             score(0, 0) + score(1, 0) > eventSettings(2) Or _
             teamRebounds(0) > eventSettings(5) Or _ 
