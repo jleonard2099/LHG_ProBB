@@ -336,6 +336,7 @@ Sub NewSchedule (scheduleFile$)
                     Locate LAST_ROW - 3, 1: Print "ENTER GAME # TO GO TO        "
                     Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO GO TO "; targetGame%
                 Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
+
                 NS% = Int((targetGame% - 1) / SCHED_ENTRIES_PER_SCREEN)
 
                 'boxName$ = diskPaths$(1) + "BOX" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%)))
@@ -397,7 +398,9 @@ Sub NewSchedule (scheduleFile$)
 
                     Locate 8, 12: Print "TOTAL GAMES ="; scheduleAP%(0)
                     Locate 9, 12: Print "SELECT GAME # TO START AND END WITH": Print
-                    Locate 10, 12: Input "ENTER START GAME #: "; SG%: Print
+                    Locate 10, 33: Print Space$(10)
+                    Locate 10, 12: Input "ENTER START GAME #:"; SG%: Print
+                    Locate 11, 31: Print Space$(10)
                     Locate 11, 12: Input "ENTER END GAME #:"; EG%: Print
 
                     Do
@@ -1608,8 +1611,6 @@ Sub LoadScheduleInfo (targetFile$)
 
     Field #1, 44 As X$, 2 As Q$(25), 2 As Q$(26), 5 As Q$(23), 5 As Q$(24)
 
-    testVar = scheduleAP%(0)
-
     For I = 1 To scheduleAP%(0)
 
         Get #1, I
@@ -1624,6 +1625,12 @@ Sub LoadScheduleInfo (targetFile$)
 
         visitorScores(I) = CVI(Q$(25))
         homeScores(I) = CVI(Q$(26))
+
+        'Make sure "Yes"/"No" options
+        'have valid values
+        If scheduleNG%(I, 3) > 1 Then
+            scheduleNG%(I, 3) = 1
+        End If
 
     Next
 
