@@ -140,7 +140,7 @@ Sub CompileLeague ()
                             defTotals!(L) = statsDefTot!(L)
                         Next
 
-                        Call CalcStatTotalsPro(totalGames, TN$, finalUpdate$)
+                        Call CalcRecordsPro(totalGames, TN$, finalUpdate$)
                         Call CalcStatLeadersPro(totalGames, TN$)
 
                     End If
@@ -777,12 +777,12 @@ End Sub
 
 
 '----------------------------------------
-'     CalcStatTotalsPro Subroutine
+'     CalcRecordsPro Subroutine
 '----------------------------------------
 'This subroutine compares all pre-loaded
 'stats to each of the record categories to
 'see if any should be updated
-Sub CalcStatTotalsPro (totalGames, teamName$, finalUpdate$)
+Sub CalcRecordsPro (totalGames, teamName$, finalUpdate$)
 
     Shared defTotals!(), offTotals!()
     Shared plyrRecords!(), statPlyrVal!()

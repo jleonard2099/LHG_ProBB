@@ -703,7 +703,9 @@ Sub ViewDefenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
                 Print Using "####"; statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + stats3FGM!(I);
 
                 'Average
-                If statPlyrVal!(I, 0) > 0 Then Locate , 21: Print Using "##.#"; (statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + stats3FGM!(I)) / statPlyrVal!(I, 0);
+                If statPlyrVal!(I, 0) > 0 Then 
+                    Locate , 21: Print Using "##.#"; (statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + stats3FGM!(I)) / statPlyrVal!(I, 0);
+                End If
 
                 'Highest Points, Rebounds
                 Locate , 27: Print Using "## ### #### ####"; statPlyrVal!(I, 13); statPlyrVal!(I, 12); statPlyrVal!(I, 5) - statPlyrVal!(I, 12); statPlyrVal!(I, 5);
@@ -725,11 +727,19 @@ Sub ViewDefenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
         Print "TEAM TOTALS";
 
         'Points / Average
-        If totalGames > 0 Then ptsCalc! = statsOffTot!(10) / totalGames Else ptsCalc! = 0
+        If totalGames > 0 Then 
+            ptsCalc! = statsOffTot!(10) / totalGames 
+        Else 
+            ptsCalc! = 0
+        End If
         Locate , 14: Print Using "##### ###.#"; statsOffTot!(10); ptsCalc!;
 
         'Rebounds
-        If totalGames > 0 Then rebCalc! = statsOffTot!(5) / totalGames Else rebCalc! = 0
+        If totalGames > 0 Then 
+            rebCalc! = statsOffTot!(5) / totalGames 
+        Else 
+            rebCalc! = 0
+        End If
         Locate , 29: Print Using "#### #### ####  ##.#"; statsOffTot!(12); statsOffTot!(5) - statsOffTot!(12) - statsOffTot!(15); statsOffTot!(5); rebCalc!;
 
         'Fouls  AST  BLK  STL  TO
@@ -1221,22 +1231,38 @@ Sub StatsSummary_Report (printDest, destFile$, teamName$, totalGames)
     Print #1, "TOTALS";
 
     'Points
-    If totalGames > 0 Then ptsCalc! = statsOffTot!(10) / totalGames Else ptsCalc! = 0
+    If totalGames > 0 Then 
+        ptsCalc! = statsOffTot!(10) / totalGames 
+    Else 
+        ptsCalc! = 0
+    End If
     Print #1, Tab(14); Using "##### ###.#"; statsOffTot!(10); ptsCalc!;
 
     'Rebounds
-    If totalGames > 0 Then rebCalc! = statsOffTot!(5) / totalGames Else rebCalc! = 0
+    If totalGames > 0 Then 
+        rebCalc! = statsOffTot!(5) / totalGames 
+    Else 
+        rebCalc! = 0
+    End If
     Print #1, Tab(29); Using "#### #### ####  ##.#"; statsOffTot!(12); statsOffTot!(5) - statsOffTot!(12) - statsOffTot!(15); statsOffTot!(5); rebCalc!;
 
     'Fouls  AST  BLK  STL  TO
     Print #1, Using " #### #### #### #### ####"; statsOffTot!(6); statsOffTot!(8); statsOffTot!(9); statsOffTot!(7); statsOffTot!(11)
 
     'Points
-    If totalGames > 0 Then ptsCalc! = statsDefTot!(10) / totalGames Else ptsCalc! = 0
+    If totalGames > 0 Then 
+        ptsCalc! = statsDefTot!(10) / totalGames 
+    Else 
+        ptsCalc! = 0
+    End If
     Print #1, Tab(14); Using "##### ###.#"; statsDefTot!(10); ptsCalc!;
 
     'Rebounds
-    If totalGames > 0 Then rebCalc! = statsDefTot!(5) / totalGames Else rebCalc! = 0
+    If totalGames > 0 Then 
+        rebCalc! = statsDefTot!(5) / totalGames 
+    Else 
+        rebCalc! = 0
+    End If
     Print #1, Tab(29); Using "#### #### ####  ##.#"; statsDefTot!(12); statsDefTot!(5) - statsDefTot!(12) - statsDefTot!(15); statsDefTot!(5); rebCalc!;
 
     'Fouls  AST  BLK  STL  TO
@@ -1277,38 +1303,38 @@ Sub SortStats (categoryPick)
     'SORT BASED ON CATEGORY
     Select Case categoryPick
 
-    	Case 1: SG% = 0
-    	Case 2: SG% = 10
-    	Case 3: SG% = 14
-    	Case 4: SG% = 2
-    	Case 5: SG% = 1
-    	Case 6: SG% = 15
-    	Case 7: SG% = 18
-    	Case 8: SG% = 19
-    	Case 9: SG% = 16
-    	Case 10: SG% = 4
-    	Case 11: SG% = 3
-    	Case 12: SG% = 17
-    	Case 14: SG% = 22
-    	Case 15: SG% = 20
-    	Case 17: SG% = 12
-    	Case 16: SG% = 13
-    	Case 18: SG% = 23
-    	Case 19: SG% = 5
-    	Case 20: SG% = 21
-    	Case 21: SG% = 6
-    	Case 22: SG% = 8
-    	Case 23: SG% = 9
-    	Case 24: SG% = 7
-    	Case 25: SG% = 11
+    	Case 1: statGroup = 0
+    	Case 2: statGroup = 10
+    	Case 3: statGroup = 14
+    	Case 4: statGroup = 2
+    	Case 5: statGroup = 1
+    	Case 6: statGroup = 15
+    	Case 7: statGroup = 18
+    	Case 8: statGroup = 19
+    	Case 9: statGroup = 16
+    	Case 10: statGroup = 4
+    	Case 11: statGroup = 3
+    	Case 12: statGroup = 17
+    	Case 14: statGroup = 22
+    	Case 15: statGroup = 20
+    	Case 17: statGroup = 12
+    	Case 16: statGroup = 13
+    	Case 18: statGroup = 23
+    	Case 19: statGroup = 5
+    	Case 20: statGroup = 21
+    	Case 21: statGroup = 6
+    	Case 22: statGroup = 8
+    	Case 23: statGroup = 9
+    	Case 24: statGroup = 7
+    	Case 25: statGroup = 11
 
     End Select
 
     If categoryPick = 0 Or categoryPick = 13 Then
 
-        For Z = 0 To 12
+        For Z = 0 To 13
 
-            For Z1 = Z + 1 To 13
+            For Z1 = Z + 1 To 14
             
                 If _StriCmp(statPlyrNames$(Z),statPlyrNames$(Z1)) = 1 Then
 
@@ -1329,11 +1355,11 @@ Sub SortStats (categoryPick)
     
     Else
 
-        For Z = 0 To 12
+        For Z = 0 To 13
 
             For Z1 = Z + 1 To 14
 
-                If statPlyrVal!(Z, SG%) < statPlyrVal!(Z1, SG%) Then
+                If statPlyrVal!(Z, statGroup) < statPlyrVal!(Z1, statGroup) Then
 
                     For I = 0 To 24:
                         Swap statPlyrVal!(Z, I), statPlyrVal!(Z1, I)
