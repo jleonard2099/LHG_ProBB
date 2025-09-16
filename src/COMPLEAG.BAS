@@ -73,8 +73,6 @@ Sub CompileLeague ()
     Erase leaderVals!, offLeaders!
     Erase leagLdrPlayer$, leagLdrTeam$
 
-    C$ = ","
-
     leagueFile$ = _OpenFileDialog$("Choose League Stats file", diskPaths$(2), "*.TMS", "League Stats files [.TMS]")
     'ChooseFile$(diskPaths$(2) + "*.TMS", "LEAGUE", ExitCode%)
 
@@ -829,16 +827,19 @@ Sub CalcRecordsPro (totalGames, teamName$, finalUpdate$)
                 plyrRecDesc$(1, 0) = statPlyrNames$(I)
                 plyrRecDesc$(1, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 1) > plyrRecords!(2) Then
                 plyrRecords!(2) = statPlyrVal!(I, 1)
                 plyrRecDesc$(2, 0) = statPlyrNames$(I)
                 plyrRecDesc$(2, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 2) > plyrRecords!(3) Then
                 plyrRecords!(3) = statPlyrVal!(I, 2)
                 plyrRecDesc$(3, 0) = statPlyrNames$(I)
                 plyrRecDesc$(3, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 19) > plyrRecords!(4) And UCase$(finalUpdate$) = "Y" And statPlyrVal!(I, 2) / statPlyrVal!(I, 0) >= 3.65 Then
                 plyrRecords!(4) = statPlyrVal!(I, 19)
                 plyrRecDesc$(4, 0) = statPlyrNames$(I)
@@ -850,11 +851,13 @@ Sub CalcRecordsPro (totalGames, teamName$, finalUpdate$)
                 plyrRecDesc$(5, 0) = statPlyrNames$(I)
                 plyrRecDesc$(5, 1) = teamName$
             End If
+
             If stats3FGM!(I) > plyrRecords!(6) Then
                 plyrRecords!(6) = stats3FGM!(I)
                 plyrRecDesc$(6, 0) = statPlyrNames$(I)
                 plyrRecDesc$(6, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 21) > plyrRecords!(7) And UCase$(finalUpdate$) = "Y" And stats3FGM!(I) / statPlyrVal!(I, 0) >= .3 Then
                 plyrRecords!(7) = statPlyrVal!(I, 21)
                 plyrRecDesc$(7, 0) = statPlyrNames$(I)
@@ -866,11 +869,13 @@ Sub CalcRecordsPro (totalGames, teamName$, finalUpdate$)
                 plyrRecDesc$(8, 0) = statPlyrNames$(I)
                 plyrRecDesc$(8, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 4) > plyrRecords!(9) Then
                 plyrRecords!(9) = statPlyrVal!(I, 4)
                 plyrRecDesc$(9, 0) = statPlyrNames$(I)
                 plyrRecDesc$(9, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 20) > plyrRecords!(10) And UCase$(finalUpdate$) = "Y" And statPlyrVal!(I, 4) / statPlyrVal!(I, 0) >= 1.52 Then
                 plyrRecords!(10) = statPlyrVal!(I, 20)
                 plyrRecDesc$(10, 0) = statPlyrNames$(I)
@@ -882,11 +887,13 @@ Sub CalcRecordsPro (totalGames, teamName$, finalUpdate$)
                 plyrRecDesc$(11, 0) = statPlyrNames$(I)
                 plyrRecDesc$(11, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 12) > plyrRecords!(12) Then
                 plyrRecords!(12) = statPlyrVal!(I, 12)
                 plyrRecDesc$(12, 0) = statPlyrNames$(I)
                 plyrRecDesc$(12, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 22) > plyrRecords!(13) And UCase$(finalUpdate$) = "Y" Then
                 plyrRecords!(13) = statPlyrVal!(I, 22)
                 plyrRecDesc$(13, 0) = statPlyrNames$(I)
@@ -898,21 +905,25 @@ Sub CalcRecordsPro (totalGames, teamName$, finalUpdate$)
                 plyrRecDesc$(14, 0) = statPlyrNames$(I)
                 plyrRecDesc$(14, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 26) > plyrRecords!(15) Then
                 plyrRecords!(15) = statPlyrVal!(I, 26)
                 plyrRecDesc$(15, 0) = statPlyrNames$(I)
                 plyrRecDesc$(15, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 5) - statPlyrVal!(I, 26) > plyrRecords!(16) Then
                 plyrRecords!(16) = statPlyrVal!(I, 5) - statPlyrVal!(I, 26)
                 plyrRecDesc$(16, 0) = statPlyrNames$(I)
                 plyrRecDesc$(16, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 5) > plyrRecords!(17) Then
                 plyrRecords!(17) = statPlyrVal!(I, 5)
                 plyrRecDesc$(17, 0) = statPlyrNames$(I)
                 plyrRecDesc$(17, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 13) > plyrRecords!(18) And UCase$(finalUpdate$) = "Y" Then
                 plyrRecords!(18) = statPlyrVal!(I, 13)
                 plyrRecDesc$(18, 0) = statPlyrNames$(I)
@@ -924,26 +935,31 @@ Sub CalcRecordsPro (totalGames, teamName$, finalUpdate$)
                 plyrRecDesc$(19, 0) = statPlyrNames$(I)
                 plyrRecDesc$(19, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 7) > plyrRecords!(20) Then
                 plyrRecords!(20) = statPlyrVal!(I, 7)
                 plyrRecDesc$(20, 0) = statPlyrNames$(I)
                 plyrRecDesc$(20, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 8) > plyrRecords!(21) Then
                 plyrRecords!(21) = statPlyrVal!(I, 8)
                 plyrRecDesc$(21, 0) = statPlyrNames$(I)
                 plyrRecDesc$(21, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 9) > plyrRecords!(22) Then
                 plyrRecords!(22) = statPlyrVal!(I, 9)
                 plyrRecDesc$(22, 0) = statPlyrNames$(I)
                 plyrRecDesc$(22, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 11) > plyrRecords!(23) Then
                 plyrRecords!(23) = statPlyrVal!(I, 11)
                 plyrRecDesc$(23, 0) = statPlyrNames$(I)
                 plyrRecDesc$(23, 1) = teamName$
             End If
+
             If statPlyrVal!(I, 18) > plyrRecords!(24) And UCase$(finalUpdate$) = "Y" Then
                 plyrRecords!(24) = statPlyrVal!(I, 18)
                 plyrRecDesc$(24, 0) = statPlyrNames$(I)

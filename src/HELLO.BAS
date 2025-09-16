@@ -8965,7 +8965,6 @@ Sub PrintActiveLineup (teamIdx)
         Print Using "##"; gameRatings!(teamIdx, lineupIdx(teamIdx, I1), 0);
 
         'Free Throw %
-        'test = lineupIdx(teamIdx, I1)
         ftPct = gameRatings!(teamIdx, lineupIdx(teamIdx, I1), 1)
         If ftPct >= 100 Then ftPct = 99
         Print Using "### "; ftPct;
@@ -10040,16 +10039,10 @@ Sub SETUPRATINGS (teamStyle)
 
     For I = 0 To 1:
 
-        test1$ = gameTeams$(I)
-
         For I1 = 0 To 14
-
-            test1 = plyrRat_GAME(I, I1, 18)
-            test2$ = players_GAME$(I, I1, 0)
 
             If playerActive%(I, I1) = 1 Then
                 'ADD Player FGA + Player Off Reb + Player Def Reb + Player Fouls / Player Minutes
-                test2 = plyrRat_GAME(I, I1, 0)
                 rebAdj!(I) = rebAdj!(I) + Int((plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 6) + plyrRat_GAME(I, I1, 7) + plyrRat_GAME(I, I1, 9)) / plyrRat_GAME(I, I1, 0) + .5)
             End If
         Next I1
@@ -14671,8 +14664,6 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx, dataOK)
     avgAttendance&(gameIdx) = CVL(Q$(378))
 
     Close #1
-
-    test$ = gameArena$(gameIdx)
 
     If (CK <> 999) Then
 

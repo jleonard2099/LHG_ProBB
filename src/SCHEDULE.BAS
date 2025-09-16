@@ -1270,21 +1270,37 @@ Sub SortSchedule ()
     Shared scheduleYN$()
 
     For I = 1 To scheduleAP%(0)
+
         HR% = Int(scheduleNG%(I, 15) / 100)
         MIN% = scheduleNG%(I, 15) - HR% * 100
         TM% = HR% * 60 + MIN%
 
         scheduleNG%(I, 12) = Int(TM% / 30 - 18)
 
-        D& = (scheduleNG%(I, 18) - 1)
-        D& = D& * 365 '-- 372
+        'Determine how many days have passed in the year
+        'based on the game month
+        Select Case (scheduleNG%(I, 17) - 1)
+            Case 0: MonthDays& = 0 ' January
+            Case 1: MonthDays& = 31 ' February
+            Case 2: MonthDays& = 59 ' March (31+28)
+            Case 3: MonthDays& = 90 ' April (31+28+31)
+            Case 4: MonthDays& = 120 ' May
+            Case 5: MonthDays& = 151 ' June
+            Case 6: MonthDays& = 181 ' July
+            Case 7: MonthDays& = 212 ' August
+            Case 8: MonthDays& = 243 ' September
+            Case 9: MonthDays& = 273 ' October
+            Case 10: MonthDays& = 304 ' November
+            Case 11: MonthDays& = 334 ' December
+        End Select
 
-        M& = (scheduleNG%(I, 17) - 1)
-        M& = M& * 31
+        'Here we essentially turn each date into
+        'a total number of days from a 0 reference.
+        D& = scheduleNG%(I, 16)
+        M& = MonthDays&
+        Y& = (scheduleNG%(I, 18) - 1) * 366
 
-        Y& = scheduleNG%(I, 16)
-
-        schedDates&(I) = (D& + M& + Y&) * 24 * 60 + TM%
+        schedDates&(I) = (Y& + M& + D&) * 24 * 60 + TM%
 
     Next
 
