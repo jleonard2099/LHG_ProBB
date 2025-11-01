@@ -345,8 +345,8 @@ $ExeIcon:'./lhg_probb.ico'
 _Icon
 _AllowFullScreen
 
-If _FileExists("errlog") Then
-    Kill "errlog"
+If _FileExists(cfgPath$ + "errlog") Then
+    Kill cfgPath$ + "errlog"
 End If
 
 opSysType$ = Left$(_OS$, InStr(2, _OS$, "[") - 1)
@@ -360,34 +360,51 @@ End Select
 
 'Default new folders to current path
 For I = 0 To 3
-
     diskPaths$(I) = _CWD$ + dirSeparator$
-
 Next
 
+' Test if we can write locally
+CanWriteLocally = 0 ' Assume FALSE
+On Error GoTo WriteTestFailed
+Open "WRITETEST.TMP" For Output As #1
+Close #1
+Kill "WRITETEST.TMP"
+CanWriteLocally = 1 ' SUCCESS - TRUE
+WriteTestFailed:
+On Error GoTo 0
+
+' Determine base path for config files
+If (CanWriteLocally = 1) Or dirSeparator$ = "/" Then
+    ' Can write locally - use local folders (portable/Mac/Linux scenario)
+    cfgPath$ = _CWD$
+Else
+    ' Can't write locally - use AppData (Windows restricted scenario)
+    cfgPath$ = Environ$("LOCALAPPDATA") + "\LH Games\Basketball Pro\"
+End If
+
 'Read-in existing DEV.BAS
-If _FileExists("DEV.BAS") Then
+If _FileExists(cfgPath$ + "DEV.BAS") Then
 
-    Open "DEV.BAS" For Input As #1
+    Open cfgPath$ + "DEV.BAS" For Input As #1
 
-    'DEV.BAS will not have the "Schedule" / "Leader" folders configured
-    For I = 0 To 1
+    'DEV.BAS will not have the "Schedule" folder configured
+    For I = 0 To 3
         Input #1, diskPaths$(I)
     Next
 
     Close #1
 
-    Kill "DEV.BAS"
+    Kill cfgPath$ + "DEV.BAS"
 
 End If
 
-'Write FOLDERS.CFG
-If Not _FileExists("FOLDERS.CFG") Then
+If Not _FileExists(cfgPath$ + "FOLDERS.CFG") Then
 
-    Open "FOLDERS.CFG" For Output As #2
+    ' Create FOLDERS.CFG file
+    Open cfgPath$ + "FOLDERS.CFG" For Output As #2
 
     For I = 0 To 3
-        Print #2, diskPaths$(I)
+        Print #2, Left$(diskPaths$(I), Len(diskPaths$(I)) - 1)
     Next
 
     Close #2
@@ -395,13 +412,17 @@ If Not _FileExists("FOLDERS.CFG") Then
 End If
 
 'Read in path values
-Open "FOLDERS.CFG" For Input As #3
+Open cfgPath$ + "FOLDERS.CFG" For Input As #3
 
 For I = 0 To 3
     Input #3, diskPaths$(I)
 Next
 
 Close #3
+
+'If _FileExists(cfgPath$ + "errlog") Then
+'    Kill cfgPath$ + "errlog"
+'End If
 
 'Run main menu
 SELECTION% = 1
@@ -422,18 +443,18 @@ System
 
 Errhandler:
 
-Open "errlog" For Append As #10
-'Print #10, "An error occurred. Please contact support with the following information:"
+Open cfgPath$ + "errlog" For Append As #10
+Print #10, "An error occurred. Please contact support with the following information:"
 Print #10, "Error #"; Err; "on program file line"; _ErrorLine
 
 If _InclErrorLine Then
     Print #10, "    in module "; _InclErrorFile$; " line "; _InclErrorLine
 End If
 
-'If _FileExists("GAME82") Then
-'Print #10, "Schedule game # "; Using "###"; schedGame(0) + schedGame(2)
-'Print #10, gameTeams$(0) + " vs. " + gameTeams$(1)
-'End If
+If _FileExists(cfgPath$ + "GAME82") Then
+    Print #10, "Schedule game # "; Using "###"; schedGame(0) + schedGame(2)
+    Print #10, gameTeams$(0) + " vs. " + gameTeams$(1)
+End If
 Print #10,
 Close #10
 Resume Next ' moves program to code following the error.
@@ -840,9 +861,9 @@ Sub PROHOOP ()
     '         DETERMINE GAME OPTIONS
     '----------------------------------------
 
-    If Not _FileExists("DEFAULT") Then
+    If Not _FileExists(cfgPath$ + "DEFAULT") Then
 
-        Open "DEFAULT" For Output As #3
+        Open cfgPath$ + "DEFAULT" For Output As #3
 
         'Player option
         Print #3, 3
@@ -889,7 +910,7 @@ Sub PROHOOP ()
 
     End If
 
-    Open "DEFAULT" For Input As #4
+    Open cfgPath$ + "DEFAULT" For Input As #4
     Input #4, playerOpt
     Input #4, threePtOpt
     Input #4, sClockVal
@@ -911,9 +932,9 @@ Sub PROHOOP ()
 
     Close #4
 
-    If _FileExists("TICKER") Then
+    If _FileExists(cfgPath$ + "TICKER") Then
 
-        Open "TICKER" For Input As #5
+        Open cfgPath$ + "TICKER" For Input As #5
 
         For I = 1 To 32
             For I1 = 0 To 1
@@ -944,9 +965,9 @@ Sub PROHOOP ()
     End If
 
     'Load game in-progress, if there is one
-    If _FileExists("GAME82") Then
+    If _FileExists(cfgPath$ + "GAME82") Then
 
-        Open "GAME82" For Input As #6
+        Open cfgPath$ + "GAME82" For Input As #6
 
         Input #6, scheduleFile$
 
@@ -958,8 +979,8 @@ Sub PROHOOP ()
 
         currGame = schedGame(0) + schedGame(2)
 
-        'Open "pbplog" + Str$(currGame) For Append As #11
-        'Open "pbplog" For Append As #11
+        'Open cfgPath$ + "pbplog" + Str$(currGame) For Append As #11
+        'Open cfgPath$ + "pbplog" For Append As #11
 
         If Not _FileExists(scheduleFile$) Then
 
@@ -1006,7 +1027,7 @@ Sub PROHOOP ()
 
     Else
 
-        'Open "pbplog" For Append As #11
+        'Open cfgPath$ + "pbplog" For Append As #11
 
     End If
 
@@ -1131,7 +1152,7 @@ Sub PROHOOP ()
                 Select Case setting
 
                     Case 0:
-                        Open "DEFAULT" For Output As #8
+                        Open cfgPath$ + "DEFAULT" For Output As #8
                         Print #8, playerOpt
                         Print #8, threePtOpt
                         Print #8, sClockVal
@@ -1334,9 +1355,6 @@ Sub PROHOOP ()
         'College attendance ranges 80% to 100% of max capacity
         margin = Int(avgAttendance&(1) * .10)
         actualAttendance& = avgAttendance&(1) + Int(Rnd(1) * margin * 2) - margin
-
-        'Average attendance +/- 5,000
-        'actualAttendance& = avgAttendance&(1) + Int(Rnd(1) * 10000) - 5000
     End If
 
     LS = 0
@@ -1353,7 +1371,7 @@ Sub PROHOOP ()
     'Determine subs / play parameters
     For P9 = 0 To 1
 
-        If playerMode = 1 And P9 = compTeam Or playerMode = 2 Then
+        If (playerMode = 1 And P9 = compTeam) Or playerMode = 2 Then
             Call ComputerCoach
             'Call ComputerCoach_Legacy
         Else
@@ -1711,7 +1729,10 @@ Sub PROHOOP ()
     P3 = 0
     assistShotBoost = 0
 
-    If (playerMode = 0 And coachOpt = 1) Or (playerMode = 1 And D = compTeam And coachOpt = 1) Or (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+    If (playerMode = 0 And coachOpt = 1) Or 
+        (playerMode = 1 And D = compTeam And coachOpt = 1) Or _ 
+        (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+        'Computer in charge - auto determine
 
         Call WHOGETSBALL
 
@@ -2656,7 +2677,7 @@ Sub PROHOOP ()
         Else
 
             'PC vs PC, Computer on Defense
-            If playerMode = 2 Or playerMode = 1 And D = compTeam Then
+            If (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
 
                 '4th quarter | OT, 4 mins left, offense ahead by 10+
                 If quarter >= 4 And gameClock! <= 240 And scoreDiff > 10 Then
@@ -2715,7 +2736,9 @@ Sub PROHOOP ()
         If playChoice <> 1 Then
 
             'Human Opponent, Computer Shoots | Computer is Visitor AND on Defense, Computer Shoots | Computer is Visitor AND On Offense | Computer is Home Team
-            If (playerMode = 0 And coachOpt = 1 Or playerMode = 1 And D = compTeam And coachOpt = 1 Or playerMode = 1 And P = compTeam Or playerMode = 2) Then
+            If (playerMode = 0 And coachOpt = 1) Or 
+                (playerMode = 1 And D = compTeam And coachOpt = 1) Or _ 
+                (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
 
                 If gameClock! <= 660 And gameClock! >= 540 And quarter = 2 And timeouts(P) >= 6 Then
                     playChoice = 2
@@ -2853,13 +2876,14 @@ Sub PROHOOP ()
 
         'Computer - try for 3 always when in range
         If threePtRange = 1 Then
-            If (playerMode = 1 And P = compTeam) Or (playerMode = 2) Then
+            If (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
                 playChoice = 4
             End If
         End If
 
         'Try for 3 near end of game when down by 3
-        If quarter >= 4 And gameClock! < 30 And scoreDiff >= 3 And ((playerMode = 1 And P = compTeam) Or playerMode = 2) Then
+        If quarter >= 4 And gameClock! < 30 And scoreDiff >= 3 And _
+            ((playerMode = 1 And P = compTeam) Or playerMode = 2) Then
             playChoice = 4
         End If
 
@@ -3378,7 +3402,7 @@ Sub PROHOOP ()
             pbpString$ = "DESIGNATED FOULER (0-4)"
             Call SELECTPBP(P, 1)
 
-            If playerMode = 1 And D = compTeam Or playerMode = 2 Then
+            If (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
                 desigFouler = Int(Rnd(1) * 5)
             Else
                 Do
@@ -4552,25 +4576,20 @@ End Sub
 'key is desired for a choice.
 Sub LetterToNumber (promptVal$, J)
 
-    J = Val(promptVal$)
+    char$ = UCase$(promptval$)
+    code% = Asc(char$)
 
-    Select Case UCase$(promptVal$)
-
-        Case "A": J = 10
-        Case "B": J = 11
-        Case "C": J = 12
-        Case "D": J = 13
-        Case "E": J = 14
-        Case "F": J = 15
-        Case "G": J = 16
-        Case "H": J = 17
-        Case "I": J = 18
-        Case "J": J = 19
-        Case "K": J = 20
-        Case "L": J = 21
-        Case "M": J = 22
-
-    End Select
+    ' Digits 0-9
+    If code% >= 48 And code% <= 57 Then
+        J = code% - 48
+        ' Letters A-Z
+    ElseIf code% >= 65 And code% <= 90 Then
+        ' A=10, B=11, ..., M=22
+        J = code% - 55
+    Else
+        ' default / invalid input
+        J = 0
+    End If
 
 End Sub
 
@@ -7041,7 +7060,7 @@ Sub UpdateSchedule
             SX$(schedGame(2) + 1, X) = gameTeams$(X)
         Next
 
-        Open "TICKER" For Output As #1
+        Open cfgPath$ + "TICKER" For Output As #1
 
         For I = 1 To 32:
             For I1 = 0 To 1:
@@ -8307,7 +8326,8 @@ Sub DEADBALLOPTIONS (userTakeTO)
 
         End If
 
-    Loop Until I$ = Chr$(13) Or userTakeTO = 1 Or (playerMode = 1 And P = compTeam) Or playerMode = 2
+    Loop Until I$ = Chr$(13) Or userTakeTO = 1 Or _ 
+        (playerMode = 1 And P = compTeam) Or playerMode = 2
 
 End Sub
 
@@ -8477,7 +8497,8 @@ Sub STOPPAGE (userTakeTO)
 
         End If 'Done checking computer control
 
-    Loop Until I$ = Chr$(13) Or (playerMode = 1 And P = compTeam) Or playerMode = 2
+    Loop Until I$ = Chr$(13) Or _
+        (playerMode = 1 And P = compTeam) Or playerMode = 2
 
 End Sub
 
@@ -13112,9 +13133,9 @@ Sub EVENTS (specialCount, specialStat)
 
     Shared eventSettings()
 
-    If _FileExists("EVENTS.BOX") Then
+    If _FileExists(cfgPath$ + "EVENTS.BOX") Then
 
-        Open "EVENTS.BOX" For Input As #1
+        Open cfgPath$ + "EVENTS.BOX" For Input As #1
 
         For X = 1 To 13
             Input #1, eventSettings(X)
@@ -13321,6 +13342,8 @@ Sub POSTGAME ()
         Color 15, 0
         Cls
 
+        Locate 2
+
         Color 14: Print "(0) ";
         Color 15: Print "STATS TO SCREEN"
         Print
@@ -13332,7 +13355,7 @@ Sub POSTGAME ()
         Color 14: Print "(2) ";
         Color 15: Print "STATS TO TEXT FILE"
 
-        If autoPlay = 1 And playerMode = 2 Then
+        If (autoPlay = 1 And playerMode = 2) Then
             choice = 2
         Else
             Do
@@ -13419,14 +13442,17 @@ Sub BOXOPTIONS (outputChoice)
             Else
                 'File = prompt | auto-create
                 If autoPlay <> 1 Then
-                    Cls
-                    Print "ENTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";
-                    Input boxName$
-                    boxName$ = boxName$ + ".BSS"
+                
+                    boxName$ = _SAVEFILEDIALOG$("Save Boxscore File", diskPaths$(1) + "\Boxscore","*.BSS","Special Boxscore File")
+
+                    'Cls
+                    'Print "ENTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";
+                    'Input boxName$
+                    'boxName$ = boxName$ + ".BSS"
                 Else
                     'ScheduleName_GameXXX.BS
-                    baseFile$ = GetFileBaseName$(scheduleFile$)
-                    boxName$ = baseFile$ + "_GAME" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2)))) + ".BS"
+                    'baseFile$ = GetFileBaseName$(scheduleFile$)
+                    boxName$ = scheduleFile$ + "_GAME" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2)))) + ".BS"
                 End If
 
             End If
@@ -13456,9 +13482,9 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
     Shared actualAttendance&
 
     If hasSpecial = 1 Then
-        Open (diskPaths$(1) + boxName$) For Append As #1
+        Open (boxName$) For Append As #1
     Else
-        Open (diskPaths$(1) + boxName$) For Output As #1
+        Open (boxName$) For Output As #1
     End If
 
     If gameLoc = 2 Then
@@ -13626,7 +13652,7 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
 
     If printChoice = 1 Then
 
-        Open diskPaths$(1) + boxName$ For Input As #2
+        Open boxName$ For Input As #2
 
         Do
             Line Input #2, X$
@@ -13635,7 +13661,7 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
 
         Close #2
 
-        Kill "TEMPBOX"
+        Kill boxName$
 
     End If
 
@@ -13651,16 +13677,18 @@ Sub BOX2SCREEN ()
 
     Shared actualAttendance&
 
+    Color 15, 0
+
     Cls
 
     Color 14
+    Locate 2, 1
+    Print "SITE: ";
+    Color 15
+
     If gameLoc = 2 Then
-        Print "SITE: ";
-        Color 15
         Print "NEUTRAL"
     Else
-        Print "SITE: ";
-        Color 15
         Print gameArena$(gameLoc)
     End If
 
@@ -14033,15 +14061,15 @@ Sub SAVESTATS ()
     ' Update schedule, ticker, etc.
     If UCase$(I$) = "Y" Or autoPlay = 1 Then
 
-        If _FileExists("GAME82") Then
+        If _FileExists(cfgPath$ + "GAME82") Then
 
             Call UpdateSchedule
 
             If schedGame(1) < schedGame(0) + schedGame(2) Then
-                Kill "GAME82"
+                Kill cfgPath$ + "GAME82"
                 endAllGames = 1
             Else
-                Open "GAME82" For Output As #2
+                Open cfgPath$ + "GAME82" For Output As #2
 
                 Print #2, scheduleFile$
 

@@ -137,4 +137,5 @@ Declare Sub ViewScheduleSummary (statFile$, teamName$, totalGames, menuExit)
 Declare Sub ViewSeasonRecords ()
 Declare Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
+Declare Function CanWriteLocally%
 Declare Function FindStatsLeague% (statFile$, numberGames)

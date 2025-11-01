@@ -71,7 +71,7 @@ Sub NEWLDR ()
                             memberName$(X) = "XXX"
                         Next
 
-                        Call ReadLeagueStats(leagStatFile$)
+                        Call ReadLeagueMembers(leagStatFile$)
                         Call UpdateExpandedLeaders(JB, PTS, TTS)
                         Call SaveExpandedLeaders(GetFileBaseName$(leagStatFile$), JB, PTS, TTS)
 
@@ -95,7 +95,7 @@ Sub NEWLDR ()
                         Color 15, 0
                         Cls
 
-                        Call ReadLeagueStats(leagStatFile$)
+                        Call ReadLeagueMembers(leagStatFile$)
                         Call UpdateExpandedStandings
 
                     End If

@@ -360,11 +360,6 @@ Sub ReadSchedOld (targetFile$)
     Shared homeScores(), visitorScores()
     Shared scheduleYN$()
 
-    ReDim scheduleNG%(MAX_SCHEDULE_GAMES, 21)
-    ReDim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
-    ReDim homeScores(MAX_SCHEDULE_GAMES)
-    ReDim visitorScores(MAX_SCHEDULE_GAMES)
-
     Open targetFile$ For Random As #1 Len = SCHEDULE_SIZE_BYTES - 2
 
     fileLength& = LOF(1)

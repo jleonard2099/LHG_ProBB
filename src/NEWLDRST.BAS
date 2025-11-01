@@ -15,6 +15,7 @@ Sub UpdateExpandedStandings ()
     Shared totTeamLosses(), totTeamWins()
 
     Shared teamScore(), oppScore()
+    Shared gameAttendance&()
 
     Shared locIndicator$(), oppName$()
     Shared memberName$(), expStdLeagName$()
@@ -27,6 +28,12 @@ Sub UpdateExpandedStandings ()
     Erase totHomeLosses, totHomeWins
     Erase totAwayLosses, totAwayWins
     Erase totTeamLosses, totTeamWins
+
+    Erase expStdLeagName$
+    Erase locIndicator$, oppName$
+
+    Erase teamScore, oppScore
+    Erase gameAttendance&
 
     TMR = TEAMS_PER_LEAGUE
     currRecord = 0
@@ -65,23 +72,11 @@ Sub UpdateExpandedStandings ()
                         lastWinStreak(currRecord) = lastWinStreak(currRecord) + 1
                         lastLoseStreak(currRecord) = 0
 
-                        If locIndicator$(I) = "V" Then
+                        If (Left$(locIndicator$(I), 1) = "V" Or Left$(locIndicator$(I), 1) = "A") Then
                             totAwayWins(currRecord) = totAwayWins(currRecord) + 1
                         End If
-                        If locIndicator$(I) = "V1" Then
+                        If (Left$(locIndicator$(I), 1) = "H")
                             totAwayWins(currRecord) = totAwayWins(currRecord) + 1
-                        End If
-                        If locIndicator$(I) = "V2" Then
-                            totAwayWins(currRecord) = totAwayWins(currRecord) + 1
-                        End If
-                        If locIndicator$(I) = "H" Then
-                            totHomeWins(currRecord) = totHomeWins(currRecord) + 1
-                        End If
-                        If locIndicator$(I) = "H1" Then
-                            totHomeWins(currRecord) = totHomeWins(currRecord) + 1
-                        End If
-                        If locIndicator$(I) = "H2" Then
-                            totHomeWins(currRecord) = totHomeWins(currRecord) + 1
                         End If
 
                     End If
@@ -92,22 +87,10 @@ Sub UpdateExpandedStandings ()
                         lastLoseStreak(currRecord) = lastLoseStreak(currRecord) + 1
                         lastWinStreak(currRecord) = 0
 
-                        If locIndicator$(I) = "V" Then
+                        If (Left$(locIndicator$(I), 1) = "V" Or Left$(locIndicator$(I), 1) = "A") Then 
                             totAwayLosses(currRecord) = totAwayLosses(currRecord) + 1
                         End If
-                        If locIndicator$(I) = "V1" Then
-                            totAwayLosses(currRecord) = totAwayLosses(currRecord) + 1
-                        End If
-                        If locIndicator$(I) = "V2" Then
-                            totAwayLosses(currRecord) = totAwayLosses(currRecord) + 1
-                        End If
-                        If locIndicator$(I) = "H" Then
-                            totHomeLosses(currRecord) = totHomeLosses(currRecord) + 1
-                        End If
-                        If locIndicator$(I) = "H1" Then
-                            totHomeLosses(currRecord) = totHomeLosses(currRecord) + 1
-                        End If
-                        If locIndicator$(I) = "H2" Then
+                        If (Left$(locIndicator$(I), 1) = "H")
                             totHomeLosses(currRecord) = totHomeLosses(currRecord) + 1
                         End If
 
@@ -195,7 +178,8 @@ Sub NewStandings_Screen (league$)
 
         End Select
 
-        If NT > 1 And targetDiv$ <> "" Then
+        If targetDiv$ <> "" Or (targetDiv$ = "" And expStdLeagName$(AA) <> "") Then
+        'If targetDiv$ <> "" Then
 
             Color 11
             Locate 2, 35: Print league$
@@ -259,9 +243,9 @@ Sub NewStandings_Screen (league$)
             Color 14
             Locate LAST_ROW - 1, 28: Print "HIT ANY KEY TO CONTINUE";
             I$ = GetKeyPress$
-            
+
         End If
-            
+
     Next NT
 
 End Sub
@@ -315,7 +299,8 @@ Sub NewStandings_Report (printDest, destFile$, league$)
 
         End Select
 
-        If NT > 1 And targetDiv$ <> "" Then
+        If targetDiv$ <> "" Or (targetDiv$ = "" And expStdLeagName$(AA) <> "") Then
+        'If targetDiv$ <> "" Then
 
             Print #1, league$
             Print #1, Tab(20); "                     MAJ          HOME    ROAD   LAST 10"

@@ -10,7 +10,7 @@ Declare Sub SaveScheduleStats (saveFile$, numberGames)
 Declare Sub ReadSeasonRecords (recordFile$)
 Declare Sub ReadGameRecords (recordFile$)
 Declare Sub ReadLeagueIndex (indexFile$)
-Declare Sub ReadLeagueStats (statFile$)
+Declare Sub ReadLeagueMembers (statFile$)
 
 Declare Function nameStatFile$ (teamName$)
 Declare Function CheckString% (targetString$)
