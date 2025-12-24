@@ -251,7 +251,6 @@ Dim Shared rebFoulChance, ruleOptType
 Dim Shared sClockVal, shotChance, shotClock, shotPctOpt, shotType, sndOpt
 Dim Shared threePtOpt, threePtRange, tickerGames, timeoutOpt, twoTimeouts, willDunk
 
-
 Dim Shared MINS_PER_GAME
 
 Dim Shared gameClock!, pbpDelay!, possTime!, timeElapsed!

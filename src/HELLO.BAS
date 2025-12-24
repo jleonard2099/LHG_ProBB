@@ -553,8 +553,6 @@ Sub TeamMgt_Menu ()
 
     Do
 
-        SELECTION% = 1
-
         Call TITLE
 
         ReDim menuChoices$(1 To 9)
@@ -568,6 +566,8 @@ Sub TeamMgt_Menu ()
         menuChoices$(7) = "ADJUST PLAYING TIME       "
         menuChoices$(8) = "CONVERT DATA FILE FROM 4.0"
         menuChoices$(9) = "RETURN TO MAIN MENU       "
+
+        menuSelection = 1
         Count% = 9
         Start% = 1
         ExitCode% = 9
@@ -581,14 +581,14 @@ Sub TeamMgt_Menu ()
         Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), menuSelection, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
         If ExitCode% <> 27 Then
 
-            Select Case SELECTION%
+            Select Case menuSelection
 
                 Case 1:
                     Call InputTeam(1)
@@ -620,7 +620,7 @@ Sub TeamMgt_Menu ()
 
         End If
 
-    Loop Until SELECTION% = 9 Or ExitCode% = 27
+    Loop Until menuSelection = 9 Or ExitCode% = 27
 
 End Sub
 
@@ -636,8 +636,6 @@ Sub Replay_Menu ()
 
     Do
 
-        SELECTION% = 1
-
         Call TITLE
 
         _Title "Basketball: The Pro Game - Stats Menu"
@@ -650,7 +648,8 @@ Sub Replay_Menu ()
         menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES"
         menuChoices$(5) = "TEAM CAREER OPTIONS             "
         menuChoices$(6) = "RETURN TO MAIN MENU             "
-        SELECTION% = 1
+
+        menuSelection = 1
         Count% = 6
         Start% = 1
         ExitCode% = 6
@@ -664,14 +663,14 @@ Sub Replay_Menu ()
         Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), menuSelection, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
         If ExitCode% <> 27 Then
 
-            Select Case SELECTION%
+            Select Case menuSelection
 
                 Case 1:
                     Call LOOKY
@@ -698,7 +697,7 @@ Sub Replay_Menu ()
         Color 15, 0
         Cls
 
-    Loop Until SELECTION% = 6 Or ExitCode% = 27
+    Loop Until menuSelection = 6 Or ExitCode% = 27
 
 End Sub
 
@@ -727,7 +726,8 @@ Sub Leaders_Menu ()
         menuChoices$(6) = "EXPANDED LEADERS / STANDINGS   "
         menuChoices$(7) = "DELETE ALL STATS FOR A LEAGUE  "
         menuChoices$(8) = "RETURN TO MAIN MENU            "
-        SELECTION% = 1
+
+        menuSelection = 1
         Count% = 8
         Start% = 1
         ExitCode% = 8
@@ -741,14 +741,14 @@ Sub Leaders_Menu ()
         Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), menuSelection, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
         If ExitCode% <> 27 Then
 
-            Select Case SELECTION%
+            Select Case menuSelection
 
                 Case 1:
                     Call CREATLEAG
@@ -775,7 +775,7 @@ Sub Leaders_Menu ()
 
         End If
 
-    Loop Until SELECTION% = 8 Or ExitCode% = 27
+    Loop Until menuSelection = 8 Or ExitCode% = 27
 
 End Sub
 
@@ -6317,24 +6317,24 @@ Sub TICKER ()
 
                 Case 1 To 20:
                     'ESPN
-                    Locate , 28: Print "ALLSTATE HALFTIME REPORT"
+                    halftimeString$ = "ALLSTATE HALFTIME REPORT"
 
                 Case 21 To 40:
                     'NBC
                     'Previously, "Prudential Halftime"
-                    Locate , 28: Print "XFINITY HALFTIME REPORT"
+                    halftimeString$ = "XFINITY HALFTIME REPORT"
 
                 Case 41 To 60:
                     'NBC - Sunday Night
-                    Locate , 29: Print "TOYOTA HALFTIME REPORT"
+                    halftimeString$ = "TOYOTA HALFTIME REPORT"
 
                 Case 61 To 80:
                     'ABC
-                    Locate , 31: Print "KIA HALFTIME REPORT"
+                    halftimeString$ = "KIA HALFTIME REPORT"
 
                 Case 81 To 100:
                     'CBS/Fox
-                    Locate , 28: Print "VERIZON HALFTIME REPORT"
+                    halftimeString$ = "VERIZON HALFTIME REPORT"
  
             End Select
 
@@ -6346,31 +6346,34 @@ Sub TICKER ()
 
                     Case 1 To 25
                         'ABC
-                        Locate , 27: Print "CHEVROLET FINAL SCOREBOARD"
+                        halftimeString$ = "CHEVROLET FINAL SCOREBOARD"
 
                     Case 26 To 50:
                         'Fox / CBS
-                        Locate , 27: Print "STATE FARM FINAL SCOREBOARD"
+                        halftimeString$ = "STATE FARM FINAL SCOREBOARD"
 
                     Case 51 To 75:
                         'NBC
-                        Locate , 24: Print "FEDERAL EXPRESS FINAL SCOREBOARD"
+                        halftimeString$ = "FEDERAL EXPRESS FINAL SCOREBOARD"
 
                     Case 76 To 100:
                         'ESPN
-                        Locate , 23: Print "ESPN SPORTSCENTER FINAL SCOREBOARD"
+                        halftimeString$ = "ESPN SPORTSCENTER FINAL SCOREBOARD"
 
                 End Select
 
             Else
 
                 If halfTime = 0 Then
-                    Locate , 30: Print "LANCE HAFFNER GAMES SCOREBOARD"
+                    halftimeString$ = "LANCE HAFFNER GAMES SCOREBOARD"
                 End If
 
             End If
 
         End If
+
+        Locate , ((80 - Len(halftimeString$)) / 2)
+        Print halftimeString$
 
         Color 15
 
