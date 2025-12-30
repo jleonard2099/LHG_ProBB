@@ -105,10 +105,10 @@ Sub StatOptions_League ()
 
                 Case "F":
                     userFile$ = _SaveFileDialog$("Save League Report", _CWD$ + "\Report", "*.txt", "Text File")
-                    Call ProLeadersReport(0, userFile$)
+                    Call LeaderStats_Report(0, userFile$)
 
                 Case "P":
-                    Call ProLeadersReport(0, "REPORT")
+                    Call LeaderStats_Report(0, "REPORT")
 
                 Case "S":
                     Call LeagStdgs_Screen
@@ -1014,7 +1014,7 @@ End Sub
 
 
 '----------------------------------------
-'    ProLeadersReport Subroutine
+'      LeaderStats_Report Subroutine
 '----------------------------------------
 'This subroutine formats the previously
 'loaded stats and outputs them to a file.
@@ -1024,7 +1024,7 @@ End Sub
 'Destination
 '   0 = File
 '   1 = Printer
-Sub ProLeadersReport (printDest, destFile$)
+Sub LeaderStats_Report (printDest, destFile$)
 
     Shared divWins(), divLosses()
     Shared defLeaders!(), offLeaders!()
@@ -1040,111 +1040,67 @@ Sub ProLeadersReport (printDest, destFile$)
 
     Open destFile$ For Output As #1
 
-    Print #1, "                        "; leagueName$; " LEAGUE STANDINGS"
-    Print #1,
-    Print #1, "    "; div1Name$; " DIVISION"
-    Print #1,
-    Print #1, "                   W    L     PCT   GB"
+    Print #1, Tab(24); leagueName$; " LEAGUE STANDINGS"
 
-    For P = 1 To 10
+    For div = 1 To 4
 
-        If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
-            D1 = divWins(1) - divLosses(1)
-            D = divWins(P) - divLosses(P)
-            D = D1 - D
-            BK$ = "   " + Str$(Int(D / 2))
-            If D = 0 Then BK$ = "   ---"
-            If D = 1 Then BK$ = "     "
-            If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
-            If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
+        first = ((div - 1) * 10) + 1
+        last = div * 10
 
-            PCT! = divWins(P) / (divWins(P) + divLosses(P))
+        For P = first To last
 
-            Print #1, "    "; compLdrTeam$(P); Tab(16);
-            Print #1, Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
-            Print #1, BK$
-        End If
+            Select Case div
+            
+                Case 1
+                    divisionName$ = div1Name$
 
-    Next P
+                Case 2
+                    divisionName$ = div2Name$
 
-    Print #1,
-    Print #1, "    "; div2Name$; " DIVISION"
-    Print #1,
-    Print #1, "                   W    L     PCT   GB"
+                Case 3
+                    divisionName$ = div3Name$                
+                
+                Case 4
+                    divisionName$ = div4Name$
 
-    For P = 11 To 20
+            End Select
 
-        If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
-            D1 = divWins(11) - divLosses(11)
-            D = divWins(P) - divLosses(P)
-            D = D1 - D
-            BK$ = "   " + Str$(Int(D / 2))
-            If D = 0 Then BK$ = "   ---"
-            If D = 1 Then BK$ = "     "
-            If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
-            If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
+            Print #1,
+            Print #1, "    "; divisionName$; " DIVISION"
+            Print #1,
+            Print #1, "                   W    L     PCT   GB"
 
-            PCT! = divWins(P) / (divWins(P) + divLosses(P))
+            If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
 
-            Print #1, "    "; compLdrTeam$(P); Tab(16);
-            Print #1, Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
-            Print #1, BK$
-        End If
+                'Win %
+                PCT! = divWins(P) / (divWins(P) + divLosses(P))
 
-    Next P
+                'Games Behind
+                D1 = divWins(1) - divLosses(1)
+                D = divWins(P) - divLosses(P)
+                D = D1 - D
 
-    Print #1,
-    Print #1, "    "; div3Name$; " DIVISION"
-    Print #1,
-    Print #1, "                   W    L     PCT   GB"
+                BK$ = "   " + Str$(Int(D / 2))
 
-    For P = 21 To 30
+                If D = 0 Then BK$ = "   ---"
+                If D = 1 Then BK$ = "     "
+                If D > 19 Then 
+                    BK$ = Right$(Len(BK$), L - 1)
+                End If
+                If D / 2 <> Int(D / 2) Then 
+                    BK$ = BK$ + H$
+                End If
 
-        If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
-            D1 = divWins(21) - divLosses(21)
-            D = divWins(P) - divLosses(P)
-            D = D1 - D
-            BK$ = "   " + Str$(Int(D / 2))
-            If D = 0 Then BK$ = "   ---"
-            If D = 1 Then BK$ = "     "
-            If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
-            If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
+                Print #1, "    "; compLdrTeam$(P); Tab(16);
+                Print #1, Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
+                Print #1, BK$
 
-            PCT! = divWins(P) / (divWins(P) + divLosses(P))
+            End If
 
-            Print #1, "    "; compLdrTeam$(P); Tab(16);
-            Print #1, Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
-            Print #1, BK$
+        Next P
 
-        End If
+    Next div
 
-    Next P
-
-    Print #1,
-    Print #1, "    "; div4Name$; " DIVISION"
-    Print #1,
-    Print #1, "                   W    L     PCT   GB"
-
-    For P = 31 To 40
-
-        If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
-            D1 = divWins(31) - divLosses(31)
-            D = divWins(P) - divLosses(P)
-            D = D1 - D
-            BK$ = "   " + Str$(Int(D / 2))
-            If D = 0 Then BK$ = "   ---"
-            If D = 1 Then BK$ = "     "
-            If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
-            If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
-
-            PCT! = divWins(P) / (divWins(P) + divLosses(P))
-
-            Print #1, "    "; compLdrTeam$(P); Tab(16);
-            Print #1, Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
-            Print #1, BK$
-        End If
-
-    Next P
 
     Print #1, Chr$(12)
     Print #1, "FIELD GOAL % (MIN 5 FGA/G)"; Tab(41); "FREE THROW % (MIN 2 FTA/G)"
