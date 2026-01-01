@@ -1729,7 +1729,7 @@ Sub PROHOOP ()
     P3 = 0
     assistShotBoost = 0
 
-    If (playerMode = 0 And coachOpt = 1) Or 
+    If (playerMode = 0 And coachOpt = 1) Or _
         (playerMode = 1 And D = compTeam And coachOpt = 1) Or _ 
         (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
         'Computer in charge - auto determine
@@ -2736,7 +2736,7 @@ Sub PROHOOP ()
         If playChoice <> 1 Then
 
             'Human Opponent, Computer Shoots | Computer is Visitor AND on Defense, Computer Shoots | Computer is Visitor AND On Offense | Computer is Home Team
-            If (playerMode = 0 And coachOpt = 1) Or 
+            If (playerMode = 0 And coachOpt = 1) Or _
                 (playerMode = 1 And D = compTeam And coachOpt = 1) Or _ 
                 (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
 
@@ -4576,7 +4576,7 @@ End Sub
 'key is desired for a choice.
 Sub LetterToNumber (promptVal$, J)
 
-    char$ = UCase$(promptval$)
+    char$ = UCase$(promptVal$)
     code% = Asc(char$)
 
     ' Digits 0-9
@@ -13446,7 +13446,7 @@ Sub BOXOPTIONS (outputChoice)
                 'File = prompt | auto-create
                 If autoPlay <> 1 Then
                 
-                    boxName$ = _SAVEFILEDIALOG$("Save Boxscore File", diskPaths$(1) + "\Boxscore","*.BSS","Special Boxscore File")
+                    boxName$ = _SaveFileDialog$("Save Boxscore File", diskPaths$(1) + "\Boxscore", "*.BSS", "Special Boxscore File")
 
                     'Cls
                     'Print "ENTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";

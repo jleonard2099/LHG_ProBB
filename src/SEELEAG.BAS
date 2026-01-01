@@ -176,15 +176,21 @@ Sub LeagStdgs_Screen ()
             D1 = divWins(1) - divLosses(1)
             D = divWins(P) - divLosses(P)
             D = D1 - D
+
             BK$ = "     " + Str$(Int(D / 2))
+
             If D = 0 Then BK$ = "   ---"
             If D = 1 Then BK$ = "     "
-            If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
-            If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
+            If D > 19 Then
+                BK$ = Right$(BK$, Len(BK$) - 1)
+            End If
+            If D / 2 <> Int(D / 2) Then
+                BK$ = BK$ + H$
+            End If
 
             Print "    "; compLdrTeam$(P); Tab(16);
 
-            'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
+            'This will throw errors if there are 0 games!!!
             PCT! = divWins(P) / (divWins(P) + divLosses(P))
 
             Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
@@ -225,15 +231,21 @@ Sub LeagStdgs_Screen ()
                 D1 = divWins(11) - divLosses(11)
                 D = divWins(P) - divLosses(P)
                 D = D1 - D
+
                 BK$ = "     " + Str$(Int(D / 2))
+
                 If D = 0 Then BK$ = "   ---"
                 If D = 1 Then BK$ = "     "
-                If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
-                If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
+                If D > 19 Then
+                    BK$ = Right$(BK$, Len(BK$) - 1)
+                End If
+                If D / 2 <> Int(D / 2) Then
+                    BK$ = BK$ + H$
+                End If
 
                 Print "    "; compLdrTeam$(P); Tab(16);
 
-                'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
+                'This will throw errors if there are 0 games!!!
                 PCT! = divWins(P) / (divWins(P) + divLosses(P))
 
                 Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
@@ -273,19 +285,27 @@ Sub LeagStdgs_Screen ()
         For P = 21 To 30
 
             If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
+
                 D1 = divWins(21) - divLosses(21)
                 D = divWins(P) - divLosses(P)
                 D = D1 - D
+
                 BK$ = "     " + Str$(Int(D / 2))
+
                 If D = 0 Then BK$ = "   ---"
                 If D = 1 Then BK$ = "     "
-                If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
-                If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
-
-                'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
-                PCT! = divWins(P) / (divWins(P) + divLosses(P))
+                If D > 19 Then
+                    BK$ = Right$(BK$, Len(BK$) - 1)
+                End If
+                If D / 2 <> Int(D / 2) Then
+                    BK$ = BK$ + H$
+                End If
 
                 Print "    "; compLdrTeam$(P); Tab(16);
+
+                'This will throw errors if there are 0 games!!!
+                PCT! = divWins(P) / (divWins(P) + divLosses(P))
+
                 Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
                 Print BK$
 
@@ -324,19 +344,27 @@ Sub LeagStdgs_Screen ()
         For P = 31 To 40
 
             If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
+
                 D1 = divWins(31) - divLosses(31)
                 D = divWins(P) - divLosses(P)
                 D = D1 - D
+
                 BK$ = "     " + Str$(Int(D / 2))
+
                 If D = 0 Then BK$ = "   ---"
                 If D = 1 Then BK$ = "     "
-                If D > 19 Then L = Len(BK$): BK$ = Right$(BK$, L - 1)
-                If D / 2 <> Int(D / 2) Then BK$ = BK$ + H$
-
-                'This is WIN/LOSS PCT; will throw errors if there are 0 games!!!
-                PCT! = divWins(P) / (divWins(P) + divLosses(P))
+                If D > 19 Then
+                    BK$ = Right$(BK$, Len(BK$) - 1)
+                End If
+                If D / 2 <> Int(D / 2) Then
+                    BK$ = BK$ + H$
+                End If
 
                 Print "    "; compLdrTeam$(P); Tab(16);
+
+                'This will throw errors if there are 0 games!!!
+                PCT! = divWins(P) / (divWins(P) + divLosses(P))
+
                 Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
                 Print BK$
             End If
@@ -1085,13 +1113,15 @@ Sub LeaderStats_Report (printDest, destFile$)
                 If D = 0 Then BK$ = "   ---"
                 If D = 1 Then BK$ = "     "
                 If D > 19 Then 
-                    BK$ = Right$(Len(BK$), L - 1)
+                    BK$ = Right$(BK$, Len(BK$) - 1)
                 End If
                 If D / 2 <> Int(D / 2) Then 
                     BK$ = BK$ + H$
                 End If
 
                 Print #1, "    "; compLdrTeam$(P); Tab(16);
+
+                'This will throw errors if there are 0 games!!!
                 Print #1, Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
                 Print #1, BK$
 
