@@ -406,9 +406,10 @@ Sub PrintRoster (printDest, destFile$, YN$)
     Print #1, Tab(73); Using "####"; teamRatings(26)
 
     'NEW PAGE
-    Print #1, Chr$(12)
-
+    Print #1, 
+    If printDest = 1 Then Print #1, Chr$(12)
     Print #1,
+
     Print #1, Tab(XCoord); teamInfo$(0); " "; teamInfo$(1)
     Print #1, Tab(30); "WON - ";
     Print #1, Using "##"; teamRatings(1) + teamRatings(3);

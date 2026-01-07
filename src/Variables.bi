@@ -35,9 +35,9 @@ Dim roadLosses, roadWins, totalLosses, totalWins
 Dim tiedGames
 
 ' Conferences / Orgs
-Dim memberIdx(TEAMS_PER_LEAGUE)
-Dim memberName$(TEAMS_PER_LEAGUE)
-Dim memberYear$(TEAMS_PER_LEAGUE)
+'Dim memberIdx(TEAMS_PER_LEAGUE)
+'Dim memberName$(TEAMS_PER_LEAGUE)
+'Dim memberYear$(TEAMS_PER_LEAGUE)
 
 '-- For Road Data
 Dim gameAtt_Road&(MAX_SCHED_STATS)
@@ -141,7 +141,7 @@ Dim defTotals!(21), offTotals!(21)
 Dim defLeaders!(TEAMS_PER_LEAGUE, 20), offLeaders!(TEAMS_PER_LEAGUE, 20)
 Dim leaderVals!(0 To 250, 0 To 2)
 
-Dim compLdrTeam$(TEAMS_PER_LEAGUE)
+'Dim compLdrTeam$(TEAMS_PER_LEAGUE)
 
 Dim divWins(TEAMS_PER_LEAGUE), divLosses(TEAMS_PER_LEAGUE)
 Dim compLgStatVal!(260), compLgStatAtt!(260)

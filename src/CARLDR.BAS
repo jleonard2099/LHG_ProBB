@@ -394,13 +394,16 @@ Sub CareerLeaders_Report (careerName$, printDest, destFile$)
 
     Print #1, Tab(5); "GAMES PLAYED"; Tab(34); "FIELD GOALS ATTEMPTED"; Tab(62); "FIELD GOALS MADE"
     For I = 0 To 19
-        Print #1, Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Using "##"; I + 1;
+        Print #1, ". ";
         Print #1, carLdrPlyrName$(0, I);
         Print #1, Tab(18); Using "####"; carLdrVal!(0, I);
-        Print #1, Tab(28); Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Tab(28); Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(1, I);
         Print #1, Tab(47); Using "####"; carLdrVal!(1, I);
-        Print #1, Tab(58); Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Tab(58); Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(2, I);
         Print #1, Tab(76); Using "####"; carLdrVal!(2, I)
     Next
@@ -410,13 +413,16 @@ Sub CareerLeaders_Report (careerName$, printDest, destFile$)
 
     Print #1, Tab(5); "FIELD GOAL %"; Tab(34); "3 POINTERS MADE"; Tab(62); "3 POINTERS ATTEMPTED"
     For I = 0 To 19
-        Print #1, Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(3, I);
         Print #1, Tab(18); Using "##.#"; carLdrVal!(3, I) * 100;
-        Print #1, Tab(28); Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Tab(28); Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(5, I);
         Print #1, Tab(47); Using "####"; carLdrVal!(5, I);
-        Print #1, Tab(58); Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Tab(58); Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(4, I);
         Print #1, Tab(76); Using "####"; carLdrVal!(4, I)
     Next
@@ -426,13 +432,16 @@ Sub CareerLeaders_Report (careerName$, printDest, destFile$)
 
     Print #1, Tab(5); "3 POINTER %"; Tab(34); "FREE THROWS MADE"; Tab(62); "FREE THROWS ATTEMPTED"
     For I = 0 To 19
-        Print #1, Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(6, I);
         Print #1, Tab(18); Using "##.#"; carLdrVal!(6, I) * 100;
-        Print #1, Tab(28); Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Tab(28); Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(7, I);
         Print #1, Tab(47); Using "####"; carLdrVal!(7, I);
-        Print #1, Tab(58); Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Tab(58); Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(8, I);
         Print #1, Tab(76); Using "####"; carLdrVal!(8, I)
     Next
@@ -442,13 +451,16 @@ Sub CareerLeaders_Report (careerName$, printDest, destFile$)
 
     Print #1, Tab(5); "FREE THROW %"; Tab(34); "TOTAL REBOUNDS"; Tab(62); "PERSONAL FOULS"
     For I = 0 To 19
-        Print #1, Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(9, I);
         Print #1, Tab(18); Using "##.#"; carLdrVal!(9, I) * 100;
-        Print #1, Tab(28); Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Tab(28); Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(10, I);
         Print #1, Tab(47); Using "####"; carLdrVal!(10, I);
-        Print #1, Tab(58); Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Tab(58); Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(11, I);
         Print #1, Tab(76); Using "####"; carLdrVal!(11, I)
     Next
@@ -458,13 +470,16 @@ Sub CareerLeaders_Report (careerName$, printDest, destFile$)
 
     Print #1, Tab(5); "STEALS"; Tab(34); "ASSISTS"; Tab(62); "BLOCKS"
     For I = 0 To 19
-        Print #1, Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(12, I);
         Print #1, Tab(18); Using "####"; carLdrVal!(12, I);
-        Print #1, Tab(28); Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Tab(28); Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(13, I);
         Print #1, Tab(47); Using "####"; carLdrVal!(13, I);
-        Print #1, Tab(58); Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Tab(58); Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(14, I);
         Print #1, Tab(76); Using "####"; carLdrVal!(14, I)
     Next
@@ -474,13 +489,16 @@ Sub CareerLeaders_Report (careerName$, printDest, destFile$)
 
     Print #1, Tab(5); "MINUTES PLAYED"; Tab(34); "POINTS"; Tab(62); "OFFENSIVE REBOUNDS"
     For I = 0 To 19
-        Print #1, Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(15, I);
         Print #1, Tab(18); Using "####"; Int((carLdrVal!(15, I) + 30) / 60);
-        Print #1, Tab(28); Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Tab(28); Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(16, I);
         Print #1, Tab(47); Using "####"; carLdrVal!(16, I);
-        Print #1, Tab(58); Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Tab(58); Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(17, I);
         Print #1, Tab(76); Using "####"; carLdrVal!(17, I)
     Next
@@ -490,7 +508,8 @@ Sub CareerLeaders_Report (careerName$, printDest, destFile$)
 
     Print #1, Tab(5); "HIGHEST POINTS"
     For I = 0 To 19
-        Print #1, Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(18, I);
         Print #1, Tab(18); Using "####"; carLdrVal!(18, I)
     Next

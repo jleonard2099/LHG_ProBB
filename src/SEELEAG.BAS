@@ -138,8 +138,6 @@ Sub StatOptions_League ()
 End Sub
 
 
-
-
 '----------------------------------------
 '     LeagStdgs_Screen Subroutine
 '----------------------------------------
@@ -154,85 +152,72 @@ Sub LeagStdgs_Screen ()
     Shared leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
     Color 15, 0
-    Cls
-
-    Color 12
-    Locate 2, Int((80 - Len(leagueName$) - 17) / 2)
-    Print leagueName$; " LEAGUE STANDINGS"
-
-    ' Division 1 Standings
-    Color 2
-    Locate 4, 1
-    Print "    " + RTrim$(div1Name$) + " DIVISION"
-
-    Color 14
-    Print "                   W    L     PCT   GB"
-    Color 15
-
-    For P = 1 To 10
-
-        If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
-
-            D1 = divWins(1) - divLosses(1)
-            D = divWins(P) - divLosses(P)
-            D = D1 - D
-
-            BK$ = "     " + Str$(Int(D / 2))
-
-            If D = 0 Then BK$ = "   ---"
-            If D = 1 Then BK$ = "     "
-            If D > 19 Then
-                BK$ = Right$(BK$, Len(BK$) - 1)
-            End If
-            If D / 2 <> Int(D / 2) Then
-                BK$ = BK$ + H$
-            End If
-
-            Print "    "; compLdrTeam$(P); Tab(16);
-
-            'This will throw errors if there are 0 games!!!
-            PCT! = divWins(P) / (divWins(P) + divLosses(P))
-
-            Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
-            Print BK$
-
-        End If
-
-    Next P
-
-    '-----
-    Color 12
-    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
-    Color 15
-    QK$ = GetKeyPress$
-    '-----
 
     Cls
 
     Color 12
+
     Locate 2, Int((80 - Len(leagueName$) - 17) / 2)
     Print leagueName$; " LEAGUE STANDINGS"
 
-    ' Division 2 Standings
-    If div2Name$ <> "" Then
+    'Cycle through divisions
+    For division = 1 To 4
+
+        Select Case division
+
+            Case 1
+                divisionName$ = RTrim$(div1Name$)
+                yCoord = 4
+                xCoord = 1
+
+            Case 2
+                divisionName$ = RTrim$(div2Name$)
+                yCoord = 4
+                xCoord = 41
+
+            Case 3
+                divisionName$ = RTrim$(div3Name$)
+                yCoord = 17
+                xCoord = 1
+
+            Case 4
+                divisionName$ = RTrim$(div4Name$)
+                yCoord = 17
+                xCoord = 41
+
+        End Select
+
+        'If division = 1 Or (division > 1 And divisionName$ <> "") Then
+
+        Locate yCoord, xCoord
 
         Color 2
-        Locate 4, 1
-        Print "    " + RTrim$(div2Name$) + " DIVISION"
+        Print "    " + divisionName$;
+
+        Locate yCoord, xCoord + 17
 
         Color 14
-        Print "                   W    L     PCT   GB"
+        Print " W   L    PCT   GB"
+
         Color 15
 
-        For P = 11 To 20
+        RT = 0
+        first = ((division - 1) * 10) + 1
+        last = division * 10
 
-            If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
+        D1 = divWins(first) - divLosses(first)
 
-                D1 = divWins(11) - divLosses(11)
+        For P = first To last
+
+            If compLdrTeam$(P) = "" Or compLdrTeam$(P) = "*" Then
+                RT = RT + 1
+            Else
+
+                'Games Behind
                 D = divWins(P) - divLosses(P)
                 D = D1 - D
 
-                BK$ = "     " + Str$(Int(D / 2))
+                BK$ = "   " + Str$(Int(D / 2))
 
                 If D = 0 Then BK$ = "   ---"
                 If D = 1 Then BK$ = "     "
@@ -240,137 +225,40 @@ Sub LeagStdgs_Screen ()
                     BK$ = Right$(BK$, Len(BK$) - 1)
                 End If
                 If D / 2 <> Int(D / 2) Then
-                    BK$ = BK$ + H$
+                    BK$ = BK$ + " 1/2"
                 End If
 
-                Print "    "; compLdrTeam$(P); Tab(16);
+                Select Case division
+
+                    Case 1
+                        Locate (P + 4 - RT), 1
+
+                    Case 2
+                        Locate (P - 6 - RT), 41
+
+                    Case 3
+                        Locate (P - 3 - RT), 1
+
+                    Case 4
+                        Locate (P - 13 - RT), 41
+
+                End Select
+
+                Print "    "; PadRight$(compLdrTeam$(P), 13); Using "##  ##  "; divWins(P); divLosses(P);
 
                 'This will throw errors if there are 0 games!!!
                 PCT! = divWins(P) / (divWins(P) + divLosses(P))
 
-                Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
+                Print Using "#.###"; PCT!;
                 Print BK$
 
             End If
 
         Next P
 
-    End If
+        'End If
 
-    '-----
-    Color 12
-    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
-    Color 15
-    QK$ = GetKeyPress$
-    '-----
-
-    Cls
-
-    Color 12
-    Locate 2, Int((80 - Len(leagueName$) - 17) / 2)
-    Print leagueName$; " LEAGUE STANDINGS"
-    Print
-
-    ' Division 3 Standings
-    If div3Name$ <> "" Then
-
-        Color 2
-        Locate 4, 1
-        Print "    " + RTrim$(div3Name$) + " DIVISION"
-
-        Color 14
-        Print "                   W    L     PCT   GB"
-        Color 15
-
-        For P = 21 To 30
-
-            If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
-
-                D1 = divWins(21) - divLosses(21)
-                D = divWins(P) - divLosses(P)
-                D = D1 - D
-
-                BK$ = "     " + Str$(Int(D / 2))
-
-                If D = 0 Then BK$ = "   ---"
-                If D = 1 Then BK$ = "     "
-                If D > 19 Then
-                    BK$ = Right$(BK$, Len(BK$) - 1)
-                End If
-                If D / 2 <> Int(D / 2) Then
-                    BK$ = BK$ + H$
-                End If
-
-                Print "    "; compLdrTeam$(P); Tab(16);
-
-                'This will throw errors if there are 0 games!!!
-                PCT! = divWins(P) / (divWins(P) + divLosses(P))
-
-                Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
-                Print BK$
-
-            End If
-
-        Next P
-
-    End If
-
-    '-----
-    Color 12
-    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
-    Color 15
-    QK$ = GetKeyPress$
-    '-----
-
-    Cls
-
-    Color 12
-    Locate 2, Int((80 - Len(leagueName$) - 17) / 2)
-    Print leagueName$; " LEAGUE STANDINGS"
-    Print
-
-    ' Division 4 Standings
-    Color 2
-    If div4Name$ <> "" Then
-
-        Color 2
-        Locate 4, 1
-        Print "    " + RTrim$(div4Name$) + " DIVISION"
-
-        Color 14
-        Print "                   W    L     PCT   GB"
-        Color 15
-
-        For P = 31 To 40
-
-            If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
-
-                D1 = divWins(31) - divLosses(31)
-                D = divWins(P) - divLosses(P)
-                D = D1 - D
-
-                BK$ = "     " + Str$(Int(D / 2))
-
-                If D = 0 Then BK$ = "   ---"
-                If D = 1 Then BK$ = "     "
-                If D > 19 Then
-                    BK$ = Right$(BK$, Len(BK$) - 1)
-                End If
-                If D / 2 <> Int(D / 2) Then
-                    BK$ = BK$ + H$
-                End If
-
-                Print "    "; compLdrTeam$(P); Tab(16);
-
-                'This will throw errors if there are 0 games!!!
-                PCT! = divWins(P) / (divWins(P) + divLosses(P))
-
-                Print Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
-                Print BK$
-            End If
-        Next P
-
-    End If
+    Next division
 
     '-----
     Color 12
@@ -1068,35 +956,40 @@ Sub LeaderStats_Report (printDest, destFile$)
 
     Open destFile$ For Output As #1
 
-    Print #1, Tab(24); leagueName$; " LEAGUE STANDINGS"
+    XCoord = Int((80 - Len(leagueName$) - 17) / 2)
+    Print #1,
+    Print #1, Tab(XCoord); leagueName$; " LEAGUE STANDINGS"
+    Print #1,
 
-    For div = 1 To 4
+    For division = 1 To 4
 
-        first = ((div - 1) * 10) + 1
-        last = div * 10
+        Select Case division
+
+            Case 1
+                divisionName$ = RTrim$(div1Name$)
+
+            Case 2
+                divisionName$ = RTrim$(div2Name$)
+
+            Case 3
+                divisionName$ = RTrim$(div3Name$)
+
+            Case 4
+                divisionName$ = RTrim$(div4Name$)
+
+        End Select
+
+        'If division = 1 Or (division > 1 And divisionName$ <> "") Then
+
+        Print #1, "    "; PadRight$(divisionName$,15);
+        Print #1, "W    L     PCT    GB"
+
+        first = ((division - 1) * 10) + 1
+        last = division * 10
+
+        D1 = divWins(first) - divLosses(first)
 
         For P = first To last
-
-            Select Case div
-            
-                Case 1
-                    divisionName$ = div1Name$
-
-                Case 2
-                    divisionName$ = div2Name$
-
-                Case 3
-                    divisionName$ = div3Name$                
-                
-                Case 4
-                    divisionName$ = div4Name$
-
-            End Select
-
-            Print #1,
-            Print #1, "    "; divisionName$; " DIVISION"
-            Print #1,
-            Print #1, "                   W    L     PCT   GB"
 
             If compLdrTeam$(P) <> "" And compLdrTeam$(P) <> "*" Then
 
@@ -1104,7 +997,6 @@ Sub LeaderStats_Report (printDest, destFile$)
                 PCT! = divWins(P) / (divWins(P) + divLosses(P))
 
                 'Games Behind
-                D1 = divWins(1) - divLosses(1)
                 D = divWins(P) - divLosses(P)
                 D = D1 - D
 
@@ -1112,42 +1004,45 @@ Sub LeaderStats_Report (printDest, destFile$)
 
                 If D = 0 Then BK$ = "   ---"
                 If D = 1 Then BK$ = "     "
-                If D > 19 Then 
+                If D > 19 Then
                     BK$ = Right$(BK$, Len(BK$) - 1)
                 End If
-                If D / 2 <> Int(D / 2) Then 
-                    BK$ = BK$ + H$
+                If D / 2 <> Int(D / 2) Then
+                    BK$ = BK$ + " 1/2"
                 End If
 
                 Print #1, "    "; compLdrTeam$(P); Tab(16);
 
-                'This will throw errors if there are 0 games!!!
-                Print #1, Using "   ##   ##   #.###"; divWins(P); divLosses(P); PCT!;
+                Print #1, Using "   ##   ##  "; divWins(P); divLosses(P);
+
+                PCT! = divWins(P) / (divWins(P) + divLosses(P))
+                
+                Print #1, Using " #.### "; PCT!;
                 Print #1, BK$
 
             End If
 
         Next P
 
-    Next div
+    Next division
 
+    Print #1,
+    If printDest = 1 Then Print #1, Chr$(12)
+    Print #1,
 
-    Print #1, Chr$(12)
     Print #1, "FIELD GOAL % (MIN 5 FGA/G)"; Tab(41); "FREE THROW % (MIN 2 FTA/G)"
     Print #1,
     Print #1, "                            PCT   FGA"; Tab(41); "                            PCT   FTA"
 
     For P = 41 To 60
 
-        If leagLdrPlayer$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, Left$(leagLdrPlayer$(P), 10) + ", " + leagLdrTeam$(P);
             Print #1, Tab(28);
             Print #1, Using "##.#  ####"; compLgStatVal!(P) * 100; compLgStatAtt!(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leagLdrPlayer$(P + 20) = "" Then
             Print #1,
         Else
@@ -1163,15 +1058,13 @@ Sub LeaderStats_Report (printDest, destFile$)
 
     For P = 1 To 20
 
-        If leagLdrPlayer$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Print #1, Tab(34);
+            Print #1, Tab(33);
             Print #1, Using "###.#"; compLgStatVal!(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leagLdrPlayer$(P + 20) = "" Then
             Print #1,
         Else
@@ -1182,20 +1075,21 @@ Sub LeaderStats_Report (printDest, destFile$)
 
     Next
 
-    Print #1, Chr$(12)
+    Print #1,
+    If printDest = 1 Then Print #1, Chr$(12)
+    Print #1,
+
     Print #1, "STEALS PER GAME"; Tab(41); "STEALS"
 
     For P = 81 To 90
 
-        If leagLdrPlayer$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Print #1, Tab(34);
+            Print #1, Tab(33);
             Print #1, Using "###.#"; compLgStatVal!(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leagLdrPlayer$(P + 10) = "" Then
             Print #1,
         Else
@@ -1211,15 +1105,13 @@ Sub LeaderStats_Report (printDest, destFile$)
 
     For P = 101 To 110
 
-        If leagLdrPlayer$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Print #1, Tab(34);
+            Print #1, Tab(33);
             Print #1, Using "###.#"; compLgStatVal!(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leagLdrPlayer$(P + 10) = "" Then
             Print #1,
         Else
@@ -1235,15 +1127,13 @@ Sub LeaderStats_Report (printDest, destFile$)
 
     For P = 121 To 130
 
-        If leagLdrPlayer$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Print #1, Tab(34);
+            Print #1, Tab(33);
             Print #1, Using "###.#"; compLgStatVal!(P) * 100;
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leagLdrPlayer$(P + 20) = "" Then
             Print #1,
         Else
@@ -1259,15 +1149,13 @@ Sub LeaderStats_Report (printDest, destFile$)
 
     For P = 131 To 140
 
-        If leagLdrPlayer$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
             Print #1, Tab(34);
             Print #1, Using "####"; compLgStatVal!(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leagLdrPlayer$(P + 20) = "" Then
             Print #1,
         Else
@@ -1279,20 +1167,20 @@ Sub LeaderStats_Report (printDest, destFile$)
     Next
 
     Print #1,
-    Print #1, Chr$(12)
+    If printDest = 1 Then Print #1, Chr$(12)
+    Print #1,
+    
     Print #1, "REBOUNDS PER GAME"; Tab(41); "REBOUNDS"
 
     For P = 161 To 170
 
-        If leagLdrPlayer$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Print #1, Tab(34);
+            Print #1, Tab(33);
             Print #1, Using "###.#"; compLgStatVal!(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leagLdrPlayer$(P + 10) = "" Then
             Print #1,
         Else
@@ -1308,15 +1196,13 @@ Sub LeaderStats_Report (printDest, destFile$)
 
     For P = 181 To 190
 
-        If leagLdrPlayer$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Print #1, Tab(34);
+            Print #1, Tab(33);
             Print #1, Using "###.#"; compLgStatVal!(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leagLdrPlayer$(P + 10) = "" Then
             Print #1,
         Else
@@ -1332,15 +1218,13 @@ Sub LeaderStats_Report (printDest, destFile$)
 
     For P = 201 To 210
 
-        If leagLdrPlayer$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
             Print #1, Tab(34);
             Print #1, Using "####"; compLgStatVal!(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leagLdrPlayer$(P + 10) = "" Then
             Print #1,
         Else
@@ -1356,15 +1240,13 @@ Sub LeaderStats_Report (printDest, destFile$)
 
     For P = 221 To 230
 
-        If leagLdrPlayer$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leagLdrPlayer$(P) + ", " + leagLdrTeam$(P);
-            Print #1, Tab(34);
+            Print #1, Tab(33);
             Print #1, Using "###.#"; compLgStatVal!(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leagLdrPlayer$(P + 10) = "" Then
             Print #1,
         Else
@@ -1387,7 +1269,9 @@ Sub LeaderStats_Report (printDest, destFile$)
     Next
 
     Print #1,
-    Print #1, Chr$(12)
+    If printDest = 1 Then Print #1, Chr$(12)
+    Print #1,
+
     Print #1, Tab(32); "OFFENSIVE TOTALS"
     Print #1, Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG": Color 15
 
@@ -1396,60 +1280,64 @@ Sub LeaderStats_Report (printDest, destFile$)
         If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
 
             'Player
-            Print #1, Left$(offLeaderNames$(X), 11); Tab(13);
-
+            Print #1, offLeaderTeams$(X);
+            
             'Games
-            Print #1, Using "##"; offLeaders!(X, 16);
             Print #1, Tab(16);
+            Print #1, Using "##"; offLeaders!(X, 16);
 
             'FGA
+            Print #1, Tab(19);
             Print #1, Using "####"; offLeaders!(X, 1);
-            Print #1, Tab(21);
 
             'FGM
+            Print #1, Tab(24);
             Print #1, Using "####"; offLeaders!(X, 2);
-            Print #1, Tab(26);
 
             'FG %
+            Print #1, Tab(29);
             Print #1, Using ".###"; offLeaders!(X, 17);
-            Print #1, Tab(31);
 
             'FTA / FTM / FT%
+            Print #1, Tab(34);
             Print #1, Using "#### #### .###"; offLeaders!(X, 3); offLeaders!(X, 4); offLeaders!(X, 18);
-            Print #1, Tab(46);
 
             'Rebounds
+            Print #1, Tab(49);
             Print #1, Using "####"; offLeaders!(X, 5);
-            Print #1, Tab(51);
 
             'Assists
+            Print #1, Tab(54);
             Print #1, Using "####"; offLeaders!(X, 8);
-            Print #1, Tab(56);
 
             'Personal Fouls
+            Print #1, Tab(59);
             Print #1, Using "####"; offLeaders!(X, 6);
-            Print #1, Tab(61);
 
             'Steals
+            Print #1, Tab(64);
             Print #1, Using "###"; offLeaders!(X, 7);
-            Print #1, Tab(65);
 
             'Blocks
+            Print #1, Tab(68);
             Print #1, Using "###"; offLeaders!(X, 9);
-            Print #1, Tab(69);
 
             'Points
+            Print #1, Tab(72);
             Print #1, Using "#####"; offLeaders!(X, 20);
-            Print #1, Tab(75);
 
             'Average
+            Print #1, Tab(78);
             Print #1, Using "###.#"; offLeaders!(X, 19)
 
         End If
 
     Next
 
-    Print #1, Chr$(12)
+    Print #1,
+    If printDest = 1 Then Print #1, Chr$(12)
+    Print #1,
+    
     Print #1, Tab(32); "DEFENSIVE TOTALS"
     Print #1, Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG": Color 15
     Color 15
@@ -1459,53 +1347,54 @@ Sub LeaderStats_Report (printDest, destFile$)
         If defLeaderTeams$(X) <> "" And defLeaderTeams$(X) <> "*" And defLeaderTeams$(X) <> " " Then
 
             'Player
-            Print #1, Left$(defLeaderTeams$(X), 11); Tab(13);
+            Print #1, defLeaderTeams$(X); 
 
             'Games
-            Print #1, Using "##"; defLeaders!(X, 16);
             Print #1, Tab(16);
+            Print #1, Using "##"; defLeaders!(X, 16);
 
             'FGA
+            Print #1, Tab(19);
             Print #1, Using "####"; defLeaders!(X, 1);
-            Print #1, Tab(21);
 
             'FGM
+            Print #1, Tab(24);
             Print #1, Using "####"; defLeaders!(X, 2);
-            Print #1, Tab(26);
 
             'FG %
+            Print #1, Tab(29);
             Print #1, Using ".###"; defLeaders!(X, 17);
-            Print #1, Tab(31);
 
             'FTA / FTM / FT%
+            Print #1, Tab(34);
             Print #1, Using "#### #### .###"; defLeaders!(X, 3); defLeaders!(X, 4); defLeaders!(X, 18);
-            Print #1, Tab(46);
 
             'Rebounds
+            Print #1, Tab(49);
             Print #1, Using "####"; defLeaders!(X, 5);
-            Print #1, Tab(51);
 
             'Assists
+            Print #1, Tab(54);
             Print #1, Using "####"; defLeaders!(X, 8);
-            Print #1, Tab(56);
 
             'Personal Fouls
+            Print #1, Tab(59);
             Print #1, Using "####"; defLeaders!(X, 6);
-            Print #1, Tab(61);
 
             'Steals
+            Print #1, Tab(64);
             Print #1, Using "###"; defLeaders!(X, 7);
-            Print #1, Tab(65);
 
             'Blocks
+            Print #1, Tab(68);
             Print #1, Using "###"; defLeaders!(X, 9);
-            Print #1, Tab(69);
 
             'Points
+            Print #1, Tab(72);
             Print #1, Using "#####"; defLeaders!(X, 20);
-            Print #1, Tab(75);
 
             'Average
+            Print #1, Tab(78);
             Print #1, Using "###.#"; defLeaders!(X, 19)
 
         End If
@@ -1532,4 +1421,3 @@ Sub LeaderStats_Report (printDest, destFile$)
     End If
 
 End Sub
-

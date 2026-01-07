@@ -1329,8 +1329,9 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
         Print #1, Tab(68); "    "; Using ".###"; statPCT!
     End If
 
-    Print #1, Chr$(12)
-
+    Print #1, 
+    If printDest = 1 Then Print #1, Chr$(12)
+    Print #1, 
 
     '--------------------
     ' Player Comparisons
@@ -1676,7 +1677,9 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
             Print #1,
 
             If playerIdx Mod 3 = 2 Then
-                Print #1, Chr$(12)
+                Print #1, 
+                If printDest = 1 Then Print #1, Chr$(12)
+                Print #1, 
             End If
 
         End If 'done checking for null player

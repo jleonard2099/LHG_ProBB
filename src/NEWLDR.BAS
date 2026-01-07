@@ -1572,7 +1572,10 @@ Sub NewLeaders_Report (printDest, destFile$, TVN, maxRecords, categoryId)
     For W = 1 To maxRecords
 
         If (W - 1) Mod 55 = 0 Then
-            Print #1, Chr$(12)
+            Print #1, 
+            If printDest = 1 Then Print #1, Chr$(12)
+            Print #1, 
+
             Print #1, "     PLAYER                  TEAM                     "; expIndCategory$(categoryId)
             Print #1, "     ------                  ----                     ";
             Print #1, String$(Len(expIndCategory$(categoryId)), 45)
