@@ -104,7 +104,7 @@ Sub StatOptions_League ()
             Select Case userKey$
 
                 Case "F":
-                    userFile$ = _SaveFileDialog$("Save League Report", _CWD$ + "\Report", "*.txt", "Text File")
+                    userFile$ = _SaveFileDialog$("Save League Leaders Report", _CWD$ + "\League Leader Report", "*.txt", "Text File")
                     Call LeaderStats_Report(0, userFile$)
 
                 Case "P":

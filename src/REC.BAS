@@ -61,7 +61,7 @@ Sub Records_Menu ()
                         Select Case userKey$
 
                             Case "F"
-                                userFile$ = _SAVEFILEDIALOG$("Save Records Report",_CWD$ + "\Records","*.txt","Text File")           
+                                userFile$ = _SaveFileDialog$("Save Records Report",_CWD$ + "\Records","*.txt","Text File")           
                                 If userFile$ <> "" Then
                                     Call SeasonRecords_Report(0, userFile$)
                                 End If

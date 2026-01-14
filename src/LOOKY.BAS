@@ -328,7 +328,7 @@ Sub ViewScheduleSummary (statFile$, teamName$, totalGames, menuExit)
                         Select Case userKey$
 
                             Case "F"
-                                userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
+                                userFile$ = _SaveFileDialog$("Save Team Summary Report", _CWD$ + "\Team Summary Report", "*.txt", "Text File")
                                 If userFile$ <> "" Then
                                     Call StatsSchedule_Report(0, userFile$, teamName$, totalGames)
                                     Call StatsSummary_Report(0, userFile$, teamName$, totalGames)
@@ -615,7 +615,7 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
                         Select Case userKey$
 
                             Case "F"
-                                userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
+                                userFile$ = _SaveFileDialog$("Save Team Offense Stats Report", _CWD$ + "\Team Offense Stats Report", "*.txt", "Text File")
                                 If userFile$ <> "" Then
                                     Call StatsSchedule_Report(0, userFile$, teamName$, totalGames)
                                     Call StatsSummary_Report(0, userFile$, teamName$, totalGames)
@@ -812,7 +812,7 @@ Sub ViewDefenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
                         Select Case userKey$
 
                             Case "F"
-                                userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
+                                userFile$ = _SaveFileDialog$("Save Team Defense Stats Report", _CWD$ + "\Team Defense Stats Report", "*.txt", "Text File")
                                 If userFile$ <> "" Then
                                     Call StatsSchedule_Report(0, userFile$, teamName$, totalGames)
                                     Call StatsSummary_Report(0, userFile$, teamName$, totalGames)
@@ -948,7 +948,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames, menuExit)
                     Select Case userKey$
 
                         Case "F"
-                            userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
+                            userFile$ = _SaveFileDialog$("Save Extended Stat Report", _CWD$ + "\Extended Stat Report", "*.txt", "Text File")
                             If userFile$ <> "" Then
                                 Call StatsSchedule_Report(0, userFile$, teamName$, totalGames)
                                 Call StatsSummary_Report(0, userFile$, teamName$, totalGames)

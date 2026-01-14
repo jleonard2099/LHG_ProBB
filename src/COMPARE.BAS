@@ -95,7 +95,7 @@ Sub COMPARE ()
                     Select Case userKey$
 
                         Case "F":
-                            userFile$ = _SAVEFILEDIALOG$("Save Comparison Report",_CWD$ + "\Comparison","*.txt","Text File")
+                            userFile$ = _SaveFileDialog$("Save Comparison Report",_CWD$ + "\Comparison","*.txt","Text File")
                             If userFile$ <> "" Then
                                 Call Comparisons_Report(0, userFile$, team$, posn$())
                             End If

@@ -13806,7 +13806,9 @@ Sub BOXOPTIONS (outputChoice)
             End If
 
             'Includes a special option to send to printer when done
-            Call BOX2FILE(outputChoice, boxName$, 0)
+            If boxName$ <> "" Then
+                Call BOX2FILE(outputChoice, boxName$, 0)
+            End If
 
     End Select
 
