@@ -462,7 +462,7 @@ Sub SaveSchedFileConverted (saveFile$, numberGames)
 
     Field #1, 44 As X$, 2 As Q$(25), 2 As Q$(26), 5 As Q$(23), 5 As Q$(24)
 
-    For I = 1 To numberGames
+    For I = 1 To scheduleAP%(0) 'numberGames
 
         For X = 0 To 21
             LSet Q$(X + 1) = MKI$(scheduleNG%(I, X))

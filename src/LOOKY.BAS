@@ -127,6 +127,8 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames)
 
     Call ReadTeamStats (teamName$, statFile$)
 
+    '-- Here is where we need to use actual team names vs stat file names
+
     For I = 0 To 14
 
         If statPlyrVal!(I, 0) <> 0 Then
