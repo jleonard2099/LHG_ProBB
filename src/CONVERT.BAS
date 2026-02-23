@@ -539,29 +539,6 @@ End Sub
 
 
 '----------------------------------------
-'       ConvertAllTeam Subroutine
-'----------------------------------------
-' Quick and dirty script to convert all
-' team files in the "Schedule" folder
-Sub ConvertAllTeam ()
-
-    fileSpec$ = diskPaths$(0) + "PROBBTMS.*"
-
-    Count% = FileCount%(fileSpec$)
-    ReDim foundFiles$(0 To Count%)
-    foundFiles$(0) = fileSpec$
-    Call ReadFile(foundFiles$())
-
-    For X = 1 To Count%
-        target$ = diskPaths$(0) + foundFiles$(X)
-        Print "Converting "; target$
-        Call ConvertTeam4to5(target$, 1)
-    Next X
-
-End Sub
-
-
-'----------------------------------------
 '       ConvertAllSched Subroutine
 '----------------------------------------
 ' Quick and dirty script to convert all
@@ -579,6 +556,29 @@ Sub ConvertAllSched ()
         target$ = diskPaths$(3) + foundFiles$(X)
         Print "Converting "; target$
         Call ConvertSched4to5(target$, 1)
+    Next X
+
+End Sub
+
+
+'----------------------------------------
+'       ConvertAllTeam Subroutine
+'----------------------------------------
+' Quick and dirty script to convert all
+' team files in the "Schedule" folder
+Sub ConvertAllTeam ()
+
+    fileSpec$ = diskPaths$(0) + "PROBBTMS.*"
+
+    Count% = FileCount%(fileSpec$)
+    ReDim foundFiles$(0 To Count%)
+    foundFiles$(0) = fileSpec$
+    Call ReadFile(foundFiles$())
+
+    For X = 1 To Count%
+        target$ = diskPaths$(0) + foundFiles$(X)
+        Print "Converting "; target$
+        Call ConvertTeam4to5(target$, 1)
     Next X
 
 End Sub
