@@ -5,13 +5,6 @@ Sub GPMIN ()
     Shared playerNames$(), teamInfo$()
     Shared leagueRatings(), playerRatings!(), teamRatings()
 
-    ' Postions (Guard / Forward / Center)
-    Dim P$(0 To 2)
-
-    P$(0) = "G"
-    P$(1) = "F"
-    P$(2) = "C"
-
     teamNbr = 0
     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
@@ -66,7 +59,9 @@ Sub GPMIN ()
 
             Color 14: Print "15 ";
             Color 15: Print "END AND SAVE CHANGES"
+
             teamTotalMins! = MIN / teamRatings(0)
+
             Locate 23, 1
             Color 14: Print "TEAM MIN/G = ";
             Color 15
@@ -89,10 +84,10 @@ Sub GPMIN ()
 
                     Locate 28, 1: Print Space$(38);
                     Locate 28, 1: Print playerNames$(B1, 0); " ";
-                    Input "MINUTES PER GAME "; minutesPerGame
+                    Input "MINUTES PER GAME "; minutesPerGame!
 
                     playerRatings!(B1, 16) = gamesPlayed * -1
-                    playerRatings!(B1, 17) = minutesPerGame * gamesPlayed * -1
+                    playerRatings!(B1, 17) = minutesPerGame! * gamesPlayed * -1
 
                 Else
 

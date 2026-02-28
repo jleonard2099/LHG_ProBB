@@ -448,7 +448,11 @@ Sub PrintRoster (printDest, destFile$, YN$)
 
             'HI GAME
             Print #1, Tab(43); Using "####"; playerRatings!(I, 15)
+            
+            'Games Played
             'Print #1, Tab(53); USING "####"; playerRatings!(I, 16);
+
+            'Mintes/Game
             'Print #1, Tab(65); USING "####"; playerRatings!(I, 17)
 
         End If

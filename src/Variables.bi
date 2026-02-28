@@ -35,9 +35,10 @@ Dim roadLosses, roadWins, totalLosses, totalWins
 Dim tiedGames
 
 ' Conferences / Orgs
-'Dim memberIdx(TEAMS_PER_LEAGUE)
-'Dim memberName$(TEAMS_PER_LEAGUE)
-'Dim memberYear$(TEAMS_PER_LEAGUE)
+Dim memberIdx(TEAMS_PER_LEAGUE)
+Dim memberName$(TEAMS_PER_LEAGUE)
+Dim memberTeam$(TEAMS_PER_LEAGUE)
+Dim memberYear$(TEAMS_PER_LEAGUE)
 
 '-- For Road Data
 Dim gameAtt_Road&(MAX_SCHED_STATS)
@@ -141,7 +142,7 @@ Dim defTotals!(21), offTotals!(21)
 Dim defLeaders!(TEAMS_PER_LEAGUE, 20), offLeaders!(TEAMS_PER_LEAGUE, 20)
 Dim leaderVals!(0 To 250, 0 To 2)
 
-'Dim compLdrTeam$(TEAMS_PER_LEAGUE)
+Dim compLdrTeam$(TEAMS_PER_LEAGUE)
 
 Dim divWins(TEAMS_PER_LEAGUE), divLosses(TEAMS_PER_LEAGUE)
 Dim compLgStatVal!(260), compLgStatAtt!(260)
@@ -229,7 +230,7 @@ Dim actualAttendance&
 
 Dim JY, tickerStart
 
-Dim alpha$(4), tickerPeriod$(14)
+Dim tickerPeriod$(14)
 
 Dim avgAttendance&(1)
 
@@ -239,12 +240,13 @@ Dim Shared activePosition$, pbpString$, prevBall$
 Dim Shared C1, D, MJ, P, P9
 
 Dim Shared assistShotBoost, autoPlay, ballCarrier, bonusFoulNum
-Dim Shared coachOpt, compTeam, currGame, defPress
+Dim Shared coachOpt, compTeam, computerTimeout, currGame, defPress
 Dim Shared gameOver, earlyExit, endAllGames, eraAdj, eraChoice
 Dim Shared ft3PtFoul, fastBreak, forcedThree, foulPlayer
 Dim Shared freeThrowVal, ftRulesOpt, fullCtOpt
 Dim Shared gameLoc, goaltendTOs
-Dim Shared halfTime, maxTimeouts, nbrLines, offStatus
+Dim Shared halfTime
+Dim Shared lastDefCheckDiff, lastOffCheckDiff, maxTimeouts, nbrLines, offStatus
 Dim Shared passes, periodEnd, playerMode, playerOpt, playoffOpt, pbpOpt
 Dim Shared quarter, quarterOpt
 Dim Shared rebFoulChance, ruleOptType
