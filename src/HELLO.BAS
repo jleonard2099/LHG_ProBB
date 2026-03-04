@@ -3352,8 +3352,7 @@ Sub PROHOOP ()
                     rndPlayer = Int(Rnd(1) * 5)
                     pbpString$ = "STUFF BY " + players_GAME$(D, lineupIdx(D, rndPlayer), 0)
                     'Technically, interrupting a dunk is a block, but the play is being fouled
-                    'I'm not sure why this is the only circumstance in which a dunk is stuffed
-                    '(it happens on ~2.7% of attempts)
+                    'Cleanly blocked dunks are VERY rare.
                     'Commented line below would credit block
                     'gameRatings!(D, lineupIdx(D, rndPlayer), 15) = gameRatings!(D, lineupIdx(D, rndPlayer), 15) + 1
                     Call PBP(D)
@@ -3376,23 +3375,30 @@ Sub PROHOOP ()
                 End If
 
                 617 '
-                pbpString$ = "... AND " + teamGender$(P) + "'S FOULED !!!"
-                Call SELECTPBP(P, 0)
-                Call DELAY
+                RN0 = Int(Rnd(1) * 1000) + 1
 
-                'Update score and FGA
-                score(P, quarter) = score(P, quarter) + 2
-                score(P, 0) = score(P, 0) + 2
+                'Only 0.34% of fouls on dunks are clean
+                If willDunk = 0 Or (willDunk = 1 And RN >= 34) Then
 
-                'Inrease FGM
-                gameRatings!(P, lineupIdx(P, ballCarrier), 8) = gameRatings!(P, lineupIdx(P, ballCarrier), 8) + 1
+                    pbpString$ = "... AND " + teamGender$(P) + "'S FOULED !!!"
+                    Call SELECTPBP(P, 0)
+                    Call DELAY
 
-                Call UPDATESCREEN
+                    'Update score and FGA
+                    score(P, quarter) = score(P, quarter) + 2
+                    score(P, 0) = score(P, 0) + 2
 
-                ' ** Foul on made FGA **
-                Call FoulCalled(1)
+                    'Inrease FGM
+                    gameRatings!(P, lineupIdx(P, ballCarrier), 8) = gameRatings!(P, lineupIdx(P, ballCarrier), 8) + 1
 
-                Call FreeThrow_Make1(missedLast)
+                    Call UPDATESCREEN
+
+                    ' ** Foul on made FGA **
+                    Call FoulCalled(1)
+
+                    Call FreeThrow_Make1(missedLast)
+
+                End If
 
                 Call CheckGameClock
                 If gameClock! = 0 Then 170
@@ -9124,7 +9130,7 @@ Sub FoulCalled (randomFouler)
 
         P3 = 1
 
-        If playerMode = 0 Or playerMode = 1 And D <> compTeam Then
+        If playerMode = 0 Or playerMode = 1 And compTeam <> D Then
             P9 = D
             C1 = 1
             Call ChooseLineup
