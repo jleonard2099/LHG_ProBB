@@ -15057,6 +15057,7 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
 
             'Locate 2, 33
             'Color 31: Print "LOADING..."
+            chosenIdx = 1
 
             Do
 
@@ -15102,7 +15103,7 @@ Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%,
 
     If numberTeams > 0 Then
 
-        SELECTION% = 1
+        SELECTION% = selectedIdx
         Count% = numberTeams
         Start% = 1
         FileFGColor = 15: FileBGColor = 4

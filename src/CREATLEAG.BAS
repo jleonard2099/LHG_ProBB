@@ -61,14 +61,14 @@ Sub CREATLEAG ()
 
                 Case 1:
                     Call DefineLeague
-                    Call ReviewEditLeague(leagueName$)
+                    leagueFile$ = diskPaths$(2) + leagueName$ + ".TMI"
+                    Call ReviewEditLeague(leagueFile$)
 
                 Case 2:
                     leagueFile$ = _OpenFileDialog$("Choose League Definition file", diskPaths$(2), "*.TMI", "League Definition files [.TMI]")
-                    'ChooseFile$(diskPaths$(2) + "*.TMI", "LEAGUE", FileExit%)
-
+ 
                     If leagueFile$ <> "" Then
-                        Call ReviewEditLeague(GetFileBaseName$(leagueFile$))
+                        Call ReviewEditLeague(leagueFile$)
                     End If
 
             End Select
@@ -187,15 +187,13 @@ End Sub
 'This subroutine provides an interface to
 'the user allowing them to choose / clear
 'teams from the league definition.
-Sub ReviewEditLeague (leagueFile$)
+Sub ReviewEditLeague (targetFile$)
 
     Shared memberIdx()
     Shared memberName$(), memberYear$()
 
     Shared leagueName$
     Shared div1Name$, div2Name$, div3Name$, div4Name$
-
-    targetFile$ = diskPaths$(2) + leagueFile$ + ".TMI"
 
     If _FileExists (targetFile$) Then
         Call ReadConferenceIndex (targetFile$)
@@ -270,7 +268,7 @@ Sub ReviewEditLeague (leagueFile$)
 
     Loop Until choice = 3
 
-    Call SaveLeague(leagueFile$)
+    Call SaveLeague(targetFile$)
 
 End Sub
 
@@ -289,9 +287,11 @@ Sub SaveLeague (leagueFile$)
     Shared leagueName$
     Shared div1Name$, div2Name$, div3Name$, div4Name$
 
+    Dim leagStatFile$
     Dim statFileNames$(TEAMS_PER_LEAGUE)
 
-    Open diskPaths$(2) + leagueFile$ + ".TMI" For Output As #1
+    'Open Definition File
+    Open leagueFile$ For Output As #1
 
     Print #1, leagueName$
     Print #1, div1Name$
@@ -318,7 +318,9 @@ Sub SaveLeague (leagueFile$)
 
     Next X
 
-    Open diskPaths$(2) + leagueFile$ + ".TMS" For Output As #2
+    'Open Stat File
+    leagStatFile$ = String.Replace$(leagueFile$, ".TMI", ".TMS"
+    Open leagStatFile$ For Output As #2
 
     Write #2, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 

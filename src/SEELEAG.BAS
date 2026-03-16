@@ -39,14 +39,9 @@ Sub LoadLeaderFiles_League (targetFile$)
 
     Shared leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
-    Open diskPaths$(2) + GetFileBaseName$(targetFile$) + ".TMS" For Input As #1
-    Input #1, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
-    Close #1
-
-    div1Name$ = PadRight$(div1Name$, 8)
-    div2Name$ = PadRight$(div2Name$, 8)
-    div3Name$ = PadRight$(div3Name$, 8)
-    div4Name$ = PadRight$(div4Name$, 8)
+    'Assume stat files are in same folder
+    memberFile$ = String.Replace$(targetFile$, ".LDR", ".TMS")
+    Call ReadLeagueMembers(memberFile$)
 
     Cls
 
