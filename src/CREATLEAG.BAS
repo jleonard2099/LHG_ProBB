@@ -319,7 +319,8 @@ Sub SaveLeague (leagueFile$)
     Next X
 
     'Open Stat File
-    leagStatFile$ = String.Replace$(leagueFile$, ".TMI", ".TMS"
+    leagStatFile$ = String.Replace$(leagueFile$, ".TMI", ".TMS")
+
     Open leagStatFile$ For Output As #2
 
     Write #2, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
