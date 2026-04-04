@@ -1314,7 +1314,7 @@ Sub PROHOOP ()
         currGame = schedGame(0) + schedGame(2)
 
         'Open cfgPath$ + "pbplog" + Str$(currGame) For Append As #11
-        'Open cfgPath$ + "pbplog" For Append As #11
+        Open cfgPath$ + "pbplog" For Append As #11
 
         If Not _FileExists(scheduleFile$) Then
 
@@ -1361,7 +1361,7 @@ Sub PROHOOP ()
 
     Else
 
-        'Open cfgPath$ + "pbplog" For Append As #11
+        Open cfgPath$ + "pbplog" For Append As #11
 
     End If
 
@@ -1623,7 +1623,7 @@ Sub PROHOOP ()
 
     'If we've run into issues so far...
     If earlyExit = 1 Then
-        'Close #11
+        Close #11
         Exit Sub
     End If
 
@@ -2412,7 +2412,7 @@ Sub PROHOOP ()
     If threePtOpt = 1 Then
 
         ' ***Shot chance based on user's 3FG make % ***
-        'Shot percentages are consistently low without a boost. 
+        'Shot percentages are consistently low without a boost.
         'This is likely b/c factors such as shot severity,
         'fatigue and shotType may not be decent.
         If teamLeague$(P) = "WNBA" Then
@@ -2422,7 +2422,7 @@ Sub PROHOOP ()
         End If
 
         'The default values as calculated from team ratings
-        'seem to favor accuracy for modern seasons. Therefore, 
+        'seem to favor accuracy for modern seasons. Therefore,
         'we have to make adjustments in older seasons
         plyrBase3FG = gameRatings!(P, lineupIdx(P, ballCarrier), 19)
         threeFGChance = plyrBase3FG
@@ -2469,7 +2469,7 @@ Sub PROHOOP ()
         'I've generally observed more frequent 3FG's happen with 10 min quarters
         'It could be specific to women's basketball; we would need to simulate
         'olympic results for better idea
-        If quarterOpt = 1 Then 
+        If quarterOpt = 1 Then
             threeFGChance = threeFGChance + 8
         End If
 
@@ -2493,7 +2493,7 @@ Sub PROHOOP ()
             End If
 
             'If team is ahead...
-            If crunchLevel > 0 AND score(P, 0) - score(D, 0) > 0 Then
+            If crunchLevel > 0 And score(P, 0) - score(D, 0) > 0 Then
 
                 'Players who don't normally shoot 3FGA's will take them
                 'even less often
@@ -3102,7 +3102,7 @@ Sub PROHOOP ()
         'Determine when PC will take TO
         If playChoice <> 1 Then
 
-            Call TimeoutChoice (computerTimeout)
+            Call TimeoutChoice(computerTimeout)
 
             If computerTimeout = 1 Then
                 playChoice = 2
@@ -3415,7 +3415,12 @@ Sub PROHOOP ()
                     pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
                     Call SELECTPBP(P, 1)
 
-                    Call DEADBALLOPTIONS(deadballTO)
+                    If (quarter >= 4 And gameClock! <= 120) Or (quarter < 4 And gameClock! <= 60) Then
+                        'Allow subs late in quarter
+                        Call STOPPAGE(takeTO)
+                    Else
+                        Call DEADBALLOPTIONS(deadballTO)
+                    End If
 
                     If (deadballTO = 1) Then
 
@@ -3589,7 +3594,12 @@ Sub PROHOOP ()
                     Call SELECTPBP(P, 1)
                     Call DELAY
 
-                    Call DEADBALLOPTIONS(deadballTO)
+                    If (quarter >= 4 And gameClock! <= 120) Or (quarter < 4 And gameClock! <= 60) Then
+                        'Allow subs late in quarter
+                        Call STOPPAGE(takeTO)
+                    Else
+                        Call DEADBALLOPTIONS(deadballTO)
+                    End If
 
                     If (deadballTO = 1) Then
 
@@ -3856,7 +3866,12 @@ Sub PROHOOP ()
                         pbpString$ = gameTeams$(P) + " BALL AFTER SCORE"
                         Call SELECTPBP(P, 1)
 
-                        Call DEADBALLOPTIONS(deadballTO)
+                        If (quarter >= 4 And gameClock! <= 120) Or (quarter < 4 And gameClock! <= 60) Then
+                            'Allow subs late in quarter
+                            Call STOPPAGE(takeTO)
+                        Else
+                            Call DEADBALLOPTIONS(deadballTO)
+                        End If
 
                         If (deadballTO = 1) Then
 
@@ -4006,12 +4021,12 @@ Sub PROHOOP ()
         If ftRulesOpt = 0 Then
 
             'Time to inbound the ball
-            Call STOPPAGE(takeTO)
-
             pbpString$ = gameTeams$(P) + " BALL AFTER FOUL"
             Call PBP(P)
 
             Call DELAY
+
+            Call STOPPAGE(takeTO)
 
             A6 = 1
             passes = passes + 1
@@ -4048,7 +4063,12 @@ Sub PROHOOP ()
                 Call SELECTPBP(P, 1)
                 DELAY
 
-                Call DEADBALLOPTIONS(deadballTO)
+                If (quarter >= 4 And gameClock! <= 120) Or (quarter < 4 And gameClock! <= 60) Then
+                    'Allow subs late in quarter
+                    Call STOPPAGE(takeTO)
+                Else
+                    Call DEADBALLOPTIONS(deadballTO)
+                End If
 
                 If (deadballTO = 1) Then
 
@@ -4150,7 +4170,12 @@ Sub PROHOOP ()
         Call SELECTPBP(P, 1)
         Call DELAY
 
-        Call DEADBALLOPTIONS(deadballTO)
+        If (quarter >= 4 And gameClock! <= 120) Or (quarter < 4 And gameClock! <= 60) Then
+            'Allow subs late in quarter
+            Call STOPPAGE(takeTO)
+        Else
+            Call DEADBALLOPTIONS(deadballTO)
+        End If
 
         If (deadballTO = 1) Then
 
@@ -4308,8 +4333,7 @@ Sub PROHOOP ()
                 Call SELECTPBP(D, 1)
                 Call DELAY
 
-                Call DEADBALLOPTIONS(deadballTO)
-                If deadballTO = 1 Then Call STOPPAGE(takeTO)
+                Call STOPPAGE(takeTO)
 
                 Call ChangePossession
 
@@ -4325,8 +4349,7 @@ Sub PROHOOP ()
                 Call SELECTPBP(P, 1)
                 Call DELAY
 
-                Call DEADBALLOPTIONS(deadballTO)
-                If deadballTO = 1 Then Call STOPPAGE(takeTO)
+                Call STOPPAGE(takeTO)
 
                 GoTo 520
 
@@ -4375,7 +4398,12 @@ Sub PROHOOP ()
                 Call SELECTPBP(P, 1)
                 Call DELAY
 
-                Call DEADBALLOPTIONS(deadballTO)
+                If (quarter >= 4 And gameClock! <= 120) Or (quarter < 4 And gameClock! <= 60) Then
+                    'Allow subs late in quarter
+                    Call STOPPAGE(takeTO)
+                Else
+                    Call DEADBALLOPTIONS(deadballTO)
+                End If
 
                 If (deadballTO = 1) Then
 
@@ -5015,10 +5043,10 @@ End Sub
 'is taking a TO, it will happen here.
 Sub TimeoutChoice (offTakeTO)
 
-	Dim toChoice
+    Dim toChoice
 
-	'Default to no choice / no TO
-	toChoice = -1
+    'Default to no choice / no TO
+    toChoice = -1
 
     ' ***********************************
     ' *** Check for TimeOut - Offense ***
@@ -5028,62 +5056,62 @@ Sub TimeoutChoice (offTakeTO)
     '  Computer on Defense, But Human Lets Computer Shoot
     '  Computer on Offense
     '  Computer vs. Computer
-	If (playerMode = 0 And coachOpt = 1) Or _
-		(playerMode = 1 And D = compTeam And coachOpt = 1) Or _ 
-		(playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+    If (playerMode = 0 And coachOpt = 1) Or _
+        (playerMode = 1 And D = compTeam And coachOpt = 1) Or _ 
+        (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
 
-		If playoffOpt = 1 Then
-			toScoreBuffer = 3
-			runTrigger = 4
-		Else
-			toScoreBuffer = 0
-			runTrigger = 6
-		End If
+        If playoffOpt = 1 Then
+            toScoreBuffer = 3
+            runTrigger = 4
+        Else
+            toScoreBuffer = 0
+            runTrigger = 6
+        End If
 
-		scoreDiff = score(P, 0) - score(D, 0)
+        scoreDiff = score(P, 0) - score(D, 0)
 
-		timeWindow = 0
+        timeWindow = 0
 
-		If quarter = 2 And gameClock! <= 660 And gameClock! >= 540 Then timeWindow = 1
-		If quarter = 2 And gameClock! <= 240 And gameClock! >= 120 Then timeWindow = 2
-		If quarter = 4 And gameClock! <= 840 And gameClock! >= 720 Then timeWindow = 3
-		If quarter = 4 And gameClock! <= 300 And gameClock! >= 180 Then timeWindow = 4
+        If quarter = 2 And gameClock! <= 660 And gameClock! >= 540 Then timeWindow = 1
+        If quarter = 2 And gameClock! <= 240 And gameClock! >= 120 Then timeWindow = 2
+        If quarter = 4 And gameClock! <= 840 And gameClock! >= 720 Then timeWindow = 3
+        If quarter = 4 And gameClock! <= 300 And gameClock! >= 180 Then timeWindow = 4
 
-		Select Case timeWindow
+        Select Case timeWindow
 
-			Case 1
-				If timeouts(P) >= 6 And scoreDiff <= (5 + toScoreBuffer) Then
-					toChoice = P
-				End If
+            Case 1
+                If timeouts(P) >= 6 And scoreDiff <= (5 + toScoreBuffer) Then
+                    toChoice = P
+                End If
 
-			Case 2
-				If timeouts(P) >= 5 And scoreDiff <= (8 + toScoreBuffer) Then
-					toChoice = P
-				End If
+            Case 2
+                If timeouts(P) >= 5 And scoreDiff <= (8 + toScoreBuffer) Then
+                    toChoice = P
+                End If
 
-			Case 3
-				If timeouts(P) >= 4 And scoreDiff <= (5 + toScoreBuffer) Then
-					toChoice = P
-				End If
+            Case 3
+                If timeouts(P) >= 4 And scoreDiff <= (5 + toScoreBuffer) Then
+                    toChoice = P
+                End If
 
-			Case 4
-				If timeouts(P) >= 3 And scoreDiff <= (10 + toScoreBuffer) Then
-					toChoice = P
-				End If
+            Case 4
+                If timeouts(P) >= 3 And scoreDiff <= (10 + toScoreBuffer) Then
+                    toChoice = P
+                End If
 
-		End Select
+        End Select
 
-		' Emergency run-stopper — playoffs teams pull the trigger faster
-		If (lastOffCheckDiff - scoreDiff) >= runTrigger And timeouts(P) >= 1 Then
-			toChoice = P
-			lastOffCheckDiff = scoreDiff
-		End If
+        ' Emergency run-stopper — playoffs teams pull the trigger faster
+        If (lastOffCheckDiff - scoreDiff) >= runTrigger And timeouts(P) >= 1 Then
+            toChoice = P
+            lastOffCheckDiff = scoreDiff
+        End If
 
-	End If
+    End If
 
-	If toChoice = P Then
-		offTakeTO = 1
-	End If
+    If toChoice = P Then
+        offTakeTO = 1
+    End If
 
 
     ' ***********************************
@@ -5096,28 +5124,28 @@ Sub TimeoutChoice (offTakeTO)
     If (playerMode = 1 And P = compTeam And coachOpt = 1) Or _
         (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
 
-		If playoffPlay = 1 Then
-			runTrigger = 6
-			clockThreshold = 300
-		Else
-			runTrigger = 8
-			clockThreshold = 240
-		End If
+        If playoffPlay = 1 Then
+            runTrigger = 6
+            clockThreshold = 300
+        Else
+            runTrigger = 8
+            clockThreshold = 240
+        End If
 
-		'Opponent killing clock late, defense is trailing
-		If gameClock! <= clockThreshold And quarter = 4 And scoreDiff < 0 And timeouts(D) >= 1 Then
-			toChoice = D
-		End If
+        'Opponent killing clock late, defense is trailing
+        If gameClock! <= clockThreshold And quarter = 4 And scoreDiff < 0 And timeouts(D) >= 1 Then
+            toChoice = D
+        End If
 
-		'Opponent on a scoring run
-		If (scoreDiff - lastDefCheckDiff) <= -runTrigger And timeouts(D) >= 1 Then
-			toChoice = D
-		End If
+        'Opponent on a scoring run
+        If (scoreDiff - lastDefCheckDiff) <= -runTrigger And timeouts(D) >= 1 Then
+            toChoice = D
+        End If
 
-		'Opponent just scored, defense wants to regroup
-		If opponentJustScored = 1 And gameClock! <= clockThreshold And quarter = 4 And timeouts(D) >= 1 Then
-			toChoice = D
-		End If
+        'Opponent just scored, defense wants to regroup
+        If opponentJustScored = 1 And gameClock! <= clockThreshold And quarter = 4 And timeouts(D) >= 1 Then
+            toChoice = D
+        End If
 
     End If
 
@@ -8669,22 +8697,6 @@ Sub DEADBALLOPTIONS (userTakeTO)
 
     Do
 
-        Call CLEARPBP
-
-        'Substitutions for computer teams
-        If playerMode = 2 Then
-            P9 = 0
-            Call COMPUTERSUBS
-            P9 = 1
-            Call COMPUTERSUBS
-        End If
-
-        If playerMode = 1 Then
-            'Computer vs. Human
-            P9 = compTeam
-            Call COMPUTERSUBS
-        End If
-
         Call CLEARPBPBOX
 
         'User options to continue play
@@ -8707,12 +8719,10 @@ Sub DEADBALLOPTIONS (userTakeTO)
 
             If playerMode = 0 Then
 
-                Print "1 - SUB "; gameTeams$(P)
-                Print "2 - SUB "; gameTeams$(D)
-                Print "3 - CHANGE STRATEGY "; gameTeams$(P)
-                Print "4 - CHANGE STRATEGY "; gameTeams$(D)
-                Print "5 - TIME OUT "; gameTeams$(P)
-                Print "6 - TIME OUT "; gameTeams$(D)
+                Print "1 - CHANGE STRATEGY "; gameTeams$(P)
+                Print "2 - CHANGE STRATEGY "; gameTeams$(D)
+                Print "3 - TIME OUT "; gameTeams$(P)
+                Print "4 - TIME OUT "; gameTeams$(D)
 
                 I$ = GetKeyPress$
                 P3 = Val(I$)
@@ -8721,9 +8731,8 @@ Sub DEADBALLOPTIONS (userTakeTO)
 
                 tgtTeam = 1 - compTeam
 
-                Print "1 - SUB "; gameTeams$(tgtTeam)
-                Print "2 - CHANGE STRATEGY "; gameTeams$(tgtTeam)
-                Print "3 - TIME OUT "; gameTeams$(tgtTeam)
+                Print "1 - CHANGE STRATEGY "; gameTeams$(tgtTeam)
+                Print "2 - TIME OUT "; gameTeams$(tgtTeam)
 
                 I$ = GetKeyPress$
                 P3 = Val(I$)
@@ -8739,8 +8748,8 @@ Sub DEADBALLOPTIONS (userTakeTO)
             End If
 
             If P3 = 0 Or _ 
-                (playerMode = 1 And P = compTeam And (P3 = 1 Or P3 = 3 Or (P3 = 5 And timeouts(P) <= 0))) Or _ 
-                (playerMode = 1 And D = compTeam And (P3 = 2 Or P3 = 4 Or (P3 = 6 And timeouts(D) <= 0))) Then
+                (playerMode = 1 And P = compTeam And (P3 = 1 Or (P3 = 3 And timeouts(P) <= 0))) Or _ 
+                (playerMode = 1 And D = compTeam And (P3 = 2 Or (P3 = 4 And timeouts(D) <= 0))) Then
 
                 'When ENTER is pressed (to continue),
                 'team has no timeouts or computer team
@@ -8755,45 +8764,28 @@ Sub DEADBALLOPTIONS (userTakeTO)
                 Select Case P3
 
                     Case 1
-                        'Substitution - Offense
-                        C1 = 1
-                        P9 = P
-                        Call ChooseLineup
-                        Call DefPlaySafeNormal
-                        lineupChanged = 1
-                        Call SCOREBOARD
-
-                    Case 2
-                        'Substitution - Defense
-                        C1 = 1
-                        P9 = D
-                        Call ChooseLineup
-                        Call DefPlaySafeNormal
-                        P9 = P
-                        lineupChanged = 1
-                        Call SCOREBOARD
-
-                    Case 3
                         'Strategy - Offense
                         P9 = P
                         Call CHANGESTRATEGY(P9)
                         Call SCOREBOARD
 
-                    Case 4
+                    Case 2
                         'Strategy - Defense
                         P9 = D
                         Call CHANGESTRATEGY(P9)
                         Call SCOREBOARD
 
-                    Case 5
+                    Case 3
                         'Timeout - Offense
                         Call TimeoutCalled(P)
+                        userTakeTO = 1
                         lastDefCheckDiff = score(D, 0) - score(P, 0)
                         lastOffCheckDiff = score(P, 0) - score(D, 0)
 
-                    Case 6
+                    Case 4
                         'Timeout - Defense
                         Call TimeoutCalled(D)
+                        userTakeTO = 1
                         lastDefCheckDiff = score(D, 0) - score(P, 0)
                         lastOffCheckDiff = score(P, 0) - score(D, 0)
 
@@ -9451,6 +9443,7 @@ Sub PrintActiveLineup (teamIdx)
         Color 15
 
         'Player Name
+        Print #11, "Index - "; lineupIdx(teamIdx, I1)
         Print Left$(players_GAME$(teamIdx, lineupIdx(teamIdx, I1), 0), 12);
 
         If teamIdx = 0 Then
@@ -10703,17 +10696,17 @@ Function DecideShot%
 
     baseValue = MINS_PER_GAME
 
-	If playoffOpt = 1 Then
+    If playoffOpt = 1 Then
 
         'Adjust pacing for playoff leads
-		crunchLevel = GetDesparationLevel%
+        crunchLevel = GetDesparationLevel%
 
-		If crunchLevel > 0 AND score(P, 0) - score(D, 0) > 0 THEN
-			'Leading team burns clock deliberately
-			paceFactor = paceFactor + (3 * crunchLevel)
-		End If
+        If crunchLevel > 0 And score(P, 0) - score(D, 0) > 0 Then
+            'Leading team burns clock deliberately
+            paceFactor = paceFactor + (3 * crunchLevel)
+        End If
 
-	End If
+    End If
 
     If quarterOpt = 1 Then
         'baseValue = baseValue + 10
@@ -12867,7 +12860,7 @@ Sub DisplayRoster ()
             Locate , 16
 
             'Position
-            If Len(players_GAME$(P9, R1, 1)) = 1 Then 
+            If Len(players_GAME$(P9, R1, 1)) = 1 Then
                 Print players_GAME$(P9, R1, 1);
             Else
                 Print Left$(players_GAME$(P9, R1, 1), 1); Right$(players_GAME$(P9, R1, 1), 1);
@@ -12945,27 +12938,27 @@ Sub SHOTPERCENT (useAssist)
 
     defModifier = 0
 
-	If tourneyPlay = 1 Then
+    If tourneyPlay = 1 Then
 
         'Adjust defensive impact on shot % for tournament play / desparation
-		crunchLevel = GetDesparationLevel%
+        crunchLevel = GetDesparationLevel%
 
-		'Teams tend to have higher defensive pressure
-		If crunchLevel > 0 AND score(P, 0) - score(D, 0) < 0 Then
-			defModifier = defModifier + crunchLevel * 2
+        'Teams tend to have higher defensive pressure
+        If crunchLevel > 0 And score(P, 0) - score(D, 0) < 0 Then
+            defModifier = defModifier + crunchLevel * 2
             'Team that is behind has slightly lower make chance
             baseChance = baseChance + (crunchLevel * -3)
-		End If
+        End If
 
-		If crunchLevel > 0 And score(P, 0) - score(D, 0) > 0 Then
-			defModifier = defModifier + crunchLevel * 3
+        If crunchLevel > 0 And score(P, 0) - score(D, 0) > 0 Then
+            defModifier = defModifier + crunchLevel * 3
             'Team that is ahead has slightly higher make chance
             baseChance = baseChance + crunchLevel
-		End If
+        End If
 
-	End If
+    End If
 
-    shotChance =  baseChance + dFG_Pct_Adj(D) + defModifier
+    shotChance = baseChance + dFG_Pct_Adj(D) + defModifier
     threePtRange = 0
 
     'Shift shot chance towards team with homefield advantage
@@ -13341,11 +13334,11 @@ Sub FreeThrows (nbrFTAs, missedLastFT)
             'Adjust FT% for tournament play / desparation
             crunchLevel = GetDesparationLevel%
 
-            If crunchLevel > 0 THEN
+            If crunchLevel > 0 Then
 
                 'Pressure only on players below 75%, scales with how far below
                 ftPressurePenalty = (75 - playerBaseFTPct) * .10 * crunchLevel
-                ftShotChance = playerBaseFTPct - MAX(ftPressurePenalty, 0)
+                ftshotChance = playerBaseFTPct - MAX(ftPressurePenalty, 0)
 
             End If
 
@@ -15384,7 +15377,7 @@ End Sub
 'should be started.
 Sub EndOfGame
 
-    'Close #11
+    Close #11
     Call POSTGAME
 
     Cls
@@ -17739,23 +17732,23 @@ End Function
 'This function uses game clock and score
 'deficit to determine how desparate a team
 'might be to play more aggressively.
-Function GetDesparationLevel%()
+Function GetDesparationLevel% ()
 
-	scoreDiff = ABS(score(P, 0) - score(D, 0))
+    scoreDiff = Abs(score(P, 0) - score(D, 0))
 
-	level = 0
-	
-    If gameClock! <= 120 AND scoreDiff <= 6 Then
-		'Full crunch
-        level = 2  
+    level = 0
+    
+    If gameClock! <= 120 And scoreDiff <= 6 Then
+        'Full crunch
+        level = 2
     End If
 
-	IF gameClock! <= 300 AND scoreDiff <= 10 Then
-		'Late game
-        level = 1 
-	End If
+    If gameClock! <= 300 And scoreDiff <= 10 Then
+        'Late game
+        level = 1
+    End If
 
-	GetDesparationLevel% = level
+    GetDesparationLevel% = level
 
 End Function
 

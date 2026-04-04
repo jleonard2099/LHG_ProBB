@@ -96,20 +96,23 @@ Sub DefineLeague ()
 
     Do
 
+        'boxText$ = "The name should have no periods or special characters" + Chr$(13) + Chr$(10) + "Sample names are NBA 2020, WNBA 2020, G-League 2020"
+        'leagueName$ = _InputBox$("Enter Name for League", boxText$)
+
         Color 15, 0
         Cls
 
-        Call MenuBox(6, 8, 61, 7, 15, 1)
+        Call MenuBox(6, 8, 61, 8, 15, 1)
 
         Do
 
-            Locate 7,
+            Locate 8,
 
             Locate , 12: Print "ENTER NAME FOR LEAGUE: "
             Print
             Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
-            Locate , 12: Print "SAMPLE NAMES ARE NBA, WBA, NBA94-95"
-            Locate 7, 33: Input leagueName$
+            Locate , 12: Print "SAMPLE NAMES ARE NBA 2020, WNBA 2020, G-League 2020"
+            Locate 8, 33: Input leagueName$
 
             If leagueName$ <> "" Then
 
@@ -215,7 +218,7 @@ Sub ReviewEditLeague (targetFile$)
 
         For I = 1 To TEAMS_PER_DIV
 
-            Color 2: Print Using "## "; I;
+            Color 2: Print Using "  ## "; I;
             Color 15: Print Left$(memberName$(I), 17);
 
             Locate , 21
@@ -234,7 +237,7 @@ Sub ReviewEditLeague (targetFile$)
 
         Do
 
-            Locate 21, 1
+            Locate 22, 1
 
             Color 14: Print "(1) ";
             Color 15: Print "ADD A TEAM"

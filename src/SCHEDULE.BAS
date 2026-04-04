@@ -965,12 +965,15 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                         'Extract only
                         If Not (scheduleAction% = 4) Then
 
-                            Open diskPaths$(3) + subSchedFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
-                            fileLength& = LOF(1)
-                            totalGames = fileLength& / SCHEDULE_SIZE_BYTES
+                            Print
+                            Print "FOUND A MATCH - ADDING GAME # ";
 
-                            'Write matching games
-                            Locate 1, 1: Print totalGames + 1; " MATCHES"
+                            Open diskPaths$(3) + subSchedFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
+
+                            fileLength& = LOF(1)
+                            numberGames = fileLength& / SCHEDULE_SIZE_BYTES
+
+                            Print numberGames + 1
 
                             For X = 0 To 21
                                 Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
@@ -989,7 +992,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                             LSet Q$(25) = MKI$(visitorScores(I))
                             LSet Q$(26) = MKI$(homeScores(I))
 
-                            Put #1, totalGames + 1
+                            Put #1, numberGames + 1
 
                             Close #1
 
