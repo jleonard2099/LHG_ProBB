@@ -16,6 +16,8 @@ Sub InputTeam (menuShortcut%)
 
     Else
 
+        SELECTION% = 1
+
         Do
 
             Cls
@@ -28,7 +30,6 @@ Sub InputTeam (menuShortcut%)
             menuChoices$(3) = "PRINT A TEAM ROSTER  "
             menuChoices$(4) = "VIEW A TEAM ROSTER   "
             menuChoices$(5) = "EXIT TO MAIN MENU    "
-            SELECTION% = 1
             Count% = 5
             Start% = 1
             ExitCode% = 5

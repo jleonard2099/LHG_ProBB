@@ -16,6 +16,8 @@ Sub SCHEDULE ()
 
     _Title "Basketball: The Pro Game - Scheduler"
 
+    SELECTION% = 1
+
     Do
 
         Color 7, 0
@@ -31,7 +33,6 @@ Sub SCHEDULE ()
         menuChoices$(6) = "BOXSCORE MAINTENANCE / PARAMETERS "
         menuChoices$(7) = "CONVERT SCHEDULE FILE FROM 4.0    "
         menuChoices$(8) = "RETURN TO BB PRO GAME MAIN MENU   "
-        SELECTION% = 1
         Count% = 8
         Start% = 1
         ExitCode% = 8
@@ -332,6 +333,7 @@ Sub NewSchedule (scheduleFile$)
                 Call EditGame(DT$, TM$)
 
             Case "B":
+                Color 15, 2
                 Do
                     Locate LAST_ROW - 3, 1: Print "ENTER GAME # TO GO TO        "
                     Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO GO TO "; targetGame%
@@ -347,6 +349,7 @@ Sub NewSchedule (scheduleFile$)
 
             Case "D"
                 ' *** DELETE A GAME FROM THE SCHEDULE ***
+                Color 15, 4
                 Do
                     Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO DELETE "; targetGame%
                 Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
@@ -370,6 +373,7 @@ Sub NewSchedule (scheduleFile$)
 
             Case "G":
                 'GOTO A SPECIFIC PAGE
+                Color 15, 2
                 Do
                     Locate LAST_ROW - 3, 1: Print "ENTER GAME # TO GO TO        "
                     Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO GO TO "; targetGame%
@@ -576,6 +580,7 @@ Sub EditGame (DT$, TM$)
     Shared NS%
 
     ' *** EDIT A GAME ***
+    Color 15, 6
     Do
         Locate LAST_ROW - 3, 1: Print "ENTER GAME # TO EDIT        "
         Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO EDIT "; targetGame%

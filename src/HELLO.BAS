@@ -482,7 +482,6 @@ Sub Main_Menu (menuSelection)
         menuChoices$(6) = "CONFIGURE GAME FOLDERS "
         menuChoices$(7) = "EXIT PROGRAM           "
 
-        menuSelection = 1
         Count% = 7
         Start% = 1
         ExitCode% = 7
@@ -550,6 +549,8 @@ End Sub
 'it's roster.
 Sub TeamMgt_Menu ()
 
+    menuSelection = 1
+
     Do
 
         Call TITLE
@@ -566,7 +567,6 @@ Sub TeamMgt_Menu ()
         menuChoices$(8) = "CONVERT DATA FILE FROM 4.0"
         menuChoices$(9) = "RETURN TO MAIN MENU       "
 
-        menuSelection = 1
         Count% = 9
         Start% = 1
         ExitCode% = 9
@@ -633,6 +633,8 @@ End Sub
 'team careers
 Sub Replay_Menu ()
 
+    menuSelection = 1
+
     Do
 
         Call TITLE
@@ -648,7 +650,6 @@ Sub Replay_Menu ()
         menuChoices$(5) = "TEAM CAREER OPTIONS             "
         menuChoices$(6) = "RETURN TO MAIN MENU             "
 
-        menuSelection = 1
         Count% = 6
         Start% = 1
         ExitCode% = 6
@@ -709,6 +710,8 @@ End Sub
 'leaders, stats and standings
 Sub Leaders_Menu ()
 
+    menuSelection = 1
+    
     Do
 
         Call TITLE
@@ -726,7 +729,6 @@ Sub Leaders_Menu ()
         menuChoices$(7) = "DELETE ALL STATS FOR A LEAGUE  "
         menuChoices$(8) = "RETURN TO MAIN MENU            "
 
-        menuSelection = 1
         Count% = 8
         Start% = 1
         ExitCode% = 8
@@ -1168,7 +1170,7 @@ Sub PROHOOP ()
 
     Dim invalid3FG
     Dim playChoice, pbpType
-    Dim threePtShotChance
+    Dim shootingFoul, threePtShotChance
 
     Shared threePtRange
 
@@ -1189,6 +1191,7 @@ Sub PROHOOP ()
 
     Randomize Timer
 
+    shootingFoul = 0
     Call InitVar
 
     '----------------------------------------
@@ -3106,7 +3109,7 @@ Sub PROHOOP ()
 
             If computerTimeout = 1 Then
                 playChoice = 2
-                computerTimeout = 1
+                computerTimeout = 0
             End If
 
         End If
@@ -3307,6 +3310,8 @@ Sub PROHOOP ()
                     Call FoulCalled(1)
 
                     'Free Throws
+                    'Assumed contact is before shooting motion completed
+                    shootingFoul = 1
                     GoTo 591
 
                 End If
@@ -3417,6 +3422,7 @@ Sub PROHOOP ()
 
                     If (quarter >= 4 And gameClock! <= 120) Or (quarter < 4 And gameClock! <= 60) Then
                         'Allow subs late in quarter
+                        deadballTO = 0
                         Call STOPPAGE(takeTO)
                     Else
                         Call DEADBALLOPTIONS(deadballTO)
@@ -3596,6 +3602,7 @@ Sub PROHOOP ()
 
                     If (quarter >= 4 And gameClock! <= 120) Or (quarter < 4 And gameClock! <= 60) Then
                         'Allow subs late in quarter
+                        deadballTO = 0
                         Call STOPPAGE(takeTO)
                     Else
                         Call DEADBALLOPTIONS(deadballTO)
@@ -3998,17 +4005,15 @@ Sub PROHOOP ()
 
     566 '
     'Check if in BONUS
-    If (teamFouls(D) >= bonusFoulNum And quarter <= 4) Or (teamFouls(D) > 3 And quarter > 4) Then
+    If isTeamInBonus%(D) = 1 Then
 
-        If freeThrowVal = 1 Then
-            pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " GETS 3 FT TO MAKE 2..."
-        Else
-            pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " GETS 2 FREE THROWS..."
-        End If
+        pbpString$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0) + " GETS 2 FREE THROWS..."
 
         Call PBP(P)
 
         'Take free throws
+        'Call FreeThrows(2, missedLast)
+        shootingFoul = 0
         GoTo 591
 
     Else
@@ -4152,7 +4157,7 @@ Sub PROHOOP ()
     ' *** FREE THROWS IN BONUS / 2 FREE THROWS ***
 
     591 '
-    Call FreeThrow_Make2(missedLast)
+    Call FreeThrow_Make2(shootingFoul, missedLast)
 
     Call CheckGameClock
 
@@ -5052,13 +5057,9 @@ Sub TimeoutChoice (offTakeTO)
     ' *** Check for TimeOut - Offense ***
     ' ***********************************
 
-    '  Human Opponent, Computer Shoots
-    '  Computer on Defense, But Human Lets Computer Shoot
     '  Computer on Offense
     '  Computer vs. Computer
-    If (playerMode = 0 And coachOpt = 1) Or _
-        (playerMode = 1 And D = compTeam And coachOpt = 1) Or _ 
-        (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+    If (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
 
         If playoffOpt = 1 Then
             toScoreBuffer = 3
@@ -5118,11 +5119,9 @@ Sub TimeoutChoice (offTakeTO)
     ' *** Check for TimeOut - Defense ***
     ' ***********************************
 
-    '  Computer on Defense, But Human Lets Computer Shoot
-    '  Computer is Visitor AND On Offense
+    '  Computer On Defense
     '  Computer vs. Computer
-    If (playerMode = 1 And P = compTeam And coachOpt = 1) Or _
-        (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
+    If (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
 
         If playoffPlay = 1 Then
             runTrigger = 6
@@ -8085,7 +8084,7 @@ Sub DefPlaySafeNormal ()
                     gameRatings!(P9, lineupIdx(P9, playerPos(safeIdx)), 17) = gameRatings!(P9, lineupIdx(P9, playerPos(safeIdx)), 17) * 3
                     gameRatings!(P9, lineupIdx(P9, playerPos(safeIdx)), 22) = 0
 
-                    Locate menuPos(safeIdx) + 3, 20
+                    Locate menuPos(safeIdx) + 5, 20
                     Print players_GAME$(P9, lineupIdx(P9, playerPos(safeIdx)), 0); " WILL NOW PLAY NORMAL DEFENSE!"
                     Call StealAdjustments
 
@@ -8159,7 +8158,7 @@ Sub DefPlaySafeNormal ()
                         gameRatings!(P9, lineupIdx(P9, playerPos(normIdx)), 17) = Int((gameRatings!(P9, lineupIdx(P9, playerPos(normIdx)), 17) + 1) / 3)
                         gameRatings!(P9, lineupIdx(P9, playerPos(normIdx)), 22) = 50
 
-                        Locate menuPos(normIdx) + 3, 20
+                        Locate menuPos(normIdx) + 5, 20
                         Print players_GAME$(P9, lineupIdx(P9, playerPos(normIdx)), 0); " WILL NOW PLAY SAFE!"
                         Call StealAdjustments
 
@@ -9332,13 +9331,13 @@ Sub SCOREBOARD ()
     Color 7: Print Using "##"; teamFouls(1);
 
     'Bonus
-    If teamFouls(0) >= bonusFoulNum And quarter <= 4 Or teamFouls(0) > 2 And quarter > 4 Then
+    If isTeamInBonus%(0) = 1 Then
         Color 0, 2
         Locate , 46: Print "BONUS";
         Color 7, 0
     End If
 
-    If teamFouls(1) >= bonusFoulNum And quarter <= 4 Or teamFouls(1) > 2 And quarter > 4 Then
+    If isTeamInBonus%(1) = 1 Then
         Color 0, 2
         Locate , 29: Print "BONUS"
         Color 7, 0
@@ -13401,7 +13400,7 @@ Sub FreeThrow_Make1 (missedLastFT)
             Print gameTeams$(P)
         End If
 
-        If freeThrowVal = 1 And ((teamFouls(D) >= bonusFoulNum And quarter <= 4) Or (teamFouls(D) > 3 And quarter > 4)) Then
+        If freeThrowVal = 1 And isTeamInBonus%(D) = 1 Then
             'Team in BONUS
             pbpString$ = "2 TO MAKE 1 FT: " + players_GAME$(P, lineupIdx(P, ballCarrier), 0) + Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " %"
         Else
@@ -13484,7 +13483,7 @@ End Sub
 'for 3 attempts to make 2 free throws.
 'It also calculates the stat adjustments
 'and score afterward.
-Sub FreeThrow_Make2 (missedLastFT)
+Sub FreeThrow_Make2 (foulOnShot, missedLastFT)
 
     offStatus = 50
     Call STOPPAGE(takeTO)
@@ -13497,8 +13496,8 @@ Sub FreeThrow_Make2 (missedLastFT)
             Print gameTeams$(P)
         End If
 
-        If freeThrowVal = 1 And ((teamFouls(D) >= bonusFoulNum And quarter <= 4) Or (teamFouls(D) > 3 And quarter > 4)) Then
-            'Team in BONUS
+        If freeThrowVal = 1 And foulOnShot = 1 And isTeamInBonus%(D) = 1 Then
+            'Team in BONUS; shooting foul
             pbpString$ = "3 TO MAKE 2 FT: " + players_GAME$(P, lineupIdx(P, ballCarrier), 0) + Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " %":
         Else
             pbpString$ = "2 FT: " + players_GAME$(P, lineupIdx(P, ballCarrier), 0) + Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " %"
@@ -13506,8 +13505,11 @@ Sub FreeThrow_Make2 (missedLastFT)
 
         Call SELECTPBP(P, 0)
 
+        'Reset foul marker
+        foulOnShot = 0
+
     End If
-    
+
     Call DELAY
     nbrFTMade = 0
 
@@ -17834,6 +17836,22 @@ Function IsPlayerAlreadyAssigned% (playerIndex As Integer, currentSlot As Intege
         End If
 
     Next slotIdx
+
+End Function
+
+
+'----------------------------------------
+'         isTeamInBonus% Function
+'----------------------------------------
+Function isTeamInBonus% (targetTeam)
+
+    If (teamFouls(targetTeam) >= bonusFoulNum And quarter <= 4) Or (teamFouls(targetTeam) >= 4 And quarter > 4) Then
+        bonusIndicator = 1
+    Else
+        bonusIndicator = 0
+    End If
+
+    isTeamInBonus% = bonusIndicator
 
 End Function
 

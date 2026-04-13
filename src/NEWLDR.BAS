@@ -24,6 +24,8 @@ Sub NEWLDR ()
 
     Shared expStdLeagName$()
 
+    SELECTION% = 1
+
     Do
 
         Cls
@@ -36,7 +38,6 @@ Sub NEWLDR ()
         menuChoices$(3) = "UPDATE EXPANDED LEAGUE STANDINGS"
         menuChoices$(4) = "VIEW EXPANDED LEAGUE STANDINGS  "
         menuChoices$(5) = "RETURN TO LEAGUE LEADERS MENU   "
-        SELECTION% = 1
         Count% = 5
         Start% = 1
         ExitCode% = 5

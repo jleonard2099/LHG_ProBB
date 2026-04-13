@@ -16,6 +16,8 @@ Sub CREATLEAG ()
 
     ReDim menuChoices$(1 To 3)
 
+    SELECTION% = 1
+
     Do
 
         Color 15, 0
@@ -25,7 +27,6 @@ Sub CREATLEAG ()
         menuChoices$(1) = "CREATE A LEAGUE       "
         menuChoices$(2) = "MODIFY LEAGUE MEMBERS "
         menuChoices$(3) = "RETURN TO LEADERS MENU"
-        SELECTION% = 1
         Count% = 3
         Start% = 1
         ExitCode% = 3
