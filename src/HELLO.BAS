@@ -324,7 +324,7 @@ teamEraOpt$(1) = "HOME         "
 teamEraOpt$(2) = "NO ADJUSTMENT"
 
 timeoutSetting$(0) = "MANDATORY @ 7 / 10 MIN; MAX 4 IN Q4 (PRE 2001)"
-timeoutSetting$(1) = "MANDATORY @ 6 / 9 MIN; MAX 4 IN Q4 (2001-2017)"
+timeoutSetting$(1) = "MANDATORY @ 6 / 9 MIN; MAX 4 IN Q4 (2001-2016)"
 timeoutSetting$(2) = "MANDATORY @ 7 / 3 MIN, MAX 4 IN Q4 (2017-18)"
 timeoutSetting$(3) = "MANDATORY @ 7 / 3 MIN, MAX 2 IN Q4 (2018+)"
 timeoutSetting$(4) = "MANDATORY @ 5 / 3 MIN, MAX 2 IN Q4 (WNBA)"
@@ -711,7 +711,7 @@ End Sub
 Sub Leaders_Menu ()
 
     menuSelection = 1
-    
+
     Do
 
         Call TITLE
@@ -1169,7 +1169,7 @@ Sub PROHOOP ()
     _Title "Basketball: The Pro Game v" + GAME_VERSION$ + " - LET'S HOOP!"
 
     Dim invalid3FG
-    Dim playChoice, pbpType
+    Dim playChoice, pbpType, quarterSeconds
     Dim shootingFoul, threePtShotChance
 
     Shared threePtRange
@@ -1655,6 +1655,8 @@ Sub PROHOOP ()
     '   1 = Computer Team
     '   2 = PC vs. PC
 
+    Print #11, "--- " + gameTeams$(0) + " VS. " + gameTeams$(1) + " ---"
+
     For I = 0 To 1:
         'If disk ID has alpha-char, or is only 3 characters,
         'then assume the year is the first 2 chars
@@ -1743,10 +1745,12 @@ Sub PROHOOP ()
 
     'Set game clock
     If quarterOpt = 0 Then
-        gameClock! = 720
+        quarterSeconds = 720
     Else
-        gameClock! = 600
+        quarterSeconds = 600
     End If
+
+    gameClock! = quarterSeconds
 
     Call CheckGameClock
 
@@ -1792,6 +1796,9 @@ Sub PROHOOP ()
     End Select
 
     Call ChangePossession
+
+    lastDefCheckDiff = score(D, 0) - score(P, 0)
+    lastOffCheckDiff = score(P, 0) - score(D, 0)
 
     Call SCOREBOARD
 
@@ -1928,14 +1935,14 @@ Sub PROHOOP ()
 
     End If
 
+    If quarter = 4 Then
+        Print #11, "Q4 START: " + gameTeams$(0) + " timeouts=" + Str$(timeouts(0)) + " | " + gameTeams$(1) + " timeouts=" + Str$(timeouts(1))
+    End If
+
     'New quarter
     If quarter <= 4 Then
 
-        If quarterOpt = 0 Then
-            gameClock! = 720
-        Else
-            gameClock! = 600
-        End If
+        gameClock! = quarterSeconds
 
         Call CheckGameClock
         Call SCOREBOARD
@@ -2052,8 +2059,12 @@ Sub PROHOOP ()
 
     End If
 
-    passes = 1
     assistShotBoost = 0
+    passes = 1
+
+    '-- REMOVE ME???
+    'playChoice = 0
+
     shotChance = 0
 
     D6 = 0
@@ -2158,6 +2169,7 @@ Sub PROHOOP ()
                                 GoTo 445
                             Else
                                 'Difficult Shot
+                                Print #11, "--- FG CHOICE: No Shot / Difficult ---"
                                 GoTo 437
                             End If
 
@@ -2408,6 +2420,7 @@ Sub PROHOOP ()
     'All but last 2 mins / Overtime
     If (quarter < 4 Or quarter = 4 And gameClock! > 120) And playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0 Then
         'Fatigued - No Shot / Difficult Shot
+        Print #11, "--- FG CHOICE: Fatigued ---"
         GoTo 437
     End If
 
@@ -2737,8 +2750,6 @@ Sub PROHOOP ()
         threePtShotChance = 3
     End If
 
-    '--> only set this if we need to track where code is going
-    'If autoPlay = 1 Then
     If (autoPlay = 0 Or pbpDelay! > 0) Then
 
         If shotChance > 70 And fastBreak = 1 And passes = 1 Then
@@ -3078,6 +3089,7 @@ Sub PROHOOP ()
 
             'This is where ~1/2 of FGA's are decided
             'Simply by waiting until the clock is low
+            Print #11, "--- FG CHOICE: Shot Clock Low: shotClock="; Str$(shotClock); ", quarter="; Str$(quarter); ", gameClock="; Str$(gameClock!)
             playChoice = 1
 
         Else
@@ -3086,11 +3098,14 @@ Sub PROHOOP ()
 
                 If (gameClock! <= 8 And scoreDiff <= -3) Or (gameClock! <= 20 And scoreDiff <= -5) Then
 
+                    Print #11, "--- FG CHOICE: Last Second Prayer: shotClock="; Str$(shotClock); ", quarter="; Str$(quarter); ", gameClock="; Str$(gameClock!)
                     playChoice = 1
 
                 Else
 
                     If shotType > 1 Then
+                        Print #11, "--- FG CHOICE: shotType > 1: shotClock="; Str$(shotClock); ", quarter="; Str$(quarter); ", gameClock="; Str$(gameClock!)
+
                         playChoice = 1
                     Else
                         playChoice = 0
@@ -3105,7 +3120,12 @@ Sub PROHOOP ()
         'Determine when PC will take TO
         If playChoice <> 1 Then
 
-            Call TimeoutChoice(computerTimeout)
+            'Make sure we're not taking timeouts too close together
+            computerTimeout = 0
+
+            If Not (lastTOQuarter = quarter And (lastTOClock - gameClock!) < 45) Then
+                Call TimeoutChoice(computerTimeout)
+            End If
 
             If computerTimeout = 1 Then
                 playChoice = 2
@@ -3205,7 +3225,7 @@ Sub PROHOOP ()
     End If
 
     'Timeout
-    If Val(I$) = 2 And (playerMode = 0 Or playerMode = 1 And D = compTeam) And timeouts(P) > 0 Then
+    If Val(I$) = 2 And (playerMode = 0 Or (playerMode = 1 And D = compTeam)) And timeouts(P) > 0 Then
         playChoice = 2
     End If
 
@@ -3264,6 +3284,8 @@ Sub PROHOOP ()
         Case 2
             537 '
             ' *** SHOOT !!! ***
+            Print #11, "--- FG CHOICE: Shot Chosen ---"
+
             pbpType = 3
             Call MAKEPBP(pbpType)
             Call PBP(P)
@@ -3324,6 +3346,8 @@ Sub PROHOOP ()
             foulChance = (shotChance - 2) * .1
 
             If foulRoll <= foulChance Then
+
+                Print #11, "--- FG CHOICE: Shot Fouled! ---"
 
                 ' ** Foul on shot **
                 Call ResetShotClock
@@ -3390,8 +3414,7 @@ Sub PROHOOP ()
                     Call DELAY
 
                     'Update score and FGA
-                    score(P, quarter) = score(P, quarter) + 2
-                    score(P, 0) = score(P, 0) + 2
+                    Call ScoreUpdate(2)
 
                     'Inrease FGM
                     gameRatings!(P, lineupIdx(P, ballCarrier), 8) = gameRatings!(P, lineupIdx(P, ballCarrier), 8) + 1
@@ -3459,10 +3482,13 @@ Sub PROHOOP ()
             Else
 
                 'No foul - process shot
+                Print #11, "--- FG CHOICE: No Foul, Taking Shot ---"
 
                 Call Rolld100(shotRoll)
 
                 If shotRoll <= shotChance Then
+
+                    Print #11, "--- FG CHOICE: Shot Made ---"
 
                     'Shot Good
                     If willDunk = 1 Then
@@ -3575,8 +3601,7 @@ Sub PROHOOP ()
                     End If
 
                     560 '
-                    score(P, quarter) = score(P, quarter) + 2
-                    score(P, 0) = score(P, 0) + 2
+                    Call ScoreUpdate(2)
 
                     Call CreditAssists
                     Call UPDATESCREEN
@@ -3633,6 +3658,8 @@ Sub PROHOOP ()
                     End If
 
                 Else
+
+                    Print #11, "--- FG CHOICE: Shot Missed ---"
 
                     'Shot Missed
                     Call Rolld100(blockRoll)
@@ -3737,6 +3764,11 @@ Sub PROHOOP ()
 
         Case 3
             ' *** TIMEOUT ***
+            lastTOQuarter = quarter
+            lastTOClock = gameClock!
+            Print #11, "TO stamped: lastTOQuarter=" + Str$(lastTOQuarter) + " lastTOClock=" + Str$(lastTOClock)
+
+            Print #11, "Calling TimeoutCalled from: COMPUTER OFFENSE"
             Call TimeoutCalled(P)
 
             Call STOPPAGE(takeTO)
@@ -3801,6 +3833,7 @@ Sub PROHOOP ()
                 '3-point not supported
                 'Take regular shot
                 P3 = 1
+                Print #11, "--- FG CHOICE: 3 pt not supported: shotClock="; Str$(shotClock); ", quarter="; Str$(quarter); ", gameClock="; Str$(gameClock!)
                 playChoice = 1
                 GoTo 537
 
@@ -3854,8 +3887,7 @@ Sub PROHOOP ()
                     Else
 
                         'Would have been made; shot still counts
-                        score(P, quarter) = score(P, quarter) + 3
-                        score(P, 0) = score(P, 0) + 3
+                        Call ScoreUpdate(3)
 
                         Call FreeThrows(1, missedLast)
 
@@ -3939,12 +3971,10 @@ Sub PROHOOP ()
                         If invalid3FG = 1 Then
                             'Foot was on the line - it's only a 2FGA
                             invalid3FG = 0
-                            score(P, quarter) = score(P, quarter) + 2
-                            score(P, 0) = score(P, 0) + 2
+                            Call ScoreUpdate(2)
                         Else
                             'Reward 3 pts
-                            score(P, quarter) = score(P, quarter) + 3
-                            score(P, 0) = score(P, 0) + 3
+                            Call ScoreUpdate(3)
 
                             'Increase 3FGM
                             threeFG(P, lineupIdx(P, ballCarrier), 0) = threeFG(P, lineupIdx(P, ballCarrier), 0) + 1
@@ -4380,8 +4410,7 @@ Sub PROHOOP ()
                 'Increase FGM
                 gameRatings!(P, lineupIdx(P, ballCarrier), 8) = gameRatings!(P, lineupIdx(P, ballCarrier), 8) + 1
 
-                score(P, quarter) = score(P, quarter) + 2
-                score(P, 0) = score(P, 0) + 2
+                Call ScoreUpdate(2)
 
                 Call UPDATESCREEN
 
@@ -4580,7 +4609,7 @@ Sub PROHOOP ()
     'Starting in 2018, this was changed to
     'be only 14 seconds
     If teamYears(eraChoice) >= 2018 Then
-        shotClock! = 14
+        shotClock = 14
     End If
 
     If (autoPlay = 0 Or pbpDelay! > 0) Then
@@ -5013,6 +5042,8 @@ End Sub
 'shot clock and adjusting play time.
 Sub TimeoutCalled (chargeTeam)
 
+    Print #11, "TimeoutCalled: chargeTeam=" + Str$(chargeTeam) + " timeouts=" + Str$(timeouts(chargeTeam)) + " quarter=" + Str$(quarter) + " gameClock=" + Str$(gameClock!)
+
     If timeouts(chargeTeam) > 0 Then
 
         If mandatoryTO(chargeTeam) = 0 Then
@@ -5033,6 +5064,15 @@ Sub TimeoutCalled (chargeTeam)
         Call SELECTPBP(chargeTeam, 1)
         Call DELAY
 
+        lastOffCheckDiff = score(P, 0) - score(D, 0)
+        lastDefCheckDiff = score(D, 0) - score(P, 0)
+
+        If timeouts(chargeTeam) = 0 Then
+            Print #11, gameTeams$(chargeTeam); " - FINAL TIMEOUT: QUARTER -"; Str$(quarter); "; CLOCK - "; Str$(gameClock!)
+        Else
+            Print #11, gameTeams$(chargeTeam); " - TIMEOUT: QUARTER - "; Str$(quarter); "; CLOCK - "; Str$(gameClock!)
+        End If
+
     End If
 
 End Sub
@@ -5044,68 +5084,200 @@ End Sub
 'This subroutine determines whether the
 'computer should take a timeout.  If the
 'Offense is taking a TO, the regular flow
-'of the game will handle it. It the DEF
+'of the game will handle it. If the DEF
 'is taking a TO, it will happen here.
 Sub TimeoutChoice (offTakeTO)
 
-    Dim toChoice
+    Dim clockThreshold, runTrigger
+    Dim offScoreDiff, defScoreDiff
+    Dim timeWindow
+    Dim toChoice, toReserve, toScoreBuffer
 
     'Default to no choice / no TO
     toChoice = -1
 
+    'Assign time windows based on era/ruleset
+    Select Case timeoutOpt
+
+        Case 0
+            mandatoryMins1 = 10
+            mandatoryMins2 = 7
+            q4MaxTOs = 2
+
+        Case 1
+            mandatoryMins1 = 9
+            mandatoryMins2 = 6
+            q4MaxTOs = 4
+
+        Case 2
+            mandatoryMins1 = 7
+            mandatoryMins2 = 3
+            q4MaxTOs = 4
+
+        Case 3
+            mandatoryMins1 = 7
+            mandatoryMins2 = 3
+            q4MaxTOs = 2
+
+        Case 4
+            mandatoryMins1 = 5
+            mandatoryMins2 = 3
+            q4MaxTOs = 2
+
+    End Select
+
+    mandatoryMark1 = mandatoryMins1 * 60
+    mandatoryMark2 = mandatoryMins2 * 60
+
+    ' Window opens 60 seconds before each mark
+    toWindow1High = mandatoryMark1 + 60
+    toWindow1Low = mandatoryMark1
+    toWindow2High = mandatoryMark2 + 60
+    toWindow2Low = mandatoryMark2
+
+    ' Score differentials from each side's perspective
+    offScoreDiff = score(P, 0) - score(D, 0)
+    defScoreDiff = score(D, 0) - score(P, 0)
+
     ' ***********************************
     ' *** Check for TimeOut - Offense ***
     ' ***********************************
-
     '  Computer on Offense
     '  Computer vs. Computer
     If (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
 
         If playoffOpt = 1 Then
             toScoreBuffer = 3
-            runTrigger = 4
         Else
             toScoreBuffer = 0
-            runTrigger = 6
         End If
-
-        scoreDiff = score(P, 0) - score(D, 0)
 
         timeWindow = 0
 
-        If quarter = 2 And gameClock! <= 660 And gameClock! >= 540 Then timeWindow = 1
-        If quarter = 2 And gameClock! <= 240 And gameClock! >= 120 Then timeWindow = 2
-        If quarter = 4 And gameClock! <= 840 And gameClock! >= 720 Then timeWindow = 3
-        If quarter = 4 And gameClock! <= 300 And gameClock! >= 180 Then timeWindow = 4
+        ' Window 1 - Q2/Q4 only for older eras, all quarters for newer
+        If gameClock! <= toWindow1High And gameClock! >= toWindow1Low And _
+            (timeoutOpt >= 2) Or (timeoutOpt < 2 And (quarter = 2 Or quarter = 4)) Then
+            timeWindow = 1
+        End If
+    End If
 
-        Select Case timeWindow
+    ' Window 2 - always all quarters
+    If gameClock! <= toWindow2High And gameClock! >= toWindow2Low Then
+        timeWindow = 2
+    End If
 
-            Case 1
-                If timeouts(P) >= 6 And scoreDiff <= (5 + toScoreBuffer) Then
-                    toChoice = P
-                End If
 
-            Case 2
-                If timeouts(P) >= 5 And scoreDiff <= (8 + toScoreBuffer) Then
-                    toChoice = P
-                End If
+    ' Time window cases - score based
+    Select Case timeWindow
 
-            Case 3
-                If timeouts(P) >= 4 And scoreDiff <= (5 + toScoreBuffer) Then
-                    toChoice = P
-                End If
+        Case 1
+            Select Case quarter
+                Case 1
+                    If timeouts(P) > 6 And offScoreDiff <= (3 + toScoreBuffer) Then
+                        Print #11, "TO trigger: OFFENSE Q1 Window 1"
+                        toChoice = P
+                    End If
+                Case 2
+                    If timeouts(P) > 5 And offScoreDiff <= (2 + toScoreBuffer) Then
+                        Print #11, "TO trigger: OFFENSE Q2 Window 1"
+                        toChoice = P
+                    End If
+                Case 3
+                    If timeouts(P) > 4 And offScoreDiff <= (7 + toScoreBuffer) Then
+                        Print #11, "TO trigger: OFFENSE Q3 Window 1"
+                        toChoice = P
+                    End If
+                Case Else ' Q4 and OT
+                    If timeouts(P) > 3 And offScoreDiff <= (10 + toScoreBuffer) Then
+                        Print #11, "TO trigger: OFFENSE Q4/OT Window 1"
+                        toChoice = P
+                    End If
+            End Select
 
-            Case 4
-                If timeouts(P) >= 3 And scoreDiff <= (10 + toScoreBuffer) Then
-                    toChoice = P
-                End If
+        Case 2
+            Select Case quarter
+                Case 1
+                    If timeouts(P) > 6 And offScoreDiff <= (3 + toScoreBuffer) Then
+                        Print #11, "TO trigger: OFFENSE Q1 Window 2"
+                        toChoice = P
+                    End If
+                Case 2
+                    If timeouts(P) > 5 And offScoreDiff <= (8 + toScoreBuffer) Then
+                        Print #11, "TO trigger: OFFENSE Q2 Window 2"
+                        toChoice = P
+                    End If
+                Case 3
+                    If timeouts(P) > 3 And offScoreDiff <= (10 + toScoreBuffer) Then
+                        Print #11, "TO trigger: OFFENSE Q3 Window 2"
+                        toChoice = P
+                    End If
+                Case Else ' Q4 and OT
+                    If timeouts(P) > 2 And offScoreDiff <= (14 + toScoreBuffer) Then
+                        Print #11, "TO trigger: OFFENSE Q4/OT Window 2"
+                        toChoice = P
+                    End If
+            End Select
 
+    End Select
+
+    ' Quarter-aware run-stopper thresholds
+    Select Case quarter
+
+        Case 1
+            runTrigger = 12
+            toReserve = 5
+
+        Case 2
+            runTrigger = 10
+            toReserve = 4
+
+        Case 3
+            runTrigger = 6
+            toReserve = 3
+
+        Case 4
+            runTrigger = 5
+            toReserve = 0
+
+        Case Else
+            toReserve = 0
+            If playoffOpt = 1 Then
+                runTrigger = 2
+            Else
+                runTrigger = 4
+            End If
+    End Select
+
+    ' Emergency run-stopper - Q2 onward only
+    If quarter >= 2 And (lastOffCheckDiff - offScoreDiff) >= runTrigger And timeouts(P) > toReserve Then
+        Print #11, "TO trigger: OFFENSE run-stopper quarter="; quarter; "delta="; (offScoreDiff - lastOffCheckDiff); "trigger="; runTrigger
+        toChoice = P
+    End If
+
+    ' Q4 specific triggers - ordered by clock time, most urgent last
+    If quarter = 4 Then
+
+        ' Opponent in bonus - set up deliberate foul situation
+        If gameClock! <= 180 And offScoreDiff < 0 And offScoreDiff >= -6 And isTeamInBonus%(P) = 1 And timeouts(P) >= 1 Then
+            Print #11, "TO trigger: OFFENSE Q4 opponent in bonus"
+            toChoice = P
+        End If
+
+        ' Protect small lead late
+        If gameClock! <= 120 And offScoreDiff > 0 And offScoreDiff <= 6 And timeouts(P) >= 1 Then
+            Print #11, "TO trigger: OFFENSE Q4 protect lead"
+            toChoice = P
+        End If
+
+        ' Final possession - draw up a play
+        Select Case sClockVal
+            Case 0: scBase = 24
+            Case 1: scBase = 30
         End Select
 
-        ' Emergency run-stopper — playoffs teams pull the trigger faster
-        If (lastOffCheckDiff - scoreDiff) >= runTrigger And timeouts(P) >= 1 Then
+        If gameClock! <= (scBase * 2) And Abs(offScoreDiff) <= 5 And timeouts(P) >= 1 Then
+            Print #11, "TO trigger: OFFENSE Q4 final possession"
             toChoice = P
-            lastOffCheckDiff = scoreDiff
         End If
 
     End If
@@ -5114,43 +5286,166 @@ Sub TimeoutChoice (offTakeTO)
         offTakeTO = 1
     End If
 
-
     ' ***********************************
     ' *** Check for TimeOut - Defense ***
     ' ***********************************
-
     '  Computer On Defense
     '  Computer vs. Computer
     If (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
 
-        If playoffPlay = 1 Then
-            runTrigger = 6
+        If playoffOpt = 1 Then
             clockThreshold = 300
         Else
-            runTrigger = 8
             clockThreshold = 240
         End If
 
-        'Opponent killing clock late, defense is trailing
-        If gameClock! <= clockThreshold And quarter = 4 And scoreDiff < 0 And timeouts(D) >= 1 Then
+        ' Quarter-aware run-stopper thresholds
+        Select Case quarter
+
+            Case 1
+                runTrigger = 12
+                toReserve = 5
+
+            Case 2
+                runTrigger = 10
+                toReserve = 4
+
+            Case 3
+                runTrigger = 6
+                toReserve = 3
+
+            Case Else
+                toReserve = 0
+                If playoffOpt = 1 Then
+                    runTrigger = 2
+                Else
+                    runTrigger = 4
+                End If
+
+        End Select
+
+        ' Time window cases - score based
+        timeWindow = 0
+        If gameClock! <= toWindow1High And gameClock! >= toWindow1Low Then timeWindow = 1
+        If gameClock! <= toWindow2High And gameClock! >= toWindow2Low Then timeWindow = 2
+
+        Select Case timeWindow
+
+            Case 1
+
+                Select Case quarter
+
+                    Case 1
+                        If timeouts(D) > 6 And defScoreDiff <= (3 + toScoreBuffer) Then
+                            Print #11, "TO trigger: DEFENSE Q1 Window 1"
+                            toChoice = D
+                        End If
+
+                    Case 2
+                        If timeouts(D) > 5 And defScoreDiff <= (2 + toScoreBuffer) Then
+                            Print #11, "TO trigger: DEFENSE Q2 Window 1"
+                            toChoice = D
+                        End If
+
+                    Case 3
+                        If timeouts(D) > 4 And defScoreDiff <= (7 + toScoreBuffer) Then
+                            Print #11, "TO trigger: DEFENSE Q3 Window 1"
+                            toChoice = D
+                        End If
+
+                    Case Else ' Q4 and OT
+                        If timeouts(D) > 3 And defScoreDiff <= (10 + toScoreBuffer) Then
+                            Print #11, "TO trigger: DEFENSE Q4/OT Window 1"
+                            toChoice = D
+                        End If
+
+                End Select
+
+            Case 2
+
+                Select Case quarter
+
+                    Case 1
+                        If timeouts(D) > 6 And defScoreDiff <= (3 + toScoreBuffer) Then
+                            Print #11, "TO trigger: DEFENSE Q1 Window 2"
+                            toChoice = D
+                        End If
+
+                    Case 2
+                        If timeouts(D) > 5 And defScoreDiff <= (8 + toScoreBuffer) Then
+                            Print #11, "TO trigger: DEFENSE Q2 Window 2"
+                            toChoice = D
+                        End If
+
+                    Case 3
+                        If timeouts(D) > 3 And defScoreDiff <= (10 + toScoreBuffer) Then
+                            Print #11, "TO trigger: DEFENSE Q3 Window 2"
+                            toChoice = D
+                        End If
+
+                    Case Else ' Q4 and OT
+                        If timeouts(D) > 2 And defScoreDiff <= (14 + toScoreBuffer) Then
+                            Print #11, "TO trigger: DEFENSE Q4/OT Window 2"
+                            toChoice = D
+                        End If
+
+                End Select
+
+        End Select
+
+        ' Opponent on scoring run - Q2 onward only
+        If quarter >= 2 And (defScoreDiff - lastDefCheckDiff) >= runTrigger And timeouts(D) > toReserve Then
+            Print #11, "TO trigger: DEFENSE run-stopper quarter="; quarter; "delta="; (defScoreDiff - lastDefCheckDiff); "trigger="; runTrigger
             toChoice = D
         End If
 
-        'Opponent on a scoring run
-        If (scoreDiff - lastDefCheckDiff) <= -runTrigger And timeouts(D) >= 1 Then
-            toChoice = D
+        ' Q4 specific triggers - ordered by clock time, most urgent last
+        If quarter = 4 Then
+
+            ' Opponent killing clock, defense trailing
+            If gameClock! <= clockThreshold And defScoreDiff < 0 And timeouts(D) > toReserve Then
+                Print #11, "TO trigger: DEFENSE Q4 clock kill"
+                toChoice = D
+            End If
+
+            ' Opponent just scored, defense regroups
+            If opponentJustScored = 1 And gameClock! <= clockThreshold And timeouts(D) >= 1 Then
+                Print #11, "TO trigger: DEFENSE Q4 opponent just scored"
+                toChoice = D
+            End If
+
+            ' Trailing by one possession, stop clock
+            If gameClock! <= 180 And defScoreDiff < 0 And defScoreDiff > -4 And timeouts(D) >= 1 Then
+                Print #11, "TO trigger: DEFENSE Q4 trailing stop clock"
+                toChoice = D
+            End If
+
+            ' Opponent in bonus - set up intentional foul
+            If gameClock! <= 180 And defScoreDiff < 0 And defScoreDiff >= -8 And isTeamInBonus%(D) = 1 And timeouts(D) >= 1 Then
+                Print #11, "TO trigger: DEFENSE Q4 opponent in bonus"
+                toChoice = D
+            End If
+
+            ' Just lost the lead - most urgent override
+            If gameClock! <= 120 And defScoreDiff >= -2 And defScoreDiff <= 0 And timeouts(D) >= 1 Then
+                Print #11, "TO trigger: DEFENSE Q4 just lost lead"
+                toChoice = D
+            End If
+
         End If
 
-        'Opponent just scored, defense wants to regroup
-        If opponentJustScored = 1 And gameClock! <= clockThreshold And quarter = 4 And timeouts(D) >= 1 Then
+        ' Use-it-or-lose-it before Q4 cap kicks in
+        If quarter = 4 And gameClock! <= 240 And gameClock! >= 180 And timeouts(D) > 2 And Abs(defScoreDiff) <= 12 Then
+            Print #11, "TO trigger: DEFENSE Q4 use-it-or-lose-it"
             toChoice = D
         End If
 
     End If
 
-    'Offense hasn't taken a timeout
+    ' Offense isn't taking a timeout
     If toChoice = D And offTakeTO = 0 Then
-        lastDefCheckDiff = scoreDiff
+        lastTOQuarter = quarter
+        lastTOClock = gameClock!
         Call TimeoutCalled(D)
     End If
 
@@ -8603,7 +8898,6 @@ Sub CheckMandatoryTO ()
             clockTime1 = 420
             '3 minutes
             clockTime2 = 180
-
         Case 4
             '5 | 6 minutes, dep. on quarter
             If quarter = 2 Or quarter = 4 Then
@@ -8635,15 +8929,16 @@ Sub CheckMandatoryTO ()
 
             Call WINDEX
 
+            Print #11, "QUARTER - "; quarter; "; TIME - "; gameClock!
             pbpString$ = gameTeams$(chargeTeam) + " WILL BE CHARGED"
             Call SELECTPBP(chargeTeam, 0)
+            Print #11, pbpString$
+
             pbpString$ = "WITH A MANDATORY TIMEOUT"
             Call SELECTPBP(chargeTeam, 0)
+            Print #11, pbpString$
 
-            If timeouts(chargeTeam) > 0 Then
-                timeouts(chargeTeam) = timeouts(chargeTeam) - 1
-            End If
-            mandatoryTO(chargeTeam) = 1
+            Call TimeoutCalled(chargeTeam)
 
             Call UPDATESCREEN
 
@@ -8662,15 +8957,23 @@ Sub CheckMandatoryTO ()
 
             Call WINDEX
 
+            Print #11, "QUARTER - "; quarter; "; TIME - "; gameClock!
+
             pbpString$ = gameTeams$(chargeTeam) + " WILL BE CHARGED"
             Call SELECTPBP(chargeTeam, 0)
+            Print #11, pbpString$
+
             pbpString$ = "WITH A MANDATORY TIMEOUT"
             Call SELECTPBP(chargeTeam, 0)
+            Print #11, pbpString$
 
             If timeouts(chargeTeam) > 0 Then
                 timeouts(chargeTeam) = timeouts(chargeTeam) - 1
             End If
             mandatoryTO(chargeTeam) = 1
+
+            lastOffCheckDiff = score(P, 0) - score(D, 0)
+            lastDefCheckDiff = score(D, 0) - score(P, 0)
 
             Call UPDATESCREEN
 
@@ -8776,17 +9079,21 @@ Sub DEADBALLOPTIONS (userTakeTO)
 
                     Case 3
                         'Timeout - Offense
+                        lastTOQuarter = quarter
+                        lastTOClock = gameClock!
+                        Print #11, "TO stamped: lastTOQuarter=" + Str$(lastTOQuarter) + " lastTOClock=" + Str$(lastTOClock)
+                        Print #11, "Calling TimeoutCalled from: HUMAN OFFENSE DEADBALL"
                         Call TimeoutCalled(P)
                         userTakeTO = 1
-                        lastDefCheckDiff = score(D, 0) - score(P, 0)
-                        lastOffCheckDiff = score(P, 0) - score(D, 0)
 
                     Case 4
                         'Timeout - Defense
+                        lastTOQuarter = quarter
+                        lastTOClock = gameClock!
+                        Print #11, "TO stamped: lastTOQuarter=" + Str$(lastTOQuarter) + " lastTOClock=" + Str$(lastTOClock)
+                        Print #11, "Calling TimeoutCalled from: HUMAN DEFENSE DEADBALL"
                         Call TimeoutCalled(D)
                         userTakeTO = 1
-                        lastDefCheckDiff = score(D, 0) - score(P, 0)
-                        lastOffCheckDiff = score(P, 0) - score(D, 0)
 
                 End Select
 
@@ -9410,6 +9717,23 @@ Sub SCOREBOARD ()
         Color 7, 0
 
     End If
+
+End Sub
+
+
+
+'----------------------------------------
+'          ScoreUpdate Subroutine
+'----------------------------------------
+Sub ScoreUpdate (pts)
+
+    score(P, quarter) = score(P, quarter) + pts
+    score(P, 0) = score(P, 0) + pts
+
+    lastOffCheckDiff = score(P, 0) - score(D, 0)
+    lastDefCheckDiff = score(D, 0) - score(P, 0)
+
+    opponentJustScored = 1
 
 End Sub
 
@@ -10712,8 +11036,10 @@ Function DecideShot%
     End If
 
     If RN0 <= baseValue + CInt(((JY - paceFactor) * .8)) Then
+        Print #11, "--- FG CHOICE: DecideShot = Good Shot"
         DecideShot% = 1
     Else
+        Print #11, "--- FG CHOICE: DecideShot = Not Good"
         DecideShot% = 0
     End If
 
@@ -12232,7 +12558,6 @@ Sub ComputerCoach ()
 
     Call TryBlankPositionFallback(slotIdx, bestPlayer, bestCX)
 
-
     'Fill in next 2 positions as Forwards
     For slotIdx = 2 To 3
 
@@ -12358,7 +12683,6 @@ Sub ComputerCoach ()
 
     Call TryBlankPositionFallback(slotIdx, bestPlayer, bestCX)
 
-
     'Fill in last position as CENTER
     slotIdx = 4
 
@@ -12478,7 +12802,6 @@ Sub ComputerCoach ()
     End If
 
     Call TryBlankPositionFallback(slotIdx, bestPlayer, bestCX)
-
 
     '--- Assign best player to lineup slot ---
     If bestPlayer > -1 Then
@@ -12783,8 +13106,9 @@ Sub MADEFT (ftNumber)
         Print ftNumber; " GOOD"
     End If
 
-    score(P, quarter) = score(P, quarter) + 1
-    score(P, 0) = score(P, 0) + 1
+    Print #11, ftNumber; " GOOD"
+
+    Call ScoreUpdate(1)
 
     Call UPDATESCREEN
     Call DELAY
@@ -12809,6 +13133,8 @@ Sub MISSFT (ftNumber)
         Call DELAY
 
     End If
+
+    Print #11, ftNumber; " MISSED"
 
 End Sub
 
@@ -13043,7 +13369,7 @@ Sub SHOTPERCENT (useAssist)
                 Else
                     '-- This may not be needed at all!!!
                     '-- We are going to retry older years to see
-                    'shotChance = shotChance + 15
+                    shotChance = shotChance + 15
                 End If
 
                 shotChance = shotChance + penetrationDefAdj(rndOff, I2)
@@ -13110,8 +13436,7 @@ Sub THREEFT (currFreeThrow)
 
     Call PBP(P)
 
-    score(P, quarter) = score(P, quarter) + 1
-    score(P, 0) = score(P, 0) + 1
+    Call ScoreUpdate(1)
 
     Call UPDATESCREEN
 
@@ -13326,7 +13651,7 @@ Sub FreeThrows (nbrFTAs, missedLastFT)
         'FT Success Chance
         playerBaseFTPct = gameRatings!(P, lineupIdx(P, ballCarrier), 1)
         ftshotChance = playerBaseFTPct
-        
+
         'Consider playoff pressure
         If playoffOpt = 1 Then
 
@@ -13498,6 +13823,7 @@ Sub FreeThrow_Make2 (foulOnShot, missedLastFT)
 
         If freeThrowVal = 1 And foulOnShot = 1 And isTeamInBonus%(D) = 1 Then
             'Team in BONUS; shooting foul
+            Print #11, "BONUS!"
             pbpString$ = "3 TO MAKE 2 FT: " + players_GAME$(P, lineupIdx(P, ballCarrier), 0) + Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " %":
         Else
             pbpString$ = "2 FT: " + players_GAME$(P, lineupIdx(P, ballCarrier), 0) + Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " %"
@@ -13556,18 +13882,16 @@ Sub FreeThrow_Make2 (foulOnShot, missedLastFT)
 
         End If
 
-        'Only have to make 2 (3 to make 2 rules)
+        'Only allowed to make 2 FTs
         If nbrFTMade = 2 Then
             Exit For
         End If
 
         'On 2nd attempt
-        If freeThrowNbr = 2 Then
-            'Modern rules - just exit (only 2 FT)
-            '3 to make 2 - if 2 misses then done
-            If freeThrowVal = 0 Or (freeThrowVal = 1 And ((teamFouls(D) <= bonusFoulNum And quarter <= 4) Or (teamFouls(D) <= 3 And quarter > 4))) Then
-                Exit For
-            End If
+        If freeThrowNbr = 2 And _ 
+            Not (freeThrowVal = 1 And foulOnShot = 1 And isTeamInBonus%(D) = 1) Then
+            'Done if rules are strictly for 2 fouls
+            Exit For
         End If
 
     Next freeThrowNbr
@@ -15379,6 +15703,7 @@ End Sub
 'should be started.
 Sub EndOfGame
 
+    Print #11, "-- GAME OVER --"
     Close #11
     Call POSTGAME
 
@@ -17739,7 +18064,7 @@ Function GetDesparationLevel% ()
     scoreDiff = Abs(score(P, 0) - score(D, 0))
 
     level = 0
-    
+
     If gameClock! <= 120 And scoreDiff <= 6 Then
         'Full crunch
         level = 2
@@ -17804,6 +18129,9 @@ Function goodPlayer% (teamIdx, playerIdx)
     'Check roster status, invalid player in roster, or foul status
     If plyrRat_GAME(teamIdx, playerIdx, 18) <> 0 Or players_GAME$(teamIdx, playerIdx, 0) = "XXX" Or foulDanger%(teamIdx, playerIdx) = 1 Then
         'Or timeExceeded = 1 Then
+        If foulDanger%(teamIdx, playerIdx) = 1 Then
+            test1 = 1
+        End If
         goodPlayer% = 0
     Else
         goodPlayer% = 1
@@ -17926,8 +18254,14 @@ Function playerSubValue% (teamIdx, playerIdx)
 
     playerName$ = players_GAME$(teamIdx, playerIdx, 0)
     playerPos$ = players_GAME$(teamIdx, playerIdx, 1)
-    If playerPos$ = "SF" Or playerPos$ = "PF" Then playerPos$ = "F"
-    If playerPos$ = "SG" Or playerPos$ = "PG" Then playerPos$ = "G"
+
+    If playerPos$ = "SF" Or playerPos$ = "PF" Then
+        playerPos$ = "F"
+    End If
+
+    If playerPos$ = "SG" Or playerPos$ = "PG" Then
+        playerPos$ = "G"
+    End If
 
     'Player's contribution
     offRebRating = gameRatings!(teamIdx, playerIdx, 21)

@@ -237,7 +237,7 @@ Dim avgAttendance&(1)
 ' Shared / Global
 Dim Shared activePosition$, pbpString$, prevBall$
 
-Dim Shared C1, D, MJ, P, P9
+Dim Shared C1, D, M5, MJ, P, P9
 
 Dim Shared assistShotBoost, autoPlay, ballCarrier, bonusFoulNum
 Dim Shared coachOpt, compTeam, computerTimeout, currGame, defPress
@@ -246,16 +246,20 @@ Dim Shared ft3PtFoul, fastBreak, forcedThree, foulPlayer
 Dim Shared freeThrowVal, ftRulesOpt, fullCtOpt
 Dim Shared gameLoc, goaltendTOs
 Dim Shared halfTime
-Dim Shared lastDefCheckDiff, lastOffCheckDiff, maxTimeouts, nbrLines, offStatus
+Dim Shared lastTOQuarter
+Dim Shared lastDefCheckDiff, lastOffCheckDiff, maxTimeouts, nbrLines
+Dim Shared offStatus, opponentJustScored
 Dim Shared passes, periodEnd, playerMode, playerOpt, playoffOpt, pbpOpt
-Dim Shared quarter, quarterOpt
+Dim Shared quarter, quarterOpt, quarterSeconds
 Dim Shared rebFoulChance, ruleOptType
 Dim Shared sClockVal, shotChance, shotClock, shotPctOpt, shotType, sndOpt
 Dim Shared threePtOpt, threePtRange, tickerGames, timeoutOpt, twoTimeouts, willDunk
 
+
 Dim Shared MINS_PER_GAME
 
 Dim Shared gameClock!, pbpDelay!, possTime!, timeElapsed!
+Dim Shared lastTOClock As Single
 
 Dim Shared pbpText$(1 To MAX_PBP_LINES)
 
