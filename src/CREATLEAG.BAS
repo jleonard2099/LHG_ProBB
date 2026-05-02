@@ -16,8 +16,6 @@ Sub CREATLEAG ()
 
     ReDim menuChoices$(1 To 3)
 
-    SELECTION% = 1
-
     Do
 
         Color 15, 0
@@ -27,6 +25,7 @@ Sub CREATLEAG ()
         menuChoices$(1) = "CREATE A LEAGUE       "
         menuChoices$(2) = "MODIFY LEAGUE MEMBERS "
         menuChoices$(3) = "RETURN TO LEADERS MENU"
+        SELECTION% = 1
         Count% = 3
         Start% = 1
         ExitCode% = 3
@@ -62,14 +61,14 @@ Sub CREATLEAG ()
 
                 Case 1:
                     Call DefineLeague
-                    leagueFile$ = diskPaths$(2) + leagueName$ + ".TMI"
-                    Call ReviewEditLeague(leagueFile$)
+                    Call ReviewEditLeague(leagueName$)
 
                 Case 2:
                     leagueFile$ = _OpenFileDialog$("Choose League Definition file", diskPaths$(2), "*.TMI", "League Definition files [.TMI]")
- 
+                    'ChooseFile$(diskPaths$(2) + "*.TMI", "LEAGUE", FileExit%)
+
                     If leagueFile$ <> "" Then
-                        Call ReviewEditLeague(leagueFile$)
+                        Call ReviewEditLeague(GetFileBaseName$(leagueFile$))
                     End If
 
             End Select
@@ -97,23 +96,20 @@ Sub DefineLeague ()
 
     Do
 
-        'boxText$ = "The name should have no periods or special characters" + Chr$(13) + Chr$(10) + "Sample names are NBA 2020, WNBA 2020, G-League 2020"
-        'leagueName$ = _InputBox$("Enter Name for League", boxText$)
-
         Color 15, 0
         Cls
 
-        Call MenuBox(6, 8, 61, 8, 15, 1)
+        Call MenuBox(6, 8, 61, 7, 15, 1)
 
         Do
 
-            Locate 8,
+            Locate 7,
 
             Locate , 12: Print "ENTER NAME FOR LEAGUE: "
             Print
             Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
-            Locate , 12: Print "SAMPLE NAMES ARE NBA 2020, WNBA 2020, G-League 2020"
-            Locate 8, 33: Input leagueName$
+            Locate , 12: Print "SAMPLE NAMES ARE NBA, WBA, NBA94-95"
+            Locate 7, 33: Input leagueName$
 
             If leagueName$ <> "" Then
 
@@ -191,7 +187,7 @@ End Sub
 'This subroutine provides an interface to
 'the user allowing them to choose / clear
 'teams from the league definition.
-Sub ReviewEditLeague (targetFile$)
+Sub ReviewEditLeague (leagueFile$)
 
     Shared memberIdx()
     Shared memberName$(), memberYear$()
@@ -199,8 +195,10 @@ Sub ReviewEditLeague (targetFile$)
     Shared leagueName$
     Shared div1Name$, div2Name$, div3Name$, div4Name$
 
-    If _FileExists (targetFile$) Then
-        Call ReadConferenceIndex (targetFile$)
+    targetFile$ = diskPaths$(2) + leagueFile$ + ".TMI"
+
+    If _FileExists(targetFile$) Then
+        Call ReadLeagueIndex(targetFile$)
     End If
 
     Do
@@ -219,7 +217,7 @@ Sub ReviewEditLeague (targetFile$)
 
         For I = 1 To TEAMS_PER_DIV
 
-            Color 2: Print Using "  ## "; I;
+            Color 2: Print Using "## "; I;
             Color 15: Print Left$(memberName$(I), 17);
 
             Locate , 21
@@ -238,7 +236,7 @@ Sub ReviewEditLeague (targetFile$)
 
         Do
 
-            Locate 22, 1
+            Locate 21, 1
 
             Color 14: Print "(1) ";
             Color 15: Print "ADD A TEAM"
@@ -272,7 +270,7 @@ Sub ReviewEditLeague (targetFile$)
 
     Loop Until choice = 3
 
-    Call SaveLeague(targetFile$)
+    Call SaveLeague(leagueFile$)
 
 End Sub
 
@@ -291,11 +289,9 @@ Sub SaveLeague (leagueFile$)
     Shared leagueName$
     Shared div1Name$, div2Name$, div3Name$, div4Name$
 
-    Dim leagStatFile$
     Dim statFileNames$(TEAMS_PER_LEAGUE)
 
-    'Open Definition File
-    Open leagueFile$ For Output As #1
+    Open diskPaths$(2) + leagueFile$ + ".TMI" For Output As #1
 
     Print #1, leagueName$
     Print #1, div1Name$
@@ -322,10 +318,7 @@ Sub SaveLeague (leagueFile$)
 
     Next X
 
-    'Open Stat File
-    leagStatFile$ = String.Replace$(leagueFile$, ".TMI", ".TMS")
-
-    Open leagStatFile$ For Output As #2
+    Open diskPaths$(2) + leagueFile$ + ".TMS" For Output As #2
 
     Write #2, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 

@@ -228,11 +228,17 @@ Dim scheduleFile$
 
 Dim actualAttendance&
 
-Dim JY, tickerStart
+Dim eraPaceAvg, eraShootBase
+Dim matchPace, tickerStart
+
+Dim staminaScale As Single
 
 Dim tickerPeriod$(14)
 
 Dim avgAttendance&(1)
+
+Dim maxRoster(0 To 1)
+
 
 ' Shared / Global
 Dim Shared activePosition$, pbpString$, prevBall$
