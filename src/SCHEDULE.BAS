@@ -87,7 +87,6 @@ Sub SCHEDULE ()
                 Case 2 To 5:
 
                     Do
-
                         'Have the user pick a schedule
                         scheduleFile$ = _OpenFileDialog$("Choose Schedule file", diskPaths$(3), "*.SCD", "Schedule files [.SCD]")
                         'ChooseFile$(diskPaths$(3) + "*.SCD", "SCHEDULE", FileExit%)
@@ -116,8 +115,9 @@ Sub SCHEDULE ()
                     Call BoxscoreMaintenance
 
                 Case 7:
-                    scheduleFile$ = _OpenFileDialog$("Select schedule file", diskPaths$(3), "*.SCD", "Schedule files [.SCD]")
-                    Call ConvertSched4to5(scheduleFile$, 0)
+                    Call RunAllSchedules
+                    'scheduleFile$ = _OpenFileDialog$("Select schedule file", diskPaths$(3), "*.SCD", "Schedule files [.SCD]")
+                    'Call ConvertSched4to5(scheduleFile$, 0)
                     'Call ConvertAllSched
 
             End Select
@@ -1701,4 +1701,3 @@ Sub EditBoxscore (boxName$)
     End If
 
 End Sub
-

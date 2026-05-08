@@ -53,12 +53,12 @@ Sub COMPARE ()
                     Select Case playerNames$(I, 1)
 
                         Case "F": posn$(I) = "FORWARD"
-                    	Case "C ": posn$(I) = "CENTER"
-                    	Case "G ": posn$(I) = "GUARD"
-                    	Case "FC": posn$(I) = "FORWARD/GUARD"
-                    	Case "FG": posn$(I) = "FORWARD/CENTER"
-                    	Case "GF": posn$(I) = "GUARD/FORWARD"
-                    	Case "CF": posn$(I) = "CENTER/FORWARD"
+                        Case "C ": posn$(I) = "CENTER"
+                        Case "G ": posn$(I) = "GUARD"
+                        Case "FC": posn$(I) = "FORWARD/GUARD"
+                        Case "FG": posn$(I) = "FORWARD/CENTER"
+                        Case "GF": posn$(I) = "GUARD/FORWARD"
+                        Case "CF": posn$(I) = "CENTER/FORWARD"
 
                     End Select
 
@@ -689,7 +689,7 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
     Locate , 36: Print " ASST/G ";
     Locate , 44: Print " FOULS ";
     Locate , 51: Print " F/G ";
-    Locate , 56: Print " TREB ";
+    Locate , 56: Print " T.REB ";
     Locate , 62: Print " STL ";
     Locate , 67: Print " STL/G"
 
@@ -750,10 +750,10 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print "%";
     End If
 
-    'OREB
+    'O.REB
     Locate , 58: Print Using "#######"; playerRatings!(idx, 6);
 
-    'OREB / Game
+    'O.REB / Game
     Locate , 65
     If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 6) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 6) = 0) Then 
         Print "      0.0";
@@ -766,10 +766,10 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
     Locate , 16: Print String$(60, 177)
     Color 4, 11
 
-    'DREB
+    'D.REB
     Locate 10, 14: Print Using "######"; playerRatings!(idx, 7);
 
-    'DREB / Game
+    'D.REB / Game
     Locate , 20
     If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 7) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 7) = 0) Then 
         Print "      0.0";
@@ -802,7 +802,7 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "###.#"; playerRatings!(idx, 9) / playerRatings!(idx, 0);
     End If
 
-    'TREB
+    'T.REB
     Locate , 55: Print Using "######"; playerRatings!(idx, 6) + playerRatings!(idx, 7);
 
     'Steals
@@ -915,10 +915,10 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print "%";
     End If
 
-    'OREB
+    'O.REB
     Locate , 58: Print Using "#######"; playerRatings!(idx, 12);
 
-    'OREB / Game
+    'O.REB / Game
     Locate , 65
     If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 12) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 12) = 0) Then
         Print "      0.0";
@@ -931,10 +931,10 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
     Locate , 16: Print String$(60, 177)
     Color 4, 11
 
-    'DREB
+    'D.REB
     Locate 11, 14: Print Using "######"; playerRatings!(idx, 5) - playerRatings!(idx, 12);
 
-    'DREB / Game
+    'D.REB / Game
     Locate , 20
     If playerRatings!(idx, 0) = 0 Or (playerRatings!(idx, 5) - playerRatings!(idx, 12)) = 0 Or (playerRatings!(idx, 0) > 0 And (playerRatings!(idx, 5) - playerRatings!(idx, 12)) = 0) Then
         Print "      0.0";
@@ -967,7 +967,7 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "###.#"; playerRatings!(idx, 6) / playerRatings!(idx, 0);
     End If
 
-    'TREB
+    'T.REB
     Locate , 55: Print Using "######"; playerRatings!(idx, 5);
 
     'Steals
@@ -1043,7 +1043,7 @@ End Sub
 
 
 '----------------------------------------
-'   Comparisons_Report Subroutine
+'      Comparisons_Report Subroutine
 '----------------------------------------
 'This subroutine focuses on the formatting
 'of team stats for comparison. The stats
@@ -1054,7 +1054,7 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
 
     Shared playerRatings!(), teamRatings()
 
-    Shared playerRatings!()
+    Shared playerRatings!(), statPlyrVal!()
     Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
 
@@ -1073,16 +1073,13 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     Print #1, Tab(33); teamName$
     Print #1,
 
-    'Locate 2
     Print #1, Tab(3); "   OFFENSIVE STATS    ";
     Print #1, Tab(55); "   DEFENSIVE STATS   "
     Print #1,
 
-    'Locate 3
     Print #1, Tab(3); "       ACTUAL   REPLAY";
     Print #1, Tab(55); "       ACTUAL  REPLAY"
 
-    'Locate 4
     Print #1, Tab(3); " FGM   ";
     Print #1, Tab(10); Using "######"; teamRatings(6);
     Print #1, Tab(16); Using "#########"; statsOffTot!(2);
@@ -1091,7 +1088,6 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     Print #1, Tab(62); Using "######"; teamRatings(20);
     Print #1, Tab(68); Using "########"; statsDefTot!(2)
 
-    'Locate 5
     Print #1, Tab(3); " FGA   ";
     Print #1, Tab(10); Using "######"; teamRatings(5);
     Print #1, Tab(16); Using "#########"; statsOffTot!(1);
@@ -1102,21 +1098,22 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     Print #1, Tab(62); Using "######"; teamRatings(19);
     Print #1, Tab(68); Using "########"; statsDefTot!(1)
 
-    'Locate 6
     Print #1, Tab(3); " FG PCT";
 
     If teamRatings(6) = 0 Then
         Print #1, Tab(10); "   0.0";
     End If
     If teamRatings(6) > 0 Then
-        Print #1, Tab(10); "  "; Using ".###"; (teamRatings(6) / teamRatings(5));
+        statPCT! = (teamRatings(6) / teamRatings(5))
+        Print #1, Tab(10); "  "; Using ".###"; statPCT!;
     End If
 
     If statsOffTot!(1) = 0 Then
         Print #1, Tab(16); "      0.0";
     End If
     If statsOffTot!(1) > 0 Then
-        Print #1, Tab(16); "     "; Using ".###"; (statsOffTot!(2) / statsOffTot!(1));
+        statPCT! = (statsOffTot!(2) / statsOffTot!(1))
+        Print #1, Tab(16); "     "; Using ".###"; statPCT!;
     End If
 
     Print #1, Tab(30); "  ACTUAL   ";
@@ -1128,18 +1125,18 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
         Print #1, Tab(62); "   0.0";
     End If
     If teamRatings(19) > 0 Then
-        Print #1, Tab(62); "  "; Using ".###"; (teamRatings(20) / teamRatings(19));
+        statPCT! = (teamRatings(20) / teamRatings(19))
+        Print #1, Tab(62); Using "  .###"; statPCT!;
     End If
 
-    statPCT! = (statsDefTot!(2) / statsDefTot!(1))
     If statsDefTot!(1) = 0 Then
         Print #1, Tab(68); "     0.0"
     End If
     If statsDefTot!(1) > 0 Then
-        Print #1, Tab(68); "    "; Using ".###"; statPCT!
+        statPCT! = (statsDefTot!(2) / statsDefTot!(1))
+        Print #1, Tab(68); Using "    .###"; statPCT!
     End If
 
-    'Locate 7
     Print #1, Tab(3); " FTM   ";
     Print #1, Tab(10); Using "######"; teamRatings(8);
     Print #1, Tab(16); Using "#########"; statsOffTot!(4);
@@ -1152,7 +1149,6 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     Print #1, Tab(62); Using "######"; teamRatings(22);
     Print #1, Tab(68); Using "########"; statsDefTot!(4)
 
-    'Locate 8
     Print #1, Tab(3); " FTA   ";
     Print #1, Tab(10); Using "######"; teamRatings(7);
     Print #1, Tab(16); Using "#########"; statsOffTot!(3);
@@ -1161,21 +1157,22 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     Print #1, Tab(62); Using "######"; teamRatings(21);
     Print #1, Tab(68); Using "########"; statsDefTot!(3)
 
-    'Locate 9
     Print #1, Tab(3); " FT PCT";
 
     If teamRatings(7) = 0 Then
         Print #1, Tab(10); "   0.0";
     End If
     If teamRatings(7) > 0 Then
-        Print #1, Tab(10); "  "; Using ".###"; (teamRatings(8) / teamRatings(7));
+        statPCT! = (teamRatings(8) / teamRatings(7))
+        Print #1, Tab(10); Using "  .###"; statPCT!;
     End If
 
     If statsOffTot!(3) = 0 Then
         Print #1, Tab(16); "      0.0";
     End If
     If statsOffTot!(3) > 0 Then
-        Print #1, Tab(16); "     "; Using ".###"; (statsOffTot!(4) / statsOffTot!(3));
+        statPCT! = (statsOffTot!(4) / statsOffTot!(3))
+        Print #1, Tab(16); Using "     .###"; statPCT!;
     End If
 
     Print #1, Tab(55); " FT PCT";
@@ -1184,36 +1181,34 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
         Print #1, Tab(62); "   0.0";
     End If
     If teamRatings(21) > 0 Then
-        Print #1, Tab(62); "  "; Using ".###"; (teamRatings(22) / teamRatings(21));
+        statPCT! = (teamRatings(22) / teamRatings(21))
+        Print #1, Tab(62); Using "  .###"; statPCT!;
     End If
 
-    statPCT! = (statsDefTot!(4) / statsDefTot!(3))
     If statsDefTot!(13) = 0 Then
         Print #1, Tab(68); "     0.0"
     End If
     If statsDefTot!(13) > 0 Then
-        Print #1, Tab(68); "    "; Using ".###"; statPCT!
+        statPCT! = (statsDefTot!(4) / statsDefTot!(3))
+        Print #1, Tab(68); Using "    .###"; statPCT!
     End If
 
-    'Locate 10
-    Print #1, Tab(3); " O.RB  ";
+    Print #1, Tab(3); " O.REB ";
     Print #1, Tab(10); Using "######"; teamRatings(9);
     Print #1, Tab(16); Using "#########"; statsOffTot!(12);
 
-    Print #1, Tab(55); " O.RB  ";
+    Print #1, Tab(55); " O.REB ";
     Print #1, Tab(62); Using "######"; teamRatings(23);
     Print #1, Tab(68); Using "########"; statsDefTot!(12)
 
-    'Locate 11
-    Print #1, Tab(3); " D.RB  ";
+    Print #1, Tab(3); " D.REB ";
     Print #1, Tab(10); Using "######"; teamRatings(10);
     Print #1, Tab(16); Using "#########"; statsOffTot!(5) - statsOffTot!(12) - statsOffTot!(15);
 
-    Print #1, Tab(55); " D.RB  ";
+    Print #1, Tab(55); " D.REB ";
     Print #1, Tab(62); Using "######"; teamRatings(24);
     Print #1, Tab(68); Using "########"; statsDefTot!(5) - statsDefTot!(12) - statsDefTot!(15)
 
-    'Locate 12
     Print #1, Tab(3); " T.REB ";
     Print #1, Tab(10); Using "######"; teamRatings(9) + teamRatings(10);
     Print #1, Tab(16); Using "#########"; statsOffTot!(5) - statsOffTot!(15);
@@ -1222,7 +1217,6 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     Print #1, Tab(62); Using "######"; teamRatings(23) + teamRatings(24);
     Print #1, Tab(68); Using "########"; statsDefTot!(5) - statsDefTot!(15)
 
-    'Locate 13
     Print #1, Tab(3); " ASS'T ";
     Print #1, Tab(10); Using "######"; teamRatings(11);
     Print #1, Tab(16); Using "#########"; statsOffTot!(8);
@@ -1231,7 +1225,6 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     Print #1, Tab(62); Using "######"; teamRatings(25);
     Print #1, Tab(68); Using "########"; statsDefTot!(8)
 
-    'Locate 14
     Print #1, Tab(3); " FLS   ";
     Print #1, Tab(10); Using "######"; teamRatings(12);
     Print #1, Tab(16); Using "#########"; statsOffTot!(6);
@@ -1240,7 +1233,6 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     Print #1, Tab(62); Using "######"; teamRatings(26);
     Print #1, Tab(68); Using "########"; statsDefTot!(6)
 
-    'Locate 15
     Print #1, Tab(3); "  ST   ";
     Print #1, Tab(10); Using "######"; teamRatings(14);
     Print #1, Tab(16); Using "#########"; statsOffTot!(7);
@@ -1251,7 +1243,6 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     Print #1, Tab(62); Using "######"; teamRatings(28);
     Print #1, Tab(68); Using "########"; statsDefTot!(7)
 
-    'Locate 16
     Print #1, Tab(3); "  TO   ";
     Print #1, Tab(10); Using "######"; teamRatings(15);
     Print #1, Tab(16); Using "#########"; statsOffTot!(11);
@@ -1264,7 +1255,6 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     Print #1, Tab(62); Using "######"; teamRatings(29);
     Print #1, Tab(68); Using "########"; statsDefTot!(11)
 
-    'Locate 17
     Print #1, Tab(3); " BLK   ";
     Print #1, Tab(10); Using "######"; teamRatings(16);
     Print #1, Tab(16); Using "#########"; statsOffTot!(9);
@@ -1277,7 +1267,6 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     Print #1, Tab(62); Using "######"; teamRatings(30);
     Print #1, Tab(68); Using "########"; statsDefTot!(9)
 
-    'Locate 18
     Print #1, Tab(3); " 3-FGM ";
     Print #1, Tab(10); Using "######"; teamRatings(18);
     Print #1, Tab(16); Using "#########"; statsOffTot!(13);
@@ -1286,7 +1275,6 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     Print #1, Tab(62); Using "######"; teamRatings(32);
     Print #1, Tab(68); Using "########"; statsDefTot!(13)
 
-    'Locate 19
     Print #1, Tab(3); " 3-FGA ";
     Print #1, Tab(10); Using "######"; teamRatings(17);
     Print #1, Tab(16); Using "#########"; statsOffTot!(14);
@@ -1295,21 +1283,21 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     Print #1, Tab(62); Using "######"; teamRatings(31);
     Print #1, Tab(68); Using "########"; statsDefTot!(14)
 
-    'Locate 20
     Print #1, Tab(3); " 3-PCT ";
     If teamRatings(17) = 0 Then
         Print #1, Tab(10); "   0.0";
     End If
     If teamRatings(17) > 0 Then
-        Print #1, Tab(10); "  "; Using ".###"; (teamRatings(18) / teamRatings(17));
+        statPCT! = (teamRatings(18) / teamRatings(17))
+        Print #1, Tab(10); Using "  .###"; statPCT!;
     End If
 
-    statPCT! = (statsOffTot!(13) / statsOffTot!(14))
     If statsOffTot!(13) = 0 Then
         Print #1, Tab(16); "      0.0";
     End If
     If statsOffTot!(13) > 0 Then
-        Print #1, Tab(16); "     "; Using ".###"; statPCT!;
+        statPCT! = (statsOffTot!(13) / statsOffTot!(14))
+        Print #1, Tab(16); Using "     .###"; statPCT!;
     End If
 
     Print #1, Tab(55); " 3-PCT ";
@@ -1318,15 +1306,15 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
         Print #1, Tab(62); "   0.0";
     End If
     If teamRatings(31) > 0 Then
-        Print #1, Tab(62); "  "; Using ".###"; (teamRatings(32) / teamRatings(31));
+        Print #1, Tab(62); Using "  .###"; (teamRatings(32) / teamRatings(31));
     End If
 
-    statPCT! = (statsDefTot!(13) / statsDefTot!(14))
     If statsDefTot!(13) = 0 Then
         Print #1, Tab(68); "     0.0"
     End If
     If statsDefTot!(13) > 0 Then
-        Print #1, Tab(68); "    "; Using ".###"; statPCT!
+        statPCT! = (statsDefTot!(13) / statsDefTot!(14))
+        Print #1, Tab(68); Using "    .###"; statPCT!
     End If
 
     Print #1, 
@@ -1364,96 +1352,117 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
             Print #1, Tab(59); " O.REB ";
             Print #1, Tab(66); " O.REB/G"
 
-            'Locate 5
+            ' *** ACTUAL VALUES ***
+            'Print out values from COLBBTMS
             Print #1, " ACTUAL  ";
+
+            'Games
             Print #1, Tab(14); Using "###"; playerRatings!(playerIdx, 0);
+
+            'Minutes
             Print #1, Tab(17); Using "#####"; playerRatings!(playerIdx, 1);
+
+            'FGM / FGA
             Print #1, Tab(22); Using "#####"; playerRatings!(playerIdx, 3);
             Print #1, Tab(27); Using "#####"; playerRatings!(playerIdx, 2);
 
+            'FG %
             Print #1, Tab(32);
             If playerRatings!(playerIdx, 3) = 0 Then
                 Print #1, "    0.0%";
             End If
             If playerRatings!(playerIdx, 3) > 0 Then
-                Print #1, Using "#####.#"; (playerRatings!(playerIdx, 3) / playerRatings!(playerIdx, 2)) * 100;
+                statPCT! = (playerRatings!(playerIdx, 3) / playerRatings!(playerIdx, 2)) * 100
+                Print #1, Using "#####.#"; statPCT!;
                 Print #1, "%";
             End If
 
+            'FTM / FTA
             Print #1, Tab(40); Using "#####"; playerRatings!(playerIdx, 5);
             Print #1, Tab(45); Using "#####"; playerRatings!(playerIdx, 4);
 
+            'FT %
             Print #1, Tab(50);
             If playerRatings!(playerIdx, 5) = 0 Then
                 Print #1, "    0.0%";
             End If
             If playerRatings!(playerIdx, 5) > 0 Then
-                Print #1, Using "#####.#"; (playerRatings!(playerIdx, 5) / playerRatings!(playerIdx, 4)) * 100;
+                statPCT! = (playerRatings!(playerIdx, 5) / playerRatings!(playerIdx, 4)) * 100
+                Print #1, Using "#####.#"; statPCT!;
                 Print #1, "%";
             End If
 
+            'O.REB
             Print #1, Tab(58); Using "#######"; playerRatings!(playerIdx, 6);
 
+            'O.REB / Game
             Print #1, Tab(65);
             If playerRatings!(playerIdx, 0) = 0 Or playerRatings!(playerIdx, 6) = 0 Or (playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 6) = 0) Then
                 Print #1, "      0.0"
             End If
             If playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 6) > 0 Then
-                Print #1, Using "#######.#"; playerRatings!(playerIdx, 6) / playerRatings!(playerIdx, 0)
+                statPCT! = playerRatings!(playerIdx, 6) / playerRatings!(playerIdx, 0)
+                Print #1, Using "#######.#"; statPCT!
             End If
 
-            '-----
-
-            'Locate 6
+            ' *** REPLAY VALUES ***
+            'Print out values from stat files
             Print #1, " REPLAY  ";
-            Print #1, Tab(14); Using "###"; playerRatings!(playerIdx, 0);
 
+            'Games
+            Print #1, Tab(14); Using "###"; statPlyrVal!(playerIdx, 0);
+
+            'Minutes
             Print #1, Tab(17);
-            If playerRatings!(playerIdx, 10) = 0 Then
+            If statPlyrVal!(playerIdx, 10) = 0 Then
                 Print #1, "    0";
             End If
-            If playerRatings!(playerIdx, 10) > 0 Then
-                Print #1, Using "#####"; (playerRatings!(playerIdx, 10) + 30) / 60;
+            If statPlyrVal!(playerIdx, 10) > 0 Then
+                Print #1, Using "#####"; (statPlyrVal!(playerIdx, 10) + 30) / 60;
             End If
 
-            Print #1, Tab(22); Using "#####"; playerRatings!(playerIdx, 2);
-            Print #1, Tab(27); Using "#####"; playerRatings!(playerIdx, 1);
+            'FGM / FGA
+            Print #1, Tab(22); Using "#####"; statPlyrVal!(playerIdx, 2);
+            Print #1, Tab(27); Using "#####"; statPlyrVal!(playerIdx, 1);
 
+            'FG %
             Print #1, Tab(32);
-            If playerRatings!(playerIdx, 2) = 0 Then
+            If statPlyrVal!(playerIdx, 2) = 0 Then
                 Print #1, "    0.0%";
             End If
-            If playerRatings!(playerIdx, 2) > 0 Then
-                Print #1, Using "#####.#"; (playerRatings!(playerIdx, 2) / playerRatings!(playerIdx, 1)) * 100;
+            If statPlyrVal!(playerIdx, 2) > 0 Then
+                Print #1, Using "#####.#"; (statPlyrVal!(playerIdx, 2) / statPlyrVal!(playerIdx, 1)) * 100;
                 Print #1, "%";
             End If
 
-            Print #1, Tab(40); Using "#####"; playerRatings!(playerIdx, 4);
-            Print #1, Tab(45); Using "#####"; playerRatings!(playerIdx, 3);
+            'FTM / FTA
+            Print #1, Tab(40); Using "#####"; statPlyrVal!(playerIdx, 4);
+            Print #1, Tab(45); Using "#####"; statPlyrVal!(playerIdx, 3);
 
+            'FT %
             Print #1, Tab(50);
-            If playerRatings!(playerIdx, 4) = 0 Then
+            If statPlyrVal!(playerIdx, 4) = 0 Then
                 Print #1, "    0.0%";
             End If
-            If playerRatings!(playerIdx, 4) > 0 Then
-                Print #1, Using "#####.#"; playerRatings!(playerIdx, 4) / playerRatings!(playerIdx, 3) * 100;
+            If statPlyrVal!(playerIdx, 4) > 0 Then
+                Print #1, Using "#####.#"; statPlyrVal!(playerIdx, 4) / statPlyrVal!(playerIdx, 3) * 100;
                 Print #1, "%";
             End If
 
-            Print #1, Tab(58); Using "#######"; playerRatings!(playerIdx, 12);
+            'O.REB
+            Print #1, Tab(58); Using "#######"; statPlyrVal!(playerIdx, 12);
 
+            'O.REB / GAME
             Print #1, Tab(65);
-            If playerRatings!(playerIdx, 0) = 0 Or playerRatings!(playerIdx, 12) = 0 Or (playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 12) = 0) Then
+            If statPlyrVal!(playerIdx, 0) = 0 Or statPlyrVal!(playerIdx, 12) = 0 Or (statPlyrVal!(playerIdx, 0) > 0 And statPlyrVal!(playerIdx, 12) = 0) Then
                 Print #1, "      0.0";
             End If
-            If playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 12) > 0 Then
-                Print #1, Using "#######.#"; playerRatings!(playerIdx, 12) / playerRatings!(playerIdx, 0);
+            If statPlyrVal!(playerIdx, 0) > 0 And statPlyrVal!(playerIdx, 12) > 0 Then
+                Print #1, Using "#######.#"; statPlyrVal!(playerIdx, 12) / statPlyrVal!(playerIdx, 0);
             End If
 
             Print #1,
             Print #1,
-
-            '-----
 
             Print #1, Tab(14); " D.REB ";
             Print #1, Tab(21); " D.REB/G ";
@@ -1461,16 +1470,18 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
             Print #1, Tab(36); " ASST/G ";
             Print #1, Tab(44); " FOULS ";
             Print #1, Tab(51); " F/G ";
-            Print #1, Tab(56); " TREB ";
+            Print #1, Tab(56); " T.REB ";
             Print #1, Tab(62); " STL ";
             Print #1, Tab(67); " STL/G"
 
-            '-----
-
-            'Locate 10
+            ' *** ACTUAL VALUES ***
+            'Print out values from COLBBTMS
             Print #1, " ACTUAL ";
+
+            'D.Reb
             Print #1, Tab(14); Using "######"; playerRatings!(playerIdx, 7);
 
+            'D.Reb / Game
             Print #1, Tab(20);
             If playerRatings!(playerIdx, 0) = 0 Or playerRatings!(playerIdx, 7) = 0 Or (playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 7) = 0) Then
                 Print #1, "      0.0";
@@ -1479,8 +1490,10 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
                 Print #1, Using "#######.#"; playerRatings!(playerIdx, 7) / playerRatings!(playerIdx, 0);
             End If
 
+            'Assists
             Print #1, Tab(29); Using "######"; playerRatings!(playerIdx, 8);
 
+            'Assists / Game
             Locate , 35
             If playerRatings!(playerIdx, 0) = 0 Or playerRatings!(playerIdx, 8) = 0 Or (playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 8) = 0) Then
                 Print #1, "     0.0";
@@ -1489,8 +1502,10 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
                 Print #1, Using "######.#"; playerRatings!(playerIdx, 8) / playerRatings!(playerIdx, 0);
             End If
 
+            'Fouls
             Locate , 43: Print #1, Using "#######"; playerRatings!(playerIdx, 9);
 
+            'Fouls / Game
             Locate , 50
             If playerRatings!(playerIdx, 0) = 0 Or playerRatings!(playerIdx, 9) = 0 Or (playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 9) = 0) Then
                 Print #1, "  0.0";
@@ -1499,9 +1514,13 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
                 Print #1, Using "###.#"; playerRatings!(playerIdx, 9) / playerRatings!(playerIdx, 0);
             End If
 
+            'T.REB
             Locate , 55: Print #1, Using "######"; playerRatings!(playerIdx, 6) + playerRatings!(playerIdx, 7);
+
+            'Steals
             Locate , 61: Print #1, Using "#####"; playerRatings!(playerIdx, 11);
 
+            'Steals / Game
             Locate , 66
             If playerRatings!(playerIdx, 0) = 0 Or playerRatings!(playerIdx, 11) = 0 Or (playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 11) = 0) Then
                 Print #1, "    0.0"
@@ -1510,61 +1529,68 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
                 Print #1, Using "#####.#"; playerRatings!(playerIdx, 11) / playerRatings!(playerIdx, 0)
             End If
 
-            '-----
-
-            'Locate 11
+            ' *** REPLAY VALUES ***
+            'Print out values from stat files
             Print #1, " REPLAY  ";
-            Print #1, Tab(14); Using "######"; playerRatings!(playerIdx, 5) - playerRatings!(playerIdx, 12);
 
+            'D.Reb
+            Print #1, Tab(14); Using "######"; statPlyrVal!(playerIdx, 5) - statPlyrVal!(playerIdx, 12);
+
+            'D.Reb / Game
             Print #1, Tab(20);
-            If playerRatings!(playerIdx, 0) = 0 Or (playerRatings!(playerIdx, 5) - playerRatings!(playerIdx, 12)) = 0 Or (playerRatings!(playerIdx, 0) > 0 And (playerRatings!(playerIdx, 5) - playerRatings!(playerIdx, 12)) = 0) Then
+            If statPlyrVal!(playerIdx, 0) = 0 Or (statPlyrVal!(playerIdx, 5) - statPlyrVal!(playerIdx, 12)) = 0 Or (statPlyrVal!(playerIdx, 0) > 0 And (statPlyrVal!(playerIdx, 5) - statPlyrVal!(playerIdx, 12)) = 0) Then
                 Print #1, "      0.0";
             End If
-            If playerRatings!(playerIdx, 0) > 0 And (playerRatings!(playerIdx, 5) - playerRatings!(playerIdx, 12)) > 0 Then
-                Print #1, Using "#######.#"; (playerRatings!(playerIdx, 5) - playerRatings!(playerIdx, 12)) / playerRatings!(playerIdx, 0);
+            If statPlyrVal!(playerIdx, 0) > 0 And (statPlyrVal!(playerIdx, 5) - statPlyrVal!(playerIdx, 12)) > 0 Then
+                Print #1, Using "#######.#"; (statPlyrVal!(playerIdx, 5) - statPlyrVal!(playerIdx, 12)) / statPlyrVal!(playerIdx, 0);
             End If
 
+            'Assists
             Print #1, Tab(29);
-            Print #1, Using "######"; playerRatings!(playerIdx, 8);
+            Print #1, Using "######"; statPlyrVal!(playerIdx, 8);
 
+            'Assists / Game
             Print #1, Tab(35);
-            If playerRatings!(playerIdx, 0) = 0 Or playerRatings!(playerIdx, 8) = 0 Or (playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 8) = 0) Then
+            If statPlyrVal!(playerIdx, 0) = 0 Or statPlyrVal!(playerIdx, 8) = 0 Or (statPlyrVal!(playerIdx, 0) > 0 And statPlyrVal!(playerIdx, 8) = 0) Then
                 Print #1, "     0.0";
             End If
-            If playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 8) > 0 Then
-                Print #1, Using "######.#"; playerRatings!(playerIdx, 8) / playerRatings!(playerIdx, 0);
+            If statPlyrVal!(playerIdx, 0) > 0 And statPlyrVal!(playerIdx, 8) > 0 Then
+                Print #1, Using "######.#"; statPlyrVal!(playerIdx, 8) / statPlyrVal!(playerIdx, 0);
             End If
 
+            'Fouls
             Print #1, Tab(43);
-            Print #1, Using "#######"; playerRatings!(playerIdx, 6);
+            Print #1, Using "#######"; statPlyrVal!(playerIdx, 6);
 
+            'Fouls / Game
             Print #1, Tab(50);
-            If playerRatings!(playerIdx, 0) = 0 Or playerRatings!(playerIdx, 6) = 0 Or (playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 6) = 0) Then
+            If playerRatings!(playerIdx, 0) = 0 Or statPlyrVal!(playerIdx, 6) = 0 Or (statPlyrVal!(playerIdx, 0) > 0 And statPlyrVal!(playerIdx, 6) = 0) Then
                 Print #1, "  0.0";
             End If
-            If playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 6) > 0 Then
-                Print #1, Using "###.#"; playerRatings!(playerIdx, 6) / playerRatings!(playerIdx, 0);
+            If statPlyrVal!(playerIdx, 0) > 0 And statPlyrVal!(playerIdx, 6) > 0 Then
+                Print #1, Using "###.#"; statPlyrVal!(playerIdx, 6) / statPlyrVal!(playerIdx, 0);
             End If
 
+            'T.Reb
             Print #1, Tab(55);
-            Print #1, Using "######"; playerRatings!(playerIdx, 5);
-            Print #1, Tab(61);
-            Print #1, Using "#####"; playerRatings!(playerIdx, 7);
+            Print #1, Using "######"; statPlyrVal!(playerIdx, 5);
 
+            'Steals
+            Print #1, Tab(61);
+            Print #1, Using "#####"; statPlyrVal!(playerIdx, 7);
+
+            'Steals / Game
             Print #1, Tab(66);
-            If playerRatings!(playerIdx, 0) = 0 Or playerRatings!(playerIdx, 7) = 0 Or (playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 7) = 0) Then
+            If statPlyrVal!(playerIdx, 0) = 0 Or statPlyrVal!(playerIdx, 7) = 0 Or (statPlyrVal!(playerIdx, 0) > 0 And statPlyrVal!(playerIdx, 7) = 0) Then
                 Print #1, "    0.0";
             End If
-            If playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 7) > 0 Then
-                Print #1, Using "#####.#"; playerRatings!(playerIdx, 7) / playerRatings!(playerIdx, 0);
+            If statPlyrVal!(playerIdx, 0) > 0 And statPlyrVal!(playerIdx, 7) > 0 Then
+                Print #1, Using "#####.#"; statPlyrVal!(playerIdx, 7) / statPlyrVal!(playerIdx, 0);
             End If
 
-            '-----
-
             Print #1,
             Print #1,
 
-            'Locate 14
             Print #1, Tab(14); " BLK ";
             Print #1, Tab(19); " BLK/G ";
             Print #1, Tab(26); " 3-FGM ";
@@ -1575,12 +1601,14 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
             Print #1, Tab(62); " PTS/G ";
             Print #1, Tab(69); " MIN/G"
 
-            '-----
-
-            'Locate 15
+            ' *** ACTUAL VALUES ***
+            'Print out values from COLBBTMS
             Print #1, " ACTUAL  ";
+
+            'Blocks
             Print #1, Tab(14); Using "####"; playerRatings!(playerIdx, 12);
 
+            'Blocks / Game
             Print #1, Tab(18);
             If playerRatings!(playerIdx, 0) = 0 Or playerRatings!(playerIdx, 12) = 0 Or (playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 12) = 0) Then
                 Print #1, "    0.0";
@@ -1589,11 +1617,13 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
                 Print #1, Using "#####.#"; playerRatings!(playerIdx, 12) / playerRatings!(playerIdx, 0);
             End If
 
+            '3-FGM / 3-FGA
             Print #1, Tab(25);
             Print #1, Using "#######"; playerRatings!(playerIdx, 14);
             Print #1, Tab(32);
             Print #1, Using "#######"; playerRatings!(playerIdx, 13);
 
+            '3-FG %
             Print #1, Tab(39);
             If playerRatings!(playerIdx, 14) = 0 Then
                 Print #1, "      0.0%";
@@ -1603,11 +1633,15 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
                 Print #1, "%";
             End If
 
+            'Hi Game
             Print #1, Tab(49);
             Print #1, Using "#######"; playerRatings!(playerIdx, 15);
+
+            'Points
             Print #1, Tab(56);
             Print #1, Using "######"; (playerRatings!(playerIdx, 3) * 2) + playerRatings!(playerIdx, 5) + playerRatings!(playerIdx, 14);
 
+            'Points / Game
             Print #1, Tab(62);
             If (playerRatings!(playerIdx, 3) * 2) + playerRatings!(playerIdx, 5) + playerRatings!(playerIdx, 14) = 0 Then
                 Print #1, "   0.0";
@@ -1616,6 +1650,7 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
                 Print #1, Using "####.#"; ((playerRatings!(playerIdx, 3) * 2) + playerRatings!(playerIdx, 5) + playerRatings!(playerIdx, 14)) / playerRatings!(playerIdx, 0);
             End If
 
+            'Mins / Game
             Print #1, Tab(68);
             If playerRatings!(playerIdx, 1) = 0 Then
                 Print #1, "    0.0"
@@ -1624,25 +1659,29 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
                 Print #1, Using "#####.#"; playerRatings!(playerIdx, 1) / playerRatings!(playerIdx, 0)
             End If
 
-            '-----
-
-            'Locate 16
+            ' *** REPLAY VALUES ***
+            'Print out values from stat files
             Print #1, " REPLAY  ";
-            Print #1, Tab(14); Using "####"; playerRatings!(playerIdx, 9);
 
+            'Blocks
+            Print #1, Tab(14); Using "####"; statPlyrVal!(playerIdx, 9);
+
+            'Blocks / Game
             Print #1, Tab(18);
-            If playerRatings!(playerIdx, 0) = 0 Or playerRatings!(playerIdx, 9) = 0 Or (playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 9) = 0) Then
+            If statPlyrVal!(playerIdx, 0) = 0 Or statPlyrVal!(playerIdx, 9) = 0 Or (statPlyrVal!(playerIdx, 0) > 0 And statPlyrVal!(playerIdx, 9) = 0) Then
                 Print #1, "    0.0";
             End If
-            If playerRatings!(playerIdx, 0) > 0 And playerRatings!(playerIdx, 9) > 0 Then
-                Print #1, Using "#####.#"; playerRatings!(playerIdx, 9) / playerRatings!(playerIdx, 0);
+            If statPlyrVal!(playerIdx, 0) > 0 And statPlyrVal!(playerIdx, 9) > 0 Then
+                Print #1, Using "#####.#"; statPlyrVal!(playerIdx, 9) / statPlyrVal!(playerIdx, 0);
             End If
 
+            '3-FGM / 3-FGA
             Print #1, Tab(25);
             Print #1, Using "#######"; stats3FGM!(playerIdx);
             Print #1, Tab(32);
             Print #1, Using "#######"; stats3FGA!(playerIdx);
 
+            '3-FG %
             Print #1, Tab(39);
             If stats3FGM!(playerIdx) = 0 Then
                 Print #1, "      0.0%";
@@ -1652,25 +1691,30 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
                 Print #1, "%";
             End If
 
+            'Hi Game
             Print #1, Tab(49);
-            Print #1, Using "#######"; playerRatings!(playerIdx, 13);
-            Print #1, Tab(56);
-            Print #1, Using "######"; (playerRatings!(playerIdx, 2) * 2) + playerRatings!(playerIdx, 4) + stats3FGM!(playerIdx);
+            Print #1, Using "#######"; statPlyrVal!(playerIdx, 13);
 
+            'Points
+            Print #1, Tab(56);
+            Print #1, Using "######"; (statPlyrVal!(playerIdx, 2) * 2) + statPlyrVal!(playerIdx, 4) + stats3FGM!(playerIdx);
+
+            'Points / Game
             Print #1, Tab(62);
-            If (playerRatings!(playerIdx, 2) * 2) + playerRatings!(playerIdx, 4) + stats3FGM!(playerIdx) = 0 Then
+            If (statPlyrVal!(playerIdx, 2) * 2) + statPlyrVal!(playerIdx, 4) + stats3FGM!(playerIdx) = 0 Then
                 Print #1, "   0.0";
             End If
-            If (playerRatings!(playerIdx, 2) * 2) + playerRatings!(playerIdx, 4) + stats3FGM!(playerIdx) > 0 Then
-                Print #1, Using "####.#"; ((playerRatings!(playerIdx, 2) * 2) + playerRatings!(playerIdx, 4) + stats3FGM!(playerIdx)) / playerRatings!(playerIdx, 0);
+            If (statPlyrVal!(playerIdx, 2) * 2) + statPlyrVal!(playerIdx, 4) + stats3FGM!(playerIdx) > 0 Then
+                Print #1, Using "####.#"; ((statPlyrVal!(playerIdx, 2) * 2) + statPlyrVal!(playerIdx, 4) + stats3FGM!(playerIdx)) / statPlyrVal!(playerIdx, 0);
             End If
 
+            'Minutes / Game
             Print #1, Tab(68);
-            If playerRatings!(playerIdx, 10) = 0 Then
+            If statPlyrVal!(playerIdx, 10) = 0 Then
                 Print #1, "    0.0"
             End If
-            If playerRatings!(playerIdx, 10) > 0 Then
-                Print #1, Using "#####.#"; ((playerRatings!(playerIdx, 10) + 30) / 60) / playerRatings!(playerIdx, 0)
+            If statPlyrVal!(playerIdx, 10) > 0 Then
+                Print #1, Using "#####.#"; ((statPlyrVal!(playerIdx, 10) + 30) / 60) / statPlyrVal!(playerIdx, 0)
             End If
 
             Print #1,

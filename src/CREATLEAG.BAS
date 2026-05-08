@@ -200,7 +200,7 @@ Sub ReviewEditLeague (targetFile$)
     Shared div1Name$, div2Name$, div3Name$, div4Name$
 
     If _FileExists (targetFile$) Then
-        Call ReadConferenceIndex (targetFile$)
+        Call ReadLeagueIndex (targetFile$)
     End If
 
     Do

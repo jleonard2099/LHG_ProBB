@@ -150,7 +150,7 @@ End Sub
 Sub NewTeamParameters_Base (teamYear$, teamName$, normYrIdx)
 
     Shared tmInfo_DRAFT$()
-    Shared leagRat_DRAFT(), leagueAverages%(), teamRat_DRAFT()
+    Shared leagRat_DRAFT(), leagueAvgVals(), teamRat_DRAFT()
 
     Color 15, 0
     Cls
@@ -163,15 +163,15 @@ Sub NewTeamParameters_Base (teamYear$, teamName$, normYrIdx)
     '# of Games
     leagRat_DRAFT(0, 0) = 82
     'AVG FGA/G
-    leagRat_DRAFT(0, 1) = leagueAverages%(normYrIdx, 1)
+    leagRat_DRAFT(0, 1) = leagueAvgVals(normYrIdx, 1)
     'AVG RB/G
-    leagRat_DRAFT(0, 2) = leagueAverages%(normYrIdx, 2)
+    leagRat_DRAFT(0, 2) = leagueAvgVals(normYrIdx, 2)
     'LEAGUE FG%
-    leagRat_DRAFT(0, 3) = leagueAverages%(normYrIdx, 3)
+    leagRat_DRAFT(0, 3) = leagueAvgVals(normYrIdx, 3)
     'AVG PF/G
-    leagRat_DRAFT(0, 4) = leagueAverages%(normYrIdx, 4)
+    leagRat_DRAFT(0, 4) = leagueAvgVals(normYrIdx, 4)
     'LEAGUE 3FG%
-    leagRat_DRAFT(0, 5) = leagueAverages%(normYrIdx, 5)
+    leagRat_DRAFT(0, 5) = leagueAvgVals(normYrIdx, 5)
     'LEAGUE POWER ADJ
     leagRat_DRAFT(0, 6) = 0
 
@@ -290,7 +290,7 @@ End Sub
 Sub NewTeamParameters_OffDef ()
 
     Shared tmInfo_DRAFT$()
-    Shared leagRat_DRAFT(), leagueAverages%(), teamRat_DRAFT()
+    Shared leagRat_DRAFT(), leagueAvgVals(), teamRat_DRAFT()
 
     Color 15, 0
     Cls
@@ -587,7 +587,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT(), normYrIdx)
     Dim nbrPlayers
 
     Shared tmInfo_DRAFT$(), plyrNames_DRAFT$(), tmYears_DRAFT$()
-    Shared plyrRat_DRAFT(), leagRat_DRAFT(), leagueAverages%(), leagTot_DRAFT(), teamRat_DRAFT()
+    Shared plyrRat_DRAFT(), leagRat_DRAFT(), leagueAvgVals(), leagTot_DRAFT(), teamRat_DRAFT()
 
     Do
 
@@ -659,29 +659,29 @@ Sub DraftChoices (draftNew, doneDrafting, teamIdx, tmTotal_DRAFT(), normYrIdx)
                     leagTot_DRAFT(B, I) = teamRat_DRAFT(1, I)
                 Next
 
-                plyrRat_DRAFT(0, B, 2) = plyrRat_DRAFT(0, B, 2) * (leagueAverages%(normYrIdx, 1) / leagRat_DRAFT(1, 1))
-                plyrRat_DRAFT(0, B, 6) = plyrRat_DRAFT(0, B, 6) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT(1, 2))
-                plyrRat_DRAFT(0, B, 7) = plyrRat_DRAFT(0, B, 7) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT(1, 2))
+                plyrRat_DRAFT(0, B, 2) = plyrRat_DRAFT(0, B, 2) * (leagueAvgVals(normYrIdx, 1) / leagRat_DRAFT(1, 1))
+                plyrRat_DRAFT(0, B, 6) = plyrRat_DRAFT(0, B, 6) * (leagueAvgVals(normYrIdx, 2) / leagRat_DRAFT(1, 2))
+                plyrRat_DRAFT(0, B, 7) = plyrRat_DRAFT(0, B, 7) * (leagueAvgVals(normYrIdx, 2) / leagRat_DRAFT(1, 2))
 
                 FG = CInt(plyrRat_DRAFT(1, B1, 3) / plyrRat_DRAFT(1, B1, 2) * 100)
-                FG = FG * (leagueAverages%(normYrIdx, 3) / leagRat_DRAFT(1, 3))
+                FG = FG * (leagueAvgVals(normYrIdx, 3) / leagRat_DRAFT(1, 3))
 
                 plyrRat_DRAFT(0, B, 3) = FG / 100 * plyrRat_DRAFT(0, B, 2)
 
-                leagTot_DRAFT(B, 5) = (leagueAverages%(normYrIdx, 1) / leagRat_DRAFT(1, 1)) * leagTot_DRAFT(B, 5)
-                leagTot_DRAFT(B, 19) = leagTot_DRAFT(B, 19) * (leagueAverages%(normYrIdx, 1) / leagRat_DRAFT(1, 1))
-                leagTot_DRAFT(B, 9) = leagTot_DRAFT(B, 9) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT(1, 2))
-                leagTot_DRAFT(B, 10) = leagTot_DRAFT(B, 10) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT(1, 2))
-                leagTot_DRAFT(B, 23) = leagTot_DRAFT(B, 23) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT(1, 2))
-                leagTot_DRAFT(B, 24) = leagTot_DRAFT(B, 24) * (leagueAverages%(normYrIdx, 2) / leagRat_DRAFT(1, 2))
+                leagTot_DRAFT(B, 5) = (leagueAvgVals(normYrIdx, 1) / leagRat_DRAFT(1, 1)) * leagTot_DRAFT(B, 5)
+                leagTot_DRAFT(B, 19) = leagTot_DRAFT(B, 19) * (leagueAvgVals(normYrIdx, 1) / leagRat_DRAFT(1, 1))
+                leagTot_DRAFT(B, 9) = leagTot_DRAFT(B, 9) * (leagueAvgVals(normYrIdx, 2) / leagRat_DRAFT(1, 2))
+                leagTot_DRAFT(B, 10) = leagTot_DRAFT(B, 10) * (leagueAvgVals(normYrIdx, 2) / leagRat_DRAFT(1, 2))
+                leagTot_DRAFT(B, 23) = leagTot_DRAFT(B, 23) * (leagueAvgVals(normYrIdx, 2) / leagRat_DRAFT(1, 2))
+                leagTot_DRAFT(B, 24) = leagTot_DRAFT(B, 24) * (leagueAvgVals(normYrIdx, 2) / leagRat_DRAFT(1, 2))
 
                 FG = cInt(teamRat_DRAFT(1, 6) / teamRat_DRAFT(1, 5) * 100)
-                FG = FG * (leagueAverages%(normYrIdx, 3) / leagRat_DRAFT(1, 3))
+                FG = FG * (leagueAvgVals(normYrIdx, 3) / leagRat_DRAFT(1, 3))
 
                 teamRat_DRAFT(0, 6) = FG / 100 * teamRat_DRAFT(0, 5)
 
                 FG = cInt(teamRat_DRAFT(1, 20) / teamRat_DRAFT(1, 19) * 100)
-                FG = FG * (leagueAverages%(normYrIdx, 3) / leagRat_DRAFT(1, 3))
+                FG = FG * (leagueAvgVals(normYrIdx, 3) / leagRat_DRAFT(1, 3))
 
                 teamRat_DRAFT(0, 20) = FG / 100 * teamRat_DRAFT(0, 19)
 

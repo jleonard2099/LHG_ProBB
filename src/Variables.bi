@@ -156,7 +156,7 @@ Dim leagLdrPlayer$(260), leagLdrTeam$(260)
 '----------------------------------------
 ' Used in DRAFT routines
 '---------------------------------------
-Dim leagueAverages%(1 To DRAFT_NBR_YEARS, 0 To 5)
+Dim leagueAvgVals(1 To DRAFT_NBR_YEARS, 0 To 5)
 
 Dim tmAtt_DRAFT&(0 To 1)
 
@@ -228,7 +228,9 @@ Dim scheduleFile$
 
 Dim actualAttendance&
 
-Dim JY, tickerStart
+Dim eraShootRate, opponentJustScored, tickerStart
+
+Dim maxRoster(0 To 1)
 
 Dim tickerPeriod$(14)
 
@@ -237,12 +239,12 @@ Dim avgAttendance&(1)
 ' Shared / Global
 Dim Shared activePosition$, pbpString$, prevBall$
 
-Dim Shared C1, D, MJ, P, P9
+'Dim Shared C1, D, MJ, P, P9
 
 Dim Shared assistShotBoost, autoPlay, ballCarrier, bonusFoulNum
 Dim Shared coachOpt, compTeam, computerTimeout, currGame, defPress
 Dim Shared gameOver, earlyExit, endAllGames, eraAdj, eraChoice
-Dim Shared ft3PtFoul, fastBreak, forcedThree, foulPlayer
+'Dim Shared ft3PtFoul, fastBreak, forcedThree, foulPlayer
 Dim Shared freeThrowVal, ftRulesOpt, fullCtOpt
 Dim Shared gameLoc, goaltendTOs
 Dim Shared halfTime
@@ -265,12 +267,12 @@ Dim Shared d3FG_Pct_Adj(1), dFG_Pct_Adj(1)
 Dim Shared defStyles(1), fullCtOpt(0 To 1)
 
 Dim Shared gameStat3FGM(1, 14), gameStat3FGA(1, 14)
-Dim Shared leagRat_GAME(1, 6), lineupIdx(0 To 1, 0 To 4)
+'Dim Shared leagRat_GAME(1, 6), lineupIdx(0 To 1, 0 To 4)
 Dim Shared mandatoryTO(0 To 1), miscAdj(1, 4), offStyles(1)
 Dim Shared pbpFG(1 To MAX_PBP_LINES), pbpBG(1 To MAX_PBP_LINES)
 Dim Shared penetrationDefAdj(2, 9), penetrationOffAdj!(0 To 8)
 Dim Shared periodPlayerTot(1, 8, 14, 14), periodTeamTot(1, 7, 14)
-Dim Shared perFoulAdj(0 To 32), plyrRat_GAME(1, 14, 19)
+'Dim Shared perFoulAdj(0 To 32), plyrRat_GAME(1, 14, 19)
 Dim Shared plyrRebIdx(14), plyrRebVal(14), plyrStaminaGame(14)
 Dim Shared rebRatings(0 To 10), rosterIdx(14), rosterStatus(1, 13)
 Dim Shared schedGame(2), schedOptions(21)
