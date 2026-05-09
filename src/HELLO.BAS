@@ -5015,8 +5015,8 @@ Sub TimeoutChoice (offTakeTO)
 
             ' Final possession - draw up a play
             Select Case sClockVal
-                Case 0 : scBase = 24
-                Case 1 : scBase = 30
+                Case 0: scBase = 24
+                Case 1: scBase = 30
             End Select
 
             If gameClock! <= (scBase * 2) And Abs(offScoreDiff) <= 5 And timeouts(P) >= 1 Then
@@ -5142,7 +5142,6 @@ Sub TimeoutChoice (offTakeTO)
 
         ' Opponent on scoring run - Q2 onward only
         If quarter >= 2 And (defScoreDiff - lastDefCheckDiff) >= runTrigger And timeouts(D) > toReserve Then
-            Print #11, "TO trigger: DEFENSE run-stopper quarter=" & quarter & " delta=" & (defScoreDiff - lastDefCheckDiff) & " trigger=" & runTrigger
             toChoice = D
         End If
 
@@ -9450,6 +9449,8 @@ End Sub
 '          ScoreUpdate Subroutine
 '----------------------------------------
 Sub ScoreUpdate (pts)
+
+    Shared opponentJustScored
 
     score(P, quarter) = score(P, quarter) + pts
     score(P, 0) = score(P, 0) + pts
@@ -17677,23 +17678,6 @@ Sub CheckRecords ()
     Next
 
     Close #3
-
-End Sub
-
-
-'----------------------------------------
-'          ScoreUpdate Function
-'----------------------------------------
-'Updates the offense's score with the
-'appropriate number of points
-Sub ScoreUpdate (pointsScored)
-
-    Shared opponentJustScored
-
-    score(P, quarter) = score(P, quarter) + pointsScored
-    score(P, 0) = score(P, 0) + pointsScored
-
-    opponentJustScored = 1
 
 End Sub
 

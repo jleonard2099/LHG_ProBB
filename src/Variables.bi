@@ -254,7 +254,7 @@ Dim Shared gameLoc, goaltendTOs
 Dim Shared halfTime
 Dim Shared lastTOQuarter
 Dim Shared lastDefCheckDiff, lastOffCheckDiff, maxTimeouts, nbrLines
-Dim Shared offStatus, opponentJustScored
+Dim Shared offStatus
 Dim Shared passes, periodEnd, playerMode, playerOpt, playoffOpt, pbpOpt
 Dim Shared quarter, quarterOpt, quarterSeconds
 Dim Shared rebFoulChance, ruleOptType
