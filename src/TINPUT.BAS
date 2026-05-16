@@ -407,7 +407,7 @@ Sub PrintRoster (printDest, destFile$, YN$)
     Print #1, Tab(73); Using "####"; teamRatings(26)
 
     'NEW PAGE
-    Print #1, 
+    Print #1,
     If printDest = 1 Then Print #1, Chr$(12)
     Print #1,
 
@@ -449,7 +449,7 @@ Sub PrintRoster (printDest, destFile$, YN$)
 
             'HI GAME
             Print #1, Tab(43); Using "####"; playerRatings!(I, 15)
-            
+
             'Games Played
             'Print #1, Tab(53); USING "####"; playerRatings!(I, 16);
 
@@ -1272,8 +1272,6 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
         Locate 18, 29: Input teamRatings(27)
         Locate 18, 29: Print " "
 
-        '-- We currently don't have a a calculation for if this data is missing
-
     Else
 
         Cls
@@ -1481,14 +1479,16 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
 
     If inputAction% = 2 Then
 
-        'Edit Team
-        Locate 2, 1
-        Color 14
-
-        Print "CHANGE PLAYER STATS"
-        Color 15
-
         Do
+
+            Cls
+
+            'Edit Team
+            Locate 2, 1
+
+            Color 14
+            Print "CHANGE PLAYERS"
+            Color 15
 
             Locate 4, 1
             Print Space$(40)
@@ -1502,6 +1502,7 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
             Print
 
             Do
+
                 Locate 26, 21
                 Color 11
                 Print "# TO CHANGE (1-15) (0 TO CONTINUE) ";
@@ -1514,9 +1515,10 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
                     Cls
 
                     Color 12
-                    Locate 2, 35: Print "PLAYER - "; idx + 1
+                    Locate 2, 35: Print "PLAYER - "; idx
 
                     Color 14
+                    Locate 4
                     Print "CHANGE PLAYER STATS"
 
                     Color 15
@@ -1550,7 +1552,8 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
         End If
 
         'Input from scratch
-        For I = 0 To 14
+        I = 0
+        Do While I <= 14 And playerNames$(I, 0) <> "XXX"
 
             Cls
 
@@ -1678,13 +1681,11 @@ Sub InputEditTeam (inputAction%, yearNumber$, teamIdx, haveSteals, haveBlocks)
 
                 Call EditPlayer(I, inputAction%)
 
-            Else
+            End If
 
-                Exit For
+            I = I + 1
 
-            End If 'Done with initial player params
-
-        Next I
+        Loop
 
     End If
 
@@ -1713,7 +1714,7 @@ Sub EditPlayer (playerIdx, action)
     If action = 2 Then
 
         'Edit Player
-        Locate 4, 1
+        Locate 5, 1
         Print " 1. NAME (XXX TO QUIT) "; playerNames$(playerIdx, 0)
         Print " 2. POSITION  "; playerNames$(playerIdx, 1)
         Print " 3. GAMES "; playerRatings!(playerIdx, 0)
@@ -1752,108 +1753,108 @@ Sub EditPlayer (playerIdx, action)
         Select Case B9
 
             Case 1
-                Locate 4, 24: Print Space$(10)
-                Locate 4, 1: Input " 1. NAME (XXX TO QUIT) "; playerNames$(playerIdx, 0)
-                Locate 4, 24: Print " "
+                Locate 5, 24: Print Space$(10)
+                Locate 5, 1: Input " 1. NAME (XXX TO QUIT) "; playerNames$(playerIdx, 0)
+                Locate 5, 24: Print " "
 
             Case 2
-                Locate 5, 14: Print Space$(10)
-                Locate 5, 1: Input " 2. POSITION "; playerNames$(playerIdx, 1)
-                Locate 5, 14: Print " "
+                Locate 6, 14: Print Space$(10)
+                Locate 6, 1: Input " 2. POSITION "; playerNames$(playerIdx, 1)
+                Locate 6, 14: Print " "
 
             Case 3
-                Locate 6, 11: Print Space$(10)
-                Locate 6, 1: Input " 3. GAMES "; playerRatings!(playerIdx, 0)
-                Locate 6, 11: Print " "
+                Locate 7, 11: Print Space$(10)
+                Locate 7, 1: Input " 3. GAMES "; playerRatings!(playerIdx, 0)
+                Locate 7, 11: Print " "
 
             Case 4
-                Locate 7, 13: Print Space$(10)
-                Locate 7, 1: Input " 4. MINUTES "; playerRatings!(playerIdx, 1)
-                Locate 7, 13: Print " "
+                Locate 8, 13: Print Space$(10)
+                Locate 8, 1: Input " 4. MINUTES "; playerRatings!(playerIdx, 1)
+                Locate 8, 13: Print " "
 
             Case 5
-                Locate 8, 9: Print Space$(10)
-                Locate 8, 1: Input " 5. FGM "; playerRatings!(playerIdx, 3)
-                Locate 8, 9: Print " "
-
-            Case 6
                 Locate 9, 9: Print Space$(10)
-                Locate 9, 1: Input " 6. FGA "; playerRatings!(playerIdx, 2)
+                Locate 9, 1: Input " 5. FGM "; playerRatings!(playerIdx, 3)
                 Locate 9, 9: Print " "
 
-            Case 7
-                Locate 10, 11: Print Space$(10)
-                Locate 10, 1: Input " 7. 3-FGM "; playerRatings!(playerIdx, 14)
-                Locate 10, 11: Print " "
+            Case 6
+                Locate 10, 9: Print Space$(10)
+                Locate 10, 1: Input " 6. FGA "; playerRatings!(playerIdx, 2)
+                Locate 10, 9: Print " "
 
-            Case 8
+            Case 7
                 Locate 11, 11: Print Space$(10)
-                Locate 11, 1: Input " 8. 3-FGA "; playerRatings!(playerIdx, 13)
+                Locate 11, 1: Input " 7. 3-FGM "; playerRatings!(playerIdx, 14)
                 Locate 11, 11: Print " "
 
-            Case 9
-                Locate 12, 9: Print Space$(10)
-                Locate 12, 1: Input " 9. FTM "; playerRatings!(playerIdx, 5)
-                Locate 12, 9: Print " "
+            Case 8
+                Locate 12, 11: Print Space$(10)
+                Locate 12, 1: Input " 8. 3-FGA "; playerRatings!(playerIdx, 13)
+                Locate 12, 11: Print " "
 
-            Case 10
+            Case 9
                 Locate 13, 9: Print Space$(10)
-                Locate 13, 1: Input "10. FTA "; playerRatings!(playerIdx, 4)
+                Locate 13, 1: Input " 9. FTM "; playerRatings!(playerIdx, 5)
                 Locate 13, 9: Print " "
 
+            Case 10
+                Locate 14, 9: Print Space$(10)
+                Locate 14, 1: Input "10. FTA "; playerRatings!(playerIdx, 4)
+                Locate 14, 9: Print " "
+
             Case 11
-                Locate 14, 13: Print Space$(10)
-                Locate 14, 1: Input "11. OFF REB "; playerRatings!(playerIdx, 6)
-                Locate 14, 13: Print " "
+                Locate 15, 13: Print Space$(10)
+                Locate 15, 1: Input "11. OFF REB "; playerRatings!(playerIdx, 6)
+                Locate 15, 13: Print " "
 
             Case 12
-                Locate 15, 13: Print Space$(10)
-                Locate 15, 1: Input "12. DEF REB "; playerRatings!(playerIdx, 7)
-                Locate 15, 13: Print " "
+                Locate 16, 13: Print Space$(10)
+                Locate 16, 1: Input "12. DEF REB "; playerRatings!(playerIdx, 7)
+                Locate 16, 13: Print " "
 
                 'Calculate Rebounds if missing
                 If playerRatings!(playerIdx, 6) = 0 And RB = 0 Then
                     'Off Rebounds = ~ Def Rebounds / 3
                     playerRatings!(playerIdx, 6) = .32 * playerRatings!(playerIdx, 7)
                     playerRatings!(playerIdx, 7) = playerRatings!(playerIdx, 7) - playerRatings!(playerIdx, 6)
-                    Locate 14: Print "11. OFF REB "; playerRatings!(playerIdx, 6)
-                    Locate 15: Print "12. DEF REB "; playerRatings!(playerIdx, 7)
+                    Locate 15: Print "11. OFF REB "; playerRatings!(playerIdx, 6)
+                    Locate 16: Print "12. DEF REB "; playerRatings!(playerIdx, 7)
                 End If
 
             Case 13
-                Locate 16, 13: Print Space$(10)
-                Locate 16, 1: Input "13. ASSISTS "; playerRatings!(playerIdx, 8)
-                Locate 16, 13: Print " "
+                Locate 17, 13: Print Space$(10)
+                Locate 17, 1: Input "13. ASSISTS "; playerRatings!(playerIdx, 8)
+                Locate 17, 13: Print " "
 
             Case 14
-                Locate 17, 12: Print Space$(10)
-                Locate 17, 1: Input "14. STEALS "; playerRatings!(playerIdx, 11)
-                Locate 17, 12: Print " "
-
-            Case 15
                 Locate 18, 12: Print Space$(10)
-                Locate 18, 1: Input "15. BLOCKS "; playerRatings!(playerIdx, 12)
+                Locate 18, 1: Input "14. STEALS "; playerRatings!(playerIdx, 11)
                 Locate 18, 12: Print " "
 
+            Case 15
+                Locate 19, 12: Print Space$(10)
+                Locate 19, 1: Input "15. BLOCKS "; playerRatings!(playerIdx, 12)
+                Locate 19, 12: Print " "
+
             Case 16
-                Locate 19, 11: Print Space$(10)
-                Locate 19, 1: Input "16. FOULS "; playerRatings!(playerIdx, 9)
-                Locate 19, 11: Print " "
+                Locate 20, 11: Print Space$(10)
+                Locate 20, 1: Input "16. FOULS "; playerRatings!(playerIdx, 9)
+                Locate 20, 11: Print " "
 
             Case 17
-                Locate 20, 10: Print Space$(10)
-                Locate 20, 1: Input "17. DISQ "; playerRatings!(playerIdx, 10)
-                Locate 20, 10: Print " "
+                Locate 21, 10: Print Space$(10)
+                Locate 21, 1: Input "17. DISQ "; playerRatings!(playerIdx, 10)
+                Locate 21, 10: Print " "
 
             Case 18
-                Locate 21, 13: Print Space$(10)
-                Locate 21, 1: Input "18. HI-GAME "; playerRatings!(playerIdx, 15)
-                Locate 21, 13: Print " "
+                Locate 22, 13: Print Space$(10)
+                Locate 22, 1: Input "18. HI-GAME "; playerRatings!(playerIdx, 15)
+                Locate 22, 13: Print " "
 
             Case 19:
-                Locate 22, 30: Print Space$(10)
-                Locate 22, 1: Input "19. ACTIVE FLAG (0-YES 1-NO) "; playerRatings!(playerIdx, 18)
-                Locate 22, 30: Print " "
+                Locate 23, 30: Print Space$(10)
+                Locate 23, 1: Input "19. ACTIVE FLAG (0-YES 1-NO) "; playerRatings!(playerIdx, 18)
+                Locate 23, 30: Print " "
 
                 'Locate 22, 23: Print Space$(10)
                 'Locate 22, 1: Input "19. PENETRATION (1-9) "; playerRatings!(playerIdx, 16)
