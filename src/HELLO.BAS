@@ -4168,13 +4168,16 @@ Sub PROHOOP ()
                 'Offense gets the rebound
                 rndOReb = Rnd(1) * ORB
                 ballCarrier = -1
-
                 tgtPlayer = 0
+
                 Do While tgtPlayer <= 4 And rndOReb > rebRatings(tgtPlayer)
                     rebRatings(tgtPlayer + 1) = rebRatings(tgtPlayer + 1) + rebRatings(tgtPlayer)
                     tgtPlayer = tgtPlayer + 1
                 Loop
-                ballCarrier = tgtPlayer
+
+                If tgtPlayer <= 4 Then 
+                    ballCarrier = tgtPlayer
+                End If
 
                 If ballCarrier = -1 Then
                     ballCarrier = Int(Rnd(1) * 5)
@@ -4192,13 +4195,16 @@ Sub PROHOOP ()
                 'Defense gets the rebound
                 rndDReb = Rnd(1) * DRB
                 ballCarrier = -1
-
                 tgtPlayer = 5
+                
                 Do While tgtPlayer <= 9 And rndDReb > rebRatings(tgtPlayer)
                     rebRatings(tgtPlayer + 1) = rebRatings(tgtPlayer + 1) + rebRatings(tgtPlayer)
                     tgtPlayer = tgtPlayer + 1
                 Loop
-                ballCarrier = tgtPlayer - 5
+                
+                If tgtPlayer <= 9 Then 
+                    ballCarrier = tgtPlayer - 5
+                End If
 
                 If ballCarrier = -1 Then
                     ballCarrier = Int(Rnd(1) * 5)
@@ -15378,14 +15384,14 @@ Sub DebugStatTotals
     'Print #11, "POSSESSIONS: "; Str$(possCount(1) + possCount(2) + possCount(3) + possCount(4))
     'Print #11, "ASSISTS: "; Str$(gameAsst(0) + gameAsst(1))
     'Print #11, "TURNOVERS: "; Str$(turnovers(0) + turnovers(1))
-    Print #11, "TOTAL REBOUNDS: "; Str$(teamRebounds(0) + teamRebounds(1))
+    'Print #11, "TOTAL REBOUNDS: "; Str$(teamRebounds(0) + teamRebounds(1))
     'Print #11, "Total FGM: "; gameFGM(0) + gameFGM(1)
     'Print #11, "Total FGA: "; gameFGA(0) + gameFGA(1)
     'Print #11, "Total 3FGM: "; game3FGM(0) + game3FGM(1)
     'Print #11, "Total 3FGA: "; game3FGA(0) + game3FGA(1)
     'Print #11, "Total FTM: "; gameFTM(0) + gameFTM(1)
     'Print #11, "Total FTA: "; gameFTA(0) + gameFTA(1)
-    Print #11, "Total Fouls ALL: "; totalFouls(0) + totalFouls(1)
+    'Print #11, "Total Fouls ALL: "; totalFouls(0) + totalFouls(1)
     'Print #11, "Total Fouls Drawn: "; totalDrawFouls
     'Print #11, "Total Fouls Intentional: "; totalIntFouls
     'Print #11, "Total Fouls Loose Ball: "; totalLBFouls
@@ -18101,8 +18107,6 @@ Function TickerTime% (timeInterval, X)
 End Function
 
 
-
-
 '----------------------------------------
 '       RunAllSchedules Subroutine
 '----------------------------------------
@@ -18211,15 +18215,3 @@ Sub RunAllSchedules ()
 
 End Sub
 
-
-
-
-Function gameTimeElapsed! (qtr, clk!)
-    If qtr <= 4 Then
-        ' Regulation quarters - 720 seconds each
-        gameTimeElapsed! = ((qtr - 1) * 720) + (720 - clk!)
-    Else
-        ' Overtime periods - 300 seconds each
-        gameTimeElapsed! = (4 * 720) + ((qtr - 5) * 300) + (300 - clk!)
-    End If
-End Function
