@@ -38,18 +38,8 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-Dim Shared C1, D, M5, MJ, P, P9
 
-Dim Shared assistShotBoost, autoPlay, ballCarrier, bonusFoulNum
-
-Dim Shared leagRat_GAME(1, 6), lineupIdx(0 To 1, 0 To 4)
-
-ReDim relaxedPos$(0 To 8), targetPos$(0 To 8)
-
-Dim Shared playerSlotMins!(0 To 1, 14, 4)
-
-
-'-- REMOVE ME
+'-- TEMPORARY USE --
 Dim possCount(8)
 Dim Shared totalDrawFouls, totalIntFouls, totalLBFouls, totalOffFouls, totalPerFouls, totalShotFouls
 Dim Shared totalPlayers&, totalCX&, totalMatchPace&, totalMatches&
@@ -1039,7 +1029,7 @@ Sub PROHOOP ()
         currGame = schedGame(0) + schedGame(2)
 
         'Open cfgPath$ + "pbplog" + Str$(currGame) For Append As #11
-        Open cfgPath$ + "pbplog" For Append As #11
+        'Open cfgPath$ + "pbplog" For Append As #11
 
         If Not _FileExists(scheduleFile$) Then
 
@@ -1086,7 +1076,7 @@ Sub PROHOOP ()
 
     Else
 
-        Open cfgPath$ + "pbplog" For Append As #11
+        'Open cfgPath$ + "pbplog" For Append As #11
 
     End If
 
@@ -1348,7 +1338,7 @@ Sub PROHOOP ()
 
     'If we've run into issues so far...
     If earlyExit = 1 Then
-        Close #11
+        'Close #11
         Exit Sub
     End If
 
@@ -1376,8 +1366,6 @@ Sub PROHOOP ()
     '   0 = Human
     '   1 = Computer Team
     '   2 = PC vs. PC
-
-    'Print #11, "--- " + gameTeams$(0) + " VS. " + gameTeams$(1) + " ---"
 
     For I = 0 To 1:
         'If disk ID has alpha-char, or is only 3 characters,
@@ -1661,9 +1649,10 @@ Sub PROHOOP ()
 
     End If
 
-    If quarter = 4 Then
+    '-- Evaluate timeout reserve
+    'If quarter = 4 Then
         'Print #11, "Q4 START: " + gameTeams$(0) + " timeouts=" + Str$(timeouts(0)) + " | " + gameTeams$(1) + " timeouts=" + Str$(timeouts(1))
-    End If
+    'End If
 
     'New quarter
     If quarter <= 4 Then
@@ -4175,7 +4164,7 @@ Sub PROHOOP ()
                     tgtPlayer = tgtPlayer + 1
                 Loop
 
-                If tgtPlayer <= 4 Then 
+                If tgtPlayer <= 4 Then
                     ballCarrier = tgtPlayer
                 End If
 
@@ -4202,7 +4191,7 @@ Sub PROHOOP ()
                     tgtPlayer = tgtPlayer + 1
                 Loop
                 
-                If tgtPlayer <= 9 Then 
+                If tgtPlayer <= 9 Then
                     ballCarrier = tgtPlayer - 5
                 End If
 
@@ -4681,6 +4670,7 @@ End Sub
 'shot clock and adjusting play time.
 Sub TimeoutCalled (chargeTeam)
 
+    '-- Evaluate timeout calls
     'Print #11, "TimeoutCalled: chargeTeam=" + Str$(chargeTeam) + " timeouts=" + Str$(timeouts(chargeTeam)) + " quarter=" + Str$(quarter) + " gameClock=" + Str$(gameClock!)
 
     If timeouts(chargeTeam) > 0 Then
@@ -8281,8 +8271,8 @@ End Sub
 'to players related to substitutions.
 Sub EvaluateSubs (teamIdx)
 
-    Dim disabledPlayers, foulPlayers
-    Dim fatiguePlayers, tiredPlayers
+    Dim badPlayers, disabledPlayers
+    Dim fatiguePlayers, foulPlayers, tiredPlayers
 
     Shared maxRoster()
 
@@ -8316,7 +8306,7 @@ Sub EvaluateSubs (teamIdx)
             contribPct = (plyrRat_GAME(teamIdx, I1, 2) + plyrRat_GAME(teamIdx, I1, 6) + plyrRat_GAME(teamIdx, I1, 7)) / X9!
 
             'Exhausted players outside last 2 mins
-            If currPlyrCX <= 0 And (quarter < 4 Or quarter = 4 And gameClock! > 120) Then
+            If currPlyrCX <= 0 And (quarter < 4 Or (quarter = 4 And gameClock! > 120)) Then
                 fatiguePlayers = fatiguePlayers + 1
             End If
 
@@ -8372,7 +8362,6 @@ Sub EvaluateSubs (teamIdx)
         '-- XS = 0 during regular play
         '-- XS = 1 when the quarter is over
         'Check if we have too many tired players, foul players, low game clock or taking timeout
-        '(foulPlayers >= 1 And badPlayers < (maxRoster(teamIdx) - 1)) Or _
         If (tiredPlayers >= 1 And (5 - tiredPlayers) < (maxRoster(teamIdx) - fatiguePlayers)) Or _
             (foulPlayers >= 1 And badPlayers < (maxRoster(teamIdx) - 1)) Or _
             (quarter = 4 And gameClock! < 120 And XS = 0) Or _
@@ -8411,7 +8400,7 @@ Sub CreditAssists ()
             found = 0
             contribTotal = 0
 
-            'Determine fouler based on % contribution
+            'Determine assists based on % contribution
             tgtContrib = Int(Rnd(1) * miscAdj(P, 2)) + 1
 
             Do While luPlayer <= 4 And found = 0
@@ -8423,17 +8412,16 @@ Sub CreditAssists ()
                 Else
                     luPlayer = luPlayer + 1
                 End If
+
             Loop
 
             If tgtContrib > contribTotal Then
                 luPlayer = Int(Rnd(1) * 5)
             End If
 
-            If players_GAME$(P, lineupIdx(P, ballCarrier), 0) <> players_GAME$(P, lineupIdx(P, luPlayer), 0) Then
-                gameRatings!(P, lineupIdx(P, luPlayer), 14) = gameRatings!(P, lineupIdx(P, luPlayer), 14) + 1
-            End If
-
         Loop Until players_GAME$(P, lineupIdx(P, ballCarrier), 0) <> players_GAME$(P, lineupIdx(P, luPlayer), 0)
+        
+        gameRatings!(P, lineupIdx(P, luPlayer), 14) = gameRatings!(P, lineupIdx(P, luPlayer), 14) + 1
 
     End If
 
@@ -8602,8 +8590,6 @@ Sub CheckMandatoryTO ()
             End If
 
             Call WINDEX
-
-            'Print #11, "QUARTER - "; quarter; "; TIME - "; gameClock!
 
             pbpString$ = gameTeams$(chargeTeam) + " WILL BE CHARGED"
             Call SELECTPBP(chargeTeam, 0)
@@ -8979,6 +8965,7 @@ Sub FoulCalled (randomFouler)
 
         'Determine fouler based on % contribution
         Do While luPlayer <= 4 And found = 0
+
             foulContrib = foulContrib + gameRatings!(D, lineupIdx(D, luPlayer), 17)
 
             If tgtContrib <= foulContrib Then
@@ -10791,19 +10778,6 @@ Sub SETUPRATINGS (teamStyle)
         End Select
 
     End If
-
-    '-- REMOVE ME
-    'Print #11, "ADJUSTED FGA/G (matchPace): "; Str$(matchPace)
-    totalMatchPace& = totalMatchPace& + matchPace
-
-    For A = 0 To 1
-        For I1 = 0 To 14
-            'Print #11, "PLAYER CONTRIBUTION (CX): "; Str$(gameRatings!(A, I1, 3))
-            'Print #11, "PLAYER FOUL RATING: "; Str$(gameRatings!(A, I1, 16))
-            totalCX& = totalCX& + gameRatings!(A, I1, 3)
-            totalPlayers& = totalPlayers& + 1
-        Next I1
-    Next A
 
 End Sub
 
@@ -15366,20 +15340,6 @@ Sub DebugStatTotals
         Next I1
     Next I
 
-    'Print #11, "CENTER SLOT SUMMARY"
-    'For teamIdx = 0 To 1
-    '    Print #11, "TEAM="; Str$(teamIdx)
-    '    For I1 = 0 To 14
-    '        If players_GAME$(teamIdx, I1, 1) = "C" Then
-    '            Print #11, "  "; players_GAME$(teamIdx, I1, 0);
-    '            For slotIdx = 0 To 4
-    '               Print #11, " SLOT"; Str$(slotIdx); "="; Str$(playerSlotMins!(teamIdx, I1, slotIdx));
-    '           Next slotIdx
-    '           Print #11, ""
-    '       End If
-    '  Next I1
-    'Next teamIdx
-
     'Print #11, "POINTS: "; Str$(score(P, 0) + score(D, 0))
     'Print #11, "POSSESSIONS: "; Str$(possCount(1) + possCount(2) + possCount(3) + possCount(4))
     'Print #11, "ASSISTS: "; Str$(gameAsst(0) + gameAsst(1))
@@ -15412,11 +15372,11 @@ End Sub
 'should be started.
 Sub EndOfGame
 
-    Call DebugStatTotals
+    'Call DebugStatTotals
 
     Call POSTGAME
 
-    Close #11
+    'Close #11
 
     Cls
 
@@ -18120,10 +18080,7 @@ Sub RunAllSchedules ()
     Shared scheduleH$(), scheduleV$()
     Shared scheduleYN$()
 
-    Shared modeAbbrev$(), sClockOpt$(), yesNo$()
-
-    'fileSpec$ = diskPaths$(3) + "ABA 1975*.SCD"
-    fileSpec$ = diskPaths$(3) + "WNBA*.SCD"
+    fileSpec$ = diskPaths$(3) + "*.SCD"
 
     Count% = FileCount%(fileSpec$)
     ReDim foundFiles$(0 To Count%)
@@ -18191,7 +18148,10 @@ Sub RunAllSchedules ()
         ReDim scheduleH$(1)
         ReDim scheduleV$(1)
 
+        currGame = 0
         Do
+            currGame = currGame + 1
+            Print "Playing game # "; currGame
             Call PROHOOP
         Loop Until schedGame(0) + schedGame(2) > schedGame(1)
 
