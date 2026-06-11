@@ -612,7 +612,7 @@ Sub TeamComparisons_Screen (teamName$)
     '3FGA
     Locate 19, 68: Print Using "########"; statsDefTot!(14);
 
-    '3 FGA PCT
+    '3 FG PCT
     Locate 20, 16
     If statsOffTot!(13) = 0 Then
         Print "      0.0";
@@ -789,10 +789,10 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
 
     'Assist / Game
     Locate , 35
-    If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 8) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 8) = 0) Then 
+    If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 8) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 8) = 0) Then
         Print "     0.0";
     End If
-    If playerRatings!(idx, 0) > 0 And playerRatings!(idx, 8) > 0 Then 
+    If playerRatings!(idx, 0) > 0 And playerRatings!(idx, 8) > 0 Then
         Print Using "######.#"; playerRatings!(idx, 8) / playerRatings!(idx, 0);
     End If
 
@@ -801,10 +801,10 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
 
     'Fouls / Game
     Locate , 50
-    If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 9) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 9) = 0) Then 
+    If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 9) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 9) = 0) Then
         Print "  0.0";
     End If
-    If playerRatings!(idx, 0) > 0 And playerRatings!(idx, 9) > 0 Then 
+    If playerRatings!(idx, 0) > 0 And playerRatings!(idx, 9) > 0 Then
         Print Using "###.#"; playerRatings!(idx, 9) / playerRatings!(idx, 0);
     End If
 
@@ -816,10 +816,10 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
 
     'Steals / Game
     Locate , 66
-    If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 11) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 11) = 0) Then 
+    If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 11) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 11) = 0) Then
         Print "    0.0";
     End If
-    If playerRatings!(idx, 0) > 0 And playerRatings!(idx, 11) > 0 Then 
+    If playerRatings!(idx, 0) > 0 And playerRatings!(idx, 11) > 0 Then
         Print Using "#####.#"; playerRatings!(idx, 11) / playerRatings!(idx, 0);
     End If
 
@@ -831,10 +831,10 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
 
     'Blocks / Game
     Locate , 18
-    If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 12) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 12) = 0) Then 
+    If playerRatings!(idx, 0) = 0 Or playerRatings!(idx, 12) = 0 Or (playerRatings!(idx, 0) > 0 And playerRatings!(idx, 12) = 0) Then
         Print "    0.0";
     End If
-    If playerRatings!(idx, 0) > 0 And playerRatings!(idx, 12) > 0 Then 
+    If playerRatings!(idx, 0) > 0 And playerRatings!(idx, 12) > 0 Then
         Print Using "#####.#"; playerRatings!(idx, 12) / playerRatings!(idx, 0);
     End If
 
@@ -844,7 +844,7 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
 
     '3FG %
     Locate , 39
-    If playerRatings!(idx, 14) = 0 Then 
+    If playerRatings!(idx, 14) = 0 Then
         Print "      0.0%";
     End If
     If playerRatings!(idx, 14) > 0 Then
@@ -860,19 +860,19 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
 
     'Pts / Game
     Locate , 62
-    If (playerRatings!(idx, 3) * 2) + playerRatings!(idx, 5) + playerRatings!(idx, 14) = 0 Then 
+    If (playerRatings!(idx, 3) * 2) + playerRatings!(idx, 5) + playerRatings!(idx, 14) = 0 Then
         Print "   0.0";
     End If
-    If (playerRatings!(idx, 3) * 2) + playerRatings!(idx, 5) + playerRatings!(idx, 14) > 0 Then 
+    If (playerRatings!(idx, 3) * 2) + playerRatings!(idx, 5) + playerRatings!(idx, 14) > 0 Then
         Print Using "####.#"; ((playerRatings!(idx, 3) * 2) + playerRatings!(idx, 5) + playerRatings!(idx, 14)) / playerRatings!(idx, 0);
     End If
 
     'Min / Game
     Locate , 68
-    If playerRatings!(idx, 1) = 0 Then 
+    If playerRatings!(idx, 1) = 0 Then
         Print "    0.0";
     End If
-    If playerRatings!(idx, 1) > 0 Then 
+    If playerRatings!(idx, 1) > 0 Then
         Print Using "#####.#"; playerRatings!(idx, 1) / playerRatings!(idx, 0);
     End If
 
@@ -1034,7 +1034,7 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
     End If
 
     'Min / Game
-    Locate , 68 
+    Locate , 68
     If statPlyrVal!(idx, 10) = 0 Then
         Print "    0.0";
     End If
@@ -1756,3 +1756,4 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     End If
 
 End Sub
+

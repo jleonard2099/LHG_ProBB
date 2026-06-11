@@ -38,11 +38,15 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
+Dim staminaPenalty, overusePenalty, usedStamina
+Dim threePtShotChance
 
 '-- TEMPORARY USE --
+Dim Shared rawTOAdj
 Dim possCount(8)
 Dim Shared totalDrawFouls, totalIntFouls, totalLBFouls, totalOffFouls, totalPerFouls, totalShotFouls
-Dim Shared totalPlayers&, totalCX&, totalMatchPace&, totalMatches&
+Dim Shared totalCX&, totalMatchPace&, totalMatches&
+Dim Shared totalRawTOAdj&, totalPlayers&
 
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
@@ -260,14 +264,14 @@ For I = 0 To 8
     Read penetrationOffAdj!(I)
 Next
 
-'Data -3,0,-5,-3,1,5,1,-5,-3
-Data -5,0,-7,-5,2,6,2,-7,-5
+'Data -3,0,-5,-3,1,5,1,-5,-3    Original
+Data -4,0,-5,-4,2,5,2,-5,-4
 For I = 0 To 8
     Read offStealAdj!(I)
 Next
 
-'Data 24,8,40,24,8,24,45,16,28
-Data 17,6,28,17,6,17,32,11,20
+'Data 24,8,40,24,8,24,45,16,28  Original
+Data 13,5,21,13,5,13,24,8,15
 For I = 1 To 9
     Read defStealAdj!(I)
 Next
@@ -368,6 +372,7 @@ timeoutSetting$(1) = "MANDATORY @ 6 / 9 MIN; MAX 4 IN Q4 (2001-2016)"
 timeoutSetting$(2) = "MANDATORY @ 7 / 3 MIN, MAX 4 IN Q4 (2017-18)"
 timeoutSetting$(3) = "MANDATORY @ 7 / 3 MIN, MAX 2 IN Q4 (2018+)"
 timeoutSetting$(4) = "MANDATORY @ 5 / 3 MIN, MAX 2 IN Q4 (WNBA)"
+timeoutSetting$(5) = "NO MANDATORY TIMEOUTS"
 
 yesNoText$(0) = "NO "
 yesNoText$(1) = "YES"
@@ -875,11 +880,12 @@ Sub PROHOOP ()
 
     _Title "Basketball: The Pro Game v" + GAME_VERSION$ + " - LET'S HOOP!"
 
-    Dim invalid3FG
+    Dim invalid3FG, offFoulMax, perFoulMax
     Dim playChoice, pbpType, quarterSeconds
-    Dim shootingFoul, threePtShotChance
+    Dim shootingFoul
+    Shared staminaPenalty, overusePenalty, usedStamina
 
-    Shared threePtRange
+    Shared threePtRange, threePtShotChance
 
     Shared actualAttendance&
     Shared avgAttendance&()
@@ -1029,7 +1035,7 @@ Sub PROHOOP ()
         currGame = schedGame(0) + schedGame(2)
 
         'Open cfgPath$ + "pbplog" + Str$(currGame) For Append As #11
-        'Open cfgPath$ + "pbplog" For Append As #11
+        Open cfgPath$ + "pbplog" For Append As #11
 
         If Not _FileExists(scheduleFile$) Then
 
@@ -1076,7 +1082,7 @@ Sub PROHOOP ()
 
     Else
 
-        'Open cfgPath$ + "pbplog" For Append As #11
+        Open cfgPath$ + "pbplog" For Append As #11
 
     End If
 
@@ -1253,7 +1259,7 @@ Sub PROHOOP ()
 
                     Case 8:
                         timeoutOpt = timeoutOpt + 1
-                        If timeoutOpt > 4 Then timeoutOpt = 0
+                        If timeoutOpt > 5 Then timeoutOpt = 0
 
                     Case 9:
                         '
@@ -1338,7 +1344,7 @@ Sub PROHOOP ()
 
     'If we've run into issues so far...
     If earlyExit = 1 Then
-        'Close #11
+        Close #11
         Exit Sub
     End If
 
@@ -1390,9 +1396,7 @@ Sub PROHOOP ()
     Call ChangeContributions
     Call LOADSTATS
 
-
-
-    '-- DON'T REMOVE ME
+    unforcedTOAdj = teamAdj(P, 1) + teamAdj(D, 2)
 
     If teamRat_GAME(0, 33) = teamRat_GAME(1, 33) And teamRat_GAME(0, 34) = teamRat_GAME(1, 34) Then
         Call ColorChange
@@ -1416,17 +1420,18 @@ Sub PROHOOP ()
     End Select
 
     'Determine subs / play parameters
+    'Visiting team = 0
+    'Home team = 1
     For team = 0 To 1
 
         If (playerMode = 1 And team = compTeam) Or playerMode = 2 Then
-
-            'Call ComputerCoach_Legacy(compTeam)
+            'Call ComputerCoach_Legacy(team)
+            'Call ComputerCoach_College(team)
             Call ComputerCoach(team)
-
         Else
-            Call ChooseLineup
+            Call ChooseLineup(team)
             Call CHANGESTRATEGY(team)
-            Call DefPlaySafeNormal
+            Call DefPlaySafeNormal(team)
         End If
 
     Next team
@@ -1485,7 +1490,7 @@ Sub PROHOOP ()
         Case 2, 3
             If teamYears(rulesStyle) >= 1975 Then
                 P = 1 - jumpBall
-                D = 1 - P
+                D = jumpBall
             Else
                 'NBA used jump ball every quarter before 1975
                 jumpBall = Int(Rnd(1) * 2)
@@ -1506,7 +1511,11 @@ Sub PROHOOP ()
 
     End Select
 
-    Call ChangePossession
+    'Call ChangePossession
+    C1 = 2
+    prevBall$ = ""
+    P9 = P
+
     possCount(quarter) = possCount(quarter) + 1
 
     lastDefCheckDiff = score(D, 0) - score(P, 0)
@@ -1533,9 +1542,6 @@ Sub PROHOOP ()
     If (autoPlay = 0 Or pbpDelay! > 0) Then
         Call SELECTPBP(jumpBall, 1)
     End If
-
-    P = jumpBall
-    P9 = jumpBall
 
     GoTo 300
 
@@ -1632,27 +1638,25 @@ Sub PROHOOP ()
 
         If playerMode = 1 Then
 
-            'Call ComputerCoach_Legacy(compTeam)
-            Call ComputerCoach(compTeam)
+            'Call ComputerCoach_Legacy(team)
+            'Call ComputerCoach_College(team)
+            Call ComputerCoach(team)
 
         End If
 
         If playerMode = 2 Then
 
             'Call ComputerCoach_Legacy(0)
+            'Call ComputerCoach_College(0)
             Call ComputerCoach(0)
 
             'Call ComputerCoach_Legacy(1)
+            'Call ComputerCoach_College(1)
             Call ComputerCoach(1)
 
         End If
 
     End If
-
-    '-- Evaluate timeout reserve
-    'If quarter = 4 Then
-        'Print #11, "Q4 START: " + gameTeams$(0) + " timeouts=" + Str$(timeouts(0)) + " | " + gameTeams$(1) + " timeouts=" + Str$(timeouts(1))
-    'End If
 
     'New quarter
     If quarter <= 4 Then
@@ -1822,51 +1826,84 @@ Sub PROHOOP ()
             Case 1, 4, 7:
                 ' *** SHOT VS REG M-M, TIGHT M-M, 1-3-1 ZONE ***
                 If isWNBATeam%(eraChoice) = 1 Then
-                    offFoulMax = 16
-                    perFoulMax = 32
+                    offFoulMax = 6
+                    perFoulMax = 22
                 Else
-                    offFoulMax = 18
-                    perFoulMax = 30
+                    offFoulMax = 6
+                    perFoulMax = 18
                 End If
 
             Case 2, 5, 6, 8, 9
                 ' *** SHOT VS LOOSE M-M, SAG M-M, ALL ZONE EXCEPT 1-3-1 ***
                 If isWNBATeam%(eraChoice) = 1 Then
-                    offFoulMax = 6
-                    perFoulMax = 11
+                    offFoulMax = 2
+                    perFoulMax = 7
                 Else
-                    offFoulMax = 7
-                    perFoulMax = 10
+                    offFoulMax = 2
+                    perFoulMax = 5
                 End If
 
             Case 3
                 ' *** SHOT VS TRAP M-M ***
                 If isWNBATeam%(eraChoice) = 1 Then
-                    offFoulMax = 28
-                    perFoulMax = 45
+                    offFoulMax = 10
+                    perFoulMax = 27
                 Else
-                    offFoulMax = 30
-                    perFoulMax = 50
+                    offFoulMax = 9
+                    perFoulMax = 29
                 End If
 
         End Select
 
+        stealType = 1
         stealChance = unforcedTOAdj + defStealAdj!(defStyles(D)) + offStealAdj!(offStyles(P)) + teamAdj(P, 0) + gameRatings!(D, lineupIdx(D, P9), 5)
+        'Print #11, "Team rating: "; teamAdj(P, 0)
+        'Print #11, "Player rating: "; gameRatings!(D, lineupIdx(D, P9), 5)
 
     Else
 
         'Choices for a PRESS
         defPress = 0
         If isWNBATeam%(eraChoice) = 1 Then
-            offFoulMax = 28
-            perFoulMax = 45
+            offFoulMax = 10
+            perFoulMax = 27
         Else
-            offFoulMax = 30
-            perFoulMax = 50
+            offFoulMax = 9
+            perFoulMax = 29
         End If
 
+        stealType = 2
         stealChance = 40 + unforcedTOAdj + teamAdj(P, 0) + gameRatings!(D, lineupIdx(D, P9), 5)
 
+    End If
+
+    'Temporary "calibration" needed for steal chances
+    'because of the double-dip approach used for steals
+    'as an outcome separate from turnovers (rather than
+    'being a subet, as College BB does)
+    If isWNBATeam%(P) = 1 Then
+
+        Select Case teamYears(P)
+
+            Case 1997 To 1998
+                stealOffset = 22
+
+            Case 1999 To 2006
+                stealOffset = 18
+
+            Case 2007 To 2012
+                stealOffset = 22
+
+            Case 2013 To 2017
+                stealOffset = 18
+
+            Case Is >= 2018
+                stealOffset = 15
+
+        End Select
+
+    Else
+        stealOffset = 13
     End If
 
     ' *** Determine Shot Outcome ***
@@ -1876,6 +1913,13 @@ Sub PROHOOP ()
 
     toMin = perFoulMax + 1
     toMax = perFoulMax + unforcedTOAdj - plyrTOAdj + leagueTOAdj
+
+    If stealChance - stealOffset > toMax Then
+        stealChance = stealChance - stealOffset
+    End If
+
+    test1 = (stealChance - stealOffset - toMax)
+    Print #11, "SO="; stealOffset; " SC="; stealChance; " TM="; toMax; " DIFF="; test1
 
     RN0 = Int(Rnd(1) * 1000) + 1
 
@@ -1913,6 +1957,7 @@ Sub PROHOOP ()
             Call DELAY
 
             turnovers(D) = turnovers(D) + 1
+            'Print #11, "Turnover - OFF FOUL"
 
             Call UPDATESCREEN
 
@@ -1940,16 +1985,120 @@ Sub PROHOOP ()
 
         Case (toMax + 1) To 1000
 
-            P9 = Int(Rnd(1) * 5)
+            stealPlyr = Int(Rnd(1) * 5)
 
             'Check for steal
-            If isWNBATeam%(eraChoice) = 1 Then
-                stealChance = stealChance * 0.9
-            End If
+            'Print #11, "Checking for steal"
 
             If RN0 <= stealChance Then
 
-                GoTo 513
+                ' *** SUCCESSFUL STEAL ***
+                Call LastShot
+                Call ResetShotClock
+
+                'Increase player TOs
+                gameRatings!(P, lineupIdx(P, ballCarrier), 23) = gameRatings!(P, lineupIdx(P, ballCarrier), 23) + 1
+
+                If (autoPlay = 0 Or pbpDelay! > 0) Then
+
+                    If pbpOpt = 1 Then
+
+                        Call WINDEX
+                        Print "BALL STOLEN BY "; players_GAME$(D, lineupIdx(D, stealPlyr), 0); "!"
+                        Call DELAY
+
+                    Else
+
+                        Call Rolld100(RN0)
+
+                        Select Case RN0
+
+                            Case 1 To 3:
+                                pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " QUICKLY REACHES IN!"
+
+                            Case 4 To 6:
+                                pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " SNEAKS IN FROM BEHIND!"
+
+                            Case 7 To 10:
+                                pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " GETS A HAND ON THE BALL!"
+
+                            Case Else
+                                pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " REACHES FOR IT!"
+
+                        End Select
+
+                        Call PBP(D)
+
+                        RN0 = Int(Rnd(1) * 20) + 1
+
+                        Select Case RN0
+
+                            Case 1: pbpString$ = "PASS INTERCEPTED BY " + players_GAME$(D, lineupIdx(D, stealPlyr), 0) + "!"
+
+                            Case 2: pbpString$ = "PASS IS PICKED OFF BY " + players_GAME$(D, lineupIdx(D, stealPlyr), 0) + "!"
+
+                            Case 3: pbpString$ = "BALL IS STOLEN BY " + players_GAME$(D, lineupIdx(D, stealPlyr), 0) + "!"
+
+                            Case 4: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " WITH THE STEAL!"
+
+                            Case 5: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " TAKES IT AWAY!"
+
+                            Case 6: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " STEALS IT!"
+
+                            Case 7: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " RIPS IT LOOSE!"
+
+                            Case 8: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " TAKES THE BALL AWAY!"
+
+                            Case 9: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " STEALS THE BALL!"
+
+                            Case 10: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " PICKS IT OFF!"
+
+                            Case 11: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " SWIPES THE BALL!"
+
+                            Case 12: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " WITH THE STOLEN BALL!"
+
+                            Case 13: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " STRIPS IT AWAY!"
+
+                            Case 14: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " WITH THE STEAL!"
+
+                            Case 15: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " SWIPES AND STEALS IT!"
+
+                            Case 16: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " SNATCHES IT AWAY!"
+
+                            Case 17: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " QUICKLY REACHES IN!"
+
+                            Case 18: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " TAKES IT THE OTHER WAY!"
+
+                            Case 19: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " POKES IT LOOSE!"
+
+                            Case 20: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " STRIPS IT CLEAN!"
+
+                        End Select
+
+                        Call PBP(D)
+
+                    End If
+
+                End If
+
+                'Increase steals + team TOs
+                gameRatings!(D, lineupIdx(D, stealPlyr), 13) = gameRatings!(D, lineupIdx(D, stealPlyr), 13) + 1
+                turnovers(P) = turnovers(P) + 1
+
+                Call UPDATESCREEN
+
+                C1 = 2
+
+                Call CheckGameClock
+                If gameClock! = 0 Then 170
+
+                Call ChangePossession
+                P9 = D
+                possCount(quarter) = possCount(quarter) + 1
+
+                fastBreak = 1
+
+                GoTo 300
 
             Else
 
@@ -1958,135 +2107,19 @@ Sub PROHOOP ()
                     'Shoot!
 
                     'Fatigued ouside last 2 mins / Overtime
-                    If ((quarter < 4 Or (quarter = 4 And gameClock! > 120)) And (playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0)) Then
+                    If ((quarter < 4 Or (quarter = 4 And gameClock! > 120)) And (playerStamina%(P, lineupIdx(P9, ballCarrier)) <= 0)) Then
                         'Fatigued - No Shot / Difficult Shot
                         GoTo 437
                     End If
 
-
-
-                    '-- Call a function that returns threePtShotChance
-
                     ' *** CHECKING 3-POINT SHOT ***
                     If threePtOpt = 1 Then
-
-                        ' ***Shot chance based on user's 3FG make % ***
-                        'Shot percentages are consistently low without a boost.
-                        'This is likely b/c factors such as shot severity,
-                        'fatigue and shotType may not be decent.
-                        base3FGMake = gameRatings!(P, lineupIdx(P, ballCarrier), 20) + teamAdj(D, 4)
-
-                        Select Case teamLeague$(P)
-
-                            Case "ABA"
-                                leagueShotAdj = 10
-
-                            Case "NBA"
-                                leagueShotAdj = 0
-
-                            Case "WNBA"
-                                leagueShotAdj = 5
-
-                        End Select
-
-                        threePtShotChance = base3FGMake + teamAdj(D, 4) + leagueShotAdj
-
-                        'The default values as calculated from team ratings
-                        'seem to favor accuracy for modern seasons. Therefore,
-                        'we have to make adjustments in older seasons
-                        plyrBase3FG = gameRatings!(P, lineupIdx(P, ballCarrier), 19)
-                        threeFGChance = plyrBase3FG
-
-                        'Favor modern outcomes if teams are from different eras
-                        Select Case teamYears(eraChoice)
-
-                            Case Is <= 1995
-                                threeFGChance = threeFGChance - 10
-
-                            Case 1996 To 1998
-                                'After 1995 the 3-pt line moved which encouraged
-                                'teams to take more 3-pointers
-                                If isWNBATeam%(P) = 0 Then
-                                    threeFGChance = threeFGChance - 3
-                                End If
-
-                            Case 1999 To 2009
-                                'Teams were allowed to play zone, which led to
-                                'more 3 FGA's happening
-                                If isWNBATeam%(P) = 0 Then
-                                    threeFGChance = threeFGChance - 3
-                                Else
-                                    threeFGChance = threeFGChance + 15
-                                End If
-
-                            Case 2010 To 2012
-                                If isWNBATeam%(P) = 0 Then
-                                    threeFGChance = threeFGChance - 3
-                                End If
-
-                            Case 2013 To 2016
-                                If isWNBATeam%(P) = 1 Then
-                                    threeFGChance = threeFGChance - 10
-                                End If
-
-                            Case Is >= 2017
-                                If isWNBATeam%(P) = 1 Then
-                                    threeFGChance = threeFGChance + 1
-                                End If
-
-                        End Select
-
-                        'I've generally observed more frequent 3FG's happen with 10 min quarters
-                        'It could be specific to women's basketball; we would need to simulate
-                        'olympic results for better idea
-                        If quarterOpt = 1 Then
-                            threeFGChance = threeFGChance + 8
-                        End If
-
-                        'Consider pressure in playoffs
-                        If playoffOpt = 1 Then
-
-                            'Adjust 3FGA frequency for tournament play / desparation
-                            crunchLevel = GetDesparationLevel%
-
-                            'If team is behind...
-                            If crunchLevel > 0 And score(P, 0) - score(D, 0) < 0 Then
-
-                                'Players who don't normally shoot 3FGA's as much will
-                                'take more desparate attempts
-                                If plyrBase3FG < 34 Then
-                                    threeFGChance = threeFGChance * (1 + 0.08 * crunchLevel)
-                                Else
-                                    threeFGChance = threeFGChance * (1 + 0.02 * crunchLevel)
-                                End If
-
-                            End If
-
-                            'If team is ahead...
-                            If crunchLevel > 0 And score(P, 0) - score(D, 0) > 0 Then
-
-                                'Players who don't normally shoot 3FGA's will take them
-                                'even less often
-                                If plyrBase3FG < 34 Then
-                                    threeFGChance = threeFGChance * (1 - (.15 * crunchLevel))
-                                Else
-                                    'Good shooters will still be more conservative
-                                    threeFGChance = threeFGChance * (1 - (.05 * crunchLevel))
-                                End If
-
-                            End If
-
-                        End If
-
-                        '-- End of function that returns threePtShotChance
-
-
 
                         Call Rolld100(threeFGRoll)
 
                         currPlayer$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0)
 
-                        If threeFGRoll <= threeFGChance Then
+                        If threeFGRoll <= threeFGShotChance% Then
                             'Take 3FGA within player's frequency
                             shotType = 4
                             offStatus = 0
@@ -2126,7 +2159,7 @@ Sub PROHOOP ()
 
                         End If
 
-                    End If
+                    End If 'Done checking for 3-pt shot
 
                     ' *** CHECKING FOR ASSISTED SHOT ***
                     playChoice = 1
@@ -2139,9 +2172,9 @@ Sub PROHOOP ()
 
                     'GoTo 437
 
-                End If
+                End If 'Done checking for good shot
 
-            End If
+            End If 'Done checking for steal
 
     End Select
 
@@ -2201,127 +2234,18 @@ Sub PROHOOP ()
 
     '----- NOODLE -----
 
-    ' *** SUCCESSFUL STEAL ***
-
-    513 '
-    Call LastShot
-    Call ResetShotClock
-
-    'Increase player TOs
-    gameRatings!(P, lineupIdx(P, ballCarrier), 23) = gameRatings!(P, lineupIdx(P, ballCarrier), 23) + 1
-
-    If (autoPlay = 0 Or pbpDelay! > 0) Then
-
-        If pbpOpt = 1 Then
-
-            Call WINDEX
-            Print "BALL STOLEN BY "; players_GAME$(D, lineupIdx(D, P9), 0); "!"
-            Call DELAY
-
-        Else
-
-            Call Rolld100(RN0)
-
-            Select Case RN0
-
-                Case 1 To 3:
-                    pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " QUICKLY REACHES IN!"
-
-                Case 4 To 6:
-                    pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " SNEAKS IN FROM BEHIND!"
-
-                Case 7 To 10:
-                    pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " GETS A HAND ON THE BALL!"
-
-                Case Else
-                    pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " REACHES FOR IT!"
-
-            End Select
-
-            Call PBP(D)
-
-            RN0 = Int(Rnd(1) * 20) + 1
-
-            Select Case RN0
-
-                Case 1: pbpString$ = "PASS INTERCEPTED BY " + players_GAME$(D, lineupIdx(D, P9), 0) + "!"
-
-                Case 2: pbpString$ = "PASS IS PICKED OFF BY " + players_GAME$(D, lineupIdx(D, P9), 0) + "!"
-
-                Case 3: pbpString$ = "BALL IS STOLEN BY " + players_GAME$(D, lineupIdx(D, P9), 0) + "!"
-
-                Case 4: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " WITH THE STEAL!"
-
-                Case 5: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " TAKES IT AWAY!"
-
-                Case 6: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " STEALS IT!"
-
-                Case 7: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " RIPS IT LOOSE!"
-
-                Case 8: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " TAKES THE BALL AWAY!"
-
-                Case 9: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " STEALS THE BALL!"
-
-                Case 10: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " PICKS IT OFF!"
-
-                Case 11: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " SWIPES THE BALL!"
-
-                Case 12: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " WITH THE STOLEN BALL!"
-
-                Case 13: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " STRIPS IT AWAY!"
-
-                Case 14: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " WITH THE STEAL!"
-
-                Case 15: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " SWIPES AND STEALS IT!"
-
-                Case 16: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " SNATCHES IT AWAY!"
-
-                Case 17: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " QUICKLY REACHES IN!"
-
-                Case 18: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " TAKES IT THE OTHER WAY!"
-
-                Case 19: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " POKES IT LOOSE!"
-
-                Case 20: pbpString$ = players_GAME$(D, lineupIdx(D, P9), 0) + " STRIPS IT CLEAN!"
-
-            End Select
-
-            Call PBP(D)
-
-        End If
-
-    End If
-
-    'Increase steals + team TOs
-    gameRatings!(D, lineupIdx(D, P9), 13) = gameRatings!(D, lineupIdx(D, P9), 13) + 1
-    turnovers(P) = turnovers(P) + 1
-
-    Call UPDATESCREEN
-
-    C1 = 2
-
-    Call CheckGameClock
-    If gameClock! = 0 Then 170
-
-    Call ChangePossession
-    P9 = D
-    possCount(quarter) = possCount(quarter) + 1
-
-    fastBreak = 1
-
-    GoTo 300
-
-    '----- NOODLE -----
-
     ' *** TURNOVER ***
 
-    515 '
+    515 '--> Turnover Subroutine
+
     Call LastShot
     Call ResetShotClock
 
     'Increase player and team TO's
     gameRatings!(P, lineupIdx(P, ballCarrier), 23) = gameRatings!(P, lineupIdx(P, ballCarrier), 23) + 1
     turnovers(P) = turnovers(P) + 1
+
+    'Print #11, "Turnover - Unforced"
 
     If shotViolation = 0 Then
         pbpType = 1
@@ -2414,7 +2338,7 @@ Sub PROHOOP ()
 
             prevBall$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0)
             activePosition$ = Left$(players_GAME$(P, lineupIdx(P, ballCarrier), 1), 1)
-    
+
             'Shooting Guard or Point Guard --> treat as Guard
             If activePosition$ = "S" Or activePosition$ = "P" Then
                 activePosition$ = Right$(players_GAME$(P, lineupIdx(P, ballCarrier), 1), 1)
@@ -2659,91 +2583,84 @@ Sub PROHOOP ()
     'Determine some late game scenarios
     scoreDiff = score(P, 0) - score(D, 0)
 
+    If (playerMode = 1 And coachOpt <> 1) Then
+        promptUser = 1
+    Else
+        promptUser = 0
+    End If
+
+    If quarterOpt = 1 Then
+        intFoulWindow = 120
+    Else
+        intFoulWindow = 240
+    End If
+
     'Computer Opponent or "Let Computer Shoot"
     If playerMode <> 0 Or coachOpt = 1 Then
 
-        If sClockVal = 2 Then
+        'Human Offense - prompt for intentional foul
+        'Consider intentional foul
+        If quarter >= 4 And gameClock! <= intFoulWindow And scoreDiff > 0 And _
+            playerMode = 1 And P = compTeam Then
 
-            '=== NO SHOT CLOCK ERA ===
-            'Trailing team must foul to regain possession
-            'Human player on defense - always prompt
-            If (playerMode = 1 And D = compTeam) Or playerMode = 0 Then
-                GoTo 530
-            End If
+            'Computer on Offense
+            pbpString$ = Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " FT%  INTENTIONAL FOUL? (Y/N)"
+            Call SELECTPBP(P, 0)
 
-            'PC on defense - foul aggressively when trailing
-            If quarter >= 4 Then
+            Do
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = "3"
 
-                If (gameClock! <= 120 And scoreDiff > 3 And (d100% <= 20 + scoreDiff)) Or _
-                   (gameClock! <= 240 And scoreDiff > 8 And (d100% <= 12)) Then
-                    playChoice = 3
-                    GoTo 532
-                End If
-
+            If UCase$(I$) = "Y" Or I$ = "3" Then
+                playChoice = 3
+                GoTo 532
             End If
 
         Else
-            '=== SHOT CLOCK ERA ===
-            'Human player on offense - prompt for intentional foul
-            If quarter >= 4 And gameClock! <= 240 And scoreDiff > 0 And _
-                playerMode = 1 And P = compTeam Then
 
-                pbpString$ = Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " FT%  INTENTIONAL FOUL? (Y/N)"
-                Call SELECTPBP(P, 0)
+            'Computer on Defense
+            If (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
 
-                Do
-                    I$ = GetKeyPress$
-                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = "3"
+                considerFoul = 0
 
-                If UCase$(I$) = "Y" Or I$ = "3" Then
-                    playChoice = 3
-                    GoTo 532
-                End If
+                If quarter >= 4 Then
 
-            Else
+                    If sClockVal = 2 Then
+                        '=== NO SHOT CLOCK ERA ===
+                        If (gameClock! <= 120 And scoreDiff > 3 And (d100% <= 20 + scoreDiff)) Or _
+                           (gameClock! <= 240 And scoreDiff > 8 And (d100% <= 12)) Then
+                            considerFoul = 1
+                        End If
 
-                'PC on defense
-                If (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
-
-                    'Consider intentional foul
-                    If quarterOpt = 1 Then
-                        intFoulWindow = 120
                     Else
-                        intFoulWindow = 240
-                    End If
 
-                    If quarter >= 4 Then
-    
-                        considerFoul = 0
-
+                        '=== SHOT CLOCK ERA ===
                         ' Late game, trailing badly
                         If gameClock! <= intFoulWindow And scoreDiff > 10 Then
                             considerFoul = 1
                         End If
-                        
+
                         ' Final possessions, any deficit
                         If gameClock! <= 30 And scoreDiff > 0 Then
                             considerFoul = 1
-                        End If
-    
-                        If considerFoul = 1 Then
-
-                            If ((playerMode = 1 Or playerMode = 0) And coachOpt <> 1) Then
-                                GoTo 530
-                            Else
-                                playChoice = 3
-                                GoTo 532
-                            End If
-
                         End If
 
                     End If
 
                 End If
 
-            End If
+                If promptUser = 1 Then
+                    GoTo 530
+                Else
+                    If considerFoul = 1 Then
+                        playChoice = 3
+                        GoTo 532
+                    End If
+                End If
 
-        End If
+            End If 'Done with computer Defense
+
+        End If 'Done checking intl foul scenarios
 
         'Shoot when clock is low or possession is dragging on
         If gameClock! <= 1 Or _
@@ -2871,16 +2788,20 @@ Sub PROHOOP ()
         playChoice = 3
     End If
 
-    'Timeout
+    'Timeout - Human Offense
     If Val(I$) = 2 And (playerMode = 0 Or (playerMode = 1 And D = compTeam)) And timeouts(P) > 0 Then
         playChoice = 2
     End If
 
     P3 = playChoice
 
+    'Human Player
     If playerMode < 2 Then
-        If (playChoice = 2 And timeouts(P) = 0) Or (playChoice = 3 And quarter < 4) Or (playChoice = 3 And quarter = 4 And gameClock! > 240) Or (playerMode = 1 And playChoice = 3 And D = compTeam) Then
-            'Take shot with no timeouts | Take timeout with more than 4 mins left | Take timeout before Q4 | Take timeout with PC on Defense
+        'No timeouts left
+        'Take timeout before last 4 minutes
+        'Take timeout with PC on Defense
+        If (playChoice = 2 And timeouts(P) = 0) Or _
+            playChoice = 3 And (quarter < 4 Or (quarter = 4 And gameClock! > 240) Or (playerMode = 1 And D = compTeam)) Then
             GoTo 530
         End If
     End If
@@ -2890,17 +2811,14 @@ Sub PROHOOP ()
 
     If threePtOpt = 1 Then
 
-        'Computer - try for 3 always when in range
-        If threePtRange = 1 Then
-            If (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+        'Computer on Offense
+        'Try for 3 when in range (always) or when down by 3 late in game
+        If (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+            If threePtRange = 1 Or _
+               quarter >= 4 And gameClock! < 30 And scoreDiff >= 3 Then
+
                 playChoice = 4
             End If
-        End If
-
-        'Try for 3 near end of game when down by 3
-        If quarter >= 4 And gameClock! < 30 And scoreDiff >= 3 And _
-            ((playerMode = 1 And P = compTeam) Or playerMode = 2) Then
-            playChoice = 4
         End If
 
         '3-pt shot in player's frequency
@@ -2909,7 +2827,6 @@ Sub PROHOOP ()
         End If
 
     End If
-
 
     ' *** Done determining value for playChoice ***
     playType = playChoice + 1
@@ -3076,7 +2993,13 @@ Sub PROHOOP ()
 
                     ' ** Foul on made FGA **
                     Call FoulCalled(1)
-                    Call FreeThrow_Make1(missedLast)
+
+                    If freeThrowVal = 0 Or (freeThrowVal = 1 And isTeamInBonus%(D) = 0) Then
+                        'Modern rules, or "To Make" rules before team is in bonus
+                        Call FreeThrows(1, missedLast)
+                    Else
+                        Call FreeThrow_Make1(missedLast)
+                    End If
 
                 End If
 
@@ -3447,6 +3370,7 @@ Sub PROHOOP ()
             pbpString$ = "DESIGNATED FOULER (0-4)"
             Call SELECTPBP(P, 1)
 
+            'Computer on Defense
             If (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
                 desigFouler = Int(Rnd(1) * 5)
             Else
@@ -3693,7 +3617,6 @@ Sub PROHOOP ()
         Call PBP(P)
 
         'Take free throws
-        'Call FreeThrows(2, missedLast)
         shootingFoul = 0
         GoTo 591
 
@@ -3794,7 +3717,12 @@ Sub PROHOOP ()
     ' *** FREE THROWS IN BONUS / 2 FREE THROWS ***
 
     591 '
-    Call FreeThrow_Make2(shootingFoul, missedLast)
+    If freeThrowVal = 0 Or (freeThrowVal = 1 And foulOnShot = 0 And isTeamInBonus%(D) = 0) Then
+        'Modern rules, or "To Make" rules, NOT shooting foul, team not in bonus
+        Call FreeThrows(2, missedLast)
+    Else
+        Call FreeThrow_Make2(shootingFoul, missedLast)
+    End If
 
     Call CheckGameClock
 
@@ -3928,7 +3856,7 @@ Sub PROHOOP ()
 
     offGoalTendChance = Int(Rnd(1) * 5000) + 1
     defGoalTendChance = Int(Rnd(1) * 2000) + 1
-    
+
     Select Case resultRoll
 
         Case 1
@@ -3941,6 +3869,8 @@ Sub PROHOOP ()
 
                 turnovers(P) = turnovers(P) + 1
                 goaltendTOs = goaltendTOs + 1
+
+                'Print #11, "Turnover - Goal Tending"
 
                 pbpString$ = "OFFENSIVE GOAL TENDING"
                 Call SELECTPBP(P, 1)
@@ -4185,7 +4115,7 @@ Sub PROHOOP ()
                 rndDReb = Rnd(1) * DRB
                 ballCarrier = -1
                 tgtPlayer = 5
-                
+
                 Do While tgtPlayer <= 9 And rndDReb > rebRatings(tgtPlayer)
                     rebRatings(tgtPlayer + 1) = rebRatings(tgtPlayer + 1) + rebRatings(tgtPlayer)
                     tgtPlayer = tgtPlayer + 1
@@ -4532,14 +4462,15 @@ Sub InitVar ()
     Erase pbpFG, pbpBG, periodPlayerTot, periodTeamTot
     Erase playerSlotMins!, rebRatings
     Erase score, schedGame, schedOptions, statTotals
-    Erase teamAdj, teamIndex
-    Erase teamFouls, teamScore, threeFG, timePlayed
+    Erase teamAdj, teamIndex, teamFouls, teamScore
+    Erase threeFG, timePlayed, teamRebounds
     Erase teamRecWins, teamRecLoss
-    Erase teamRebounds, totalFouls, turnovers
+    Erase totalFouls, turnovers
 
-    Erase gameRatings!, game3FGM!, game3FGA!
-    Erase rebAdj!
-    Erase statsOffTot!, statsDefTot!, gameStatPlyrVal!
+    Erase game3FGM!, game3FGA!
+    Erase gameRatings!, gameStatPlyrVal!
+    Erase teamContrib!
+    Erase statsOffTot!, statsDefTot!
     Erase indRecords!, teamRecords!
 
     Erase diskIDs$, gameSite$, gameTeams$
@@ -4670,9 +4601,6 @@ End Sub
 'shot clock and adjusting play time.
 Sub TimeoutCalled (chargeTeam)
 
-    '-- Evaluate timeout calls
-    'Print #11, "TimeoutCalled: chargeTeam=" + Str$(chargeTeam) + " timeouts=" + Str$(timeouts(chargeTeam)) + " quarter=" + Str$(quarter) + " gameClock=" + Str$(gameClock!)
-
     If timeouts(chargeTeam) > 0 Then
 
         If mandatoryTO(chargeTeam) = 0 Then
@@ -4763,7 +4691,6 @@ Sub TimeoutChoice (offTakeTO)
     ' *** Check for TimeOut - Offense ***
     ' ***********************************
     '  Computer on Offense
-    '  Computer vs. Computer
     If (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
 
         If playoffOpt = 1 Then
@@ -4790,19 +4717,19 @@ Sub TimeoutChoice (offTakeTO)
             Case 1
                 Select Case quarter
                     Case 1
-                        If timeouts(P) > 6 And offScoreDiff <= (3 + toScoreBuffer) Then
+                        If timeouts(P) > 6 And offScoreDiff <= -(3 + toScoreBuffer) Then
                             toChoice = P
                         End If
                     Case 2
-                        If timeouts(P) > 5 And offScoreDiff <= (2 + toScoreBuffer) Then
+                        If timeouts(P) > 5 And offScoreDiff <= -(2 + toScoreBuffer) Then
                             toChoice = P
                         End If
                     Case 3
-                        If timeouts(P) > 4 And offScoreDiff <= (7 + toScoreBuffer) Then
+                        If timeouts(P) > 4 And offScoreDiff <= -(7 + toScoreBuffer) Then
                             toChoice = P
                         End If
                     Case Else ' Q4 and OT
-                        If timeouts(P) > 3 And offScoreDiff <= (10 + toScoreBuffer) Then
+                        If timeouts(P) > 3 And offScoreDiff <= -(10 + toScoreBuffer) Then
                             toChoice = P
                         End If
                 End Select
@@ -4810,19 +4737,19 @@ Sub TimeoutChoice (offTakeTO)
             Case 2
                 Select Case quarter
                     Case 1
-                        If timeouts(P) > 6 And offScoreDiff <= (3 + toScoreBuffer) Then
+                        If timeouts(P) > 6 And offScoreDiff <= -(3 + toScoreBuffer) Then
                             toChoice = P
                         End If
                     Case 2
-                        If timeouts(P) > 5 And offScoreDiff <= (8 + toScoreBuffer) Then
+                        If timeouts(P) > 5 And offScoreDiff <= -(8 + toScoreBuffer) Then
                             toChoice = P
                         End If
                     Case 3
-                        If timeouts(P) > 3 And offScoreDiff <= (10 + toScoreBuffer) Then
+                        If timeouts(P) > 3 And offScoreDiff <= -(10 + toScoreBuffer) Then
                             toChoice = P
                         End If
                     Case Else ' Q4 and OT
-                        If timeouts(P) > 2 And offScoreDiff <= (14 + toScoreBuffer) Then
+                        If timeouts(P) > 2 And offScoreDiff <= -(14 + toScoreBuffer) Then
                             toChoice = P
                         End If
                 End Select
@@ -4873,27 +4800,51 @@ Sub TimeoutChoice (offTakeTO)
         ' Q4 specific triggers - ordered by clock time, most urgent last
         If quarter = 4 Then
 
-            ' Opponent in bonus - set up deliberate foul situation
-            If gameClock! <= 180 And offScoreDiff < 0 And offScoreDiff >= -6 And isTeamInBonus%(P) = 1 And timeouts(P) >= 1 Then
-                toChoice = P
-            End If
+            If timeouts(P) >= 1 Then
 
-            ' Protect small lead late
-            If gameClock! <= 120 And offScoreDiff > 0 And offScoreDiff <= 6 And timeouts(P) >= 1 Then
-                toChoice = P
-            End If
+                ' Opponent in bonus - set up deliberate foul situation
+                If gameClock! <= 180 And offScoreDiff < 0 And offScoreDiff >= -6 And isTeamInBonus%(P) = 1 Then
+                    toChoice = P
+                End If
 
-            ' Final possession - draw up a play
-            Select Case sClockVal
-                Case 0: scBase = 24
-                Case 1: scBase = 30
-            End Select
+                ' Protect small lead late
+                If gameClock! <= 120 And offScoreDiff > 0 And offScoreDiff <= 6 Then
+                    toChoice = P
+                End If
 
-            If gameClock! <= (scBase * 2) And Abs(offScoreDiff) <= 5 And timeouts(P) >= 1 Then
-                toChoice = P
-            End If
+                'Take TO for substitution if there are
+                'too many lineup players exhausting
+                If gameClock! > 120 Then
 
-        End If
+                    exhaustedLineup = 0
+
+                    For I1 = 0 To 4
+
+                        If playerStamina%(teamIdx, lineupIdx(teamIdx, I1)) <= 0 Then
+                            exhaustedLineup = exhaustedLineup + 1
+                        End If
+
+                    Next I1
+
+                    If exhaustedLineup >= 2 And timeouts(teamIdx) > toReserve Then
+                        toChoice = P
+                    End If
+
+                End If
+
+                ' Final possession - draw up a play
+                Select Case sClockVal
+                    Case 0: scBase = 24
+                    Case 1: scBase = 30
+                End Select
+
+                If gameClock! <= (scBase * 2) And Abs(offScoreDiff) <= 5 And timeouts(P) >= 1 Then
+                    toChoice = P
+                End If
+
+            End If 'Done cheking for timeouts
+
+        End If 'Done checking if Q4
 
     End If
 
@@ -4905,7 +4856,6 @@ Sub TimeoutChoice (offTakeTO)
     ' *** Check for TimeOut - Defense ***
     ' ***********************************
     '  Computer On Defense
-    '  Computer vs. Computer
     If (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
 
         If playoffOpt = 1 Then
@@ -5023,24 +4973,48 @@ Sub TimeoutChoice (offTakeTO)
                 toChoice = D
             End If
 
-            ' Opponent just scored, defense regroups
-            If opponentJustScored = 1 And gameClock! <= clockThreshold And timeouts(D) >= 1 Then
-                toChoice = D
-            End If
+            If timeouts(D) > 1 Then
 
-            ' Trailing by one possession, stop clock
-            If gameClock! <= 180 And defScoreDiff < 0 And defScoreDiff > -4 And timeouts(D) >= 1 Then
-                toChoice = D
-            End If
+                ' Opponent just scored, defense regroups
+                If opponentJustScored = 1 And gameClock! <= clockThreshold Then
+                    toChoice = D
+                End If
 
-            ' Opponent in bonus - set up intentional foul
-            If gameClock! <= 180 And defScoreDiff < 0 And defScoreDiff >= -8 And isTeamInBonus%(D) = 1 And timeouts(D) >= 1 Then
-                toChoice = D
-            End If
+                ' Trailing by one possession, stop clock
+                If gameClock! <= 180 And defScoreDiff < 0 And defScoreDiff > -4 Then
+                    toChoice = D
+                End If
 
-            ' Just lost the lead - most urgent override
-            If gameClock! <= 120 And defScoreDiff >= -2 And defScoreDiff <= 0 And timeouts(D) >= 1 Then
-                toChoice = D
+                ' Opponent in bonus - set up intentional foul
+                If gameClock! <= 180 And defScoreDiff < 0 And defScoreDiff >= -8 And isTeamInBonus%(D) = 1 Then
+                    toChoice = D
+                End If
+
+                ' Just lost the lead - most urgent override
+                If gameClock! <= 120 And defScoreDiff >= -2 And defScoreDiff <= 0 Then
+                    toChoice = D
+                End If
+
+                'Take TO for substitution if there are
+                'too many lineup players exhausting
+                If gameClock! > 120 Then
+
+                    exhaustedLineup = 0
+
+                    For I1 = 0 To 4
+
+                        If playerStamina%(teamIdx, lineupIdx(teamIdx, I1)) <= 0 Then
+                            exhaustedLineup = exhaustedLineup + 1
+                        End If
+
+                    Next I1
+
+                    If exhaustedLineup >= 2 And timeouts(teamIdx) > toReserve Then
+                        toChoice = D
+                    End If
+
+                End If
+
             End If
 
         End If
@@ -5057,6 +5031,7 @@ Sub TimeoutChoice (offTakeTO)
         lastTOQuarter = quarter
         lastTOClock = gameClock!
         Call TimeoutCalled(D)
+        Call STOPPAGE(takeTO)
         lastDefCheckDiff = score(D, 0) - score(P, 0)
         lastOffCheckDiff = score(P, 0) - score(D, 0)
     End If
@@ -5335,9 +5310,11 @@ Sub SELECTPBP (teamIdx, clean)
     Select Case pbpOpt
 
         Case 0:
+            'Verbose
             Call PBP(teamIdx)
 
         Case 1:
+            'Classic
             If pbpDelay! > 0 Then
                 If clean = 1 Then Call WINDEX
                 Print pbpString$
@@ -7510,31 +7487,30 @@ End Sub
 'This subroutine displays a brief summary
 'of the current team's Off / Def styles
 'in the lower part of the lineup screen
-Sub DisplayOffDefStyles ()
+Sub DisplayOffDefStyles (teamIdx)
 
     Shared yesNoText$()
 
-    Locate 19, 29
+    Locate 19, 32
     Color 14
-    Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
+    Print "SELECT OFFENSIVE AND DEFENSIVE STYLE"
 
     Locate 21, 32
     Color 15: Print "O";
     Color 3: Print "FFENSE STYLE-";
-    'Color 7: Print offStyleDesc$(offStyles(P9))
-    Color 7: Print offStylesNew$(offStyles(P9))
+    Color 7: Print offStylesNew$(offStyles(teamIdx))
 
     Locate 22, 32
     Color 3: Print "DE";
     Color 15: Print "F";
     Color 3: Print "ENSE STYLE-";
-    Color 7: Print defStyleDesc$(defStyles(P9))
+    Color 7: Print defStyleDesc$(defStyles(teamIdx))
 
     Locate 23, 32
     Color 3: Print "FULL COURT ";
     Color 15: Print "P";
     Color 3: Print "RESS-";
-    Color 7: Print yesNoText$(fullCtOpt(P9))
+    Color 7: Print yesNoText$(fullCtOpt(teamIdx))
 
 End Sub
 
@@ -7545,9 +7521,9 @@ End Sub
 'This subroutine walks the user through
 'the selection of play styles for their
 'team on both offense and defense.
-Sub ChooseLineup ()
+Sub ChooseLineup (teamIdx)
 
-    Call DisplayRoster
+    Call DisplayRoster(teamIdx)
 
     maxOffChoice = 8
 
@@ -7563,7 +7539,7 @@ Sub ChooseLineup ()
     Color 14, 0
     Print "STARTING LINEUP"
 
-    Call DisplayOffDefStyles
+    Call DisplayOffDefStyles(teamIdx)
 
     If C1 = 1 Then
 
@@ -7577,22 +7553,22 @@ Sub ChooseLineup ()
             Color 15, 0
             Print "ENTER "; posnName$(slot); " # ";
 
-            Z = lineupIdx(P9, slot)
+            Z = lineupIdx(teamIdx, slot)
             nonPlayers = 0
 
             For IP% = 0 To Z
-                If playerActive%(P9, IP%) = 0 Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX" Then
+                If playerActive%(teamIdx, IP%) = 0 Or players_GAME$(teamIdx, IP%, 0) = "" Or players_GAME$(teamIdx, IP%, 0) = "XXX" Then
                     nonPlayers = nonPlayers + 1
                 End If
             Next
 
-            If playerActive%(P9, Z) = 1 Then
-                Print players_GAME$(P9, Z, 0);
+            If playerActive%(teamIdx, Z) = 1 Then
+                Print players_GAME$(teamIdx, Z, 0);
 
                 'Print player name in team colors (activated)
                 Locate Z + 3 - nonPlayers, 3
-                Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34)
-                Print Left$(players_GAME$(P9, Z, 0), 12)
+                Color teamRat_GAME(teamIdx, 33), teamRat_GAME(teamIdx, 34)
+                Print Left$(players_GAME$(teamIdx, Z, 0), 12)
                 Color 15, 0
             End If
 
@@ -7622,40 +7598,52 @@ Sub ChooseLineup ()
                 If posn = 15 Then
 
                     If UCase$(I$) = "P" Then
-                        fullCtOpt(P9) = 1 - fullCtOpt(P9)
+                        fullCtOpt(teamIdx) = 1 - fullCtOpt(teamIdx)
                     End If
 
                     If UCase$(I$) = "F" Then
-                        defStyles(P9) = defStyles(P9) + 1
-                        If defStyles(P9) > maxDefChoice Then defStyles(P9) = 1
+                        defStyles(teamIdx) = defStyles(teamIdx) + 1
+                        If defStyles(teamIdx) > maxDefChoice Then defStyles(teamIdx) = 1
                     End If
 
                     If UCase$(I$) = "O" Then
-                        offStyles(P9) = offStyles(P9) + 1
-                        If offStyles(P9) > 8 Then offStyles(P9) = 0
+                        offStyles(teamIdx) = offStyles(teamIdx) + 1
+                        If offStyles(teamIdx) > 8 Then offStyles(teamIdx) = 0
                     End If
 
-                    Call DisplayOffDefStyles
+                    Call DisplayOffDefStyles(teamIdx)
 
                 Else
 
                     'Valid position #, player has not fouled out, and is active / eligible
-                    If posn >= 0 And posn <= 14 And gameRatings!(P9, posn, 12) < FOULS_TO_DQ And players_GAME$(P9, posn, 0) <> "XXX" And playerActive%(P9, posn) = 1 Then
+                    If posn >= 0 And posn <= 14 And gameRatings!(teamIdx, posn, 12) < FOULS_TO_DQ And players_GAME$(teamIdx, posn, 0) <> "XXX" And playerActive%(teamIdx, posn) = 1 Then
 
-                        I2 = 0
+                        For I2 = 0 To 4
+                            If lineupIdx(teamIdx, I2) = posn And lineupIdx(teamIdx, I2) >= 0 Then
+                                Color 14, 0
+                                Locate 25, 30
+                                Print Space$(40)
+                                Locate 25, 30
+                                Print players_GAME$(teamIdx, lineupIdx(teamIdx, I2), 0); " IS ALREADY IN THE LINEUP!"
+                                posn = -1
+                                Exit For
+                            End If
+                        Next I2
 
-                        Do While I2 <= 4 And (lineupIdx(P9, I2) <> posn Or lineupIdx(P9, I2) < 0)
-                            I2 = I2 + 1
-                        Loop
+                        'I2 = 0
 
-                        If I2 <= 4 Then
-                            Color 14, 0
-                            Locate 25, 30
-                            Print Space$(40)
-                            Locate 25, 30
-                            Print players_GAME$(P9, lineupIdx(P9, I2), 0); " IS ALREADY IN THE LINEUP!"
-                            posn = -1
-                        End If
+                        'Do While I2 <= 4 And (lineupIdx(teamIdx, I2) <> posn Or lineupIdx(teamIdx, I2) < 0)
+                        '    I2 = I2 + 1
+                        'Loop
+
+                        'If I2 <= 4 Then
+                        '    Color 14, 0
+                        '    Locate 25, 30
+                        '    Print Space$(40)
+                        '    Locate 25, 30
+                        '    Print players_GAME$(teamIdx, lineupIdx(teamIdx, I2), 0); " IS ALREADY IN THE LINEUP!"
+                        '    posn = -1
+                        'End If
 
                     End If
 
@@ -7663,22 +7651,22 @@ Sub ChooseLineup ()
 
             Loop Until posn >= 0 And posn <= 14
 
-            lineupIdx(P9, slot) = posn
+            lineupIdx(teamIdx, slot) = posn
             nonPlayers = 0
 
-            For IP% = 0 To lineupIdx(P9, slot)
-                If playerActive%(P9, IP%) = 0 Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX" Then
+            For IP% = 0 To lineupIdx(teamIdx, slot)
+                If playerActive%(teamIdx, IP%) = 0 Or players_GAME$(teamIdx, IP%, 0) = "" Or players_GAME$(teamIdx, IP%, 0) = "XXX" Then
                     nonPlayers = nonPlayers + 1
                 End If
             Next
 
-            If playerActive%(P9, posn) = 1 Then
-                Print players_GAME$(P9, posn, 0);
+            If playerActive%(teamIdx, posn) = 1 Then
+                Print players_GAME$(teamIdx, posn, 0);
 
                 'Print player name in team colors (activated)
                 Locate posn + 3 - nonPlayers, 3
-                Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34)
-                Print Left$(players_GAME$(P9, posn, 0), 12)
+                Color teamRat_GAME(teamIdx, 33), teamRat_GAME(teamIdx, 34)
+                Print Left$(players_GAME$(teamIdx, posn, 0), 12)
                 Color 15, 0
             End If
 
@@ -7710,14 +7698,14 @@ Sub ChooseLineup ()
 
             Case Is <= 4
 
-                If offStatus = 50 And slot = ballCarrier And P9 = P Then
+                If offStatus = 50 And slot = ballCarrier And teamIdx = P Then
 
                     'We've chosen someone who has been fouled on
                     Color 14, 0
                     Locate 25, 30
                     Print Space$(40)
                     Locate 25, 30
-                    Print players_GAME$(P9, lineupIdx(P9, slot), 0); " IS AT THE FT LINE"
+                    Print players_GAME$(teamIdx, lineupIdx(teamIdx, slot), 0); " IS AT THE FT LINE"
 
                     goodLineup = 0
 
@@ -7725,11 +7713,11 @@ Sub ChooseLineup ()
 
                     Locate LAST_ROW, 1: Print Space$(30);
 
-                    Z = lineupIdx(P9, slot)
+                    Z = lineupIdx(teamIdx, slot)
                     nonPlayers = 0
 
                     For IP% = 0 To Z:
-                        If playerActive%(P9, IP%) = 0 Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX" Then
+                        If playerActive%(teamIdx, IP%) = 0 Or players_GAME$(teamIdx, IP%, 0) = "" Or players_GAME$(teamIdx, IP%, 0) = "XXX" Then
                             nonPlayers = nonPlayers + 1
                         End If
                     Next
@@ -7737,7 +7725,7 @@ Sub ChooseLineup ()
                     Locate Z + 3 - nonPlayers, 3
                     Color 15, 0
                     'Only print valid roster indices
-                    If Z >= 0 Then Print Left$(players_GAME$(P9, Z, 0), 12)
+                    If Z >= 0 Then Print Left$(players_GAME$(teamIdx, Z, 0), 12)
 
                     Do
 
@@ -7758,38 +7746,50 @@ Sub ChooseLineup ()
                         If posn = 15 Then
 
                             If UCase$(I$) = "P" Then
-                                fullCtOpt(P9) = 1 - fullCtOpt(P9)
+                                fullCtOpt(teamIdx) = 1 - fullCtOpt(teamIdx)
                             End If
 
                             If UCase$(I$) = "F" Then
-                                defStyles(P9) = defStyles(P9) + 1
-                                If defStyles(P9) > maxDefChoice Then defStyles(P9) = 1
+                                defStyles(teamIdx) = defStyles(teamIdx) + 1
+                                If defStyles(teamIdx) > maxDefChoice Then defStyles(teamIdx) = 1
                             End If
 
                             If UCase$(I$) = "O" Then
-                                offStyles(P9) = offStyles(P9) + 1
-                                If offStyles(P9) > maxOffChoice Then offStyles(P9) = 0
+                                offStyles(teamIdx) = offStyles(teamIdx) + 1
+                                If offStyles(teamIdx) > maxOffChoice Then offStyles(teamIdx) = 0
                             End If
 
                         Else
 
                             'Valid position #, player has not fouled out, and is active / eligible
-                            If posn >= 0 And posn <= 14 And gameRatings!(P9, posn, 12) < FOULS_TO_DQ And players_GAME$(P9, posn, 0) <> "XXX" And playerActive%(P9, posn) = 1 Then
+                            If posn >= 0 And posn <= 14 And gameRatings!(teamIdx, posn, 12) < FOULS_TO_DQ And players_GAME$(teamIdx, posn, 0) <> "XXX" And playerActive%(teamIdx, posn) = 1 Then
 
-                                I2 = 0
+                                For I2 = 0 To 4:
+                                    If lineupIdx(teamIdx, I2) = posn And lineupIdx(teamIdx, I2) >= 0 Then
+                                        Color 14, 0
+                                        Locate 25, 30
+                                        Print Space$(40)
+                                        Locate 25, 30
+                                        Print players_GAME$(teamIdx, lineupIdx(teamIdx, I2), 0); " IS ALREADY IN THE LINEUP!"
+                                        posn = -1
+                                        Exit For
+                                    End If
+                                Next I2
 
-                                Do While I2 <= 4 And (lineupIdx(P9, I2) <> posn Or lineupIdx(P9, I2) < 0)
-                                    I2 = I2 + 1
-                                Loop
+                                'I2 = 0
 
-                                If I2 <= 4 Then
-                                    Color 14, 0
-                                    Locate 25, 30
-                                    Print Space$(40)
-                                    Locate 25, 30
-                                    Print players_GAME$(P9, lineupIdx(P9, I2), 0); " IS ALREADY IN THE LINEUP!"
-                                    posn = -1
-                                End If
+                                'Do While I2 <= 4 And (lineupIdx(teamIdx, I2) <> posn Or lineupIdx(teamIdx, I2) < 0)
+                                '    I2 = I2 + 1
+                                'Loop
+
+                                'If I2 <= 4 Then
+                                '    Color 14, 0
+                                '    Locate 25, 30
+                                '    Print Space$(40)
+                                '    Locate 25, 30
+                                '    Print players_GAME$(teamIdx, lineupIdx(teamIdx, I2), 0); " IS ALREADY IN THE LINEUP!"
+                                '    posn = -1
+                                'End If
 
                             End If
 
@@ -7804,24 +7804,24 @@ Sub ChooseLineup ()
                     Print Space$(40)
 
                     If goodLineup = 1 Then
-                        lineupIdx(P9, slot) = posn
+                        lineupIdx(teamIdx, slot) = posn
                     End If
 
-                    For IP% = 0 To lineupIdx(P9, slot)
-                        If playerActive%(P9, IP%) = 0 Or players_GAME$(P9, IP%, 0) = "" Or players_GAME$(P9, IP%, 0) = "XXX" Then
+                    For IP% = 0 To lineupIdx(teamIdx, slot)
+                        If playerActive%(teamIdx, IP%) = 0 Or players_GAME$(teamIdx, IP%, 0) = "" Or players_GAME$(teamIdx, IP%, 0) = "XXX" Then
                             nonPlayers = nonPlayers + 1
                         End If
                     Next
 
-                    If playerActive%(P9, posn) = 1 And goodLineup = 1 Then
+                    If playerActive%(teamIdx, posn) = 1 And goodLineup = 1 Then
                         Color 15, 0
                         Locate slot + 20, 13
-                        Print players_GAME$(P9, posn, 0);
+                        Print players_GAME$(teamIdx, posn, 0);
 
                         'Print player name in team colors (activated)
                         Locate posn + 3 - nonPlayers, 3
-                        Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34)
-                        Print Left$(players_GAME$(P9, posn, 0), 12)
+                        Color teamRat_GAME(teamIdx, 33), teamRat_GAME(teamIdx, 34)
+                        Print Left$(players_GAME$(teamIdx, posn, 0), 12)
                         Color 15, 0
                     End If
 
@@ -7829,26 +7829,26 @@ Sub ChooseLineup ()
 
             Case 5
                 If UCase$(I$) = "P" Then
-                    fullCtOpt(P9) = 1 - fullCtOpt(P9)
+                    fullCtOpt(teamIdx) = 1 - fullCtOpt(teamIdx)
                 End If
 
                 If UCase$(I$) = "F" Then
-                    defStyles(P9) = defStyles(P9) + 1
-                    If defStyles(P9) > 5 Then defStyles(P9) = 1
+                    defStyles(teamIdx) = defStyles(teamIdx) + 1
+                    If defStyles(teamIdx) > 5 Then defStyles(teamIdx) = 1
                 End If
 
                 If UCase$(I$) = "O" Then
-                    offStyles(P9) = offStyles(P9) + 1
-                    If offStyles(P9) > 8 Then offStyles(P9) = 0
+                    offStyles(teamIdx) = offStyles(teamIdx) + 1
+                    If offStyles(teamIdx) > 8 Then offStyles(teamIdx) = 0
                 End If
 
-                Call DisplayOffDefStyles
+                Call DisplayOffDefStyles(teamIdx)
 
             Case 6
                 nonPlayers = 0
 
                 For I1 = 0 To 14
-                    If goodPlayer%(P9, I1) = 0 Then
+                    If goodPlayer%(teamIdx, I1) = 0 Then
                         nonPlayers = nonPlayers + 1
                     End If
                 Next
@@ -7864,7 +7864,7 @@ Sub ChooseLineup ()
                         J = I + 1
 
                         Do While J <= 4 And foundDupe = 0
-                            If lineupIdx(P9, I) = lineupIdx(P9, J) Then
+                            If lineupIdx(teamIdx, I) = lineupIdx(teamIdx, J) Then
                                 foundDupe = 1
                             End If
                             J = J + 1
@@ -7887,12 +7887,12 @@ Sub ChooseLineup ()
                     foundFoul = 0
                     Do While I1 <= 4 And foundFoul = 0
 
-                        If lineupIdx(P9, I1) >= 0 And gameRatings!(P9, lineupIdx(P9, I1), 12) >= FOULS_TO_DQ Then
+                        If lineupIdx(teamIdx, I1) >= 0 And gameRatings!(teamIdx, lineupIdx(teamIdx, I1), 12) >= FOULS_TO_DQ Then
                             Color 14, 0
                             Locate 25, 30
                             Print Space$(40)
                             Locate 25, 30
-                            Print players_GAME$(P9, lineupIdx(P9, I1), 0); " HAS FOULED OUT"
+                            Print players_GAME$(teamIdx, lineupIdx(teamIdx, I1), 0); " HAS FOULED OUT"
                             goodLineup = 0
                             foundFoul = 1
                         End If
@@ -7916,7 +7916,7 @@ End Sub
 'This subroutine lets the user review all
 'players who are taking it safe on defense
 'and determine if they should play normal.
-Sub DefPlaySafeNormal ()
+Sub DefPlaySafeNormal (teamIdx)
 
     Dim playerPos(5), menuPos(5)
 
@@ -7933,7 +7933,7 @@ Sub DefPlaySafeNormal ()
 
     For slot = 0 To 4
 
-        safeStatus = gameRatings!(P9, lineupIdx(P9, slot), 22)
+        safeStatus = gameRatings!(teamIdx, lineupIdx(teamIdx, slot), 22)
 
         If safeStatus = 50 Then
 
@@ -7950,7 +7950,7 @@ Sub DefPlaySafeNormal ()
 
         If safeStatus = 50 And skipHeader = 1 Then
             'Locate currIdx + 5, 1
-            Print currIdx; "- "; players_GAME$(P9, lineupIdx(P9, slot), 0)
+            Print currIdx; "- "; players_GAME$(teamIdx, lineupIdx(teamIdx, slot), 0)
             menuPos(safePlyrCnt) = currIdx
             playerPos(safePlyrCnt) = slot
             currIdx = currIdx + 1
@@ -7984,14 +7984,14 @@ Sub DefPlaySafeNormal ()
 
                 If plyrNum = menuPos(plyrNum) Then
 
-                    gameRatings!(P9, lineupIdx(P9, playerPos(safeIdx)), 17) = gameRatings!(P9, lineupIdx(P9, playerPos(safeIdx)), 17) * 3
-                    gameRatings!(P9, lineupIdx(P9, playerPos(safeIdx)), 22) = 0
+                    gameRatings!(teamIdx, lineupIdx(teamIdx, playerPos(safeIdx)), 17) = gameRatings!(teamIdx, lineupIdx(teamIdx, playerPos(safeIdx)), 17) * 3
+                    gameRatings!(teamIdx, lineupIdx(teamIdx, playerPos(safeIdx)), 22) = 0
 
                     Locate menuPos(safeIdx) + 5, 20
-                    Print players_GAME$(P9, lineupIdx(P9, playerPos(safeIdx)), 0); " WILL NOW PLAY NORMAL DEFENSE!"
+                    Print players_GAME$(teamIdx, lineupIdx(teamIdx, playerPos(safeIdx)), 0); " WILL NOW PLAY NORMAL DEFENSE!"
                     Call StealAdjustments
 
-                    dFG_Pct_Adj(P9) = dFG_Pct_Adj(P9) - 1
+                    dFG_Pct_Adj(teamIdx) = dFG_Pct_Adj(teamIdx) - 1
                     safeIdx = safeIdx + 1
                     MJ = 25
 
@@ -8014,7 +8014,7 @@ Sub DefPlaySafeNormal ()
 
         For slot = 0 To 4
 
-            If gameRatings!(P9, lineupIdx(P9, slot), 22) = 0 And foulTrouble%(P9, lineupIdx(P9, slot)) = 1 Then
+            If gameRatings!(teamIdx, lineupIdx(teamIdx, slot), 22) = 0 And foulTrouble%(teamIdx, lineupIdx(teamIdx, slot)) = 1 Then
 
                 dangerPlyrCnt = dangerPlyrCnt + 1
 
@@ -8031,7 +8031,7 @@ Sub DefPlaySafeNormal ()
                 assignSafe = 0
             Else
                 If currIdx = dangerPlyrCnt Then
-                    Print currIdx; "- "; players_GAME$(P9, lineupIdx(P9, slot), 0)
+                    Print currIdx; "- "; players_GAME$(teamIdx, lineupIdx(teamIdx, slot), 0)
                     menuPos(dangerPlyrCnt) = currIdx
                     playerPos(dangerPlyrCnt) = slot
                     currIdx = currIdx + 1
@@ -8058,14 +8058,14 @@ Sub DefPlaySafeNormal ()
 
                     If plyrNum = menuPos(plyrNum) Then
 
-                        gameRatings!(P9, lineupIdx(P9, playerPos(normIdx)), 17) = Int((gameRatings!(P9, lineupIdx(P9, playerPos(normIdx)), 17) + 1) / 3)
-                        gameRatings!(P9, lineupIdx(P9, playerPos(normIdx)), 22) = 50
+                        gameRatings!(teamIdx, lineupIdx(teamIdx, playerPos(normIdx)), 17) = Int((gameRatings!(teamIdx, lineupIdx(teamIdx, playerPos(normIdx)), 17) + 1) / 3)
+                        gameRatings!(teamIdx, lineupIdx(teamIdx, playerPos(normIdx)), 22) = 50
 
                         Locate menuPos(normIdx) + 5, 20
-                        Print players_GAME$(P9, lineupIdx(P9, playerPos(normIdx)), 0); " WILL NOW PLAY SAFE!"
+                        Print players_GAME$(teamIdx, lineupIdx(teamIdx, playerPos(normIdx)), 0); " WILL NOW PLAY SAFE!"
                         Call StealAdjustments
 
-                        dFG_Pct_Adj(P9) = dFG_Pct_Adj(P9) + 1
+                        dFG_Pct_Adj(teamIdx) = dFG_Pct_Adj(teamIdx) + 1
                         normIdx = normIdx + 1
 
                     End If
@@ -8271,12 +8271,17 @@ End Sub
 'to players related to substitutions.
 Sub EvaluateSubs (teamIdx)
 
+    Dim contribPct As Single, remainingContribPct As Single
     Dim badPlayers, disabledPlayers
-    Dim fatiguePlayers, foulPlayers, tiredPlayers
+    Dim exhaustedPlayers, foulPlayers, tiredPlayers
+
+    Dim secsPerQuarter
 
     Shared maxRoster()
 
-    fatiguePlayers = 0
+    secsPerQuarter = (MINS_PER_GAME * 60) / 4
+
+    exhaustedPlayers = 0
     disabledPlayers = 0
     tiredPlayers = 0
     foulPlayers = 0
@@ -8293,21 +8298,21 @@ Sub EvaluateSubs (teamIdx)
 
     Next I
 
+    'Computer on Offense
     'offStatus = 50 means team is in BONUS
-    'If it's a computer-controlled offense not in BONUS
-    'If offStatus <> 50 Or (playerMode = 1 And teamIdx = compTeam) Or (playerMode = 2 And teamIdx = P) Then
     If Not (offStatus = 50 And (playerMode = 1 And teamIdx = compTeam) Or (playerMode = 2 And teamIdx = P)) Then
 
         For I1 = 0 To 14
 
+            '-- Evaluate Bench Players --
             currPlyrCX = playerStamina%(teamIdx, I1)
-
             'FGA + TOT REB / (Blocks + Assists)
             contribPct = (plyrRat_GAME(teamIdx, I1, 2) + plyrRat_GAME(teamIdx, I1, 6) + plyrRat_GAME(teamIdx, I1, 7)) / X9!
+            remainingContribPct = currPlyrCX / contribPct
 
             'Exhausted players outside last 2 mins
             If currPlyrCX <= 0 And (quarter < 4 Or (quarter = 4 And gameClock! > 120)) Then
-                fatiguePlayers = fatiguePlayers + 1
+                exhaustedPlayers = exhaustedPlayers + 1
             End If
 
             'Disabled player or inactive spot
@@ -8315,42 +8320,37 @@ Sub EvaluateSubs (teamIdx)
                 badPlayers = badPlayers + 1
             End If
 
-            'More closely evaluate players currently in the lineup
+            '-- Evaluate Lineup Players --
             If playerInLineup%(teamIdx, I1) = 1 Then
 
-                'Contributed more than 1/2 of usual, 1/2 of the way through the game
-                If quarter = 2 And currPlyrCX / contribPct < .5 Then
-                    tiredPlayers = tiredPlayers + 1
-                End If
+                Select Case quarter
 
-                'Contributed more than 1/4 of usual, 1/4 of the way through the game
-                If quarter = 1 And gameClock! >= 600 And currPlyrCX / contribPct < .75 Then
-                    tiredPlayers = tiredPlayers + 1
-                End If
+                    Case 1
+                        'Less than 75% stamina through 25% of the game
+                        If remainingContribPct < .75 Then tiredPlayers = tiredPlayers + 1
 
-                'Contributed more than 3/4 of usual, 3/4 of the way through the game
-                If quarter = 3 And gameClock! >= 600 And currPlyrCX / contribPct < .25 Then
-                    tiredPlayers = tiredPlayers + 1
-                End If
+                    Case 2
+                        'Less than 50% stamina through 50% of the game
+                        If remainingContribPct < .5 Then tiredPlayers = tiredPlayers + 1
 
-                'Contributed more than 3/8 of usual, 5-10 mins left in game
-                If quarter >= 3 And gameClock! >= 300 And gameClock! < 600 And currPlyrCX / contribPct < .13 Then
-                    tiredPlayers = tiredPlayers + 1
-                End If
+                    Case 3
+                        'Less than 25% stamina through 75% of the game
+                        If remainingContribPct < .25 Then tiredPlayers = tiredPlayers + 1
 
-                'Contributed more than relevant % in last 5 mins of game
-                If quarter = 4 And gameClock! < 300 And currPlyrCX / contribPct < gameClock! / MINS_PER_GAME Then
-                    tiredPlayers = tiredPlayers + 1
-                End If
+                    Case 4
+                        'Less than 13% stamina through 87% of the game
+                        If gameClock! <= (secsPerQuarter / 2) And remainingContribPct < .13 Then tiredPlayers = tiredPlayers + 1
+                        'Is player stamina enough to make the last 5 minutes?
+                        If gameClock! < 300 And remainingContribPct < (gameClock! / secsPerQuarter) Then tiredPlayers = tiredPlayers + 1
 
-                'Fully fatigued, 1st 3 quarters or last 2 minutes of game
+                End Select
+
                 If currPlyrCX <= 0 And (quarter < 4 Or (quarter = 4 And gameClock! > 120)) Then
                     tiredPlayers = tiredPlayers + 1
                 End If
 
                 'Close to fouling out
                 If foulDanger%(teamIdx, I1) = 1 Then
-                    badPlayers = badPlayers + 1
                     foulPlayers = foulPlayers + 1
                 End If
 
@@ -8362,7 +8362,7 @@ Sub EvaluateSubs (teamIdx)
         '-- XS = 0 during regular play
         '-- XS = 1 when the quarter is over
         'Check if we have too many tired players, foul players, low game clock or taking timeout
-        If (tiredPlayers >= 1 And (5 - tiredPlayers) < (maxRoster(teamIdx) - fatiguePlayers)) Or _
+        If (tiredPlayers >= 1 And (5 - tiredPlayers) < (maxRoster(teamIdx) - exhaustedPlayers)) Or _
             (foulPlayers >= 1 And badPlayers < (maxRoster(teamIdx) - 1)) Or _
             (quarter = 4 And gameClock! < 120 And XS = 0) Or _
             quarter > 4 Or computerTimeout = 1 Then
@@ -8370,6 +8370,7 @@ Sub EvaluateSubs (teamIdx)
             computerTimeout = 0
 
             'Call ComputerCoach_Legacy(teamIdx)
+            'Call ComputerCoach_College(teamIdx)
             Call ComputerCoach(teamIdx)
 
         End If
@@ -8420,7 +8421,7 @@ Sub CreditAssists ()
             End If
 
         Loop Until players_GAME$(P, lineupIdx(P, ballCarrier), 0) <> players_GAME$(P, lineupIdx(P, luPlayer), 0)
-        
+
         gameRatings!(P, lineupIdx(P, luPlayer), 14) = gameRatings!(P, lineupIdx(P, luPlayer), 14) + 1
 
     End If
@@ -8633,7 +8634,6 @@ Sub DEADBALLOPTIONS (userTakeTO)
 
         'User options to continue play
         If playerMode = 2 Then
-            'Or playerMode = 1 And P = compTeam Then
 
             P9 = P
             C1 = 2
@@ -8698,13 +8698,13 @@ Sub DEADBALLOPTIONS (userTakeTO)
                     Case 1
                         'Strategy - Offense
                         P9 = P
-                        Call CHANGESTRATEGY(P9)
+                        Call CHANGESTRATEGY(P)
                         Call SCOREBOARD
 
                     Case 2
                         'Strategy - Defense
                         P9 = D
-                        Call CHANGESTRATEGY(P9)
+                        Call CHANGESTRATEGY(D)
                         Call SCOREBOARD
 
                     Case 3
@@ -8843,32 +8843,30 @@ Sub STOPPAGE (userTakeTO)
                         'Substitution - Offense
                         C1 = 1
                         P9 = P
-                        Call ChooseLineup
-                        Call DefPlaySafeNormal
-                        P9 = P
+                        Call ChooseLineup(P)
+                        Call DefPlaySafeNormal(P)
                         lineupChanged = 1
                         Call SCOREBOARD
 
                     Case 2
                         'Substitution - Defense
                         C1 = 1
-                        P9 = D
-                        Call ChooseLineup
-                        Call DefPlaySafeNormal
                         P9 = P
+                        Call ChooseLineup(D)
+                        Call DefPlaySafeNormal(D)
                         lineupChanged = 1
                         Call SCOREBOARD
 
                     Case 3
                         'Strategy - Offense
                         P9 = P
-                        Call CHANGESTRATEGY(P9)
+                        Call CHANGESTRATEGY(P)
                         Call SCOREBOARD
 
                     Case 4
                         'Strategy - Defense
                         P9 = D
-                        Call CHANGESTRATEGY(P9)
+                        Call CHANGESTRATEGY(D)
                         Call SCOREBOARD
 
                     Case 5
@@ -8990,7 +8988,7 @@ Sub FoulCalled (randomFouler)
 
     Call UPDATESCREEN
 
-    If playerStamina%(D, lineupIdx(D, foulPlayer)) = 0 Then
+    If playerStamina%(D, lineupIdx(D, foulPlayer)) <= 0 Then
         gameRatings!(D, lineupIdx(D, foulPlayer), 3) = gameRatings!(D, lineupIdx(D, foulPlayer), 3) + 1
     End If
 
@@ -9059,12 +9057,12 @@ Sub FoulCalled (randomFouler)
 
         P3 = 1
 
-        If playerMode = 0 Or playerMode = 1 And compTeam = P9 Then
-            P9 = D
+        If playerMode = 0 Or playerMode = 1 And compTeam <> D Then
             C1 = 1
-            Call ChooseLineup
-            Call CHANGESTRATEGY(P9)
-            Call DefPlaySafeNormal
+            P9 = D
+            Call ChooseLineup(D)
+            Call CHANGESTRATEGY(D)
+            Call DefPlaySafeNormal(D)
         End If
 
         'Allow player substitutions
@@ -10001,14 +9999,20 @@ Sub SETUPRATINGS (teamStyle)
 
             Select Case teamYears(I)
 
-                Case 1997 To 2005
-                    turnoverFreq(I) = 11
+                Case 1997 To 1998
+                    turnoverFreq(I) = 18
 
-                Case 2006 To 2019
-                    turnoverFreq(I) = 14
+                Case 1999 To 2006
+                    turnoverFreq(I) = 16
 
-                Case Is >= 2020
-                    turnoverFreq(I) = 10
+                Case 2007 To 2012
+                    turnoverFreq(I) = 18
+
+                Case 2013 To 2017
+                    turnoverFreq(I) = 16
+
+                Case Is >= 2018
+                    turnoverFreq(I) = 15
 
             End Select
 
@@ -10176,7 +10180,7 @@ Sub SETUPRATINGS (teamStyle)
 
         If eraAdj <> 2 Then
 
-            HN% = 1
+            diffEras = 1
             teamStyle = I
 
             'matchPace = FGA / G adjusted for league average
@@ -10259,9 +10263,9 @@ Sub SETUPRATINGS (teamStyle)
                 End Select
 
                 If teamYears(eraChoice) >= 1968 And teamYears(eraChoice) <= 1972 Then
-                    staminaScale = 1.11
+                    'staminaScale = 1.11
                 Else
-                    staminaScale = 1.04
+                    'staminaScale = 1.04
                 End If
 
             Else
@@ -10335,30 +10339,30 @@ Sub SETUPRATINGS (teamStyle)
                 Select Case teamYears(eraChoice)
 
                     Case 1955 To 1957
-                        staminaScale = 1.12
+                        'staminaScale = 1.12
 
                     Case 1958 To 1962
-                        staminaScale = 1.26
+                        'staminaScale = 1.26
 
                     Case 1963 To 1971
-                        staminaScale = 1.15
+                        'staminaScale = 1.15
 
                     Case 1968 To 1975
-                        staminaScale = 1.09
+                        'staminaScale = 1.09
 
                     Case 1976 To 1989
                         ' ** Baseline Value 1982-83 **
                         'Average CX = 10.63
-                        staminaScale = 1.00
+                        'staminaScale = 1.00
 
                     Case 1990 To 1994
-                        staminaScale = 0.96
+                        'staminaScale = 0.96
 
                     Case 1995 To 2013
-                        staminaScale = 0.90
+                        'staminaScale = 0.90
 
                     Case Is >= 2014
-                        staminaScale = 0.95
+                        'staminaScale = 0.95
 
                 End Select
 
@@ -10402,10 +10406,10 @@ Sub SETUPRATINGS (teamStyle)
             Select Case teamYears(eraChoice)
 
                 Case 1997 To 2005
-                    staminaScale = 0.68
+                    'staminaScale = 0.68
 
                 Case Is >= 2006
-                    staminaScale = 0.75
+                    'staminaScale = 0.75
 
             End Select
 
@@ -10415,7 +10419,7 @@ Sub SETUPRATINGS (teamStyle)
         'No Shot Clock
         eraShootRate = 84
         eraPaceAvg = 83
-        staminaScale = 1.02
+        'staminaScale = 1.02
 
     End If
 
@@ -10451,11 +10455,15 @@ Sub SETUPRATINGS (teamStyle)
 
         ' ** Calculate unforced team turnovers / player possession
         '(Team TOs - Def Steals) / Game  / Poss Adj
-        teamAdj(I, 1) = CInt(((teamRat_GAME(I, 15) - teamRat_GAME(I, 28)) / teamRat_GAME(I, 0)) / (teamPossAdj(I) * 5) * 1000) - turnoverFreq(I)
+        rawTOAdj = CInt(((teamRat_GAME(I, 15) - teamRat_GAME(I, 28)) / teamRat_GAME(I, 0)) / (teamPossAdj(I) * 5) * 1000)
+        teamAdj(I, 1) = rawTOAdj - turnoverFreq(I)
+
+        totalRawTOAdj& = totalRawTOAdj& + rawTOAdj
 
         ' ** Calculate unforced opponent turnovers / player possession
         '((Opp TOs - Team Steals) / Game / Poss Adj) - turnoverFreq
-        teamAdj(I, 2) = CInt(((teamRat_GAME(I, 29) - teamRat_GAME(I, 14)) / teamRat_GAME(I, 0)) / (teamPossAdj(I) * 5) * 1000) - turnoverFreq(I)
+        rawTOAdj = CInt(((teamRat_GAME(I, 29) - teamRat_GAME(I, 14)) / teamRat_GAME(I, 0)) / (teamPossAdj(I) * 5) * 1000)
+        teamAdj(I, 2) = rawTOAdj - turnoverFreq(I)
 
         ' ** Foul Rating **
         '(Opp FTA - Opp FGM)/10 - 7.9 * Games Played
@@ -10681,58 +10689,7 @@ Sub SETUPRATINGS (teamStyle)
 
     Next I
 
-    For I = 0 To 1
-        'Tm FGA + Opp FGA + Off Reb + Team Reb / (Games Played * 2)
-        rebAdj!(I) = (teamRat_GAME(I, 5) + teamRat_GAME(I, 19) + teamRat_GAME(I, 9) + teamRat_GAME(I, 10)) / (teamRat_GAME(I, 0) * 2)
-        'ADD Opp Off Reb + Opp Def Reb + Team Fouls + Opp Fouls / (Games Played * 2)
-        rebAdj!(I) = rebAdj!(I) + (teamRat_GAME(I, 23) + teamRat_GAME(I, 24) + teamRat_GAME(I, 12) + teamRat_GAME(I, 26)) / (teamRat_GAME(I, 0) * 2)
-        '               * 2 - (League FGA/G + League Reb/G + League PF/G)
-        rebAdj!(I) = rebAdj!(I) * 2 - (leagRat_GAME(I, 1) + leagRat_GAME(I, 2) + leagRat_GAME(I, 4))
-    Next I
-
-    If HN% = 1 Then
-
-        I = teamStyle
-
-        teamAdj(1 - I, 1) = teamAdj(1 - I, 1) * turnoverFreq(I) / turnoverFreq(1 - I)
-        rebAdj!(1 - I) = rebAdj!(1 - I) * (leagRat_GAME(I, 1) + leagRat_GAME(I, 2) + leagRat_GAME(I, 4)) / (leagRat_GAME(1 - I, 1) + leagRat_GAME(1 - I, 2) + leagRat_GAME(1 - I, 4))
-
-        For I1 = 0 To 14
-            'ADD League FG% (for both teams) - League Power Adj (for both teams)
-            gameRatings!(1 - I, I1, 0) = gameRatings!(1 - I, I1, 0) + leagRat_GAME(I, 3) - leagRat_GAME(1 - I, 3) - leagRat_GAME(1 - I, 6) + leagRat_GAME(I, 6)
-        Next
-
-    End If
-
-    S9 = CInt((rebAdj!(0) + rebAdj!(1)) / 2)
-
-    If playoffOpt = 1 Then
-        S9 = S9 - 11
-    End If
-
-    Erase rebAdj!
-
-    For I = 0 To 1:
-
-        For I1 = 0 To 14
-
-            If playerActive%(I, I1) = 1 Then
-                'ADD Player FGA + Player Off Reb + Player Def Reb + Player Fouls / Player Minutes
-                rebAdj!(I) = rebAdj!(I) + Int((plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 6) + plyrRat_GAME(I, I1, 7) + plyrRat_GAME(I, I1, 9)) / plyrRat_GAME(I, I1, 0) + .5)
-            End If
-        Next I1
-    Next I
-
-    'Assign CX for each team / player
-    For I = 0 To 1
-        For I1 = 0 To 14
-            If playerActive%(I, I1) = 1 Then
-                'Player FGA + Player Off Reb + Player Def RB + Player Fouls / (Minutes / (M9(I) * S9))
-                gameRatings!(I, I1, 3) = Int(((plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 6) + plyrRat_GAME(I, I1, 7) + plyrRat_GAME(I, I1, 9)) / plyrRat_GAME(I, I1, 0)) / rebAdj!(I) * S9 + .5)
-                If gameRatings!(I, I1, 3) = 0 Then gameRatings!(I, I1, 3) = 1
-            End If
-        Next I1
-    Next I
+    Call SETSTAMINA(teamStyle, diffEras)
 
     X3! = 0
 
@@ -10778,6 +10735,89 @@ Sub SETUPRATINGS (teamStyle)
         End Select
 
     End If
+
+End Sub
+
+
+'----------------------------------------
+'         SETSTAMINA Subroutine
+'----------------------------------------
+'This subroutine lets the user choose the
+'play style of teams (based on era) and
+'adjust contribution ratings for players
+Sub SETSTAMINA (teamChoice, mixedEras)
+
+    Dim teamStamina(0 To 1)
+
+    For I = 0 To 1
+        'Tm FGA + Opp FGA + Off Reb + Team Reb / (Games Played * 2)
+        teamStamina(I) = (teamRat_GAME(I, 5) + teamRat_GAME(I, 19) + teamRat_GAME(I, 9) + teamRat_GAME(I, 10)) / (teamRat_GAME(I, 0) * 2)
+        'ADD Opp Off Reb + Opp Def Reb + Team Fouls + Opp Fouls / (Games Played * 2)
+        teamStamina(I) = teamStamina(I) + (teamRat_GAME(I, 23) + teamRat_GAME(I, 24) + teamRat_GAME(I, 12) + teamRat_GAME(I, 26)) / (teamRat_GAME(I, 0) * 2)
+        '               * 2 - (League FGA/G + League Reb/G + League PF/G)
+        teamStamina(I) = teamStamina(I) * 2 - (leagRat_GAME(I, 1) + leagRat_GAME(I, 2) + leagRat_GAME(I, 4))
+    Next I
+
+    If mixedEras = 1 Then
+
+        teamAdj(1 - teamChoice, 1) = teamAdj(1 - teamChoice, 1) * turnoverFreq(teamChoice) / turnoverFreq(1 - teamChoice)
+        teamStamina(1 - teamChoice) = teamStamina(1 - teamChoice) * (leagRat_GAME(teamChoice, 1) + leagRat_GAME(teamChoice, 2) + leagRat_GAME(teamChoice, 4)) / (leagRat_GAME(1 - teamChoice, 1) + leagRat_GAME(1 - teamChoice, 2) + leagRat_GAME(1 - teamChoice, 4))
+
+        For I1 = 0 To 14
+            'ADD League FG% (for both teams) - League Power Adj (for both teams)
+            gameRatings!(1 - I, I1, 0) = gameRatings!(1 - I, I1, 0) + leagRat_GAME(I, 3) - leagRat_GAME(1 - I, 3) - leagRat_GAME(1 - I, 6) + leagRat_GAME(I, 6)
+        Next
+
+    End If
+
+    gameAvgTmStamina = CInt((teamStamina(0) + teamStamina(1)) / 2)
+
+    If playoffOpt = 1 Then
+        gameAvgTmStamina = gameAvgTmStamina - 11
+    End If
+
+    teamStamina(0) = 0
+    teamStamina(1) = 0
+
+    'Total stamina for all active roster players (both teams)
+    For I = 0 To 1:
+
+        For I1 = 0 To 14
+
+            If playerActive%(I, I1) = 1 Then
+
+                'Sum of player contributions / min
+                test! = plyrRat_GAME(I, I1, 0)
+                playerContrib = plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 6) + plyrRat_GAME(I, I1, 7) + plyrRat_GAME(I, I1, 9)
+                teamStamina(I) = teamStamina(I) + CInt(playerContrib / plyrRat_GAME(I, I1, 0))
+
+            End If
+
+        Next I1
+
+    Next I
+
+    'Assign CX for each team / player
+    For I = 0 To 1
+
+        For I1 = 0 To 14
+
+            If playerActive%(I, I1) = 1 Then
+
+                'Adjust player contribution by cumulative contribution and game stamina
+                playerContrib = plyrRat_GAME(I, I1, 2) + plyrRat_GAME(I, I1, 6) + plyrRat_GAME(I, I1, 7) + plyrRat_GAME(I, I1, 9)
+                gameRatings!(I, I1, 3) = CInt(((playerContrib / plyrRat_GAME(I, I1, 0)) / teamStamina(I)) * gameAvgTmStamina)
+
+                If gameRatings!(I, I1, 3) <= 0 Then
+                    'Ensure contribution is always positive
+                    gameRatings!(I, I1, 3) = 1
+                End If
+
+            End If
+
+        Next I1
+
+    Next I
 
 End Sub
 
@@ -12237,7 +12277,28 @@ Sub ComputerCoach (teamIdx)
     Dim bestCX, bestPlayer
     Dim rosterSize, slotIdx
 
+    Shared sortedStamina(), staminaRosterIdx()
+
     Shared relaxedPos$(), targetPos$()
+
+    Dim prevLineup(4) As Integer
+
+    'Store existing lineup before changing it
+    For I2 = 0 To 4
+        prevLineup(I2) = lineupIdx(teamIdx, I2)
+    Next I2
+
+    '-- REMOVE ME --
+    exhaustedLineup = 0
+    For I1 = 0 To 4
+        If prevLineup(I1) >= 0 Then
+            If playerStamina%(teamIdx, prevLineup(I1)) <= 0 Then
+                exhaustedLineup = exhaustedLineup + 1
+            End If
+        End If
+    Next I1
+    '----------
+
 
     'Initialize lineup spots
     For I2 = 0 To 4
@@ -12247,7 +12308,7 @@ Sub ComputerCoach (teamIdx)
     'Fill in first 2 positions as GUARDS
     For slotIdx = 0 To 1
 
-        ReDim targetPos$(0 To 7)
+        ReDim targetPos$(0 To 8)
         targetPos$(0) = "G"
         targetPos$(1) = "GC"
         targetPos$(2) = "CG"
@@ -12256,13 +12317,25 @@ Sub ComputerCoach (teamIdx)
         targetPos$(5) = "CF"
         targetPos$(6) = "F"
         targetPos$(7) = "C"
+        targetPos$(8) = ""
+
+        If prevLineup(slotIdx) >= 0 Then
+            If playerStamina%(teamIdx, prevLineup(slotIdx)) <= 0 Then
+                bestCX = playerSubValue%(teamIdx, prevLineup(slotIdx)) - _
+                    PositionPenalty%(players_GAME$(teamIdx, prevLineup(slotIdx), 1), slotIdx)
+            Else
+                bestCX = -999
+            End If
+        Else
+            bestCX = -999
+        End If
 
         Call FindPlayerForSlot(teamIdx, slotIdx, bestCX, bestPlayer, 0)
 
         If bestPlayer = -1 Then
 
             'Relaxed search for target positions (with penalty)
-            ReDim relaxedPos$(0 To 7)
+            ReDim relaxedPos$(0 To 8)
             relaxedPos$(0) = "GC"
             relaxedPos$(1) = "CG"
             relaxedPos$(2) = "GF"
@@ -12271,6 +12344,7 @@ Sub ComputerCoach (teamIdx)
             relaxedPos$(5) = "CF"
             relaxedPos$(6) = "F"
             relaxedPos$(7) = "C"
+            relaxedPos$(8) = ""
 
             Call FindPlayerForSlot(teamIdx, slotIdx, bestCX, bestPlayer, 1)
 
@@ -12288,7 +12362,7 @@ Sub ComputerCoach (teamIdx)
     'Fill in next 2 positions as Forwards
     For slotIdx = 2 To 3
 
-        ReDim targetPos$(0 To 6)
+        ReDim targetPos$(0 To 7)
         targetPos$(0) = "F"
         targetPos$(1) = "FG"
         targetPos$(2) = "FC"
@@ -12296,13 +12370,25 @@ Sub ComputerCoach (teamIdx)
         targetPos$(4) = "GF"
         targetPos$(5) = "C"
         targetPos$(6) = "G"
+        targetPos$(7) = ""
+
+        If prevLineup(slotIdx) >= 0 Then
+            If playerStamina%(teamIdx, prevLineup(slotIdx)) <= 0 Then
+                bestCX = playerSubValue%(teamIdx, prevLineup(slotIdx)) - _
+                    PositionPenalty%(players_GAME$(teamIdx, prevLineup(slotIdx), 1), slotIdx)
+            Else
+                bestCX = -999
+            End If
+        Else
+            bestCX = -999
+        End If
 
         Call FindPlayerForSlot(teamIdx, slotIdx, bestCX, bestPlayer, 0)
 
         If bestPlayer = -1 Then
 
             'Relaxed search for target positions (with penalty)
-            ReDim relaxedPos$(0 To 6)
+            ReDim relaxedPos$(0 To 7)
             relaxedPos$(0) = "F"
             relaxedPos$(1) = "FC"
             relaxedPos$(2) = "CF"
@@ -12310,6 +12396,7 @@ Sub ComputerCoach (teamIdx)
             relaxedPos$(4) = "GF"
             relaxedPos$(5) = "C"
             relaxedPos$(6) = "G"
+            relaxedPos$(7) = "G"
 
             Call FindPlayerForSlot(teamIdx, slotIdx, bestCX, bestPlayer, 1)
 
@@ -12327,7 +12414,7 @@ Sub ComputerCoach (teamIdx)
     'Fill in last position as CENTER
     slotIdx = 4
 
-    ReDim targetPos$(0 To 8)
+    ReDim targetPos$(0 To 9)
     targetPos$(0) = "C"
     targetPos$(1) = "FC"
     targetPos$(2) = "CF"
@@ -12337,13 +12424,14 @@ Sub ComputerCoach (teamIdx)
     targetPos$(6) = "GF"
     targetPos$(7) = "G"
     targetPos$(8) = "FG"
+    targetPos$(9) = ""
 
     Call FindPlayerForSlot(teamIdx, slotIdx, bestCX, bestPlayer, 0)
 
     If bestPlayer = -1 Then
 
         'Relaxed search for target positions (with penalty)
-        ReDim relaxedPos$(0 To 6)
+        ReDim relaxedPos$(0 To 7)
         relaxedPos$(0) = "C"
         relaxedPos$(1) = "CG"
         relaxedPos$(2) = "FC"
@@ -12351,6 +12439,18 @@ Sub ComputerCoach (teamIdx)
         relaxedPos$(4) = "F"
         relaxedPos$(5) = "GF"
         relaxedPos$(6) = "FG"
+        relaxedPos$(6) = ""
+
+        If prevLineup(slotIdx) >= 0 Then
+            If playerStamina%(teamIdx, prevLineup(slotIdx)) <= 0 Then
+                bestCX = playerSubValue%(teamIdx, prevLineup(slotIdx)) - _
+                    PositionPenalty%(players_GAME$(teamIdx, prevLineup(slotIdx), 1), slotIdx)
+            Else
+                bestCX = -999
+            End If
+        Else
+            bestCX = -999
+        End If
 
         Call FindPlayerForSlot(teamIdx, slotIdx, bestCX, bestPlayer, 1)
 
@@ -12433,12 +12533,17 @@ Sub FindPlayerForSlot (teamIdx, slotIdx, optimalCX, optimalPlayer, relaxSearch)
 
     Shared relaxedPos$(), targetPos$()
 
-    Dim foundSlot
+    Shared sortedStamina(), staminaRosterIdx()
+
+    Dim foundSlot, limit
     Dim findPos$, playerPos$
 
     If relaxSearch = 0 Then
         optimalPlayer = -1
         optimalCX = -999
+        limit = UBound(targetPos$)
+    Else
+        limit = UBound(relaxedPos$)
     End If
 
     For I1 = 0 To 14
@@ -12450,7 +12555,8 @@ Sub FindPlayerForSlot (teamIdx, slotIdx, optimalCX, optimalPlayer, relaxSearch)
             foundSlot = 0
 
             X = 0
-            Do While X <= 3 And foundSlot = 0
+
+            Do While X <= limit And foundSlot = 0
 
                 If relaxSearch = 1 Then
                     findPos$ = relaxedPos$(X)
@@ -12458,7 +12564,9 @@ Sub FindPlayerForSlot (teamIdx, slotIdx, optimalCX, optimalPlayer, relaxSearch)
                     findPos$ = targetPos$(X)
                 End If
 
-                If playerPos$ = findPos$ Then foundSlot = 1
+                If playerPos$ = findPos$ Then
+                    foundSlot = 1
+                End If
 
                 X = X + 1
 
@@ -12484,7 +12592,7 @@ Sub FindPlayerForSlot (teamIdx, slotIdx, optimalCX, optimalPlayer, relaxSearch)
 
         End If
 
-    Next
+    Next I1
 
 End Sub
 
@@ -12525,6 +12633,302 @@ End Sub
 
 
 '----------------------------------------
+'         REBOUNDSORT Subroutine
+'----------------------------------------
+'This subroutine does a bubble sort to
+'arrange roster players based on their
+'current rebound contributions.
+Sub REBOUNDSORT ()
+
+    Dim lastSwap As Integer
+    Dim sortLimit As Integer
+    Dim swapPos As Integer
+
+    Shared rosterCandidateIdx(), sortedRebounds()
+
+    sortLimit = 3
+
+    Do
+
+        lastSwap = 0
+        swapPos = 0
+
+        Do
+
+            If sortedRebounds(swapPos) > sortedRebounds(swapPos + 1) Then
+
+                Swap rosterCandidateIdx(swapPos), rosterCandidateIdx(swapPos + 1)
+                Swap sortedRebounds(swapPos), sortedRebounds(swapPos + 1)
+
+                lastSwap = swapPos
+
+            End If
+
+            swapPos = swapPos + 1
+
+        Loop While swapPos <= sortLimit
+
+        If lastSwap <> 0 Then
+            sortLimit = lastSwap - 1
+        End If
+
+    Loop While lastSwap <> 0
+
+End Sub
+
+
+'----------------------------------------
+'         STAMINASORT Subroutine
+'----------------------------------------
+'This subroutine does a bubble sort to
+'arrange roster players based on their
+'current stamina.
+Sub STAMINASORT ()
+
+    Dim lastSwap As Integer
+    Dim sortLimit As Integer
+    Dim swapPos As Integer
+
+    Shared sortedStamina(), staminaRosterIdx()
+
+    sortLimit = 12
+
+    Do
+
+        lastSwap = 0
+        swapPos = 0
+
+        Do
+
+            If sortedStamina(swapPos) > sortedStamina(swapPos + 1) Then
+
+                ' Swap stamina values
+                Swap sortedStamina(swapPos), sortedStamina(swapPos + 1)
+                ' Swap corresponding player indices
+                Swap staminaRosterIdx(swapPos), staminaRosterIdx(swapPos + 1)
+
+                lastSwap = swapPos
+
+            End If
+
+            swapPos = swapPos + 1
+
+        Loop While swapPos <= sortLimit
+
+        If lastSwap <> 0 Then
+            sortLimit = lastSwap - 1
+        End If
+
+    Loop While lastSwap <> 0
+
+End Sub
+
+
+'----------------------------------------
+'        FindValidSubs Subroutine
+'----------------------------------------
+'This subroutine finds the best available
+'candidates for the roster based on
+'optimal criteria. Multiple passes are
+'made to relax criteria each time.
+Sub FindValidSubs (teamIdx)
+
+    Dim remainingContribPct As Single
+    Dim primaryFound As Integer
+    Dim secondaryFound As Integer
+    Dim qualified As Integer
+
+    Dim secsPerQuarter
+
+    Shared rosterCandidateIdx()
+    Shared sortedRebounds(), sortedStamina(), staminaRosterIdx()
+
+    Erase sortedRebounds
+
+    secsPerQuarter = (MINS_PER_GAME * 60) / 4
+
+    'Look for all qualified candidates in the roster
+    checkIdx = 15
+
+    'Primary pass: check all qualifications
+    slot = 0
+
+    Do While slot <= 4 And checkIdx >= 0
+
+        primaryFound = 0
+
+        Do While checkIdx >= 0 And primaryFound = 0
+
+            checkIdx = checkIdx - 1
+
+            If checkIdx >= 0 Then
+
+                If goodPlayer%(teamIdx, staminaRosterIdx(checkIdx)) = 1 Then
+
+                    remainingContribPct = sortedStamina(checkIdx) / gameRatings!(teamIdx, staminaRosterIdx(checkIdx), 3)
+                    qualified = 1
+
+                    'Disqualify any players who don't have enough stamina
+                    'left to finish the game
+
+                    Select Case quarter
+
+                        Case 1
+                            'Less than 75% stamina through 25% of the game
+                            If remainingContribPct < .75 Then qualified = 0
+
+                        Case 2
+                            'Less than 50% stamina through 50% of the game
+                            If remainingContribPct < .5 Then qualified = 0
+
+                        Case 3
+                            'Less than 25% stamina through 75% of the game
+                            If remainingContribPct < .25 Then qualified = 0
+                        
+                        Case 4
+                            'Less than 13% stamina through 87% of the game
+                            If gameClock! <= (secsPerQuarter / 2) And remainingContribPct < .13 Then qualified = 0
+                            'Is player stamina enough to make the last 5 minutes?
+                            If gameClock! < 300 And remainingContribPct < (gameClock! / secsPerQuarter) Then qualified = 0
+                            
+                    End Select
+
+                    If ((quarter = 4 And gameClock! > 120) Or quarter < 4) And sortedStamina(checkIdx) <= 0 Then
+                        qualified = 0
+                    End If
+
+                    If qualified = 1 Then
+                        rosterCandidateIdx(slot) = staminaRosterIdx(checkIdx)
+                        sortedRebounds(slot) = gameRatings!(teamIdx, staminaRosterIdx(checkIdx), 2)
+                        primaryFound = 1
+                    End If
+
+                End If
+
+            End If
+
+        Loop
+
+        If primaryFound Then
+            slot = slot + 1
+        End If
+
+    Loop
+
+    'Secondary pass: relax search by allowing fatigued players
+    If checkIdx < 0 Then
+
+        checkIdx = 15
+        slot = 0
+
+        Do While slot <= 4 And checkIdx >= 0
+
+            secondaryFound = 0
+
+            Do While checkIdx >= 0 And secondaryFound = 0
+
+                checkIdx = checkIdx - 1
+
+                If checkIdx >= 0 Then
+
+                    If goodPlayer%(teamIdx, staminaRosterIdx(checkIdx)) = 1 Then
+                        rosterCandidateIdx(slot) = staminaRosterIdx(checkIdx)
+                        sortedRebounds(slot) = gameRatings!(teamIdx, staminaRosterIdx(checkIdx), 2)
+                        secondaryFound = 1
+                    End If
+
+                End If
+
+            Loop
+
+            If secondaryFound Then slot = slot + 1
+
+        Loop
+
+    End If
+
+    'Final pass: relax search by allowing players with lots of fouls
+    If checkIdx < 0 Then
+
+        checkIdx = 14
+
+        For slot = 0 To 4
+
+            Do Until (playerActive%(teamIdx, staminaRosterIdx(checkIdx)) = 1 And players$(teamIdx, staminaRosterIdx(checkIdx)) <> "XXX") Or checkIdx <= 0
+                checkIdx = checkIdx - 1
+            Loop
+
+            If checkIdx < 0 Then
+                checkIdx = 0 ' safety guard against negative index
+            End If
+
+            rosterCandidateIdx(slot) = staminaRosterIdx(checkIdx)
+            sortedRebounds(slot) = gameRatings!(teamIdx, staminaRosterIdx(checkIdx), 2)
+
+        Next slot
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'    ComputerCoach_College Subroutine
+'----------------------------------------
+'This subroutine essentially handles the
+'AI for determining a lineup and strategy
+'for a computer team.
+Sub ComputerCoach_College (teamIdx)
+
+    Shared rosterCandidateIdx()
+    Shared sortedStamina(), staminaRosterIdx()
+
+    Erase rosterCandidateIdx
+    Erase sortedStamina, staminaRosterIdx
+
+    'Assign stamina values to players
+    For I = 0 To 13
+
+        staminaRosterIdx(I) = I
+
+        sortedStamina(I) = playerStamina%(teamIdx, I)
+
+        If currHalf = 2 And gameClock! <= 120 Or currHalf > 2 Then
+            'Reset fatigue for final 2 mins or Overtime
+            sortedStamina(I) = plyrOff_GAME!(teamIdx, I, 3)
+        End If
+
+        If foulDanger%(teamIdx, staminaRosterIdx(I)) = 1 Then
+            'Player with too many fouls should be considered last
+            sortedStamina(I) = 0
+        End If
+
+    Next I
+
+    'Sort all players by stamina
+    '(lowest --> highest)
+    Call STAMINASORT
+
+    'Find candidates from highest stamina
+    Call FindValidSubs(teamIdx)
+
+    'Sort all valid players based on rebounds
+    Call REBOUNDSORT
+
+    'Slots will be filled in order based
+    'on rebound contributions.
+    'In other words, top rebounders will go
+    'to G, the next to F, then to C
+    For I = 0 To 4
+        lineupIdx(teamIdx, I) = rosterCandidateIdx(I)
+    Next I
+
+    Call ComputerStrategy(teamIdx)
+
+End Sub
+
+
+'----------------------------------------
 '     ComputerCoach_Legacy Subroutine
 '----------------------------------------
 'This subroutine essentially handles the
@@ -12539,16 +12943,16 @@ Sub ComputerCoach_Legacy (teamIdx)
 
     ' Fill guard positions (slots 0-1)
     For slot = 0 To 1
-        Call FillSlotWithPosition(slot, "G")
+        Call FillSlotWithPosition(teamIdx, slot, "G")
     Next slot
 
     ' Fill forward positions (slots 2-3)
     For slot = 2 To 3
-        Call FillSlotWithPosition(slot, "F")
+        Call FillSlotWithPosition(teamIdx, slot, "F")
     Next slot
 
     ' Fill center position (slot 4)
-    Call FillSlotWithPosition(4, "C")
+    Call FillSlotWithPosition(teamIdx, 4, "C")
 
     ' Fill any remaining empty slots with any available players
     Call FillEmptySlots(teamIdx)
@@ -12564,13 +12968,13 @@ End Sub
 'This routine will try to fill a lineup
 'slot based on evaluations of the player's
 'eligibility, stamina, and other factors.
-Sub FillSlotWithPosition (slot As Integer, preferredPos As String)
+Sub FillSlotWithPosition (teamIdx, slot, preferredPos$)
 
     Dim targetPos As String
     Dim positionsTried As Integer
     Dim playerFound As Integer
 
-    targetPos = preferredPos
+    targetPos = preferredPos$
     positionsTried = 0
     playerFound = 0
 
@@ -12587,34 +12991,32 @@ Sub FillSlotWithPosition (slot As Integer, preferredPos As String)
             If Left$(players_GAME$(teamIdx, I1, 1), 1) = targetPos Or Right$(players_GAME$(teamIdx, I1, 1), 1) = targetPos Then
 
                 ' Check if player is available
-                If goodPlayer%(teamIdx, I1) = 1 Then
+                If goodPlayer%(teamIdx, I1) = 1 And playerInLineup%(teamIdx, I1) = 0 Then
 
-                    ' Check if player is already assigned to another slot
-                    If playerInLineup%(I1, slot) = 0 Then
+                    ' Get player's current rating/stamina
+                    'expectedMins = plyrRat_GAME(teamIdx, I1, 1) / plyrRat_GAME(teamIdx, I1, 0)
+                    'currentMins = timePlayed(teamIdx, I1) / 60
 
-                        ' Get player's current rating/stamina
-                        M6 = playerStamina%(teamIdx, I1)
+                    M6 = playerStamina%(teamIdx, I1) '+ Int(expectedMins - currentMins)
 
-                        ' Get current slot holder's rating/stamina
+                    ' Get current slot holder's rating/stamina
+                    If lineupIdx(teamIdx, slot) > -1 Then
+                        M7 = playerStamina%(teamIdx, lineupIdx(teamIdx, slot))
+                    End If
+
+                    ' Use clutch rating in crunch time
+                    If quarter = 4 And gameClock! < 120 Or quarter > 4 Then
+                        M6 = gameRatings!(teamIdx, I1, 3)
                         If lineupIdx(teamIdx, slot) > -1 Then
-                            M7 = playerStamina%(teamIdx, lineupIdx(teamIdx, slot))
+                            M7 = gameRatings!(teamIdx, lineupIdx(teamIdx, slot), 3)
                         End If
+                    End If
 
-                        ' Use clutch rating in crunch time
-                        If quarter = 4 And gameClock! < 120 Or quarter > 4 Then
-                            M6 = gameRatings!(teamIdx, I1, 3)
-                            If lineupIdx(teamIdx, slot) > -1 Then
-                                M7 = gameRatings!(teamIdx, lineupIdx(teamIdx, slot), 3)
-                            End If
-                        End If
-
-                        ' Assign if slot is empty or this player is better
-                        If lineupIdx(teamIdx, slot) = -1 Or M6 >= M7 Then
-                            lineupIdx(teamIdx, slot) = I1
-                            playerFound = 1
-                            Exit For
-                        End If
-
+                    ' Assign if slot is empty or this player is better
+                    If lineupIdx(teamIdx, slot) = -1 Or M6 >= M7 Then
+                        lineupIdx(teamIdx, slot) = I1
+                        playerFound = 1
+                        Exit For
                     End If
 
                 End If
@@ -12745,19 +13147,19 @@ End Sub
 'This subroutine displays the starting
 'lineup for each team and gives the user
 'an interface for changing the lineup
-Sub DisplayRoster ()
+Sub DisplayRoster (teamIdx)
 
     Cls
 
-    Color teamRat_GAME(P9, 33), teamRat_GAME(P9, 34): Print gameTeams$(P9);
+    Color teamRat_GAME(teamIdx, 33), teamRat_GAME(teamIdx, 34): Print gameTeams$(teamIdx);
 
     Color 15, 0
-    Print " TEAM ROSTER   COACH: "; gameCoach$(P9); "     ";
+    Print " TEAM ROSTER   COACH: "; gameCoach$(teamIdx); "     ";
 
     Print "  RECORD: ";
-    Print Using "##"; teamRat_GAME(P9, 1) + teamRat_GAME(P9, 3);
+    Print Using "##"; teamRat_GAME(teamIdx, 1) + teamRat_GAME(teamIdx, 3);
     Print "-";
-    Print Using "##"; teamRat_GAME(P9, 2) + teamRat_GAME(P9, 4)
+    Print Using "##"; teamRat_GAME(teamIdx, 2) + teamRat_GAME(teamIdx, 4)
 
     Color 14
     Print "# NAME         PS GP MG FG 3FG %3A FT  ORB  DRB PA DS B  CX CN PT F  FC PTS/G"
@@ -12767,7 +13169,7 @@ Sub DisplayRoster ()
     'Output all player ratings for end user
     For R1 = 0 To 14
 
-        If playerActive%(P9, R1) = 1 And players_GAME$(P9, R1, 0) <> "XXX" And players_GAME$(P9, R1, 0) <> "" Then
+        If playerActive%(teamIdx, R1) = 1 And players_GAME$(teamIdx, R1, 0) <> "XXX" And players_GAME$(teamIdx, R1, 0) <> "" Then
 
             Color 2
 
@@ -12781,45 +13183,45 @@ Sub DisplayRoster ()
             Color 15
 
             'Name
-            Print Left$(players_GAME$(P9, R1, 0), 12);
+            Print Left$(players_GAME$(teamIdx, R1, 0), 12);
             Locate , 16
 
             'Position
-            If Len(players_GAME$(P9, R1, 1)) = 1 Then
-                Print players_GAME$(P9, R1, 1);
+            If Len(players_GAME$(teamIdx, R1, 1)) = 1 Then
+                Print players_GAME$(teamIdx, R1, 1);
             Else
-                Print Left$(players_GAME$(P9, R1, 1), 1); Right$(players_GAME$(P9, R1, 1), 1);
+                Print Left$(players_GAME$(teamIdx, R1, 1), 1); Right$(players_GAME$(teamIdx, R1, 1), 1);
             End If
 
             Locate , 19
 
             'Games Played, Minutes / Game
-            Print Using "## ##"; plyrRat_GAME(P9, R1, 0); plyrRat_GAME(P9, R1, 1) / plyrRat_GAME(P9, R1, 0);
+            Print Using "## ##"; plyrRat_GAME(teamIdx, R1, 0); plyrRat_GAME(teamIdx, R1, 1) / plyrRat_GAME(teamIdx, R1, 0);
 
             'FG, 3FG , %3A, FT, ORB, DRB, Pass Rating, Steals, Blocks
-            Print Using "### ### ## ### ##.# ##.# ## ## ##"; gameRatings!(P9, R1, 0); gameRatings!(P9, R1, 20); gameRatings!(P9, R1, 19); gameRatings!(P9, R1, 1); gameRatings!(P9, R1, 21) / 10; gameRatings!(P9, R1, 2) / 10; gameRatings!(P9, R1, 4) / 10; gameRatings!(P9, R1, 5); gameRatings!(P9, R1, 6);
+            Print Using "### ### ## ### ##.# ##.# ## ## ##"; gameRatings!(teamIdx, R1, 0); gameRatings!(teamIdx, R1, 20); gameRatings!(teamIdx, R1, 19); gameRatings!(teamIdx, R1, 1); gameRatings!(teamIdx, R1, 21) / 10; gameRatings!(teamIdx, R1, 2) / 10; gameRatings!(teamIdx, R1, 4) / 10; gameRatings!(teamIdx, R1, 5); gameRatings!(teamIdx, R1, 6);
 
             'Contribution
             L = 0
-            L = gameRatings!(P9, R1, 7) + gameRatings!(P9, R1, 11) + gameRatings!(P9, R1, 12)
-            Print Using "### "; gameRatings!(P9, R1, 3) - L;
+            L = gameRatings!(teamIdx, R1, 7) + gameRatings!(teamIdx, R1, 11) + gameRatings!(teamIdx, R1, 12)
+            Print Using "### "; gameRatings!(teamIdx, R1, 3) - L;
 
             'Condition
-            J = playerStamina%(P9, R1)
+            J = playerStamina%(teamIdx, R1)
 
-            If J / gameRatings!(P9, R1, 3) < .25 And quarter <= 3 Then
+            If J / gameRatings!(teamIdx, R1, 3) < .25 And quarter <= 3 Then
                 Locate , 61: Print " T";
             End If
 
-            If J / gameRatings!(P9, R1, 3) < .5 And quarter <= 2 Then
+            If J / gameRatings!(teamIdx, R1, 3) < .5 And quarter <= 2 Then
                 Locate , 61: Print " T";
             End If
 
-            If J / gameRatings!(P9, R1, 3) <= (gameClock! / 2880) And quarter = 4 And gameClock! > 200 Then
+            If J / gameRatings!(teamIdx, R1, 3) <= (gameClock! / 2880) And quarter = 4 And gameClock! > 200 Then
                 Locate , 61: Print " T";
             End If
 
-            If gameRatings!(P9, R1, 3) - gameRatings!(P9, R1, 7) - gameRatings!(P9, R1, 11) - gameRatings!(P9, R1, 12) <= 0 Then
+            If gameRatings!(teamIdx, R1, 3) - gameRatings!(teamIdx, R1, 7) - gameRatings!(teamIdx, R1, 11) - gameRatings!(teamIdx, R1, 12) <= 0 Then
                 Locate , 61: Print "EX";
             End If
 
@@ -12828,7 +13230,7 @@ Sub DisplayRoster ()
             End If
 
             'Points, Fouls, Foul Commit, Pts / Game
-            Locate , 63: Print Using "### # ### ##.#"; gameRatings!(P9, R1, 8) * 2 + gameRatings!(P9, R1, 10) + threeFG(P9, R1, 0); gameRatings!(P9, R1, 12); gameRatings!(P9, R1, 17); (plyrRat_GAME(P9, R1, 3) * 2 + plyrRat_GAME(P9, R1, 5) + plyrRat_GAME(P9, R1, 14)) / plyrRat_GAME(P9, R1, 0)
+            Locate , 63: Print Using "### # ### ##.#"; gameRatings!(teamIdx, R1, 8) * 2 + gameRatings!(teamIdx, R1, 10) + threeFG(teamIdx, R1, 0); gameRatings!(teamIdx, R1, 12); gameRatings!(teamIdx, R1, 17); (plyrRat_GAME(teamIdx, R1, 3) * 2 + plyrRat_GAME(teamIdx, R1, 5) + plyrRat_GAME(teamIdx, R1, 14)) / plyrRat_GAME(teamIdx, R1, 0)
 
         End If
 
@@ -13338,13 +13740,7 @@ Sub FreeThrow_Make1 (missedLastFT)
             Print gameTeams$(P)
         End If
 
-        If freeThrowVal = 1 And isTeamInBonus%(D) = 1 Then
-            'Team in BONUS
-            pbpString$ = "2 TO MAKE 1 FT: " + players_GAME$(P, lineupIdx(P, ballCarrier), 0) + Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " %"
-        Else
-            pbpString$ = "1 FT: " + players_GAME$(P, lineupIdx(P, ballCarrier), 0) + Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " %"
-        End If
-
+        pbpString$ = "2 TO MAKE 1 FT: " + players_GAME$(P, lineupIdx(P, ballCarrier), 0) + Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " %"
         Call SELECTPBP(P, 0)
 
     End If
@@ -13398,11 +13794,6 @@ Sub FreeThrow_Make1 (missedLastFT)
             Exit For
         End If
 
-        If freeThrowNbr = 1 And (freeThrowVal = 0 Or (freeThrowVal = 1 And (teamFouls(D) <= bonusFoulNum And quarter <= 4 Or teamFouls(D) <= 3 And quarter > 4))) Then
-            'Team NOT in BONUS
-            Exit For
-        End If
-
     Next freeThrowNbr
 
     If shotRoll > ftshotChance Then
@@ -13434,12 +13825,7 @@ Sub FreeThrow_Make2 (foulOnShot, missedLastFT)
             Print gameTeams$(P)
         End If
 
-        If freeThrowVal = 1 And foulOnShot = 1 And isTeamInBonus%(D) = 1 Then
-            'Team in BONUS; shooting foul
-            pbpString$ = "3 TO MAKE 2 FT: " + players_GAME$(P, lineupIdx(P, ballCarrier), 0) + Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " %":
-        Else
-            pbpString$ = "2 FT: " + players_GAME$(P, lineupIdx(P, ballCarrier), 0) + Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " %"
-        End If
+        pbpString$ = "3 TO MAKE 2 FT: " + players_GAME$(P, lineupIdx(P, ballCarrier), 0) + Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " %":
 
         Call SELECTPBP(P, 0)
 
@@ -13496,13 +13882,6 @@ Sub FreeThrow_Make2 (foulOnShot, missedLastFT)
 
         'Only allowed to make 2 FTs
         If nbrFTMade = 2 Then
-            Exit For
-        End If
-
-        'On 2nd attempt
-        If freeThrowNbr = 2 And _ 
-            Not (freeThrowVal = 1 And foulOnShot = 1 And isTeamInBonus%(D) = 1) Then
-            'Done if rules are strictly for 2 fouls
             Exit For
         End If
 
@@ -15372,11 +15751,11 @@ End Sub
 'should be started.
 Sub EndOfGame
 
-    'Call DebugStatTotals
+    Call DebugStatTotals
 
     Call POSTGAME
 
-    'Close #11
+    Close #11
 
     Cls
 
@@ -17804,9 +18183,6 @@ Function goodPlayer% (teamIdx, playerIdx)
         players_GAME$(teamIdx, playerIdx, 0) = "XXX" Or _
         foulDanger%(teamIdx, playerIdx) = 1 Then
         'Or timeExceeded = 1 Then
-        If foulDanger%(teamIdx, playerIdx) = 1 Then
-            test1 = 1
-        End If
         goodPlayer% = 0
     Else
         goodPlayer% = 1
@@ -17924,8 +18300,9 @@ Function playerSubValue% (teamIdx, playerIdx)
     Dim currentMins, expectedMins, remainingMins
     Dim offRebRating, defRebRating, rebBonus
     Dim baseCX, rawCX, totalCX, finalCX
-    Dim staminaPenalty, overusePenalty, usedStamina
     Dim playerName$, playerPos$
+
+    Shared staminaPenalty, overusePenalty, usedStamina
 
     playerName$ = players_GAME$(teamIdx, playerIdx, 0)
     playerPos$ = players_GAME$(teamIdx, playerIdx, 1)
@@ -17965,25 +18342,29 @@ Function playerSubValue% (teamIdx, playerIdx)
         totalCX = totalCX + 2
     End If
 
-    'Respect players who are tiring
-    staminaPenalty = (usedStamina \ 3)
-    If staminaPenalty > 8 Then
-        staminaPenalty = 8
-    End If
-
-    'Address players who have been in too long
-    'This should help bench starters in Q2
-    targetMins = expectedMins * 0.60
+    'Rotate players after 1/4 of their time
+    targetMins = expectedMins * (0.25 * quarter)
     If currentMins > targetMins Then
 
         timeDiff = currentMins - targetMins
         timeContribPenalty = CInt(timeDiff)
 
-        If timeContribPenalty > 12 Then
-            timeContribPenalty = 12
+        If timeContribPenalty > 4 Then
+            timeContribPenalty = 4
         End If
     Else
         timeContribPenalty = 0
+    End If
+
+    'Respect players who are tiring
+    If playerStamina%(teamIdx, playerIdx) <= 0 Then
+        'leaves finalCX at 0 regardless of star power
+        staminaPenalty = totalCX
+    Else
+        staminaPenalty = (usedStamina \ 3)
+        If staminaPenalty > 8 Then
+            staminaPenalty = 8
+        End If
     End If
 
     'If implemented, this would try to adjust contribution
@@ -18010,23 +18391,26 @@ Function PositionPenalty% (Pos$, slotIdx%)
 
     Dim penalty
 
+    'Default value for no position (ie, "OTHERS")
+    penalty = 0
+
     Select Case slotIdx%
 
         Case 0, 1 ' Guards
             Select Case Pos$
                 Case "G": penalty = 0
-                Case "CG", "GF": penalty = 4
-                Case "C", "F": penalty = 17
-                Case "CF", "FC": penalty = 5
+                Case "CG", "GF": penalty = 2
+                Case "C", "F": penalty = 7
+                Case "CF", "FC": penalty = 3
             End Select
 
         Case 2, 3 ' Forwards
             Select Case Pos$
                 Case "F": penalty = 0
-                Case "GF": penalty = 8
-                Case "CF", "FC": penalty = 6
-                Case "C": penalty = 16
-                Case "G": penalty = 10
+                Case "GF": penalty = 4
+                Case "CF", "FC": penalty = 4
+                Case "C": penalty = 8
+                Case "G": penalty = 6
             End Select
 
         Case 4 ' Center
@@ -18035,7 +18419,7 @@ Function PositionPenalty% (Pos$, slotIdx%)
                 Case "F": penalty = 9
                 Case "GC": penalty = 12
                 Case "GF": penalty = 15
-                Case "G": penalty = 21
+                Case "G": penalty = 9
             End Select
 
     End Select
@@ -18048,7 +18432,7 @@ End Function
 '----------------------------------------
 '          TickerTime Function
 '----------------------------------------
-'This subroutine determines which of the
+'This function determines which of the
 'pre-determined time intervals the ticker
 'display should be using.
 Function TickerTime% (timeInterval, X)
@@ -18068,6 +18452,133 @@ End Function
 
 
 '----------------------------------------
+'       threeFGShotChance Function
+'----------------------------------------
+'This function determines both the chance
+'a player is going to take a 3-pointer,
+'as well as the chance of them making one
+Function threeFGShotChance%
+
+    Dim crunchLevel
+    Dim leagueShotAdj, plyrBase3FG
+    Dim threeFGChance
+
+    Shared threePtShotChance
+
+    ' ***Shot chance based on user's 3FG make % ***
+    'Shot percentages are consistently low without a boost.
+    'This is likely b/c factors such as shot severity,
+    'fatigue and shotType may not be decent.
+    base3FGMake = gameRatings!(P, lineupIdx(P, ballCarrier), 20) + teamAdj(D, 4)
+
+    Select Case teamLeague$(P)
+
+        Case "ABA"
+            leagueShotAdj = 10
+
+        Case "NBA"
+            leagueShotAdj = 0
+
+        Case "WNBA"
+            leagueShotAdj = 5
+
+    End Select
+
+    threePtShotChance = base3FGMake + teamAdj(D, 4) + leagueShotAdj
+
+    'The default values as calculated from team ratings
+    'seem to favor accuracy for modern seasons. Therefore,
+    'we have to make adjustments in older seasons
+    plyrBase3FG = gameRatings!(P, lineupIdx(P, ballCarrier), 19)
+    threeFGChance = plyrBase3FG
+
+    'Favor modern outcomes if teams are from different eras
+    Select Case teamYears(eraChoice)
+
+        Case Is <= 1995
+            threeFGChance = threeFGChance - 10
+
+        Case 1996 To 1998
+            'After 1995 the 3-pt line moved which encouraged
+            'teams to take more 3-pointers
+            If isWNBATeam%(P) = 0 Then
+                threeFGChance = threeFGChance - 3
+            End If
+
+        Case 1999 To 2009
+            'Teams were allowed to play zone, which led to
+            'more 3 FGA's happening
+            If isWNBATeam%(P) = 0 Then
+                threeFGChance = threeFGChance - 3
+            Else
+                threeFGChance = threeFGChance + 15
+            End If
+
+        Case 2010 To 2012
+            If isWNBATeam%(P) = 0 Then
+                threeFGChance = threeFGChance - 3
+            End If
+
+        Case 2013 To 2016
+            If isWNBATeam%(P) = 1 Then
+                threeFGChance = threeFGChance - 10
+            End If
+
+        Case Is >= 2017
+            If isWNBATeam%(P) = 1 Then
+                threeFGChance = threeFGChance + 1
+            End If
+
+    End Select
+
+    'I've generally observed more frequent 3FG's happen with 10 min quarters
+    'It could be specific to women's basketball; we would need to simulate
+    'olympic results for better idea
+    If quarterOpt = 1 Then
+        threeFGChance = threeFGChance + 8
+    End If
+
+    'Consider pressure in playoffs
+    If playoffOpt = 1 Then
+
+        'Adjust 3FGA frequency for tournament play / desparation
+        crunchLevel = GetDesparationLevel%
+
+        'If team is behind...
+        If crunchLevel > 0 And score(P, 0) - score(D, 0) < 0 Then
+
+            'Players who don't normally shoot 3FGA's as much will
+            'take more desparate attempts
+            If plyrBase3FG < 34 Then
+                threeFGChance = threeFGChance * (1 + 0.08 * crunchLevel)
+            Else
+                threeFGChance = threeFGChance * (1 + 0.02 * crunchLevel)
+            End If
+
+        End If
+
+        'If team is ahead...
+        If crunchLevel > 0 And score(P, 0) - score(D, 0) > 0 Then
+
+            'Players who don't normally shoot 3FGA's will take them
+            'even less often
+            If plyrBase3FG < 34 Then
+                threeFGChance = threeFGChance * (1 - (.15 * crunchLevel))
+            Else
+                'Good shooters will still be more conservative
+                threeFGChance = threeFGChance * (1 - (.05 * crunchLevel))
+            End If
+
+        End If
+
+    End If
+
+    threeFGShotChance% = threeFGChance
+
+End Function
+
+
+'----------------------------------------
 '       RunAllSchedules Subroutine
 '----------------------------------------
 ' Quick and dirty script to run all games
@@ -18075,12 +18586,14 @@ End Function
 ' configured "Schedule" folder
 Sub RunAllSchedules ()
 
+    Dim averageTOAdj
+
     Shared homeScores(), visitorScores()
     Shared scheduleAP%(), scheduleNG%()
     Shared scheduleH$(), scheduleV$()
     Shared scheduleYN$()
 
-    fileSpec$ = diskPaths$(3) + "*.SCD"
+    fileSpec$ = diskPaths$(3) + "WNBA*.SCD"
 
     Count% = FileCount%(fileSpec$)
     ReDim foundFiles$(0 To Count%)
@@ -18097,6 +18610,7 @@ Sub RunAllSchedules ()
         totalCX& = 0
         totalMatchPace& = 0
         totalMatches& = 0
+        totalRawTOAdj& = 0
 
         'target$
         Call LoadScheduleInfo(target$)
@@ -18164,10 +18678,12 @@ Sub RunAllSchedules ()
         ReDim scheduleV$(MAX_SCHEDULE_GAMES)
 
         totalMatches& = EG%
-        averagePace! = totalMatchPace& / totalMatches&
-        averageCX! = totalCX& / totalPlayers&
+        'averagePace! = totalMatchPace& / totalMatches&
+        'averageCX! = totalCX& / totalPlayers&
+        averageTOAdj = totalRawTOAdj& / totalMatches&
 
-        Print #21, foundFiles$(X); "; averagePace = "; averagePace!; "; averageCX = "; averageCX!
+        'Print #21, foundFiles$(X); "; averagePace = "; averagePace!; "; averageCX = "; averageCX!
+        Print #21, foundFiles$(X); "; averageTOAdj = "; averageTOAdj
 
     Next X
 

@@ -74,7 +74,7 @@ Dim location$(0 To 2), modeAbbrev$(0 To 3)
 Dim playoffGame$(1), playMode$(3)
 Dim quarterLength$(0 To 1)
 Dim sClockOpt$(0 To 2), teamEraOpt$(0 To 2)
-Dim teamIndicator$(1), timeoutSetting$(0 To 4)
+Dim teamIndicator$(1), timeoutSetting$(0 To 5)
 Dim yesNo$(0 To 1), yesNoText$(1)
 
 
@@ -237,7 +237,11 @@ Dim tickerPeriod$(14)
 
 Dim avgAttendance&(1)
 
+Dim game3FGM!(1, 14), game3FGA!(1, 14)
+
 Dim maxRoster(0 To 1)
+Dim rosterCandidateIdx(14)
+Dim sortedRebounds(14), sortedStamina(14), staminaRosterIdx(14)
 
 ReDim relaxedPos$(0 To 8), targetPos$(0 To 8)
 
@@ -294,9 +298,7 @@ Dim Shared totalFouls(1), teamRebounds(1), turnoverAdj(0 To 32), turnovers(1)
 Dim Shared teamRecWins(1), teamRecLoss(1)
 
 Dim Shared defStealAdj!(1 To 9), gameRatings!(0 To 1, 0 To 14, 0 To 25)
-Dim Shared offRebPct!(0 To 1), offStealAdj!(0 To 8), rebAdj!(1)
-
-Dim game3FGM!(1, 14), game3FGA!(1, 14)
+Dim Shared offRebPct!(0 To 1), offStealAdj!(0 To 8), teamContrib!(1)
 
 Dim Shared defStyleDesc$(9), diskIDs$(0 To 1)
 Dim Shared gameCoach$(3), gameMascots$(3), gameArena$(3), gameTeams$(3)
