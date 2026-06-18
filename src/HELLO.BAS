@@ -1191,7 +1191,7 @@ Sub PROHOOP ()
             Locate , 2: Print "* NBA - 6 TOs UNTIL 00-01; 7 TOs (01-02+); WNBA - 4 TOs UNTIL 2024"
             Locate , 2: Print "* 3-PT SHOT FOR ALL ABA SEASONS; NBA SINCE 79-80"
             Locate , 2: Print "* FREE THROWS ON ALL FOULS UNTIL 72-73"
-            Locate , 2: Print "* BONUS FTs: 3 TO MAKE 2 | 2 TO MAKE 1 UNTIL 72-73"
+            Locate , 2: Print "* BONUS FTs: 3 TO MAKE 2 | 2 TO MAKE 1 UNTIL 81-82"
             Locate , 2: Print "* BONUS ON 7TH FOUL UNTIL 72-73; 6TH FOUL (72-73), 5TH FOUL (73-74+)";
 
             Do
@@ -1640,9 +1640,9 @@ Sub PROHOOP ()
 
         If playerMode = 1 Then
 
-            'Call ComputerCoach_Legacy(team)
-            'Call ComputerCoach_College(team)
-            Call ComputerCoach(team)
+            'Call ComputerCoach_Legacy(compTeam)
+            'Call ComputerCoach_College(compTeam)
+            Call ComputerCoach(compTeam)
 
         End If
 
@@ -3908,7 +3908,7 @@ Sub PROHOOP ()
                         pbpString$ = "IT'S OVER THE LINE!"
 
                     Case 4
-                        gameTeams$(D) + " SCOOPS THE LOOSE BALL"
+                        pbpString$ = gameTeams$(D) + " SCOOPS THE LOOSE BALL"
                 
                 End Select
 
@@ -8670,6 +8670,8 @@ Sub DEADBALLOPTIONS (userTakeTO)
 
     Do
 
+        Call CLEARPBP
+
         Call CLEARPBPBOX
 
         'User options to continue play
@@ -8768,6 +8770,7 @@ Sub DEADBALLOPTIONS (userTakeTO)
             Call WINDEX
 
         End If
+
 
     Loop Until I$ = Chr$(13) Or userTakeTO = 1 Or _ 
         (playerMode = 1 And P = compTeam) Or playerMode = 2
