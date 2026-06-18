@@ -45,6 +45,7 @@ Dim threePtShotChance
 Dim Shared rawTOAdj
 Dim possCount(8)
 Dim Shared totalDrawFouls, totalIntFouls, totalLBFouls, totalOffFouls, totalPerFouls, totalShotFouls
+Dim Shared totalRebFouls
 Dim Shared totalCX&, totalMatchPace&, totalMatches&
 Dim Shared totalRawTOAdj&, totalPlayers&
 
@@ -271,7 +272,8 @@ For I = 0 To 8
 Next
 
 'Data 24,8,40,24,8,24,45,16,28  Original
-Data 13,5,21,13,5,13,24,8,15
+'Data 13,5,21,13,5,13,24,8,15
+Data 9,3,14,9,3,9,16,5,10
 For I = 1 To 9
     Read defStealAdj!(I)
 Next
@@ -1801,14 +1803,6 @@ Sub PROHOOP ()
 
     End If
 
-    If isWNBATeam%(P) = 1 Then
-        plyrTOAdj = gameRatings!(P, lineupIdx(P, ballCarrier), 5) / 10
-        leagueTOAdj = -20
-    Else
-        plyrTOAdj = 0
-        leagueTOAdj = 0
-    End If
-
     unforcedTOAdj = teamAdj(P, 1) + teamAdj(D, 2)
 
     'Scale foul frequency as needed
@@ -1817,6 +1811,21 @@ Sub PROHOOP ()
     Else
         foulScale! = 1.0 ' shot clock era baseline
     End If
+
+    ' offFoulMax: Upper bound of offensive foul TO range on 1-1000 roll
+    ' perFoulMax: Upper bound of personal foul range on 1-1000 roll
+    '    frequency for personal fouls = window between offFoulMax and perFoulMax
+    '    ALWAYS preserve this window when adjusting offFoulMax
+    '    target_offFoulTO_rate * total_foul_check_evaluations
+    '    Target: ~1.13 offensive foul TOs per team per game (NBA/WNBA validated)
+
+    ' stealChance: steal-specific adjustments (excludes unforcedTOAdj)
+    '   Player rating divided by 10 to scale from 1-1000 to window-appropriate range
+    '    Combined window: toMax = perFoulMax + unforcedTOAdj + Int(stealChance * stealMultiplier)
+    '    Steal occurs when: RN0 > perFoulMax + unforcedTOAdj (within toMax window)
+
+    plyrStealRate = Int(gameRatings!(D, lineupIdx(D, P9), 5) / 10)
+
 
     ' Determine foul likelihood based on defense
     If defPress = 0 Then
@@ -1856,9 +1865,7 @@ Sub PROHOOP ()
         End Select
 
         stealType = 1
-        stealChance = unforcedTOAdj + defStealAdj!(defStyles(D)) + offStealAdj!(offStyles(P)) + teamAdj(P, 0) + gameRatings!(D, lineupIdx(D, P9), 5)
-        'Print #11, "Team rating: "; teamAdj(P, 0)
-        'Print #11, "Player rating: "; gameRatings!(D, lineupIdx(D, P9), 5)
+        stealChance = defStealAdj!(defStyles(D)) + offStealAdj!(offStyles(P)) + teamAdj(P, 0) + plyrStealRate
 
     Else
 
@@ -1873,38 +1880,92 @@ Sub PROHOOP ()
         End If
 
         stealType = 2
-        stealChance = 40 + unforcedTOAdj + teamAdj(P, 0) + gameRatings!(D, lineupIdx(D, P9), 5)
+        stealChance = 40 + teamAdj(P, 0) + plyrStealRate
 
     End If
 
-    'Temporary "calibration" needed for steal chances
-    'because of the double-dip approach used for steals
-    'as an outcome separate from turnovers (rather than
-    'being a subet, as College BB does)
-    If isWNBATeam%(P) = 1 Then
+
+    ' stealMultiplier: scales stealChance to match era-specific steal rates
+    ' Formula: multiplier = target_steals / baseline_steals (7.5)
+    ' From there, validate empirically with tests:
+    '     corrected_multiplier = current * (target / actual)
+    ' Affects only steals in the TO window - does not affect unforced TOs
+
+    If isWNBATeam%(P) Then
+
+        'Baseline - 7.1 steals / game
 
         Select Case teamYears(P)
 
-            Case 1997 To 1998
-                stealOffset = 22
+            Case 1997
+                stealMultiplier! = 1.0
 
-            Case 1999 To 2006
-                stealOffset = 18
+            Case 1998
+                stealMultiplier! = 1.14
 
-            Case 2007 To 2012
-                stealOffset = 22
+            Case 1999 To 2002
+                stealMultiplier! = 1.27
 
-            Case 2013 To 2017
-                stealOffset = 18
+            Case 2003 To 2006
+                stealMultiplier! = 1.16
 
-            Case Is >= 2018
-                stealOffset = 15
+            Case 2007 To 2016
+                stealMultiplier! = 1.08
+
+            Case 2017 To 2021
+                stealMultiplier! = 1.0
+
+            Case Is >= 2022
+                stealMultiplier! = 1.36 '1.12
 
         End Select
 
     Else
-        stealOffset = 13
+
+        'Baseline - 7.5 steals / game
+
+        Select Case teamYears(P)
+
+            Case Is <= 1976
+                stealMultiplier! = 1.4 '1.17
+
+            Case 1977 To 1981
+                stealMultiplier! = 1.24
+
+            Case 1982 To 1988
+                stealMultiplier! = 1.14
+
+            Case 1989
+                stealMultiplier! = 1.21
+
+            Case 1990 To 1993
+                stealMultiplier! = 1.15
+
+            Case 1994
+                stealMultiplier! = 1.19
+
+            Case 1995 To 1999
+                stealMultiplier! = 1.1
+
+            Case 2000 To 2005
+                stealMultiplier! = 1.04
+
+            Case 2006 To 2011
+                stealMultiplier! = 1.27 '0.96
+
+            Case 2012 To 2022
+                stealMultiplier! = 1.15 '1.23
+
+            Case 2023 To 2024
+                stealMultiplier! = 0.98
+
+            Case Is >= 2025
+                stealMultiplier! = 1.1
+
+        End Select
+
     End If
+
 
     ' *** Determine Shot Outcome ***
     'No shot clock = reduced fouls / possession
@@ -1912,14 +1973,7 @@ Sub PROHOOP ()
     perFoulMax = CInt(perFoulMax * foulScale!)
 
     toMin = perFoulMax + 1
-    toMax = perFoulMax + unforcedTOAdj - plyrTOAdj + leagueTOAdj
-
-    If stealChance - stealOffset > toMax Then
-        stealChance = stealChance - stealOffset
-    End If
-
-    test1 = (stealChance - stealOffset - toMax)
-    Print #11, "SO="; stealOffset; " SC="; stealChance; " TM="; toMax; " DIFF="; test1
+    toMax = perFoulMax + unforcedTOAdj + Int(stealChance * stealMultiplier!)
 
     RN0 = Int(Rnd(1) * 1000) + 1
 
@@ -1957,8 +2011,6 @@ Sub PROHOOP ()
             Call DELAY
 
             turnovers(D) = turnovers(D) + 1
-            'Print #11, "Turnover - OFF FOUL"
-
             Call UPDATESCREEN
 
             Call STOPPAGE(takeTO)
@@ -1980,112 +2032,20 @@ Sub PROHOOP ()
             GoTo 566
 
         Case toMin To toMax
-            'Turnover
-            GoTo 515
+            ' *** TURNOVER ***
 
-        Case (toMax + 1) To 1000
+            If RN0 <= perFoulMax + unforcedTOAdj Then
 
-            stealPlyr = Int(Rnd(1) * 5)
+                ' *** UNFORCED TO ***
+                GoTo 515
 
-            'Check for steal
-            'Print #11, "Checking for steal"
-
-            If RN0 <= stealChance Then
+            Else
 
                 ' *** SUCCESSFUL STEAL ***
                 Call LastShot
                 Call ResetShotClock
 
-                'Increase player TOs
-                gameRatings!(P, lineupIdx(P, ballCarrier), 23) = gameRatings!(P, lineupIdx(P, ballCarrier), 23) + 1
-
-                If (autoPlay = 0 Or pbpDelay! > 0) Then
-
-                    If pbpOpt = 1 Then
-
-                        Call WINDEX
-                        Print "BALL STOLEN BY "; players_GAME$(D, lineupIdx(D, stealPlyr), 0); "!"
-                        Call DELAY
-
-                    Else
-
-                        Call Rolld100(RN0)
-
-                        Select Case RN0
-
-                            Case 1 To 3:
-                                pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " QUICKLY REACHES IN!"
-
-                            Case 4 To 6:
-                                pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " SNEAKS IN FROM BEHIND!"
-
-                            Case 7 To 10:
-                                pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " GETS A HAND ON THE BALL!"
-
-                            Case Else
-                                pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " REACHES FOR IT!"
-
-                        End Select
-
-                        Call PBP(D)
-
-                        RN0 = Int(Rnd(1) * 20) + 1
-
-                        Select Case RN0
-
-                            Case 1: pbpString$ = "PASS INTERCEPTED BY " + players_GAME$(D, lineupIdx(D, stealPlyr), 0) + "!"
-
-                            Case 2: pbpString$ = "PASS IS PICKED OFF BY " + players_GAME$(D, lineupIdx(D, stealPlyr), 0) + "!"
-
-                            Case 3: pbpString$ = "BALL IS STOLEN BY " + players_GAME$(D, lineupIdx(D, stealPlyr), 0) + "!"
-
-                            Case 4: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " WITH THE STEAL!"
-
-                            Case 5: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " TAKES IT AWAY!"
-
-                            Case 6: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " STEALS IT!"
-
-                            Case 7: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " RIPS IT LOOSE!"
-
-                            Case 8: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " TAKES THE BALL AWAY!"
-
-                            Case 9: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " STEALS THE BALL!"
-
-                            Case 10: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " PICKS IT OFF!"
-
-                            Case 11: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " SWIPES THE BALL!"
-
-                            Case 12: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " WITH THE STOLEN BALL!"
-
-                            Case 13: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " STRIPS IT AWAY!"
-
-                            Case 14: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " WITH THE STEAL!"
-
-                            Case 15: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " SWIPES AND STEALS IT!"
-
-                            Case 16: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " SNATCHES IT AWAY!"
-
-                            Case 17: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " QUICKLY REACHES IN!"
-
-                            Case 18: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " TAKES IT THE OTHER WAY!"
-
-                            Case 19: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " POKES IT LOOSE!"
-
-                            Case 20: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " STRIPS IT CLEAN!"
-
-                        End Select
-
-                        Call PBP(D)
-
-                    End If
-
-                End If
-
-                'Increase steals + team TOs
-                gameRatings!(D, lineupIdx(D, stealPlyr), 13) = gameRatings!(D, lineupIdx(D, stealPlyr), 13) + 1
-                turnovers(P) = turnovers(P) + 1
-
-                Call UPDATESCREEN
+                Call StealOccurred
 
                 C1 = 2
 
@@ -2100,81 +2060,81 @@ Sub PROHOOP ()
 
                 GoTo 300
 
-            Else
+            End If
 
-                If GoodShotChance% = 1 Then
+        Case (toMax + 1) To 1000
 
-                    'Shoot!
+            If GoodShotChance% = 1 Then
 
-                    'Fatigued ouside last 2 mins / Overtime
-                    If ((quarter < 4 Or (quarter = 4 And gameClock! > 120)) And (playerStamina%(P, lineupIdx(P9, ballCarrier)) <= 0)) Then
-                        'Fatigued - No Shot / Difficult Shot
-                        GoTo 437
+                'Shoot!
+
+                'Fatigued ouside last 2 mins / Overtime
+                If ((quarter < 4 Or (quarter = 4 And gameClock! > 120)) And (playerStamina%(P, lineupIdx(P9, ballCarrier)) <= 0)) Then
+                    'Fatigued - No Shot / Difficult Shot
+                    GoTo 437
+                End If
+
+                ' *** CHECKING 3-POINT SHOT ***
+                If threePtOpt = 1 Then
+
+                    Call Rolld100(threeFGRoll)
+
+                    currPlayer$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0)
+
+                    If threeFGRoll <= threeFGShotChance% Then
+                        'Take 3FGA within player's frequency
+                        shotType = 4
+                        offStatus = 0
+                        threePtShotChance = threePtShotChance + Int(Rnd(1) * 7) - 3
+                        GoTo 520
+                    Else
+                        shotType = 3
+                        playChoice = 1
                     End If
 
-                    ' *** CHECKING 3-POINT SHOT ***
-                    If threePtOpt = 1 Then
+                    '3 Point Shot chosen
+                    If playChoice = 4 Then
 
-                        Call Rolld100(threeFGRoll)
+                        'Forced 3FGA = harder shot
+                        If d100% <= 35 Then
 
-                        currPlayer$ = players_GAME$(P, lineupIdx(P, ballCarrier), 0)
+                            'No Shot
+                            GoTo 437
 
-                        If threeFGRoll <= threeFGShotChance% Then
-                            'Take 3FGA within player's frequency
+                        Else
+                            'Difficult shot - reduced chance to hit
                             shotType = 4
                             offStatus = 0
-                            threePtShotChance = threePtShotChance + Int(Rnd(1) * 7) - 3
+                            threePtShotChance = .33 * threePtShotChance
                             GoTo 520
-                        Else
-                            shotType = 3
-                            playChoice = 1
                         End If
 
-                        '3 Point Shot chosen
-                        If playChoice = 4 Then
+                    Else
 
-                            'Forced 3FGA = harder shot
-                            If d100% <= 35 Then
-
-                                'No Shot
-                                GoTo 437
-
-                            Else
-                                'Difficult shot - reduced chance to hit
-                                shotType = 4
-                                offStatus = 0
-                                threePtShotChance = .33 * threePtShotChance
-                                GoTo 520
-                            End If
-
-                        Else
-
-                            'A 3-pointer wasn't chosen but we're in tight circumstances
-                            '...behind with 30 secs left and our ball carrier has shot 3FGA
-                            If quarter >= 4 And gameClock! < 30 And score(D, 0) - score(P, 0) >= 3 And gameRatings!(P, lineupIdx(P, ballCarrier), 19) >= 3 Then
-                                shotType = 4
-                                offStatus = 0
-                                GoTo 520
-                            End If
-
+                        'A 3-pointer wasn't chosen but we're in tight circumstances
+                        '...behind with 30 secs left and our ball carrier has shot 3FGA
+                        If quarter >= 4 And gameClock! < 30 And score(D, 0) - score(P, 0) >= 3 And gameRatings!(P, lineupIdx(P, ballCarrier), 19) >= 3 Then
+                            shotType = 4
+                            offStatus = 0
+                            GoTo 520
                         End If
 
-                    End If 'Done checking for 3-pt shot
+                    End If
 
-                    ' *** CHECKING FOR ASSISTED SHOT ***
-                    playChoice = 1
-                    Call SHOTPERCENT(1)
+                End If 'Done checking for 3-pt shot
 
-                    offStatus = 0
-                    GoTo 520
+                ' *** CHECKING FOR ASSISTED SHOT ***
+                playChoice = 1
+                Call SHOTPERCENT(1)
 
-                Else
+                offStatus = 0
+                GoTo 520
 
-                    'GoTo 437
+            Else
 
-                End If 'Done checking for good shot
+                'GoTo 437
 
-            End If 'Done checking for steal
+            End If 'Done checking for good shot
 
     End Select
 
@@ -3810,7 +3770,7 @@ Sub PROHOOP ()
 
             Case 1 To rebFoulChance:
                 foulOnReb = 1
-                GoTo 770
+                totalRebFouls = totalRebFouls + 1
 
             Case rebFoulChance + 1 To rebMax:
                 Call ReboundDistribution(P)
@@ -3819,7 +3779,7 @@ Sub PROHOOP ()
             Case rebMax + 1 To (100 - deadballAdj):
                 Call ReboundDistribution(D)
                 GoTo 800
-  
+
         End Select
 
     End If
@@ -3857,6 +3817,35 @@ Sub PROHOOP ()
     offGoalTendChance = Int(Rnd(1) * 5000) + 1
     defGoalTendChance = Int(Rnd(1) * 2000) + 1
 
+    ' deadballAdj: % chance of deadball/OOB on missed shot
+    '    Higher value = fewer rebounds, more deadball situations
+    '    NBA default = 0 (no effect)
+    '    WNBA values - derived from rebound excess data
+    If isWNBATeam%(eraChoice) = 1 Then
+
+        Select Case teamYears(eraChoice)
+
+            Case 1997 To 1999
+                deadballAdj = 20
+
+            Case 2000 To 2009
+                deadballAdj = 24
+
+            Case 2010 To 2019
+                deadballAdj = 15
+
+            Case Is >= 2020
+                deadballAdj = 12
+
+        End Select
+
+    Else
+
+        deadballAdj = 0
+
+    End If
+
+
     Select Case resultRoll
 
         Case 1
@@ -3890,18 +3879,39 @@ Sub PROHOOP ()
 
         Case 2 To rebFoulChance
             foulOnReb = 1
+            totalRebFouls = totalRebFouls + 1
             GoTo 770
 
         Case rebFoulChance + 1 To rebFoulChance + 3
             'TEAM REBOUND
-            'Ball knocked out-of-bounds
+            'About 3-5 times per game
             If d100% > 20 Then
 
+                'Defense recovers - turnover / posseession change
                 teamRebounds(D) = teamRebounds(D) + 1
 
                 Call UPDATESCREEN
 
-                pbpString$ = "RB KNOCKED O.B. TO " + gameTeams$(D)
+                stringNbr = Int(Rnd(1) * 4) + 1
+
+                Select Case stringNbr
+                
+                    Case 1
+                        pbpString$ = "REB KNOCKED O.B. TO " + gameTeams$(D)
+
+                    Case 2
+                        pbpString$ = "O.B. BALL RECOVERED BY" + gameTeams$(D)
+                                        
+                    Case 3
+                        pbpString$ = gameTeams$(D) + " COMES UP WITH THE LOOSE BALL"
+                        Call SELECTPBP(D, 1)
+                        pbpString$ = "IT'S OVER THE LINE!"
+
+                    Case 4
+                        gameTeams$(D) + " SCOOPS THE LOOSE BALL"
+                
+                End Select
+
                 Call SELECTPBP(D, 1)
                 Call DELAY
 
@@ -3914,11 +3924,30 @@ Sub PROHOOP ()
 
             Else
 
+                'Offense saves it - keeps possession
                 teamRebounds(P) = teamRebounds(P) + 1
 
                 Call UPDATESCREEN
 
-                pbpString$ = "RB KNOCKED O.B. TO " + gameTeams$(P)
+                stringNbr = Int(Rnd(1) * 4) + 1
+
+                Select Case stringNbr
+                
+                    Case 1
+                        pbpString$ = "REB KNOCKED O.B. TO " + gameTeams$(P)
+
+                    Case 2
+                        pbpString$ = gameTeams$(P) + " RESCUES THE LOOSE BALL"
+                        Call SELECTPBP(P, 1)
+                    
+                    Case 3
+                        pbpString$ = "THE REBOUND IS SAVED FROM GOING OUT"
+                    
+                    Case 4
+                        pbpString$ = gameTeams$(P) + " DARTS FOR A LOOSE BALL"
+
+                End Select
+
                 Call SELECTPBP(P, 1)
                 Call DELAY
 
@@ -4022,7 +4051,7 @@ Sub PROHOOP ()
 
             End If
 
-        Case rebFoulChance + 8 To 100:
+        Case rebFoulChance + 8 To 100
             770 '
             'Calculate rebound contributions
             '-- totalRB is a total of "rebound ratings" for both teams
@@ -4032,6 +4061,12 @@ Sub PROHOOP ()
             totalRB = 0
 
             Erase rebRatings
+
+            If resultRoll >= deadballAdj + 1 Then
+                deadballOnReb = 1
+            Else
+                deadballOnReb = 0
+            End If
 
             'Offense
             For I = 0 To 4
@@ -4082,7 +4117,7 @@ Sub PROHOOP ()
             rbChance = Rnd(1) * totalRB
 
             'Determine if ORB / DRB
-            If rbChance <= ORB + defRebChance Then
+            If rbChance <= ORB Then
 
                 'Offense gets the rebound
                 rndOReb = Rnd(1) * ORB
@@ -4163,6 +4198,9 @@ Sub PROHOOP ()
             Call DELAY
         End If
 
+    End If
+
+    If deadballOnReb = 1 Then
     End If
 
     If foulOnReb = 1 Then
@@ -4367,6 +4405,8 @@ Sub InitVar ()
     totalOffFouls = 0
     totalPerFouls = 0
     totalShotFouls = 0
+    totalRebFouls = 0
+
 
     'Don't remove me
     possTime! = 0
@@ -9994,7 +10034,17 @@ Sub SETUPRATINGS (teamStyle)
         'should we simply update perFoulAdj() for other league years?
         perFoulRat(I) = 0
 
-        'TurnoverFreq = league baseline for turnovers
+        'TurnoverFreq = League baseline TOs / player possession
+        '(scaled to 1-1000 roll)
+
+        ' Derived from: (rawTOAdj / 2) - (target_unforcedTOAdj / 2)
+        ' Where rawTOAdj = CInt(((teamTOs - defSteals) / games) / (teamPossAdj * 5) * 1000)
+        '    Pre-1974: derived from pace data using formula (pace / 2) * 0.65
+
+        'IMPACT:
+        '    Increasing this value NARROWS the TO window (fewer TOs)
+        '    Decreasing this value WIDENS the TO window (more TOs)
+
         If isWNBATeam%(I) = 1 Then
 
             Select Case teamYears(I)
@@ -10022,19 +10072,63 @@ Sub SETUPRATINGS (teamStyle)
             Select Case teamYears(I)
 
                 Case Is <= 1959
+                    'NEEDS TESTED
                     turnoverFreq(I) = 59
+
+                Case 1960 To 1970
+                    'NEEDS TESTED
+                    turnoverFreq(I) = CInt(turnoverAdj(teamYears(I) - 1960) * 0.65)
+
+                Case 1971 To 1974
+                    turnoverFreq(I) = 33
+
+                Case 1975 To 1979
+                    turnoverFreq(I) = 32
+
+                Case 1980 To 1982
+                    turnoverFreq(I) = 28
+
+                Case 1983 To 1986
+                    turnoverFreq(I) = 24
+
+                Case 1987 To 1991
+                    turnoverFreq(I) = 20
+
+                Case 1992 To 2001
+                    turnoverFreq(I) = 20
+
+                Case 2002 To 2003
+                    turnoverFreq(I) = 18
+
+                Case 2004
+                    turnoverFreq(I) = 15
+
+                Case 2005 To 2014
+                    turnoverFreq(I) = 18
+
+                Case 2015 To 2019
+                    turnoverFreq(I) = 17
+
+                Case 2020 To 2023
+                    turnoverFreq(I) = 18
+
+                Case Is >= 2024
+                    turnoverFreq(I) = 15 '17
+
+            End Select
+
+            Select Case teamYears(I)
+
+                Case Is <= 1959
                     perFoulRat(I) = 11
 
                 Case 1960 To 1992
-                    turnoverFreq(I) = CInt(turnoverAdj(teamYears(I) - 1960) * 0.65)
                     perFoulRat(I) = perFoulAdj(teamYears(I) - 1960) - 3
 
-                Case 1993 To 1999
-                    turnoverFreq(I) = 20
+                Case Is >= 1993
                     perFoulRat(I) = 0
 
                 Case Is >= 2000
-                    turnoverFreq(I) = 20
                     perFoulRat(I) = 0
 
             End Select
@@ -10205,6 +10299,8 @@ Sub SETUPRATINGS (teamStyle)
 
     End If 'Done checking for different eras
 
+    Print #11, "matchPace - "; matchPace
+
     'Check if we should favor ratings (rebounds, dunks, etc.)
     'towards one team or another
     If eraAdj > 2 Then
@@ -10373,13 +10469,28 @@ Sub SETUPRATINGS (teamStyle)
             ' ** WNBA **
             Select Case teamYears(eraChoice)
 
-                Case 1997 To 2000
-                    eraShootRate = 80
+                Case 1997 To 1998
+                    eraShootRate = 62
 
-                Case 2001 To 2010
+                Case 1999
+                    eraShootRate = 62
+
+                Case 2000 To 2002
+                    eraShootRate = 58
+
+                Case 2003
+                    eraShootRate = 63
+
+                Case 2004 To 2005
+                    eraShootRate = 58
+
+                Case 2006 To 2009
                     eraShootRate = 82
 
-                Case Is >= 2011
+                Case 2010 To 2021
+                    eraShootRate = 82
+
+                Case Is >= 2022
                     eraShootRate = 83
 
             End Select
@@ -10453,14 +10564,14 @@ Sub SETUPRATINGS (teamStyle)
 
         teamAdj(I, 0) = CInt(((oppSteals / (teamPossAdj(I) * 5)) * 1000)) - leagStlPerPossAdj
 
-        ' ** Calculate unforced team turnovers / player possession
+        ' ** Calculate unforced team turnover tendency / player possession (scaled to 1-1000)
         '(Team TOs - Def Steals) / Game  / Poss Adj
         rawTOAdj = CInt(((teamRat_GAME(I, 15) - teamRat_GAME(I, 28)) / teamRat_GAME(I, 0)) / (teamPossAdj(I) * 5) * 1000)
         teamAdj(I, 1) = rawTOAdj - turnoverFreq(I)
 
         totalRawTOAdj& = totalRawTOAdj& + rawTOAdj
 
-        ' ** Calculate unforced opponent turnovers / player possession
+        ' ** Calculate unforced opponent turnover tendency / player possession (scaled to 1-1000)
         '((Opp TOs - Team Steals) / Game / Poss Adj) - turnoverFreq
         rawTOAdj = CInt(((teamRat_GAME(I, 29) - teamRat_GAME(I, 14)) / teamRat_GAME(I, 0)) / (teamPossAdj(I) * 5) * 1000)
         teamAdj(I, 2) = rawTOAdj - turnoverFreq(I)
@@ -13971,6 +14082,109 @@ End Sub
 
 
 '----------------------------------------
+'        StealOccurred Subroutine
+'----------------------------------------
+'This subroutine handles stats and PBP
+'for a successful steal event
+Sub StealOccurred
+
+    stealPlyr = Int(Rnd(1) * 5)
+
+    'Increase player TOs
+    gameRatings!(P, lineupIdx(P, ballCarrier), 23) = gameRatings!(P, lineupIdx(P, ballCarrier), 23) + 1
+
+    If (autoPlay = 0 Or pbpDelay! > 0) Then
+
+        If pbpOpt = 1 Then
+
+            Call WINDEX
+            Print "BALL STOLEN BY "; players_GAME$(D, lineupIdx(D, stealPlyr), 0); "!"
+            Call DELAY
+
+        Else
+
+            Call Rolld100(RN0)
+
+            Select Case RN0
+
+                Case 1 To 3:
+                    pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " QUICKLY REACHES IN!"
+
+                Case 4 To 6:
+                    pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " SNEAKS IN FROM BEHIND!"
+
+                Case 7 To 10:
+                    pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " GETS A HAND ON THE BALL!"
+
+                Case Else
+                    pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " REACHES FOR IT!"
+
+            End Select
+
+            Call PBP(D)
+
+            RN0 = Int(Rnd(1) * 20) + 1
+
+            Select Case RN0
+
+                Case 1: pbpString$ = "PASS INTERCEPTED BY " + players_GAME$(D, lineupIdx(D, stealPlyr), 0) + "!"
+
+                Case 2: pbpString$ = "PASS IS PICKED OFF BY " + players_GAME$(D, lineupIdx(D, stealPlyr), 0) + "!"
+
+                Case 3: pbpString$ = "BALL IS STOLEN BY " + players_GAME$(D, lineupIdx(D, stealPlyr), 0) + "!"
+
+                Case 4: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " WITH THE STEAL!"
+
+                Case 5: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " TAKES IT AWAY!"
+
+                Case 6: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " STEALS IT!"
+
+                Case 7: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " RIPS IT LOOSE!"
+
+                Case 8: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " TAKES THE BALL AWAY!"
+
+                Case 9: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " STEALS THE BALL!"
+
+                Case 10: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " PICKS IT OFF!"
+
+                Case 11: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " SWIPES THE BALL!"
+
+                Case 12: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " WITH THE STOLEN BALL!"
+
+                Case 13: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " STRIPS IT AWAY!"
+
+                Case 14: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " WITH THE STEAL!"
+
+                Case 15: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " SWIPES AND STEALS IT!"
+
+                Case 16: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " SNATCHES IT AWAY!"
+
+                Case 17: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " QUICKLY REACHES IN!"
+
+                Case 18: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " TAKES IT THE OTHER WAY!"
+
+                Case 19: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " POKES IT LOOSE!"
+
+                Case 20: pbpString$ = players_GAME$(D, lineupIdx(D, stealPlyr), 0) + " STRIPS IT CLEAN!"
+
+            End Select
+
+            Call PBP(D)
+
+        End If
+
+    End If
+
+    'Increase steals + team TOs
+    gameRatings!(D, lineupIdx(D, stealPlyr), 13) = gameRatings!(D, lineupIdx(D, stealPlyr), 13) + 1
+    turnovers(P) = turnovers(P) + 1
+
+    Call UPDATESCREEN
+
+End Sub
+
+
+'----------------------------------------
 '           EVENTS Subroutine
 '----------------------------------------
 'This subroutine works with another to
@@ -15720,17 +15934,18 @@ Sub DebugStatTotals
     Next I
 
     'Print #11, "POINTS: "; Str$(score(P, 0) + score(D, 0))
-    'Print #11, "POSSESSIONS: "; Str$(possCount(1) + possCount(2) + possCount(3) + possCount(4))
+    Print #11, "POSSESSIONS: "; Str$(possCount(1) + possCount(2) + possCount(3) + possCount(4))
     'Print #11, "ASSISTS: "; Str$(gameAsst(0) + gameAsst(1))
     'Print #11, "TURNOVERS: "; Str$(turnovers(0) + turnovers(1))
     'Print #11, "TOTAL REBOUNDS: "; Str$(teamRebounds(0) + teamRebounds(1))
     'Print #11, "Total FGM: "; gameFGM(0) + gameFGM(1)
-    'Print #11, "Total FGA: "; gameFGA(0) + gameFGA(1)
+    Print #11, "Total FGA: "; gameFGA(0) + gameFGA(1)
     'Print #11, "Total 3FGM: "; game3FGM(0) + game3FGM(1)
     'Print #11, "Total 3FGA: "; game3FGA(0) + game3FGA(1)
     'Print #11, "Total FTM: "; gameFTM(0) + gameFTM(1)
     'Print #11, "Total FTA: "; gameFTA(0) + gameFTA(1)
     'Print #11, "Total Fouls ALL: "; totalFouls(0) + totalFouls(1)
+    'Print #11, "Total Fouls on REB: "; totalRebFouls
     'Print #11, "Total Fouls Drawn: "; totalDrawFouls
     'Print #11, "Total Fouls Intentional: "; totalIntFouls
     'Print #11, "Total Fouls Loose Ball: "; totalLBFouls
@@ -15751,7 +15966,7 @@ End Sub
 'should be started.
 Sub EndOfGame
 
-    Call DebugStatTotals
+    'Call DebugStatTotals
 
     Call POSTGAME
 
@@ -18593,7 +18808,7 @@ Sub RunAllSchedules ()
     Shared scheduleH$(), scheduleV$()
     Shared scheduleYN$()
 
-    fileSpec$ = diskPaths$(3) + "WNBA*.SCD"
+    fileSpec$ = diskPaths$(3) + "NBA*.SCD"
 
     Count% = FileCount%(fileSpec$)
     ReDim foundFiles$(0 To Count%)
