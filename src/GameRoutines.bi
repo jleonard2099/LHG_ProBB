@@ -103,6 +103,10 @@ Declare Function GetTeamYear% (yearFromName$)
 Declare Function GetTeamGender$ (diskID$)
 Declare Function GetTeamLeague$ (diskID$)
 Declare Function goodPlayer% (teamIdx, playerIdx)
+Declare Function IsDefensePC
+Declare Function IsOffensePC
+Declare Function IsOffenseHuman
+Declare Function IsDefenseHuman
 Declare Function IsPlayerAlreadyAssigned% (playerIndex As Integer, currentSlot As Integer)
 Declare Function isTeamInBonus% (targetTeam)
 Declare Function isWNBATeam% (tgtTeam)

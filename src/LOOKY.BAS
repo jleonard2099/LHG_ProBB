@@ -519,7 +519,7 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
         Color 6: Print "PER GAME";
 
         'FGM / FGA
-        Locate , 28: Print Using "##.# ##.#"; statsOffTot!(2) / totalGames; statsOffTot!(1) / totalGames;
+        Locate , 28: Print Using "##.# ###.#"; statsOffTot!(2) / totalGames; statsOffTot!(1) / totalGames;
 
         '3FGM / 3FGA
         Locate , 44: Print Using "##.# ##.#"; statsOffTot!(13) / totalGames; statsOffTot!(14) / totalGames;
@@ -560,7 +560,7 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
         Color 6: Print "PER GAME";
 
         'FGM / FGA
-        Locate , 28: Print Using "##.# ##.#"; statsDefTot!(2) / totalGames; statsDefTot!(1) / totalGames;
+        Locate , 28: Print Using "##.# ###.#"; statsDefTot!(2) / totalGames; statsDefTot!(1) / totalGames;
 
         '3FGM / 3FGA
         Locate , 44: Print Using "##.# ##.#"; statsDefTot!(13) / totalGames; statsDefTot!(14) / totalGames;
