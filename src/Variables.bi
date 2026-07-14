@@ -264,7 +264,7 @@ Dim Shared passes, periodEnd, playerMode, playerOpt, playoffOpt, pbpOpt
 Dim Shared quarter, quarterOpt, quarterSeconds
 Dim Shared rebFoulChance, ruleOptType
 Dim Shared sClockVal, shotChance, shotClock, shotPctOpt, shotType, sndOpt
-Dim Shared threePtOpt, threePtRange, tickerGames, timeoutOpt, twoTimeouts, willDunk
+Dim Shared threePtOpt, threePtRange, timeoutOpt, twoTimeouts, useTicker, willDunk
 
 Dim Shared MINS_PER_GAME
 
