@@ -1788,23 +1788,16 @@ Sub PROHOOP ()
     P3 = 0
     assistShotBoost = 0
 
-    If (playerMode = 0 And coachOpt = 1) Or _
-        (playerMode = 1 And D = compTeam And coachOpt = 1) Or _ 
-        IsOffensePC Then
+    If IsOffensePC Or (IsOffenseHuman And coachOpt = 1) Then
         'Computer in charge - auto determine
-
         Call WHOGETSBALL
-
     Else
-
-        '-- SHOULD BE 40
-        If d100% > 90 Then
-            'random ball carrier
+        If d100% > 40 Then
+            'Random ball carrier
             ballCarrier = Int(Rnd(1) * 5)
         Else
             Call GetPassChoice
         End If
-
     End If
 
     unforcedTOAdj = teamAdj(P, 1) + teamAdj(D, 2)
@@ -2547,12 +2540,6 @@ Sub PROHOOP ()
     'Determine some late game scenarios
     scoreDiff = score(P, 0) - score(D, 0)
 
-    If (playerMode = 1 And coachOpt <> 1) Then
-        promptUser = 1
-    Else
-        promptUser = 0
-    End If
-
     If quarterOpt = 1 Then
         intFoulWindow = 120
     Else
@@ -2562,12 +2549,10 @@ Sub PROHOOP ()
     'Computer Opponent or "Let Computer Shoot"
     If playerMode <> 0 Or coachOpt = 1 Then
 
-        'Human Offense - prompt for intentional foul
         'Consider intentional foul
-        If quarter >= 4 And gameClock! <= intFoulWindow And scoreDiff > 0 And _
-            playerMode = 1 And P = compTeam Then
+        If (quarter >= 4 And gameClock! <= intFoulWindow And scoreDiff > 0 And _
+            playerMode = 1 And P = compTeam) Then
 
-            'Computer on Offense
             pbpString$ = Str$(gameRatings!(P, lineupIdx(P, ballCarrier), 1)) + " FT%  INTENTIONAL FOUL? (Y/N)"
             Call SELECTPBP(P, 0)
 
@@ -2612,7 +2597,8 @@ Sub PROHOOP ()
 
                 End If
 
-                If promptUser = 1 Then
+                'Human Player Select Shots
+                If IsOffenseHuman And coachOpt <> 1 Then
                     GoTo 530
                 Else
                     If considerFoul = 1 Then
@@ -2746,25 +2732,26 @@ Sub PROHOOP ()
     '-- If comparing to College BB,
     '   there's alot here missing!!!!
 
-    'Foul was chosen | Computer on offense and last 4 minutes of game
-    If Val(I$) = 3 And (playerMode = 0 Or playerMode = 1 And P = compTeam) And quarter >= 4 And gameClock! < 240 Then
+    'Foul, chosen, computer on offense and last 4 minutes of game
+    If Val(I$) = 3 And IsDefenseHuman And quarter >= 4 And gameClock! < 240 Then
         playChoice = 3
     End If
 
-    'Timeout - Human Offense
-    If Val(I$) = 2 And (playerMode = 0 Or (playerMode = 1 And D = compTeam)) And timeouts(P) > 0 Then
+    If Val(I$) = 2 And IsOffenseHuman And timeouts(P) > 0 Then
+        'Timeout
         playChoice = 2
     End If
 
     P3 = playChoice
 
-    'Human Player
+    'Human Offense
     If playerMode < 2 Then
         'No timeouts left
         'Take timeout before last 4 minutes
         'Take timeout with PC on Defense
         If (playChoice = 2 And timeouts(P) = 0) Or _
-            playChoice = 3 And (quarter < 4 Or (quarter = 4 And gameClock! > 240) Or (playerMode = 1 And D = compTeam)) Then
+            playChoice = 3 And (quarter < 4 Or (quarter = 4 And gameClock! > 240) Or IsDefensePC) Then
+            'Allow player a shoot
             GoTo 530
         End If
     End If
@@ -2778,7 +2765,6 @@ Sub PROHOOP ()
         If IsOffensePC Then
             If threePtRange = 1 Or _
                quarter >= 4 And gameClock! < 30 And scoreDiff >= 3 Then
-
                 playChoice = 4
             End If
         End If
@@ -7906,9 +7892,8 @@ End Sub
 Sub EvaluateSubs (teamIdx)
 
     Dim contribPct As Single, remainingContribPct As Single
-    Dim badPlayers, disabledPlayers
+    Dim badPlayers, currPlyrCX, disabledPlayers
     Dim exhaustedPlayers, foulPlayers, tiredPlayers
-
     Dim secsPerQuarter
 
     Shared maxRoster()
@@ -7924,15 +7909,12 @@ Sub EvaluateSubs (teamIdx)
     X9! = 0
 
     For I = 0 To 14
-
         If players_GAME$(teamIdx, I, 0) <> "XXX" Then
             'Sum of all player Blocks + Assists
             X9! = X9! + plyrRat_GAME(teamIdx, I, 12) + plyrRat_GAME(teamIdx, I, 8)
         End If
-
     Next I
 
-    'Computer on Offense
     'offStatus = 50 means team is in BONUS
     If Not (offStatus = 50 And (playerMode = 1 And teamIdx = compTeam) Or (playerMode = 2 And teamIdx = P)) Then
 
@@ -8272,14 +8254,11 @@ Sub DEADBALLOPTIONS (userTakeTO)
 
         'User options to continue play
         If playerMode = 2 Then
-
             P9 = P
             C1 = 2
             Call CheckGameClock
             Call StealAdjustments
-
         Else
-
             'At least 1 human
             Locate 10, 1
             Color 14, 0
@@ -8318,9 +8297,8 @@ Sub DEADBALLOPTIONS (userTakeTO)
             End If
 
             If P3 = 0 Or _ 
-                (playerMode = 1 And P = compTeam And (P3 = 1 Or (P3 = 3 And timeouts(P) <= 0))) Or _ 
-                (playerMode = 1 And D = compTeam And (P3 = 2 Or (P3 = 4 And timeouts(D) <= 0))) Then
-
+                (IsOffensePC And (P3 = 1 Or (P3 = 3 And timeouts(P) <= 0))) Or _ 
+                (IsDefensePC And (P3 = 2 Or (P3 = 4 And timeouts(D) <= 0))) Then
                 'When ENTER is pressed (to continue),
                 'team has no timeouts or computer team
                 P9 = P
@@ -8455,9 +8433,8 @@ Sub STOPPAGE (userTakeTO)
             End If
 
             If P3 = 0 Or _ 
-                (playerMode = 1 And P = compTeam And (P3 = 1 Or P3 = 3 Or (P3 = 5 And timeouts(P) <= 0))) Or _ 
-                (playerMode = 1 And D = compTeam And (P3 = 2 Or P3 = 4 Or (P3 = 6 And timeouts(D) <= 0))) Then
-
+                (IsOffensePC And (P3 = 1 Or P3 = 3 Or (P3 = 5 And timeouts(P) <= 0))) Or _ 
+                (IsDefensePC And (P3 = 2 Or P3 = 4 Or (P3 = 6 And timeouts(D) <= 0))) Then
                 'When ENTER is pressed (to continue),
                 'team has no timeouts or computer team
                 P9 = P
@@ -8697,7 +8674,7 @@ Sub FoulCalled (randomFouler)
 
         P3 = 1
 
-        If playerMode = 0 Or playerMode = 1 And compTeam <> D Then
+        If IsDefenseHuman Then
             C1 = 1
             P9 = D
             Call ChooseLineup(D)
@@ -15569,10 +15546,9 @@ End Sub
 '       StartingLineup Subroutine
 '----------------------------------------
 Sub StartingLineup (gameIdx)
-
-    playerCount = 0
-    nonPlayerCount = 0
-    teamTotalMins = 0
+    
+    Dim nonPlayerCount, playerCount
+    Dim teamTotalMins
 
     'Total minutes of all players
     For X = 0 To 14
@@ -15607,17 +15583,14 @@ Sub StartingLineup (gameIdx)
 
         'Count active players
         For I = 0 To 14:
-
             If playerActive%(gameIdx, I) = 1 Then
                 playerCount = playerCount + 1
             End If
-
         Next
 
         'Keep looping until we have at least:
         ' (10 active players and <= 3 non-players)
         ' (9+ active players and < 5 non-players)
-
     Loop While (playerCount < 10 And nonPlayerCount < 4) Or (playerCount < 8 And nonPlayerCount >= 5)
 
 End Sub
@@ -15641,10 +15614,9 @@ End Sub
 '----------------------------------------
 '       DebugStatTotals Subroutine
 '----------------------------------------
-'This subroutine should only be used
-'when trying to derive base values
-'to calibrate pacing / accuracy for
-'a specific era of Basketball
+'This subroutine should only be used when 
+'trying to derive base values to calibrate 
+'the pacing / accuracy for a specific era 
 Sub DebugStatTotals
 
     Dim gameAsst(0 To 1)
@@ -18037,7 +18009,7 @@ End Function
 '----------------------------------------
 '          GetTeamYear Function
 '----------------------------------------
-'This subroutine determines the 4-digit
+'This function determines the 4-digit
 'team year from the team loaded by the
 'file. It uses the 2 digit year to make
 'assumptions. (00 to 24 are year 2000.)
@@ -18145,31 +18117,31 @@ End Function
 
 
 '--------------------------------------------
-'        IsOffensePC Function
+'          IsOffensePC Function
 '--------------------------------------------
 'This function returns TRUE if the computer
 'is on offense
 Function IsOffensePC
     
-    IsOffensePC = (playerMode = 1 And P = compTeam) Or playerMode = 2
+    IsOffensePC = (playerMode = 1 And compTeam = P) Or playerMode = 2
 
 End Function
 
 
 '--------------------------------------------
-'        IsDefensePC Function
+'          IsDefensePC Function
 '--------------------------------------------
 'This function returns TRUE if the computer
 'is on defense
 Function IsDefensePC
 
-    IsDefensePC = (playerMode = 1 And D = compTeam) Or playerMode = 2
+    IsDefensePC = (playerMode = 1 And compTeam = D) Or playerMode = 2
 
 End Function
 
 
 '--------------------------------------------
-'        IsOffenseHuman Function
+'          IsOffenseHuman Function
 '--------------------------------------------
 'This function returns TRUE if a human player
 'is on offense
@@ -18181,7 +18153,7 @@ End Function
 
 
 '--------------------------------------------
-'        IsDefenseHuman Function
+'          IsDefenseHuman Function
 '--------------------------------------------
 'This function returns TRUE if a human player
 'is on defense
