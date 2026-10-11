@@ -59,16 +59,16 @@ Sub SCHEDULE ()
             ReDim scheduleH$(MAX_SCHEDULE_GAMES)
             ReDim scheduleV$(MAX_SCHEDULE_GAMES)
 
-            scheduleNG%(0, 2) = 1
-            scheduleNG%(0, 3) = 1
-            scheduleNG%(0, 5) = 0
-            scheduleNG%(0, 7) = 0
-            scheduleNG%(0, 8) = 3
-            scheduleNG%(0, 9) = 1
-            scheduleNG%(0, 10) = 0
-            scheduleNG%(0, 11) = 1
-            scheduleNG%(0, 14) = 5
-
+            scheduleNG%(0, 2) = 1 'Location: Home
+            scheduleNG%(0, 3) = 1 '3 Pt Opt: Yes
+            scheduleNG%(0, 5) = 0 'Game Type: Normal
+            scheduleNG%(0, 7) = 0 'Shot Clock: 24 sec
+            scheduleNG%(0, 8) = 3 'Team Control: PC vs PC
+            scheduleNG%(0, 9) = 1 'Coach Opt: Shots + Calls
+            scheduleNG%(0, 10) = 0 'Free Throws: Current Rules
+            scheduleNG%(0, 11) = 1 'Shoot on: All Fouls
+            scheduleNG%(0, 14) = 5 'Bonus on Foul #: 5
+        
             Select Case SELECTION%
 
                 Case 1
@@ -151,9 +151,6 @@ Sub NewSchedule (scheduleFile$)
     Shared scheduleYN$()
 
     Shared modeAbbrev$(), sClockOpt$(), yesNo$()
-
-    DT$ = "10-22-25"
-    TM$ = "07:30P"
 
     baseFile$ = GetFileBaseName$(scheduleFile$)
 
@@ -327,6 +324,8 @@ Sub NewSchedule (scheduleFile$)
                     scheduleYN$(targetGame%, X) = scheduleYN$(targetGame% - 1, X)
                 Next
 
+                DT$ = "10-22-25"
+                TM$ = "07:30P"
                 Call NewGame(V$, H$, YN$, DT$, TM$, NTMS, targetGame%)
 
             Case "E"
@@ -1389,17 +1388,6 @@ Sub ChangeGlobalSettings ()
     Dim displayPause!
 
     ' GLOBAL SETTINGS FOR A SCHEDULE
-    ' The code below would use default values based on the most recent rules
-    'playerOpt = 3
-    'gameLoc = 1
-    'sClockVal = 0
-    'coachOpt = 1
-    'threePtOpt = 1
-    'playoffOpt = 0
-    'bonusFoulNum = 5
-    'freeThrowVal = 0
-    'ftRulesOpt = 0
-
     'This code will assign defaults based on the first game in the schedule.
     'Usually when I want to change global settings, I want to keep most
     'settings in the schedule the same.
@@ -1418,7 +1406,7 @@ Sub ChangeGlobalSettings ()
     quarterOpt = scheduleNG%(1, 20)
     maxTOs = scheduleNG%(1, 21)
 
-    DT$ = "10-22-24"
+    DT$ = "10-22-25"
     TM$ = "07:30P"
 
     Do
