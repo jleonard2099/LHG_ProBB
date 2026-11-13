@@ -229,7 +229,9 @@ Dim scheduleFile$
 Dim actualAttendance&
 
 Dim eraPaceAvg, eraShootRate
-Dim matchPace, opponentJustScored, tickerStart
+Dim matchPace, opponentJustScored
+Dim staminaPenalty, overusePenalty, usedStamina
+Dim threePtShotChance, tickerStart
 
 Dim staminaScale As Single
 
@@ -307,3 +309,4 @@ Dim Shared pbpStyle$(1), players_GAME$(1, 14, 1), posnName$(0 To 4)
 
 Dim Shared SX$(32, 1)
 Dim Shared teamAbbrev$(3), teamGender$(0 To 1), teamLeague$(0 To 1)
+

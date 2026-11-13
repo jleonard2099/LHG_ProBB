@@ -38,8 +38,6 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-Dim staminaPenalty, overusePenalty, usedStamina
-Dim threePtShotChance
 
 '-- TEMPORARY USE --
 Dim Shared test1
@@ -9863,19 +9861,10 @@ Sub SETUPRATINGS (teamStyle)
 
     Else
 
-        eraAdj = 3
+        eraAdj = 1
         'Both Teams Are Same Year
         'matchPace = FGA / G adjusted for league average
         'Here we adjust FGA / G for both teams evenly
-        'Print #11, "teamRat_GAME(0, 5) = "; teamRat_GAME(0, 5)
-        'Print #11, "teamRat_GAME(0, 19) = "; teamRat_GAME(0, 19)
-        'Print #11, "teamRat_GAME(1, 5) = "; teamRat_GAME(1, 5)
-        'Print #11, "teamRat_GAME(1, 19) = "; teamRat_GAME(1, 19)
-        'Print #11, "teamRat_GAME(0, 0) = "; teamRat_GAME(0, 0)
-        'Print #11, "teamRat_GAME(1, 0) = "; teamRat_GAME(1, 0)
-        'Print #11, "teamRat_GAME(0, 0) = "; teamRat_GAME(0, 1)
-        'Print #11, "teamRat_GAME(1, 0) = "; teamRat_GAME(1, 1)
-
         JX! = (teamRat_GAME(0, 5) + teamRat_GAME(0, 19)) / ((teamRat_GAME(1, 0) + teamRat_GAME(0, 0)) * 2) + (teamRat_GAME(1, 5) + teamRat_GAME(1, 19)) / ((teamRat_GAME(1, 0) + teamRat_GAME(0, 0)) * 2)
         matchPace = JX! * 2 - (leagRat_GAME(0, 1) + leagRat_GAME(1, 1)) / 2
 
@@ -9887,7 +9876,7 @@ Sub SETUPRATINGS (teamStyle)
 
     'Check if we should favor ratings (rebounds, dunks, etc.)
     'towards one team or another
-    If eraAdj > 2 Then
+    If eraAdj >= 2 Then
         'No favored era: assume teams are same era
         'Use Home Team's era (in case they are not)
         eraChoice = 1
@@ -15208,8 +15197,8 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
         Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID:"
         Locate 8,
 
-        If numberTeams > 0 Then 
-            yearToShow$ = _IIF(previousYear$ <> "", previousYear$, yearNumber$)
+        If numberTeams > 0 Then
+            yearToShow$ = _IIf(previousYear$ <> "", previousYear$, yearNumber$)
             Locate 13, 44
             Color 14, 4: Print yearToShow$
             Color 15, 4
@@ -15614,9 +15603,9 @@ End Sub
 '----------------------------------------
 '       DebugStatTotals Subroutine
 '----------------------------------------
-'This subroutine should only be used when 
-'trying to derive base values to calibrate 
-'the pacing / accuracy for a specific era 
+'This subroutine should only be used when
+'trying to derive base values to calibrate
+'the pacing / accuracy for a specific era
 Sub DebugStatTotals
 
     Dim gameAsst(0 To 1)
